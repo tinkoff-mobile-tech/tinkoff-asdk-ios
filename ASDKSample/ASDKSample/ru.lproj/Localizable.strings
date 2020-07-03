@@ -1,0 +1,66 @@
+/*
+ *  Localizable.strings
+ *  ASDKSample
+ *
+ *  Copyright (c) 2020 Tinkoff Bank
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
+
+// titles
+"title.onlineShop" = "Онлайн магазин";
+"title.pay" = "Оплата";
+"title.paymeny" = "Оплатить";
+"title.settings" = "Настройки";
+"title.cart" = "Корзина";
+"title.paymentCardList" = "Список карт";
+"title.qrcode" = "QR-код";
+"title.savingCard" = "Сохранение карты";
+"title.paymentFormLanguage" = "Локализация платежной формы";
+"title.fasterPayments" = "Система Быстрых Платежей";
+"title.showEmailField" = "Поле ввода email";
+"title.paymentSource" = "Источник оплаты";
+"title.goods" = "Товары";
+"title.paymentTryAgain" = "Повторить платеж";
+"title.payByApplePay" = "Оплатить с помощью ApplePay";
+"title.payBySBP" = "Оплатить с помощью Системы Быстрых Платежей";
+"title.payAndSaveAsParent" = "Оплатить, начать регулярный платеж";
+
+//
+"text.showEmailField" = "Показать на платежной форме поле для ввода email куда будет отправлен чек полсе оплаты";
+"text.parentPayment" = "Родительский платеж";
+"text.totalAmount" = "на сумму";
+"text.payBySBP.description" = "на главном экране кнопка сгенерировать QR-код для приема платежей, на форме платежей добавляеся кнопка оплатить с помощью СБП";
+"text.addCardCheckType.description" = "NO – сохранить карту без проверок. Родительский платеж в случае успеха не создастся.\n3DS – при сохранении карты выполнить проверку 3DS и выполнить списание, а затем отмену на 1 р. Карты, не поддерживающие 3DS, привязаны не будут. В случае успеха сгенерируется родительский платеж, для рекуррентных платежей.\nHOLD – при сохранении сделать списание и затем отмену на 1 руб. В случае успеха сгенерируется родительский платеж для рекуррентных платежей.\n3DSHOLD – при привязке карты выполняем проверку, поддерживает карта 3DS или нет. Если карта поддерживает 3DS выполняем списание и затем отмену на 1 руб.";
+"text.language.description" = "auto - Устанавливается язык который выбран на устройстве.\nru - Платежная форма на Русском языке.\nen - Платежная форма на Англисйком языке.";
+
+// plaseholder
+"plaseholder.email" = "Отправить квитанцию по адресу";
+
+// buttons
+"button.pay" = "Оплатить";
+"button.cancel" = "Отменить";
+"button.done" = "Готово";
+"button.backToShop" = "Вернуться в магазин";
+"button.close" = "Закрыть";
+"button.generateQRCode" = "Сгенерировать QR-код";
+"button.paymentTryAgain" = "Повторить платеж";
+"button.selectAnotherCard" = "Выбрать другую карту";
+"button.payAndSaveAsParent" = "Оплатить, начать регулярный платеж";
+
+// status
+"status.cartIsEmpty" = "Корзина пуста";
+"status.sbp.on" = "Включены";
+"status.sbp.off" = "Выключены";
+"status.showEmailField.on" = "Показывать";
+"status.showEmailField.off" = "Скрыто";

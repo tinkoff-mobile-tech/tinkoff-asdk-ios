@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  ASDKSample
+
+  Created by v.budnikov on 15.05.2020.
+  Copyright © 2020 Tinkoff. All rights reserved.
+*/
+
+"NSCameraUsageDescription" = "Вы можете воспользоваться камерой для сканирования реквизитов карты и не вводить их вручную.";
+

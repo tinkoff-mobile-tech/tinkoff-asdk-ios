@@ -1,0 +1,9 @@
+platform :ios, '11.0'
+use_frameworks!
+
+target 'ASDKSample' do
+
+	pod 'ASDKCore', :path => "../ASDKCore"
+	pod 'ASDKUI', :path => "../ASDKUI"
+
+end

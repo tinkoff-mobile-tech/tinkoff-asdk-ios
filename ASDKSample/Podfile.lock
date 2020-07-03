@@ -1,0 +1,22 @@
+PODS:
+  - ASDKCore (2.0.0)
+  - ASDKUI (2.0.0):
+    - ASDKCore
+
+DEPENDENCIES:
+  - ASDKCore (from `../ASDKCore`)
+  - ASDKUI (from `../ASDKUI`)
+
+EXTERNAL SOURCES:
+  ASDKCore:
+    :path: "../ASDKCore"
+  ASDKUI:
+    :path: "../ASDKUI"
+
+SPEC CHECKSUMS:
+  ASDKCore: c202cebab89c7585477b97be729dde15b3b76e57
+  ASDKUI: 33ce93e4d98ab8611f5309e7ea817e2023017a71
+
+PODFILE CHECKSUM: a3bae3fb9ff24daf8ec776924d5aff0f5cac5f20
+
+COCOAPODS: 1.9.3

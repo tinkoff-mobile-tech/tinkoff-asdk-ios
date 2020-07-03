@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iN0-l3-epB" customClass="CartBuyButtonView" customModule="ASDKSample" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="123"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fJD-lJ-AAZ">
+                    <rect key="frame" x="87" y="57" width="240" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="AhB-sd-6Kt"/>
+                        <constraint firstAttribute="width" constant="240" id="IoG-cH-JPs"/>
+                    </constraints>
+                    <state key="normal" title="Button"/>
+                    <connections>
+                        <action selector="buttonActionTouchUpInside:" destination="-2" eventType="touchUpInside" id="nkd-Kx-ncH"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9lf-fT-j8H">
+                    <rect key="frame" x="20" y="16" width="374" height="25"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="9lf-fT-j8H" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leadingMargin" id="0E1-cf-qOU"/>
+                <constraint firstAttribute="bottom" secondItem="fJD-lJ-AAZ" secondAttribute="bottom" constant="16" id="0YH-mO-hyl"/>
+                <constraint firstItem="fJD-lJ-AAZ" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="DzC-9X-VxH"/>
+                <constraint firstItem="fJD-lJ-AAZ" firstAttribute="top" secondItem="9lf-fT-j8H" secondAttribute="bottom" constant="16" id="Nxw-EJ-hha"/>
+                <constraint firstAttribute="trailingMargin" secondItem="9lf-fT-j8H" secondAttribute="trailing" id="kvp-H0-ff0"/>
+                <constraint firstItem="9lf-fT-j8H" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="ls2-gH-m7r"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="buttonBuy" destination="fJD-lJ-AAZ" id="YlJ-WG-Hox"/>
+                <outlet property="labelTitle" destination="9lf-fT-j8H" id="i99-nl-rZY"/>
+            </connections>
+            <point key="canvasLocation" x="-365.21739130434787" y="-355.91517857142856"/>
+        </view>
+    </objects>
+</document>

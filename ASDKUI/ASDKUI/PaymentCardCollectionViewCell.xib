@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PaymentCardCollectionViewCell" id="xal-wh-2n0" customClass="PaymentCardCollectionViewCell" customModule="ASDKUI" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="83"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="8L2-IX-RQC">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="83"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xO9-GC-dM9">
+                        <rect key="frame" x="0.0" y="8" width="320" height="67"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="fDf-35-BRJ">
+                                <rect key="frame" x="24" y="0.0" width="272" height="67"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mir_logo" translatesAutoresizingMaskIntoConstraints="NO" id="RCi-DQ-ElX">
+                                        <rect key="frame" x="0.0" y="24.5" width="36" height="18"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="36" id="0a6-Av-Ser"/>
+                                            <constraint firstAttribute="height" constant="18" id="yZ9-gB-n3Q"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Card name *1234" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JXa-l1-fx0">
+                                        <rect key="frame" x="44" y="23.5" width="87" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00/00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfC-TQ-Qui">
+                                        <rect key="frame" x="139" y="23.5" width="47" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fET-JB-EcQ">
+                                        <rect key="frame" x="194" y="0.0" width="78" height="67"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="CVC" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UPA-lK-1Cl" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                                                <rect key="frame" x="34" y="23" width="44" height="21"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="44" id="jLV-tZ-zPJ"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" secureTextEntry="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
+                                            </textField>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <constraints>
+                                            <constraint firstItem="UPA-lK-1Cl" firstAttribute="centerY" secondItem="fET-JB-EcQ" secondAttribute="centerY" id="ZK7-Oh-lqA"/>
+                                            <constraint firstItem="UPA-lK-1Cl" firstAttribute="leading" secondItem="fET-JB-EcQ" secondAttribute="leading" constant="34" id="Zc6-uI-jWV"/>
+                                            <constraint firstAttribute="trailing" secondItem="UPA-lK-1Cl" secondAttribute="trailing" id="qca-SB-jEO"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="fDf-35-BRJ" secondAttribute="bottom" id="0Sd-Cu-xOd"/>
+                            <constraint firstItem="fDf-35-BRJ" firstAttribute="top" secondItem="xO9-GC-dM9" secondAttribute="top" id="J2k-ry-DUT"/>
+                            <constraint firstAttribute="trailing" secondItem="fDf-35-BRJ" secondAttribute="trailing" constant="24" id="foy-xh-J4r"/>
+                            <constraint firstItem="fDf-35-BRJ" firstAttribute="leading" secondItem="xO9-GC-dM9" secondAttribute="leading" constant="24" id="o9t-yg-5lj"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="xO9-GC-dM9" secondAttribute="trailing" id="Egd-Bx-94p"/>
+                    <constraint firstItem="xO9-GC-dM9" firstAttribute="top" secondItem="8L2-IX-RQC" secondAttribute="topMargin" id="GLy-nw-2T7"/>
+                    <constraint firstItem="xO9-GC-dM9" firstAttribute="leading" secondItem="8L2-IX-RQC" secondAttribute="leading" id="abM-wG-Sz0"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="xO9-GC-dM9" secondAttribute="bottom" id="hOt-n6-WIH"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="281" height="83"/>
+            <connections>
+                <outlet property="imageViewLogo" destination="RCi-DQ-ElX" id="QS3-SI-w5R"/>
+                <outlet property="labelCardExpData" destination="cfC-TQ-Qui" id="HSw-Yr-e44"/>
+                <outlet property="labelCardName" destination="JXa-l1-fx0" id="l7D-7i-i0h"/>
+                <outlet property="textFieldCardCVC" destination="UPA-lK-1Cl" id="ycr-OW-4nK"/>
+                <outlet property="textFieldCardCVCContainer" destination="fET-JB-EcQ" id="mdY-Sr-G2t"/>
+                <outlet property="viewBorder" destination="xO9-GC-dM9" id="bl7-vk-0XC"/>
+            </connections>
+            <point key="canvasLocation" x="11" y="102"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="mir_logo" width="24" height="11"/>
+    </resources>
+</document>

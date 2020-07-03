@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="QRCodeViewController" customModule="ASDKUI" customModuleProvider="target">
+            <connections>
+                <outlet property="imageView" destination="iSR-oZ-aAv" id="pqh-hw-UPI"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iSR-oZ-aAv">
+                    <rect key="frame" x="16" y="140" width="288" height="288"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="iSR-oZ-aAv" secondAttribute="height" multiplier="1:1" id="9sz-SO-DJ0"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="iSR-oZ-aAv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="fnl-2z-Ty3" secondAttribute="leading" priority="750" constant="16" id="4u1-G4-TFF"/>
+                <constraint firstItem="iSR-oZ-aAv" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" priority="250" constant="16" id="5cF-Zs-hrF"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="iSR-oZ-aAv" secondAttribute="bottom" priority="750" constant="16" id="8Gp-Bn-zJN"/>
+                <constraint firstItem="iSR-oZ-aAv" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="MUh-iS-UEG"/>
+                <constraint firstItem="iSR-oZ-aAv" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" priority="250" constant="16" id="Nr9-Lp-ScX"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="iSR-oZ-aAv" secondAttribute="trailing" priority="750" constant="16" id="YVC-lI-Xpa"/>
+                <constraint firstItem="iSR-oZ-aAv" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="cQe-8K-p8Y"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="iSR-oZ-aAv" secondAttribute="trailing" priority="250" constant="16" id="kHQ-xi-K5T"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="iSR-oZ-aAv" secondAttribute="bottom" priority="750" constant="140" id="nQo-Gx-kfS"/>
+                <constraint firstItem="iSR-oZ-aAv" firstAttribute="top" relation="lessThanOrEqual" secondItem="fnl-2z-Ty3" secondAttribute="top" priority="750" constant="16" id="qb2-R8-0iD"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="-279" y="326"/>
+        </view>
+    </objects>
+</document>

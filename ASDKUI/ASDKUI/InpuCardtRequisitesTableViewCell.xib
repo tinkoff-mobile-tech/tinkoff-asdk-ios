@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="InpuCardtRequisitesTableViewCell" id="KGk-i7-Jjw" customClass="InpuCardtRequisitesTableViewCell" customModule="ASDKUI" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="96"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="96"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SHY-2B-Zw7">
+                        <rect key="frame" x="16" y="8" width="288" height="72"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eIN-TC-rLO">
+                                <rect key="frame" x="24" y="0.0" width="20" height="72"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="jeD-9H-t2k"/>
+                                </constraints>
+                            </imageView>
+                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LFA-Gd-Rwo" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                                <rect key="frame" x="52" y="25" width="172" height="22"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </textField>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ckc-SM-KOe">
+                                <rect key="frame" x="52" y="36" width="68" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0SR-e7-Fzu" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                                <rect key="frame" x="120" y="25" width="48" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="jKz-0X-KcD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HoE-zn-oQj">
+                                <rect key="frame" x="44" y="21" width="76" height="30"/>
+                                <connections>
+                                    <action selector="onCardNumberTouchUpInside:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="FIX-UD-GkR"/>
+                                </connections>
+                            </button>
+                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="e73-6L-HLY" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                                <rect key="frame" x="228" y="25" width="44" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="qKV-y7-Czp"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o2e-54-hl9">
+                                <rect key="frame" x="232" y="14" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="M4P-uP-UCL"/>
+                                    <constraint firstAttribute="height" constant="44" id="cF5-Tv-oR1"/>
+                                </constraints>
+                                <state key="normal" image="next"/>
+                                <connections>
+                                    <action selector="onButtonRightTouchUpInside:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Ec9-Vq-bfg"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="Ckc-SM-KOe" firstAttribute="centerY" secondItem="SHY-2B-Zw7" secondAttribute="centerY" id="05N-G6-gbO"/>
+                            <constraint firstItem="0SR-e7-Fzu" firstAttribute="leading" secondItem="Ckc-SM-KOe" secondAttribute="trailing" id="0z2-Lz-TAn"/>
+                            <constraint firstItem="eIN-TC-rLO" firstAttribute="leading" secondItem="SHY-2B-Zw7" secondAttribute="leading" constant="24" id="2E5-ef-b7G"/>
+                            <constraint firstItem="HoE-zn-oQj" firstAttribute="leading" secondItem="eIN-TC-rLO" secondAttribute="trailing" id="3yt-Yh-o6N"/>
+                            <constraint firstItem="o2e-54-hl9" firstAttribute="leading" secondItem="LFA-Gd-Rwo" secondAttribute="trailing" constant="8" id="5Ji-cr-cbU"/>
+                            <constraint firstAttribute="trailing" secondItem="o2e-54-hl9" secondAttribute="trailing" constant="12" id="60O-8x-oIF"/>
+                            <constraint firstItem="Ckc-SM-KOe" firstAttribute="leading" secondItem="eIN-TC-rLO" secondAttribute="trailing" constant="8" id="Agf-ry-m6o"/>
+                            <constraint firstAttribute="bottom" secondItem="eIN-TC-rLO" secondAttribute="bottom" id="Dxu-Ya-ZPy"/>
+                            <constraint firstItem="eIN-TC-rLO" firstAttribute="top" secondItem="SHY-2B-Zw7" secondAttribute="top" id="Gez-20-cJq"/>
+                            <constraint firstItem="0SR-e7-Fzu" firstAttribute="centerY" secondItem="SHY-2B-Zw7" secondAttribute="centerY" id="GiL-6h-fkI"/>
+                            <constraint firstItem="o2e-54-hl9" firstAttribute="centerY" secondItem="SHY-2B-Zw7" secondAttribute="centerY" id="IHh-db-gvY"/>
+                            <constraint firstAttribute="height" constant="72" id="OJB-Vm-dqt"/>
+                            <constraint firstAttribute="trailing" secondItem="e73-6L-HLY" secondAttribute="trailing" constant="16" id="PgZ-pp-phM"/>
+                            <constraint firstItem="LFA-Gd-Rwo" firstAttribute="leading" secondItem="eIN-TC-rLO" secondAttribute="trailing" constant="8" id="R5J-fQ-oGh"/>
+                            <constraint firstItem="0SR-e7-Fzu" firstAttribute="centerX" secondItem="SHY-2B-Zw7" secondAttribute="centerX" id="bMj-f7-MaM"/>
+                            <constraint firstItem="LFA-Gd-Rwo" firstAttribute="centerY" secondItem="SHY-2B-Zw7" secondAttribute="centerY" id="cbO-ev-h12"/>
+                            <constraint firstItem="0SR-e7-Fzu" firstAttribute="leading" secondItem="HoE-zn-oQj" secondAttribute="trailing" id="dA5-sH-8ai"/>
+                            <constraint firstItem="e73-6L-HLY" firstAttribute="centerY" secondItem="SHY-2B-Zw7" secondAttribute="centerY" id="f81-66-pw4"/>
+                            <constraint firstItem="HoE-zn-oQj" firstAttribute="centerY" secondItem="SHY-2B-Zw7" secondAttribute="centerY" id="mn0-bM-Hi9"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="SHY-2B-Zw7" secondAttribute="trailing" id="1k7-f7-8dB"/>
+                    <constraint firstItem="SHY-2B-Zw7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="6xL-oQ-PbR"/>
+                    <constraint firstItem="SHY-2B-Zw7" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="S3Z-J6-2yU"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="SHY-2B-Zw7" secondAttribute="bottom" constant="8" id="j1C-mJ-lBQ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="buttonRight" destination="o2e-54-hl9" id="lkP-th-9Xo"/>
+                <outlet property="buttonShowCardNumber" destination="HoE-zn-oQj" id="gp7-Ye-kAX"/>
+                <outlet property="imageViewPSLogo" destination="eIN-TC-rLO" id="q6x-vr-rcU"/>
+                <outlet property="imageViewPSLogoWidth" destination="jeD-9H-t2k" id="vHv-jf-VlM"/>
+                <outlet property="labelShortCardNumber" destination="Ckc-SM-KOe" id="tjQ-mv-0q5"/>
+                <outlet property="textFieldCardCVC" destination="e73-6L-HLY" id="EPS-bw-5BY"/>
+                <outlet property="textFieldCardExpDate" destination="0SR-e7-Fzu" id="scH-TI-cF2"/>
+                <outlet property="textFieldCardNumber" destination="LFA-Gd-Rwo" id="1ob-yI-k0Z"/>
+                <outlet property="viewBorder" destination="SHY-2B-Zw7" id="RZJ-Eu-RHX"/>
+            </connections>
+            <point key="canvasLocation" x="-26.086956521739133" y="79.6875"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="next" width="28" height="28"/>
+    </resources>
+</document>
