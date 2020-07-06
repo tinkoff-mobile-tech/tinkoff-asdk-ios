@@ -4,7 +4,7 @@ use_frameworks!
 
 target 'ASDKSample' do
 
-	pod 'TinkoffASDKCore', :path => "../TinkoffASDKCore"
-	pod 'TinkoffASDKUI', :path => "../TinkoffASDKUI"
+	pod 'TinkoffASDKCore', :path => "../TinkoffASDKCore/"
+	pod 'TinkoffASDKUI', :path => "../TinkoffASDKUI/"
 
 end

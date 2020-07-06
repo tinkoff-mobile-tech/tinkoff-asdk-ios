@@ -4,19 +4,19 @@ PODS:
     - TinkoffASDKCore
 
 DEPENDENCIES:
-  - TinkoffASDKCore (from `../TinkoffASDKCore`)
-  - TinkoffASDKUI (from `../TinkoffASDKUI`)
+  - TinkoffASDKCore (from `../TinkoffASDKCore/`)
+  - TinkoffASDKUI (from `../TinkoffASDKUI/`)
 
 EXTERNAL SOURCES:
   TinkoffASDKCore:
-    :path: "../TinkoffASDKCore"
+    :path: "../TinkoffASDKCore/"
   TinkoffASDKUI:
-    :path: "../TinkoffASDKUI"
+    :path: "../TinkoffASDKUI/"
 
 SPEC CHECKSUMS:
-  TinkoffASDKCore: 6c18fc7944fc888ca4e07e80901fb04435da09e8
-  TinkoffASDKUI: 2fbedf92f2e40476f8650b1515b4372a9a2cf9d7
+  TinkoffASDKCore: 3ad40f3ca37f4f7c0efb74ac29f9f2bd83235cf8
+  TinkoffASDKUI: f856524498c5a2f59e35052719679ae21a9de36c
 
-PODFILE CHECKSUM: ed35fd5755fa81df3693209be94825138ad3dddc
+PODFILE CHECKSUM: 3ef6d03e0389bc187ffb82685c06a76f819597f8
 
 COCOAPODS: 1.9.3

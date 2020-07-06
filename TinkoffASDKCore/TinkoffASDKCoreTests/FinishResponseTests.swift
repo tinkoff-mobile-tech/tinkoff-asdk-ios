@@ -76,7 +76,7 @@ class FinishResponseTests: XCTestCase {
 	func test_FinishResponseSuccess() {
 		
 		let errorCode: Int = 0
-		let terminalKey: String = ASDKStageTestData.terminalKey
+		let terminalKey: String = StageTestData.terminalKey
 		let amount: Int64 = 20000
 		let orderId: Int64 = 8221860
 		let paymentId: Int64 = 142639745
@@ -124,7 +124,7 @@ class FinishResponseTests: XCTestCase {
 	func test_FinishResponseNeed3DSConfirmation() {
 		
 		let errorCode: Int = 0
-		let terminalKey: String = ASDKStageTestData.terminalKey
+		let terminalKey: String = StageTestData.terminalKey
 		let amount: Int64 = 2332
 		let orderId: Int64 = 87654321
 		let paymentId: Int64 = 12345678
