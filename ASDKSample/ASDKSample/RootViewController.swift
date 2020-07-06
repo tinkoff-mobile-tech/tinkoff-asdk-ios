@@ -18,8 +18,8 @@
 //
 
 import UIKit
-import ASDKUI
-import ASDKCore
+import TinkoffASDKUI
+import TinkoffASDKCore
 import PassKit
 
 struct Product: Codable {
@@ -138,9 +138,9 @@ class RootViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.section == 1 {
-			let credentional = AcquiringSdkCredential(terminalKey: ASDKStageTestData.terminalKey,
-													  password: ASDKStageTestData.terminalPassword,
-													  publicKey: ASDKStageTestData.testPublicKey)
+			let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
+													  password: StageTestData.terminalPassword,
+													  publicKey: StageTestData.testPublicKey)
 			
 			let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
 			acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -163,9 +163,9 @@ class RootViewController: UITableViewController {
 		if let viewController = segue.destination as? BuyProductsViewController, let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) {
 			let product = dataSource[indexPath.row]
 			
-			let credentional = AcquiringSdkCredential(terminalKey: ASDKStageTestData.terminalKey,
-													  password: ASDKStageTestData.terminalPassword,
-													  publicKey: ASDKStageTestData.testPublicKey)
+			let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
+													  password: StageTestData.terminalPassword,
+													  publicKey: StageTestData.testPublicKey)
 			
 			let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
 			acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -174,7 +174,7 @@ class RootViewController: UITableViewController {
 			if let sdk = try? AcquiringUISDK.init(configuration: acquiringSDKConfiguration) {
 				viewController.scaner = self
 				viewController.sdk = sdk
-				viewController.customerKey = ASDKStageTestData.customerKey
+				viewController.customerKey = StageTestData.customerKey
 			}
 			
 			viewController.products = [product]
@@ -182,14 +182,14 @@ class RootViewController: UITableViewController {
 	}
 	
 	@IBAction func openCardList(_ sender: UIBarButtonItem) {
-		let credentional = AcquiringSdkCredential(terminalKey: ASDKStageTestData.terminalKey,
-												  password: ASDKStageTestData.terminalPassword,
-												  publicKey: ASDKStageTestData.testPublicKey)
+		let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
+												  password: StageTestData.terminalPassword,
+												  publicKey: StageTestData.testPublicKey)
 		
 		let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)		
 		acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
-		let customerKey = ASDKStageTestData.customerKey
+		let customerKey = StageTestData.customerKey
 		let cardListViewConfigration = AcquiringViewConfigration.init()
 		cardListViewConfigration.viewTitle = NSLocalizedString("title.paymentCardList", comment: "Список карт")
 		cardListViewConfigration.scaner = self

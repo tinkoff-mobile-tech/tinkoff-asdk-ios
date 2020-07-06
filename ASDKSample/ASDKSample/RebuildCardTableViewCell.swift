@@ -18,7 +18,7 @@
 //
 
 import UIKit
-import ASDKUI
+import TinkoffASDKUI
 
 class RebuildCardTableViewCell: UITableViewCell {
 

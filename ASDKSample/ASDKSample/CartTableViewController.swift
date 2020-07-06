@@ -18,8 +18,8 @@
 //
 
 import UIKit
-import ASDKUI
-import ASDKCore
+import TinkoffASDKUI
+import TinkoffASDKCore
 
 class CartProductTableViewCell: UITableViewCell {
 	
@@ -108,9 +108,9 @@ class CartTableViewController: UITableViewController {
 			
 			footer.onButtonTouch = { [weak self] in
 				if let viewController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "BuyProductsViewController") as? BuyProductsViewController {
-					let credentional = AcquiringSdkCredential(terminalKey: ASDKStageTestData.terminalKey,
-															  password: ASDKStageTestData.terminalPassword,
-															  publicKey: ASDKStageTestData.testPublicKey)
+					let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
+															  password: StageTestData.terminalPassword,
+															  publicKey: StageTestData.testPublicKey)
 					
 					let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
 					acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -118,7 +118,7 @@ class CartTableViewController: UITableViewController {
 					
 					if let sdk = try? AcquiringUISDK.init(configuration: acquiringSDKConfiguration) {
 						viewController.sdk = sdk
-						viewController.customerKey = ASDKStageTestData.customerKey
+						viewController.customerKey = StageTestData.customerKey
 					}
 					
 					viewController.products = CartDataProvider.shared.dataSource

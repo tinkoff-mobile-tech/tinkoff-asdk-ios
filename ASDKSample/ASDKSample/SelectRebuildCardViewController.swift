@@ -18,8 +18,8 @@
 //
 
 import UIKit
-import ASDKCore
-import ASDKUI
+import TinkoffASDKCore
+import TinkoffASDKUI
 
 class SelectRebuildCardViewController: UITableViewController {
 

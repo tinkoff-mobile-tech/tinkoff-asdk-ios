@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2C06D08B23F1492C006FC588 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C06D08923F1492C006FC588 /* AboutViewController.swift */; };
-		2C0A4A6024851142001B18C0 /* ASDKStageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0A4A5F24851142001B18C0 /* ASDKStageTestData.swift */; };
 		2C2F7B8D2451726F008A2415 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C2F7B8C2451726F008A2415 /* WebKit.framework */; };
 		2C4683FB247258AA0067DA48 /* CardScanerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4683FA247258AA0067DA48 /* CardScanerViewController.swift */; };
 		2C4683FD247258BC0067DA48 /* BuyProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4683FC247258BC0067DA48 /* BuyProductsViewController.swift */; };
@@ -38,6 +37,7 @@
 		2CD7522424A36D19005FA56C /* RebuildCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7522124A36D19005FA56C /* RebuildCardTableViewCell.swift */; };
 		2CD7522524A36D19005FA56C /* RebuildCardTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */; };
 		2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */; };
+		2CF833BE24B2FDC0009832BD /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF833BD24B2FDC0009832BD /* StageTestData.swift */; };
 		2CFEEE08246EA4910009E633 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEEE07246EA4910009E633 /* InfoPlist.strings */; };
 		4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */; };
 /* End PBXBuildFile section */
@@ -62,9 +62,7 @@
 /* Begin PBXFileReference section */
 		0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C06D08923F1492C006FC588 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
-		2C0A4A5F24851142001B18C0 /* ASDKStageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ASDKStageTestData.swift; path = ../../ASDKCore/ASDKCoreTests/ASDKStageTestData.swift; sourceTree = "<group>"; };
 		2C2F7B8C2451726F008A2415 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		2C44133424AF900300C52465 /* ASDKSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ASDKSample.entitlements; sourceTree = "<group>"; };
 		2C4683FA247258AA0067DA48 /* CardScanerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardScanerViewController.swift; sourceTree = "<group>"; };
 		2C4683FC247258BC0067DA48 /* BuyProductsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProductsViewController.swift; sourceTree = "<group>"; };
 		2C4D782D23F42090003A355D /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +100,8 @@
 		2CD7522124A36D19005FA56C /* RebuildCardTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RebuildCardTableViewCell.swift; sourceTree = "<group>"; };
 		2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebuildCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
+		2CF833BD24B2FDC0009832BD /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StageTestData.swift; path = ../../TinkoffASDKCore/TinkoffASDKCoreTests/StageTestData.swift; sourceTree = "<group>"; };
+		2CF833C124B306E3009832BD /* ASDKSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ASDKSample.entitlements; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
 		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
@@ -191,7 +191,7 @@
 		2C9C7EBD239FBCB200DE4071 /* ASDKSample */ = {
 			isa = PBXGroup;
 			children = (
-				2C44133424AF900300C52465 /* ASDKSample.entitlements */,
+				2CF833C124B306E3009832BD /* ASDKSample.entitlements */,
 				2CFEEE0C246EA7670009E633 /* Scaner */,
 				2C9C7EC2239FBCB200DE4071 /* RootViewController.swift */,
 				2CA7764A2451AA8E0078AEB3 /* About */,
@@ -253,7 +253,7 @@
 		2CA776512451AB270078AEB3 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				2C0A4A5F24851142001B18C0 /* ASDKStageTestData.swift */,
+				2CF833BD24B2FDC0009832BD /* StageTestData.swift */,
 				2CA0206023F2C2B600C2AB0E /* Utils.swift */,
 				2CA0206423F2CE5700C2AB0E /* UIUtils.swift */,
 			);
@@ -476,8 +476,8 @@
 				2C9C7EC3239FBCB200DE4071 /* RootViewController.swift in Sources */,
 				2CAE6DE324628FD200F48739 /* ButtonTableViewCell.swift in Sources */,
 				2CA0206D23F2D1F400C2AB0E /* CartEmptyTableViewCell.swift in Sources */,
+				2CF833BE24B2FDC0009832BD /* StageTestData.swift in Sources */,
 				2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */,
-				2C0A4A6024851142001B18C0 /* ASDKStageTestData.swift in Sources */,
 				2C9C7EBF239FBCB200DE4071 /* AppDelegate.swift in Sources */,
 				2CA0206723F2CF8700C2AB0E /* CartBuyButtonView.swift in Sources */,
 				2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */,
@@ -587,6 +587,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -650,6 +651,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -678,7 +680,6 @@
 			baseConfigurationReference = F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = ASDKSample/ASDKSampleDebug.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 26;
 				INFOPLIST_FILE = ASDKSample/Info.plist;
@@ -687,9 +688,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.tinkoff.acquiringSample;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.tinkoff.asdksample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -699,8 +699,7 @@
 			baseConfigurationReference = F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = ASDKSample/ASDKSample.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 26;
 				INFOPLIST_FILE = ASDKSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -708,9 +707,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.tinkoff.acquiringSample;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.tinkoff.asdksample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
