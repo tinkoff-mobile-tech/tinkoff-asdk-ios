@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
 	spec.documentation_url = 'https://oplata.tinkoff.ru/develop/api/payments/'
-	spec.license = { :type => 'Apache 2.0' }
+	spec.license = { :type => 'Apache 2.0', :file => 'License.txt' }
 	spec.author = { 'Tinkoff' => 'v.budnikov@tinkoff.ru' }
 	spec.platform = :ios
 	spec.module_name = "TinkoffASDKUI"
