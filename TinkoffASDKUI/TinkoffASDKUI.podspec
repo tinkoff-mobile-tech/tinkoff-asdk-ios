@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
 	spec.swift_version = '5.0'
 	spec.ios.deployment_target = '11.0'
 	spec.source = { :git => 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS.git', :tag => spec.version }
-	spec.source_files = 'TinkoffASDKUI/TinkoffASDKUI/*.swift', 'TinkoffASDKUI/CardRequisitesInputMask/*.swift'
+	spec.source_files = 'TinkoffASDKUI/TinkoffASDKUI/*.swift', 'TinkoffASDKUI/TinkoffASDKUI/CardRequisitesInputMask/*.swift'
 	spec.resource = "TinkoffASDKUI/TinkoffASDKUI/**/*.{lproj,strings,xib,xcassets,imageset}"
 	spec.dependency 'TinkoffASDKCore'
 
