@@ -1,5 +1,5 @@
 //
-//  RandomAmounChekingViewController.swift
+//  RandomAmounCheckingViewController.swift
 //  TinkoffASDKUI
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,7 +19,7 @@
 
 import UIKit
 
-class RandomAmounChekingViewController: ConfirmViewController {
+class RandomAmounCheckingViewController: ConfirmViewController {
 	
 	enum TableViewCells {
 		case title
@@ -30,7 +30,9 @@ class RandomAmounChekingViewController: ConfirmViewController {
 	weak var alertViewHelper: AcquiringAlertViewProtocol?
 	var completeHandler: ((_ result: Double) -> Void)?
 	
+	@IBOutlet weak var viewWaiting: UIView!
 	@IBOutlet private weak var tableView: UITableView!
+	
 	private var tableViewCells: [TableViewCells]!
 	private var inputValue: String?
 	private weak var inputAccessoryViewWithButton: ButtonInputAccessoryView?
@@ -39,6 +41,9 @@ class RandomAmounChekingViewController: ConfirmViewController {
         super.viewDidLoad()
 
 		title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.confimration")
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowOnTableView(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideOnTableView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
 		
 		tableViewCells = [.title, .textField, .secureLogos]
 				
@@ -69,6 +74,10 @@ class RandomAmounChekingViewController: ConfirmViewController {
 			if let value = inputValue {
 				let desValue = value.replacingOccurrences(of: ",", with: ".")
 				if let amount = Double(desValue), amount > 0.0 {
+					if let inputField = inputField() {
+						inputField.textField.resignFirstResponder()
+					}
+					
 					completeHandler?(amount)
 				}
 			}
@@ -90,9 +99,41 @@ class RandomAmounChekingViewController: ConfirmViewController {
 		return false
 	}
 	
+	// MARK: FirstResponder, Resize Content Insets
+	
+	@objc func keyboardWillShowOnTableView(notification: NSNotification) {
+		keyboardWillShow(notification: notification)
+	}
+	
+	@objc func keyboardWillHideOnTableView(notification: NSNotification) {
+		keyboardWillHide(notification: notification)
+	}
+	
+	func keyboardWillShow(notification: NSNotification) {
+		if let userInfo = notification.userInfo as NSDictionary?, let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
+			let keyboardRectangle = keyboardFrame.cgRectValue
+			let keyboardHeight = keyboardRectangle.height
+			let inputAccessoryViewHeight: CGFloat = (view.firstResponder?.inputAccessoryView?.frame.size.height) ?? 0
+			let keyboardContentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: ((keyboardHeight) + inputAccessoryViewHeight), right: 0)
+			tableView.contentInset = keyboardContentInset
+		}
+	}
+	
+	func keyboardDidShow() {
+		if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder), let indexPath = tableView.indexPath(for: cell) {
+			tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+		}
+	}
+	
+	func keyboardWillHide(notification: NSNotification) {
+		UIView.animate(withDuration: 0.3) { [weak self] in
+			self?.tableView.contentInset = UIEdgeInsets.zero
+		}
+	}
+	
 }
 
-extension RandomAmounChekingViewController: UITableViewDataSource {
+extension RandomAmounCheckingViewController: UITableViewDataSource {
 	
 	// MARK: UITableViewDataSource
 	
@@ -130,7 +171,7 @@ extension RandomAmounChekingViewController: UITableViewDataSource {
 	
 }
 
-extension RandomAmounChekingViewController: BecomeFirstResponderListener {
+extension RandomAmounCheckingViewController: BecomeFirstResponderListener {
 	
 	func textFieldShouldBecomeFirstResponder(_ textField: UITextField) -> Bool {
 		return true
@@ -138,7 +179,7 @@ extension RandomAmounChekingViewController: BecomeFirstResponderListener {
 	
 }
 
-extension RandomAmounChekingViewController: UITextFieldDelegate {
+extension RandomAmounCheckingViewController: UITextFieldDelegate {
 	
 	// MARK: UITextFieldDelegate
 	

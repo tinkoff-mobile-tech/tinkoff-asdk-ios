@@ -38,7 +38,7 @@ protocol AcquiringCardListDataSourceDelegate: class {
 	/// Деактивировать карту
 	func cardListDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((PaymentCard?) -> Void)?)
 	/// Добаить карту
-	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard, Error>) -> Void)
+	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
 }
 
 

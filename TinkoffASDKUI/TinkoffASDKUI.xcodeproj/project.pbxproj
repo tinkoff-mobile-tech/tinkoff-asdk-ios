@@ -37,6 +37,8 @@
 		2C73726523D0868E005584EB /* ButtonInputAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C73726423D0868E005584EB /* ButtonInputAccessoryView.xib */; };
 		2C83805023AA4BC300BEA31E /* AcquiringUISDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C83804F23AA4BC300BEA31E /* AcquiringUISDK.swift */; };
 		2C8720E4247D639100B2AE14 /* AcquiringLocalizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8720E3247D639100B2AE14 /* AcquiringLocalizable.swift */; };
+		2C971A6324BC4B760058374C /* RandomAmounCheckingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C971A6024BC4B760058374C /* RandomAmounCheckingViewController.swift */; };
+		2C971A6424BC4B760058374C /* RandomAmounCheckingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C971A6224BC4B760058374C /* RandomAmounCheckingViewController.xib */; };
 		2C9B0D1523CDB150000B5F70 /* InputCardRequisitesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9B0D1423CDB150000B5F70 /* InputCardRequisitesController.swift */; };
 		2C9C7EA2239FBB6700DE4071 /* TinkoffASDKUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C9C7E98239FBB6700DE4071 /* TinkoffASDKUI.framework */; };
 		2C9C7EA7239FBB6700DE4071 /* TinkoffASDKUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9C7EA6239FBB6700DE4071 /* TinkoffASDKUITests.swift */; };
@@ -90,8 +92,6 @@
 		2CE8E62E24485C970085FA82 /* ResistanceSpaceTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CE8E62C24485C970085FA82 /* ResistanceSpaceTableViewCell.xib */; };
 		2CE934AA24460271006A4328 /* PaymentCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE934A824460271006A4328 /* PaymentCardTableViewCell.swift */; };
 		2CE934AB24460271006A4328 /* PaymentCardTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CE934A924460271006A4328 /* PaymentCardTableViewCell.xib */; };
-		2CFE99BE247550740077AAB4 /* RandomAmounChekingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE99BC247550740077AAB4 /* RandomAmounChekingViewController.swift */; };
-		2CFE99BF247550740077AAB4 /* RandomAmounChekingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CFE99BD247550740077AAB4 /* RandomAmounChekingViewController.xib */; };
 		2CFE99C224758F010077AAB4 /* ConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFE99C124758F010077AAB4 /* ConfirmViewController.swift */; };
 		2CFF6FC023C8BC3700CF5E38 /* LoadingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF6FBE23C8BC3700CF5E38 /* LoadingCollectionViewCell.swift */; };
 		2CFF6FC123C8BC3700CF5E38 /* LoadingCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CFF6FBF23C8BC3700CF5E38 /* LoadingCollectionViewCell.xib */; };
@@ -162,6 +162,8 @@
 		2C73726423D0868E005584EB /* ButtonInputAccessoryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ButtonInputAccessoryView.xib; sourceTree = "<group>"; };
 		2C83804F23AA4BC300BEA31E /* AcquiringUISDK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcquiringUISDK.swift; sourceTree = "<group>"; };
 		2C8720E3247D639100B2AE14 /* AcquiringLocalizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AcquiringLocalizable.swift; sourceTree = "<group>"; };
+		2C971A6024BC4B760058374C /* RandomAmounCheckingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomAmounCheckingViewController.swift; sourceTree = "<group>"; };
+		2C971A6224BC4B760058374C /* RandomAmounCheckingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RandomAmounCheckingViewController.xib; sourceTree = "<group>"; };
 		2C9B0D1423CDB150000B5F70 /* InputCardRequisitesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputCardRequisitesController.swift; sourceTree = "<group>"; };
 		2C9C7E98239FBB6700DE4071 /* TinkoffASDKUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TinkoffASDKUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C9C7E9B239FBB6700DE4071 /* TinkoffASDKUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TinkoffASDKUI.h; sourceTree = "<group>"; };
@@ -219,8 +221,6 @@
 		2CE934A824460271006A4328 /* PaymentCardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentCardTableViewCell.swift; sourceTree = "<group>"; };
 		2CE934A924460271006A4328 /* PaymentCardTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PaymentCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CEF793424B2F1E300AA654B /* TinkoffASDKCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TinkoffASDKCore.xcodeproj; path = ../TinkoffASDKCore/TinkoffASDKCore.xcodeproj; sourceTree = "<group>"; };
-		2CFE99BC247550740077AAB4 /* RandomAmounChekingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomAmounChekingViewController.swift; sourceTree = "<group>"; };
-		2CFE99BD247550740077AAB4 /* RandomAmounChekingViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RandomAmounChekingViewController.xib; sourceTree = "<group>"; };
 		2CFE99C124758F010077AAB4 /* ConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmViewController.swift; sourceTree = "<group>"; };
 		2CFF6FBE23C8BC3700CF5E38 /* LoadingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCollectionViewCell.swift; sourceTree = "<group>"; };
 		2CFF6FBF23C8BC3700CF5E38 /* LoadingCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -369,8 +369,8 @@
 				2CFE99C124758F010077AAB4 /* ConfirmViewController.swift */,
 				2C9C7EEE239FCD2A00DE4071 /* WebViewController.swift */,
 				2C9C7EEF239FCD2A00DE4071 /* WebViewController.xib */,
-				2CFE99BC247550740077AAB4 /* RandomAmounChekingViewController.swift */,
-				2CFE99BD247550740077AAB4 /* RandomAmounChekingViewController.xib */,
+				2C971A6024BC4B760058374C /* RandomAmounCheckingViewController.swift */,
+				2C971A6224BC4B760058374C /* RandomAmounCheckingViewController.xib */,
 				2C193C55243E192C00058DDC /* QRCodeViewController.swift */,
 				2C193C56243E192C00058DDC /* QRCodeViewController.xib */,
 				2CB0985223CC78A400EE13A7 /* Assets.xcassets */,
@@ -616,11 +616,11 @@
 				2C73726523D0868E005584EB /* ButtonInputAccessoryView.xib in Resources */,
 				2C193C60243E216D00058DDC /* StatusTableViewCell.xib in Resources */,
 				2CB5EE482445BCD100A76E84 /* PageStatusListCollectionViewCell.xib in Resources */,
+				2C971A6424BC4B760058374C /* RandomAmounCheckingViewController.xib in Resources */,
 				2CE8E62E24485C970085FA82 /* ResistanceSpaceTableViewCell.xib in Resources */,
 				2C193C52243DB31600058DDC /* SBPCollectionViewCell.xib in Resources */,
 				2CDD56CA246A8EC9005AB1B2 /* LabelTableViewCell.xib in Resources */,
 				2C9C7EF9239FEFE300DE4071 /* AcquiringPaymentViewController.xib in Resources */,
-				2CFE99BF247550740077AAB4 /* RandomAmounChekingViewController.xib in Resources */,
 				2C572D1123B39066004B4619 /* ScrollableTableViewCell.xib in Resources */,
 				2C4695752437686A00DBB3E7 /* PageStatusCollectionViewCell.xib in Resources */,
 				2CB5EE4C2445CDF800A76E84 /* CardsViewController.xib in Resources */,
@@ -662,8 +662,8 @@
 				2CE8E62D24485C970085FA82 /* ResistanceSpaceTableViewCell.swift in Sources */,
 				2CFF6FC523C8BED600CF5E38 /* CardListStatusCollectionViewCell.swift in Sources */,
 				2CB0984623CC520E00EE13A7 /* FreeState.swift in Sources */,
-				2CFE99BE247550740077AAB4 /* RandomAmounChekingViewController.swift in Sources */,
 				2CB0984423CC520E00EE13A7 /* NSCharacterSet.swift in Sources */,
+				2C971A6324BC4B760058374C /* RandomAmounCheckingViewController.swift in Sources */,
 				2CB0983B23CC520E00EE13A7 /* Next.swift in Sources */,
 				2CB4A48E244DB76F005E1469 /* QRCodeWebTableViewCell.swift in Sources */,
 				2CB0985723CC9C1300EE13A7 /* PaymentCardInputRequisitesCollectionViewCell.swift in Sources */,

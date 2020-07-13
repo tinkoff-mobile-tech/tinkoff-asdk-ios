@@ -114,7 +114,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 	
 	public func addCard(number: String, expDate: String, cvc: String, checkType: String,
 						confirmationHandler: @escaping ((_ result: FinishAddCardResponse, _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void ) -> Void),
-						completeHandler: @escaping (_ result: Result<PaymentCard, Error>) -> Void) {
+						completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
 				
 		// Step 1 init
 		let initAddCardData = InitAddCardData.init(with: checkType, customerKey: customerKey)
@@ -134,19 +134,21 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 						confirmationHandler(finishAddCardResponse, { (completionResponse) in
 							switch completionResponse {
 								case .failure(let error):
-									DispatchQueue.main.async { completeHandler(.failure(error)) }
+									completeHandler(.failure(error))
 								case .success(let confirmResponse):
-									DispatchQueue.main.async {
+									if let cardId = confirmResponse.cardId {
 										self?.fetch(startHandler: nil, completeHandler: { (cards, error) in
-											if let card = self?.item(with: confirmResponse.cardId) {
+											if let card = self?.item(with: cardId) {
 												completeHandler(.success(card))
 											} else if let card = self?.activeCards.last {
 												completeHandler(.success(card))
 											}
 										})// fetch catrs list
+									} else {
+										completeHandler(.success(nil))
 									}
 							}
-						})
+						})//confirmationHandler
 					}
 				})//сardListAddCardFinish
 			}

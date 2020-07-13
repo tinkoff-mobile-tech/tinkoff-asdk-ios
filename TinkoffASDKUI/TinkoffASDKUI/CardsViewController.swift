@@ -147,14 +147,19 @@ class CardsViewController: UIViewController {
 		return tableView.defaultCell()
 	}
 
-	private func showAlert(for result: Result<PaymentCard, Error>) {
+	private func showAlert(for result: Result<PaymentCard?, Error>) {
 		var alertTitle: String?
 		var alertMessage: String?
 		
 		switch result {
 			case .success(let card):
-				alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.cardSuccessAdded")
-				alertMessage = "card id = \(card.cardId),\n\(card.pan) \(card.expDateFormat() ?? "")"
+				if let cardAdded = card {
+					alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.cardSuccessAdded")
+					alertMessage = "card id = \(cardAdded.cardId),\n\(cardAdded.pan) \(cardAdded.expDateFormat() ?? "")"
+				} else {
+					alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.addingCard")
+					alertMessage = AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel")
+				}
 			
 			case .failure(let error):
 				alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")

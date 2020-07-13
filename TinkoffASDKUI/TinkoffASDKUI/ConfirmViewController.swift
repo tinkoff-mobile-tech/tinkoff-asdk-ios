@@ -28,13 +28,15 @@ class ConfirmViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		var closeButtonTitle = UIBarButtonItem.SystemItem.done
+		var cancelButton: UIBarButtonItem
 		
 		if #available(iOS 13.0, *) {
-			closeButtonTitle = UIBarButtonItem.SystemItem.close
+			cancelButton = UIBarButtonItem.init(barButtonSystemItem: .close, target: self, action: #selector(closeViewColtroller))
+		} else {
+			cancelButton = UIBarButtonItem.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeViewColtroller))
 		}
 		
-		navigationItem.setRightBarButton(UIBarButtonItem.init(barButtonSystemItem: closeButtonTitle, target: self, action: #selector(closeViewColtroller)), animated: true)
+		navigationItem.setRightBarButton(cancelButton, animated: true)
 	}
 	
 	override func viewDidDisappear(_ animated: Bool) {

@@ -114,11 +114,14 @@ public class AcquiringUISDK: NSObject {
 	private var onPaymentCompletionHandler: PaymentCompletionHandler?
 	private var finishPaymentStatusResponse: Result<PaymentStatusResponse, Error>?
 	
-	// 3ds web view cheking
+	// 3ds web view Checking
 	private weak var webViewController: WebViewController?
 	private var webView3DSCheckingTerminationUrl: String?
 	private var on3DSCheckingCompletionHandler: PaymentCompletionHandler?
 	private var on3DSCheckingAddCardCompletionHandler: AddCardCompletionHandler?
+	// random amount
+	private var onRandomAmountCheckingAddCardCompletionHandler: AddCardCompletionHandler?
+
 	// data providers
 	private var cardListDataProvider: CardListDataProvider!
 	private var checkPaymentStatus: PaymentStatusServiceProvider?
@@ -256,6 +259,10 @@ public class AcquiringUISDK: NSObject {
 	
 	public func presentPaymentQRCollector(on presentingViewController: UIViewController, configuration: AcquiringViewConfigration) {
 		onPaymentCompletionHandler = nil
+		
+		if configuration.startViewHeight == nil {
+			configuration.startViewHeight = presentingViewController.view.frame.size.width + 80
+		}
 		
 		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: configuration) { view in
 			let viewTitle = AcqLoc.instance.localize("TinkoffAcquiring.view.title.payQRCode")
@@ -405,7 +412,7 @@ public class AcquiringUISDK: NSObject {
 	}
 
 	private func sbpWaitingIncominPayment(paymentId: Int64, source: String, sourceType: PaymentInvoiceSBPSourceType) {
-		let completionStatus: [PaymentStatus] = [.cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]
+		let completionStatus: [PaymentStatus] = [.confirmed, .checked3ds, .refunded, .reversed, .rejected]
 		let completionHandler = onPaymentCompletionHandler
 		
 		checkPaymentStatus = PaymentStatusServiceProvider.init(sdk: acquiringSdk, paymentId: paymentId)
@@ -699,7 +706,9 @@ public class AcquiringUISDK: NSObject {
 							completionHandler(response)
 						}
 						
-						self.present3DSChecking(with: confirmation3DSData, presenter: self.acquiringPaymentView)
+						self.present3DSChecking(with: confirmation3DSData, presenter: self.acquiringPaymentView) { [weak self] in
+							self?.cancelPayment()
+						}
 					}
 					
 				case .needConfirmation3DSACS(let confirmation3DSDataACS):
@@ -708,7 +717,9 @@ public class AcquiringUISDK: NSObject {
 							completionHandler(response)
 						}
 						
-						self.present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: treeDSmessageVersion, presenter: self.acquiringPaymentView)
+						self.present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: treeDSmessageVersion, presenter: self.acquiringPaymentView) { [weak self] in
+							self?.cancelPayment()
+						}
 					}
 					
 				case .done(let response):
@@ -794,7 +805,11 @@ public class AcquiringUISDK: NSObject {
 		}
 	}
 	
-	private func present3DSChecking(with data: Confirmation3DSData, presenter: AcquiringViewConfiguration?) {
+	private func cancelAddCard() {
+		onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse.init(success: false, errorCode: 0)))
+	}
+	
+	private func present3DSChecking(with data: Confirmation3DSData, presenter: AcquiringViewConfiguration?, onCancel: @escaping (() -> Void)) {
 		guard let request = try? acquiringSdk.createConfirmation3DSRequest(data: data) else {
 			return
 		}
@@ -802,8 +817,8 @@ public class AcquiringUISDK: NSObject {
 		let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
 		webViewController = viewController
 		viewController.onCancel = {
-			presenter?.closeVC(animated: true) { [weak self] in
-				self?.cancelPayment()
+			presenter?.closeVC(animated: true) {
+				onCancel()
 			}
 		}
 		
@@ -814,7 +829,7 @@ public class AcquiringUISDK: NSObject {
 		
 	}
 	
-	private func present3DSCheckingACS(with data: Confirmation3DSDataACS, messageVersion: String, presenter: AcquiringViewConfiguration?) {
+	private func present3DSCheckingACS(with data: Confirmation3DSDataACS, messageVersion: String, presenter: AcquiringViewConfiguration?, onCancel: @escaping (() -> Void)) {
 		guard let request = try? acquiringSdk.createConfirmation3DSRequestACS(data: data, messageVersion: messageVersion) else {
 			return
 		}
@@ -822,8 +837,8 @@ public class AcquiringUISDK: NSObject {
 		let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
 		webViewController = viewController
 		viewController.onCancel = {
-			presenter?.closeVC(animated: true) { [weak self] in
-				self?.cancelPayment()
+			presenter?.closeVC(animated: true) {
+				onCancel()
 			}
 		}
 		
@@ -834,22 +849,35 @@ public class AcquiringUISDK: NSObject {
 		
 	}
 	
-	private func presentRandomAmounCheking(presenter: AcquiringViewConfiguration, completeHandler: @escaping ((_ result: Double) -> Void)) {
-		let viewController = RandomAmounChekingViewController(nibName: "RandomAmounChekingViewController", bundle: Bundle(for: RandomAmounChekingViewController.self))
+	private func presentRandomAmounChecking(with requestKey: String, presenter: AcquiringViewConfiguration?, onCancel: @escaping (() -> Void)) {
+		let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: Bundle(for: RandomAmounCheckingViewController.self))
 		
-		viewController.onCancel = {  [weak viewController] in
-			viewController?.dismiss(animated: true, completion: {
-				presenter.changedStatus(.ready)
+		viewController.onCancel = {
+			onCancel()
+		}
+		
+		viewController.completeHandler = { [weak self, weak viewController] (value) in
+			viewController?.viewWaiting.isHidden = false
+			self?.checkStateSubmitRandomAmount(amount: value, requestKey: requestKey, { (response) in
+				DispatchQueue.main.async {
+					viewController?.viewWaiting.isHidden = true
+					switch response {
+						case .success(_):
+							viewController?.onCancel = nil
+							viewController?.dismiss(animated: true, completion: {
+								self?.onRandomAmountCheckingAddCardCompletionHandler?(response)
+							})
+						case .failure(let error):
+							let alertView = UIAlertController.init(title: AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error"), message: error.localizedDescription, preferredStyle: .alert)
+							alertView.addAction(UIAlertAction.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.ok"), style: .default, handler: nil))
+							viewController?.present(alertView, animated: true, completion: nil)
+					}
+					
+				}
 			})
 		}
 		
-		viewController.completeHandler = { [weak viewController] (value) in
-			viewController?.dismiss(animated: true, completion: {
-				completeHandler(value)
-			})
-		}
-		
-		presenter.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
+		presenter?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
 			
 		})
 	}
@@ -935,22 +963,26 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 					confirmationComplete(response)
 				}
 				
-				present3DSChecking(with: confirmation3DSData, presenter: presenter)
+				present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
+					self?.cancelAddCard()
+				}
 			
 			case .needConfirmation3DSACS(let confirmation3DSDataACS):
 				on3DSCheckingAddCardCompletionHandler = { (response) in
 					confirmationComplete(response)
 				}
 				
-				present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter)
+				present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
+					self?.cancelAddCard()
+				}
 			
 			case .needConfirmationRandomAmount(let requestKey):
-				DispatchQueue.main.async { [weak self] in
-					self?.presentRandomAmounCheking(presenter: presenter, completeHandler: { (value) in
-						self?.checkStateSubmitRandomAmount(amount: value, requestKey: requestKey, { (response) in
-							confirmationComplete(response)
-						})
-					})
+				onRandomAmountCheckingAddCardCompletionHandler = { (response) in
+					confirmationComplete(response)
+				}
+				
+				presentRandomAmounChecking(with: requestKey, presenter: presenter) { [weak self] in
+					self?.cancelAddCard()
 				}
 			
 			case .done(let response):
@@ -970,7 +1002,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 		}
 	}
 	
-	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard, Error>) -> Void) {
+	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
 		
 		let checkType: String
 		if let value = addCardNeedSetCheckTypeHandler?() {

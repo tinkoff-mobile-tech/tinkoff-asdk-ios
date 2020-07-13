@@ -41,7 +41,7 @@ class AddNewCardViewController: PopUpViewContoller {
 	private var tableViewCells: [AddCardTableViewCells]!
 	private var inputCardRequisitesController: InputCardRequisitesDataSource!
 	var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
-	var completeHandler: ((_ result: Result<PaymentCard, Error>) -> Void)?
+	var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
 	weak var scanerDataSource: AcquiringScanerProtocol?
 	weak var alertViewHelper: AcquiringAlertViewProtocol?
 	

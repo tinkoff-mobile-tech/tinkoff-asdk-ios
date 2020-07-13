@@ -186,11 +186,14 @@ class BuyProductsViewController: UIViewController {
 	private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>) {
 		switch response {
 			case .success(let result):
-				var message = "Покупка на сумму \(Utils.formatAmount(result.amount))"
+				var message = NSLocalizedString("text.paymentStatusAmount", comment: "Покупка на сумму")
+				message.append(" \(Utils.formatAmount(result.amount)) ")
 				if result.status == .cancelled {
-					message.append(" отменена")
+					message.append(NSLocalizedString("text.paymentStatusCancel", comment: "отменена"))
 				} else {
-					message.append(" прошла успешно.\npaymentId = \(result.paymentId)")
+					message.append(" ")
+					message.append(NSLocalizedString("text.paymentStatusSuccess", comment: "paymentStatusSuccess"))
+					message.append("\npaymentId = \(result.paymentId)")
 				}
 				
 				let alertView = UIAlertController.init(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)

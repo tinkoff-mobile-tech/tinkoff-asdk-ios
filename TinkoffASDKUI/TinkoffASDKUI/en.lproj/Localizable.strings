@@ -22,6 +22,8 @@
 //
 "TinkoffAcquiring.alert.title.error" = "Error";
 "TinkoffAcquiring.alert.title.cardSuccessAdded" = "Success";
+"TinkoffAcquiring.alert.title.addingCard" = "Adding card";
+"TinkoffAcquiring.alert.message.addingCardCancel" = "The operation was cancelled";
 //
 "TinkoffAcquiring.button.update" = "Update";
 "TinkoffAcquiring.button.cancel" = "Cancel";
@@ -42,7 +44,7 @@
 "TinkoffAcquiring.text.status.error.emailEmpty" = "Please enter email";
 "TinkoffAcquiring.text.addcard" = "Add card";
 "TinkoffAcquiring.text.addNewCard" = "Add new card";
-"TinkoffAcquiring.text.loopConfirmation" = "To confirm the operation, we debited and refunded a small amount (up to 1.99 rubles)\nPlease specify it.";
+"TinkoffAcquiring.text.loopConfirmation" = "To confirm the operation, we debited and refunded a small amount (up to 1,99 rubles)\nPlease specify it.";
 "TinkoffAcquiring.text.or" = "or";
 //
 "TinkoffAcquiring.hint.loopAmount" = "all amount, down to the penny";
@@ -51,7 +53,7 @@
 //
 "TinkoffAcquiring.placeholder.cardNumber" = "Card number";
 "TinkoffAcquiring.placeholder.sendReceiptToEmail" = "Send receipt to email";
-"TinkoffAcquiring.placeholder.loopAmount" = "for example 0.89";
+"TinkoffAcquiring.placeholder.loopAmount" = "for example 0,89";
 //
 "TinkoffAcquiring.view.title.pay" = "Payment";
 "TinkoffAcquiring.view.title.savedCards" = "Saved cards";

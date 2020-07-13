@@ -22,6 +22,8 @@
 //
 "TinkoffAcquiring.alert.title.error" = "Ошибка";
 "TinkoffAcquiring.alert.title.cardSuccessAdded" = "Карта добавлена";
+"TinkoffAcquiring.alert.title.addingCard" = "Добавление карты";
+"TinkoffAcquiring.alert.message.addingCardCancel" = "Операция отменена";
 //
 "TinkoffAcquiring.button.update" = "Обновить";
 "TinkoffAcquiring.button.cancel" = "Отмена";
@@ -42,7 +44,7 @@
 "TinkoffAcquiring.text.status.error.emailEmpty" = "Введите email";
 "TinkoffAcquiring.text.addcard" = "Добавить карту";
 "TinkoffAcquiring.text.addNewCard" = "Добавить новую карту";
-"TinkoffAcquiring.text.loopConfirmation" = "Для подтверждения операции мы списали и вернули небольшую сумму (до 1.99 руб.)\nПожалуйста, укажите ее с точностью до копеек.";
+"TinkoffAcquiring.text.loopConfirmation" = "Для подтверждения операции мы списали и вернули небольшую сумму (до 1,99 руб.)\nПожалуйста, укажите ее с точностью до копеек.";
 "TinkoffAcquiring.text.or" = "или";
 //
 "TinkoffAcquiring.hint.loopAmount" = "сумма с точностью до копеек";
@@ -51,7 +53,7 @@
 //
 "TinkoffAcquiring.placeholder.cardNumber" = "Номер карты";
 "TinkoffAcquiring.placeholder.sendReceiptToEmail" = "Отправить квитанцию по адресу";
-"TinkoffAcquiring.placeholder.loopAmount" = "Например 0.89";
+"TinkoffAcquiring.placeholder.loopAmount" = "Например 0,89";
 //
 "TinkoffAcquiring.view.title.pay" = "Оплата";
 "TinkoffAcquiring.view.title.savedCards" = "Сохраненные карты";

@@ -250,34 +250,34 @@ class PopUpViewContoller: UIViewController {
 			let keyboardRectangle = keyboardFrame.cgRectValue
 			let keyboardHeight = keyboardRectangle.height
 			let inputAccessoryViewHeight: CGFloat = (view.firstResponder?.inputAccessoryView?.frame.size.height) ?? 0
-			let keyboardContentInset: UIEdgeInsets = UIEdgeInsets.init(top: 0, left: 0, bottom: ((keyboardHeight) + inputAccessoryViewHeight), right: 0)
+			let keyboardContentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: ((keyboardHeight) + inputAccessoryViewHeight), right: 0)
 			
 			if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder) {
-				let firstResponderVisibleHeight = tableView.frame.origin.y + cell.bounds.height + cell.frame.origin.y
-				let firstResponderTop = keyboardContentInset.bottom + firstResponderVisibleHeight
+				let firstResponderHeight = keyboardContentInset.bottom + cell.bounds.height + cell.frame.origin.y + tableView.frame.origin.y
 				
-				if firstResponderTop > preferredContentSize.height {
-					preferredContentSize = CGSize(width: preferredContentSize.width, height: firstResponderTop)
-
-					if firstResponderTop > currentPopUpViewMaxHeight {
-						_ = pushToNavigationStackAndActivate(firstResponder: view.firstResponder )
+				var delaySetContentInset: TimeInterval = 0
+				if firstResponderHeight > preferredContentSize.height {
+					preferredContentSize = CGSize(width: preferredContentSize.width, height: firstResponderHeight)
+					delaySetContentInset = 0.3
+					
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+						if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
+							_ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder )
+						}
 					}
+					
 				}//firstRespondetTop > preferredContentSize.height
 				
-				UIView.animate(withDuration: 0.3, animations: { [weak self] in
+				UIView.animate(withDuration: 0.3, delay: delaySetContentInset, options: .curveEaseOut, animations: { [weak self] in
 					self?.tableView.contentInset = keyboardContentInset
-				}) { [weak self] (complete) in
-					if complete {
-						self?.keyboardDidShow()
-					}
-				}//UIView.animat
+				})
 			}
 		}
 	}
 	
 	func keyboardDidShow() {
 		if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder), let indexPath = tableView.indexPath(for: cell) {
-			tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+			tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
 		}
 	}
 	

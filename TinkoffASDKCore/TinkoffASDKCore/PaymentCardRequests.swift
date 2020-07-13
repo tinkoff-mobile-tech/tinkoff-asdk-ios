@@ -400,6 +400,11 @@ public struct AddCardStatusResponse: ResponseOperation {
 		cardId = try? container.decode(String.self, forKey: .cardId)
 	}
 	
+	public init(success: Bool, errorCode: Int) {
+		self.success = success
+		self.errorCode = errorCode
+	}
+	
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(success, forKey: .success)
