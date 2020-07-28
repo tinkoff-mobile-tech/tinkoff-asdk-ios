@@ -40,9 +40,7 @@ class PopUpViewContoller: UIViewController {
 	
 	var modalMinHeight: CGFloat = 400 {
 		didSet {
-			//if currentHeight < modalMinHeight {
 			currentHeight = modalMinHeight
-			//}
 		}
 	}
 	
@@ -167,12 +165,12 @@ class PopUpViewContoller: UIViewController {
 	
 	// MARK: Modal Interaction Presentation
 	
-	@objc private func handlePanGesture(_ pan: UIPanGestureRecognizer) {
+	@objc private func handlePanGesture(_ panGesture: UIPanGestureRecognizer) {
 		if let win = view.window {
-			let translationY = pan.translation(in: win).y
+			let translationY = panGesture.translation(in: win).y
 			var newHeight = beginDelta - translationY
 			
-			switch pan.state {
+			switch panGesture.state {
 				case .began:
 					beginDelta = view.bounds.size.height
 				
@@ -188,6 +186,8 @@ class PopUpViewContoller: UIViewController {
 					} else if newHeight > currentPopUpViewMaxHeight {
 						newHeight = currentPopUpViewMaxHeight
 						_ = pushToNavigationStackAndActivate(firstResponder: view.firstResponder)
+					} else if modalMinHeight - newHeight > 44 {
+						closeViewController()
 					}
 				
 				case .ended:
@@ -249,35 +249,33 @@ class PopUpViewContoller: UIViewController {
 		if let userInfo = notification.userInfo as NSDictionary?, let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
 			let keyboardRectangle = keyboardFrame.cgRectValue
 			let keyboardHeight = keyboardRectangle.height
-			let inputAccessoryViewHeight: CGFloat = (view.firstResponder?.inputAccessoryView?.frame.size.height) ?? 0
-			let keyboardContentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: ((keyboardHeight) + inputAccessoryViewHeight), right: 0)
+
+			let keyboardContentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: (keyboardHeight), right: 0)
 			
 			if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder) {
 				let firstResponderHeight = keyboardContentInset.bottom + cell.bounds.height + cell.frame.origin.y + tableView.frame.origin.y
 				
 				var delaySetContentInset: TimeInterval = 0
 				if firstResponderHeight > preferredContentSize.height {
-					preferredContentSize = CGSize(width: preferredContentSize.width, height: firstResponderHeight)
 					delaySetContentInset = 0.3
 					
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
-						if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
-							_ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder )
+					UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+						self.preferredContentSize =  CGSize(width: self.preferredContentSize.width, height: firstResponderHeight)
+						self.presentationController?.containerView?.setNeedsLayout()
+						self.presentationController?.containerView?.layoutIfNeeded()
+					}) { [weak self] (complete) in
+						if complete {
+							if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
+								_ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder )
+							}
 						}
-					}
-					
-				}//firstRespondetTop > preferredContentSize.height
+					} //UIView.animate complete
+				} //firstRespondetTop > preferredContentSize.height
 				
 				UIView.animate(withDuration: 0.3, delay: delaySetContentInset, options: .curveEaseOut, animations: { [weak self] in
 					self?.tableView.contentInset = keyboardContentInset
 				})
 			}
-		}
-	}
-	
-	func keyboardDidShow() {
-		if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder), let indexPath = tableView.indexPath(for: cell) {
-			tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
 		}
 	}
 	
@@ -294,7 +292,7 @@ extension PopUpViewContoller: UIGestureRecognizerDelegate {
 	// MARK: UIGestureRecognizerDelegate
 	
 	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-		if (otherGestureRecognizer.view as? UICollectionView) != nil {
+		if (otherGestureRecognizer.view as? UITableView) == nil {
 			return false
 		}
 

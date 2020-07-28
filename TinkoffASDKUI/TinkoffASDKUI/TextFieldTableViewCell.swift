@@ -29,37 +29,47 @@ enum InputFieldTableViewCellStatus: Int {
 	
 }
 
-protocol InputFieldTableViewCellStatusProtocol: class {
+protocol InputViewStatus: class {
 	
-	var labelHint: UILabel! { get }
-	
-	var textField: UITextField! { get }
-	
-	var labelStatus: UILabel! { get }
-	
-	var status: InputFieldTableViewCellStatus { get }
+	var colorNormal: UIColor { get }
+	var colorError: UIColor { get }
+	var colorDisable: UIColor { get }
 	
 	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String?)
 	
 }
 
-class TextFieldTableViewCell: UITableViewCell, InputFieldTableViewCellStatusProtocol {
+extension InputViewStatus {
+	var colorNormal: UIColor {
+		if #available(iOS 13, *) {
+			return .label
+		}
+		
+		return .black
+	}
+	
+	var colorError: UIColor { return .systemRed }
+	var colorDisable: UIColor { return .lightGray }
+}
 
+
+protocol InputFieldTableViewCellStatusProtocol: InputViewStatus {
+
+	var labelHint: UILabel! { get }
+	
+	var textField: UITextField! { get }
+	
+	var labelStatus: UILabel! { get }
+
+}
+
+class TextFieldTableViewCell: UITableViewCell {
+	
 	@IBOutlet weak var viewCloud: UIView!
 	@IBOutlet weak var labelHint: UILabel!
 	@IBOutlet weak var textField: UITextField!
 	@IBOutlet weak var labelStatus: UILabel!
 	@IBOutlet weak var viewSeparator: UIView!
-	
-	private var colorNormal: UIColor = {
-		if #available(iOS 13, *) {
-			return .label
-		} else {
-			return .black
-		}
-	}()
-	private var colorError: UIColor = .systemRed
-	private var colorDisable: UIColor = .lightGray
 	
 	override func awakeFromNib() {
         super.awakeFromNib()
@@ -67,13 +77,13 @@ class TextFieldTableViewCell: UITableViewCell, InputFieldTableViewCellStatusProt
 		viewSeparator.backgroundColor = UIColor.init(hex: "#C7C9CC")
 		setStatus(.normal)
 	}
-    
-	// MARK: InputFieldTableViewCell
+}
+
+extension TextFieldTableViewCell: InputFieldTableViewCellStatusProtocol {
 	
-	private(set) var status: InputFieldTableViewCellStatus = .normal
+	// MARK: InputFieldTableViewCellStatusProtocol
 	
 	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String? = nil) {
-		self.status = value
 		switch value {
 			case .error:
 				textField.textColor = colorError
@@ -86,14 +96,14 @@ class TextFieldTableViewCell: UITableViewCell, InputFieldTableViewCellStatusProt
 				labelHint.textColor = colorNormal.withAlphaComponent(0.7)
 				labelStatus.textColor = colorNormal
 				viewSeparator.backgroundColor = UIColor.init(hex: "#C7C9CC")
-
+			
 			case .disable:
 				textField.textColor = colorDisable
 				labelHint.textColor = colorDisable
 				labelStatus.textColor = colorDisable
 				viewSeparator.backgroundColor = UIColor.init(hex: "#C7C9CC")
 		}
-
+		
 		labelStatus.text = statusText
 	}
 	

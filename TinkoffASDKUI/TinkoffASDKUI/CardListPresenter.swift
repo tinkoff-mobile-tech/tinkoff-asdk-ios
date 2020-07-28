@@ -35,7 +35,7 @@ enum CardRequisitesState {
 	case savedCard(card: PaymentCard, cvc: String?)
 }
 
-protocol CardListViewOutConnection {
+protocol CardListViewOutConnection: InputViewStatus {
 	
 	func requisies() -> CardRequisitesState
 	
@@ -44,7 +44,7 @@ protocol CardListViewOutConnection {
 	func waitCVCInput(forCardWith parentPaymentId: Int64, fieldActivated : @escaping (()-> Void))
 	
 	func updateView()
-	
+		
 	var didSelectSBPItem: (() -> Void)? { get set }
 	
 	var didSelectShowCardList: (() -> Void)? { get set }
@@ -438,6 +438,13 @@ extension CardListPresenter: CardListViewOutConnection {
 			if let indexPath = self?.lastActiveCardIndexPath, indexPath.row != self?.scrollViewCurrentPage(self?.cardListCollectionView) {
 				self?.cardListCollectionView?.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
 			}
+		}
+	}
+	
+	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String?) {
+		let indexPath = IndexPath.init(row: scrollViewCurrentPage(cardListCollectionView), section: 0)
+		if let cell = cardListCollectionView?.cellForItem(at: indexPath) as? InputViewStatus {
+			cell.setStatus(value, statusText: statusText)
 		}
 	}
 	

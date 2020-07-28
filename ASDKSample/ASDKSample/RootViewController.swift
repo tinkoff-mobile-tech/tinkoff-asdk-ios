@@ -181,7 +181,7 @@ class RootViewController: UITableViewController {
 		}
 	}
 	
-	@IBAction func openCardList(_ sender: UIBarButtonItem) {
+	@IBAction func openCardList(_ sender: UIBarButtonItem) {		
 		let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
 												  password: StageTestData.terminalPassword,
 												  publicKey: StageTestData.testPublicKey)
@@ -193,7 +193,11 @@ class RootViewController: UITableViewController {
 		let cardListViewConfigration = AcquiringViewConfigration.init()
 		cardListViewConfigration.viewTitle = NSLocalizedString("title.paymentCardList", comment: "Список карт")
 		cardListViewConfigration.scaner = self
-		cardListViewConfigration.alertViewHelper = self
+		
+		if AppSetting.shared.Acquiring {
+			cardListViewConfigration.alertViewHelper = self
+		}
+		
 		cardListViewConfigration.localizableInfo = AcquiringViewConfigration.LocalizableInfo.init(lang: AppSetting.shared.languageId)
 		
 		if let sdk = try? AcquiringUISDK.init(configuration: acquiringSDKConfiguration) {

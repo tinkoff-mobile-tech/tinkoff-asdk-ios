@@ -24,6 +24,7 @@ class AppSetting {
 	
 	private let keySBP = "SettingKeySBP"
 	private let keyShowEmailField = "SettingKeyShowEmailField"
+	private let keyKindForAlertView = "KindForAlertView"
 	private let keyAddCardCheckType = "AddCardChekType"
 	private let keyLanguageId = "LanguageId"
 	
@@ -39,6 +40,13 @@ class AppSetting {
 	var showEmailField: Bool = false {
 		didSet {
 			UserDefaults.standard.set(showEmailField, forKey: keyShowEmailField)
+			UserDefaults.standard.synchronize()
+		}
+	}
+	
+	var Acquiring: Bool = false {
+		didSet {
+			UserDefaults.standard.set(Acquiring, forKey: keyKindForAlertView)
 			UserDefaults.standard.synchronize()
 		}
 	}
@@ -64,6 +72,7 @@ class AppSetting {
 		
 		self.paySBP = usd.bool(forKey: keySBP)
 		self.showEmailField = usd.bool(forKey: keyShowEmailField)
+		self.Acquiring = usd.bool(forKey: keyKindForAlertView)
 		if let value = usd.value(forKey: keyAddCardCheckType) as? String {
 			self.addCardChekType = PaymentCardCheckType.init(rawValue: value)
 		}
@@ -80,6 +89,8 @@ class SettingsTableViewController: UITableViewController {
 		case paySBP
 		/// показывать на форме оплаты поле для ввода email
 		case showEmail
+		/// использовать алерты из Aquaring SDK
+		case Acquiring
 		/// какой тип проверки использоваться при сохранении карты
 		case addCardCheckType
 		/// на каком языке показыват форму оплаты
@@ -113,7 +124,7 @@ class SettingsTableViewController: UITableViewController {
 		availableLanguage.append("ru")
 		availableLanguage.append("en")
 		
-		tableViewCells = [.paySBP, .showEmail, .addCardCheckType, .language]
+		tableViewCells = [.paySBP, .showEmail, .Acquiring, .addCardCheckType, .language]
 	}
 	
     // MARK: - Table view data source
@@ -159,6 +170,22 @@ class SettingsTableViewController: UITableViewController {
 					
 					return cell
 				}
+			
+			case .Acquiring:
+				if let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.nibName) as? SwitchTableViewCell {
+					let value = AppSetting.shared.Acquiring
+					cell.switcher.isOn = value
+					
+					cell.labelTitle.text = value ? NSLocalizedString("status.alert.on", comment: "Aquaring") : NSLocalizedString("status.alert.off", comment: "Системные")
+					cell.onSwitcherChange = { (swither) in
+						AppSetting.shared.Acquiring = swither.isOn
+						tableView.beginUpdates()
+							tableView.reloadRows(at: [indexPath], with: .automatic)
+						tableView.endUpdates()
+					}
+					
+					return cell
+			}
 			
 			case .addCardCheckType:
 				if let cell = tableView.dequeueReusableCell(withIdentifier: SegmentedTabeViewCell.nibName) as? SegmentedTabeViewCell {
@@ -215,6 +242,8 @@ class SettingsTableViewController: UITableViewController {
 				return NSLocalizedString("title.fasterPayments", comment: "Система Быстрых Платежей")
 			case .showEmail:
 				return NSLocalizedString("title.showEmailField", comment: "")
+			case .Acquiring:
+				return NSLocalizedString("title.Acquiring", comment: "")
 			case .addCardCheckType:
 				return NSLocalizedString("title.savingCard", comment: "Сохранение карты")
 			case .language:
@@ -226,11 +255,14 @@ class SettingsTableViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
 		switch tableViewCells[section] {
 			case .paySBP:
-				return NSLocalizedString("title.settings.payBySBP.description", comment: "")
+				return NSLocalizedString("text.payBySBP.description", comment: "")
 
 			case .showEmail:
 				return NSLocalizedString("text.showEmailField", comment: "")
-
+			
+			case .Acquiring:
+				return NSLocalizedString("text.Acquiring.description", comment: "")
+			
 			case .addCardCheckType:
 				return NSLocalizedString("text.addCardCheckType.description", comment: "")
 			

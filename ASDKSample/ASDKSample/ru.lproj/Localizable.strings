@@ -30,14 +30,17 @@
 "title.fasterPayments" = "Система Быстрых Платежей";
 "title.showEmailField" = "Поле ввода email";
 "title.paymentSource" = "Источник оплаты";
+"title.aquaringAlertView" = "AlertView";
 "title.goods" = "Товары";
 "title.paymentTryAgain" = "Повторить платеж";
 "title.payByApplePay" = "Оплатить с помощью ApplePay";
 "title.payBySBP" = "Оплатить с помощью Системы Быстрых Платежей";
 "title.payAndSaveAsParent" = "Оплатить, начать регулярный платеж";
+"title.Acquiring" = "Уведомления, алерты";
 
 //
 "text.showEmailField" = "Показать на платежной форме поле для ввода email куда будет отправлен чек полсе оплаты";
+"text.Acquiring.description" = "Использовать AlertView системный или из Acquiring SDK";
 "text.parentPayment" = "Родительский платеж";
 "text.totalAmount" = "на сумму";
 "text.payBySBP.description" = "на главном экране кнопка сгенерировать QR-код для приема платежей, на форме платежей добавляеся кнопка оплатить с помощью СБП";
@@ -67,4 +70,5 @@
 "status.sbp.off" = "Выключены";
 "status.showEmailField.on" = "Показывать";
 "status.showEmailField.off" = "Скрыто";
-
+"status.alert.on" = "Acquiring SDK";
+"status.alert.off" = "Системные";

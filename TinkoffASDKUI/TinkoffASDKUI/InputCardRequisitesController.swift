@@ -234,6 +234,10 @@ extension InputCardRequisitesController: UITextFieldDelegate {
 	// MARK: UITextFieldDelegate
 	
 	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+		if let cell: InputViewStatus = UIView.searchTableViewCell(by: textField) {
+			cell.setStatus(.normal, statusText: nil)
+		}
+		
 		inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
 		inputAccessoryViewWithButton?.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.addCard"), for: .normal)
 		textField.inputAccessoryView = inputAccessoryViewWithButton
@@ -280,6 +284,10 @@ extension InputCardRequisitesController: MaskedTextFieldDelegateListener {
 	// MARK: MaskedTextFieldDelegateListener
 		
 	func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
+		if let cell: InputViewStatus = UIView.searchTableViewCell(by: textField) {
+			cell.setStatus(.normal, statusText: nil)
+		}
+		
 		if inputView?.textFieldCardNumber == textField {
 			inputView?.textFieldCardNumber.textColor = colorNormal
 			inputCardNumber = value

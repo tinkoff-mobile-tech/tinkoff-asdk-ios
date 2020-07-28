@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PaymentCardInputRequisitesCollectionViewCell" id="gTV-IL-0wX" customClass="PaymentCardInputRequisitesCollectionViewCell" customModule="ASDKUI" customModuleProvider="target">
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PaymentCardInputRequisitesCollectionViewCell" id="gTV-IL-0wX" customClass="PaymentCardInputRequisitesCollectionViewCell" customModule="TinkoffASDKUI" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -36,12 +36,12 @@
                                     <action selector="onButtonRightTouchUpInside:" destination="gTV-IL-0wX" eventType="touchUpInside" id="Up1-h7-Gqd"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="j6N-J6-vhI" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="j6N-J6-vhI" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI" customModuleProvider="target">
                                 <rect key="frame" x="52" y="26.5" width="202" height="22"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                             </textField>
-                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3jT-bT-0lU" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3jT-bT-0lU" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI" customModuleProvider="target">
                                 <rect key="frame" x="136" y="26.5" width="48" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="Qj9-HE-Lp0"/>
@@ -49,7 +49,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                             </textField>
-                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aZn-oT-eI5" customClass="UITextFieldCardRequisites" customModule="ASDKUI" customModuleProvider="target">
+                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aZn-oT-eI5" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI" customModuleProvider="target">
                                 <rect key="frame" x="262" y="27" width="44" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="8Cy-AN-EHz"/>
@@ -69,6 +69,13 @@
                                     <action selector="onCardNumberTouchUpInside:" destination="gTV-IL-0wX" eventType="touchUpInside" id="4Fi-0q-yVI"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mlj-wQ-cKP">
+                                <rect key="frame" x="46" y="52.5" width="208" height="1"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="uqy-Qr-xId"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -77,12 +84,14 @@
                             <constraint firstItem="aZn-oT-eI5" firstAttribute="centerY" secondItem="blN-kc-AkU" secondAttribute="centerY" id="CAe-hr-GjC"/>
                             <constraint firstItem="yaX-Wb-UjN" firstAttribute="centerY" secondItem="blN-kc-AkU" secondAttribute="centerY" id="Cdp-82-9N6"/>
                             <constraint firstItem="hOV-Yt-4Nz" firstAttribute="leading" secondItem="blN-kc-AkU" secondAttribute="leading" constant="24" id="G6B-Hs-p22"/>
+                            <constraint firstItem="Mlj-wQ-cKP" firstAttribute="leading" secondItem="hOV-Yt-4Nz" secondAttribute="trailing" constant="2" id="Lj3-HH-0dr"/>
                             <constraint firstItem="WFf-re-5Rl" firstAttribute="centerY" secondItem="blN-kc-AkU" secondAttribute="centerY" id="Ml4-vL-sPN"/>
                             <constraint firstItem="3jT-bT-0lU" firstAttribute="leading" secondItem="WFf-re-5Rl" secondAttribute="trailing" id="QW9-zm-bsB"/>
                             <constraint firstItem="3jT-bT-0lU" firstAttribute="centerY" secondItem="blN-kc-AkU" secondAttribute="centerY" id="Ts4-A1-2BQ"/>
                             <constraint firstItem="j6N-J6-vhI" firstAttribute="leading" secondItem="hOV-Yt-4Nz" secondAttribute="trailing" constant="8" id="aNa-FP-I9Z"/>
                             <constraint firstAttribute="bottom" secondItem="hOV-Yt-4Nz" secondAttribute="bottom" id="baA-Tv-1UE"/>
                             <constraint firstItem="DQK-r5-dng" firstAttribute="leading" secondItem="hOV-Yt-4Nz" secondAttribute="trailing" constant="8" id="bkb-UB-8Uw"/>
+                            <constraint firstAttribute="trailing" secondItem="Mlj-wQ-cKP" secondAttribute="trailing" constant="66" id="c4W-wR-uzN"/>
                             <constraint firstItem="DQK-r5-dng" firstAttribute="centerY" secondItem="blN-kc-AkU" secondAttribute="centerY" id="fMg-gd-rYW"/>
                             <constraint firstItem="j6N-J6-vhI" firstAttribute="centerY" secondItem="blN-kc-AkU" secondAttribute="centerY" id="hQl-4j-iVV"/>
                             <constraint firstItem="yaX-Wb-UjN" firstAttribute="leading" secondItem="j6N-J6-vhI" secondAttribute="trailing" constant="8" id="ltN-c2-VtC"/>
@@ -90,6 +99,7 @@
                             <constraint firstItem="j6N-J6-vhI" firstAttribute="leading" secondItem="hOV-Yt-4Nz" secondAttribute="trailing" constant="8" id="nC2-ma-45R"/>
                             <constraint firstItem="3jT-bT-0lU" firstAttribute="leading" secondItem="DQK-r5-dng" secondAttribute="trailing" constant="8" id="rw8-MC-mbu"/>
                             <constraint firstItem="3jT-bT-0lU" firstAttribute="centerX" secondItem="blN-kc-AkU" secondAttribute="centerX" id="wsF-hF-xqU"/>
+                            <constraint firstItem="Mlj-wQ-cKP" firstAttribute="top" secondItem="j6N-J6-vhI" secondAttribute="bottom" constant="4" id="yD8-uw-9bU"/>
                             <constraint firstAttribute="trailing" secondItem="aZn-oT-eI5" secondAttribute="trailing" constant="14" id="z72-6p-RcG"/>
                         </constraints>
                     </view>
@@ -114,6 +124,7 @@
                 <outlet property="textFieldCardExpDateWidth" destination="Qj9-HE-Lp0" id="c3B-S2-teb"/>
                 <outlet property="textFieldCardNumber" destination="j6N-J6-vhI" id="HdU-HV-UBN"/>
                 <outlet property="viewBorder" destination="blN-kc-AkU" id="zos-Qc-W72"/>
+                <outlet property="viewSeparator" destination="Mlj-wQ-cKP" id="Ibe-bW-kof"/>
             </connections>
             <point key="canvasLocation" x="-193.125" y="89.260563380281695"/>
         </collectionViewCell>

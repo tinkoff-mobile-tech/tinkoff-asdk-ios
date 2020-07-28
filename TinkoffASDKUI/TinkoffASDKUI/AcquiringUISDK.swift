@@ -87,7 +87,7 @@ public protocol AcquiringScanerProtocol: class {
 	
 }
 
-/// Отображение не стандартного AlertView если в приложении используется не UIAlertViewController
+/// Отображение не стандартного AlertView если в приложении используется не UIAlertController
 public protocol AcquiringAlertViewProtocol: class {
 	///
 	/// - Parameters:
@@ -196,7 +196,7 @@ public class AcquiringUISDK: NSObject {
 		
 		acquiringPaymentView?.onTouchButtonSBP = { [weak self] in
 			if let paymentId = self?.initResponse?.paymentId {
-				self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: .url)
+				self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: .url, configuration: configuration)
 			}
 		}
 		
@@ -215,6 +215,14 @@ public class AcquiringUISDK: NSObject {
 						presentingViewController: presentingViewController,
 						configuration: configuration)
 	}
+	
+	///
+	///
+	public func presentAlertView(on presentingViewController: UIViewController, title: String, icon: AcquiringAlertIconType = .success, autoCloseTime: TimeInterval = 3) {
+		let alert = AcquiringAlertViewController.create()
+		alert.present(on: presentingViewController, title: title, icon: icon, autoCloseTime: autoCloseTime)
+	}
+	
 	
 	// MARK: Система Быстрых Платежей
 	
@@ -243,7 +251,7 @@ public class AcquiringUISDK: NSObject {
 				switch response {
 					case .success(let initResponse):
 						self?.initResponse = initResponse
-						self?.presentSbpActivity(paymentId: initResponse.paymentId, paymentInvoiceSource: paymentInvoiceSource)
+						self?.presentSbpActivity(paymentId: initResponse.paymentId, paymentInvoiceSource: paymentInvoiceSource, configuration: configuration)
 					
 					case .failure(let error):
 						self?.initResponse = nil
@@ -267,7 +275,7 @@ public class AcquiringUISDK: NSObject {
 		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: configuration) { view in
 			let viewTitle = AcqLoc.instance.localize("TinkoffAcquiring.view.title.payQRCode")
 			view.changedStatus(.initWaiting)
-			self.getStaticQRCode { [weak self, weak view] (response) in
+			self.getStaticQRCode { [weak view] (response) in
 				switch response {
 					case .success(let qrCodeSVG):
 						DispatchQueue.main.async {
@@ -275,11 +283,15 @@ public class AcquiringUISDK: NSObject {
 						}
 					
 					case .failure(let error):
-						if let alertView = self?.alertView(for: error) {
-							DispatchQueue.main.async {
+						DispatchQueue.main.async {
+							let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+							
+							if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
 								view?.closeVC(animated: true) {
-									presentingViewController.present(alertView, animated: true, completion: nil)
+									presentingViewController.present(alert, animated: true, completion: nil)
 								}
+							} else {
+								AcquiringAlertViewController.create().present(on: presentingViewController, title: alertTitle)
 							}
 						}
 				}//switch response
@@ -372,7 +384,7 @@ public class AcquiringUISDK: NSObject {
 		})
 	}
 	
-	private func presentSbpActivity(paymentId: Int64, paymentInvoiceSource: PaymentInvoiceSBPSourceType) {
+	private func presentSbpActivity(paymentId: Int64, paymentInvoiceSource: PaymentInvoiceSBPSourceType, configuration: AcquiringViewConfigration) {
 		let paymentInvoice = PaymentInvoiceQRCodeData.init(paymentId: paymentId, paymentInvoiceType: paymentInvoiceSource)
 		_ = acquiringSdk.paymentInvoiceQRCode(data: paymentInvoice) { [weak self] (response) in
 			switch response {
@@ -405,7 +417,17 @@ public class AcquiringUISDK: NSObject {
 					self?.initResponse = nil
 					DispatchQueue.main.async {
 						self?.acquiringPaymentView?.changedStatus(.error(error))
-						self?.showErrorAlert(error: error)
+						
+						let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+						if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
+							self?.presentingViewController?.present(alert, animated: true, completion: {
+								//
+							})
+						} else {
+							if let presentingView = self?.presentingViewController {
+								AcquiringAlertViewController.create().present(on: presentingView, title: alertTitle)
+							}
+						}
 					}
 			}
 		}
@@ -849,7 +871,7 @@ public class AcquiringUISDK: NSObject {
 		
 	}
 	
-	private func presentRandomAmounChecking(with requestKey: String, presenter: AcquiringViewConfiguration?, onCancel: @escaping (() -> Void)) {
+	private func presentRandomAmounChecking(with requestKey: String, presenter: AcquiringViewConfiguration?, alertViewHelper: AcquiringAlertViewProtocol?, onCancel: @escaping (() -> Void)) {
 		let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: Bundle(for: RandomAmounCheckingViewController.self))
 		
 		viewController.onCancel = {
@@ -867,12 +889,20 @@ public class AcquiringUISDK: NSObject {
 							viewController?.dismiss(animated: true, completion: {
 								self?.onRandomAmountCheckingAddCardCompletionHandler?(response)
 							})
+							
 						case .failure(let error):
-							let alertView = UIAlertController.init(title: AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error"), message: error.localizedDescription, preferredStyle: .alert)
-							alertView.addAction(UIAlertAction.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.ok"), style: .default, handler: nil))
-							viewController?.present(alertView, animated: true, completion: nil)
+							
+							let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+							if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
+								self?.presentingViewController?.present(alert, animated: true, completion: {
+									//
+								})
+							} else {
+								if let presentingView = self?.presentingViewController {
+									AcquiringAlertViewController.create().present(on: presentingView, title: alertTitle)
+								}
+							}
 					}
-					
 				}
 			})
 		}
@@ -880,28 +910,6 @@ public class AcquiringUISDK: NSObject {
 		presenter?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
 			
 		})
-	}
-	
-	// MARK: Error Alert
-	
-	private func showErrorAlert(error: Error) {
-		let alertView = UIAlertController.init(title: AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error"), message: error.localizedDescription, preferredStyle: .alert)
-		alertView.addAction(UIAlertAction.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.ok"), style: .default, handler: { (_) in
-			//
-		}))
-		
-		presentingViewController?.present(alertView, animated: true, completion: {
-			//
-		})
-	}
-
-	private func alertView(for error: Error) -> UIAlertController {
-		let alertView = UIAlertController.init(title: AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error"), message: error.localizedDescription, preferredStyle: .alert)
-		alertView.addAction(UIAlertAction.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.ok"), style: .default, handler: { (_) in
-			//
-		}))
-		
-		return alertView
 	}
 	
 }
@@ -956,7 +964,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 		}
 	}
 	
-	private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringViewConfiguration, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+	private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringViewConfiguration, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
 		switch confirmationResponse.responseStatus {
 			case .needConfirmation3DS(let confirmation3DSData):
 				on3DSCheckingAddCardCompletionHandler = { (response) in
@@ -981,7 +989,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 					confirmationComplete(response)
 				}
 				
-				presentRandomAmounChecking(with: requestKey, presenter: presenter) { [weak self] in
+				presentRandomAmounChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
 					self?.cancelAddCard()
 				}
 			
@@ -1002,7 +1010,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 		}
 	}
 	
-	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
+	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
 		
 		let checkType: String
 		if let value = addCardNeedSetCheckTypeHandler?() {
@@ -1011,18 +1019,20 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 			checkType = PaymentCardCheckType.no.rawValue
 		}
 		
-		cardListDataProvider.addCard(number: number, expDate: expDate, cvc: cvc,
+		cardListDataProvider.addCard(number: number,
+									 expDate: expDate,
+									 cvc: cvc,
 									 checkType: checkType,
-		confirmationHandler: { (confirmationResponse, confirmationComplete) in
-			DispatchQueue.main.async { [weak self] in
-				self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, confirmationComplete)
-			}
-		},
-		completeHandler: { (response) in
-			DispatchQueue.main.async {
-				completeHandler(response)
-			}
-		})
+									 confirmationHandler: { (confirmationResponse, confirmationComplete) in
+										DispatchQueue.main.async { [weak self] in
+											self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
+										}
+									},
+									 completeHandler: { (response) in
+										DispatchQueue.main.async {
+											completeHandler(response)
+										}
+									})
 
 	}
 
@@ -1043,7 +1053,6 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 					self.cancelPayment()
 				}
 			}
-
 		}
 	}
 	
@@ -1096,17 +1105,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
 			if stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationURL().absoluteString ?? "") ||
 				stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString ?? "") {
 				webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { (value, error) in
-					debugPrint("document.getElementsByTagName('pre')[0].innerText = \(value ?? "" )")
-// dubug success confirm add card
-//					let value =
-//"""
-//{"Success":true,"ErrorCode":"0","TerminalKey":"TestSDK","Status":"AUTHORIZED","RequestKey":"9efaef1b-134c-4644-8e0c-b0e0609ddde4","CardId":"70000004024"}
-//"""
-// dubug success confirm payment
-//					let value =
-//"""
-//{"Success":true,"ErrorCode":"0","TerminalKey":"TestSDK","Status":"AUTHORIZED","PaymentId":"700000417798","OrderId":"G-S/v6pDXvDh3JdM3wLC","Amount":100}
-//"""
+					//debugPrint("document.getElementsByTagName('pre')[0].innerText = \(value ?? "" )")
 					guard let responseString = value as? String, let data = responseString.data(using: .utf8) else {
 						return
 					}

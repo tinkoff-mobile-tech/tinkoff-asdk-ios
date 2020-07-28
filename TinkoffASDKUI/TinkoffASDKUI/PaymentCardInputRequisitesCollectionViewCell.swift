@@ -55,12 +55,12 @@ class UITextFieldCardRequisites: UITextField {
 	
 }
 
-
 class PaymentCardInputRequisitesCollectionViewCell: UICollectionViewCell, InputRequisitesViewInConnection {
 	
 	@IBOutlet weak var viewBorder: UIView!
 	@IBOutlet weak var imageViewPSLogo: UIImageView!
 	@IBOutlet weak var imageViewPSLogoWidth: NSLayoutConstraint!
+	@IBOutlet weak var viewSeparator: UIView!
 	//
 	@IBOutlet weak var textFieldCardNumber: UITextFieldCardRequisites!
 	@IBOutlet weak var textFieldCardExpDate: UITextFieldCardRequisites!
@@ -94,5 +94,33 @@ class PaymentCardInputRequisitesCollectionViewCell: UICollectionViewCell, InputR
 	@IBAction private func onCardNumberTouchUpInside(_ sender: UIButton) {
 		onCardNumberTouch?()
 	}
+	
+}
+
+
+extension PaymentCardInputRequisitesCollectionViewCell: InputViewStatus {
+
+	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String?) {
+		switch value {
+			case .error:
+				textFieldCardNumber.textColor = colorError
+				textFieldCardExpDate.textColor = colorError
+				textFieldCardCVC.textColor = colorError
+				viewSeparator.backgroundColor = colorError
+			
+			case .normal:
+				textFieldCardNumber.textColor = colorNormal
+				textFieldCardExpDate.textColor = colorNormal
+				textFieldCardCVC.textColor = colorNormal
+				viewSeparator.backgroundColor = .clear
+			
+			case .disable:
+				textFieldCardNumber.textColor = colorDisable
+				textFieldCardExpDate.textColor = colorDisable
+				textFieldCardCVC.textColor = colorDisable
+				viewSeparator.backgroundColor = .clear
+		}
+	}
+	
 	
 }

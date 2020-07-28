@@ -132,7 +132,12 @@ class CardsViewController: UIViewController {
 			
 			case .error(let error):
 				if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
-					cell.labelStatus.text = error.localizedDescription
+					if (error as NSError).code == 7 {
+						cell.labelStatus.text = error.localizedDescription
+					} else {
+						cell.labelStatus.text = AcqLoc.instance.localize("TinkoffAcquiring.text.status.cardListEmpty")
+					}
+					
 					cell.labelStatus.isHidden = false
 					cell.buttonUpdate.isHidden = false
 					cell.activityIndicator.stopAnimating()
@@ -148,31 +153,35 @@ class CardsViewController: UIViewController {
 	}
 
 	private func showAlert(for result: Result<PaymentCard?, Error>) {
-		var alertTitle: String?
+		var alertTitle: String
 		var alertMessage: String?
+		var alertIcon: AcquiringAlertIconType
 		
 		switch result {
 			case .success(let card):
 				if let cardAdded = card {
 					alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.cardSuccessAdded")
 					alertMessage = "card id = \(cardAdded.cardId),\n\(cardAdded.pan) \(cardAdded.expDateFormat() ?? "")"
+					alertIcon = .success
 				} else {
 					alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.addingCard")
 					alertMessage = AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel")
+					alertIcon = .error
 				}
 			
 			case .failure(let error):
 				alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
 				alertMessage = error.localizedDescription
+				alertIcon = .error
 		}
 		
-		if let alertView = alertViewHelper?.presentAlertView(alertTitle, message: alertMessage, dismissCompletion: nil) {
-			present(alertView, animated: true, completion: nil)
+		if let alert = alertViewHelper?.presentAlertView(alertTitle, message: alertMessage, dismissCompletion: nil) {
+			present(alert, animated: true, completion: nil)
 		} else {
-			let alertView = UIAlertController.init(title: alertTitle, message: alertMessage, preferredStyle: .alert)
-			alertView.addAction(UIAlertAction.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.ok"), style: .default, handler: nil))
-			present(alertView, animated: true, completion: nil)
+			let alert = AcquiringAlertViewController.create()
+			alert.present(on: self, title: alertTitle, icon: alertIcon)
 		}
+		
 	}
 	
 	private func showAddCardView() {

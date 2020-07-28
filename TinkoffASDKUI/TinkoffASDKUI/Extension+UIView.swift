@@ -33,18 +33,18 @@ extension UIView {
 		return nil
 	}
 	
-	/// Находит ячейку UITableViewCell в которой расположена текущая UIView
-	/// если UITableViewCell реализует протокол нужны `<T>` то позвращаем instance на протокол
+	/// Находит UIView которая реализует `<T>` в которой расположена текущая UIView
+	/// если UIView реализует протокол то позвращаем instance на протокол
 	/// - Parameter view: от какого элемента начинать поиск
 	/// - Returns: T
 	static func searchTableViewCell<T>(by view: UIView?) -> T? {
 		var viewResult = view
-		if viewResult is UITableViewCell && viewResult is T {
+		if viewResult is T {
 			return viewResult as? T
 		} else {
 			while viewResult?.superview != nil {
 				viewResult = viewResult?.superview
-				if viewResult is UITableViewCell && viewResult is T {
+				if viewResult is T {
 					return viewResult as? T
 				}
 			}

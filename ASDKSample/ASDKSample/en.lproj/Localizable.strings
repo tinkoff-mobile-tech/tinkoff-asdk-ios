@@ -29,15 +29,18 @@
 "title.paymentFormLanguage" = "Payment Form Language";
 "title.fasterPayments" = "Faster Payments Service";
 "title.showEmailField" = "Email field";
+"title.aquaringAlertView" = "AlertView type";
 "title.paymentSource" = "Payment Source";
 "title.goods" = "Goods";
 "title.paymentTryAgain" = "Try quick payment";
 "title.payByApplePay" = "Pay By ApplePay";
 "title.payBySBP" = "Pay By SBP";
 "title.payAndSaveAsParent" = "Pay and save as parent payment";
+"title.Acquiring" = "Alert View Type";
 
 //
 "text.showEmailField" = "Show email field for required enter on a payment screen. After payment success, payment receipt sended to this email.";
+"text.Acquiring.description" = "Use AlertView system or from Acquiring SDK";
 "text.parentPayment" = "Parent payment";
 "text.totalAmount" = "total amount";
 "text.payBySBP.description" = "Show generate QR-code on main screen, add sbp button on a payment screen";
@@ -67,3 +70,6 @@
 "status.sbp.off" = "Deactivated";
 "status.showEmailField.on" = "Showing";
 "status.showEmailField.off" = "Hidden";
+"status.alert.on" = "Acquiring SDK";
+"status.alert.off" = "System";
+

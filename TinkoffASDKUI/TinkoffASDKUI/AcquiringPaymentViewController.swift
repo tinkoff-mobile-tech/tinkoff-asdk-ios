@@ -38,7 +38,7 @@ protocol AcquiringCardListDataSourceDelegate: class {
 	/// Деактивировать карту
 	func cardListDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((PaymentCard?) -> Void)?)
 	/// Добаить карту
-	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
 }
 
 
@@ -255,37 +255,49 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 		tableView.reloadData()
 	}
 	
-	func validatePaymentForm() -> Bool {
+	func validatePaymentForm(showErrorStatus: Bool = true) -> Bool {
 		
 		if userTableViewCells.first(where: { (item) -> Bool in
 			if case AcquiringViewTableViewCells.email = item  { return true }
 			return false
 		}) != nil {
-			return inputEmailPresenter.inputValue() != nil
+			let result = inputEmailPresenter.inputValue() != nil
+			
+			if result == false && showErrorStatus == true {
+				inputEmailPresenter.setStatus(.error, statusText: nil)
+			}
+			
+			return result
 		}
-		
-		if case .paymentWainingCVC(_) = paymentStatus {
-			switch cardListPresenter.requisies() {
-				case .savedCard(_, let cvc):
+
+		switch cardListPresenter.requisies() {
+			case .savedCard(_, let cvc):
+				
+				if case .paymentWainingCVC(_) = paymentStatus {
 					let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
 					if cardRequisitesValidator.validateCardCVC(cvc: cvc) {
 						return true
 					}
 					
+					cardListPresenter.setStatus(.error, statusText: nil)
 					return false
+				}
 				
-				case .requisites(let number , let expDate, let cvc):
-					if let number = number, let expDate = expDate, let cvc = cvc {
-						let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-						if cardRequisitesValidator.validateCardNumber(number: number) && cardRequisitesValidator.validateCardExpiredDate(value: expDate) && cardRequisitesValidator.validateCardCVC(cvc: cvc) {
-							return true
-						}
-						
+			case .requisites(let number , let expDate, let cvc):
+				if let number = number, let expDate = expDate, let cvc = cvc {
+					let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
+					if cardRequisitesValidator.validateCardNumber(number: number) && cardRequisitesValidator.validateCardExpiredDate(value: expDate) && cardRequisitesValidator.validateCardCVC(cvc: cvc) {
+						return true
+					} else {
+						cardListPresenter.setStatus(.error, statusText: nil)
 						return false
 					}
-			}
+				} else {
+					cardListPresenter.setStatus(.error, statusText: nil)
+					return false
+				}
 		}
-
+		
 		return true
 	}
 	

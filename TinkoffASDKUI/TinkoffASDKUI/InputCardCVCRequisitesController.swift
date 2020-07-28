@@ -52,7 +52,7 @@ extension InputCardCVCRequisitesPresenter: UITextFieldDelegate {
 		
 	// MARK: UITextFieldDelegate
 	
-	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {		
 		return becomeFirstResponderListener?.textFieldShouldBecomeFirstResponder(textField) ?? true
 	}
 	

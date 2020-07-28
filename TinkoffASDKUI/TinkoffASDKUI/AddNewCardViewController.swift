@@ -73,6 +73,7 @@ class AddNewCardViewController: PopUpViewContoller {
 															expDate: expDate,
 															cvc: cvc,
 															addCardViewPresenter: self,
+															alertViewHelper: alertViewHelper,
 															completeHandler: { [weak self] (response) in
 					self?.closeViewController {
 						self?.completeHandler?(response)

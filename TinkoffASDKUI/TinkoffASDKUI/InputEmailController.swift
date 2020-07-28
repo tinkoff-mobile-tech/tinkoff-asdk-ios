@@ -19,7 +19,7 @@
 
 import UIKit
 
-protocol InputEmailControllerOutConnection {
+protocol InputEmailControllerOutConnection: InputViewStatus {
 	
 	func present(hint: String?, preFilledValue: String?, textFieldCell: InputFieldTableViewCellStatusProtocol, tableView: UITableView, firstResponderListener: BecomeFirstResponderListener?)
 	
@@ -31,7 +31,7 @@ protocol InputEmailControllerOutConnection {
 
 
 class InputEmailController: NSObject, InputEmailControllerOutConnection {
-		
+	
 	private weak var textFieldCell: InputFieldTableViewCellStatusProtocol!
 	private weak var tableView: UITableView!
 	private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
@@ -93,6 +93,10 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
 		}
 		
 		return nil
+	}
+	
+	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String?) {
+		textFieldCell.setStatus(value, statusText: statusText)
 	}
 	
 	private func prepareResignFirstResponder() {

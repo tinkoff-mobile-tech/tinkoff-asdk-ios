@@ -188,6 +188,7 @@ class BuyProductsViewController: UIViewController {
 			case .success(let result):
 				var message = NSLocalizedString("text.paymentStatusAmount", comment: "Покупка на сумму")
 				message.append(" \(Utils.formatAmount(result.amount)) ")
+				
 				if result.status == .cancelled {
 					message.append(NSLocalizedString("text.paymentStatusCancel", comment: "отменена"))
 				} else {
@@ -196,13 +197,22 @@ class BuyProductsViewController: UIViewController {
 					message.append("\npaymentId = \(result.paymentId)")
 				}
 				
-				let alertView = UIAlertController.init(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
-				alertView.addAction(UIAlertAction.init(title: "ОК", style: .default, handler: nil))
-				present(alertView, animated: true, completion: nil)
+				if AppSetting.shared.Acquiring {
+					sdk.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
+				} else {
+					let alertView = UIAlertController.init(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
+					alertView.addAction(UIAlertAction.init(title: "ОК", style: .default, handler: nil))
+					present(alertView, animated: true, completion: nil)
+				}
+				
 			case .failure(let error):
-				let alertView = UIAlertController.init(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
-				alertView.addAction(UIAlertAction.init(title: "ОК", style: .default, handler: nil))
-				present(alertView, animated: true, completion: nil)
+				if AppSetting.shared.Acquiring {
+					sdk.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
+				} else {
+					let alertView = UIAlertController.init(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
+					alertView.addAction(UIAlertAction.init(title: "ОК", style: .default, handler: nil))
+					present(alertView, animated: true, completion: nil)
+				}
 		}
 	}
 	
@@ -322,6 +332,7 @@ extension BuyProductsViewController: UITableViewDataSource {
 			case .products:
 				let cell = tableView.defaultCell()
 				let product = products[indexPath.row]
+				cell.textLabel?.numberOfLines = 0
 				cell.textLabel?.text = product.name
 				cell.detailTextLabel?.text = Utils.formatAmount(product.price)
 				return cell
