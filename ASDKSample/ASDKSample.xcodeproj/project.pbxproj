@@ -66,6 +66,7 @@
 		2C4683FA247258AA0067DA48 /* CardScanerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardScanerViewController.swift; sourceTree = "<group>"; };
 		2C4683FC247258BC0067DA48 /* BuyProductsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProductsViewController.swift; sourceTree = "<group>"; };
 		2C4D782D23F42090003A355D /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		2C634C6F24E5640F00529898 /* ASDKSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ASDKSample.entitlements; sourceTree = "<group>"; };
 		2C6560812476D18800DEA4A9 /* SegmentedTabeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedTabeViewCell.swift; sourceTree = "<group>"; };
 		2C6560822476D18800DEA4A9 /* SegmentedTabeViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SegmentedTabeViewCell.xib; sourceTree = "<group>"; };
 		2C9C7EBB239FBCB200DE4071 /* ASDKSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ASDKSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,7 +102,6 @@
 		2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebuildCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
 		2CF833BD24B2FDC0009832BD /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StageTestData.swift; path = ../../TinkoffASDKCore/TinkoffASDKCoreTests/StageTestData.swift; sourceTree = "<group>"; };
-		2CF833C124B306E3009832BD /* ASDKSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ASDKSample.entitlements; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
 		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
@@ -191,8 +191,9 @@
 		2C9C7EBD239FBCB200DE4071 /* ASDKSample */ = {
 			isa = PBXGroup;
 			children = (
-				2CF833C124B306E3009832BD /* ASDKSample.entitlements */,
+				2C634C6F24E5640F00529898 /* ASDKSample.entitlements */,
 				2CFEEE0C246EA7670009E633 /* Scaner */,
+				2C9C7EC2239FBCB200DE4071 /* RootViewController.swift */,
 				2CA7764A2451AA8E0078AEB3 /* About */,
 				2C4D782C23F4207A003A355D /* Settings */,
 				2C4D782623F3EF68003A355D /* ProductDetail */,
@@ -200,7 +201,6 @@
 				2CA776512451AB270078AEB3 /* Utils */,
 				2C9C7EBE239FBCB200DE4071 /* AppDelegate.swift */,
 				2CA77648245183A90078AEB3 /* SceneDelegate.swift */,
-				2C9C7EC2239FBCB200DE4071 /* RootViewController.swift */,
 				2C9C7EC4239FBCB200DE4071 /* Main.storyboard */,
 				2C9C7EC7239FBCB400DE4071 /* Assets.xcassets */,
 				2C9C7EC9239FBCB400DE4071 /* LaunchScreen.storyboard */,
@@ -299,7 +299,7 @@
 				2C9C7EB7239FBCB200DE4071 /* Sources */,
 				2C9C7EB8239FBCB200DE4071 /* Frameworks */,
 				2C9C7EB9239FBCB200DE4071 /* Resources */,
-				7047BFCA2F43AE4C85D6C084 /* [CP] Embed Pods Frameworks */,
+				1A2A0FBF0D77B410193555FF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -426,6 +426,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1A2A0FBF0D77B410193555FF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		6CFAB7742899CF1424BA2DC0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -446,23 +463,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7047BFCA2F43AE4C85D6C084 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -590,6 +590,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Z8MAVG5W47;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -654,6 +655,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Z8MAVG5W47;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -680,14 +682,17 @@
 			baseConfigurationReference = F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ASDKSample/ASDKSampleDebug.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
+				DEVELOPMENT_TEAM = 8SEFGGQX9M;
 				INFOPLIST_FILE = ASDKSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = ru.tinkoff.asdksample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -699,14 +704,16 @@
 			baseConfigurationReference = F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 31;
+				CODE_SIGN_ENTITLEMENTS = ASDKSample/ASDKSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 32;
+				DEVELOPMENT_TEAM = 8SEFGGQX9M;
 				INFOPLIST_FILE = ASDKSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = ru.tinkoff.asdksample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";

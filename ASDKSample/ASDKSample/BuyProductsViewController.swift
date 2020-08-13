@@ -46,7 +46,7 @@ class BuyProductsViewController: UIViewController {
 	var products: [Product] = []
 	var sdk: AcquiringUISDK!
 	var customerKey: String!
-	var customerEmail: String = "customer@email.com"
+	var customerEmail: String?
 	weak var scaner: AcquiringScanerProtocol?
 
 	lazy var paymentApplePayConfiguration = AcquiringUISDK.ApplePayConfiguration()
@@ -126,6 +126,8 @@ class BuyProductsViewController: UIViewController {
 	private func createPaymentData() -> PaymentInitData {
 		let amount = productsAmount()
 		var paymentData = PaymentInitData.init(amount: NSDecimalNumber.init(value: amount), orderId: Int64(arc4random()), customerKey: customerKey)
+		paymentData.description = "Краткое описние товара"
+
 		var receiptItems: [Item] = []
 		products.forEach { (product) in
 			receiptItems.append(Item.init(amount: product.price, price: product.price, name: product.name, tax: .vat10))
@@ -134,7 +136,7 @@ class BuyProductsViewController: UIViewController {
 		paymentData.receipt = Receipt.init(shopCode: nil,
 										   email: customerEmail,
 										   taxation: .osn,
-										   phone: nil,
+										   phone: "+79876543210",
 										   items: receiptItems,
 										   agentData: nil,
 										   supplierInfo: nil,
@@ -144,8 +146,8 @@ class BuyProductsViewController: UIViewController {
 		return paymentData
 	}
 	
-	private func acquiringViewConfigration() -> AcquiringViewConfigration {
-		let viewConfigration = AcquiringViewConfigration.init()
+	private func acquiringViewConfiguration() -> AcquiringViewConfiguration {
+		let viewConfigration = AcquiringViewConfiguration.init()
 		viewConfigration.scaner = scaner
 		
 		viewConfigration.fields = []
@@ -154,7 +156,7 @@ class BuyProductsViewController: UIViewController {
 		let amountString = Utils.formatAmount(NSDecimalNumber.init(floatLiteral: productsAmount()))
 		let amountTitle = NSAttributedString.init(string: "\(NSLocalizedString("text.totalAmount", comment: "на сумму")) \(amountString)", attributes: [.font : UIFont.systemFont(ofSize: 17)])
 		// fields.append
-		viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.amount(title: title, amount: amountTitle))
+		viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.amount(title: title, amount: amountTitle))
 		
 		// InfoFields.detail
 		let productsDetatils = NSMutableAttributedString.init()
@@ -166,19 +168,19 @@ class BuyProductsViewController: UIViewController {
 		
 		productsDetatils.append(NSAttributedString.init(string: productsDetails, attributes: [.font : UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor(red: 0.573, green: 0.6, blue: 0.635, alpha: 1)]))
 		// fields.append
-		viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.detail(title: productsDetatils))
+		viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.detail(title: productsDetatils))
 		
 		if AppSetting.shared.showEmailField {
-			viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.email(value: nil, placeholder: NSLocalizedString("plaseholder.email", comment: "Отправить квитанцию по адресу")))
+			viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.email(value: nil, placeholder: NSLocalizedString("plaseholder.email", comment: "Отправить квитанцию по адресу")))
 		}
 		
 		// fields.append InfoFields.buttonPaySPB
 		if AppSetting.shared.paySBP {
-			viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.buttonPaySPB)
+			viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.buttonPaySPB)
 		}
 
 		viewConfigration.viewTitle = NSLocalizedString("title.pay", comment: "Оплата")
-		viewConfigration.localizableInfo = AcquiringViewConfigration.LocalizableInfo.init(lang: AppSetting.shared.languageId)
+		viewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo.init(lang: AppSetting.shared.languageId)
 		
 		return viewConfigration
 	}
@@ -216,20 +218,31 @@ class BuyProductsViewController: UIViewController {
 		}
 	}
 	
-	private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfigration) {
+	private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfiguration) {
 		sdk.presentPaymentView(on: self, paymentData: paymentData, configuration: viewConfigration) { [weak self] (response) in
 			self?.responseReviewing(response)
 		}
 	}
 	
 	func pay() {
-		presentPaymentView(paymentData: createPaymentData(), viewConfigration: acquiringViewConfigration())
+		presentPaymentView(paymentData: createPaymentData(), viewConfigration: acquiringViewConfiguration())
+	}
+	
+	func pay(_ complete: @escaping (()-> Void)) {
+		sdk.pay(on: self,
+				initPaymentData: createPaymentData(),
+				cardRequisites: PaymentSourceData.cardNumber(number: "!!!номер карты!!!", expDate: "1120", cvv: "111"),
+				infoEmail: nil, configuration: acquiringViewConfiguration())
+		{ [weak self] (response) in
+			complete()
+			self?.responseReviewing(response)
+		}
 	}
 	
 	func payByApplePay() {
 		sdk.presentPaymentApplePay(on: self,
 								   paymentData: createPaymentData(),
-								   viewConfiguration: AcquiringViewConfigration.init(),
+								   viewConfiguration: AcquiringViewConfiguration.init(),
 								   paymentConfiguration: paymentApplePayConfiguration) { [weak self] (response) in
 									self?.responseReviewing(response)
 		}
@@ -239,12 +252,12 @@ class BuyProductsViewController: UIViewController {
 		var paymentData = createPaymentData()
 		paymentData.savingAsParentPayment = true
 		
-		presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfigration())
+		presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfiguration())
 	}
 	
 	func charge(_ complete: @escaping (()-> Void)) {
 		if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
-			sdk.presentPaymentView(on: self, paymentData: createPaymentData(), parentPatmentId: parentPaymentId, configuration: acquiringViewConfigration()) { [weak self] (response) in
+			sdk.presentPaymentView(on: self, paymentData: createPaymentData(), parentPatmentId: parentPaymentId, configuration: acquiringViewConfiguration()) { [weak self] (response) in
 				complete()
 				self?.responseReviewing(response)
 			}
@@ -252,13 +265,13 @@ class BuyProductsViewController: UIViewController {
 	}
 	
 	func generateSbpQrImage() {
-		sdk.presentPaymentSbpQrImage(on: self, paymentData: createPaymentData(), configuration: acquiringViewConfigration()) { [weak self] (response) in
+		sdk.presentPaymentSbpQrImage(on: self, paymentData: createPaymentData(), configuration: acquiringViewConfiguration()) { [weak self] (response) in
 			self?.responseReviewing(response)
 		}
 	}
 	
 	func generateSbpUrl() {
-		sdk.presentPaymentSbpUrl(on: self, paymentData: createPaymentData(), configuration: acquiringViewConfigration()) { [weak self] (response) in
+		sdk.presentPaymentSbpUrl(on: self, paymentData: createPaymentData(), configuration: acquiringViewConfiguration()) { [weak self] (response) in
 			self?.responseReviewing(response)
 		}
 	}
@@ -343,10 +356,20 @@ extension BuyProductsViewController: UITableViewDataSource {
 					cell.button.isEnabled = true
 					cell.button.backgroundColor = yellowButtonColor()
 					cell.button.setImage(nil, for: .normal)
+					// открыть экран оплаты и оплатить
 					cell.onButtonTouch = { [weak self] in
 						self?.pay()
 					}
-					
+					// оплатить в один клик, не показывая экран оплаты
+					//cell.onButtonTouch = { [weak self, weak cell] in
+					//	cell?.activityIndicator.startAnimating()
+					//	cell?.button.isEnabled = false
+					//	self?.pay {
+					//		cell?.activityIndicator.stopAnimating()
+					//		cell?.button.isEnabled = true
+					//	}
+					//}
+
 					return cell
 				}
 

@@ -53,6 +53,14 @@ class PopUpViewContoller: UIViewController {
 	private lazy var panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
 	private weak var didAppearTextFieldNeedBecomeFirstResponder: UIView?
 	
+	lazy var buttonClose: UIBarButtonItem = {
+		if #available(iOS 13.0, *) {
+			return UIBarButtonItem.init(barButtonSystemItem: .close, target: self, action: #selector(closeView(_:)))
+		} else {
+			return UIBarButtonItem.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeView(_:)))
+		}
+	}()
+	
 	// MARK: Lifecycle
 	
 	override public func viewDidLoad() {
@@ -78,6 +86,10 @@ class PopUpViewContoller: UIViewController {
 		
 		currentPopUpViewMaxHeight = maxPopUpViewHeight(UIScreen.main.traitCollection)
 		preferredContentSize = CGSize(width: view.bounds.size.width, height: currentHeight)
+		
+		if presentingViewController != nil, navigationController != nil, navigationController?.viewControllers.count == 1 {
+			navigationItem.setRightBarButton(buttonClose, animated: true)
+		}
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -98,13 +110,23 @@ class PopUpViewContoller: UIViewController {
 		disappearComletionHandler?()
 	}
 	
-	func closeViewController(_ complete: (() -> Void)? = nil) {
-		if let nav = navigationController {
-			disappearComletionHandler = complete
-			nav.popViewController(animated: true)
-		} else {
-			dismiss(animated: true) {
+	@objc private func closeView(_ button: UIBarButtonItem?) {
+		closeViewController()
+	}
+	
+	@objc func closeViewController(_ complete: (() -> Void)? = nil) {
+		if let presetingVC = presentingViewController {
+			presetingVC.dismiss(animated: true) {
 				complete?()
+			}
+		} else {
+			if let nav = navigationController {
+				disappearComletionHandler = complete
+				nav.popViewController(animated: true)
+			} else {
+				dismiss(animated: true) {
+					complete?()
+				}
 			}
 		}
 	}
@@ -224,8 +246,11 @@ class PopUpViewContoller: UIViewController {
 			
 		} else if let parentViewController = presentingViewController {
 			dismiss(animated: false) {
-				parentViewController.present(self, animated: false) {
-					completion?()
+				let nav = UINavigationController.init(rootViewController: self)
+				parentViewController.present(nav, animated: false) {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+						completion?()
+					}
 				}
 			}
 			

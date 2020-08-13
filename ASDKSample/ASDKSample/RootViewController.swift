@@ -18,8 +18,9 @@
 //
 
 import UIKit
-import TinkoffASDKUI
+
 import TinkoffASDKCore
+import TinkoffASDKUI
 import PassKit
 
 struct Product: Codable {
@@ -147,7 +148,7 @@ class RootViewController: UITableViewController {
 
 			if let sdk = try? AcquiringUISDK.init(configuration: acquiringSDKConfiguration) {
 				
-				let viewConfigration = AcquiringViewConfigration.init()
+				let viewConfigration = AcquiringViewConfiguration.init()
 				viewConfigration.viewTitle = NSLocalizedString("title.qrcode", comment: "QR-код")
 				
 				sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
@@ -181,7 +182,34 @@ class RootViewController: UITableViewController {
 		}
 	}
 	
-	@IBAction func openCardList(_ sender: UIBarButtonItem) {		
+	private func addCardView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
+		sdk.presentAddCardView(on: self, customerKey: customerKey, configuration: cardListViewConfigration) { (result) in
+			var alertMessage: String
+			var alertIcon: AcquiringAlertIconType
+			switch result {
+				case .success(let card):
+					if card != nil {
+						alertMessage = NSLocalizedString("alert.title.cardSuccessAdded", comment: "")
+						alertIcon = .success
+					} else {
+						alertMessage = NSLocalizedString("alert.message.addingCardCancel", comment: "")
+						alertIcon = .error
+				}
+				
+				case .failure(let error):
+					alertMessage = error.localizedDescription
+					alertIcon = .error
+			}
+			
+			sdk.presentAlertView(on: self, title: alertMessage, icon: alertIcon)
+		}
+	}
+	
+	private func addCardListView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
+		sdk.presentCardList(on: self, customerKey: customerKey, configuration: cardListViewConfigration)
+	}
+	
+	@IBAction func openCardList(_ sender: UIBarButtonItem) {
 		let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
 												  password: StageTestData.terminalPassword,
 												  publicKey: StageTestData.testPublicKey)
@@ -190,7 +218,7 @@ class RootViewController: UITableViewController {
 		acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
 		let customerKey = StageTestData.customerKey
-		let cardListViewConfigration = AcquiringViewConfigration.init()
+		let cardListViewConfigration = AcquiringViewConfiguration.init()
 		cardListViewConfigration.viewTitle = NSLocalizedString("title.paymentCardList", comment: "Список карт")
 		cardListViewConfigration.scaner = self
 		
@@ -198,10 +226,14 @@ class RootViewController: UITableViewController {
 			cardListViewConfigration.alertViewHelper = self
 		}
 		
-		cardListViewConfigration.localizableInfo = AcquiringViewConfigration.LocalizableInfo.init(lang: AppSetting.shared.languageId)
+		cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo.init(lang: AppSetting.shared.languageId)
 		
 		if let sdk = try? AcquiringUISDK.init(configuration: acquiringSDKConfiguration) {
-			sdk.presentCardList(on: self, customerKey: customerKey, configuration: cardListViewConfigration)
+			// открыть экран сиска карт
+			addCardListView(sdk, customerKey, cardListViewConfigration)
+			// или открыть экран добавлени карты
+			//addCardView(sdk, customerKey, cardListViewConfigration)
+			
 			sdk.addCardNeedSetCheckTypeHandler = {
 				return AppSetting.shared.addCardChekType
 			}

@@ -49,7 +49,9 @@ class CardsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.savedCards")
+		if title == nil {
+			title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.savedCards")
+		}
 		
 		tableView.register(UINib.init(nibName: "PaymentCardTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PaymentCardTableViewCell")
 		tableView.register(UINib.init(nibName: "StatusTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "StatusTableViewCell")
@@ -61,8 +63,8 @@ class CardsViewController: UIViewController {
 		
 		tableViewSection = [.cards, .addNew]
 		
-		if presentingViewController != nil, navigationController != nil {
-			navigationItem.setLeftBarButton(buttonClose, animated: true)
+		if presentingViewController != nil, navigationController != nil, navigationController?.viewControllers.count == 1 {
+			navigationItem.setRightBarButton(buttonClose, animated: true)
 		}
     }
 	
@@ -190,11 +192,11 @@ class CardsViewController: UIViewController {
 		modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
 		modalViewController.scanerDataSource = scanerDataSource
 		modalViewController.alertViewHelper = alertViewHelper
-		
+
 		modalViewController.completeHandler = { [weak self] (result) in
 			self?.showAlert(for: result)
 		}
-		
+
 		// present
 		let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: self)
 		modalViewController.transitioningDelegate = presentationController

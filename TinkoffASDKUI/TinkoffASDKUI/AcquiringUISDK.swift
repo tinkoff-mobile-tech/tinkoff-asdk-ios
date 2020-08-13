@@ -22,7 +22,7 @@ import TinkoffASDKCore
 import WebKit
 import PassKit
 
-public class AcquiringViewConfigration {
+public class AcquiringViewConfiguration {
 	///
 	/// Поля на форме оплаты
 	public enum InfoFields {
@@ -64,7 +64,7 @@ public class AcquiringViewConfigration {
 	public weak var scaner: AcquiringScanerProtocol?
 	///
 	public weak var alertViewHelper: AcquiringAlertViewProtocol?
-	
+	public var alertViewEnable: Bool = true
 	public var featuresOptions = FeaturesOptions()
 	public var fields: [InfoFields] = []
 	public var viewTitle: String?
@@ -106,8 +106,9 @@ public class AcquiringUISDK: NSObject {
 	private weak var presentingViewController: UIViewController?
 	//
 	private var acquiringSdk: AcquiringSdk
-	private weak var acquiringPaymentView: AcquiringViewConfiguration?
+	private weak var acquiringView: AcquiringView?
 	private weak var cardsListView: CardListDataSourceStatusListener?
+	private var acquiringViewConfiguration: AcquiringViewConfiguration?
 	//
 	private var startPaymentInitData: PaymentInitData?
 	private var initResponse: PaymentInitResponse?
@@ -121,13 +122,16 @@ public class AcquiringUISDK: NSObject {
 	private var on3DSCheckingAddCardCompletionHandler: AddCardCompletionHandler?
 	// random amount
 	private var onRandomAmountCheckingAddCardCompletionHandler: AddCardCompletionHandler?
-
+	//
+	private var webViewFor3DSChecking: UIWebView?
+	
 	// data providers
 	private var cardListDataProvider: CardListDataProvider!
 	private var checkPaymentStatus: PaymentStatusServiceProvider?
 	
 	public init(configuration: AcquiringSdkConfiguration) throws {
 		self.acquiringSdk = try AcquiringSdk.init(configuration: configuration)
+		AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
 	}
 	
 	/// Вызывается кода пользователь привязывается карту.
@@ -155,46 +159,53 @@ public class AcquiringUISDK: NSObject {
 		}
 	}
 	
-	public func presentCardList(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfigration) {
+	public func presentAddCardView(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
 		AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
-
+		
 		self.presentingViewController = presentingViewController
+		acquiringViewConfiguration = configuration
+		
+		setupCardListDataProvider(for: customerKey)
+		
 		// create
-		let modalViewController = createCardListView()
+		let modalViewController = AddNewCardViewController.init(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
+		modalViewController.cardListDataSourceDelegate = self
 		modalViewController.scanerDataSource = configuration.scaner
 		modalViewController.alertViewHelper = configuration.alertViewHelper
 		
-		setupCardListDataProvider(for: customerKey)
-		cardsListView = modalViewController
-		// present
-		let presentationController = UINavigationController.init(rootViewController: modalViewController)
-		presentingViewController.present(presentationController, animated: true) {
-			_ = presentationController
-			self.cardListDataProvider.update()
+		modalViewController.completeHandler = { (result) in
+			completeHandler(result)
 		}
+		
+		// present
+		let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: presentingViewController)
+		modalViewController.transitioningDelegate = presentationController
+		presentingViewController.present(modalViewController, animated: true, completion: {
+			_ = presentationController
+		})
 	}
-	
 	
 	///
 	/// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
 	public func presentPaymentView(on presentingViewController: UIViewController,
 								   paymentData: PaymentInitData,
-								   configuration: AcquiringViewConfigration,
+								   configuration: AcquiringViewConfiguration,
 								   completionHandler: @escaping PaymentCompletionHandler)
 	{
 		onPaymentCompletionHandler = completionHandler
+		acquiringViewConfiguration = configuration
 		
 		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { view in
 			self.startPay(paymentData)
 		}
 		
-		acquiringPaymentView?.onTouchButtonPay = { [weak self] in
-			if let cardRequisites = self?.acquiringPaymentView?.cardRequisites(), let paymentId = self?.initResponse?.paymentId {
-				self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringPaymentView?.infoEmail())
+		acquiringView?.onTouchButtonPay = { [weak self] in
+			if let cardRequisites = self?.acquiringView?.cardRequisites(), let paymentId = self?.initResponse?.paymentId {
+				self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
 			}
 		}
 		
-		acquiringPaymentView?.onTouchButtonSBP = { [weak self] in
+		acquiringView?.onTouchButtonSBP = { [weak self] in
 			if let paymentId = self?.initResponse?.paymentId {
 				self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: .url, configuration: configuration)
 			}
@@ -207,13 +218,14 @@ public class AcquiringUISDK: NSObject {
 	public func presentPaymentView(on presentingViewController: UIViewController,
 								   paymentData: PaymentInitData,
 								   parentPatmentId: Int64,
-								   configuration: AcquiringViewConfigration,
+								   configuration: AcquiringViewConfiguration,
 								   completionHandler: @escaping PaymentCompletionHandler)
 	{
+		self.presentingViewController = presentingViewController
+		acquiringViewConfiguration = configuration
 		onPaymentCompletionHandler = completionHandler
-		startChargeWith(paymentData, parentPaymentId: parentPatmentId,
-						presentingViewController: presentingViewController,
-						configuration: configuration)
+		
+		startChargeWith(paymentData, parentPaymentId: parentPatmentId, presentingViewController: presentingViewController, configuration: configuration)
 	}
 	
 	///
@@ -231,19 +243,19 @@ public class AcquiringUISDK: NSObject {
 		return acquiringSdk.fpsEnabled
 	}
 		
-	public func presentPaymentSbpQrImage(on presentingViewController: UIViewController, paymentData: PaymentInitData, configuration: AcquiringViewConfigration, completionHandler: @escaping PaymentCompletionHandler) {
+	public func presentPaymentSbpQrImage(on presentingViewController: UIViewController, paymentData: PaymentInitData, configuration: AcquiringViewConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
 		presentPaymentSbp(on: presentingViewController, paymentInvoiceSource: .imageSVG, paymentData: paymentData, configuration: configuration) { (response) in
 			completionHandler(response)
 		}
 	}
 	
-	public func presentPaymentSbpUrl(on presentingViewController: UIViewController, paymentData: PaymentInitData, configuration: AcquiringViewConfigration, completionHandler: @escaping PaymentCompletionHandler) {
+	public func presentPaymentSbpUrl(on presentingViewController: UIViewController, paymentData: PaymentInitData, configuration: AcquiringViewConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
 		presentPaymentSbp(on: presentingViewController, paymentInvoiceSource: .url, paymentData: paymentData, configuration: configuration) { (response) in
 			completionHandler(response)
 		}
 	}
 	
-	private func presentPaymentSbp(on presentingViewController: UIViewController, paymentInvoiceSource: PaymentInvoiceSBPSourceType, paymentData: PaymentInitData, configuration: AcquiringViewConfigration, completionHandler: @escaping PaymentCompletionHandler) {
+	private func presentPaymentSbp(on presentingViewController: UIViewController, paymentInvoiceSource: PaymentInvoiceSBPSourceType, paymentData: PaymentInitData, configuration: AcquiringViewConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
 		onPaymentCompletionHandler = completionHandler
 		
 		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { view in
@@ -256,7 +268,7 @@ public class AcquiringUISDK: NSObject {
 					case .failure(let error):
 						self?.initResponse = nil
 						DispatchQueue.main.async {
-							self?.acquiringPaymentView?.closeVC(animated: true) {
+							self?.acquiringView?.closeVC(animated: true) {
 								completionHandler(.failure(error))
 							}
 						}
@@ -265,7 +277,7 @@ public class AcquiringUISDK: NSObject {
 		}
 	}
 	
-	public func presentPaymentQRCollector(on presentingViewController: UIViewController, configuration: AcquiringViewConfigration) {
+	public func presentPaymentQRCollector(on presentingViewController: UIViewController, configuration: AcquiringViewConfiguration) {
 		onPaymentCompletionHandler = nil
 		
 		if configuration.startViewHeight == nil {
@@ -319,7 +331,7 @@ public class AcquiringUISDK: NSObject {
 	}
 
 	/// 'Creating Payment Requests' https://developer.apple.com/library/archive/ApplePay_Guide/CreateRequest.html#//apple_ref/doc/uid/TP40014764-CH3-SW2
-	public func presentPaymentApplePay(on presentingViewController: UIViewController, paymentData data: PaymentInitData, viewConfiguration: AcquiringViewConfigration, paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
+	public func presentPaymentApplePay(on presentingViewController: UIViewController, paymentData data: PaymentInitData, viewConfiguration: AcquiringViewConfiguration, paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
 		let request = PKPaymentRequest.init()
 		request.merchantIdentifier = paymentConfiguration.merchantIdentifier
 		request.supportedNetworks = paymentConfiguration.supportedNetworks
@@ -349,7 +361,7 @@ public class AcquiringUISDK: NSObject {
 					case .failure(let error):
 						self?.initResponse = nil
 						DispatchQueue.main.async {
-							self?.acquiringPaymentView?.closeVC(animated: true) {
+							self?.acquiringView?.closeVC(animated: true) {
 								completionHandler(.failure(error))
 							}
 						}
@@ -360,7 +372,7 @@ public class AcquiringUISDK: NSObject {
 	
 	private func presentApplePayActivity(_ request: PKPaymentRequest) {
 		guard let viewController = PKPaymentAuthorizationViewController.init(paymentRequest: request) else {
-			self.acquiringPaymentView?.closeVC(animated: true) {
+			self.acquiringView?.closeVC(animated: true) {
 				let error = NSError(domain: AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
 									code: 0,
 									userInfo: nil)
@@ -373,7 +385,7 @@ public class AcquiringUISDK: NSObject {
 
 		viewController.delegate = self
 		
-		acquiringPaymentView?.presentVC(viewController, animated: true) { //[weak self] in
+		acquiringView?.presentVC(viewController, animated: true) { //[weak self] in
 			//self?.acquiringView.setViewHeight(viewController.view.frame.height)
 		}
 	}
@@ -384,7 +396,7 @@ public class AcquiringUISDK: NSObject {
 		})
 	}
 	
-	private func presentSbpActivity(paymentId: Int64, paymentInvoiceSource: PaymentInvoiceSBPSourceType, configuration: AcquiringViewConfigration) {
+	private func presentSbpActivity(paymentId: Int64, paymentInvoiceSource: PaymentInvoiceSBPSourceType, configuration: AcquiringViewConfiguration) {
 		let paymentInvoice = PaymentInvoiceQRCodeData.init(paymentId: paymentId, paymentInvoiceType: paymentInvoiceSource)
 		_ = acquiringSdk.paymentInvoiceQRCode(data: paymentInvoice) { [weak self] (response) in
 			switch response {
@@ -394,7 +406,7 @@ public class AcquiringUISDK: NSObject {
 							if UIApplication.shared.canOpenURL(url) {
 								UIApplication.shared.open(url, options: [:]) { (completion) in
 									self?.sbpWaitingIncominPayment(paymentId: paymentId, source: qrCodeResponse.qrCodeData, sourceType: paymentInvoiceSource)
-									self?.acquiringPaymentView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: "Выбор источника оплаты"))
+									self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: "Выбор источника оплаты"))
 								}
 							} else {
 								let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: [])
@@ -404,8 +416,8 @@ public class AcquiringUISDK: NSObject {
 									self?.sbpWaitingIncominPayment(paymentId: paymentId, source: qrCodeResponse.qrCodeData, sourceType: paymentInvoiceSource)
 								}
 								
-								self?.acquiringPaymentView?.presentVC(activityViewController, animated: true, completion: {
-									self?.acquiringPaymentView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: "Выбор источника оплаты"))
+								self?.acquiringView?.presentVC(activityViewController, animated: true, completion: {
+									self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: "Выбор источника оплаты"))
 								})
 							}
 						} else {
@@ -416,7 +428,7 @@ public class AcquiringUISDK: NSObject {
 				case .failure(let error):
 					self?.initResponse = nil
 					DispatchQueue.main.async {
-						self?.acquiringPaymentView?.changedStatus(.error(error))
+						self?.acquiringView?.changedStatus(.error(error))
 						
 						let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
 						if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
@@ -442,7 +454,7 @@ public class AcquiringUISDK: NSObject {
 			switch fetchStatus {
 				case .object(let response):
 					if completionStatus.contains(response.status) {
-						self?.acquiringPaymentView?.closeVC(animated: true, completion: {
+						self?.acquiringView?.closeVC(animated: true, completion: {
 							completionHandler?(.success(response))
 						})
 					}
@@ -453,9 +465,9 @@ public class AcquiringUISDK: NSObject {
 		}
 		
 		if sourceType == .url {
-			acquiringPaymentView?.changedStatus(.paymentWaitingSBPUrl(url: source, status: "Ожидание оплаты"))
+			acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: source, status: "Ожидание оплаты"))
 		} else {
-			acquiringPaymentView?.changedStatus(.paymentWaitingSBPQrCode(qrCode: source, status: "Ожидание оплаты"))
+			acquiringView?.changedStatus(.paymentWaitingSBPQrCode(qrCode: source, status: "Ожидание оплаты"))
 		}
 		
 		checkPaymentStatus?.fetchStatus(completionStatus: completionStatus)
@@ -465,15 +477,15 @@ public class AcquiringUISDK: NSObject {
 	
 	private func presentAcquiringPaymentView(presentingViewController: UIViewController,
 											 customerKey: String?,
-											 configuration: AcquiringViewConfigration,
-											 onPresenting: @escaping ((AcquiringViewConfiguration) -> Void) )
+											 configuration: AcquiringViewConfiguration,
+											 onPresenting: @escaping ((AcquiringView) -> Void) )
 	{
 		self.presentingViewController = presentingViewController
 		AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
 		// create
 		let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController", bundle: Bundle(for: AcquiringPaymentViewController.self))
-		
+
 		var fields: [AcquiringViewTableViewCells] = []
 		
 		var estimatedViewHeight: CGFloat = 300
@@ -502,11 +514,12 @@ public class AcquiringUISDK: NSObject {
 		modalViewController.modalMinHeight = estimatedViewHeight
 		modalViewController.setCells(fields)
 		
+		modalViewController.title = configuration.viewTitle
 		modalViewController.cardListDataSourceDelegate = self
 		modalViewController.scanerDataSource = configuration.scaner
 		modalViewController.alertViewHelper = configuration.alertViewHelper
 		
-		acquiringPaymentView = modalViewController
+		acquiringView = modalViewController
 		modalViewController.onTouchButtonShowCardList = { [weak self] in
 			if let viewController = self?.createCardListView() {
 				viewController.scanerDataSource = modalViewController.scanerDataSource
@@ -514,8 +527,8 @@ public class AcquiringUISDK: NSObject {
 				self?.cardsListView = viewController
 				
 				let cardListNController = UINavigationController.init(rootViewController: viewController)
-				if self?.acquiringPaymentView != nil {
-					self?.acquiringPaymentView?.presentVC(cardListNController, animated: true, completion: nil)
+				if self?.acquiringView != nil {
+					self?.acquiringView?.presentVC(cardListNController, animated: true, completion: nil)
 				} else {
 					self?.presentingViewController?.present(cardListNController, animated: true, completion: nil)
 				}
@@ -550,13 +563,13 @@ public class AcquiringUISDK: NSObject {
 				case .success(let initResponse):
 					self?.initResponse = initResponse
 					DispatchQueue.main.async {
-						self?.acquiringPaymentView?.changedStatus(.ready)
+						self?.acquiringView?.changedStatus(.ready)
 					}
 					
 				case .failure(let error):
 					self?.initResponse = nil
 					DispatchQueue.main.async {
-						self?.acquiringPaymentView?.closeVC(animated: true) {
+						self?.acquiringView?.closeVC(animated: true) {
 							self?.onPaymentCompletionHandler?(.failure(error))
 						}
 					}
@@ -565,7 +578,7 @@ public class AcquiringUISDK: NSObject {
 	}
 	
 	private func initPay(paymentData: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) {
-		acquiringPaymentView?.changedStatus(.initWaiting)
+		acquiringView?.changedStatus(.initWaiting)
 		_ = acquiringSdk.paymentInit(data: paymentData) { (response) in
 			completionHandler(response)
 		}
@@ -580,9 +593,9 @@ public class AcquiringUISDK: NSObject {
 				case .success(let successResponse):
 					// завершаем оплату
 					DispatchQueue.main.async {
-						if let cardRequisites = self?.acquiringPaymentView?.cardRequisites() {
+						if let cardRequisites = self?.acquiringView?.cardRequisites() {
 							var requestData = PaymentFinishRequestData.init(paymentId: successResponse.paymentId, paymentSource: cardRequisites)
-							requestData.setInfoEmail(self?.acquiringPaymentView?.infoEmail())
+							requestData.setInfoEmail(self?.acquiringView?.infoEmail())
 							
 							self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { (finishResponse) in
 								completionHandler(finishResponse)
@@ -596,13 +609,43 @@ public class AcquiringUISDK: NSObject {
 		}//initPay
 	}
 	
+	// MARK: Pay by cardId and card requisites
+	
+	public func pay(on presentingViewController: UIViewController,
+					initPaymentData: PaymentInitData,
+					cardRequisites: PaymentSourceData,
+					infoEmail: String?,
+					configuration: AcquiringViewConfiguration,
+					completionHandler: @escaping PaymentCompletionHandler)
+	{
+		self.presentingViewController = presentingViewController
+		startPaymentInitData = initPaymentData
+		acquiringViewConfiguration = configuration
+		onPaymentCompletionHandler = completionHandler
+		
+		initPay(paymentData: initPaymentData) { [weak self] (response) in
+			switch response {
+				case .success(let initResponse):
+					self?.initResponse = initResponse
+					self?.finishPay(cardRequisites: cardRequisites, paymentId: initResponse.paymentId, infoEmail: infoEmail)
+					DispatchQueue.main.async {
+						self?.acquiringView?.changedStatus(.ready)
+					}
+				
+				case .failure(let error):
+					self?.initResponse = nil
+					DispatchQueue.main.async {
+						self?.acquiringView?.closeVC(animated: true) {
+							self?.onPaymentCompletionHandler?(.failure(error))
+						}
+				}
+			}
+		}//initPay
+	}
+	
 	// MARK: Charge
 	
-	private func startChargeWith(_ paymentData: PaymentInitData,
-								 parentPaymentId: Int64,
-								 presentingViewController: UIViewController,
-								 configuration: AcquiringViewConfigration)
-	{
+	private func startChargeWith(_ paymentData: PaymentInitData, parentPaymentId: Int64, presentingViewController: UIViewController, configuration: AcquiringViewConfiguration) {
 		var data = paymentData
 		data.addPaymentData(["chargeFlag": "true"])
 		
@@ -611,13 +654,13 @@ public class AcquiringUISDK: NSObject {
 				case .success(let successInitResponse):
 					self.initResponse = successInitResponse
 					DispatchQueue.main.async {
-						let chargeData = PaymentChargeRequestData.init(paymentId: successInitResponse.paymentId, parentPatemntId: parentPaymentId)
+						let chargeData = PaymentChargeRequestData.init(paymentId: successInitResponse.paymentId, parentPaymentId: parentPaymentId)
 						_ = self.acquiringSdk.chargePayment(data: chargeData, completionHandler: { (chargeResponse) in
 							switch chargeResponse {
 								case .success(let successChargeResponse):
 									DispatchQueue.main.async { [weak self] in
-										if self?.acquiringPaymentView != nil {
-											self?.acquiringPaymentView?.closeVC(animated: true, completion: {
+										if self?.acquiringView != nil {
+											self?.acquiringView?.closeVC(animated: true, completion: {
 												self?.onPaymentCompletionHandler?(.success(successChargeResponse))
 											})
 										} else {
@@ -632,37 +675,37 @@ public class AcquiringUISDK: NSObject {
 										data.savingAsParentPayment = true
 										DispatchQueue.main.async {
 											var chargePaymentId = successInitResponse.paymentId
-											self.presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: configuration) { view in
-												self.acquiringPaymentView?.changedStatus(.initWaiting)
+											self.presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { view in
+												self.acquiringView?.changedStatus(.initWaiting)
 												self.initPay(paymentData: data, completionHandler: { (initResponse) in
 													switch initResponse {
 														case .success(let initResponseSuccess):
 															self.initResponse = successInitResponse
 															DispatchQueue.main.async { [weak self] in
 																chargePaymentId = initResponseSuccess.paymentId
-																self?.acquiringPaymentView?.changedStatus(.paymentWainingCVC(cardParentId: parentPaymentId))
+																self?.acquiringView?.changedStatus(.paymentWainingCVC(cardParentId: parentPaymentId))
 														}
 														
 														case .failure(let error):
 															DispatchQueue.main.async { [weak self] in
-																self?.acquiringPaymentView?.closeVC(animated: true) {
+																self?.acquiringView?.closeVC(animated: true) {
 																	self?.onPaymentCompletionHandler?(.failure(error))
 																}
 														}
 													}
 												})
 												
-												self.acquiringPaymentView?.onTouchButtonPay = { [weak self] in
-													if let cardRequisites = self?.acquiringPaymentView?.cardRequisites() {
-														self?.finishPay(cardRequisites: cardRequisites, paymentId: chargePaymentId, infoEmail: self?.acquiringPaymentView?.infoEmail())
+												self.acquiringView?.onTouchButtonPay = { [weak self] in
+													if let cardRequisites = self?.acquiringView?.cardRequisites() {
+														self?.finishPay(cardRequisites: cardRequisites, paymentId: chargePaymentId, infoEmail: self?.acquiringView?.infoEmail())
 													}
 												}
 											}
 										}
 									} else {
 										DispatchQueue.main.async { [weak self] in
-											if self?.acquiringPaymentView != nil {
-												self?.acquiringPaymentView?.closeVC(animated: true, completion: {
+											if self?.acquiringView != nil {
+												self?.acquiringView?.closeVC(animated: true, completion: {
 													self?.onPaymentCompletionHandler?(.failure(error))
 												})
 											} else {
@@ -677,8 +720,8 @@ public class AcquiringUISDK: NSObject {
 				case .failure(let error):
 					self.initResponse = nil
 					DispatchQueue.main.async { [weak self] in
-						if self?.acquiringPaymentView != nil {
-							self?.acquiringPaymentView?.closeVC(animated: true, completion: {
+						if self?.acquiringView != nil {
+							self?.acquiringView?.closeVC(animated: true, completion: {
 								self?.onPaymentCompletionHandler?(.failure(error))
 							})
 						} else {
@@ -695,21 +738,29 @@ public class AcquiringUISDK: NSObject {
 	private func finishPay(cardRequisites: PaymentSourceData, paymentId: Int64, infoEmail: String?) {
 		var requestData = PaymentFinishRequestData.init(paymentId: paymentId, paymentSource: cardRequisites)
 		requestData.setInfoEmail(infoEmail)
-		acquiringPaymentView?.changedStatus(.paymentWaiting(status: nil))
+		acquiringView?.changedStatus(.paymentWaiting(status: nil))
 
 		let completion = onPaymentCompletionHandler
 		check3dsVersionAndFinishAuthorize(requestData: requestData) { [weak self] (response) in
 			switch response {
 				case .success(let paymentResponse):
 					DispatchQueue.main.async { [weak self] in
-						self?.acquiringPaymentView?.closeVC(animated: true) {
+						if let view = self?.acquiringView {
+							view.closeVC(animated: true) {
+								completion?(.success(paymentResponse))
+							}
+						} else {
 							completion?(.success(paymentResponse))
 						}
 					}
 				
 				case .failure(let error):
 					DispatchQueue.main.async { [weak self] in
-						self?.acquiringPaymentView?.closeVC(animated: true) {
+						if let view = self?.acquiringView {
+							view.closeVC(animated: true) {
+								completion?(.failure(error))
+							}
+						} else {
 							completion?(.failure(error))
 						}
 					}
@@ -728,7 +779,7 @@ public class AcquiringUISDK: NSObject {
 							completionHandler(response)
 						}
 						
-						self.present3DSChecking(with: confirmation3DSData, presenter: self.acquiringPaymentView) { [weak self] in
+						self.present3DSChecking(with: confirmation3DSData, presenter: self.acquiringView) { [weak self] in
 							self?.cancelPayment()
 						}
 					}
@@ -739,7 +790,7 @@ public class AcquiringUISDK: NSObject {
 							completionHandler(response)
 						}
 						
-						self.present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: treeDSmessageVersion, presenter: self.acquiringPaymentView) { [weak self] in
+						self.present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: treeDSmessageVersion, presenter: self.acquiringView) { [weak self] in
 							self?.cancelPayment()
 						}
 					}
@@ -781,11 +832,11 @@ public class AcquiringUISDK: NSObject {
 					// сбор информации для прохождения 3DS v2
 					if let tdsServerTransID = checkResult.tdsServerTransID, let threeDSMethodURL = checkResult.threeDSMethodURL {
 						// вызываем web view для проверки девайса
-						self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString)
+						self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
 						// собираем информацию о девайсе
 						let screenSize = UIScreen.main.bounds.size
 						let deviceInfo = DeviceInfoParams.init(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
-															   languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru"	,
+															   languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
 															   screenWidth: Int(screenSize.width),
 															   screenHeight: Int(screenSize.height))
 						finistRequestData.setDeviceInfo(info: deviceInfo)
@@ -803,14 +854,19 @@ public class AcquiringUISDK: NSObject {
 		})
 	}
 	
-	private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String) {
+	private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
 		let urlData = Checking3DSURLData.init(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
 		guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
 			return
 		}
 		
-		DispatchQueue.main.async { [weak self] in
-			self?.acquiringPaymentView?.checkDeviceFor3DSData(with: request)
+		DispatchQueue.main.async {
+			if presenter != nil {
+				presenter?.checkDeviceFor3DSData(with: request)
+			} else {
+				self.webViewFor3DSChecking = UIWebView.init()
+				self.webViewFor3DSChecking?.loadRequest(request)
+			}
 		}
 	}
 	
@@ -831,47 +887,52 @@ public class AcquiringUISDK: NSObject {
 		onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse.init(success: false, errorCode: 0)))
 	}
 	
-	private func present3DSChecking(with data: Confirmation3DSData, presenter: AcquiringViewConfiguration?, onCancel: @escaping (() -> Void)) {
-		guard let request = try? acquiringSdk.createConfirmation3DSRequest(data: data) else {
-			return
-		}
-		
+	fileprivate func presentWebView(on presenter: AcquiringView?, load request: URLRequest, onCancel: @escaping (() -> Void)) {
 		let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
 		webViewController = viewController
-		viewController.onCancel = {
-			presenter?.closeVC(animated: true) {
+		viewController.onCancel = { [weak self] in
+			if self?.acquiringView != nil {
+				self?.acquiringView?.closeVC(animated: true) {
+					onCancel()
+				}
+			} else {
 				onCancel()
 			}
 		}
 		
-		presenter?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
+		let onPresenting = {
 			viewController.webView.navigationDelegate = self
 			viewController.webView.load(request)
-		})
+		}
 		
+		if acquiringView != nil {
+			acquiringView?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
+				onPresenting()
+			})
+		} else {
+			presentingViewController?.present(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
+				onPresenting()
+			})
+		}
 	}
 	
-	private func present3DSCheckingACS(with data: Confirmation3DSDataACS, messageVersion: String, presenter: AcquiringViewConfiguration?, onCancel: @escaping (() -> Void)) {
+	private func present3DSChecking(with data: Confirmation3DSData, presenter: AcquiringView?, onCancel: @escaping (() -> Void)) {
+		guard let request = try? acquiringSdk.createConfirmation3DSRequest(data: data) else {
+			return
+		}
+
+		presentWebView(on: presenter, load: request, onCancel: onCancel)
+	}
+
+	private func present3DSCheckingACS(with data: Confirmation3DSDataACS, messageVersion: String, presenter: AcquiringView?, onCancel: @escaping (() -> Void)) {
 		guard let request = try? acquiringSdk.createConfirmation3DSRequestACS(data: data, messageVersion: messageVersion) else {
 			return
 		}
 		
-		let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
-		webViewController = viewController
-		viewController.onCancel = {
-			presenter?.closeVC(animated: true) {
-				onCancel()
-			}
-		}
-		
-		presenter?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
-			viewController.webView.navigationDelegate = self
-			viewController.webView.load(request)
-		})
-		
+		presentWebView(on: presenter, load: request, onCancel: onCancel)
 	}
 	
-	private func presentRandomAmounChecking(with requestKey: String, presenter: AcquiringViewConfiguration?, alertViewHelper: AcquiringAlertViewProtocol?, onCancel: @escaping (() -> Void)) {
+	private func presentRandomAmounChecking(with requestKey: String, presenter: AcquiringView?, alertViewHelper: AcquiringAlertViewProtocol?, onCancel: @escaping (() -> Void)) {
 		let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: Bundle(for: RandomAmounCheckingViewController.self))
 		
 		viewController.onCancel = {
@@ -891,7 +952,6 @@ public class AcquiringUISDK: NSObject {
 							})
 							
 						case .failure(let error):
-							
 							let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
 							if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
 								self?.presentingViewController?.present(alert, animated: true, completion: {
@@ -907,9 +967,12 @@ public class AcquiringUISDK: NSObject {
 			})
 		}
 		
-		presenter?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: {
-			
-		})
+		if acquiringView != nil {
+			acquiringView?.presentVC(UINavigationController.init(rootViewController: viewController), animated: true, completion: nil)
+		} else {
+			presentingViewController?.present(UINavigationController.init(rootViewController: viewController), animated: true, completion: nil)
+		}
+		
 	}
 	
 }
@@ -921,15 +984,19 @@ extension AcquiringUISDK: CardListDataSourceStatusListener {
 	
 	public func cardsListUpdated(_ status: FetchStatus<[PaymentCard]>) {
 		cardsListView?.cardsListUpdated(status)
-		acquiringPaymentView?.cardsListUpdated(status)
+		acquiringView?.cardsListUpdated(status)
 	}
 	
 }
 
 
 extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
-		
+	
 	// MARK: AcquiringPaymentCardLidtDataSourceDelegate
+	
+	public func customerKey() -> String {
+		return cardListDataProvider.customerKey
+	}
 	
 	public func cardListNumberOfCards() -> Int {
 		return cardListDataProvider.count()
@@ -964,7 +1031,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 		}
 	}
 	
-	private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringViewConfiguration, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+	private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
 		switch confirmationResponse.responseStatus {
 			case .needConfirmation3DS(let confirmation3DSData):
 				on3DSCheckingAddCardCompletionHandler = { (response) in
@@ -1010,7 +1077,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 		}
 	}
 	
-	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
+	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
 		
 		let checkType: String
 		if let value = addCardNeedSetCheckTypeHandler?() {
@@ -1035,7 +1102,35 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 									})
 
 	}
-
+	
+	public func presentCardList(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration) {
+		AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
+		
+		if acquiringViewConfiguration == nil {
+			acquiringViewConfiguration = configuration
+		}
+		
+		if self.presentingViewController == nil {
+			self.presentingViewController = presentingViewController
+		}
+		
+		// create
+		let modalViewController = createCardListView()
+		modalViewController.title = configuration.viewTitle
+		
+		modalViewController.scanerDataSource = configuration.scaner
+		modalViewController.alertViewHelper = configuration.alertViewHelper
+		
+		setupCardListDataProvider(for: customerKey)
+		cardsListView = modalViewController
+		// present
+		let presentationController = UINavigationController.init(rootViewController: modalViewController)
+		presentingViewController.present(presentationController, animated: true) {
+			_ = presentationController
+			self.cardListDataProvider.update()
+		}
+	}
+	
 }
 
 extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
@@ -1045,11 +1140,11 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 	public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
 		controller.dismiss(animated: true) {
 			if let result = self.finishPaymentStatusResponse {
-				self.acquiringPaymentView?.closeVC(animated: true) {
+				self.acquiringView?.closeVC(animated: true) {
 					self.onPaymentCompletionHandler?(result)
 				}
 			} else {
-				self.acquiringPaymentView?.closeVC(animated: true) {
+				self.acquiringView?.closeVC(animated: true) {
 					self.cancelPayment()
 				}
 			}

@@ -23,6 +23,7 @@ import TinkoffASDKCore
 
 /// получение информации для отрисовки списка карт
 protocol AcquiringCardListDataSourceDelegate: class {
+	func customerKey() -> String
 	/// Количество доступных, активных карт
 	func cardListNumberOfCards() -> Int
 	/// Статус обновления списока карт
@@ -37,8 +38,10 @@ protocol AcquiringCardListDataSourceDelegate: class {
 	func cardListReloadData()
 	/// Деактивировать карту
 	func cardListDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((PaymentCard?) -> Void)?)
-	/// Добаить карту
-	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringViewConfiguration, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+	/// Добавить карту
+	func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+	/// Показать экран добавления карты
+	func presentAddCardView(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
 }
 
 
@@ -80,7 +83,7 @@ enum AcquiringViewTableViewCells {
 }
 
 
-protocol AcquiringViewConfiguration: class {
+protocol AcquiringView: class {
 	
 	func setCells(_ value: [AcquiringViewTableViewCells])
 	
@@ -107,7 +110,7 @@ protocol AcquiringViewConfiguration: class {
 
 class AcquiringPaymentViewController: PopUpViewContoller {
 	
-	// MARK: AcquiringViewConfiguration
+	// MARK: AcquiringView
 	var onTouchButtonShowCardList: (() -> Void)?
 	var onTouchButtonPay: (() -> Void)?
 	var onTouchButtonSBP: (() -> Void)?
@@ -502,9 +505,9 @@ extension AcquiringPaymentViewController: CardRequisitesScanerProtocol {
 }
 
 
-extension AcquiringPaymentViewController: AcquiringViewConfiguration {
+extension AcquiringPaymentViewController: AcquiringView {
 		
-	// MARK: AcquiringViewConfiguration
+	// MARK: AcquiringView
 	
 	func changedStatus(_ status: AcquiringViewStatus) {
 		paymentStatus = status

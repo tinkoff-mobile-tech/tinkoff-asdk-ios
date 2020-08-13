@@ -93,15 +93,14 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 	private var dataSource: [PaymentCard] = []
 	private weak var sdk: AcquiringSdk?
 	public private(set) var customerKey: String!
-	
+	public weak var dataSourceStatusListener: CardListDataSourceStatusListener?
+
 	public func update() {
 		switch fetchStatus {
 		case .loading:
 			break
 		default:
-			fetch(startHandler: nil) { (cards, errors) in
-				//
-			}
+			fetch(startHandler: nil) { (cards, errors) in }
 		}
 	}
 	
@@ -257,8 +256,6 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 			return false
 		}
 	}
-	
-	public weak var dataSourceStatusListener: CardListDataSourceStatusListener?
 	
 }
 

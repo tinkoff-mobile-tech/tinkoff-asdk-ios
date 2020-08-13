@@ -1,6 +1,6 @@
 PODS:
-  - TinkoffASDKCore (2.0.1)
-  - TinkoffASDKUI (2.0.1):
+  - TinkoffASDKCore (2.0.2)
+  - TinkoffASDKUI (2.0.2):
     - TinkoffASDKCore
 
 DEPENDENCIES:
@@ -14,8 +14,8 @@ EXTERNAL SOURCES:
     :path: "../TinkoffASDKUI/"
 
 SPEC CHECKSUMS:
-  TinkoffASDKCore: deebae81758735604d9a7f094854cb01b98de455
-  TinkoffASDKUI: 61a66c9bcf420b3589420745646cfeed5867e88f
+  TinkoffASDKCore: cf884186de8813275fe4a6c85437a55f9ac893b9
+  TinkoffASDKUI: 106d13d19b6c33a9158fd82161ee507f9e51354f
 
 PODFILE CHECKSUM: 3ef6d03e0389bc187ffb82685c06a76f819597f8
 

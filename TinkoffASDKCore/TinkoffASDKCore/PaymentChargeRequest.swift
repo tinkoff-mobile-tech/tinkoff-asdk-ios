@@ -25,22 +25,22 @@ public struct PaymentChargeRequestData: Codable {
 	/// Номер заказа в системе Продавца
 	public var paymentId: Int64
 	/// Родительский платеж
-	public var parentPatementId: Int64
+	public var parentPaymentId: Int64
 	
-	public init(paymentId: Int64, parentPatemntId: Int64) {
+	public init(paymentId: Int64, parentPaymentId: Int64) {
 		self.paymentId = paymentId
-		self.parentPatementId = parentPatemntId
+		self.parentPaymentId = parentPaymentId
 	}
 	
 	public enum CodingKeys: String, CodingKey {
 		case paymentId = "PaymentId"
-		case parentPatementId = "RebillId"
+		case parentPaymentId = "RebillId"
 	}
 	
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		paymentId = try container.decode(Int64.self, forKey: .paymentId)
-		parentPatementId = try container.decode(Int64.self, forKey: .parentPatementId)
+		parentPaymentId = try container.decode(Int64.self, forKey: .parentPaymentId)
 	}
 	
 }
@@ -59,7 +59,7 @@ class PaymentChargeRequest: RequestOperation, AcquiringRequestTokenParams {
 	///
 	/// отмечаем параметры которые участвуют в вычислении `token`
 	var tokenParamsKey: Set<String> = [PaymentChargeRequestData.CodingKeys.paymentId.rawValue,
-									   PaymentChargeRequestData.CodingKeys.parentPatementId.rawValue]
+									   PaymentChargeRequestData.CodingKeys.parentPaymentId.rawValue]
 	
 	///
 	/// - Parameter data: `FinishRequestData`

@@ -53,7 +53,7 @@ class IntegrationTests: XCTestCase {
 		{
 		"Amount": 20000,
 		"OrderId": \(arc4random()),
-		"CustomerKey": \"\(StageTestData.customerKey)\",
+		"CustomerKey": \"\(ASDKStageTestData.customerKey)\",
 		"Receipt": {
 			"Email": "a@test.ru",
 			"Items": [
@@ -116,7 +116,7 @@ class IntegrationTests: XCTestCase {
 		{
 			"Amount": \(paymenyAmount),
 			"OrderId": \(arc4random()),
-			"CustomerKey": \"\(StageTestData.customerKey)\",
+			"CustomerKey": \"\(ASDKStageTestData.customerKey)\",
 			"Receipt": {
 				"Email": "a@test.ru",
 				"Items":[
@@ -202,7 +202,7 @@ class IntegrationTests: XCTestCase {
 		{
 			"Amount": 20000,
 			"OrderId": \(arc4random()),
-			"CustomerKey": \"\(StageTestData.customerKey)\",
+			"CustomerKey": \"\(ASDKStageTestData.customerKey)\",
 			"Receipt": {
 			"Email": "test@gmail.com",
 			"Items": [ {

@@ -72,3 +72,7 @@
 "status.showEmailField.off" = "Скрыто";
 "status.alert.on" = "Acquiring SDK";
 "status.alert.off" = "Системные";
+
+// alert
+"alert.title.cardSuccessAdded" = "Карта добавлена";
+"alert.message.addingCardCancel" = "Операция отменена";

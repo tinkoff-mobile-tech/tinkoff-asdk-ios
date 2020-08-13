@@ -30,7 +30,7 @@ enum AddCardTableViewCells {
 
 class AddNewCardViewController: PopUpViewContoller {
 
-	// MARK: AcquiringViewConfiguration
+	// MARK: AcquiringView
 	
 	var onTouchButtonShowCardList: (() -> Void)?
 	var onTouchButtonPay: (() -> Void)?
@@ -159,9 +159,9 @@ extension AddNewCardViewController: CardRequisitesScanerProtocol {
 }
 
 
-extension AddNewCardViewController: AcquiringViewConfiguration {
+extension AddNewCardViewController: AcquiringView {
 
-	// MARK: AcquiringViewConfiguration
+	// MARK: AcquiringView
 	
 	func changedStatus(_ status: AcquiringViewStatus) {
 		

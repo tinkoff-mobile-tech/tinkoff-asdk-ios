@@ -73,3 +73,6 @@
 "status.alert.on" = "Acquiring SDK";
 "status.alert.off" = "System";
 
+// alert
+"alert.title.cardSuccessAdded" = "Success";
+"alert.message.addingCardCancel" = "The operation was cancelled";
