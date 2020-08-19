@@ -22,6 +22,7 @@ import Foundation
 public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 	
 	public typealias ObjectType = PaymentStatusResponse
+	
 	/// Текущее состояние сервиса проверки
 	public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknow
 	var queryStatus: Cancellable?
@@ -53,9 +54,7 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 		if case .loading = fetchStatus { return }
 		
 		fetch(startHandler: nil) { [weak self] (payment, errors) in
-			if let paymentResponse = payment, completionStatus.contains(paymentResponse.status) {
-				return
-			}
+			if let paymentResponse = payment, completionStatus.contains(paymentResponse.status) { return }
 			
 			if let timeInterval = self?.updateTimeInterval {
 				DispatchQueue.main.asyncAfter(deadline: .now() + timeInterval) { [weak self] in

@@ -11,6 +11,9 @@
 		2C193C4C243CB35000058DDC /* PaymentQRCodeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C193C4B243CB35000058DDC /* PaymentQRCodeRequest.swift */; };
 		2C25379C2385682B000B9724 /* PaymentStatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C25379B2385682B000B9724 /* PaymentStatusRequest.swift */; };
 		2C25379E23856FAE000B9724 /* PaymentCancelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C25379D23856FAE000B9724 /* PaymentCancelRequest.swift */; };
+		2C2A05AA24EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A05A924EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift */; };
+		2C2A05AC24EBED6800E5242E /* HTTPResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A05AB24EBED6800E5242E /* HTTPResponseError.swift */; };
+		2C2A05AE24EBFAF800E5242E /* AcquiringSdkConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A05AD24EBFAF800E5242E /* AcquiringSdkConfiguration.swift */; };
 		2C2E311423B4D59000AF9256 /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2A096238D5AD5008F8045 /* StageTestData.swift */; };
 		2C3B062A23717F9F003F100D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3B062923717F9F003F100D /* Utils.swift */; };
 		2C65607B2476932B00DEA4A9 /* CheckRandomAmountRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C65607A2476932B00DEA4A9 /* CheckRandomAmountRequest.swift */; };
@@ -49,6 +52,9 @@
 		2C193C4B243CB35000058DDC /* PaymentQRCodeRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentQRCodeRequest.swift; sourceTree = "<group>"; };
 		2C25379B2385682B000B9724 /* PaymentStatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentStatusRequest.swift; sourceTree = "<group>"; };
 		2C25379D23856FAE000B9724 /* PaymentCancelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentCancelRequest.swift; sourceTree = "<group>"; };
+		2C2A05A924EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+TinkoffASDKCore.swift"; sourceTree = "<group>"; };
+		2C2A05AB24EBED6800E5242E /* HTTPResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseError.swift; sourceTree = "<group>"; };
+		2C2A05AD24EBFAF800E5242E /* AcquiringSdkConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcquiringSdkConfiguration.swift; sourceTree = "<group>"; };
 		2C3B062923717F9F003F100D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		2C65607A2476932B00DEA4A9 /* CheckRandomAmountRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckRandomAmountRequest.swift; sourceTree = "<group>"; };
 		2C70ADE42367328400E74FEB /* AcquiringModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcquiringModels.swift; sourceTree = "<group>"; };
@@ -136,12 +142,15 @@
 				2C70ADE32367325D00E74FEB /* Models */,
 				2CB5F86E2360A9A100208488 /* Request */,
 				2CB5F86A23603DD000208488 /* AcquiringSdk.swift */,
+				2C2A05AD24EBFAF800E5242E /* AcquiringSdkConfiguration.swift */,
+				2C9FE701248F9022009E9649 /* AcquiringLogger.swift */,
 				2C71D8F7236AEFB00014EAFF /* NetworkTransport.swift */,
 				2C3B062923717F9F003F100D /* Utils.swift */,
+				2C2A05AB24EBED6800E5242E /* HTTPResponseError.swift */,
+				2C2A05A924EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift */,
 				2C88015123914355007C8BFE /* Localizable.strings */,
 				2CB5F85323603D9F00208488 /* Info.plist */,
 				2CB5F85223603D9F00208488 /* TinkoffASDKCore.h */,
-				2C9FE701248F9022009E9649 /* AcquiringLogger.swift */,
 			);
 			path = TinkoffASDKCore;
 			sourceTree = "<group>";
@@ -292,9 +301,11 @@
 				2C65607B2476932B00DEA4A9 /* CheckRandomAmountRequest.swift in Sources */,
 				2C25379E23856FAE000B9724 /* PaymentCancelRequest.swift in Sources */,
 				2C9AECDA23840D8300ACEAA0 /* PaymentChargeRequest.swift in Sources */,
+				2C2A05AC24EBED6800E5242E /* HTTPResponseError.swift in Sources */,
 				2C9FE704248F90D3009E9649 /* AcquiringRequest.swift in Sources */,
 				2C71D8F8236AEFB00014EAFF /* NetworkTransport.swift in Sources */,
 				2C3B062A23717F9F003F100D /* Utils.swift in Sources */,
+				2C2A05AA24EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift in Sources */,
 				2C25379C2385682B000B9724 /* PaymentStatusRequest.swift in Sources */,
 				2C9FE702248F9022009E9649 /* AcquiringLogger.swift in Sources */,
 				2CB5F8702360A9FC00208488 /* PaymentInitRequest.swift in Sources */,
@@ -305,6 +316,7 @@
 				2C16EAF823B0DB2E00A5C771 /* CardListDataProvider.swift in Sources */,
 				2CF1EDB1240F9CCB00155665 /* Check3dsVersionRequest.swift in Sources */,
 				2C193C4C243CB35000058DDC /* PaymentQRCodeRequest.swift in Sources */,
+				2C2A05AE24EBFAF800E5242E /* AcquiringSdkConfiguration.swift in Sources */,
 				2C2E311423B4D59000AF9256 /* StageTestData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -472,7 +484,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -485,7 +497,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = tinkoff.ASDKCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -501,7 +513,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -514,7 +526,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = tinkoff.ASDKCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

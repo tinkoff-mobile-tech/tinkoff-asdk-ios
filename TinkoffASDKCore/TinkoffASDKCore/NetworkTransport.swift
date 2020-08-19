@@ -19,21 +19,14 @@
 
 import Foundation
 
-// MARK: - NetworkTransport
-
-public protocol NetworkTransportResponseDelegate {
-	
-	func networkTransport(didCompleteRawTaskForRequest request: URLRequest, withData data: Data, response: URLResponse, error: Error?) throws -> ResponseOperation
-	
-}
-
+// MARK: NetworkTransport
 
 protocol NetworkTransport: class {
 	
 	var logger: LoggerDelegate? { get set }
-	var confirmation3DSTerminationURL: URL { get set }
-	var confirmation3DSTerminationV2URL: URL { get set }
-	var complete3DSMethodV2URL: URL { get set }
+	var confirmation3DSTerminationURL: URL { get }
+	var confirmation3DSTerminationV2URL: URL { get }
+	var complete3DSMethodV2URL: URL { get }
 	
 	func createConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest
 	func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest
@@ -45,6 +38,7 @@ protocol NetworkTransport: class {
 
 extension NetworkTransport {
 
+	/// используется для большинства запросов, обработка ответа происходит по стандартному сценарию, responseDelegate = nil
 	func send<Operation: RequestOperation, Response: ResponseOperation>(operation: Operation, completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable {
 		return send(operation: operation, responseDelegate: nil) { (response) in
 			completionHandler(response)
@@ -53,6 +47,18 @@ extension NetworkTransport {
 	
 }
 
+// MARK: NetworkTransportResponseDelegate
+
+public protocol NetworkTransportResponseDelegate {
+	
+	/// Делегирвоание обработки ответа сервера
+	/// NetworkTransport проверяет ошибки сети, HTTP Status Code `200..<300` и наличие данных
+	/// далее передает обработку данных делегату
+	func networkTransport(didCompleteRawTaskForRequest request: URLRequest, withData data: Data, response: URLResponse, error: Error?) throws -> ResponseOperation
+	
+}
+
+// MARK: AcquaringNetworkTransport
 
 final class AcquaringNetworkTransport: NetworkTransport {
 	
@@ -62,7 +68,8 @@ final class AcquaringNetworkTransport: NetworkTransport {
 	private let session: URLSession
 	private let serializationFormat = JSONSerializationFormat.self
 	private let deviceInfo: DeviceInfo
-	// Логирование работы, реализаия `ASDKApiLoggerDelegate`
+	
+	/// Логирование работы, реализаия `ASDKApiLoggerDelegate`
 	weak var logger: LoggerDelegate?
 	
 	/// Экземпляр класа для работы с сетью, создает сетевые запросы, разбирает полученные данные от сервера.
@@ -91,15 +98,28 @@ final class AcquaringNetworkTransport: NetworkTransport {
 		return request
 	}
 	
-	lazy var confirmation3DSTerminationURL: URL = {
+	/// Во время прохождения 3ds v1 WKNavigationDelegate отслеживает редиректы формы 3ds,
+	/// этот url считается конечным в сценарии прохождения 3ds
+	///
+	/// - Returns: URL
+	lazy private(set) var confirmation3DSTerminationURL: URL = {
 		return self.urlDomain.appendingPathComponent(self.apiPathV1).appendingPathComponent("Submit3DSAuthorization")
 	}()
-	
-	lazy var confirmation3DSTerminationV2URL: URL = {
+
+	/// Во время проверки `threeDSMethodCheckURL` девайса и параметров оплаты, какой версией
+	/// метода 3ds нужно воспользоваться, этот url используется как параметр `cresCallbackUrl` url завершения
+	/// сценария прохождения 3ds
+	///
+	/// - Returns: URL
+	lazy private(set) var confirmation3DSTerminationV2URL: URL = {
 		return self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Submit3DSAuthorizationV2")
 	}()
 	
-	lazy var complete3DSMethodV2URL: URL = {
+	/// Во премя прохождения 3ds v2 (ACS) WKNavigationDelegate отслеживает редиректы формы 3ds,
+	/// этот url считается конечным в сценарии прохождения 3ds
+	///
+	/// - Returns: URL
+	lazy private(set) var complete3DSMethodV2URL: URL = {
 		return self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Complete3DSMethodv2")
 	}()
 	
@@ -140,6 +160,12 @@ final class AcquaringNetworkTransport: NetworkTransport {
 		return request
 	}
 	
+	/// Для прохождения 3ds v2 (ACS) нужно подготовить URLRequest для загрузки формы подтверждения в webview
+	///
+	/// - Parameters:
+	///   - requestData: параметры `Confirmation3DSDataACS`
+	///   - messageVersion: точная версия 3ds в виде строки.
+	/// - Returns:  throws `URLRequest`
 	func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
 		guard let requestURL = URL.init(string: requestData.acsUrl) else {
 			throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: Bundle(for: type(of: self)),
@@ -157,6 +183,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
 		return request
 	}
 	
+	/// Для прохождения 3ds v1 нужно подготовить URLRequest для загрузки формы подтверждения в webview
+	///
+	/// - Parameters:
+	///   - requestData: параметры `Checking3DSURLData`
+	/// - Returns:  throws `URLRequest`
 	func createChecking3DSURL(requestData: Checking3DSURLData) throws -> URLRequest {
 		guard let requestURL = URL.init(string: requestData.threeDSMethodURL) else {
 			throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: Bundle(for: type(of: self)),
@@ -270,75 +301,6 @@ final class AcquaringNetworkTransport: NetworkTransport {
 		
 		return task
 	}//send
-	
-
-}
-
-
-extension HTTPURLResponse {
-	
-	var isSuccessful: Bool {
-		return (200..<300).contains(statusCode)
-	}
-	
-	var statusCodeDescription: String {
-		return HTTPURLResponse.localizedString(forStatusCode: statusCode)
-	}
-	
-	var textEncoding: String.Encoding? {
-		guard let encodingName = textEncodingName else { return nil }
-		
-		return String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName as CFString)))
-	}
-	
-	
-}
-
-public struct HTTPResponseError: Error, LocalizedError {
-
-	private let serializationFormat = JSONSerializationFormat.self
-
-	public enum ErrorKind {
-		case errorResponse
-		case invalidResponse
-		
-		var description: String {
-			switch self {
-			case .errorResponse:
-				return "Received error response"
-			case .invalidResponse:
-				return "Received invalid response"
-			}
-		}
-	}
-	
-	public let body: Data?
-	public let response: HTTPURLResponse
-	public let kind: ErrorKind
-	
-	public init(body: Data? = nil, response: HTTPURLResponse, kind: ErrorKind) {
-		self.body = body
-		self.response = response
-		self.kind = kind
-	}
-
-	public var bodyDescription: String {
-		guard let body = body else {
-			return "Empty response body"
-		}
-		
-		guard let description = String(data: body, encoding: response.textEncoding ?? .utf8) else {
-			return "Unreadable response body"
-		}
-		
-		return description
-	}
-
-	// MARK: LocalizedError
-	
-	public var errorDescription: String? {
-		return "\(kind.description) (\(response.statusCode) \(response.statusCodeDescription)): \(bodyDescription)"
-	}
 	
 
 }

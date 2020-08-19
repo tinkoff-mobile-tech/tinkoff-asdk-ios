@@ -123,7 +123,7 @@ public class AcquiringUISDK: NSObject {
 	// random amount
 	private var onRandomAmountCheckingAddCardCompletionHandler: AddCardCompletionHandler?
 	//
-	private var webViewFor3DSChecking: UIWebView?
+	private var webViewFor3DSChecking: WKWebView?
 	
 	// data providers
 	private var cardListDataProvider: CardListDataProvider!
@@ -864,8 +864,8 @@ public class AcquiringUISDK: NSObject {
 			if presenter != nil {
 				presenter?.checkDeviceFor3DSData(with: request)
 			} else {
-				self.webViewFor3DSChecking = UIWebView.init()
-				self.webViewFor3DSChecking?.loadRequest(request)
+				self.webViewFor3DSChecking = WKWebView.init()
+				self.webViewFor3DSChecking?.load(request)
 			}
 		}
 	}

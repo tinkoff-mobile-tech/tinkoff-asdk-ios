@@ -20,6 +20,7 @@
 import Foundation
 import UIKit
 
+
 public enum AcquiringSdkError: Error {
 	
 	case publicKey(String)
@@ -28,83 +29,9 @@ public enum AcquiringSdkError: Error {
 	
 }
 
-
-public enum AcquiringSdkLanguage: String {
-	
-	case ru
-	
-	case en
-	
-}
-
-
-public enum AcquiringSdkEnvironment: String {
-	
-	case test = "rest-api-test.tcsbank.ru"
-	
-	case prod = "securepay.tinkoff.ru"
-	
-}
-
-
-public struct AcquiringSdkCredential {
-	
-	public var terminalKey: String
-	public var password: String
-	public var publicKey: String
-	
-	/// - Parameters:
-	///   - terminalKey: ключ терминала. Выдается после подключения к **Тинькофф Эквайринг API**
-	///   - password: пароль от терминала. Выдается вместе с `terminalKey`
-	///   - publicKey: публичный ключ. Выдается вместе с `terminalKey`
-	/// - Returns: AcquiringSdkCredential
-	public init(terminalKey: String, password: String, publicKey: String) {
-		self.terminalKey = terminalKey
-		self.password = password
-		self.publicKey = publicKey
-	}
-	
-}
-
-
-/// Кофигурация для экземпляра SDK
-public class AcquiringSdkConfiguration: NSObject {
-	
-	public var fpsEnabled: Bool = false
-
-	public private(set) var credential: AcquiringSdkCredential
-	
-	public private(set) var serverEnvironment: AcquiringSdkEnvironment
-	
-	/// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
-	///
-	///   - `ru` - форма оплаты на русском языке;
-	///   - `en` - форма оплаты на английском языке.
-	///
-	/// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
-	public private(set) var language: AcquiringSdkLanguage?
-	
-	/// Логирование работы, реализаия `ASDKApiLoggerDelegate`
-	public var logger: LoggerDelegate?
-	
-	/// Показывать ошибки после выполнения запроса
-	public var showErrorAlert: Bool = true
-	
-	///
-	/// - Parameters:
-	///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
-	///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
-	/// - Returns: AcquiringSdkConfiguration
-	public init(credential: AcquiringSdkCredential, server: AcquiringSdkEnvironment = .test) {
-		self.credential = credential
-		self.serverEnvironment = server
-	}
-	
-}
-
 ///
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
-public class AcquiringSdk: NSObject {
+public final class AcquiringSdk: NSObject {
 
 	public var fpsEnabled: Bool = false
 
@@ -248,7 +175,7 @@ public class AcquiringSdk: NSObject {
 	///
 	/// - Parameters:
 	///   - data: `PaymentFinishRequestData`
-	///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа  и  `Error` - в случе ошибки.
+	///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случе ошибки.
 	public func check3dsVersion(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void) -> Cancellable {
 		let requestData = PaymentFinishRequestData.init(paymentId: data.paymentId, paymentSource: data.paymentSource)
 		let request = Check3dsVersionRequest.init(data: requestData)
@@ -266,7 +193,7 @@ public class AcquiringSdk: NSObject {
 	///
 	/// - Parameters:
 	///   - data: `PaymentFinishRequestData`
-	///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведеня платежа  и  `Error` - в случе ошибки.
+	///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведеня платежа и `Error` - в случе ошибки.
 	public func paymentFinish(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void) -> Cancellable {
 		let request = PaymentFinishRequest.init(data: data)
 		updateCardDataRequestParams(&request.parameters)
@@ -280,7 +207,7 @@ public class AcquiringSdk: NSObject {
 	}
 	
 	///
-	/// Подтверждает инициированный платеж передачей рекуррентным платежом
+	/// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
 	public func chargePayment(data: PaymentChargeRequestData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
 		let request = PaymentChargeRequest.init(data: data)
 		let requestTokenParams: JSONObject = tokenParams(request: request)
@@ -305,8 +232,6 @@ public class AcquiringSdk: NSObject {
 		}
 	}
 	
-	// MARK: -
-	
 	///
 	/// Отмена платежа
 	/// - Parameters:
@@ -323,7 +248,7 @@ public class AcquiringSdk: NSObject {
 		}
 	}
 	
-	// MARK: Cписок карт
+	// MARK: - Cписок карт
 
 	///
 	/// - Parameters:
@@ -404,7 +329,7 @@ public class AcquiringSdk: NSObject {
 		}
 	}
 	
-	// MARK:  Система быстрых платежей, оплата по QR-коду
+	// MARK: - Система быстрых платежей, оплата по QR-коду
 	
 	/// Сгенерировать QR-код для оплаты
 	///
