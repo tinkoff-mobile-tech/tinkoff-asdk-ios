@@ -274,17 +274,21 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 		}
 
 		switch cardListPresenter.requisies() {
-			case .savedCard(_, let cvc):
-				
-				if case .paymentWainingCVC(_) = paymentStatus {
-					let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
+			case .savedCard(let card, let cvc):
+				let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
+
+				if card.parentPaymentId == nil {
 					if cardRequisitesValidator.validateCardCVC(cvc: cvc) {
 						return true
 					}
-					
-					cardListPresenter.setStatus(.error, statusText: nil)
-					return false
+				} else if case .paymentWainingCVC(_) = paymentStatus {
+					if cardRequisitesValidator.validateCardCVC(cvc: cvc) {
+						return true
+					}
 				}
+				
+				cardListPresenter.setStatus(.error, statusText: nil)
+				return false
 				
 			case .requisites(let number , let expDate, let cvc):
 				if let number = number, let expDate = expDate, let cvc = cvc {

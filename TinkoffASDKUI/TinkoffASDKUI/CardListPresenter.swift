@@ -172,14 +172,16 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
 										cell?.imageViewLogo.isHidden = true
 									}
 								})
-								
+																
 								if let parentPaymentId = waitingInputCVCForParentPaymentId, parentPaymentId == card.parentPaymentId {
-									cell.textFieldCardCVCContainer.isHidden = false
-
-									inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener,
-																			inputView: cell)
+									cell.textFieldCardCVC.isHidden = false
+									inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
+								} else if card.parentPaymentId == nil {
+									cell.textFieldCardCVC.isHidden = false
+									inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
 								} else {
-									cell.textFieldCardCVCContainer.isHidden = true
+									cell.textFieldCardCVC.isHidden = true
+									inputCardCVCRequisitesPresenter.present(responderListener: nil, inputView: nil)
 								}
 								
 								return cell
@@ -353,8 +355,15 @@ extension CardListPresenter: UIScrollViewDelegate {
 			pageStatusCollectionView?.reloadData()
 		}
 		
-		if let activeCell = cardListCollectionView?.visibleCells.first, let indexPath = cardListCollectionView?.indexPath(for: activeCell) {
-			lastActiveCardIndexPath = indexPath
+		scrollView.firstResponder?.resignFirstResponder()
+		
+		let indexPath = IndexPath.init(item: scrollViewCurrentPage(scrollView), section: 0)
+		lastActiveCardIndexPath = indexPath
+			
+		if let cell = cardListCollectionView?.cellForItem(at: indexPath) as? PaymentCardCollectionViewCell {
+			if cell.textFieldCardCVC.isHidden == false {
+				inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
+			}
 		}
 	}
 	
@@ -420,7 +429,7 @@ extension CardListPresenter: CardListViewOutConnection {
 				self?.cardListCollectionView?.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
 					if let cell = self?.cardListCollectionView?.cellForItem(at: indexPath) as? PaymentCardCollectionViewCell {
-						cell.textFieldCardCVCContainer.isHidden = false
+						cell.textFieldCardCVC.isHidden = false
 						cell.textFieldCardCVC.becomeFirstResponder()
 					}
 				}

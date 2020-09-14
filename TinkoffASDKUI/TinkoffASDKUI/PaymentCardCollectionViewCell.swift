@@ -33,7 +33,7 @@ class PaymentCardCollectionViewCell: UICollectionViewCell, InputCardCVCRequisite
 	@IBOutlet weak var labelCardName: UILabel!
 	@IBOutlet weak var labelCardExpData: UILabel!
 	@IBOutlet weak var textFieldCardCVC: UITextFieldCardRequisites!
-	@IBOutlet weak var textFieldCardCVCContainer: UIView!
+	@IBOutlet private weak var viewSeparator: UIView!
 	
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -53,7 +53,7 @@ class PaymentCardCollectionViewCell: UICollectionViewCell, InputCardCVCRequisite
 		textFieldCardCVC.placeholder = "CVC"
 		textFieldCardCVC.text = nil
 		textFieldCardCVC.isSecureTextEntry = true
-		textFieldCardCVCContainer.isHidden = true
+		
 	}
 	
 	override func prepareForReuse() {
@@ -66,7 +66,28 @@ class PaymentCardCollectionViewCell: UICollectionViewCell, InputCardCVCRequisite
 		labelCardExpData.text = nil
 		
 		textFieldCardCVC.text = nil
-		textFieldCardCVCContainer.isHidden = true
 	}
+	
+}
+
+
+extension PaymentCardCollectionViewCell: InputViewStatus {
+	
+	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String?) {
+		switch value {
+			case .error:
+				textFieldCardCVC.textColor = colorError
+				viewSeparator.backgroundColor = colorError
+			
+			case .normal:
+				textFieldCardCVC.textColor = colorNormal
+				viewSeparator.backgroundColor = .clear
+			
+			case .disable:
+				textFieldCardCVC.textColor = colorDisable
+				viewSeparator.backgroundColor = .clear
+		}
+	}
+	
 	
 }

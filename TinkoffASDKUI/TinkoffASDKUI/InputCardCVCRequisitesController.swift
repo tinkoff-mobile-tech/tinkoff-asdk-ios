@@ -84,6 +84,10 @@ extension InputCardCVCRequisitesPresenter: MaskedTextFieldDelegateListener {
 	// MARK: MaskedTextFieldDelegateListener
 	
 	func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
+		if let inputViewStatus = inputView as? InputViewStatus {
+			inputViewStatus.setStatus(.normal, statusText: nil)
+		}
+		
 		if inputView?.textFieldCardCVC == textField {
 			inputCardCVC = value
 		}
@@ -95,13 +99,17 @@ extension InputCardCVCRequisitesPresenter: MaskedTextFieldDelegateListener {
 extension InputCardCVCRequisitesPresenter: InputCardCVCRequisitesViewOutConnection {
 
 	func present(responderListener: BecomeFirstResponderListener?, inputView: InputCardCVCRequisitesPresenterProtocol?) {
-		self.inputView = inputView
+		self.inputView?.textFieldCardCVC.text = nil
+		self.inputView?.textFieldCardCVC.delegate = maskedTextFieldDelegate
 		
+		self.inputView = inputView
+
 		maskedTextFieldDelegate = MaskedTextFieldDelegate()
 		maskedTextFieldDelegate.maskFormat = maskFormatCVC
 		maskedTextFieldDelegate.listener = self
 		
 		becomeFirstResponderListener = responderListener
+		inputView?.textFieldCardCVC.text = nil
 		inputView?.textFieldCardCVC.delegate = maskedTextFieldDelegate
 	}
 	

@@ -29,7 +29,7 @@ public struct StageTestData {
 	public static let terminalKey = "TestSDK"
 	
 	/// Пароль от терминала
-	public static let terminalPassword = "5l9v23g7hlhqchyb"
+	public static let terminalPassword = "12345678"
 	
 	/// Идентификатор клиента в системе продавца. Например, для этого идентификатора будут сохраняться список карт.
 	public static let customerKey = "TestSDK_CustomerKey1"
