@@ -204,7 +204,14 @@ class CardsViewController: UIViewController {
 			_ = presentationController
 		})
 	}
-	
+    
+    private func checkIfCellIsEditable(at indexPath: IndexPath) -> Bool {
+        guard case .cards = tableViewSection[indexPath.section],
+              case .object = cardListDataSourceDelegate.cardListFetchStatus()
+        else { return false }
+        
+        return true
+    }
 }
 
 
@@ -297,13 +304,7 @@ extension CardsViewController: UITableViewDataSource {
 	// MARK: TableViewDataSource - Editing
 	
 	func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		switch tableViewSection[indexPath.section] {
-			case .addNew:
-				return false
-			
-			case .cards:
-				return true
-		}
+		checkIfCellIsEditable(at: indexPath)
 	}
 	
 	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -326,7 +327,6 @@ extension CardsViewController: UITableViewDataSource {
 				}
 		} // switch tableViewSection
 	}
-	
 }
 
 
