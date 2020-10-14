@@ -27,7 +27,7 @@ public struct PaymentInitData: Codable {
 	public var amount: Int64
 	
 	/// Номер заказа в системе Продавца
-	public var orderId: Int64
+	public var orderId: String
 	
 	/// Идентификатор клиента в системе продавца. Например, для этого идентификатора будут сохраняться список карт.
 	public var customerKey: String
@@ -85,7 +85,7 @@ public struct PaymentInitData: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		amount = try container.decode(Int64.self, forKey: .amount)
-		orderId = try container.decode(Int64.self, forKey: .orderId)
+		orderId = try container.decode(String.self, forKey: .orderId)
 		customerKey = try container.decode(String.self, forKey: .customerKey)
 		description = try? container.decode(String.self, forKey: .description)
 		if let payTypeValue = try? container.decode(String.self, forKey: .payType) {
@@ -115,13 +115,13 @@ public struct PaymentInitData: Codable {
 		if paymentFormData != nil { try? container.encode(paymentFormData, forKey: .paymentFormData) }
 	}
 	
-	public init(amount: Int64, orderId: Int64, customerKey: String) {
+	public init(amount: Int64, orderId: String, customerKey: String) {
 		self.amount = amount
 		self.orderId = orderId
 		self.customerKey = customerKey
 	}
 	
-	public init(amount: NSDecimalNumber, orderId: Int64, customerKey: String) {
+	public init(amount: NSDecimalNumber, orderId: String, customerKey: String) {
 		self.amount = Int64(amount.doubleValue * 100)
 		self.orderId = orderId
 		self.customerKey = customerKey
@@ -169,7 +169,7 @@ public struct PaymentInitResponse: ResponseOperation {
 	public var terminalKey: String?
 	//
 	public var amount: Int64
-	public var orderId: Int64
+	public var orderId: String
 	public var paymentId: Int64
 	public var status: PaymentStatus
 	
@@ -196,11 +196,7 @@ public struct PaymentInitResponse: ResponseOperation {
 		//
 		amount = try container.decode(Int64.self, forKey: .amount)
 		/// orderId
-		if let stringValue = try? container.decode(String.self, forKey: .orderId), let value = Int64(stringValue) {
-			orderId = value
-		} else {
-			orderId = try container.decode(Int64.self, forKey: .orderId)
-		}
+        orderId = try container.decode(String.self, forKey: .orderId)
 		/// paymentId
 		if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
 			paymentId = value
