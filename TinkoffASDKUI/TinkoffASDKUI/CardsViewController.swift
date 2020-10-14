@@ -86,7 +86,7 @@ class CardsViewController: UIViewController {
 	
 	private func cardListCell(for tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		switch cardListDataSourceDelegate.cardListFetchStatus() {
-			case .unknow, .loading:
+			case .unknown, .loading:
 				if indexPath.row < cardListDataSourceDelegate.cardListNumberOfCards(), let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
 					let card = cardListDataSourceDelegate.cardListCard(at: indexPath.row)
 					
@@ -204,7 +204,14 @@ class CardsViewController: UIViewController {
 			_ = presentationController
 		})
 	}
-	
+    
+    private func checkIfCellIsEditable(at indexPath: IndexPath) -> Bool {
+        guard case .cards = tableViewSection[indexPath.section],
+              case .object = cardListDataSourceDelegate.cardListFetchStatus()
+        else { return false }
+        
+        return true
+    }
 }
 
 
@@ -262,7 +269,7 @@ extension CardsViewController: UITableViewDataSource {
 			
 			case .cards:
 				switch cardListDataSourceDelegate.cardListFetchStatus() {
-					case .unknow:
+					case .unknown:
 						return 1
 					
 					case .loading:
@@ -297,13 +304,7 @@ extension CardsViewController: UITableViewDataSource {
 	// MARK: TableViewDataSource - Editing
 	
 	func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		switch tableViewSection[indexPath.section] {
-			case .addNew:
-				return false
-			
-			case .cards:
-				return true
-		}
+		checkIfCellIsEditable(at: indexPath)
 	}
 	
 	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -326,7 +327,6 @@ extension CardsViewController: UITableViewDataSource {
 				}
 		} // switch tableViewSection
 	}
-	
 }
 
 

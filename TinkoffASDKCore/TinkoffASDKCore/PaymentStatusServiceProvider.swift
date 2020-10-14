@@ -24,7 +24,7 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 	public typealias ObjectType = PaymentStatusResponse
 	
 	/// Текущее состояние сервиса проверки
-	public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknow
+	public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknown
 	var queryStatus: Cancellable?
 	/// Слушатель состояния сервиса проверки
 	public var onStatusUpdated: ((FetchStatus<PaymentStatusResponse>) -> Void)?
