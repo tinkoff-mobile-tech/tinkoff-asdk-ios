@@ -73,7 +73,7 @@ public struct PaymentStatusResponse: ResponseOperation {
 	public var errorDetails: String?
 	public var terminalKey: String?
 	//
-	public var orderId: Int64
+	public var orderId: String
 	public var paymentId: Int64
 	public var amount: NSDecimalNumber
 	public var status: PaymentStatus
@@ -100,11 +100,7 @@ public struct PaymentStatusResponse: ResponseOperation {
 		terminalKey = try? container.decode(String.self, forKey: .terminalKey )
 		
 		// orderId
-		if let stringValue = try? container.decode(String.self, forKey: .orderId), let value = Int64(stringValue) {
-			orderId = value
-		} else {
-			orderId = try container.decode(Int64.self, forKey: .orderId)
-		}
+        orderId = try container.decode(String.self, forKey: .orderId)
 		
 		// paymentId
 		if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
@@ -128,7 +124,7 @@ public struct PaymentStatusResponse: ResponseOperation {
 	public init(success: Bool,
 				errorCode: Int,
 				errorMessage: String?,
-				orderId: Int64,
+				orderId: String,
 				paymentId: Int64,
 				amount: Int64,
 				status: PaymentStatus)

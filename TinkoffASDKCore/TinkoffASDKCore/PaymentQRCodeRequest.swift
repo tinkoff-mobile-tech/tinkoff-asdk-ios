@@ -116,7 +116,7 @@ public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
 	
 	// MARK: PaymentInvoice
 	
-	public var orderId: Int64
+	public var orderId: String
 	public var paymentId: Int64
 	public var qrCodeData: String
 	
@@ -143,11 +143,7 @@ public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
 		terminalKey = try? container.decode(String.self, forKey: .terminalKey)
 		
 		// orderId
-		if let stringValue = try? container.decode(String.self, forKey: .orderId), let value = Int64(stringValue) {
-			orderId = value
-		} else {
-			orderId = try container.decode(Int64.self, forKey: .orderId)
-		}
+        orderId = try container.decode(String.self, forKey: .orderId)
 		
 		// paymentId
 		if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {

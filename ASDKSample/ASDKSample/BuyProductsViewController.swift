@@ -125,7 +125,8 @@ class BuyProductsViewController: UIViewController {
 	
 	private func createPaymentData() -> PaymentInitData {
 		let amount = productsAmount()
-		var paymentData = PaymentInitData.init(amount: NSDecimalNumber.init(value: amount), orderId: Int64(arc4random()), customerKey: customerKey)
+        let randomOrderId = String(Int64(arc4random()))
+		var paymentData = PaymentInitData.init(amount: NSDecimalNumber.init(value: amount), orderId: randomOrderId, customerKey: customerKey)
 		paymentData.description = "Краткое описние товара"
 
 		var receiptItems: [Item] = []
