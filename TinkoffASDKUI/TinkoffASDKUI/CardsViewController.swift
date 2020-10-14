@@ -86,7 +86,7 @@ class CardsViewController: UIViewController {
 	
 	private func cardListCell(for tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		switch cardListDataSourceDelegate.cardListFetchStatus() {
-			case .unknow, .loading:
+			case .unknown, .loading:
 				if indexPath.row < cardListDataSourceDelegate.cardListNumberOfCards(), let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
 					let card = cardListDataSourceDelegate.cardListCard(at: indexPath.row)
 					
@@ -262,7 +262,7 @@ extension CardsViewController: UITableViewDataSource {
 			
 			case .cards:
 				switch cardListDataSourceDelegate.cardListFetchStatus() {
-					case .unknow:
+					case .unknown:
 						return 1
 					
 					case .loading:

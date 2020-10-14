@@ -22,7 +22,7 @@ import Foundation
 /// Состояние для сервисов и объектов которые загружаем с севера
 public enum FetchStatus<ObjectType> {
 	/// статус -  пустое состояние, объект только создан, данных  нет
-	case unknow
+	case unknown
 	/// статус -  данные загружаются
 	case loading
 	/// статус -  есть данные
@@ -81,7 +81,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
 	public typealias ObjectType = [PaymentCard]
 	
-	public var fetchStatus: FetchStatus<[PaymentCard]> = .unknow {
+	public var fetchStatus: FetchStatus<[PaymentCard]> = .unknown {
 		didSet {
 			dataSourceStatusListener?.cardsListUpdated(fetchStatus)
 		}
