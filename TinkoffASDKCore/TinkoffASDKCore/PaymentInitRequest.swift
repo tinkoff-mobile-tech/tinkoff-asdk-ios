@@ -54,6 +54,8 @@ public struct PaymentInitData: Codable {
 	public var shops: [Shop]?
 	/// Чеки для каждого `Shop` из объекта `PaymentInitData.shops`. В каждом чеке нужно указывать `Receipt.shopCode` == `Shop.shopCode`
 	public var receipts: [Receipt]?
+    /// Cрок жизни ссылки.
+    public var redirectDueDate: Date?
 	
 	public mutating func addPaymentData(_ additionalData: [String: String]) {
 		var updatedData: [String: String] = [:]
@@ -80,6 +82,7 @@ public struct PaymentInitData: Codable {
 		case receipt = "Receipt"
 		case shops = "Shops"
 		case receipts = "Receipts"
+        case redirectDueDate = "RedirectDueDate"
 	}
 	
 	public init(from decoder: Decoder) throws {
@@ -88,6 +91,8 @@ public struct PaymentInitData: Codable {
 		orderId = try container.decode(String.self, forKey: .orderId)
 		customerKey = try container.decode(String.self, forKey: .customerKey)
 		description = try? container.decode(String.self, forKey: .description)
+        redirectDueDate = try? container.decode(Date.self, forKey: .redirectDueDate)
+        
 		if let payTypeValue = try? container.decode(String.self, forKey: .payType) {
 			payType = PayType.init(rawValue: payTypeValue)
 		}
@@ -108,6 +113,7 @@ public struct PaymentInitData: Codable {
 		try container.encode(orderId, forKey: .orderId)
 		try container.encode(customerKey, forKey: .customerKey)
 		if description != nil { try? container.encode(description, forKey: .description) }
+        if redirectDueDate != nil { try? container.encode(redirectDueDate, forKey: .redirectDueDate)}
 		if let value = savingAsParentPayment, value == true { try container.encode("Y" , forKey: .savingAsParentPayment) }
 		if receipt != nil { try? container.encode(receipt, forKey: .receipt) }
 		if shops != nil { try? container.encode(shops, forKey: .shops) }
@@ -115,16 +121,22 @@ public struct PaymentInitData: Codable {
 		if paymentFormData != nil { try? container.encode(paymentFormData, forKey: .paymentFormData) }
 	}
 	
-	public init(amount: Int64, orderId: String, customerKey: String) {
+	public init(amount: Int64,
+                orderId: String,
+                customerKey: String,
+                redirectDueDate: Date? = nil) {
 		self.amount = amount
 		self.orderId = orderId
 		self.customerKey = customerKey
+        self.redirectDueDate = redirectDueDate
 	}
 	
-	public init(amount: NSDecimalNumber, orderId: String, customerKey: String) {
-		self.amount = Int64(amount.doubleValue * 100)
-		self.orderId = orderId
-		self.customerKey = customerKey
+	public init(amount: NSDecimalNumber,
+                orderId: String,
+                customerKey: String,
+                redirectDueDate: Date? = nil) {
+        let int64Amount = Int64(amount.doubleValue * 100)
+        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate)
 	}
 	
 }
@@ -151,7 +163,7 @@ public final class PaymentInitRequest: RequestOperation, AcquiringRequestTokenPa
 	///
 	/// - Parameter data: `PaymentInitPaymentData`
 	public init(data: PaymentInitData) {
-		if let json = try? data.encode2JSONObject() {
+        if let json = try? data.encode2JSONObject(dateEncodingStrategy: .iso8601) {
 			self.parameters = json
 		}
 	}
