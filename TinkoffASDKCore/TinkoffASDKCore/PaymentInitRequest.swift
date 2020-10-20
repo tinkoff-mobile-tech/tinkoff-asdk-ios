@@ -197,7 +197,7 @@ public struct PaymentInitResponse: ResponseOperation {
 		case paymentId = "PaymentId"
 		case status = "Status"
 	}
-	
+
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		success = try container.decode(Bool.self, forKey: .success)
@@ -237,4 +237,24 @@ public struct PaymentInitResponse: ResponseOperation {
 		try container.encode(terminalKey, forKey: .terminalKey)
 	}
 	
+}
+
+public struct PaymentInitResponseData {
+    public let amount: Int64
+    public let orderId: String
+    public let paymentId: Int64
+    
+    public init(amount: Int64,
+                orderId: String,
+                paymentId: Int64) {
+        self.amount = amount
+        self.orderId = orderId
+        self.paymentId = paymentId
+    }
+    
+    public init(paymentInitResponse: PaymentInitResponse) {
+        self.amount = paymentInitResponse.amount
+        self.orderId = paymentInitResponse.orderId
+        self.paymentId = paymentInitResponse.paymentId
+    }
 }

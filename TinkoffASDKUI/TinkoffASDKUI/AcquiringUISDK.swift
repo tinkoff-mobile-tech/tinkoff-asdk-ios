@@ -41,6 +41,7 @@ public class AcquiringViewConfiguration {
 		
 		init() {}
 	}
+    
 	///
 	/// Локализация формы оплаты
 	public struct LocalizableInfo {
@@ -73,6 +74,18 @@ public class AcquiringViewConfiguration {
 	public init() {}
 }
 
+public struct AcquiringConfiguration {
+    public enum PaymentStage {
+        case none
+        case paymentId(Int64)
+    }
+    
+    public let paymentStage: PaymentStage
+    
+    public init(paymentStage: PaymentStage = .none) {
+        self.paymentStage = paymentStage
+    }
+}
 
 public typealias PaymentCompletionHandler = ((_ result: Result<PaymentStatusResponse, Error>) -> Void)
 public typealias AddCardCompletionHandler = ((_ result: Result<AddCardStatusResponse, Error>) -> Void)
@@ -109,9 +122,10 @@ public class AcquiringUISDK: NSObject {
 	private weak var acquiringView: AcquiringView?
 	private weak var cardsListView: CardListDataSourceStatusListener?
 	private var acquiringViewConfiguration: AcquiringViewConfiguration?
+    private var acquiringConfiguration: AcquiringConfiguration?
 	//
 	private var startPaymentInitData: PaymentInitData?
-	private var initResponse: PaymentInitResponse?
+    private var paymentInitResponseData: PaymentInitResponseData?
 	private var onPaymentCompletionHandler: PaymentCompletionHandler?
 	private var finishPaymentStatusResponse: Result<PaymentStatusResponse, Error>?
 	
@@ -190,29 +204,39 @@ public class AcquiringUISDK: NSObject {
 	public func presentPaymentView(on presentingViewController: UIViewController,
 								   paymentData: PaymentInitData,
 								   configuration: AcquiringViewConfiguration,
+                                   acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
 								   completionHandler: @escaping PaymentCompletionHandler)
-	{
-		onPaymentCompletionHandler = completionHandler
-		acquiringViewConfiguration = configuration
-		
-		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { view in
-			self.startPay(paymentData)
-		}
-		
-		acquiringView?.onTouchButtonPay = { [weak self] in
-			if let cardRequisites = self?.acquiringView?.cardRequisites(), let paymentId = self?.initResponse?.paymentId {
-				self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
-			}
-		}
-		
-		acquiringView?.onTouchButtonSBP = { [weak self] in
-			if let paymentId = self?.initResponse?.paymentId {
-				self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: .url, configuration: configuration)
-			}
-		}
-		
-	}
-	
+    {
+        onPaymentCompletionHandler = completionHandler
+        acquiringViewConfiguration = configuration
+        self.acquiringConfiguration = acquiringConfiguration
+        
+        presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { [weak self] view in
+            switch acquiringConfiguration.paymentStage {
+            case .none:
+                self?.startPay(paymentData)
+            case let .paymentId(paymentId):
+                self?.paymentInitResponseData = PaymentInitResponseData(amount: paymentData.amount,
+                                                                        orderId: paymentData.orderId,
+                                                                        paymentId: paymentId)
+                view.changedStatus(.ready)
+            }
+        }
+        
+        acquiringView?.onTouchButtonPay = { [weak self] in
+            if let cardRequisites = self?.acquiringView?.cardRequisites(),
+               let paymentId = self?.paymentInitResponseData?.paymentId {
+                self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
+            }
+        }
+        
+        acquiringView?.onTouchButtonSBP = { [weak self] in
+            if let paymentId = self?.paymentInitResponseData?.paymentId {
+                self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: .url, configuration: configuration)
+            }
+        }
+    }
+
 	///
 	/// Оплатить на основе родительского платежа, регулярный платеж
 	public func presentPaymentView(on presentingViewController: UIViewController,
@@ -243,39 +267,71 @@ public class AcquiringUISDK: NSObject {
 		return acquiringSdk.fpsEnabled
 	}
 		
-	public func presentPaymentSbpQrImage(on presentingViewController: UIViewController, paymentData: PaymentInitData, configuration: AcquiringViewConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
-		presentPaymentSbp(on: presentingViewController, paymentInvoiceSource: .imageSVG, paymentData: paymentData, configuration: configuration) { (response) in
+	public func presentPaymentSbpQrImage(on presentingViewController: UIViewController,
+                                         paymentData: PaymentInitData,
+                                         configuration: AcquiringViewConfiguration,
+                                         acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
+                                         completionHandler: @escaping PaymentCompletionHandler) {
+        presentPaymentSbp(on: presentingViewController,
+                          paymentInvoiceSource: .imageSVG,
+                          paymentData: paymentData,
+                          configuration: configuration,
+                          acquiringConfiguration: acquiringConfiguration) { response in
 			completionHandler(response)
 		}
 	}
 	
-	public func presentPaymentSbpUrl(on presentingViewController: UIViewController, paymentData: PaymentInitData, configuration: AcquiringViewConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
-		presentPaymentSbp(on: presentingViewController, paymentInvoiceSource: .url, paymentData: paymentData, configuration: configuration) { (response) in
+	public func presentPaymentSbpUrl(on presentingViewController: UIViewController,
+                                     paymentData: PaymentInitData,
+                                     configuration: AcquiringViewConfiguration,
+                                     acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
+                                     completionHandler: @escaping PaymentCompletionHandler) {
+		presentPaymentSbp(on: presentingViewController,
+                          paymentInvoiceSource: .url,
+                          paymentData: paymentData,
+                          configuration: configuration,
+                          acquiringConfiguration: acquiringConfiguration) { response in
 			completionHandler(response)
 		}
 	}
 	
-	private func presentPaymentSbp(on presentingViewController: UIViewController, paymentInvoiceSource: PaymentInvoiceSBPSourceType, paymentData: PaymentInitData, configuration: AcquiringViewConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
+	private func presentPaymentSbp(on presentingViewController: UIViewController,
+                                   paymentInvoiceSource: PaymentInvoiceSBPSourceType,
+                                   paymentData: PaymentInitData,
+                                   configuration: AcquiringViewConfiguration,
+                                   acquiringConfiguration: AcquiringConfiguration,
+                                   completionHandler: @escaping PaymentCompletionHandler) {
 		onPaymentCompletionHandler = completionHandler
+        self.acquiringConfiguration = acquiringConfiguration
+        
+        let presentSbpActivity: (Int64) -> Void = { [weak self] paymentId in
+            self?.paymentInitResponseData = PaymentInitResponseData(amount: paymentData.amount,
+                                                                    orderId: paymentData.orderId,
+                                                                    paymentId: paymentId)
+            self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: paymentInvoiceSource, configuration: configuration)
+        }
 		
-		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { view in
-			self.initPay(paymentData: paymentData) { [weak self] (response) in
-				switch response {
-					case .success(let initResponse):
-						self?.initResponse = initResponse
-						self?.presentSbpActivity(paymentId: initResponse.paymentId, paymentInvoiceSource: paymentInvoiceSource, configuration: configuration)
-					
-					case .failure(let error):
-						self?.initResponse = nil
-						DispatchQueue.main.async {
-							self?.acquiringView?.closeVC(animated: true) {
-								completionHandler(.failure(error))
-							}
-						}
-				}
-			}//initPay
+		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { [weak self] view in
+            switch acquiringConfiguration.paymentStage {
+            case .none:
+                self?.initPay(paymentData: paymentData) { [weak self] (response) in
+                    switch response {
+                    case .success(let initResponse):
+                        presentSbpActivity(initResponse.paymentId)
+                    case .failure(let error):
+                        self?.paymentInitResponseData = nil
+                        DispatchQueue.main.async {
+                            self?.acquiringView?.closeVC(animated: true) {
+                                completionHandler(.failure(error))
+                            }
+                        }
+                    }
+                }
+            case let .paymentId(paymentId):
+                presentSbpActivity(paymentId)
+            }
 		}
-	}
+    }
 	
 	public func presentPaymentQRCollector(on presentingViewController: UIViewController, configuration: AcquiringViewConfiguration) {
 		onPaymentCompletionHandler = nil
@@ -310,6 +366,7 @@ public class AcquiringUISDK: NSObject {
 			}//getStaticQRCode
 		}
 	}
+
 	
 	// MARK: ApplePay
 
@@ -331,7 +388,11 @@ public class AcquiringUISDK: NSObject {
 	}
 
 	/// 'Creating Payment Requests' https://developer.apple.com/library/archive/ApplePay_Guide/CreateRequest.html#//apple_ref/doc/uid/TP40014764-CH3-SW2
-	public func presentPaymentApplePay(on presentingViewController: UIViewController, paymentData data: PaymentInitData, viewConfiguration: AcquiringViewConfiguration, paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
+	public func presentPaymentApplePay(on presentingViewController: UIViewController,
+                                       paymentData data: PaymentInitData,
+                                       viewConfiguration: AcquiringViewConfiguration,
+                                       acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
+                                       paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
 		let request = PKPaymentRequest.init()
 		request.merchantIdentifier = paymentConfiguration.merchantIdentifier
 		request.supportedNetworks = paymentConfiguration.supportedNetworks
@@ -347,26 +408,39 @@ public class AcquiringUISDK: NSObject {
 		
 		self.presentingViewController = presentingViewController
 		self.onPaymentCompletionHandler = completionHandler
+        self.acquiringConfiguration = acquiringConfiguration
 		viewConfiguration.startViewHeight = 120
+        
+        let presentApplePayActivity: (Int64) -> Void = { [weak self] paymentId in
+            self?.paymentInitResponseData = PaymentInitResponseData(amount: data.amount,
+                                                                    orderId: data.orderId,
+                                                                    paymentId: paymentId)
+            self?.presentApplePayActivity(request)
+        }
 		
 		presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: viewConfiguration) { view in
-			self.initPay(paymentData: data) { [weak self] (response) in
-				switch response {
-					case .success(let initResponse):
-						self?.initResponse = initResponse
-						DispatchQueue.main.async {
-							self?.presentApplePayActivity(request)
-						}
-						
-					case .failure(let error):
-						self?.initResponse = nil
-						DispatchQueue.main.async {
-							self?.acquiringView?.closeVC(animated: true) {
-								completionHandler(.failure(error))
-							}
-						}
-				}
-			}//initPay
+            switch acquiringConfiguration.paymentStage {
+            case .none:
+                self.initPay(paymentData: data) { [weak self] (response) in
+                    switch response {
+                        case .success(let initResponse):
+                            self?.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: initResponse)
+                            DispatchQueue.main.async {
+                                presentApplePayActivity(initResponse.paymentId)
+                            }
+                            
+                        case .failure(let error):
+                            self?.paymentInitResponseData = nil
+                            DispatchQueue.main.async {
+                                self?.acquiringView?.closeVC(animated: true) {
+                                    completionHandler(.failure(error))
+                                }
+                            }
+                    }
+                }
+            case let .paymentId(paymentId):
+                presentApplePayActivity(paymentId)
+            }
 		}
 	}
 	
@@ -426,7 +500,7 @@ public class AcquiringUISDK: NSObject {
 					}
 					
 				case .failure(let error):
-					self?.initResponse = nil
+					self?.paymentInitResponseData = nil
 					DispatchQueue.main.async {
 						self?.acquiringView?.changedStatus(.error(error))
 						
@@ -561,13 +635,13 @@ public class AcquiringUISDK: NSObject {
 		initPay(paymentData: initPaymentData) { [weak self] (response) in
 			switch response {
 				case .success(let initResponse):
-					self?.initResponse = initResponse
+					self?.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: initResponse)
 					DispatchQueue.main.async {
 						self?.acquiringView?.changedStatus(.ready)
 					}
 					
 				case .failure(let error):
-					self?.initResponse = nil
+					self?.paymentInitResponseData = nil
 					DispatchQueue.main.async {
 						self?.acquiringView?.closeVC(animated: true) {
 							self?.onPaymentCompletionHandler?(.failure(error))
@@ -587,26 +661,37 @@ public class AcquiringUISDK: NSObject {
 	/// Для сценария когда при прохождении 3ds v2 произошла ошибка.
 	/// Инициируем новый платеж и и завершаем его без проверки версии 3ds, те если потребуется прохождение топрохолим по версии 1.0
 	private func paymentTryAgainWith3dsV1(_ data: PaymentInitData, completionHandler: @escaping PaymentCompletionHandler) {
-		initResponse = nil
-		initPay(paymentData: data) { [weak self] (initResponse) in
-			switch initResponse {
-				case .success(let successResponse):
-					// завершаем оплату
-					DispatchQueue.main.async {
-						if let cardRequisites = self?.acquiringView?.cardRequisites() {
-							var requestData = PaymentFinishRequestData.init(paymentId: successResponse.paymentId, paymentSource: cardRequisites)
-							requestData.setInfoEmail(self?.acquiringView?.infoEmail())
-							
-							self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { (finishResponse) in
-								completionHandler(finishResponse)
-							})
-						}
-					}
-				
-				case .failure(let error):
-					completionHandler(.failure(error))
-			}
-		}//initPay
+        paymentInitResponseData = nil
+        
+        let repeatFinish: (Int64) -> Void = { [weak self] paymentId in
+            if let cardRequisites = self?.acquiringView?.cardRequisites() {
+                var requestData = PaymentFinishRequestData.init(paymentId: paymentId, paymentSource: cardRequisites)
+                requestData.setInfoEmail(self?.acquiringView?.infoEmail())
+                
+                self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { (finishResponse) in
+                    completionHandler(finishResponse)
+                })
+            }
+        }
+        
+        let paymentStage = acquiringConfiguration?.paymentStage ?? .none
+        switch paymentStage {
+        case .none:
+            initPay(paymentData: data) { initResponse in
+                switch initResponse {
+                    case .success(let successResponse):
+                        // завершаем оплату
+                        DispatchQueue.main.async {
+                            repeatFinish(successResponse.paymentId)
+                        }
+                    
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                }
+            }//initPay
+        case let .paymentId(paymentId):
+            repeatFinish(paymentId)
+        }
 	}
 	
 	// MARK: Pay by cardId and card requisites
@@ -616,31 +701,43 @@ public class AcquiringUISDK: NSObject {
 					cardRequisites: PaymentSourceData,
 					infoEmail: String?,
 					configuration: AcquiringViewConfiguration,
+                    acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
 					completionHandler: @escaping PaymentCompletionHandler)
 	{
 		self.presentingViewController = presentingViewController
 		startPaymentInitData = initPaymentData
 		acquiringViewConfiguration = configuration
 		onPaymentCompletionHandler = completionHandler
-		
-		initPay(paymentData: initPaymentData) { [weak self] (response) in
-			switch response {
-				case .success(let initResponse):
-					self?.initResponse = initResponse
-					self?.finishPay(cardRequisites: cardRequisites, paymentId: initResponse.paymentId, infoEmail: infoEmail)
-					DispatchQueue.main.async {
-						self?.acquiringView?.changedStatus(.ready)
-					}
-				
-				case .failure(let error):
-					self?.initResponse = nil
-					DispatchQueue.main.async {
-						self?.acquiringView?.closeVC(animated: true) {
-							self?.onPaymentCompletionHandler?(.failure(error))
-						}
-				}
-			}
-		}//initPay
+        self.acquiringConfiguration = acquiringConfiguration
+        
+        let finishPay: (Int64) -> Void = { [weak self] paymentId in
+            self?.paymentInitResponseData = PaymentInitResponseData(amount: initPaymentData.amount,
+                                                                    orderId: initPaymentData.orderId,
+                                                                    paymentId: paymentId)
+            self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: infoEmail)
+            self?.acquiringView?.changedStatus(.ready)
+        }
+        
+        switch acquiringConfiguration.paymentStage {
+        case .none:
+            initPay(paymentData: initPaymentData) { [weak self] (response) in
+                switch response {
+                    case .success(let initResponse):
+                        DispatchQueue.main.async {
+                            finishPay(initResponse.paymentId)
+                        }
+                    case .failure(let error):
+                        self?.paymentInitResponseData = nil
+                        DispatchQueue.main.async {
+                            self?.acquiringView?.closeVC(animated: true) {
+                                self?.onPaymentCompletionHandler?(.failure(error))
+                            }
+                    }
+                }
+            }
+        case let .paymentId(paymentId):
+            finishPay(paymentId)
+        }
 	}
 	
 	// MARK: Charge
@@ -652,7 +749,7 @@ public class AcquiringUISDK: NSObject {
 		_ = acquiringSdk.paymentInit(data: data) { (initResponse) in
 			switch initResponse {
 				case .success(let successInitResponse):
-					self.initResponse = successInitResponse
+					self.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: successInitResponse)
 					DispatchQueue.main.async {
 						let chargeData = PaymentChargeRequestData.init(paymentId: successInitResponse.paymentId, parentPaymentId: parentPaymentId)
 						_ = self.acquiringSdk.chargePayment(data: chargeData, completionHandler: { (chargeResponse) in
@@ -680,7 +777,7 @@ public class AcquiringUISDK: NSObject {
 												self.initPay(paymentData: data, completionHandler: { (initResponse) in
 													switch initResponse {
 														case .success(let initResponseSuccess):
-															self.initResponse = successInitResponse
+                                                            self.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: successInitResponse)
 															DispatchQueue.main.async { [weak self] in
 																chargePaymentId = initResponseSuccess.paymentId
 																self?.acquiringView?.changedStatus(.paymentWainingCVC(cardParentId: parentPaymentId))
@@ -718,7 +815,7 @@ public class AcquiringUISDK: NSObject {
 					}
 				
 				case .failure(let error):
-					self.initResponse = nil
+					self.paymentInitResponseData = nil
 					DispatchQueue.main.async { [weak self] in
 						if self?.acquiringView != nil {
 							self?.acquiringView?.closeVC(animated: true, completion: {
@@ -871,17 +968,17 @@ public class AcquiringUISDK: NSObject {
 	}
 	
 	private func cancelPayment() {
-		if let orderId = initResponse?.orderId, let paymentId = initResponse?.paymentId, let amount = initResponse?.amount {
-			let paymentResponse = PaymentStatusResponse.init(success: false,
-															 errorCode: 0,
-															 errorMessage: nil,
-															 orderId: orderId,
-															 paymentId: paymentId,
-															 amount: amount,
-															 status: .cancelled)
-			onPaymentCompletionHandler?(.success(paymentResponse))
-		}
-	}
+        if let paymentInitResponseData = paymentInitResponseData {
+            let paymentResponse = PaymentStatusResponse.init(success: false,
+                                                             errorCode: 0,
+                                                             errorMessage: nil,
+                                                             orderId: paymentInitResponseData.orderId,
+                                                             paymentId: paymentInitResponseData.paymentId,
+                                                             amount: paymentInitResponseData.amount,
+                                                             status: .cancelled)
+            onPaymentCompletionHandler?(.success(paymentResponse))
+        }
+    }
 	
 	private func cancelAddCard() {
 		onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse.init(success: false, errorCode: 0)))
@@ -1155,7 +1252,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 												   didAuthorizePayment payment: PKPayment,
 												   handler completion: @escaping (PKPaymentAuthorizationResult) -> Void)
 	{
-		if let paymentId = initResponse?.paymentId {
+		if let paymentId = paymentInitResponseData?.paymentId {
 			let paymentDataSource = PaymentSourceData.paymentData(payment.token.paymentData.base64EncodedString())
 			let data = PaymentFinishRequestData.init(paymentId: paymentId,
 													 paymentSource: paymentDataSource,
@@ -1186,7 +1283,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
 	
 	// MARK: WKNavigationDelegate
 	
-	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {		
+	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
 		webView.evaluateJavaScript("document.baseURI") { [weak self] (value, error) in
 			guard error == nil, let stringValue = value as? String else {
 				return
