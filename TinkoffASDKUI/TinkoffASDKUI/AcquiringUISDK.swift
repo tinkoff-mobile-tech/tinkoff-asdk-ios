@@ -122,10 +122,10 @@ public class AcquiringUISDK: NSObject {
 	private weak var acquiringView: AcquiringView?
 	private weak var cardsListView: CardListDataSourceStatusListener?
 	private var acquiringViewConfiguration: AcquiringViewConfiguration?
-    private var acquiringConfiguration: AcquiringConfiguration?
+      private var acquiringConfiguration: AcquiringConfiguration?
 	//
 	private var startPaymentInitData: PaymentInitData?
-    private var paymentInitResponseData: PaymentInitResponseData?
+      private var paymentInitResponseData: PaymentInitResponseData?
 	private var onPaymentCompletionHandler: PaymentCompletionHandler?
 	private var finishPaymentStatusResponse: Result<PaymentStatusResponse, Error>?
 	
@@ -139,14 +139,14 @@ public class AcquiringUISDK: NSObject {
 	//
 	private var webViewFor3DSChecking: WKWebView?
 	
-	// data providers
-	private var cardListDataProvider: CardListDataProvider!
-	private var checkPaymentStatus: PaymentStatusServiceProvider?
-	
-	public init(configuration: AcquiringSdkConfiguration) throws {
-		self.acquiringSdk = try AcquiringSdk.init(configuration: configuration)
-		AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
-	}
+      // data providers
+      private var cardListDataProvider: CardListDataProvider!
+      private var checkPaymentStatus: PaymentStatusServiceProvider?
+      
+      public init(configuration: AcquiringSdkConfiguration) throws {
+            self.acquiringSdk = try AcquiringSdk.init(configuration: configuration)
+            AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
+      }
 	
 	/// Вызывается кода пользователь привязывается карту.
 	/// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
@@ -157,20 +157,20 @@ public class AcquiringUISDK: NSObject {
 		viewController.cardListDataSourceDelegate = self
 		
 		return viewController
-	}
-	
-	public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
-		if cardListDataProvider != nil && cardListDataProvider.customerKey != customer {
-			cardListDataProvider = CardListDataProvider.init(sdk: acquiringSdk, customerKey: customer)
-		} else if cardListDataProvider ==  nil {
-			cardListDataProvider = CardListDataProvider.init(sdk: acquiringSdk, customerKey: customer)
-		}
-		
-		if statusListener == nil {
-			cardListDataProvider.dataSourceStatusListener = self
-		} else {
-			cardListDataProvider.dataSourceStatusListener = statusListener
-		}
+      }
+      
+      public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
+            if cardListDataProvider != nil && cardListDataProvider.customerKey != customer {
+                  cardListDataProvider = CardListDataProvider.init(sdk: acquiringSdk, customerKey: customer)
+            } else if cardListDataProvider ==  nil {
+                  cardListDataProvider = CardListDataProvider.init(sdk: acquiringSdk, customerKey: customer)
+            }
+            
+            if statusListener == nil {
+                  cardListDataProvider.dataSourceStatusListener = self
+            } else {
+                  cardListDataProvider.dataSourceStatusListener = statusListener
+            }
 	}
 	
 	public func presentAddCardView(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
