@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Updated
+* add ability to call payment methods with existed PaymentId
+
 ## [2.1.0] - 2020-10-15
 
 ### Fixed
