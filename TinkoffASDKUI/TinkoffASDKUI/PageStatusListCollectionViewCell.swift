@@ -20,17 +20,15 @@
 import UIKit
 
 class PageStatusListCollectionViewCell: PageStatusCollectionViewCell {
+    @IBOutlet private var buttonList: UIButton!
 
-	@IBOutlet private weak var buttonList: UIButton!
-	
-	func setIconList(_ img: UIImage?) {
-		buttonList.setImage(img?.withRenderingMode(.alwaysOriginal), for: .normal)
-	}
-	
-	var onTouchList: (()-> Void)?
-	
-	@IBAction private func buttonListTouchUpInside(_ sender: UIButton) {
-		onTouchList?()
-	}
-	
+    func setIconList(_ img: UIImage?) {
+        buttonList.setImage(img?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+
+    var onTouchList: (() -> Void)?
+
+    @IBAction private func buttonListTouchUpInside(_: UIButton) {
+        onTouchList?()
+    }
 }

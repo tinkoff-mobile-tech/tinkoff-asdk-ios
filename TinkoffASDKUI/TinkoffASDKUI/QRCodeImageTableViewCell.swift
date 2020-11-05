@@ -20,8 +20,6 @@
 import UIKit
 
 class QRCodeImageTableViewCell: UITableViewCell {
-
-	@IBOutlet weak var imageViewIcon: UIImageView!
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-
+    @IBOutlet var imageViewIcon: UIImageView!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
 }

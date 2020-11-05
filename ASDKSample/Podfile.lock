@@ -1,11 +1,17 @@
 PODS:
+  - SwiftFormat/CLI (0.47.2)
   - TinkoffASDKCore (2.1.1)
   - TinkoffASDKUI (2.1.1):
     - TinkoffASDKCore
 
 DEPENDENCIES:
+  - SwiftFormat/CLI (~> 0.47.0)
   - TinkoffASDKCore (from `../`)
   - TinkoffASDKUI (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - SwiftFormat
 
 EXTERNAL SOURCES:
   TinkoffASDKCore:
@@ -14,9 +20,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  SwiftFormat: 0315a7115b15fd4ea2d043d5f5c22e3c98f84078
   TinkoffASDKCore: b91b1f728a06a339e75ff85ff36739db2cc39c3e
   TinkoffASDKUI: 8093560c20ff017de76aedbc00d6b64aa14b9153
 
-PODFILE CHECKSUM: 7a9aad87303c31ac5e6551477b7cc8c687f3f433
+PODFILE CHECKSUM: edb14ca030f7d10a84aa2a45365341d490d4a460
 
 COCOAPODS: 1.9.3

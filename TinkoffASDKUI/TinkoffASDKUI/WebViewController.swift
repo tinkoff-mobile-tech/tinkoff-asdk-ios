@@ -21,16 +21,14 @@ import UIKit
 import WebKit
 
 class WebViewController: ConfirmViewController {
-	
-	@IBOutlet weak var webView: WKWebView!
-	var urlRequest: URLRequest?
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		
-		if let url = urlRequest {
-			webView.load(url)
-		}
-	}
-	
+    @IBOutlet var webView: WKWebView!
+    var urlRequest: URLRequest?
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let url = urlRequest {
+            webView.load(url)
+        }
+    }
 }

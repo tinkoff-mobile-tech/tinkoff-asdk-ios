@@ -17,22 +17,20 @@
 //  limitations under the License.
 //
 
-import UIKit
 import CoreImage
+import UIKit
 
 extension UIImage {
-	
-	convenience init?(qr: String, for imageOutputSize: CGSize? = nil) {
-		guard let qrFilter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
-		let qrData = qr.data(using: .ascii)
-		qrFilter.setValue(qrData, forKey: "inputMessage")
-		
-		let qrTransform = CGAffineTransform(scaleX: 12, y: 12)
-		guard let qrImage = qrFilter.outputImage?.transformed(by: qrTransform) else {
-			return nil
-		}
-		
-		self.init(ciImage: qrImage)
-	}
-	
+    convenience init?(qr: String, for _: CGSize? = nil) {
+        guard let qrFilter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
+        let qrData = qr.data(using: .ascii)
+        qrFilter.setValue(qrData, forKey: "inputMessage")
+
+        let qrTransform = CGAffineTransform(scaleX: 12, y: 12)
+        guard let qrImage = qrFilter.outputImage?.transformed(by: qrTransform) else {
+            return nil
+        }
+
+        self.init(ciImage: qrImage)
+    }
 }

@@ -20,8 +20,6 @@
 import UIKit
 
 class AmountTableViewCell: UITableViewCell {
-
-	@IBOutlet weak var labelAmount: UILabel!
-	@IBOutlet weak var labelTitle: UILabel!
-
+    @IBOutlet var labelAmount: UILabel!
+    @IBOutlet var labelTitle: UILabel!
 }

@@ -20,16 +20,14 @@
 import UIKit
 
 extension UITableView {
-	
-	func defaultCell() -> UITableViewCell {
-		if let cellEmpty = dequeueReusableCell(withIdentifier: "defaultCell") {
-			return cellEmpty
-		}
-		
-		let cell = UITableViewCell.init(style: .default, reuseIdentifier: "defaultCell")
-		cell.selectionStyle = .none
-		
-		return cell
-	}
+    func defaultCell() -> UITableViewCell {
+        if let cellEmpty = dequeueReusableCell(withIdentifier: "defaultCell") {
+            return cellEmpty
+        }
 
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "defaultCell")
+        cell.selectionStyle = .none
+
+        return cell
+    }
 }

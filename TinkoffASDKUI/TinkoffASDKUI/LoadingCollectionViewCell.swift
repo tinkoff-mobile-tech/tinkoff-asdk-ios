@@ -20,7 +20,5 @@
 import UIKit
 
 class LoadingCollectionViewCell: UICollectionViewCell {
-	
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
 }

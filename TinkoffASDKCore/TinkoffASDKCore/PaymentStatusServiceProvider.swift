@@ -20,77 +20,73 @@
 import Foundation
 
 public final class PaymentStatusServiceProvider: FetchServiceProtocol {
-	
-	public typealias ObjectType = PaymentStatusResponse
-	
-	/// Текущее состояние сервиса проверки
-	public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknown
-	var queryStatus: Cancellable?
-	/// Слушатель состояния сервиса проверки
-	public var onStatusUpdated: ((FetchStatus<PaymentStatusResponse>) -> Void)?
-	/// Платеж состояние которого проверяем
-	private(set) var paymentId: Int64 = 0
-	/// Частота обновления, не менее 10 сек
-	public var updateTimeInterval: TimeInterval = 5 {
-		didSet {
-			if updateTimeInterval < 5 {
-				updateTimeInterval = 5
-			}
-		}
-	}
-	
-	private weak var sdk: AcquiringSdk?
-	
-	public init(sdk: AcquiringSdk?, paymentId: Int64, updateTimeInterval: TimeInterval = 5) {
-		self.sdk = sdk
-		self.paymentId = paymentId
-		self.updateTimeInterval = updateTimeInterval
-	}
-	
-	/// Запустить проверку статуса платежа
-	/// - Parameter completionStatus: `[PaymentStatus]`статусы для которых проверка завршается, конечные статусы
-	///   по умолчанию выставлены [.cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]
-	public func fetchStatus(completionStatus: [PaymentStatus] = [.confirmed, .cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]) {
-		if case .loading = fetchStatus { return }
-		
-		fetch(startHandler: nil) { [weak self] (payment, errors) in
-			if let paymentResponse = payment, completionStatus.contains(paymentResponse.status) { return }
-			
-			if let timeInterval = self?.updateTimeInterval {
-				DispatchQueue.main.asyncAfter(deadline: .now() + timeInterval) { [weak self] in
-					self?.fetchStatus(completionStatus: completionStatus)
-				}
-			}
-		}
-		
-	}//fetchStatus
-	
-	// MARK: FetchDataSourceProtocol
-	
-	public func fetch(startHandler: (() -> Void)?, completeHandler: @escaping (PaymentStatusResponse?, Error?) -> Void) {
-		fetchStatus = .loading
-		startHandler?()
-		
-		queryStatus = sdk?.paymentOperationStatus(data: PaymentInfoData.init(paymentId: paymentId), completionHandler: { [weak self] (response) in
-			var status: FetchStatus<PaymentStatusResponse> = .loading
-			switch response {
-				case .failure(let error):
-					status = FetchStatus.error(error)
-					completeHandler(nil, error)
-				
-				case .success(let paymentResponse):
-					status = FetchStatus.object(paymentResponse)
-					completeHandler(paymentResponse, nil)
-				
-			}
-			
-			self?.fetchStatus = status
-			
-			DispatchQueue.main.async { [weak self] in
-				self?.onStatusUpdated?(status)
-			}
-			
-		})
-	}
-	
+    public typealias ObjectType = PaymentStatusResponse
+
+    /// Текущее состояние сервиса проверки
+    public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknown
+    var queryStatus: Cancellable?
+    /// Слушатель состояния сервиса проверки
+    public var onStatusUpdated: ((FetchStatus<PaymentStatusResponse>) -> Void)?
+    /// Платеж состояние которого проверяем
+    private(set) var paymentId: Int64 = 0
+    /// Частота обновления, не менее 10 сек
+    public var updateTimeInterval: TimeInterval = 5 {
+        didSet {
+            if updateTimeInterval < 5 {
+                updateTimeInterval = 5
+            }
+        }
+    }
+
+    private weak var sdk: AcquiringSdk?
+
+    public init(sdk: AcquiringSdk?, paymentId: Int64, updateTimeInterval: TimeInterval = 5) {
+        self.sdk = sdk
+        self.paymentId = paymentId
+        self.updateTimeInterval = updateTimeInterval
+    }
+
+    /// Запустить проверку статуса платежа
+    /// - Parameter completionStatus: `[PaymentStatus]`статусы для которых проверка завршается, конечные статусы
+    ///   по умолчанию выставлены [.cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]
+    public func fetchStatus(completionStatus: [PaymentStatus] = [.confirmed, .cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]) {
+        if case .loading = fetchStatus { return }
+
+        fetch(startHandler: nil) { [weak self] payment, _ in
+            if let paymentResponse = payment, completionStatus.contains(paymentResponse.status) { return }
+
+            if let timeInterval = self?.updateTimeInterval {
+                DispatchQueue.main.asyncAfter(deadline: .now() + timeInterval) { [weak self] in
+                    self?.fetchStatus(completionStatus: completionStatus)
+                }
+            }
+        }
+    } // fetchStatus
+
+    // MARK: FetchDataSourceProtocol
+
+    public func fetch(startHandler: (() -> Void)?, completeHandler: @escaping (PaymentStatusResponse?, Error?) -> Void) {
+        fetchStatus = .loading
+        startHandler?()
+
+        queryStatus = sdk?.paymentOperationStatus(data: PaymentInfoData(paymentId: paymentId), completionHandler: { [weak self] response in
+            var status: FetchStatus<PaymentStatusResponse> = .loading
+            switch response {
+            case let .failure(error):
+                status = FetchStatus.error(error)
+                completeHandler(nil, error)
+
+            case let .success(paymentResponse):
+                status = FetchStatus.object(paymentResponse)
+                completeHandler(paymentResponse, nil)
+            }
+
+            self?.fetchStatus = status
+
+            DispatchQueue.main.async { [weak self] in
+                self?.onStatusUpdated?(status)
+            }
+
+        })
+    }
 }

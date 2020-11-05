@@ -21,74 +21,70 @@ import UIKit
 import WebKit
 
 class QRCodeWebTableViewCell: UITableViewCell {
+    @IBOutlet private var viewBorder: UIView!
+    @IBOutlet private var webView: WKWebView!
+    @IBOutlet private var activityView: UIActivityIndicatorView!
 
-	@IBOutlet private weak var viewBorder: UIView!
-	@IBOutlet private weak var webView: WKWebView!
-	@IBOutlet private weak var activityView: UIActivityIndicatorView!
-	
-	@IBOutlet weak var labelTitle: UILabel!
-	@IBOutlet weak var buttonShare: UIButton!
-		
-	var onButtonShareTouch: (() -> Void)?
+    @IBOutlet var labelTitle: UILabel!
+    @IBOutlet var buttonShare: UIButton!
 
-	override func awakeFromNib() {
+    var onButtonShareTouch: (() -> Void)?
+
+    override func awakeFromNib() {
         super.awakeFromNib()
-		
-		viewBorder.layer.cornerRadius = 20
-		viewBorder.backgroundColor = UIColor.init(hex: "#F6F7F8")
-		
-		webView.navigationDelegate = self		
+
+        viewBorder.layer.cornerRadius = 20
+        viewBorder.backgroundColor = UIColor(hex: "#F6F7F8")
+
+        webView.navigationDelegate = self
     }
-	
-	func showQRCode(data qrCodeData: String) {
-		var smartHTML: String
-		
-		let qrCodeBase64String = Data(qrCodeData.utf8).base64EncodedString()
-			smartHTML =
-"""
-<!DOCTYPE html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>QR-code</title>
-	<style>
-		body {
-			margin:0;
-			padding:0;
-		}
-		.qr {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			height: 100vh;
-			background-repeat: no-repeat;
-			background-size: contain;
-			width: 100%;
-			background-position: center;
-			background-image:url('data:image/svg+xml;base64,\(qrCodeBase64String)')
-		}
-	</style>
-</head>
-<body>
-	<div class="qr"/>
-</body>
-</html>
-"""
-		webView.loadHTMLString(smartHTML, baseURL: Bundle(for: type(of: self)).bundleURL)
-	}
-	
-	@IBAction func buttonShareTouchUpInside(_ sender: UIButton) {
-		onButtonShareTouch?()
-	}
-	
+
+    func showQRCode(data qrCodeData: String) {
+        var smartHTML: String
+
+        let qrCodeBase64String = Data(qrCodeData.utf8).base64EncodedString()
+        smartHTML =
+            """
+            <!DOCTYPE html>
+            <head>
+            	<meta charset="UTF-8">
+            	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+            	<title>QR-code</title>
+            	<style>
+            		body {
+            			margin:0;
+            			padding:0;
+            		}
+            		.qr {
+            			display: flex;
+            			flex-direction: column;
+            			justify-content: center;
+            			height: 100vh;
+            			background-repeat: no-repeat;
+            			background-size: contain;
+            			width: 100%;
+            			background-position: center;
+            			background-image:url('data:image/svg+xml;base64,\(qrCodeBase64String)')
+            		}
+            	</style>
+            </head>
+            <body>
+            	<div class="qr"/>
+            </body>
+            </html>
+            """
+        webView.loadHTMLString(smartHTML, baseURL: Bundle(for: type(of: self)).bundleURL)
+    }
+
+    @IBAction func buttonShareTouchUpInside(_: UIButton) {
+        onButtonShareTouch?()
+    }
 }
 
 extension QRCodeWebTableViewCell: WKNavigationDelegate {
-	
-	// MARK: WKNavigationDelegate
-	
-	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		activityView.stopAnimating()
-	}
-	
+    // MARK: WKNavigationDelegate
+
+    func webView(_: WKWebView, didFinish _: WKNavigation!) {
+        activityView.stopAnimating()
+    }
 }

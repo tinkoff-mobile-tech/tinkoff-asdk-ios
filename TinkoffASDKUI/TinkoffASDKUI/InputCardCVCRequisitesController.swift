@@ -20,101 +20,87 @@
 import UIKit
 
 protocol InputCardCVCRequisitesViewOutConnection {
-	
-	func present(responderListener: BecomeFirstResponderListener?, inputView: InputCardCVCRequisitesPresenterProtocol?)
+    func present(responderListener: BecomeFirstResponderListener?, inputView: InputCardCVCRequisitesPresenterProtocol?)
 
-	func cardCVC() -> String?
-	
+    func cardCVC() -> String?
 }
-
 
 class InputCardCVCRequisitesPresenter: NSObject {
+    private var maskedTextFieldDelegate: MaskedTextFieldDelegate!
+    private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
+    private weak var inputView: InputCardCVCRequisitesPresenterProtocol?
+    private var maskFormatCVC = "[000]"
+    private var inputCardCVC: String?
 
-	private var maskedTextFieldDelegate: MaskedTextFieldDelegate!
-	private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
-	private weak var inputView: InputCardCVCRequisitesPresenterProtocol?
-	private var maskFormatCVC = "[000]"
-	private var inputCardCVC: String?
+    private var colorError = UIColor.systemRed
+    private var colorNormal: UIColor = {
+        if #available(iOS 13, *) {
+            return .label
+        } else {
+            return .black
+        }
+    }()
 
-	private var colorError: UIColor = UIColor.systemRed
-	private var colorNormal: UIColor = {
-		if #available(iOS 13, *) {
-			return .label
-		} else {
-			return .black
-		}
-	}()
-	private var colorDisable: UIColor = UIColor.systemGray
+    private var colorDisable = UIColor.systemGray
 }
-
 
 extension InputCardCVCRequisitesPresenter: UITextFieldDelegate {
-		
-	// MARK: UITextFieldDelegate
-	
-	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {		
-		return becomeFirstResponderListener?.textFieldShouldBecomeFirstResponder(textField) ?? true
-	}
-	
-	func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-		return true
-	}
-	
-	func textFieldDidEndEditing(_ textField: UITextField) {
+    // MARK: UITextFieldDelegate
 
-	}
-	
-	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-		return true
-	}
-	
-	func textFieldShouldClear(_ textField: UITextField) -> Bool {
-		return true
-	}
-	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		return true
-	}
-	
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return becomeFirstResponderListener?.textFieldShouldBecomeFirstResponder(textField) ?? true
+    }
+
+    func textFieldShouldEndEditing(_: UITextField) -> Bool {
+        return true
+    }
+
+    func textFieldDidEndEditing(_: UITextField) {}
+
+    func textField(_: UITextField, shouldChangeCharactersIn _: NSRange, replacementString _: String) -> Bool {
+        return true
+    }
+
+    func textFieldShouldClear(_: UITextField) -> Bool {
+        return true
+    }
+
+    func textFieldShouldReturn(_: UITextField) -> Bool {
+        return true
+    }
 }
-
 
 extension InputCardCVCRequisitesPresenter: MaskedTextFieldDelegateListener {
-	
-	// MARK: MaskedTextFieldDelegateListener
-	
-	func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
-		if let inputViewStatus = inputView as? InputViewStatus {
-			inputViewStatus.setStatus(.normal, statusText: nil)
-		}
-		
-		if inputView?.textFieldCardCVC == textField {
-			inputCardCVC = value
-		}
-	}
-	
+    // MARK: MaskedTextFieldDelegateListener
+
+    func textField(_ textField: UITextField, didFillMask _: Bool, extractValue value: String) {
+        if let inputViewStatus = inputView as? InputViewStatus {
+            inputViewStatus.setStatus(.normal, statusText: nil)
+        }
+
+        if inputView?.textFieldCardCVC == textField {
+            inputCardCVC = value
+        }
+    }
 }
 
-
 extension InputCardCVCRequisitesPresenter: InputCardCVCRequisitesViewOutConnection {
+    func present(responderListener: BecomeFirstResponderListener?, inputView: InputCardCVCRequisitesPresenterProtocol?) {
+        self.inputView?.textFieldCardCVC.text = nil
+        self.inputView?.textFieldCardCVC.delegate = maskedTextFieldDelegate
 
-	func present(responderListener: BecomeFirstResponderListener?, inputView: InputCardCVCRequisitesPresenterProtocol?) {
-		self.inputView?.textFieldCardCVC.text = nil
-		self.inputView?.textFieldCardCVC.delegate = maskedTextFieldDelegate
-		
-		self.inputView = inputView
+        self.inputView = inputView
 
-		maskedTextFieldDelegate = MaskedTextFieldDelegate()
-		maskedTextFieldDelegate.maskFormat = maskFormatCVC
-		maskedTextFieldDelegate.listener = self
-		
-		becomeFirstResponderListener = responderListener
-		inputView?.textFieldCardCVC.text = nil
-		inputView?.textFieldCardCVC.delegate = maskedTextFieldDelegate
-	}
-	
-	func cardCVC() -> String? {
-		return inputCardCVC
-	}
-	
+        maskedTextFieldDelegate = MaskedTextFieldDelegate()
+        maskedTextFieldDelegate.maskFormat = maskFormatCVC
+        maskedTextFieldDelegate.listener = self
+
+        becomeFirstResponderListener = responderListener
+        inputView?.textFieldCardCVC.text = nil
+        inputView?.textFieldCardCVC.delegate = maskedTextFieldDelegate
+    }
+
+    func cardCVC() -> String? {
+        return inputCardCVC
+    }
 }

@@ -20,13 +20,11 @@
 import UIKit
 
 class AddCardTableViewCell: UITableViewCell {
+    @IBOutlet var labelTitle: UILabel!
 
-	@IBOutlet weak var labelTitle: UILabel!
-	
-	override func awakeFromNib() {
+    override func awakeFromNib() {
         super.awakeFromNib()
-	
-		labelTitle.text = AcqLoc.instance.localize("TinkoffAcquiring.text.addcard")
-	}
-    
+
+        labelTitle.text = AcqLoc.instance.localize("TinkoffAcquiring.text.addcard")
+    }
 }

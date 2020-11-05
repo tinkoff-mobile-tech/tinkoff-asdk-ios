@@ -17,27 +17,26 @@
 //  limitations under the License.
 //
 
-import UIKit
 import TinkoffASDKUI
+import UIKit
 
 class RebuildCardTableViewCell: UITableViewCell {
 
-	@IBOutlet weak var viewBorder: UIView!
-	@IBOutlet weak var imageViewLogo: UIImageView!
-	@IBOutlet weak var labelCardName: UILabel!
-	@IBOutlet weak var labelCardExpData: UILabel!
-	@IBOutlet weak var labelRebuid: UILabel!
+    @IBOutlet weak var viewBorder: UIView!
+    @IBOutlet weak var imageViewLogo: UIImageView!
+    @IBOutlet weak var labelCardName: UILabel!
+    @IBOutlet weak var labelCardExpData: UILabel!
+    @IBOutlet weak var labelRebuid: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()
-     
-		imageViewLogo.image = nil
-		imageViewLogo.isHidden = true
-		
-		labelCardName.text = nil
-		labelCardExpData.text = nil
-		
-		labelRebuid.text = nil
+
+        imageViewLogo.image = nil
+        imageViewLogo.isHidden = true
+
+        labelCardName.text = nil
+        labelCardExpData.text = nil
+
+        labelRebuid.text = nil
     }
-    
 }

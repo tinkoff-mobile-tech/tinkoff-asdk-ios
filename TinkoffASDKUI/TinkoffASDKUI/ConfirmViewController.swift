@@ -20,49 +20,47 @@
 import UIKit
 
 class ConfirmViewController: UIViewController {
+    var onCancel: (() -> Void)?
 
-	var onCancel: (() -> Void)?
-	
-	private var needOnCancelNotification: Bool = true
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		
-		var cancelButton: UIBarButtonItem
-		
-		if #available(iOS 13.0, *) {
-			cancelButton = UIBarButtonItem.init(barButtonSystemItem: .close, target: self, action: #selector(closeViewColtroller))
-		} else {
-			cancelButton = UIBarButtonItem.init(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeViewColtroller))
-		}
-		
-		navigationItem.setRightBarButton(cancelButton, animated: true)
-	}
-	
-	override func viewDidDisappear(_ animated: Bool) {
-		if needOnCancelNotification {
-			self.onCancel?()
-		}
-		
-		super.viewDidDisappear(animated)
-	}
-	
-	@objc func closeViewColtroller() {
-		needOnCancelNotification = false
-		if let presetingVC = presentingViewController {
-			presetingVC.dismiss(animated: true) {
-				self.onCancel?()
-			}
-		} else {
-			if let nav = navigationController {
-				nav.popViewController(animated: true)
-				onCancel?()
-			} else {
-				dismiss(animated: true) {
-					self.onCancel?()
-				}
-			}
-		}
-	}
-	
+    private var needOnCancelNotification: Bool = true
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        var cancelButton: UIBarButtonItem
+
+        if #available(iOS 13.0, *) {
+            cancelButton = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeViewColtroller))
+        } else {
+            cancelButton = UIBarButtonItem(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeViewColtroller))
+        }
+
+        navigationItem.setRightBarButton(cancelButton, animated: true)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        if needOnCancelNotification {
+            onCancel?()
+        }
+
+        super.viewDidDisappear(animated)
+    }
+
+    @objc func closeViewColtroller() {
+        needOnCancelNotification = false
+        if let presetingVC = presentingViewController {
+            presetingVC.dismiss(animated: true) {
+                self.onCancel?()
+            }
+        } else {
+            if let nav = navigationController {
+                nav.popViewController(animated: true)
+                onCancel?()
+            } else {
+                dismiss(animated: true) {
+                    self.onCancel?()
+                }
+            }
+        }
+    }
 }

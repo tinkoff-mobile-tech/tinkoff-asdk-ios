@@ -21,18 +21,16 @@ import UIKit
 
 class AboutViewController: UIViewController {
 
-	@IBOutlet weak var labelStatus: UILabel!
-	
-	override func viewDidLoad() {
+    @IBOutlet weak var labelStatus: UILabel!
+
+    override func viewDidLoad() {
         super.viewDidLoad()
 
-		var labelStatusText = "Tinkoff Acquiring SDK"
-		if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String, let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
-			labelStatusText.append("\n \(version)(\(build))")
-		}
-		
-		labelStatus.text = labelStatusText
-		
-    }
+        var labelStatusText = "Tinkoff Acquiring SDK"
+        if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String, let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
+            labelStatusText.append("\n \(version)(\(build))")
+        }
 
+        labelStatus.text = labelStatusText
+    }
 }

@@ -20,7 +20,5 @@
 import UIKit
 
 class QRCodeViewController: UIViewController {
-
-	@IBOutlet weak var imageView: UIImageView!
-
+    @IBOutlet var imageView: UIImageView!
 }

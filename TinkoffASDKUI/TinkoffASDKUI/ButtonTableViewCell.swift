@@ -20,32 +20,30 @@
 import UIKit
 
 class ButtonTableViewCell: UITableViewCell {
+    @IBOutlet var buttonAction: UIButton!
 
-	@IBOutlet weak var buttonAction: UIButton!
-	
-	var onButtonTouch: (() -> Void)?
-	
-	override func awakeFromNib() {
+    var onButtonTouch: (() -> Void)?
+
+    override func awakeFromNib() {
         super.awakeFromNib()
-		
-		buttonAction.layer.cornerRadius = 16.0
-		buttonAction.layer.borderWidth = 1
-		if #available(iOS 13.0, *) {
-			buttonAction.layer.borderColor = UIColor.systemBackground.cgColor
-		} else {
-			buttonAction.layer.borderColor = UIColor.white.cgColor
-		}
-	}
-	
-	func setButtonIcon(_ img: UIImage?) {
-		buttonAction.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-		buttonAction.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-		buttonAction.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-		buttonAction.setImage(img, for: .normal)
-	}
-	
-	@IBAction private func buttonActionTouchUpInside(_ sender: UIButton) {
-		onButtonTouch?()
-	}
-	
+
+        buttonAction.layer.cornerRadius = 16.0
+        buttonAction.layer.borderWidth = 1
+        if #available(iOS 13.0, *) {
+            buttonAction.layer.borderColor = UIColor.systemBackground.cgColor
+        } else {
+            buttonAction.layer.borderColor = UIColor.white.cgColor
+        }
+    }
+
+    func setButtonIcon(_ img: UIImage?) {
+        buttonAction.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        buttonAction.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        buttonAction.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        buttonAction.setImage(img, for: .normal)
+    }
+
+    @IBAction private func buttonActionTouchUpInside(_: UIButton) {
+        onButtonTouch?()
+    }
 }

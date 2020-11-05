@@ -20,11 +20,9 @@
 import UIKit
 
 class ResistanceSpaceTableViewCell: UITableViewCell {
+    @IBOutlet private var heightLayoutConstraint: NSLayoutConstraint!
 
-	@IBOutlet private weak var heightLayoutConstraint: NSLayoutConstraint!
-
-	func setHeight(_ height: CGFloat) {
-		heightLayoutConstraint.constant = height
-	}
-	
+    func setHeight(_ height: CGFloat) {
+        heightLayoutConstraint.constant = height
+    }
 }

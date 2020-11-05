@@ -20,58 +20,53 @@
 import Foundation
 
 public struct CheckingRandomAmountData: Codable {
-	
-	public var amount: Int
-	public var requestKey: String
-	
-	public enum CodingKeys: String, CodingKey {
-		case amount = "Amount"
-		case requestKey = "RequestKey"
-	}
-	
-	public init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		amount = try container.decode(Int.self, forKey: .amount)
-		requestKey = try container.decode(String.self, forKey: .requestKey)
-	}
-	
-	/// - Parameter amount: Сумма в копейках
-	/// - Parameter requestKey: ключ операции для проверки
-	public init(amount: Double, requestKey: String) {
-		self.amount = Int(amount * 100)
-		self.requestKey = requestKey
-	}
+    public var amount: Int
+    public var requestKey: String
 
-	public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encode(amount, forKey: .amount)
-		try container.encode(requestKey, forKey: .requestKey)
-	}
-	
+    public enum CodingKeys: String, CodingKey {
+        case amount = "Amount"
+        case requestKey = "RequestKey"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        amount = try container.decode(Int.self, forKey: .amount)
+        requestKey = try container.decode(String.self, forKey: .requestKey)
+    }
+
+    /// - Parameter amount: Сумма в копейках
+    /// - Parameter requestKey: ключ операции для проверки
+    public init(amount: Double, requestKey: String) {
+        self.amount = Int(amount * 100)
+        self.requestKey = requestKey
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(requestKey, forKey: .requestKey)
+    }
 }
 
-
 final class CheckRandomAmountRequest: RequestOperation, AcquiringRequestTokenParams {
-	
-	// MARK: RequestOperation
-	
-	public var name = "SubmitRandomAmount"
-	
-	public var parameters: JSONObject?
-	
-	// MARK: AcquiringRequestTokenParams
-	
-	///
-	/// отмечаем параметры которые участвуют в вычислении `token`
-	public var tokenParamsKey: Set<String> = [CheckingRandomAmountData.CodingKeys.amount.rawValue,
-											  CheckingRandomAmountData.CodingKeys.requestKey.rawValue]
-	
-	///
-	/// - Parameter requestData: `CheckingRandomAmountData`
-	public init(requestData: CheckingRandomAmountData) {
-		if let json = try? requestData.encode2JSONObject() {
-			self.parameters = json
-		}
-	}
-	
+    // MARK: RequestOperation
+
+    public var name = "SubmitRandomAmount"
+
+    public var parameters: JSONObject?
+
+    // MARK: AcquiringRequestTokenParams
+
+    ///
+    /// отмечаем параметры которые участвуют в вычислении `token`
+    public var tokenParamsKey: Set<String> = [CheckingRandomAmountData.CodingKeys.amount.rawValue,
+                                              CheckingRandomAmountData.CodingKeys.requestKey.rawValue]
+
+    ///
+    /// - Parameter requestData: `CheckingRandomAmountData`
+    public init(requestData: CheckingRandomAmountData) {
+        if let json = try? requestData.encode2JSONObject() {
+            parameters = json
+        }
+    }
 }

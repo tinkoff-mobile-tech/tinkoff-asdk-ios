@@ -20,41 +20,39 @@
 import UIKit
 
 class StatusTableViewCell: UITableViewCell {
+    @IBOutlet var labelStatus: UILabel!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var buttonUpdate: UIButton!
 
-	@IBOutlet weak var labelStatus: UILabel!
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	@IBOutlet weak var buttonUpdate: UIButton!
-	
-	var onButtonTouch: (() -> Void)?
-	
-	override func awakeFromNib() {
-		super.awakeFromNib()
-		
-		defaultUIState()
-	}
-	
-	override func prepareForReuse() {
-		super.prepareForReuse()
-		
-		defaultUIState()
-	}
-	
-	@IBAction private func onButtonUpdateTouchUpInside(_ sender: UIButton) {
-		onButtonTouch?()
-	}
-		
-	func defaultUIState() {
-		onButtonTouch = nil
-		
-		activityIndicator.isHidden = false
-		activityIndicator.startAnimating()
-		
-		labelStatus.isHidden = true
-		labelStatus.text = nil
-		labelStatus.attributedText = nil
-		
-		buttonUpdate.isHidden = true
-		buttonUpdate.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.update"), for: .normal)
-	}
+    var onButtonTouch: (() -> Void)?
 
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        defaultUIState()
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        defaultUIState()
+    }
+
+    @IBAction private func onButtonUpdateTouchUpInside(_: UIButton) {
+        onButtonTouch?()
+    }
+
+    func defaultUIState() {
+        onButtonTouch = nil
+
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+
+        labelStatus.isHidden = true
+        labelStatus.text = nil
+        labelStatus.attributedText = nil
+
+        buttonUpdate.isHidden = true
+        buttonUpdate.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.update"), for: .normal)
+    }
 }

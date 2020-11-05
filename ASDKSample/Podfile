@@ -7,4 +7,8 @@ target 'ASDKSample' do
 	pod 'TinkoffASDKCore', :path => "../"
 	pod 'TinkoffASDKUI', :path => "../"
 
+	# Linting and Formatting
+
+	pod 'SwiftFormat/CLI', '~> 0.47.0'
+
 end

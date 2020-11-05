@@ -20,225 +20,215 @@
 import UIKit
 
 class RandomAmounCheckingViewController: ConfirmViewController {
-	
-	enum TableViewCells {
-		case title
-		case textField
-		case secureLogos
-	}
-	
-	weak var alertViewHelper: AcquiringAlertViewProtocol?
-	var completeHandler: ((_ result: Double) -> Void)?
-	
-	@IBOutlet weak var viewWaiting: UIView!
-	@IBOutlet private weak var tableView: UITableView!
-	
-	private var tableViewCells: [TableViewCells]!
-	private var inputValue: String?
-	private weak var inputAccessoryViewWithButton: ButtonInputAccessoryView?
-	
+    enum TableViewCells {
+        case title
+        case textField
+        case secureLogos
+    }
+
+    weak var alertViewHelper: AcquiringAlertViewProtocol?
+    var completeHandler: ((_ result: Double) -> Void)?
+
+    @IBOutlet var viewWaiting: UIView!
+    @IBOutlet private var tableView: UITableView!
+
+    private var tableViewCells: [TableViewCells]!
+    private var inputValue: String?
+    private weak var inputAccessoryViewWithButton: ButtonInputAccessoryView?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-		title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.confimration")
-		
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowOnTableView(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideOnTableView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-		
-		tableViewCells = [.title, .textField, .secureLogos]
-				
-		tableView.register(UINib.init(nibName: "TextFieldTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TextFieldTableViewCell")
-		tableView.register(UINib.init(nibName: "AmountTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "AmountTableViewCell")
-		tableView.register(UINib.init(nibName: "PSLogoTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PSLogoTableViewCell")
-		
-		tableView.dataSource = self
-	}
-	
-	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		
-		inputField()?.textField.becomeFirstResponder()
-	}
-	
-	private func inputField() -> InputFieldTableViewCellStatusProtocol? {
-		if let index = tableViewCells.firstIndex(of: .textField), let inputField = tableView.cellForRow(at: IndexPath.init(row: index, section: 0)) as? InputFieldTableViewCellStatusProtocol {
-			return inputField
-		}
-		
-		return nil
-	}
-	
-	private func onButtonAddTouch() {
-		if validate(inputValue) {
-			if let value = inputValue {
-				let desValue = value.replacingOccurrences(of: ",", with: ".")
-				if let amount = Double(desValue), amount > 0.0 {
-					if let inputField = inputField() {
-						inputField.textField.resignFirstResponder()
-					}
-					
-					completeHandler?(amount)
-				}
-			}
-		} else {
-			if let inputField = inputField() {
-				inputField.setStatus(.error, statusText: AcqLoc.instance.localize("TinkoffAcquiring.error.loopAmount"))
-			}
-		}
-	}//onButtonAddTouch
-		
-	private func validate(_ validateValue: String?) -> Bool {
-		if let value = validateValue {
-			let desValue = value.replacingOccurrences(of: ",", with: ".")
-			if let amount = Double(desValue), amount > 0.0 {
-				return true
-			}
-		}
-		
-		return false
-	}
-	
-	// MARK: FirstResponder, Resize Content Insets
-	
-	@objc func keyboardWillShowOnTableView(notification: NSNotification) {
-		keyboardWillShow(notification: notification)
-	}
-	
-	@objc func keyboardWillHideOnTableView(notification: NSNotification) {
-		keyboardWillHide(notification: notification)
-	}
-	
-	func keyboardWillShow(notification: NSNotification) {
-		if let userInfo = notification.userInfo as NSDictionary?, let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
-			let keyboardRectangle = keyboardFrame.cgRectValue
-			let keyboardHeight = keyboardRectangle.height
-			let inputAccessoryViewHeight: CGFloat = (view.firstResponder?.inputAccessoryView?.frame.size.height) ?? 0
-			let keyboardContentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: ((keyboardHeight) + inputAccessoryViewHeight), right: 0)
-			tableView.contentInset = keyboardContentInset
-		}
-	}
-	
-	func keyboardDidShow() {
-		if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder), let indexPath = tableView.indexPath(for: cell) {
-			tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-		}
-	}
-	
-	func keyboardWillHide(notification: NSNotification) {
-		UIView.animate(withDuration: 0.3) { [weak self] in
-			self?.tableView.contentInset = UIEdgeInsets.zero
-		}
-	}
-	
+        title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.confimration")
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowOnTableView(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideOnTableView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+
+        tableViewCells = [.title, .textField, .secureLogos]
+
+        tableView.register(UINib(nibName: "TextFieldTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TextFieldTableViewCell")
+        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "AmountTableViewCell")
+        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PSLogoTableViewCell")
+
+        tableView.dataSource = self
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        inputField()?.textField.becomeFirstResponder()
+    }
+
+    private func inputField() -> InputFieldTableViewCellStatusProtocol? {
+        if let index = tableViewCells.firstIndex(of: .textField), let inputField = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? InputFieldTableViewCellStatusProtocol {
+            return inputField
+        }
+
+        return nil
+    }
+
+    private func onButtonAddTouch() {
+        if validate(inputValue) {
+            if let value = inputValue {
+                let desValue = value.replacingOccurrences(of: ",", with: ".")
+                if let amount = Double(desValue), amount > 0.0 {
+                    if let inputField = inputField() {
+                        inputField.textField.resignFirstResponder()
+                    }
+
+                    completeHandler?(amount)
+                }
+            }
+        } else {
+            if let inputField = inputField() {
+                inputField.setStatus(.error, statusText: AcqLoc.instance.localize("TinkoffAcquiring.error.loopAmount"))
+            }
+        }
+    } // onButtonAddTouch
+
+    private func validate(_ validateValue: String?) -> Bool {
+        if let value = validateValue {
+            let desValue = value.replacingOccurrences(of: ",", with: ".")
+            if let amount = Double(desValue), amount > 0.0 {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    // MARK: FirstResponder, Resize Content Insets
+
+    @objc func keyboardWillShowOnTableView(notification: NSNotification) {
+        keyboardWillShow(notification: notification)
+    }
+
+    @objc func keyboardWillHideOnTableView(notification: NSNotification) {
+        keyboardWillHide(notification: notification)
+    }
+
+    func keyboardWillShow(notification: NSNotification) {
+        if let userInfo = notification.userInfo as NSDictionary?, let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            let inputAccessoryViewHeight: CGFloat = (view.firstResponder?.inputAccessoryView?.frame.size.height) ?? 0
+            let keyboardContentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight + inputAccessoryViewHeight, right: 0)
+            tableView.contentInset = keyboardContentInset
+        }
+    }
+
+    func keyboardDidShow() {
+        if let cell: UITableViewCell = UIView.searchTableViewCell(by: view.firstResponder), let indexPath = tableView.indexPath(for: cell) {
+            tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+
+    func keyboardWillHide(notification _: NSNotification) {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.tableView.contentInset = UIEdgeInsets.zero
+        }
+    }
 }
 
 extension RandomAmounCheckingViewController: UITableViewDataSource {
-	
-	// MARK: UITableViewDataSource
-	
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return tableViewCells.count
-	}
-	
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		switch tableViewCells[indexPath.row] {
-			case .title:
-				if let cell = tableView.dequeueReusableCell(withIdentifier: "AmountTableViewCell") as? AmountTableViewCell {
-					cell.labelTitle.text = AcqLoc.instance.localize("TinkoffAcquiring.text.loopConfirmation")
-					
-					return cell
-				}
-			
-			case .textField:
-				if let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldTableViewCell") as? TextFieldTableViewCell {
-					cell.textField.delegate = self
-					cell.textField.keyboardType = .decimalPad
-					cell.labelHint.text = AcqLoc.instance.localize("TinkoffAcquiring.hint.loopAmount")
-					cell.textField.placeholder = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.loopAmount")
-					
-					return cell
-				}
-			
-			case .secureLogos:
-				if let cell = tableView.dequeueReusableCell(withIdentifier: "PSLogoTableViewCell") as? PSLogoTableViewCell {
-					return cell
-				}
-		}
-		
-		return tableView.defaultCell()
-	}
-	
+    // MARK: UITableViewDataSource
+
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+        return tableViewCells.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch tableViewCells[indexPath.row] {
+        case .title:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "AmountTableViewCell") as? AmountTableViewCell {
+                cell.labelTitle.text = AcqLoc.instance.localize("TinkoffAcquiring.text.loopConfirmation")
+
+                return cell
+            }
+
+        case .textField:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldTableViewCell") as? TextFieldTableViewCell {
+                cell.textField.delegate = self
+                cell.textField.keyboardType = .decimalPad
+                cell.labelHint.text = AcqLoc.instance.localize("TinkoffAcquiring.hint.loopAmount")
+                cell.textField.placeholder = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.loopAmount")
+
+                return cell
+            }
+
+        case .secureLogos:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "PSLogoTableViewCell") as? PSLogoTableViewCell {
+                return cell
+            }
+        }
+
+        return tableView.defaultCell()
+    }
 }
 
 extension RandomAmounCheckingViewController: BecomeFirstResponderListener {
-	
-	func textFieldShouldBecomeFirstResponder(_ textField: UITextField) -> Bool {
-		return true
-	}
-	
+    func textFieldShouldBecomeFirstResponder(_: UITextField) -> Bool {
+        return true
+    }
 }
 
 extension RandomAmounCheckingViewController: UITextFieldDelegate {
-	
-	// MARK: UITextFieldDelegate
-	
-	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-		if let accessoryView = Bundle(for: type(of: self)).loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView {
-			accessoryView.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.confirm"), for: .normal)
-			accessoryView.onButtonTouchUpInside = { [weak self] in
-				self?.onButtonAddTouch()
-			}
-			
-			textField.inputAccessoryView = accessoryView
-			inputAccessoryViewWithButton = accessoryView
-		}
-		
-		inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
-		inputAccessoryViewWithButton?.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.addCard"), for: .normal)
-		
-		return true
-	}
-	
-	func textFieldDidBeginEditing(_ textField: UITextField) {
-		inputAccessoryViewWithButton?.buttonAction.isEnabled = validate(inputValue)
-	}
-	
-	func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-		return true
-	}
-	
-	func textFieldDidEndEditing(_ textField: UITextField) {
-		inputValue = textField.text
-	}
-	
-	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-		if let inputFieldCell: InputFieldTableViewCellStatusProtocol = UIView.searchTableViewCell(by: textField) {
-			tableView.beginUpdates()
-				inputFieldCell.setStatus(.normal, statusText: nil)
-			tableView.endUpdates()
-			
-		}
-		
-		let text: String = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-		inputValue = text
-		inputAccessoryViewWithButton?.buttonAction.isEnabled = validate(inputValue)
-		
-		return true
-	}
-	
-	func textFieldShouldClear(_ textField: UITextField) -> Bool {
-		if let inputField: InputFieldTableViewCellStatusProtocol = UIView.searchTableViewCell(by: textField) {
-			inputField.setStatus(.normal, statusText: nil)
-		}
-		
-		return true
-	}
-	
-	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		
-		return true
-	}
-	
+    // MARK: UITextFieldDelegate
+
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        if let accessoryView = Bundle(for: type(of: self)).loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView {
+            accessoryView.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.confirm"), for: .normal)
+            accessoryView.onButtonTouchUpInside = { [weak self] in
+                self?.onButtonAddTouch()
+            }
+
+            textField.inputAccessoryView = accessoryView
+            inputAccessoryViewWithButton = accessoryView
+        }
+
+        inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
+        inputAccessoryViewWithButton?.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.addCard"), for: .normal)
+
+        return true
+    }
+
+    func textFieldDidBeginEditing(_: UITextField) {
+        inputAccessoryViewWithButton?.buttonAction.isEnabled = validate(inputValue)
+    }
+
+    func textFieldShouldEndEditing(_: UITextField) -> Bool {
+        return true
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        inputValue = textField.text
+    }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let inputFieldCell: InputFieldTableViewCellStatusProtocol = UIView.searchTableViewCell(by: textField) {
+            tableView.beginUpdates()
+            inputFieldCell.setStatus(.normal, statusText: nil)
+            tableView.endUpdates()
+        }
+
+        let text: String = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+        inputValue = text
+        inputAccessoryViewWithButton?.buttonAction.isEnabled = validate(inputValue)
+
+        return true
+    }
+
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        if let inputField: InputFieldTableViewCellStatusProtocol = UIView.searchTableViewCell(by: textField) {
+            inputField.setStatus(.normal, statusText: nil)
+        }
+
+        return true
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+
+        return true
+    }
 }

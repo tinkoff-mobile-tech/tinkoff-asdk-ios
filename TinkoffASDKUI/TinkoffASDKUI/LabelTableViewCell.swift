@@ -20,7 +20,5 @@
 import UIKit
 
 class LabelTableViewCell: UITableViewCell {
-
-	@IBOutlet weak var labelTitle: UILabel!
-    
+    @IBOutlet var labelTitle: UILabel!
 }

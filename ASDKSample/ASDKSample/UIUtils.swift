@@ -19,61 +19,57 @@
 
 import UIKit
 
-protocol NibLoadable: class {
-	
-	static var nib: UINib { get }
-	
+protocol NibLoadable: AnyObject {
+
+    static var nib: UINib { get }
 }
 
 extension NibLoadable {
-	
-	static var nib: UINib {
-		return UINib(nibName: nibName, bundle: Bundle.init(for: self))
-	}
-	
-	static var nibName: String {
-		return String(describing: self)
-	}
-	
+
+    static var nib: UINib {
+        return UINib(nibName: nibName, bundle: Bundle(for: self))
+    }
+
+    static var nibName: String {
+        return String(describing: self)
+    }
 }
 
 extension NibLoadable where Self: UIView {
-	
-	static func loadFromNib() -> Self {
-		guard let view = nib.instantiate(withOwner: nil, options: nil).first as? Self else {
-			fatalError()
-		}
-		
-		return view
-	}
-	
+
+    static func loadFromNib() -> Self {
+        guard let view = nib.instantiate(withOwner: nil, options: nil).first as? Self else {
+            fatalError()
+        }
+
+        return view
+    }
 }
 
 extension UITableView {
-	
-	// register cell
-	func registerCells(types: [NibLoadable.Type]) {
-		types.forEach { (type) in
-			register(type.nib, forCellReuseIdentifier: type.nibName)
-		}
-	}
-	
-	// register heade and footer view
-	func registerHeaderFooter(types: [NibLoadable.Type]) {
-		types.forEach { type in
-			register(type.nib, forHeaderFooterViewReuseIdentifier: type.nibName)
-		}
-	}
-	
-	func defaultCell() -> UITableViewCell {
-		if let cellEmpty = dequeueReusableCell(withIdentifier: "defaultCell") {
-			return cellEmpty
-		} else {
-			let cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "defaultCell")
-			cell.selectionStyle = .none
-			
-			return cell
-		}
-	}
-	
+
+    // register cell
+    func registerCells(types: [NibLoadable.Type]) {
+        types.forEach { type in
+            register(type.nib, forCellReuseIdentifier: type.nibName)
+        }
+    }
+
+    // register heade and footer view
+    func registerHeaderFooter(types: [NibLoadable.Type]) {
+        types.forEach { type in
+            register(type.nib, forHeaderFooterViewReuseIdentifier: type.nibName)
+        }
+    }
+
+    func defaultCell() -> UITableViewCell {
+        if let cellEmpty = dequeueReusableCell(withIdentifier: "defaultCell") {
+            return cellEmpty
+        } else {
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "defaultCell")
+            cell.selectionStyle = .none
+
+            return cell
+        }
+    }
 }

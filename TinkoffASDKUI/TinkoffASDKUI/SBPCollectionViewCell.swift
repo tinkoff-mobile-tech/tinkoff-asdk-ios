@@ -19,6 +19,4 @@
 
 import UIKit
 
-class SBPCollectionViewCell: UICollectionViewCell {
-
-}
+class SBPCollectionViewCell: UICollectionViewCell {}

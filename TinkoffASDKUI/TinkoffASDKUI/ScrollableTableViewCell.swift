@@ -20,8 +20,6 @@
 import UIKit
 
 class ScrollableTableViewCell: UITableViewCell, CardListViewInConenction {
-
-	@IBOutlet weak var contentCollectionView: UICollectionView!
-	@IBOutlet weak var pageStatusCollectionView: UICollectionView!
-
+    @IBOutlet var contentCollectionView: UICollectionView!
+    @IBOutlet var pageStatusCollectionView: UICollectionView!
 }

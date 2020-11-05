@@ -20,23 +20,21 @@
 import UIKit
 
 class CardListStatusCollectionViewCell: UICollectionViewCell {
+    @IBOutlet var labelStatus: UILabel!
+    @IBOutlet var buttonAction: UIButton!
 
-	@IBOutlet weak var labelStatus: UILabel!
-	@IBOutlet weak var buttonAction: UIButton!
-	
-	var onButtonActionTouchUpInside: (() -> Void)?
-		
-	override func prepareForReuse() {
-		super.prepareForReuse()
-		
-		labelStatus.text = nil
-		labelStatus.attributedText = nil
-		
-		buttonAction.setTitle(nil, for: .normal)
-	}
+    var onButtonActionTouchUpInside: (() -> Void)?
 
-	@IBAction func buttonActionTouchUpInside(_ sender: UIButton) {
-		onButtonActionTouchUpInside?()
-	}
-	
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        labelStatus.text = nil
+        labelStatus.attributedText = nil
+
+        buttonAction.setTitle(nil, for: .normal)
+    }
+
+    @IBAction func buttonActionTouchUpInside(_: UIButton) {
+        onButtonActionTouchUpInside?()
+    }
 }
