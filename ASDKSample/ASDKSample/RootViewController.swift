@@ -156,7 +156,9 @@ class RootViewController: UITableViewController {
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let viewController = segue.destination as? BuyProductsViewController, let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) {
+        if let viewController = segue.destination as? BuyProductsViewController,
+           let cell = sender as? UITableViewCell,
+           let indexPath = tableView.indexPath(for: cell) {
             let product = dataSource[indexPath.row]
 
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
@@ -217,7 +219,7 @@ class RootViewController: UITableViewController {
         cardListViewConfigration.viewTitle = NSLocalizedString("title.paymentCardList", comment: "Список карт")
         cardListViewConfigration.scaner = self
 
-        if AppSetting.shared.Acquiring {
+        if AppSetting.shared.acquiring {
             cardListViewConfigration.alertViewHelper = self
         }
 
@@ -239,7 +241,8 @@ class RootViewController: UITableViewController {
 extension RootViewController: AcquiringScanerProtocol {
 
     func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController? {
-        if let viewController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "CardScanerViewController") as? CardScanerViewController {
+        if let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
+            .instantiateViewController(withIdentifier: "CardScanerViewController") as? CardScanerViewController {
             viewController.onScannerResult = { numbres in
                 completion(numbres, nil, nil)
             }

@@ -294,11 +294,11 @@
 			buildConfigurationList = 2C9C7EE5239FBCB400DE4071 /* Build configuration list for PBXNativeTarget "ASDKSample" */;
 			buildPhases = (
 				6CFAB7742899CF1424BA2DC0 /* [CP] Check Pods Manifest.lock */,
-				D739654D25542A6B00CC5F7D /* SwiftFormatter lint */,
 				2C9C7EB7239FBCB200DE4071 /* Sources */,
 				2C9C7EB8239FBCB200DE4071 /* Frameworks */,
 				2C9C7EB9239FBCB200DE4071 /* Resources */,
 				F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */,
+				D7F4A4E825558AE900A8AD95 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -447,7 +447,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D739654D25542A6B00CC5F7D /* SwiftFormatter lint */ = {
+		D7F4A4E825558AE900A8AD95 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -456,14 +456,14 @@
 			);
 			inputPaths = (
 			);
-			name = "SwiftFormatter lint";
+			name = SwiftLint;
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" --lint \"$SRCROOT\" \\\n\"$SRCROOT/../TinkoffASDKUI\" \\\n\"$SRCROOT/../TinkoffASDKCore\" \\\n";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 		F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

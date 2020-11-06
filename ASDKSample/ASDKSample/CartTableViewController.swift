@@ -98,33 +98,36 @@ class CartTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if CartDataProvider.shared.dataSource.isEmpty == false, let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: CartBuyButtonView.nibName) as? CartBuyButtonView {
-            footer.labelTitle.text = nil
-            footer.buttonBuy.setTitle(NSLocalizedString("button.pay", comment: "Оплатить"), for: .normal)
-
-            footer.onButtonTouch = { [weak self] in
-                if let viewController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "BuyProductsViewController") as? BuyProductsViewController {
-                    let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                              password: StageTestData.terminalPassword,
-                                                              publicKey: StageTestData.testPublicKey)
-
-                    let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
-                    acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-                    acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
-
-                    if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
-                        viewController.sdk = sdk
-                        viewController.customerKey = StageTestData.customerKey
-                    }
-
-                    viewController.products = CartDataProvider.shared.dataSource
-                    self?.navigationController?.pushViewController(viewController, animated: true)
-                }
-            }
-
-            return footer
+        guard !CartDataProvider.shared.dataSource.isEmpty,
+              let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: CartBuyButtonView.nibName) as? CartBuyButtonView else {
+            return UIView()
         }
 
-        return UIView()
+        footer.labelTitle.text = nil
+        footer.buttonBuy.setTitle(NSLocalizedString("button.pay", comment: "Оплатить"), for: .normal)
+
+        footer.onButtonTouch = { [weak self] in
+            guard let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
+                .instantiateViewController(withIdentifier: "BuyProductsViewController") as? BuyProductsViewController else {
+                return
+            }
+
+            let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
+                                                      password: StageTestData.terminalPassword,
+                                                      publicKey: StageTestData.testPublicKey)
+
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
+            acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
+
+            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+                viewController.sdk = sdk
+                viewController.customerKey = StageTestData.customerKey
+            }
+
+            viewController.products = CartDataProvider.shared.dataSource
+            self?.navigationController?.pushViewController(viewController, animated: true)
+        }
+        return footer
     }
 }

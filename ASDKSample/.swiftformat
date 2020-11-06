@@ -222,3 +222,7 @@
 
 ## Отключаем конвертацию последнего аргумента замыкания в вызов замыкания
 --disable trailingClosures
+
+--disable wrapMultilineStatementBraces
+
+--disable trailingSpace

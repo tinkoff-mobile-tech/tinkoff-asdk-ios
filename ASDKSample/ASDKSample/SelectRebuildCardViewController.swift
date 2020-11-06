@@ -33,7 +33,9 @@ class SelectRebuildCardViewController: UITableViewController {
         super.viewDidLoad()
 
         title = NSLocalizedString("title.paymentCardList", comment: "Сохраненные карты")
-        tableView.register(UINib(nibName: "RebuildCardTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "RebuildCardTableViewCell")
+        tableView.register(UINib(nibName: "RebuildCardTableViewCell", 
+                                 bundle: Bundle(for: type(of: self))), 
+                           forCellReuseIdentifier: "RebuildCardTableViewCell")
 
         navigationItem.setLeftBarButton(buttonClose, animated: true)
     }

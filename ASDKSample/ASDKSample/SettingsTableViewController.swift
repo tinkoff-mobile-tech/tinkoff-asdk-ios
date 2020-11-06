@@ -44,9 +44,9 @@ class AppSetting {
         }
     }
 
-    var Acquiring: Bool = false {
+    var acquiring: Bool = false {
         didSet {
-            UserDefaults.standard.set(Acquiring, forKey: keyKindForAlertView)
+            UserDefaults.standard.set(acquiring, forKey: keyKindForAlertView)
             UserDefaults.standard.synchronize()
         }
     }
@@ -72,7 +72,7 @@ class AppSetting {
 
         self.paySBP = usd.bool(forKey: keySBP)
         self.showEmailField = usd.bool(forKey: keyShowEmailField)
-        self.Acquiring = usd.bool(forKey: keyKindForAlertView)
+        self.acquiring = usd.bool(forKey: keyKindForAlertView)
         if let value = usd.value(forKey: keyAddCardCheckType) as? String {
             self.addCardChekType = PaymentCardCheckType(rawValue: value)
         }
@@ -89,7 +89,7 @@ class SettingsTableViewController: UITableViewController {
         /// показывать на форме оплаты поле для ввода email
         case showEmail
         /// использовать алерты из Aquaring SDK
-        case Acquiring
+        case acquiring
         /// какой тип проверки использоваться при сохранении карты
         case addCardCheckType
         /// на каком языке показыват форму оплаты
@@ -122,7 +122,7 @@ class SettingsTableViewController: UITableViewController {
         availableLanguage.append("ru")
         availableLanguage.append("en")
 
-        tableViewCells = [.paySBP, .showEmail, .Acquiring, .addCardCheckType, .language]
+        tableViewCells = [.paySBP, .showEmail, .acquiring, .addCardCheckType, .language]
     }
 
     // MARK: - Table view data source
@@ -142,7 +142,11 @@ class SettingsTableViewController: UITableViewController {
                 let value = AppSetting.shared.paySBP
                 cell.switcher.isOn = value
 
-                cell.labelTitle.text = value ? NSLocalizedString("status.sbp.on", comment: "Включены") : NSLocalizedString("status.sbp.off", comment: "Выключены")
+                let title = value 
+                    ? NSLocalizedString("status.sbp.on", comment: "Включены") 
+                    : NSLocalizedString("status.sbp.off", comment: "Выключены")
+
+                cell.labelTitle.text = title
                 cell.onSwitcherChange = { swither in
                     AppSetting.shared.paySBP = swither.isOn
                     tableView.beginUpdates()
@@ -158,7 +162,11 @@ class SettingsTableViewController: UITableViewController {
                 let value = AppSetting.shared.showEmailField
                 cell.switcher.isOn = value
 
-                cell.labelTitle.text = value ? NSLocalizedString("status.showEmailField.on", comment: "Показывать") : NSLocalizedString("status.showEmailField.off", comment: "Скрыто")
+                let title = value 
+                    ? NSLocalizedString("status.showEmailField.on", comment: "Показывать") 
+                    : NSLocalizedString("status.showEmailField.off", comment: "Скрыто")
+                cell.labelTitle.text = title
+
                 cell.onSwitcherChange = { swither in
                     AppSetting.shared.showEmailField = swither.isOn
                     tableView.beginUpdates()
@@ -169,14 +177,18 @@ class SettingsTableViewController: UITableViewController {
                 return cell
             }
 
-        case .Acquiring:
+        case .acquiring:
             if let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.nibName) as? SwitchTableViewCell {
-                let value = AppSetting.shared.Acquiring
+                let value = AppSetting.shared.acquiring
                 cell.switcher.isOn = value
 
-                cell.labelTitle.text = value ? NSLocalizedString("status.alert.on", comment: "Aquaring") : NSLocalizedString("status.alert.off", comment: "Системные")
+                let title = value 
+                    ? NSLocalizedString("status.alert.on", comment: "Aquaring") 
+                    : NSLocalizedString("status.alert.off", comment: "Системные")
+                cell.labelTitle.text = title
+
                 cell.onSwitcherChange = { swither in
-                    AppSetting.shared.Acquiring = swither.isOn
+                    AppSetting.shared.acquiring = swither.isOn
                     tableView.beginUpdates()
                     tableView.reloadRows(at: [indexPath], with: .automatic)
                     tableView.endUpdates()
@@ -240,7 +252,7 @@ class SettingsTableViewController: UITableViewController {
             return NSLocalizedString("title.fasterPayments", comment: "Система Быстрых Платежей")
         case .showEmail:
             return NSLocalizedString("title.showEmailField", comment: "")
-        case .Acquiring:
+        case .acquiring:
             return NSLocalizedString("title.Acquiring", comment: "")
         case .addCardCheckType:
             return NSLocalizedString("title.savingCard", comment: "Сохранение карты")
@@ -257,7 +269,7 @@ class SettingsTableViewController: UITableViewController {
         case .showEmail:
             return NSLocalizedString("text.showEmailField", comment: "")
 
-        case .Acquiring:
+        case .acquiring:
             return NSLocalizedString("text.Acquiring.description", comment: "")
 
         case .addCardCheckType:

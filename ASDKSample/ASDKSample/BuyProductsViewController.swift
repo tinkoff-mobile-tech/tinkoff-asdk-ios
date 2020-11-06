@@ -21,6 +21,8 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 import UIKit
 
+// TODO: Separate BuyProductsViewController in several files/classes
+// swiftlint:disable file_length
 class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
@@ -99,19 +101,24 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func selectRebuildCard() {
-        if let cards: [PaymentCard] = rebuidIdCards, cards.isEmpty == false, let viewController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SelectRebuildCardViewController") as? SelectRebuildCardViewController {
-            viewController.cards = cards
-            viewController.onSelectCard = { card in
-                self.paymentCardParentPaymentId = card
-                if let index = self.tableViewCells.firstIndex(of: .payRequrent) {
-                    self.tableView.beginUpdates()
-                    self.tableView.reloadSections(IndexSet(integer: index), with: .fade)
-                    self.tableView.endUpdates()
-                }
-            }
-
-            present(UINavigationController(rootViewController: viewController), animated: true, completion: nil)
+        guard let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
+            .instantiateViewController(withIdentifier: "SelectRebuildCardViewController") as? SelectRebuildCardViewController,
+            let cards: [PaymentCard] = rebuidIdCards,
+            !cards.isEmpty else {
+            return
         }
+
+        viewController.cards = cards
+        viewController.onSelectCard = { card in
+            self.paymentCardParentPaymentId = card
+            if let index = self.tableViewCells.firstIndex(of: .payRequrent) {
+                self.tableView.beginUpdates()
+                self.tableView.reloadSections(IndexSet(integer: index), with: .fade)
+                self.tableView.endUpdates()
+            }
+        }
+
+        present(UINavigationController(rootViewController: viewController), animated: true, completion: nil)
     }
 
     private func productsAmount() -> Double {
@@ -154,9 +161,13 @@ class BuyProductsViewController: UIViewController {
 
         viewConfigration.fields = []
         // InfoFields.amount
-        let title = NSAttributedString(string: NSLocalizedString("title.paymeny", comment: "Оплата"), attributes: [.font: UIFont.boldSystemFont(ofSize: 22)])
+        let title = NSAttributedString(string: NSLocalizedString("title.paymeny", comment: "Оплата"), 
+                                       attributes: [.font: UIFont.boldSystemFont(ofSize: 22)])
+        // swiftlint:disable:next compiler_protocol_init
         let amountString = Utils.formatAmount(NSDecimalNumber(floatLiteral: productsAmount()))
-        let amountTitle = NSAttributedString(string: "\(NSLocalizedString("text.totalAmount", comment: "на сумму")) \(amountString)", attributes: [.font: UIFont.systemFont(ofSize: 17)])
+
+        let amountTitle = NSAttributedString(string: "\(NSLocalizedString("text.totalAmount", comment: "на сумму")) \(amountString)", 
+                                             attributes: [.font: UIFont.systemFont(ofSize: 17)])
         // fields.append
         viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.amount(title: title, amount: amountTitle))
 
@@ -164,16 +175,19 @@ class BuyProductsViewController: UIViewController {
         let productsDetatils = NSMutableAttributedString()
         productsDetatils.append(NSAttributedString(string: "Книги\n", attributes: [.font: UIFont.systemFont(ofSize: 17)]))
 
-        let productsDetails = products.map { (product) -> String in
-            product.name
-        }.joined(separator: ", ")
-
-        productsDetatils.append(NSAttributedString(string: productsDetails, attributes: [.font: UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor(red: 0.573, green: 0.6, blue: 0.635, alpha: 1)]))
-        // fields.append
-        viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.detail(title: productsDetatils))
+        let productsDetails = products.map { $0.name }.joined(separator: ", ")
+        let detailsFieldTitle = NSAttributedString(string: productsDetails,
+                                                   attributes: [
+                                                       .font: UIFont.systemFont(ofSize: 13),
+                                                       .foregroundColor: UIColor(red: 0.573, green: 0.6, blue: 0.635, alpha: 1)
+                                                   ])
+        viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.detail(title: detailsFieldTitle))
 
         if AppSetting.shared.showEmailField {
-            viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.email(value: nil, placeholder: NSLocalizedString("plaseholder.email", comment: "Отправить квитанцию по адресу")))
+            let emailField = AcquiringViewConfiguration.InfoFields.email(value: nil,
+                                                                         placeholder: NSLocalizedString("plaseholder.email",
+                                                                                                        comment: "Отправить квитанцию по адресу"))
+            viewConfigration.fields.append(emailField)
         }
 
         // fields.append InfoFields.buttonPaySPB
@@ -201,7 +215,7 @@ class BuyProductsViewController: UIViewController {
                 message.append("\npaymentId = \(result.paymentId)")
             }
 
-            if AppSetting.shared.Acquiring {
+            if AppSetting.shared.acquiring {
                 sdk.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
             } else {
                 let alertView = UIAlertController(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
@@ -210,7 +224,7 @@ class BuyProductsViewController: UIViewController {
             }
 
         case let .failure(error):
-            if AppSetting.shared.Acquiring {
+            if AppSetting.shared.acquiring {
                 sdk.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
             } else {
                 let alertView = UIAlertController(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
@@ -231,14 +245,18 @@ class BuyProductsViewController: UIViewController {
     }
 
     func pay(_ complete: @escaping (() -> Void)) {
+        // TODO: remove indent disabling after https://github.com/nicklockwood/SwiftFormat/commit/762135f092721dbf3ce5d9cedd7273c9d1407b44
+        // will be released
+        // swiftformat:disable indent
         sdk.pay(on: self,
                 initPaymentData: createPaymentData(),
                 cardRequisites: PaymentSourceData.cardNumber(number: "!!!номер карты!!!", expDate: "1120", cvv: "111"),
-                infoEmail: nil, configuration: acquiringViewConfiguration())
-        { [weak self] response in
+                infoEmail: nil,
+                configuration: acquiringViewConfiguration()) { [weak self] response in
             complete()
             self?.responseReviewing(response)
         }
+        // swiftformat:enable indent
     }
 
     func payByApplePay() {
@@ -258,24 +276,41 @@ class BuyProductsViewController: UIViewController {
     }
 
     func charge(_ complete: @escaping (() -> Void)) {
+        // TODO: remove indent disabling after https://github.com/nicklockwood/SwiftFormat/commit/762135f092721dbf3ce5d9cedd7273c9d1407b44
+        // will be released
+        // swiftformat:disable indent
         if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
-            sdk.presentPaymentView(on: self, paymentData: createPaymentData(), parentPatmentId: parentPaymentId, configuration: acquiringViewConfiguration()) { [weak self] response in
+            sdk.presentPaymentView(on: self,
+                                   paymentData: createPaymentData(),
+                                   parentPatmentId: parentPaymentId,
+                                   configuration: acquiringViewConfiguration()) { [weak self] response in
                 complete()
                 self?.responseReviewing(response)
             }
         }
+        // swiftformat:enable indent
     }
 
     func generateSbpQrImage() {
-        sdk.presentPaymentSbpQrImage(on: self, paymentData: createPaymentData(), configuration: acquiringViewConfiguration()) { [weak self] response in
+        // TODO: remove indent disabling after https://github.com/nicklockwood/SwiftFormat/commit/762135f092721dbf3ce5d9cedd7273c9d1407b44
+        // will be released
+        // swiftformat:disable indent
+        sdk.presentPaymentSbpQrImage(on: self,
+                                     paymentData: createPaymentData(),
+                                     configuration: acquiringViewConfiguration()) { [weak self] response in
             self?.responseReviewing(response)
         }
+        // swiftformat:enable indent
     }
 
     func generateSbpUrl() {
-        sdk.presentPaymentSbpUrl(on: self, paymentData: createPaymentData(), configuration: acquiringViewConfiguration()) { [weak self] response in
+        // swiftformat:disable indent
+        sdk.presentPaymentSbpUrl(on: self,
+                                 paymentData: createPaymentData(),
+                                 configuration: acquiringViewConfiguration()) { [weak self] response in
             self?.responseReviewing(response)
         }
+        // swiftformat:enable indent
     }
 }
 
@@ -490,20 +525,22 @@ extension BuyProductsViewController: UITableViewDataSource {
 
         case .pay:
             let cards = sdk.cardListNumberOfCards()
+            // TODO: use isEmpty instead
             if cards > 0 {
                 return "открыть платежную форму и перейти к оплате товара, доступно \(cards) сохраненных карт"
             }
 
             return "открыть платежную форму и перейти к оплате товара"
-
+        // swiftlint:disable line_length
         case .payAndSaveAsParent:
             let cards = sdk.cardListNumberOfCards()
+            // TODO: use isEmpty instead
             if cards > 0 {
                 return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cards) сохраненных карт"
             }
 
             return "оплатить и сделать этот платеж родительским"
-
+        // swiftlint:enable line_length
         case .payRequrent:
             if let card = paymentCardParentPaymentId, let parentPaymentId = card.parentPaymentId {
                 return "оплатить с карты \(card.pan) \(card.expDateFormat() ?? ""), используя родительский платеж \(parentPaymentId)"

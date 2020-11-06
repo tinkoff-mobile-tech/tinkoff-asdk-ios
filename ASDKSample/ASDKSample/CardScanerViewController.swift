@@ -40,7 +40,9 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
 
     var showErrorBlock: (_ errorTitle: String, _ errorMessage: String) -> Void = { (errorTitle: String, errorMessage: String) -> Void in
         var alertController = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertAction.Style.default, handler: { (_) -> Void in }))
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), 
+                                                style: UIAlertAction.Style.default, 
+                                                handler: { (_) -> Void in }))
 
         if let topController = UIApplication.shared.keyWindow?.rootViewController {
             topController.present(alertController, animated: true, completion: nil)
@@ -119,7 +121,9 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
         if captureSession.canAddInput(videoInput) {
             captureSession.addInput(videoInput)
         } else {
-            showError(NSLocalizedString("Camera error", comment: ""), message: NSLocalizedString("No valid capture session found, I can't take any pictures or videos.", comment: ""))
+            showError(NSLocalizedString("Camera error", comment: ""), 
+                      message: NSLocalizedString("No valid capture session found, I can't take any pictures or videos.", 
+                                                 comment: ""))
             captureSession = nil
             return
         }
@@ -132,7 +136,9 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = scannerMetadataObjectTypes
         } else {
-            showError(NSLocalizedString("Preset not supported", comment: ""), message: NSLocalizedString("Camera preset not supported. Please try another one.", comment: ""))
+            showError(NSLocalizedString("Preset not supported", comment: ""), 
+                      message: NSLocalizedString("Camera preset not supported. Please try another one.", 
+                                                 comment: ""))
             return
         }
 
