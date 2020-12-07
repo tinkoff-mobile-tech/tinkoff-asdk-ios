@@ -20,74 +20,64 @@
 import UIKit
 
 protocol InputCardCVCRequisitesPresenterProtocol: class {
-	
-	var textFieldCardCVC: UITextFieldCardRequisites! { get }
-	
+    var textFieldCardCVC: UITextFieldCardRequisites! { get }
 }
-
 
 class PaymentCardCollectionViewCell: UICollectionViewCell, InputCardCVCRequisitesPresenterProtocol {
+    @IBOutlet var viewBorder: UIView!
+    @IBOutlet var imageViewLogo: UIImageView!
+    @IBOutlet var labelCardName: UILabel!
+    @IBOutlet var labelCardExpData: UILabel!
+    @IBOutlet var textFieldCardCVC: UITextFieldCardRequisites!
+    @IBOutlet private var viewSeparator: UIView!
 
-	@IBOutlet weak var viewBorder: UIView!
-	@IBOutlet weak var imageViewLogo: UIImageView!
-	@IBOutlet weak var labelCardName: UILabel!
-	@IBOutlet weak var labelCardExpData: UILabel!
-	@IBOutlet weak var textFieldCardCVC: UITextFieldCardRequisites!
-	@IBOutlet private weak var viewSeparator: UIView!
-	
-	override func awakeFromNib() {
-		super.awakeFromNib()
-		
-		viewBorder.layer.cornerRadius = 12
-		viewBorder.layer.shadowColor = labelCardName.textColor.cgColor
-		viewBorder.layer.shadowOpacity = 0.1
-		viewBorder.layer.shadowOffset = .zero
-		viewBorder.layer.shadowRadius = 8
-		
-		imageViewLogo.image = nil
-		imageViewLogo.isHidden = true
-		
-		labelCardName.text = nil
-		labelCardExpData.text = nil
-		
-		textFieldCardCVC.placeholder = "CVC"
-		textFieldCardCVC.text = nil
-		textFieldCardCVC.isSecureTextEntry = true
-		
-	}
-	
-	override func prepareForReuse() {
-		super.prepareForReuse()
+    override func awakeFromNib() {
+        super.awakeFromNib()
 
-		imageViewLogo.image = nil
-		imageViewLogo.isHidden = true
-		
-		labelCardName.text = nil
-		labelCardExpData.text = nil
-		
-		textFieldCardCVC.text = nil
-	}
-	
+        viewBorder.layer.cornerRadius = 12
+        viewBorder.layer.shadowColor = labelCardName.textColor.cgColor
+        viewBorder.layer.shadowOpacity = 0.1
+        viewBorder.layer.shadowOffset = .zero
+        viewBorder.layer.shadowRadius = 8
+
+        imageViewLogo.image = nil
+        imageViewLogo.isHidden = true
+
+        labelCardName.text = nil
+        labelCardExpData.text = nil
+
+        textFieldCardCVC.placeholder = "CVC"
+        textFieldCardCVC.text = nil
+        textFieldCardCVC.isSecureTextEntry = true
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        imageViewLogo.image = nil
+        imageViewLogo.isHidden = true
+
+        labelCardName.text = nil
+        labelCardExpData.text = nil
+
+        textFieldCardCVC.text = nil
+    }
 }
 
-
 extension PaymentCardCollectionViewCell: InputViewStatus {
-	
-	func setStatus(_ value: InputFieldTableViewCellStatus, statusText: String?) {
-		switch value {
-			case .error:
-				textFieldCardCVC.textColor = colorError
-				viewSeparator.backgroundColor = colorError
-			
-			case .normal:
-				textFieldCardCVC.textColor = colorNormal
-				viewSeparator.backgroundColor = .clear
-			
-			case .disable:
-				textFieldCardCVC.textColor = colorDisable
-				viewSeparator.backgroundColor = .clear
-		}
-	}
-	
-	
+    func setStatus(_ value: InputFieldTableViewCellStatus, statusText _: String?) {
+        switch value {
+        case .error:
+            textFieldCardCVC.textColor = colorError
+            viewSeparator.backgroundColor = colorError
+
+        case .normal:
+            textFieldCardCVC.textColor = colorNormal
+            viewSeparator.backgroundColor = .clear
+
+        case .disable:
+            textFieldCardCVC.textColor = colorDisable
+            viewSeparator.backgroundColor = .clear
+        }
+    }
 }

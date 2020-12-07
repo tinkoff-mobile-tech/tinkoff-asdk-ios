@@ -20,38 +20,35 @@
 import UIKit
 
 extension UIView {
-	
-	var firstResponder: UIView? {
-		guard !isFirstResponder else { return self }
-		
-		for subview in subviews {
-			if let firstResponder = subview.firstResponder {
-				return firstResponder
-			}
-		}
-		
-		return nil
-	}
-	
-	/// Находит UIView которая реализует `<T>` в которой расположена текущая UIView
-	/// если UIView реализует протокол то позвращаем instance на протокол
-	/// - Parameter view: от какого элемента начинать поиск
-	/// - Returns: T
-	static func searchTableViewCell<T>(by view: UIView?) -> T? {
-		var viewResult = view
-		if viewResult is T {
-			return viewResult as? T
-		} else {
-			while viewResult?.superview != nil {
-				viewResult = viewResult?.superview
-				if viewResult is T {
-					return viewResult as? T
-				}
-			}
-		}
-		
-		return nil
-	}
-	
-}
+    var firstResponder: UIView? {
+        guard !isFirstResponder else { return self }
 
+        for subview in subviews {
+            if let firstResponder = subview.firstResponder {
+                return firstResponder
+            }
+        }
+
+        return nil
+    }
+
+    /// Находит UIView которая реализует `<T>` в которой расположена текущая UIView
+    /// если UIView реализует протокол то позвращаем instance на протокол
+    /// - Parameter view: от какого элемента начинать поиск
+    /// - Returns: T
+    static func searchTableViewCell<T>(by view: UIView?) -> T? {
+        var viewResult = view
+        if viewResult is T {
+            return viewResult as? T
+        } else {
+            while viewResult?.superview != nil {
+                viewResult = viewResult?.superview
+                if viewResult is T {
+                    return viewResult as? T
+                }
+            }
+        }
+
+        return nil
+    }
+}

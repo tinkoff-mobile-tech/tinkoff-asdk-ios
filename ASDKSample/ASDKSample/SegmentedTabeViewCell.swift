@@ -21,16 +21,16 @@ import UIKit
 
 class SegmentedTabeViewCell: UITableViewCell, NibLoadable {
 
-	@IBOutlet weak var segmentedControl: UISegmentedControl!
-	
-	var onSegmentedChanged: ((Int) -> Void)?
-	
-	override func awakeFromNib() {
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+
+    var onSegmentedChanged: ((Int) -> Void)?
+
+    override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-    
-	@IBAction private func onSegmentedControlChanged(_ sender: UISegmentedControl) {
-		onSegmentedChanged?(sender.selectedSegmentIndex)
-	}
+
+    @IBAction private func onSegmentedControlChanged(_ sender: UISegmentedControl) {
+        onSegmentedChanged?(sender.selectedSegmentIndex)
+    }
 }

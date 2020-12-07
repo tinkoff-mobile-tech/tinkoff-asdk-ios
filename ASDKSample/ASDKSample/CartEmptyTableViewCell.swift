@@ -21,14 +21,13 @@ import UIKit
 
 class CartEmptyTableViewCell: UITableViewCell, NibLoadable {
 
-	@IBOutlet weak var imageViewIcon: UIImageView!
-	@IBOutlet weak var labelTitle: UILabel!
-	@IBOutlet weak var buttonAction: UIButton!
-	
-	var onButtonTouch: (() -> Void)?
-	
-	@IBAction func buttonActionTouchUpInside(_ sender: UIButton) {
-		onButtonTouch?()
-	}
-	
+    @IBOutlet weak var imageViewIcon: UIImageView!
+    @IBOutlet weak var labelTitle: UILabel!
+    @IBOutlet weak var buttonAction: UIButton!
+
+    var onButtonTouch: (() -> Void)?
+
+    @IBAction func buttonActionTouchUpInside(_ sender: UIButton) {
+        onButtonTouch?()
+    }
 }

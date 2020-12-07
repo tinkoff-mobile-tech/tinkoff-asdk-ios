@@ -6,9 +6,7 @@
 //  Copyright © 2019 Tinkoff. All rights reserved.
 //
 
-import XCTest
 @testable import ASDKSample
+import XCTest
 
-class ASDKSampleTests: XCTestCase {
-
-}
+class ASDKSampleTests: XCTestCase {}

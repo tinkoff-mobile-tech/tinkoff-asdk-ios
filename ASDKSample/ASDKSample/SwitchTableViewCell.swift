@@ -21,19 +21,16 @@ import UIKit
 
 class SwitchTableViewCell: UITableViewCell, NibLoadable {
 
-	@IBOutlet weak var labelTitle: UILabel!
-	@IBOutlet weak var switcher: UISwitch!
-	
-	var onSwitcherChange: ((_ sender: UISwitch) -> Void)?
-	
+    @IBOutlet weak var labelTitle: UILabel!
+    @IBOutlet weak var switcher: UISwitch!
+
+    var onSwitcherChange: ((_ sender: UISwitch) -> Void)?
+
     override func awakeFromNib() {
         super.awakeFromNib()
-     	
-	
     }
-	
-	@IBAction func onSwitcherChange(_ sender: UISwitch) {
-		onSwitcherChange?(sender)
-	}
-	
+
+    @IBAction func onSwitcherChange(_ sender: UISwitch) {
+        onSwitcherChange?(sender)
+    }
 }

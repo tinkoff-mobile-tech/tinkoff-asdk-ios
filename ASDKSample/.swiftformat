@@ -1,0 +1,228 @@
+## Исключаем из проверки директорию подов и локализации с картинками
+--exclude Pods,/**/Generated
+
+## Определяем версию swift
+--swiftversion 5.0
+
+## Применяемые правила
+
+
+## Заменяем && на запятую внутри if, guard, while
+--enable andOperator
+
+## Заменяем class на AnyObject при объявлении протокола
+--enable anyObjectProtocol
+
+## Добавляем по одной строчке до и после MARK:
+--enable blankLinesAroundMark
+
+## Убираем пустую строчку в конце объявления (например, массива или функции)
+--enable blankLinesAtEndOfScope
+
+## Добавляем пустую строку перед class, struct, enum, extension, protocol, function
+--enable blankLinesBetweenScopes
+
+## Открывающиеся скобки на той же строке (где if и else)
+--allman false
+
+## Убираем лишние пустые строчки (остается одна)
+--enable consecutiveBlankLines
+
+## Убираем лишние пробелы
+--enable consecutiveSpaces
+
+## Убираем дублирующиеся импорты
+--enable duplicateImports
+
+## Где писать else (на той же строке)
+--elseposition same-line
+
+## Убираем все между пустых скобок
+--enable emptyBraces
+
+
+## Меняем заголовок каждого файла согласно следующему формату
+#--header " \n {file}\n\n Создано и поддерживается командой разработки общих компонентов\n Дата создания: {created}\n\n Копирайт (c) {year} АО «Тинькофф Банк», лицензия ЦБ РФ № 2673. Все права защищены.\n//"
+
+
+## Убирает в начало объявления let и var внутри скоупа, например (let foo, let bar) = baz() на let (foo, bar) = baz()
+--patternlet hoist
+
+## Левый отступ по tab (альтернативно, число пробелов)
+--indent 4
+
+## Отступ внутри switch не применять (case пишется под switch)
+--indentcase false
+
+## Форматирование if else конструкции
+--ifdef indent
+
+## Заменяем проверку count == 0 на isEmpty
+--enable isEmpty
+
+## Перемещаем разделитель : или ; или , с начала новой линии на конец предыдущей
+--enable leadingDelimiters
+
+## Обеспечиваем пустую строчку в конце файла
+--enable linebreakAtEndOfFile
+
+## Все разрывы строк используют один и тот же символ
+--linebreaks lf
+
+## Разбиваем длинные бинарные числа на группы по 4 цифры (например, 0b01_0101_0101)
+--binarygrouping 4,8
+
+## Разбиваем длинные десятичные числа на группы по 3 цифры
+--decimalgrouping 3,6
+
+## Разбиваем длинные шестнадцатиричные числа на группы по 4 цифры
+--hexgrouping 4,8
+
+## Разбиваем длинные восьмиричные числа на группы по 4 цифры
+--octalgrouping 4,8
+
+## Разбиваем по группам экспоненциальные значения
+--exponentgrouping disabled
+
+## Буквы в шестнадцетиричных числах прописным шрифтом
+--hexliteralcase uppercase
+
+## Символ e строчными в экспоненциальном числе
+--exponentcase lowercase
+
+## Включаем пробелы при описании рейнжей
+--ranges spaced
+
+## Убираем лишние `` в случае если это не ключевое слово
+--enable redundantBackticks
+
+## Убираем лишние break из switch
+--enable redundantBreak
+
+## Убираем дублирующий параметра контроля доступа при объявлении расширения с параметром доступа
+--enable redundantExtensionACL
+
+## Убираем ненужный get {} у read-only свойства
+--enable redundantGet
+
+## Заменяем инициализацию с помощью .init() на ()
+--enable redundantInit
+
+## Убираем let / var перед игнорируемой переменной _
+--enable redundantLet
+
+## Убираем let error из catch, когда это не нужно
+--enable redundantLetError
+
+## Убираем лишнюю инициализацию nil-ом при объявлении свойства опциональным
+--enable redundantNilInit
+
+## Убираем лишнее объявление с @objc ключевым словом
+--enable redundantObjc
+
+## Убираем лишние круглые скобки, где не обязательно
+--enable redundantParens
+
+## Заменяем игнорируемый паттерн (_,_) на _
+--enable redundantPattern
+
+## Убираем лишние объявления строк в enum: String при совпадении с именем кейса
+--enable redundantRawValues
+
+## Убираем ненужный return из однострочных замыканий
+--enable redundantReturn
+
+## Оставляем self только в init, для автозамыканий нужно определить selfrequired
+--self init-only
+
+## Убираем ненужный возвращаемый тип Void из объявления функции
+--enable redundantVoidReturnType
+
+## Убираем лишние ;
+--semicolons inline
+
+## Убираем/добавляем пробелы около { }
+--enable spaceAroundBraces
+
+## Убираем/добавляем пробелы около [ ]
+--enable spaceAroundBrackets
+
+## Добавляем пробел около комментов
+--enable spaceAroundComments
+
+## Убираем пробел около дженерика < >
+--enable spaceAroundGenerics
+
+## Добавляем пробел между инфиксными операторами, также для операторов функции
+--operatorfunc spaced
+
+## Добавляет/удаляет пробел около ( )
+--enable spaceAroundParens
+
+## Добавляет пробел внутри { }
+--enable spaceInsideBraces
+
+## Удаляет пробел внутри [ ]
+--enable spaceInsideBrackets
+
+## Добавляем пробел/ы внутри комментариев (перед и после если нужно)
+--enable spaceInsideComments
+
+## Убираем лишние пробелы внутри дженериков < >
+--enable spaceInsideGenerics
+
+## Убираем лишние пробелы внутри ( )
+--enable spaceInsideParens
+
+## Нормализует порядок спецификаторов для свойств, классов, функций (public, weak, lazy и т.д.)
+--enable specifiers
+
+## Заменяем `self` на self при guard let `self` = self для weak self references
+--enable strongifiedSelf
+
+## Исправляем если надо, чтобы видел Xcode
+--enable todos
+
+## Не добавляем запятую после последнего элемента в массиве
+--commas inline
+
+## Удаляем пробел в конце строчки
+--trimwhitespace always
+
+## Применяем синтаксический сахар где можно
+--enable typeSugar
+
+## Заменяем неиспользуемые переменные только в замыканиях
+--stripunusedargs closure-only
+
+## Заменяем () на Void
+--empty void
+
+## Элементы в словарях, массивах пишем после первого на одной строчке с объявлением
+--wrapcollections before-first
+
+## Аргументы в функциях под названием функции
+--wraparguments after-first
+
+## Круглая закрывающая скобка на строке с последним аргументом (balanced переносит на новую строчку)
+--closingparen same-line
+
+
+## Отключенные правила
+
+
+## Отключаем удаление пустой линии вначале внутри {}, [], ()
+--disable blankLinesAtStartOfScope
+
+## Отключаем замену fileprivate на private когда эквивалентны
+--disable redundantFileprivate
+
+## Отключаем удаление weak спецификатора из @IBOutlet свойств
+--disable strongOutlets
+
+## Отключаем конвертацию последнего аргумента замыкания в вызов замыкания
+--disable trailingClosures
+
+--disable wrapMultilineStatementBraces
+
+--disable trailingSpace

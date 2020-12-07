@@ -20,119 +20,115 @@
 import UIKit
 
 public enum AcquiringAlertIconType {
-	case error
-	case success
-	case icon(UIImage)
+    case error
+    case success
+    case icon(UIImage)
 }
 
 class AcquiringAlertViewController: UIViewController {
-
-	static func create() -> AcquiringAlertViewController {
-		let alert = AcquiringAlertViewController.init(nibName: "AcquiringAlertViewController", bundle: Bundle(for: AcquiringAlertViewController.self))
-		alert.modalPresentationStyle = .overCurrentContext
-		alert.modalTransitionStyle = .crossDissolve
-		_ = alert.view
-		return alert
-	}
-	
-	@IBOutlet private weak var viewAlertConteiner: UIView!
-	@IBOutlet private weak var viewBorder: UIView!
-	@IBOutlet private weak var visualEffectBackground: UIVisualEffectView!
-	
-	@IBOutlet private weak var imageViewAletIcon: UIImageView!
-	@IBOutlet private weak var labelAlertTitle: UILabel!
-	
-	private var autoCloseTime: TimeInterval = 0
-	private var closedFromTimer: Bool = false
-	private var alertTouch: Bool = false {
-		didSet {
-			if alertTouch == false {
-				if closedFromTimer == true {
-					dismiss(animated: true, completion: nil)
-				}
-			}
-		}
-	}
-	
-	
-	override func viewDidLoad() {
-        super.viewDidLoad()
-		
-		viewAlertConteiner.layer.cornerRadius = 20
-		viewAlertConteiner.layer.shadowColor = labelAlertTitle.textColor.cgColor
-		viewAlertConteiner.layer.shadowOpacity = 0.15
-		viewAlertConteiner.layer.shadowOffset = .zero
-		viewAlertConteiner.layer.shadowRadius = 20
-		
-		viewAlertConteiner.backgroundColor = .clear
-		
-		viewBorder.backgroundColor = .clear
-		viewBorder.layer.cornerRadius = 20
-		viewBorder.clipsToBounds = true
-		
-		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dimmingViewTapped(_:))))
-		viewAlertConteiner.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(alertViewTapped(_:))))
-		
-		modalPresentationStyle = .overCurrentContext
+    static func create() -> AcquiringAlertViewController {
+        let alert = AcquiringAlertViewController(nibName: "AcquiringAlertViewController", bundle: Bundle(for: AcquiringAlertViewController.self))
+        alert.modalPresentationStyle = .overCurrentContext
+        alert.modalTransitionStyle = .crossDissolve
+        _ = alert.view
+        return alert
     }
 
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		
-		startCloseTimer()
-	}
-	
-	// MARK: Tap Gesture Recognizer
-	
-	@IBAction private func dimmingViewTapped(_ gesture: UITapGestureRecognizer) {
-		dismiss(animated: true, completion: nil)
-	}
-	
-	@IBAction private func alertViewTapped(_ gesture: UITapGestureRecognizer) {
-		switch gesture.state {
-			case .began:
-				if autoCloseTime > 0 {
-					alertTouch = true
-				} else {
-					dismiss(animated: true, completion: nil)
-				}
-			
-			case .ended, .cancelled, .failed:
-				alertTouch = false
-			
-			default:
-				break
-		}
+    @IBOutlet private var viewAlertConteiner: UIView!
+    @IBOutlet private var viewBorder: UIView!
+    @IBOutlet private var visualEffectBackground: UIVisualEffectView!
 
-	}
-	
-	private func startCloseTimer() {
-		if autoCloseTime > 0 {
-			DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-				if let value = self?.alertTouch, value == false {
-					self?.dismiss(animated: true, completion: nil)
-				} else {
-					self?.closedFromTimer = true
-				}
-			}
-		}
-	}
+    @IBOutlet private var imageViewAletIcon: UIImageView!
+    @IBOutlet private var labelAlertTitle: UILabel!
 
-	public func present(on presentingViewController: UIViewController, title: String, icon: AcquiringAlertIconType = .success, autoCloseTime: TimeInterval = 3) {
-		self.autoCloseTime = autoCloseTime
-		
-		switch icon {
-			case .icon(let img):
-				imageViewAletIcon.image = img
-			case .error:
-				imageViewAletIcon.image = UIImage.init(named: "cancel", in: Bundle(for: type(of: self)), compatibleWith: nil)
-			default:
-				imageViewAletIcon.image = UIImage.init(named: "done", in: Bundle(for: type(of: self)), compatibleWith: nil)
-		}
-		
-		labelAlertTitle.text = title
-		
-		presentingViewController.present(self, animated: true)
-	}
-	
+    private var autoCloseTime: TimeInterval = 0
+    private var closedFromTimer: Bool = false
+    private var alertTouch: Bool = false {
+        didSet {
+            if alertTouch == false {
+                if closedFromTimer == true {
+                    dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        viewAlertConteiner.layer.cornerRadius = 20
+        viewAlertConteiner.layer.shadowColor = labelAlertTitle.textColor.cgColor
+        viewAlertConteiner.layer.shadowOpacity = 0.15
+        viewAlertConteiner.layer.shadowOffset = .zero
+        viewAlertConteiner.layer.shadowRadius = 20
+
+        viewAlertConteiner.backgroundColor = .clear
+
+        viewBorder.backgroundColor = .clear
+        viewBorder.layer.cornerRadius = 20
+        viewBorder.clipsToBounds = true
+
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dimmingViewTapped(_:))))
+        viewAlertConteiner.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(alertViewTapped(_:))))
+
+        modalPresentationStyle = .overCurrentContext
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        startCloseTimer()
+    }
+
+    // MARK: Tap Gesture Recognizer
+
+    @IBAction private func dimmingViewTapped(_: UITapGestureRecognizer) {
+        dismiss(animated: true, completion: nil)
+    }
+
+    @IBAction private func alertViewTapped(_ gesture: UITapGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            if autoCloseTime > 0 {
+                alertTouch = true
+            } else {
+                dismiss(animated: true, completion: nil)
+            }
+
+        case .ended, .cancelled, .failed:
+            alertTouch = false
+
+        default:
+            break
+        }
+    }
+
+    private func startCloseTimer() {
+        if autoCloseTime > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                if let value = self?.alertTouch, value == false {
+                    self?.dismiss(animated: true, completion: nil)
+                } else {
+                    self?.closedFromTimer = true
+                }
+            }
+        }
+    }
+
+    public func present(on presentingViewController: UIViewController, title: String, icon: AcquiringAlertIconType = .success, autoCloseTime: TimeInterval = 3) {
+        self.autoCloseTime = autoCloseTime
+
+        switch icon {
+        case let .icon(img):
+            imageViewAletIcon.image = img
+        case .error:
+            imageViewAletIcon.image = UIImage(named: "cancel", in: Bundle(for: type(of: self)), compatibleWith: nil)
+        default:
+            imageViewAletIcon.image = UIImage(named: "done", in: Bundle(for: type(of: self)), compatibleWith: nil)
+        }
+
+        labelAlertTitle.text = title
+
+        presentingViewController.present(self, animated: true)
+    }
 }

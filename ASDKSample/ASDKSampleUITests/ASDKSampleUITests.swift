@@ -8,6 +8,4 @@
 
 import XCTest
 
-class ASDKSampleUITests: XCTestCase {
-
-}
+class ASDKSampleUITests: XCTestCase {}

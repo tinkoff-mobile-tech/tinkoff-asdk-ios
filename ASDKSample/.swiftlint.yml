@@ -1,0 +1,64 @@
+warning_threshold: 1
+
+included:
+- ../Development
+- ./
+
+excluded:
+- Pods
+- /**/Generated
+
+disabled_rules:
+# У линий не должно пыть просбелов справа от текста
+- trailing_whitespace
+- class_delegate_protocol
+# Делегаты должны быть weak, чтобы избежать цикла сильных ссылок
+- weak_delegate
+# TODO и FIXME должны быть выполнены
+- todo
+# Сложность тела функции должна быть ограничена
+- cyclomatic_complexity
+# Функции не должны быть слишком длинными
+- function_body_length
+# Файлы не должны быть слишком длинными
+#- file_length
+opt_in_rules:
+# Некоторые переопределяемые методы всегда должны вызывать super 
+- overridden_super_call
+# Некоторые методы не должны вызывать super
+- prohibited_super_call
+# Избегаем непосредственного вызова .init()
+- explicit_init
+# Операторы должны быть окружены одиночным пробелом
+- operator_usage_whitespace
+# Публичные методы/классы/.. должны быть документированы
+- missing_docs
+
+large_tuple: 4
+
+line_length: 150
+
+function_parameter_count:
+  warning: 10
+  error: 15
+
+file_length:
+  warning: 500
+
+type_body_length:
+  warning: 400
+  error: 450
+
+nesting:
+  type_level:
+    warning: 3
+  statement_level:
+    warning: 5
+
+identifier_name:
+  min_length: 1
+  max_length: 65
+
+type_name:
+  min_length: 3
+  max_length: 65

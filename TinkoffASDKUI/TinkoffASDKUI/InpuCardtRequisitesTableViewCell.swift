@@ -20,42 +20,40 @@
 import UIKit
 
 class InpuCardtRequisitesTableViewCell: UITableViewCell, InputRequisitesViewInConnection {
+    @IBOutlet var viewBorder: UIView!
+    @IBOutlet var imageViewPSLogo: UIImageView!
+    @IBOutlet var imageViewPSLogoWidth: NSLayoutConstraint!
+    //
+    @IBOutlet var textFieldCardNumber: UITextFieldCardRequisites!
+    @IBOutlet var textFieldCardExpDate: UITextFieldCardRequisites!
+    @IBOutlet var textFieldCardExpDateWidth: NSLayoutConstraint!
+    @IBOutlet var textFieldCardCVC: UITextFieldCardRequisites!
+    //
+    @IBOutlet var labelShortCardNumber: UILabel!
+    // Next or Scan
+    @IBOutlet var buttonRight: UIButton!
+    @IBOutlet var buttonShowCardNumber: UIButton!
 
-	@IBOutlet weak var viewBorder: UIView!
-	@IBOutlet weak var imageViewPSLogo: UIImageView!
-	@IBOutlet weak var imageViewPSLogoWidth: NSLayoutConstraint!
-	//
-	@IBOutlet weak var textFieldCardNumber: UITextFieldCardRequisites!
-	@IBOutlet weak var textFieldCardExpDate: UITextFieldCardRequisites!
-	@IBOutlet weak var textFieldCardExpDateWidth: NSLayoutConstraint!
-	@IBOutlet weak var textFieldCardCVC: UITextFieldCardRequisites!
-	//
-	@IBOutlet weak var labelShortCardNumber: UILabel!
-	// Next or Scan
-	@IBOutlet weak var buttonRight: UIButton!
-	@IBOutlet weak var buttonShowCardNumber: UIButton!
-	
-	var onButtonRightTouch: (() -> Void)?
-	var onCardNumberTouch: (() -> Void)?
-	
-	override func awakeFromNib() {
+    var onButtonRightTouch: (() -> Void)?
+    var onCardNumberTouch: (() -> Void)?
+
+    override func awakeFromNib() {
         super.awakeFromNib()
 
-		viewBorder.layer.cornerRadius = 12
-		viewBorder.layer.shadowColor = labelShortCardNumber.textColor.cgColor
-		viewBorder.layer.shadowOpacity = 0.1
-		viewBorder.layer.shadowOffset = .zero
-		viewBorder.layer.shadowRadius = 8
+        viewBorder.layer.cornerRadius = 12
+        viewBorder.layer.shadowColor = labelShortCardNumber.textColor.cgColor
+        viewBorder.layer.shadowOpacity = 0.1
+        viewBorder.layer.shadowOffset = .zero
+        viewBorder.layer.shadowRadius = 8
 
-		imageViewPSLogoWidth.constant = 0
-	}
-	
-	@IBAction private func onButtonRightTouchUpInside(_ sender: UIButton) {
-		onButtonRightTouch?()
-	}
-	
-	@IBAction private func onCardNumberTouchUpInside(_ sender: UIButton) {
-		onCardNumberTouch?()
-	}
-	
+        imageViewPSLogoWidth.constant = 0
+    }
+
+    @IBAction private func onButtonRightTouchUpInside(_: UIButton) {
+        onButtonRightTouch?()
+    }
+
+    @IBAction private func onCardNumberTouchUpInside(_: UIButton) {
+        onCardNumberTouch?()
+    }
 }

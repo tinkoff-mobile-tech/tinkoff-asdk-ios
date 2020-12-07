@@ -19,6 +19,4 @@
 
 import UIKit
 
-class PSLogoTableViewCell: UITableViewCell {
-    
-}
+class PSLogoTableViewCell: UITableViewCell {}

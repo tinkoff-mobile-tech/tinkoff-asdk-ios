@@ -20,25 +20,23 @@
 import Foundation
 
 class PaymentCancelRequest: RequestOperation, AcquiringRequestTokenParams {
-	
-	// MARK: RequestOperation
-	
-	var name: String = "Cancel"
-	
-	var parameters: JSONObject?
-	
-	// MARK: AcquiringRequestTokenParams
-	
-	///
-	/// отмечаем параметры которые участвуют в вычислении `token`
-	var tokenParamsKey: Set<String> = [PaymentInfoData.CodingKeys.paymentId.rawValue]
-	
-	///
-	/// - Parameter data: `FinishRequestData`
-	init(data: PaymentInfoData) {
-		if let json = try? data.encode2JSONObject() {
-			self.parameters = json
-		}
-	}
-	
+    // MARK: RequestOperation
+
+    var name: String = "Cancel"
+
+    var parameters: JSONObject?
+
+    // MARK: AcquiringRequestTokenParams
+
+    ///
+    /// отмечаем параметры которые участвуют в вычислении `token`
+    var tokenParamsKey: Set<String> = [PaymentInfoData.CodingKeys.paymentId.rawValue]
+
+    ///
+    /// - Parameter data: `FinishRequestData`
+    init(data: PaymentInfoData) {
+        if let json = try? data.encode2JSONObject() {
+            parameters = json
+        }
+    }
 }

@@ -19,6 +19,4 @@
 
 import UIKit
 
-class UICollectionReusableViewEmpty: UICollectionReusableView {
-
-}
+class UICollectionReusableViewEmpty: UICollectionReusableView {}

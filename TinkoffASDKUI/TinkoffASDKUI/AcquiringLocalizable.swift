@@ -20,35 +20,32 @@
 import Foundation
 
 protocol AcquiringLocalize: class {
+    func localize(_ string: String) -> String
 
-	func localize(_ string: String) -> String
-	
-	func setup(lang: String?, table name: String?, bundle: Bundle?)
+    func setup(lang: String?, table name: String?, bundle: Bundle?)
 }
 
 class AcqLoc: AcquiringLocalize {
-	
-	static let instance: AcquiringLocalize = AcqLoc()
-	
-	private var tableName: String?
-	private var bundle: Bundle!
-	
-	init() {}
-	
-	func setup(lang: String? = nil, table name: String? = nil, bundle: Bundle?) {
-		self.tableName = name
-		if let b = bundle {
-			self.bundle = b
-		} else {
-			self.bundle = Bundle(for: type(of: self))
-			if let languageId = lang, let path = self.bundle.path(forResource: languageId, ofType: "lproj") {
-				self.bundle = Bundle(path: path)
-			}
-		}
-	}
-	
-	func localize(_ string: String) -> String {
-		return NSLocalizedString(string, tableName: tableName, bundle: bundle, comment: string)
-	}
-	
+    static let instance: AcquiringLocalize = AcqLoc()
+
+    private var tableName: String?
+    private var bundle: Bundle!
+
+    init() {}
+
+    func setup(lang: String? = nil, table name: String? = nil, bundle: Bundle?) {
+        tableName = name
+        if let b = bundle {
+            self.bundle = b
+        } else {
+            self.bundle = Bundle(for: type(of: self))
+            if let languageId = lang, let path = self.bundle.path(forResource: languageId, ofType: "lproj") {
+                self.bundle = Bundle(path: path)
+            }
+        }
+    }
+
+    func localize(_ string: String) -> String {
+        return NSLocalizedString(string, tableName: tableName, bundle: bundle, comment: string)
+    }
 }

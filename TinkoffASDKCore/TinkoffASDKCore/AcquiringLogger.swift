@@ -20,29 +20,21 @@
 import Foundation
 
 public protocol LoggerDelegate: class {
-	
-	func print(_ value: String, file: String, function: String, line: Int)
-
+    func print(_ value: String, file: String, function: String, line: Int)
 }
-
 
 public extension LoggerDelegate {
-	
-	func print(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
-		print(value, file: file, function: function, line: line)
-	}
-	
+    func print(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
+        print(value, file: file, function: function, line: line)
+    }
 }
 
-
 public class AcquiringLoggerDefault: NSObject, LoggerDelegate {
-	
-	public func print(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
-		let fileName = file.split(separator: "/").last ?? ""
-		let threadName = Thread.isMainThread ? "main thread" : String(Thread.current.description)
-		
-		Swift.print("[ASDK ->]: on \(threadName), in \(fileName), func \(function), at line: \(line) do:")
-		Swift.print(value, separator: ", ", terminator: "\n")
-	}
-	
+    public func print(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
+        let fileName = file.split(separator: "/").last ?? ""
+        let threadName = Thread.isMainThread ? "main thread" : String(Thread.current.description)
+
+        Swift.print("[ASDK ->]: on \(threadName), in \(fileName), func \(function), at line: \(line) do:")
+        Swift.print(value, separator: ", ", terminator: "\n")
+    }
 }

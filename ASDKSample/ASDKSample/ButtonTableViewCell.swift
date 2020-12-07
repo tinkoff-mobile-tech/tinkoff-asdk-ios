@@ -21,29 +21,28 @@ import UIKit
 
 class ButtonTableViewCell: UITableViewCell, NibLoadable {
 
-	@IBOutlet weak var button: UIButton!
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	
-	var onButtonTouch: (() -> Void)?
-	
-	override func awakeFromNib() {
-        super.awakeFromNib()
-        
-		activityIndicator.stopAnimating()
-		
-		button.layer.cornerRadius = 8
-		button.clipsToBounds = true
-    }
-	
-	override func prepareForReuse() {
-		super.prepareForReuse()
-		
-		activityIndicator.stopAnimating()
-		button.isEnabled = true
-	}
+    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
-	@IBAction func buttonTouchUpInside(_ sender: UIButton) {
-		onButtonTouch?()
-	}
-	
+    var onButtonTouch: (() -> Void)?
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        activityIndicator.stopAnimating()
+
+        button.layer.cornerRadius = 8
+        button.clipsToBounds = true
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        activityIndicator.stopAnimating()
+        button.isEnabled = true
+    }
+
+    @IBAction func buttonTouchUpInside(_ sender: UIButton) {
+        onButtonTouch?()
+    }
 }
