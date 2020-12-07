@@ -437,8 +437,8 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
         case .buttonPaySBP:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonTableViewCell") as? ButtonTableViewCell {
                 cell.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"), for: .normal)
-                cell.buttonAction.tintColor = UIColor.white
-                cell.buttonAction.backgroundColor = UIColor.black
+                cell.buttonAction.tintColor = UIColor.dynamic.button.sbp.tint
+                cell.buttonAction.backgroundColor = UIColor.dynamic.button.sbp.background
                 cell.setButtonIcon(UIImage(named: "buttonIconSBP", in: Bundle(for: type(of: self)), compatibleWith: nil))
 
                 cell.onButtonTouch = { [weak self] in
