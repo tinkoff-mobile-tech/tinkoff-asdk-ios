@@ -3,6 +3,16 @@
     {
       "filename" : "logo_ps.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "logo_ps_dark.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
