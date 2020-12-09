@@ -145,8 +145,8 @@ extension String {
     }
 }
 
-enum IPAddress {
-    static func getIPAddresses() -> [String] {
+public enum IPAddressProvider {
+    public static func getIPAddresses() -> [String] {
         var addresses: [String] = []
 
         // Get list of all interfaces on the local machine:
@@ -179,7 +179,8 @@ enum IPAddress {
 
     static func my() -> String? {
         let addresses = getIPAddresses()
-
-        return addresses.first
+        let ipAddressFactory = IPAddressFactory()
+        
+        return addresses.compactMap { ipAddressFactory.ipAddress(with: $0) }.first?.fullStringValue
     }
 }
