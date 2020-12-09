@@ -29,11 +29,7 @@ class ButtonTableViewCell: UITableViewCell {
 
         buttonAction.layer.cornerRadius = 16.0
         buttonAction.layer.borderWidth = 1
-        if #available(iOS 13.0, *) {
-            buttonAction.layer.borderColor = UIColor.systemBackground.cgColor
-        } else {
-            buttonAction.layer.borderColor = UIColor.white.cgColor
-        }
+        updateColors()
     }
 
     func setButtonIcon(_ img: UIImage?) {
@@ -45,5 +41,20 @@ class ButtonTableViewCell: UITableViewCell {
 
     @IBAction private func buttonActionTouchUpInside(_: UIButton) {
         onButtonTouch?()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateColors()
+    }
+}
+
+private extension ButtonTableViewCell {
+    func updateColors() {
+        if #available(iOS 13.0, *) {
+            buttonAction.layer.borderColor = UIColor.systemBackground.cgColor
+        } else {
+            buttonAction.layer.borderColor = UIColor.white.cgColor
+        }
     }
 }

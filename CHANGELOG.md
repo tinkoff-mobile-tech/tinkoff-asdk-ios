@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* dark mode fix: background/tint colors for SBP button and payment logos image(MIC-2392)
+
 ## [2.1.1] - 2020-10-20
 
 ### Updated
