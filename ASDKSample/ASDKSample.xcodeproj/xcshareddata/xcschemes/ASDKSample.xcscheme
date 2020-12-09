@@ -48,6 +48,16 @@
                ReferencedContainer = "container:ASDKSample.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C3C81D2058EE95A9FFAB9B9ACD4643CD"
+               BuildableName = "TinkoffASDKCore-Unit-Tests.xctest"
+               BlueprintName = "TinkoffASDKCore-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
