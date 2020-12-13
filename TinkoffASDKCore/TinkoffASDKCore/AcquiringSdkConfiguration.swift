@@ -56,6 +56,8 @@ public class AcquiringSdkConfiguration: NSObject {
     public private(set) var credential: AcquiringSdkCredential
 
     public private(set) var serverEnvironment: AcquiringSdkEnvironment
+    
+    public private(set) var requestsTimeoutInterval: TimeInterval
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
     ///
@@ -70,14 +72,29 @@ public class AcquiringSdkConfiguration: NSObject {
 
     /// Показывать ошибки после выполнения запроса
     public var showErrorAlert: Bool = true
-
+    
     ///
     /// - Parameters:
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
+    ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
     /// - Returns: AcquiringSdkConfiguration
-    public init(credential: AcquiringSdkCredential, server: AcquiringSdkEnvironment = .test) {
+    public init(credential: AcquiringSdkCredential,
+                server: AcquiringSdkEnvironment = .test,
+                requestsTimeoutInterval: TimeInterval) {
         self.credential = credential
-        serverEnvironment = server
+        self.requestsTimeoutInterval = requestsTimeoutInterval
+        self.serverEnvironment = server
     }
+    
+    public convenience init(credential: AcquiringSdkCredential,
+                            server: AcquiringSdkEnvironment = .test) {
+        self.init(credential: credential,
+                  server: server,
+                  requestsTimeoutInterval: .defaultRequestsTimeoutInterval)
+    }
+}
+
+private extension TimeInterval {
+    static let defaultRequestsTimeoutInterval: TimeInterval = 40
 }
