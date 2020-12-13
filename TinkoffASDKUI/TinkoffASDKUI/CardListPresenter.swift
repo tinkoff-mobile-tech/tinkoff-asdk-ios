@@ -126,15 +126,14 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
         cellIndex = []
         switch dataSource?.cardListFetchStatus() {
         case .object:
-            if let count = dataSource?.cardListNumberOfCards() {
-                for index in 0 ... count - 1 {
-                    cellIndex.append(CellInfo(type: .card, index: index))
-                    if let parentPaymentId = waitingInputCVCForParentPaymentId, let card = dataSource?.cardListCard(at: index), card.parentPaymentId == parentPaymentId {
-                        waitingInputIndexPath = IndexPath(item: index, section: 0)
-                    }
+            let cards = getCardsForCurrentPaymentType()
+            
+            for index in 0..<cards.count {
+                cellIndex.append(CellInfo(type: .card, index: index))
+                if let parentPaymentId = waitingInputCVCForParentPaymentId, cards[index].parentPaymentId == parentPaymentId {
+                    waitingInputIndexPath = IndexPath(item: index, section: 0)
                 }
             }
-
         default:
             break
         }
@@ -162,10 +161,13 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
                     }
 
                 case .object:
-                    if let card = dataSource?.cardListCard(at: cellInfo.index), let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PaymentCardCollectionViewCell", for: indexPath) as? PaymentCardCollectionViewCell {
+                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PaymentCardCollectionViewCell", for: indexPath) as? PaymentCardCollectionViewCell {
+                        let cards = getCardsForCurrentPaymentType()
+                        
+                        let card = cards[cellInfo.index]
                         cell.labelCardName.text = card.pan
                         cell.labelCardExpData.text = card.expDateFormat()
-
+                        
                         cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
                             if let numbers = requisites, card.pan.hasPrefix(numbers) {
                                 cell?.imageViewLogo.image = icon
@@ -457,5 +459,19 @@ extension CardListPresenter: CardListViewOutConnection {
         if let cell = cardListCollectionView?.cellForItem(at: indexPath) as? InputViewStatus {
             cell.setStatus(value, statusText: statusText)
         }
+    }
+}
+
+private extension CardListPresenter {
+    func getCardsForCurrentPaymentType() -> [PaymentCard] {
+        guard let dataSource = dataSource else { return [] }
+        let resultCards: [PaymentCard]
+        switch paymentType {
+        case .standart:
+            resultCards = dataSource.allCards()
+        case .recurrent:
+            resultCards = dataSource.allCards().filter { $0.parentPaymentId != nil }
+        }
+        return resultCards
     }
 }

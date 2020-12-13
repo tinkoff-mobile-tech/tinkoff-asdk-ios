@@ -61,6 +61,8 @@ public protocol FetchDataSourceProtocol: FetchServiceProtocol where ObjectType =
     func item(with identifier: String?) -> U?
     /// Объект по идентификатору
     func item(with parentPaymentIdentifier: Int64) -> U?
+    /// Все объекты
+    func allItems() -> [U]
 }
 
 /// Для отслеживания состояния
@@ -245,6 +247,10 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
             return false
         }
+    }
+    
+    public func allItems() -> [PaymentCard] {
+        return activeCards
     }
 }
 

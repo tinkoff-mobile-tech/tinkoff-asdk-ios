@@ -34,6 +34,8 @@ protocol AcquiringCardListDataSourceDelegate: class {
     func cardListCard(with cardId: String) -> PaymentCard?
     /// Получить карту по parentPaymentId
     func cardListCard(with parentPaymentId: Int64) -> PaymentCard?
+    /// Получить все карты
+    func allCards() -> [PaymentCard]
     /// Перезагрузить, обновить список карт
     func cardListReloadData()
     /// Деактивировать карту

@@ -1104,6 +1104,10 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     public func cardListCard(with parentPaymentId: Int64) -> PaymentCard? {
         return cardListDataProvider.item(with: parentPaymentId)
     }
+    
+    public func allCards() -> [PaymentCard] {
+        return cardListDataProvider.allItems()
+    }
 
     public func cardListReloadData() {
         cardListDataProvider.update()
