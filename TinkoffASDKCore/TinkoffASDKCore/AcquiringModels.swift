@@ -600,6 +600,7 @@ public struct SupplierInfo: Codable {
 ///
 /// Информация о товаре
 public struct Item: Codable {
+    
     /// Сумма в копейках. Целочисленное значение не более 10 знаков.
     var price: Int64 = 0
 
@@ -673,13 +674,31 @@ public struct Item: Codable {
         agentData = try? container.decode(AgentData.self, forKey: .agentData)
         supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
     }
-
-    public init(amount: NSDecimalNumber, price: NSDecimalNumber, name: String, tax: Tax) {
+    
+    public init(amount: NSDecimalNumber,
+                price: NSDecimalNumber,
+                name: String,
+                tax: Tax,
+                quantity: Double = 1,
+                paymentObject: PaymentObject? = nil,
+                paymentMethod: PaymentMethod? = nil,
+                ean13: String? = nil,
+                shopCode: String? = nil,
+                measurementUnit: String? = nil,
+                supplierInfo: SupplierInfo? = nil,
+                agentData: AgentData? = nil) {
         self.amount = Int64(amount.doubleValue * 100)
         self.price = Int64(price.doubleValue * 100)
         self.name = name
         self.tax = tax
-        quantity = 1
+        self.quantity = quantity
+        self.paymentObject = paymentObject
+        self.paymentMethod = paymentMethod
+        self.ean13 = ean13
+        self.shopCode = shopCode
+        self.measurementUnit = measurementUnit
+        self.supplierInfo = supplierInfo
+        self.agentData = agentData
     }
 
     public func encode(to encoder: Encoder) throws {
