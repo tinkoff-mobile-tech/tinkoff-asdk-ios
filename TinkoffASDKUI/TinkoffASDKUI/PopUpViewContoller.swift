@@ -229,14 +229,24 @@ class PopUpViewContoller: UIViewController {
         panGesture.delegate = nil
         didAppearTextFieldNeedBecomeFirstResponder = textField
 
-        if let nav = presentingViewController as? UINavigationController {
-            dismiss(animated: false) {
-                nav.pushViewController(self, animated: false)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    completion?()
+        if let presentingNavigationController = presentingViewController as? UINavigationController {
+            
+            /// Sometimes PopUpViewController may be presenting other UIViewController
+            /// in that case when we call dismiss this presented UIViewController will be dismissed
+            /// and when we call `nav.pushViewController(self, animated: false)` after it
+            /// happens issue like that https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/14
+            /// To prevent it we dismiss any possible presented UIViewController and after that perform self dismiss
+            
+            dismissPresentedIfNeeded(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.dismiss(animated: false) {
+                    presentingNavigationController.pushViewController(self, animated: false)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        completion?()
+                    }
                 }
             }
-
+            
             return false
 
         } else if let parentViewController = presentingViewController {
