@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.1.3] - 2020-12-13
+
 ### Added
 * add requestsTimeoutInterval parameter to AcquiringSdkConfiguration with default value (MIC-2395/https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/12)
 * add all Item model's parameters to init (MIC-2384/https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/17)
