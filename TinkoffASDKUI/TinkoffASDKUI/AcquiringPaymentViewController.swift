@@ -34,6 +34,8 @@ protocol AcquiringCardListDataSourceDelegate: class {
     func cardListCard(with cardId: String) -> PaymentCard?
     /// Получить карту по parentPaymentId
     func cardListCard(with parentPaymentId: Int64) -> PaymentCard?
+    /// Получить все карты
+    func allCards() -> [PaymentCard]
     /// Перезагрузить, обновить список карт
     func cardListReloadData()
     /// Деактивировать карту
@@ -102,6 +104,12 @@ protocol AcquiringView: class {
     ///
     func cardRequisites() -> PaymentSourceData?
     func infoEmail() -> String?
+    
+    func setPaymentType(_ paymentType: PaymentType)
+}
+
+extension AcquiringView {
+    func setPaymentType(_ paymentType: PaymentType) {}
 }
 
 class AcquiringPaymentViewController: PopUpViewContoller {
@@ -119,6 +127,12 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     private var paymentStatus: AcquiringViewStatus = .initWaiting {
         didSet {
             updateTableViewCells()
+        }
+    }
+    
+    private var paymentType: PaymentType = .standart {
+        didSet {
+            cardListPresenter.setPaymentType(paymentType)
         }
     }
 
@@ -258,7 +272,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
         }) != nil {
             let result = inputEmailPresenter.inputValue() != nil
 
-            if result == false, showErrorStatus == true {
+            if !result, showErrorStatus {
                 inputEmailPresenter.setStatus(.error, statusText: nil)
             }
 
@@ -266,21 +280,26 @@ class AcquiringPaymentViewController: PopUpViewContoller {
         }
 
         switch cardListPresenter.requisies() {
-        case let .savedCard(card, cvc):
+        case let .savedCard(_, cvc):
             let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-
-            if card.parentPaymentId == nil {
-                if cardRequisitesValidator.validateCardCVC(cvc: cvc) {
-                    return true
-                }
-            } else if case .paymentWainingCVC = paymentStatus {
-                if cardRequisitesValidator.validateCardCVC(cvc: cvc) {
-                    return true
+            
+            var validationResult = true
+            
+            if case .paymentWainingCVC = paymentStatus {
+                validationResult = cardRequisitesValidator.validateCardCVC(cvc: cvc)
+            } else {
+                switch paymentType {
+                case .standart:
+                    validationResult = cardRequisitesValidator.validateCardCVC(cvc: cvc)
+                case .recurrent:
+                    validationResult = true
                 }
             }
-
-            cardListPresenter.setStatus(.error, statusText: nil)
-            return false
+            
+            if !validationResult {
+                cardListPresenter.setStatus(.error, statusText: nil)
+            }
+            return validationResult
 
         case let .requisites(number, expDate, cvc):
             if let number = number, let expDate = expDate, let cvc = cvc {
@@ -296,8 +315,6 @@ class AcquiringPaymentViewController: PopUpViewContoller {
                 return false
             }
         }
-
-        return true
     }
 }
 
@@ -566,5 +583,9 @@ extension AcquiringPaymentViewController: AcquiringView {
         }
 
         return nil
+    }
+    
+    func setPaymentType(_ paymentType: PaymentType) {
+        self.paymentType = paymentType
     }
 }

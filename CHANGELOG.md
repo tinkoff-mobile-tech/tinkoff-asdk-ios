@@ -3,6 +3,8 @@
 
 ### Fixed
 
+* cards without parentPaymentId presentation while perform recurrent payment
+* issues with cvc validation for standart and recurrent payment
 * freeze after card scanner finished work (MIC-2391/https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/14)
 
 ## [2.1.2] - 2020-12-10

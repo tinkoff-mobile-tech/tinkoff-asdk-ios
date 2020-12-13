@@ -34,6 +34,11 @@ enum CardRequisitesState {
     case savedCard(card: PaymentCard, cvc: String?)
 }
 
+enum PaymentType {
+    case standart
+    case recurrent
+}
+
 protocol CardListViewOutConnection: InputViewStatus {
     func requisies() -> CardRequisitesState
 
@@ -46,6 +51,8 @@ protocol CardListViewOutConnection: InputViewStatus {
     var didSelectSBPItem: (() -> Void)? { get set }
 
     var didSelectShowCardList: (() -> Void)? { get set }
+    
+    func setPaymentType(_ paymentType: PaymentType)
 }
 
 class CardListPresenter: NSObject {
@@ -79,6 +86,8 @@ class CardListPresenter: NSObject {
     private var waitingInputCVCForParentPaymentId: Int64?
     private var waitingInputIndexPath: IndexPath?
     private var lastActiveCardIndexPath: IndexPath?
+    
+    private var paymentType: PaymentType = .standart
 
     private func setupCardListCollectionView(_ collectionView: UICollectionView) {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "defaultCell")
@@ -117,15 +126,14 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
         cellIndex = []
         switch dataSource?.cardListFetchStatus() {
         case .object:
-            if let count = dataSource?.cardListNumberOfCards() {
-                for index in 0 ... count - 1 {
-                    cellIndex.append(CellInfo(type: .card, index: index))
-                    if let parentPaymentId = waitingInputCVCForParentPaymentId, let card = dataSource?.cardListCard(at: index), card.parentPaymentId == parentPaymentId {
-                        waitingInputIndexPath = IndexPath(item: index, section: 0)
-                    }
+            let cards = getCardsForCurrentPaymentType()
+            
+            for index in 0..<cards.count {
+                cellIndex.append(CellInfo(type: .card, index: index))
+                if let parentPaymentId = waitingInputCVCForParentPaymentId, cards[index].parentPaymentId == parentPaymentId {
+                    waitingInputIndexPath = IndexPath(item: index, section: 0)
                 }
             }
-
         default:
             break
         }
@@ -153,10 +161,13 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
                     }
 
                 case .object:
-                    if let card = dataSource?.cardListCard(at: cellInfo.index), let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PaymentCardCollectionViewCell", for: indexPath) as? PaymentCardCollectionViewCell {
+                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PaymentCardCollectionViewCell", for: indexPath) as? PaymentCardCollectionViewCell {
+                        let cards = getCardsForCurrentPaymentType()
+                        
+                        let card = cards[cellInfo.index]
                         cell.labelCardName.text = card.pan
                         cell.labelCardExpData.text = card.expDateFormat()
-
+                        
                         cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
                             if let numbers = requisites, card.pan.hasPrefix(numbers) {
                                 cell?.imageViewLogo.image = icon
@@ -166,16 +177,22 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
                                 cell?.imageViewLogo.isHidden = true
                             }
                         })
-
+                        
                         if let parentPaymentId = waitingInputCVCForParentPaymentId, parentPaymentId == card.parentPaymentId {
                             cell.textFieldCardCVC.isHidden = false
                             inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
-                        } else if card.parentPaymentId == nil {
-                            cell.textFieldCardCVC.isHidden = false
-                            inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
                         } else {
-                            cell.textFieldCardCVC.isHidden = true
-                            inputCardCVCRequisitesPresenter.present(responderListener: nil, inputView: nil)
+                            let isCvcAndDateHidden: Bool
+                            switch paymentType {
+                            case .recurrent:
+                                isCvcAndDateHidden = true
+                                inputCardCVCRequisitesPresenter.present(responderListener: nil, inputView: nil)
+                            case .standart:
+                                isCvcAndDateHidden = false
+                                inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
+                            }
+                            cell.textFieldCardCVC.isHidden = isCvcAndDateHidden
+                            cell.labelCardExpData.isHidden = isCvcAndDateHidden
                         }
 
                         return cell
@@ -421,6 +438,10 @@ extension CardListPresenter: CardListViewOutConnection {
             }
         }
     }
+    
+    func setPaymentType(_ paymentType: PaymentType) {
+        self.paymentType = paymentType
+    }
 
     func updateView() {
         cardListCollectionView?.reloadData()
@@ -438,5 +459,19 @@ extension CardListPresenter: CardListViewOutConnection {
         if let cell = cardListCollectionView?.cellForItem(at: indexPath) as? InputViewStatus {
             cell.setStatus(value, statusText: statusText)
         }
+    }
+}
+
+private extension CardListPresenter {
+    func getCardsForCurrentPaymentType() -> [PaymentCard] {
+        guard let dataSource = dataSource else { return [] }
+        let resultCards: [PaymentCard]
+        switch paymentType {
+        case .standart:
+            resultCards = dataSource.allCards()
+        case .recurrent:
+            resultCards = dataSource.allCards().filter { $0.parentPaymentId != nil }
+        }
+        return resultCards
     }
 }

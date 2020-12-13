@@ -652,6 +652,7 @@ public class AcquiringUISDK: NSObject {
 
     private func initPay(paymentData: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) {
         acquiringView?.changedStatus(.initWaiting)
+        acquiringView?.setPaymentType(paymentData.savingAsParentPayment == true ? .recurrent : .standart)
         _ = acquiringSdk.paymentInit(data: paymentData) { response in
             completionHandler(response)
         }
@@ -1102,6 +1103,10 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
     public func cardListCard(with parentPaymentId: Int64) -> PaymentCard? {
         return cardListDataProvider.item(with: parentPaymentId)
+    }
+    
+    public func allCards() -> [PaymentCard] {
+        return cardListDataProvider.allItems()
     }
 
     public func cardListReloadData() {
