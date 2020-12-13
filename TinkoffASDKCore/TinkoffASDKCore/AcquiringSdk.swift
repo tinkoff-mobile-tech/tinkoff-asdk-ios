@@ -56,7 +56,13 @@ public final class AcquiringSdk: NSObject {
                                         systemName: UIDevice.current.systemName,
                                         systemVersion: UIDevice.current.systemVersion)
 
-            networkTransport = AcquaringNetworkTransport(urlDomain: url, deviceInfo: deviceInfo)
+            let sessionConfiguration = URLSessionConfiguration.default
+            sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
+            sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
+            
+            networkTransport = AcquaringNetworkTransport(urlDomain: url,
+                                                         session: URLSession(configuration: sessionConfiguration),
+                                                         deviceInfo: deviceInfo)
         } else {
             throw AcquiringSdkError.url
         }
