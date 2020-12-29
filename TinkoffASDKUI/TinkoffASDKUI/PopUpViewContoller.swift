@@ -114,18 +114,12 @@ class PopUpViewContoller: UIViewController {
     }
 
     @objc func closeViewController(_ complete: (() -> Void)? = nil) {
-        if let presetingVC = presentingViewController {
-            presetingVC.dismiss(animated: true) {
-                complete?()
-            }
+        if let navigationController = navigationController, navigationController.viewControllers.count > 1 {
+            disappearComletionHandler = complete
+            navigationController.popViewController(animated: true)
         } else {
-            if let nav = navigationController {
-                disappearComletionHandler = complete
-                nav.popViewController(animated: true)
-            } else {
-                dismiss(animated: true) {
-                    complete?()
-                }
+            (presentingViewController ?? self).dismiss(animated: true) {
+                complete?()
             }
         }
     }
