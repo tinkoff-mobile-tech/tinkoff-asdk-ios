@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.1.4] - 2020-12-29
+
 ### Fixed
 * update close logic in PopUpViewContoller (MIC-2393/https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/15)
 
