@@ -1,6 +1,11 @@
 # Changelog
 ## [Unreleased]
 
+### Updated
+* add new Item struct init method to be able to init Item with russian ruble pennies.
+* deprecate Item struct init with NSDecimalNumber type for amount and price
+(MIC-2384/https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/11/https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/31)
+
 ## [2.1.4] - 2020-12-29
 
 ### Fixed

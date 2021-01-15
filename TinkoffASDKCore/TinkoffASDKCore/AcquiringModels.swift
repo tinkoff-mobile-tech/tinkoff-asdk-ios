@@ -675,6 +675,33 @@ public struct Item: Codable {
         supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
     }
     
+    public init(amount: Int64,
+                price: Int64,
+                name: String,
+                tax: Tax,
+                quantity: Double = 1,
+                paymentObject: PaymentObject? = nil,
+                paymentMethod: PaymentMethod? = nil,
+                ean13: String? = nil,
+                shopCode: String? = nil,
+                measurementUnit: String? = nil,
+                supplierInfo: SupplierInfo? = nil,
+                agentData: AgentData? = nil) {
+        self.amount = amount
+        self.price = price
+        self.name = name
+        self.tax = tax
+        self.quantity = quantity
+        self.paymentObject = paymentObject
+        self.paymentMethod = paymentMethod
+        self.ean13 = ean13
+        self.shopCode = shopCode
+        self.measurementUnit = measurementUnit
+        self.supplierInfo = supplierInfo
+        self.agentData = agentData
+    }
+
+    @available(*, deprecated, message: "Рекомендуется использовать метод, который принимает параметры amount и price в копейках (Int64).")
     public init(amount: NSDecimalNumber,
                 price: NSDecimalNumber,
                 name: String,
