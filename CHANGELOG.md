@@ -1,7 +1,7 @@
 # Changelog
 ## [Unreleased]
 
-## [2.1.5] - 2020-12-17
+## [2.1.5] - 2021-01-17
 
 ### Updated
 * add new Item struct init method to be able to init Item with russian ruble pennies.
