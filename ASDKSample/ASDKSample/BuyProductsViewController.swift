@@ -139,7 +139,11 @@ class BuyProductsViewController: UIViewController {
 
         var receiptItems: [Item] = []
         products.forEach { product in
-            receiptItems.append(Item(amount: product.price, price: product.price, name: product.name, tax: .vat10))
+            let item = Item(amount: product.price.int64Value * 100,
+                            price: product.price.int64Value * 100,
+                            name: product.name,
+                            tax: .vat10)
+            receiptItems.append(item)
         }
 
         paymentData.receipt = Receipt(shopCode: nil,
