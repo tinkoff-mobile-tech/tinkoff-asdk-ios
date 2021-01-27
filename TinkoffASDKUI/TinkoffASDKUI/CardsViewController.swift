@@ -84,10 +84,10 @@ class CardsViewController: UIViewController {
     }
 
     private func cardListCell(for tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch cardListDataSourceDelegate.cardListFetchStatus() {
+        switch cardListDataSourceDelegate.getCardListFetchStatus() {
         case .unknown, .loading:
-            if indexPath.row < cardListDataSourceDelegate.cardListNumberOfCards(), let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
-                let card = cardListDataSourceDelegate.cardListCard(at: indexPath.row)
+            if indexPath.row < cardListDataSourceDelegate.getCardListNumberOfCards(), let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
+                let card = cardListDataSourceDelegate.getCardListCard(at: indexPath.row)
 
                 cell.labelCardName.text = card.pan
                 cell.labelCardExpData.text = card.expDateFormat()
@@ -104,7 +104,7 @@ class CardsViewController: UIViewController {
 
         case .object:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
-                let card = cardListDataSourceDelegate.cardListCard(at: indexPath.row)
+                let card = cardListDataSourceDelegate.getCardListCard(at: indexPath.row)
 
                 cell.labelCardName.text = card.pan
                 cell.labelCardExpData.text = card.expDateFormat()
@@ -143,7 +143,7 @@ class CardsViewController: UIViewController {
                 cell.buttonUpdate.isHidden = false
                 cell.activityIndicator.stopAnimating()
                 cell.onButtonTouch = { [weak self] in
-                    self?.cardListDataSourceDelegate.cardListReloadData()
+                    self?.cardListDataSourceDelegate.cardListReload()
                 }
 
                 return cell
@@ -205,7 +205,7 @@ class CardsViewController: UIViewController {
 
     private func checkIfCellIsEditable(at indexPath: IndexPath) -> Bool {
         guard case .cards = tableViewSection[indexPath.section],
-              case .object = cardListDataSourceDelegate.cardListFetchStatus()
+              case .object = cardListDataSourceDelegate.getCardListFetchStatus()
         else { return false }
 
         return true
@@ -261,15 +261,15 @@ extension CardsViewController: UITableViewDataSource {
             return 1
 
         case .cards:
-            switch cardListDataSourceDelegate.cardListFetchStatus() {
+            switch cardListDataSourceDelegate.getCardListFetchStatus() {
             case .unknown:
                 return 1
 
             case .loading:
-                return 1 + cardListDataSourceDelegate.cardListNumberOfCards()
+                return 1 + cardListDataSourceDelegate.getCardListNumberOfCards()
 
             case .object:
-                return cardListDataSourceDelegate.cardListNumberOfCards()
+                return cardListDataSourceDelegate.getCardListNumberOfCards()
 
             case .empty:
                 return 1
@@ -310,7 +310,7 @@ extension CardsViewController: UITableViewDataSource {
             break
 
         case .cards:
-            cardListDataSourceDelegate.cardListDeactivateCard(at: indexPath.row, startHandler: {
+            cardListDataSourceDelegate.cardListToDeactivateCard(at: indexPath.row, startHandler: {
                 self.viewWaiting.isHidden = false
             }) { result in
                 self.viewWaiting.isHidden = true
