@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.2.0] - 2021-01-27
+
 ### Fixed
 * fix AcquiringPaymentViewController's memory leak
 
