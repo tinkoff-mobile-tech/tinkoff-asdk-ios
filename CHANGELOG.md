@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Updated
+* make CustomerKey optional (MIC-2386)
+
 ## [2.1.5] - 2021-01-17
 
 ### Updated
