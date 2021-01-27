@@ -124,7 +124,7 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
 
     func numberOfSections(in _: UICollectionView) -> Int {
         cellIndex = []
-        switch dataSource?.cardListFetchStatus() {
+        switch dataSource?.getCardListFetchStatus() {
         case .object:
             let cards = getCardsForCurrentPaymentType()
             
@@ -153,7 +153,7 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
         if collectionView == cardListCollectionView {
             switch cellInfo.type {
             case .card:
-                switch dataSource?.cardListFetchStatus() {
+                switch dataSource?.getCardListFetchStatus() {
                 case .loading:
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardListLoadingCollectionViewCell", for: indexPath) as? LoadingCollectionViewCell {
                         cell.activityIndicator.startAnimating()
@@ -291,7 +291,7 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
             // cellSize.width -= 30
             // cellSize.height -= 30
         } else if collectionView == pageStatusCollectionView {
-            if case .object = dataSource?.cardListFetchStatus(), let count = dataSource?.cardListNumberOfCards(), indexPath.row < count {
+            if case .object = dataSource?.getCardListFetchStatus(), let count = dataSource?.getCardListNumberOfCards(), indexPath.row < count {
                 if indexPath.row == 0 {
                     cellSize = CGSize(width: 46, height: 30)
                 } else {
@@ -390,7 +390,7 @@ extension CardListPresenter: CardListViewOutConnection {
 
         switch cellIndex[selectedCardCellIndex].type {
         case .card:
-            if let card = dataSource?.cardListCard(at: selectedCardCellIndex) {
+            if let card = dataSource?.getCardListCard(at: selectedCardCellIndex) {
                 let cvc = inputCardCVCRequisitesPresenter.cardCVC()
                 return CardRequisitesState.savedCard(card: card, cvc: cvc)
             }
@@ -468,9 +468,9 @@ private extension CardListPresenter {
         let resultCards: [PaymentCard]
         switch paymentType {
         case .standart:
-            resultCards = dataSource.allCards()
+            resultCards = dataSource.getAllCards()
         case .recurrent:
-            resultCards = dataSource.allCards().filter { $0.parentPaymentId != nil }
+            resultCards = dataSource.getAllCards().filter { $0.parentPaymentId != nil }
         }
         return resultCards
     }

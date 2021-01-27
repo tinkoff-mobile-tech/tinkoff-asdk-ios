@@ -23,27 +23,26 @@ import WebKit
 
 /// получение информации для отрисовки списка карт
 protocol AcquiringCardListDataSourceDelegate: class {
-    func customerKey() -> String
     /// Количество доступных, активных карт
-    func cardListNumberOfCards() -> Int
+    func getCardListNumberOfCards() -> Int
     /// Статус обновления списока карт
-    func cardListFetchStatus() -> FetchStatus<[PaymentCard]>
+    func getCardListFetchStatus() -> FetchStatus<[PaymentCard]>
     /// Получить карту
-    func cardListCard(at index: Int) -> PaymentCard
+    func getCardListCard(at index: Int) -> PaymentCard
     /// Получить карту по cardId
-    func cardListCard(with cardId: String) -> PaymentCard?
+    func getCardListCard(with cardId: String) -> PaymentCard?
     /// Получить карту по parentPaymentId
-    func cardListCard(with parentPaymentId: Int64) -> PaymentCard?
+    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard?
     /// Получить все карты
-    func allCards() -> [PaymentCard]
+    func getAllCards() -> [PaymentCard]
     /// Перезагрузить, обновить список карт
-    func cardListReloadData()
+    func cardListReload()
     /// Деактивировать карту
-    func cardListDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((PaymentCard?) -> Void)?)
+    func cardListToDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((PaymentCard?) -> Void)?)
     /// Добавить карту
-    func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+    func cardListToAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
     /// Показать экран добавления карты
-    func presentAddCardView(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+    func presentAddCard(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
 }
 
 enum AcquiringViewStatus {

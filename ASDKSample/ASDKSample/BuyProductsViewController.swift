@@ -70,7 +70,7 @@ class BuyProductsViewController: UIViewController {
         tableView.dataSource = self
 
         sdk.setupCardListDataProvider(for: customerKey, statusListener: self)
-        sdk.cardListReloadData()
+        try? sdk.cardListReloadData()
         sdk.addCardNeedSetCheckTypeHandler = {
             AppSetting.shared.addCardChekType
         }
@@ -79,6 +79,8 @@ class BuyProductsViewController: UIViewController {
             buttonAddToCart.isEnabled = false
             buttonAddToCart.title = nil
         }
+        
+        updateTableViewCells()
     }
 
     @IBAction func addToCart(_ sender: Any) {
@@ -528,19 +530,19 @@ extension BuyProductsViewController: UITableViewDataSource {
             return "сумма: \(Utils.formatAmount(NSDecimalNumber(value: productsAmount())))"
 
         case .pay:
-            let cards = sdk.cardListNumberOfCards()
+            let cardsCount = (try? sdk.cardListNumberOfCards()) ?? 0
             // TODO: use isEmpty instead
-            if cards > 0 {
-                return "открыть платежную форму и перейти к оплате товара, доступно \(cards) сохраненных карт"
+            if cardsCount > 0 {
+                return "открыть платежную форму и перейти к оплате товара, доступно \(cardsCount) сохраненных карт"
             }
 
             return "открыть платежную форму и перейти к оплате товара"
         // swiftlint:disable line_length
         case .payAndSaveAsParent:
-            let cards = sdk.cardListNumberOfCards()
+            let cardsCount = (try? sdk.cardListNumberOfCards()) ?? 0
             // TODO: use isEmpty instead
-            if cards > 0 {
-                return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cards) сохраненных карт"
+            if cardsCount > 0 {
+                return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cardsCount) сохраненных карт"
             }
 
             return "оплатить и сделать этот платеж родительским"

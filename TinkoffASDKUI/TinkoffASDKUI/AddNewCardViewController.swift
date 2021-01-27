@@ -67,7 +67,7 @@ class AddNewCardViewController: PopUpViewContoller {
                cardRequisitesValidator.validateCardCVC(cvc: cvc)
             {
                 viewWaiting.isHidden = false
-                cardListDataSourceDelegate?.cardListAddCard(number: number,
+                cardListDataSourceDelegate?.cardListToAddCard(number: number,
                                                             expDate: expDate,
                                                             cvc: cvc,
                                                             addCardViewPresenter: self,

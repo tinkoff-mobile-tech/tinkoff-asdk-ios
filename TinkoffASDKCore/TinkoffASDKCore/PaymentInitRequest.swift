@@ -29,7 +29,7 @@ public struct PaymentInitData: Codable {
     public var orderId: String
 
     /// Идентификатор клиента в системе продавца. Например, для этого идентификатора будут сохраняться список карт.
-    public var customerKey: String
+    public var customerKey: String?
 
     /// Краткое описание
     public var description: String?
@@ -88,7 +88,7 @@ public struct PaymentInitData: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         amount = try container.decode(Int64.self, forKey: .amount)
         orderId = try container.decode(String.self, forKey: .orderId)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
+        customerKey = try container.decodeIfPresent(String.self, forKey: .customerKey)
         description = try? container.decode(String.self, forKey: .description)
         redirectDueDate = try? container.decode(Date.self, forKey: .redirectDueDate)
 
@@ -110,7 +110,7 @@ public struct PaymentInitData: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(amount, forKey: .amount)
         try container.encode(orderId, forKey: .orderId)
-        try container.encode(customerKey, forKey: .customerKey)
+        try container.encodeIfPresent(customerKey, forKey: .customerKey)
         if description != nil { try? container.encode(description, forKey: .description) }
         if redirectDueDate != nil { try? container.encode(redirectDueDate, forKey: .redirectDueDate) }
         if let value = savingAsParentPayment, value == true { try container.encode("Y", forKey: .savingAsParentPayment) }
@@ -122,7 +122,7 @@ public struct PaymentInitData: Codable {
 
     public init(amount: Int64,
                 orderId: String,
-                customerKey: String,
+                customerKey: String?,
                 redirectDueDate: Date? = nil)
     {
         self.amount = amount
@@ -133,7 +133,7 @@ public struct PaymentInitData: Codable {
 
     public init(amount: NSDecimalNumber,
                 orderId: String,
-                customerKey: String,
+                customerKey: String?,
                 redirectDueDate: Date? = nil)
     {
         let int64Amount = Int64(amount.doubleValue * 100)
