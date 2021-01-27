@@ -605,12 +605,12 @@ public class AcquiringUISDK: NSObject {
             modalViewController.cardListDataSourceDelegate = self
         }
 
-        modalViewController.onTouchButtonShowCardList = { [weak self] in
+        modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
             guard let self = self else { return }
             
             let viewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
-            viewController.scanerDataSource = modalViewController.scanerDataSource
-            viewController.alertViewHelper = modalViewController.alertViewHelper
+            viewController.scanerDataSource = modalViewController?.scanerDataSource
+            viewController.alertViewHelper = modalViewController?.alertViewHelper
             self.cardsListView = viewController
             
             // проверяем, что cardListDataProvider не nil, поэтому мы можем

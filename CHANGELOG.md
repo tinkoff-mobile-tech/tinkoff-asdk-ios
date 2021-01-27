@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* fix AcquiringPaymentViewController's memory leak
+
 ### Updated
 * make CustomerKey optional (MIC-2386)
 
