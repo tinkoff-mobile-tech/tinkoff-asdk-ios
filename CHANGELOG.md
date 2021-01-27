@@ -6,6 +6,7 @@
 
 ### Updated
 * make CustomerKey optional (MIC-2386)
+* remove public method cancelPayment from AcquiringSdk
 
 ## [2.1.5] - 2021-01-17
 

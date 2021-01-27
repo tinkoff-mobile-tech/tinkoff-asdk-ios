@@ -233,22 +233,6 @@ public final class AcquiringSdk: NSObject {
         }
     }
 
-    ///
-    /// Отмена платежа
-    /// - Parameters:
-    ///   - data: `PaymentInfoData` информация о оплатеже
-    ///   - completionHandler: результат операции `PaymentStatusResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func cancelPayment(data: PaymentInfoData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentCancelRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
     // MARK: - Cписок карт
 
     ///
