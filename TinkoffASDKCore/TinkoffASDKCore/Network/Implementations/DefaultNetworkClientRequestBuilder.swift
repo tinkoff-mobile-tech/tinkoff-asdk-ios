@@ -54,12 +54,12 @@ final class DefaultNetworkClientRequestBuilder: NetworkClientRequestBuilder {
     
     // MARK: - Parameters Encoding
     
-    func encodeURLParameters(_ parameters: HTTPParameters, urlRequest: URLRequest) throws -> URLRequest {
+    private func encodeURLParameters(_ parameters: HTTPParameters, urlRequest: URLRequest) throws -> URLRequest {
         guard !parameters.keys.isEmpty else { return urlRequest }
         return urlRequest
     }
     
-    func encodeJSONParameters(_ parameters: HTTPParameters, urlRequest: URLRequest) throws -> URLRequest {
+    private func encodeJSONParameters(_ parameters: HTTPParameters, urlRequest: URLRequest) throws -> URLRequest {
         guard !parameters.keys.isEmpty else { return urlRequest }
         return urlRequest
     }
