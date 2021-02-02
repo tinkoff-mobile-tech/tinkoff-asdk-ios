@@ -115,7 +115,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     private(set) lazy var complete3DSMethodV2URL: URL = {
         self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Complete3DSMethodv2")
     }()
-
+    
     private func setDefaultHTTPHeaders(for request: inout URLRequest) {
         request.setValue("application/x-www-form-urlencoded; charset=utf-8; gzip,deflate;", forHTTPHeaderField: "Content-Type")
         request.setValue("text/html,application/xhtml+xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")

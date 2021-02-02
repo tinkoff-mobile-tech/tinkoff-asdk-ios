@@ -22,19 +22,15 @@ import Foundation
 
 protocol NetworkRequestAdapter: AnyObject {
     func additionalHeaders(for request: NetworkRequest) -> HTTPHeaders
-    func additionalBodyParameters(for request: NetworkRequest) -> HTTPHeaders
-    func additionalURLParameters(for request: NetworkRequest) -> HTTPHeaders
+    func additionalParameters(for request: NetworkRequest) -> HTTPParameters
 }
 
 extension NetworkRequestAdapter {
     func additionalHeaders(for request: NetworkRequest) -> HTTPHeaders {
-        return [:]
+        [:]
     }
-    func additionalBodyParameters(for request: NetworkRequest) -> HTTPHeaders {
-        return [:]
-    }
-    func additionalURLParameters(for request: NetworkRequest) -> HTTPHeaders {
-        return [:]
+    func additionalParameters(for request: NetworkRequest) -> HTTPHeaders {
+        [:]
     }
 }
 
