@@ -1,6 +1,6 @@
 //
 //
-//  NetworkError.swift
+//  HTTPURLResponseValidator.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,10 +17,9 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
-enum NetworkError: Error {
-    case transportError(Error)
-    case serverError(statusCode: Int, data: Data?)
-    case noData
+protocol HTTPURLResponseValidator {
+    func validate(response: HTTPURLResponse) -> Swift.Result<Void, Error>
 }
