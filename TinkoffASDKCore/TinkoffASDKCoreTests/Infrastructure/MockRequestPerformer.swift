@@ -1,6 +1,6 @@
 //
 //
-//  URLRequestPerformer.swift
+//  MockRequestPerformer.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,9 +18,22 @@
 //
 
 
+@testable import TinkoffASDKCore
 import Foundation
 
-protocol URLRequestPerformer {
+final class MockRequestPerformer: URLRequestPerformer {
+    var dataTaskMethodCalled = false
+    var request: URLRequest?
+    var data: Data?
+    var urlResponse: URLResponse?
+    var error: Error?
+    
     func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask
+                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
+        self.dataTaskMethodCalled = true
+        self.request = request
+        
+        completionHandler(data, urlResponse, error)
+        return EmptyNetworkDataTask()
+    }
 }
