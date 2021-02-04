@@ -1,6 +1,6 @@
 //
 //
-//  NetworkClient.swift
+//  MockRequestBuilder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,9 +18,16 @@
 //
 
 
-import Foundation
+@testable import TinkoffASDKCore
 
-protocol NetworkClient {
-    @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
+final class MockRequestBuilder: NetworkClientRequestBuilder {
+    
+    var buildURLRequestMethodCalled = false
+    
+    func buildURLRequest(baseURL: URL,
+                         request: NetworkRequest,
+                         requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
+        self.buildURLRequestMethodCalled = true
+        return URLRequest(url: baseURL)
+    }
 }

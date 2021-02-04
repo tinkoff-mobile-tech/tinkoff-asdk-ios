@@ -42,6 +42,7 @@ final class DefaultNetworkClient: NetworkClient {
     
     // MARK: - NetworkClient
     
+    @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(baseURL: baseUrl,
@@ -91,14 +92,14 @@ final class DefaultNetworkClient: NetworkClient {
             
             return dataTask
         } catch {
-            handleFailedToBuildeUrlRequest(error: error, completion: completion)
+            handleFailedToBuildUrlRequest(error: error, completion: completion)
             return EmptyCancellable()
         }
     }
 }
 
 private extension DefaultNetworkClient {
-    func handleFailedToBuildeUrlRequest(error: Error, completion: @escaping (NetworkResponse) -> Void) {
+    func handleFailedToBuildUrlRequest(error: Error, completion: @escaping (NetworkResponse) -> Void) {
         let response = NetworkResponse(request: nil,
                                        response: nil,
                                        error: nil,
