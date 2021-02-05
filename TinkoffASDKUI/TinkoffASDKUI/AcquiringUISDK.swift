@@ -995,6 +995,22 @@ public class AcquiringUISDK: NSObject {
     private func cancelAddCard() {
         onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse(success: false, errorCode: 0)))
     }
+    
+    private func presentOnTop(viewController: UIViewController, completion: (() -> Void)? = nil) {
+
+        func topPresentedViewController(viewController: UIViewController?) -> UIViewController? {
+            if let presentedViewController = viewController?.presentedViewController {
+                return topPresentedViewController(viewController: presentedViewController)
+            } else {
+                return viewController
+            }
+        }
+        
+        topPresentedViewController(viewController: self.presentingViewController)?.present(viewController,
+                                                                                           animated: true,
+                                                                                           completion: completion)
+        
+    }
 
     fileprivate func presentWebView(on _: AcquiringView?, load request: URLRequest, onCancel: @escaping (() -> Void)) {
         let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
@@ -1013,15 +1029,10 @@ public class AcquiringUISDK: NSObject {
             viewController.webView.navigationDelegate = self
             viewController.webView.load(request)
         }
-
-        if acquiringView != nil {
-            acquiringView?.presentVC(UINavigationController(rootViewController: viewController), animated: true, completion: {
-                onPresenting()
-            })
-        } else {
-            presentingViewController?.present(UINavigationController(rootViewController: viewController), animated: true, completion: {
-                onPresenting()
-            })
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        presentOnTop(viewController: navigationController) {
+            onPresenting()
         }
     }
 
