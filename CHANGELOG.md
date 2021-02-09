@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* issue with 3ds webview presentation while add card
+
 ## [2.2.0] - 2021-01-27
 
 ### Fixed
