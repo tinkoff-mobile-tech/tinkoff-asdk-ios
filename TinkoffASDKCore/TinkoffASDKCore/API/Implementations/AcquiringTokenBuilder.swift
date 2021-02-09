@@ -33,7 +33,7 @@ struct AcquiringTokenBuilder: APITokenBuilder {
     
     func buildToken(parameters: HTTPParameters) -> String {
         var tokenParameters = parameters
-        tokenParameters["Password"] = password
+        tokenParameters[APIConstants.Keys.password] = password
         
         let gluedParameterValues = tokenParameters
             .sorted { $0.key < $1.key }
