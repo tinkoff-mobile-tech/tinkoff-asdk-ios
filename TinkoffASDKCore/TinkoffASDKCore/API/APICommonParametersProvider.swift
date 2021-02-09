@@ -35,20 +35,15 @@ final class APICommonParametersProvider: NetworkRequestAdapter {
     }
     
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
-        var additionalParameters: HTTPParameters = [.customerKeyKey: customerKey,
-                                                    .terminalKeyKey: terminalKey]
+        var additionalParameters: HTTPParameters = [APIConstants.Keys.customerKey: customerKey,
+                                                    APIConstants.Keys.terminalKey: terminalKey]
         
         if let apiRequest = request as? APIRequest {
             let tokenParameters = apiRequest.tokenParams.merging(additionalParameters) { _, new in new }
             let token = tokenBuilder.buildToken(parameters: tokenParameters)
-            additionalParameters["Token"] = token
+            additionalParameters[APIConstants.Keys.token] = token
         }
         
         return additionalParameters
     }
-}
-
-private extension String {
-    static let customerKeyKey = "CustomerKey"
-    static let terminalKeyKey = "TerminalKey"
 }

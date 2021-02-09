@@ -46,6 +46,9 @@ extension APIRequest {
     }
     
     var commonNotTokenParameters: Set<String> {
-        return ["DATA", "Receipt", "Receipts", "Shops"]
+        return [APIConstants.Keys.data,
+                APIConstants.Keys.receipt,
+                APIConstants.Keys.receipts,
+                APIConstants.Keys.shops]
     }
 }
