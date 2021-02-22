@@ -21,9 +21,9 @@
 import UIKit
 
 extension UIViewController {
-    func topPresentedViewController() -> UIViewController {
+    var topPresentedViewControllerOrSelfIfNotPresenting: UIViewController {
         if let presentedViewController = self.presentedViewController {
-            return presentedViewController.topPresentedViewController()
+            return presentedViewController.topPresentedViewControllerOrSelfIfNotPresenting
         } else {
             return self
         }
@@ -32,9 +32,9 @@ extension UIViewController {
     func presentOnTop(viewController: UIViewController,
                       animated: Bool,
                       completion: (() -> Void)? = nil) {
-        self.topPresentedViewController().present(viewController,
-                                                  animated: animated,
-                                                  completion: completion)
+        self.topPresentedViewControllerOrSelfIfNotPresenting.present(viewController,
+                                                                     animated: animated,
+                                                                     completion: completion)
     }
 }
 

@@ -1062,7 +1062,7 @@ public class AcquiringUISDK: NSObject {
                             if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                                 self?.presentingViewController?.presentOnTop(viewController: alert, animated: true)
                             } else {
-                                if let topViewControllerInStack = self?.presentingViewController?.topPresentedViewController() {
+                                if let topViewControllerInStack = self?.presentingViewController?.topPresentedViewControllerOrSelfIfNotPresenting {
                                     AcquiringAlertViewController.create().present(on: topViewControllerInStack, title: alertTitle)
                                 }
                             }
