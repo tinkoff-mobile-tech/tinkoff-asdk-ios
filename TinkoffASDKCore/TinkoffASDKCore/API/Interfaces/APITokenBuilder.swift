@@ -21,5 +21,6 @@
 import Foundation
 
 protocol APITokenBuilder {
-    func buildToken(parameters: HTTPParameters) -> String
+    func buildToken(commonParameters: HTTPParameters,
+                    request: TokenProvidableAPIRequest?) -> String
 }

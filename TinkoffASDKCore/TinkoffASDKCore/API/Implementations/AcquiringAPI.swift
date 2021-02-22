@@ -23,20 +23,49 @@ import Foundation
 final class AcquiringAPI: API {
     private let environment: AcquiringSdkEnvironment
     private let networkClient: NetworkClient
-    private let apiCommonParametersProvider: APICommonParametersProvider
+    private let apiCommonParametersProvider: APIParametersProvider
+    private let apiResponseDecoder: APIResponseDecoder
     
     init(environment: AcquiringSdkEnvironment,
          networkClient: NetworkClient,
-         apiCommonParametersProvider: APICommonParametersProvider) {
+         apiCommonParametersProvider: APIParametersProvider,
+         apiResponseDecoder: APIResponseDecoder) {
         self.environment = environment
         self.networkClient = networkClient
         self.apiCommonParametersProvider = apiCommonParametersProvider
         self.networkClient.requestAdapter = apiCommonParametersProvider
+        self.apiResponseDecoder = apiResponseDecoder
     }
     
-    func performRequest(_ request: APIRequest) {
-        networkClient.performRequest(request) { response in
-            // TODO:
+    // MARK: - API
+
+    func performRequest<Request: APIRequest>(_ request: Request,
+                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) {
+        networkClient.performRequest(request) { [weak self] response in
+            do {
+                let data = try response.result.get()
+                self?.handleResponseData(data,
+                                         for: request,
+                                         completion: completion)
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+}
+
+private extension AcquiringAPI {
+    func handleResponseData<Request: APIRequest>(_ data: Data,
+                                                 for request: Request,
+                                                 completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) {
+        do {
+            let apiResponse = try apiResponseDecoder.decode(data: data, for: request)
+            let payload = try apiResponse.result.get()
+            completion(.success(payload))
+        } catch let apiFailureError as APIFailureError {
+            completion(.failure(APIError.failure(apiFailureError)))
+        } catch {
+            completion(.failure(APIError.invalidResponse))
         }
     }
 }
