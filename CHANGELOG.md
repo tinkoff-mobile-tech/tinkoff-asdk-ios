@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.2.2] - 2021-02-22
+
 ### Fixed
 * issue with random amount checking presentation for 3DSHold card check type
 * fix AddNewCardViewController's memory leak 
