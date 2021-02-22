@@ -31,15 +31,15 @@ struct AcquiringTokenBuilder: APITokenBuilder {
     
     // MARK: - APITokenBuilder
     
-    func buildToken(parameters: HTTPParameters) -> String {
-        var tokenParameters = parameters
+    func buildToken(commonParameters: HTTPParameters,
+                    request: TokenProvidableAPIRequest?) -> String {
+        var tokenParameters = request?.parametersForToken ?? [:]
         tokenParameters[APIConstants.Keys.password] = password
-        
-        let gluedParameterValues = tokenParameters
+        tokenParameters = tokenParameters.merging(commonParameters, uniquingKeysWith: { _, new in new})
+        let tokenString = tokenParameters
             .sorted { $0.key < $1.key }
             .map { String(describing: $0.value) }
             .joined()
-        
-        return gluedParameterValues.sha256()
+        return tokenString.sha256()
     }
 }

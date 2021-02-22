@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  APIResponseDecoder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,19 +20,6 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = InitPayload
-    
-    var requestPath: [String] { ["Init"] }
-    var httpMethod: HTTPMethod { .post }
-  
-    var parameters: HTTPParameters {
-        (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
-
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
-    }
+protocol APIResponseDecoder {
+    func decode<Request: APIRequest>(data: Data, for: Request) throws -> APIResponse<Request.Payload>
 }

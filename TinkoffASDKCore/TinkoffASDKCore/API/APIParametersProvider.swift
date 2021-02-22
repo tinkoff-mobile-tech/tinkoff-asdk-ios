@@ -1,6 +1,6 @@
 //
 //
-//  APICommonParametersProvider.swift
+//  APIParametersProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import Foundation
 
-final class APICommonParametersProvider: NetworkRequestAdapter {
+final class APIParametersProvider: NetworkRequestAdapter {
     
     private let customerKey: String
     private let terminalKey: String
@@ -35,15 +35,13 @@ final class APICommonParametersProvider: NetworkRequestAdapter {
     }
     
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
-        var additionalParameters: HTTPParameters = [APIConstants.Keys.customerKey: customerKey,
-                                                    APIConstants.Keys.terminalKey: terminalKey]
+        var commonParameters: HTTPParameters = [APIConstants.Keys.customerKey: customerKey,
+                                                APIConstants.Keys.terminalKey: terminalKey]
         
-        if let apiRequest = request as? APIRequest {
-            let tokenParameters = apiRequest.tokenParams.merging(additionalParameters) { _, new in new }
-            let token = tokenBuilder.buildToken(parameters: tokenParameters)
-            additionalParameters[APIConstants.Keys.token] = token
-        }
+        let token = tokenBuilder.buildToken(commonParameters: commonParameters,
+                                            request: request as? TokenProvidableAPIRequest)
+        commonParameters[APIConstants.Keys.token] = token
         
-        return additionalParameters
+        return commonParameters
     }
 }
