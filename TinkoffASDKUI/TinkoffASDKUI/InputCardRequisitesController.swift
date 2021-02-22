@@ -81,7 +81,7 @@ class InputCardRequisitesController: NSObject {
     private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
     private lazy var cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
     private lazy var cardRequisitesInputMask: CardRequisitesInputMaskProtocol = CardRequisitesInputMask()
-    private var cardRequisitesScaner: CardRequisitesScanerProtocol?
+    private weak var cardRequisitesScaner: CardRequisitesScanerProtocol?
 
     private var colorError = UIColor.systemRed
     private var colorNormal: UIColor = {

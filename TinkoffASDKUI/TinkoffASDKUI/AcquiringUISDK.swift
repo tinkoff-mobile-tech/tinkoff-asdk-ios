@@ -995,22 +995,6 @@ public class AcquiringUISDK: NSObject {
     private func cancelAddCard() {
         onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse(success: false, errorCode: 0)))
     }
-    
-    private func presentOnTop(viewController: UIViewController, completion: (() -> Void)? = nil) {
-
-        func topPresentedViewController(viewController: UIViewController?) -> UIViewController? {
-            if let presentedViewController = viewController?.presentedViewController {
-                return topPresentedViewController(viewController: presentedViewController)
-            } else {
-                return viewController
-            }
-        }
-        
-        topPresentedViewController(viewController: self.presentingViewController)?.present(viewController,
-                                                                                           animated: true,
-                                                                                           completion: completion)
-        
-    }
 
     fileprivate func presentWebView(on _: AcquiringView?, load request: URLRequest, onCancel: @escaping (() -> Void)) {
         let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
@@ -1031,9 +1015,11 @@ public class AcquiringUISDK: NSObject {
         }
         
         let navigationController = UINavigationController(rootViewController: viewController)
-        presentOnTop(viewController: navigationController) {
-            onPresenting()
-        }
+        presentingViewController?.presentOnTop(viewController: navigationController,
+                                               animated: true,
+                                               completion: {
+                                                onPresenting()
+                                               })
     }
 
     private func present3DSChecking(with data: Confirmation3DSData, presenter: AcquiringView?, onCancel: @escaping (() -> Void)) {
@@ -1070,28 +1056,25 @@ public class AcquiringUISDK: NSObject {
                         viewController?.dismiss(animated: true, completion: {
                             self?.onRandomAmountCheckingAddCardCompletionHandler?(response)
                         })
-
                     case let .failure(error):
-                        let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
-                        if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
-                            self?.presentingViewController?.present(alert, animated: true, completion: {
-                                //
-                            })
-                        } else {
-                            if let presentingView = self?.presentingViewController {
-                                AcquiringAlertViewController.create().present(on: presentingView, title: alertTitle)
+                        viewController?.dismiss(animated: true, completion: {
+                            let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+                            if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
+                                self?.presentingViewController?.presentOnTop(viewController: alert, animated: true)
+                            } else {
+                                if let topViewControllerInStack = self?.presentingViewController?.topPresentedViewControllerOrSelfIfNotPresenting {
+                                    AcquiringAlertViewController.create().present(on: topViewControllerInStack, title: alertTitle)
+                                }
                             }
-                        }
+                        })
                     }
                 }
             }
         }
-
-        if acquiringView != nil {
-            acquiringView?.presentVC(UINavigationController(rootViewController: viewController), animated: true, completion: nil)
-        } else {
-            presentingViewController?.present(UINavigationController(rootViewController: viewController), animated: true, completion: nil)
-        }
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        presentingViewController?.presentOnTop(viewController: navigationController,
+                                               animated: true)
     }
 }
 
