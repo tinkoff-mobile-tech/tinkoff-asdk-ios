@@ -31,10 +31,16 @@ struct APIConstants {
         static let data = "DATA"
         static let receipt = "Receipt"
         static let shops = "Shops"
+        static let status = "Status"
         static let receipts = "Receipts"
         static let redirectDueDate = "RedirectDueDate"
         static let password = "Password"
         static let terminalKey = "TerminalKey"
+        static let paymentId = "PaymentId"
         static let token = "Token"
+        static let success = "Success"
+        static let errorCode = "ErrorCode"
+        static let errorMessage = "Message"
+        static let errorDetails = "Details"
     }
 }
