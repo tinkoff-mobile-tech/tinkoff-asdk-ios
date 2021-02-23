@@ -20,40 +20,6 @@
 
 import Foundation
 
-enum APIError: Error {
-    case invalidResponse
-    case failure(APIFailureError)
-}
-
-struct APIFailureError: Error, Decodable {
-    let errorCode: Int
-    let errorMessage: String?
-    let errorDetails: String?
-    
-    private enum CodingKeys: CodingKey {
-        case errorCode
-        case errorMessage
-        case errorDetails
-        
-        var stringValue: String {
-            switch self {
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            }
-        }
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        let errorCodeString = try container.decode(String.self, forKey: .errorCode)
-        errorCode = Int(errorCodeString) ?? 0
-        errorMessage = try container.decodeIfPresent(String.self, forKey: .errorMessage)
-        errorDetails = try container.decodeIfPresent(String.self, forKey: .errorDetails)
-    }
-}
-
 class APIResponse<Model: Decodable>: Decodable {
     let success: Bool
     let terminalKey: String?
