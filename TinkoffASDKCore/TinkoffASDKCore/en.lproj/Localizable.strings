@@ -25,3 +25,6 @@
 "NetworkError.transportError" = "Transport error";
 "NetworkError.serverError" = "Server error";
 "NetworkError.emptyBody" = "Empty body response";
+
+"APIError.failureError" = "Acquiring API error";
+"APIError.invalidResponse" = "Invalid API response";
