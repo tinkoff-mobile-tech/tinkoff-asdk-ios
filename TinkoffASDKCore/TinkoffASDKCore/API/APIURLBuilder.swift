@@ -25,9 +25,9 @@ struct APIURLBuilder {
         case failedToBuildAPIUrl
     }
     
-    func buildURL(environment: AcquiringSdkEnvironment) throws -> URL {
-        guard let environmentUrl = URL(string: "https://\(environment.rawValue)"),
-              let url = URL(string: environment.rawValue, relativeTo: environmentUrl) else {
+    func buildURL(host: String) throws -> URL {
+        guard !host.isEmpty else { throw Error.failedToBuildAPIUrl }
+        guard let url = URL(string: "https://\(host)") else {
             throw Error.failedToBuildAPIUrl
         }
         

@@ -21,5 +21,5 @@
 import Foundation
 
 protocol APIEnvironmentProvider {
-    var environment: AcquiringSdkEnvironment { get }
+    var host: String { get }
 }
