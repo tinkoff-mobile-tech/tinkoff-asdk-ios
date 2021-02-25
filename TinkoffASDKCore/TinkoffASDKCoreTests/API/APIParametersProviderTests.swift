@@ -30,6 +30,10 @@ class APIParametersProviderTests: XCTestCase {
                                                            terminalKey: terminalKey,
                                                            tokenBuilder: mockTokenBuilder)
     
+    override func setUp() {
+        mockTokenBuilder.token = ""
+    }
+    
     func testProvidedAdditionalParametersContainCustomerKeyTerminalKeyAndToken() {
         let token = "tokenFromBuilder"
         mockTokenBuilder.token = token

@@ -21,7 +21,7 @@ import Foundation
 
 ///
 /// Cостояния платежа, подробнее [Двухстадийная форма оплаты](https://oplata.tinkoff.ru/landing/develop/documentation/processing_payment).
-public enum PaymentStatus: String, Decodable {
+public enum PaymentStatus: String, Decodable, Equatable {
     /// Платёж создан
     case new = "NEW"
 
