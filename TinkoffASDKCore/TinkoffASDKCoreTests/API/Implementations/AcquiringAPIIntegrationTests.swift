@@ -23,6 +23,8 @@ import XCTest
 
 final class AcquiringAPIIntegrationTests: XCTestCase {
     
+    private let expectationTimeout: TimeInterval = 5
+    
     let customerKey = "CustomerKey"
     let terminalKey = "TerminalKey"
     let password = "12345678"
@@ -73,6 +75,8 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
             }
             apiRequestExpectation.fulfill()
         }
+        
+        wait(for: [apiRequestExpectation], timeout: expectationTimeout)
     }
     
     func testCorrectPayloadIfCorrectResponseWithClippedFormat() {
@@ -121,6 +125,8 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
             }
             apiRequestExpectation.fulfill()
         }
+        
+        wait(for: [apiRequestExpectation], timeout: expectationTimeout)
     }
     
     func testAPIFailureErrorForStandartDecodeStrategy() {
@@ -167,6 +173,8 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
             }
             apiRequestExpectation.fulfill()
         }
+        
+        wait(for: [apiRequestExpectation], timeout: expectationTimeout)
     }
     
     func testInvalidResponseError() {
@@ -198,5 +206,7 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
             }
             apiRequestExpectation.fulfill()
         }
+        
+        wait(for: [apiRequestExpectation], timeout: expectationTimeout)
     }
 }
