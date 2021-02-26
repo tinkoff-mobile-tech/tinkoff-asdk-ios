@@ -30,8 +30,7 @@ class AcquiringTokenBuilderTests: XCTestCase {
         let parameters: HTTPParameters = [:]
         let request: TokenProvidableAPIRequest? = nil
         
-        let expectedTokenString = "\(password)"
-        let expectedToken = expectedTokenString.sha256()
+        let expectedToken = password.sha256()
         
         let token = tokenBuilder.buildToken(commonParameters: parameters, request: request)
         XCTAssertEqual(token, expectedToken)

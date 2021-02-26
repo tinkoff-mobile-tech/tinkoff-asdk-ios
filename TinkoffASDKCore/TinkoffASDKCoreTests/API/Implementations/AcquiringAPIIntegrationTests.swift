@@ -63,6 +63,7 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
                                           paymentId: paymentId,
                                           status: status)
         
+        let apiRequestExpectation = XCTestExpectation()
         api.performRequest(request) { result in
             do {
                 let payload = try result.get()
@@ -70,6 +71,7 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
             } catch {
                 XCTFail()
             }
+            apiRequestExpectation.fulfill()
         }
     }
     
@@ -82,18 +84,6 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
         let responseString =
         """
         [
-            {
-                "\(APIConstants.Keys.amount)": \(amount),
-                "\(APIConstants.Keys.orderId)": "\(orderId)",
-                "\(APIConstants.Keys.paymentId)": "\(paymentId)",
-                "\(APIConstants.Keys.status)": "\(status.rawValue)"
-            },
-            {
-                "\(APIConstants.Keys.amount)": \(amount),
-                "\(APIConstants.Keys.orderId)": "\(orderId)",
-                "\(APIConstants.Keys.paymentId)": "\(paymentId)",
-                "\(APIConstants.Keys.status)": "\(status.rawValue)"
-            },
             {
                 "\(APIConstants.Keys.amount)": \(amount),
                 "\(APIConstants.Keys.orderId)": "\(orderId)",
@@ -119,8 +109,9 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
                                                            orderId: orderId,
                                                            paymentId: paymentId,
                                                            status: status),
-                                    count: 4)
+                                    count: 2)
         
+        let apiRequestExpectation = XCTestExpectation()
         api.performRequest(request) { result in
             do {
                 let payload = try result.get()
@@ -128,6 +119,7 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
             } catch {
                 XCTFail()
             }
+            apiRequestExpectation.fulfill()
         }
     }
     
@@ -139,37 +131,6 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
         testAPIFailureErrorFor(decodeStrategy: .clipped)
     }
     
-    func testInvalidResponseError() {
-        let errorCode = 20
-        
-        let responseString =
-        """
-        {
-            "\(APIConstants.Keys.errorCode)": \(errorCode)
-        }
-        """
-        
-        let responseData = responseString.data(using: .utf8)
-        networkClient.data = responseData
-        
-        var request = MockAPIRequest<InitPayload>()
-        request.httpMethod = .post
-        request.decodeStrategy = .standart
-        
-        api.performRequest(request) { result in
-            do {
-                let _ = try result.get()
-                XCTFail()
-            } catch APIError.invalidResponse {
-                
-            } catch {
-                XCTFail()
-            }
-        }
-    }
-}
-
-extension AcquiringAPIIntegrationTests {
     func testAPIFailureErrorFor(decodeStrategy: APIRequestDecodeStrategy) {
         let errorCode = 20
         let errorMessage = "error message"
@@ -192,6 +153,7 @@ extension AcquiringAPIIntegrationTests {
         request.httpMethod = .post
         request.decodeStrategy = decodeStrategy
         
+        let apiRequestExpectation = XCTestExpectation()
         api.performRequest(request) { result in
             do {
                 let _ = try result.get()
@@ -203,6 +165,38 @@ extension AcquiringAPIIntegrationTests {
             } catch {
                 XCTFail()
             }
+            apiRequestExpectation.fulfill()
+        }
+    }
+    
+    func testInvalidResponseError() {
+        let errorCode = 20
+        
+        let responseString =
+        """
+        {
+            "\(APIConstants.Keys.errorCode)": \(errorCode)
+        }
+        """
+        
+        let responseData = responseString.data(using: .utf8)
+        networkClient.data = responseData
+        
+        var request = MockAPIRequest<InitPayload>()
+        request.httpMethod = .post
+        request.decodeStrategy = .standart
+        
+        let apiRequestExpectation = XCTestExpectation()
+        api.performRequest(request) { result in
+            do {
+                let _ = try result.get()
+                XCTFail()
+            } catch APIError.invalidResponse {
+                
+            } catch {
+                XCTFail()
+            }
+            apiRequestExpectation.fulfill()
         }
     }
 }

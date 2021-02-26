@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct InitPayload: Decodable {
+public struct InitPayload: Decodable, Equatable {
     public let amount: Int64
     public let orderId: String
     public let paymentId: Int64
