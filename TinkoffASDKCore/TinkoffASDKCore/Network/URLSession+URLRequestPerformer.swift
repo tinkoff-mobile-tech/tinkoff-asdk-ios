@@ -21,7 +21,7 @@
 import Foundation
 
 extension URLSession: URLRequestPerformer {
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
+    func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
         let urlSessionDataTask: URLSessionDataTask = dataTask(with: request, completionHandler: completionHandler)
         return urlSessionDataTask
     }

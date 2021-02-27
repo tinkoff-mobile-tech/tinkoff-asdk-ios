@@ -49,7 +49,7 @@ final class DefaultNetworkClient: NetworkClient {
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
             
-            let dataTask = urlRequestPerfomer.dataTask(with: urlRequest) { [responseValidator] data, response, error in
+            let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
                 let result: Result<Data, Error>
                 
                 defer {

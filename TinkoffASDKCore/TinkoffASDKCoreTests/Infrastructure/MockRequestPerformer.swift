@@ -28,8 +28,8 @@ final class MockRequestPerformer: URLRequestPerformer {
     var urlResponse: URLResponse?
     var error: Error?
     
-    func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
+    func createDataTask(with request: URLRequest,
+                        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
         self.dataTaskMethodCalled = true
         self.request = request
         
