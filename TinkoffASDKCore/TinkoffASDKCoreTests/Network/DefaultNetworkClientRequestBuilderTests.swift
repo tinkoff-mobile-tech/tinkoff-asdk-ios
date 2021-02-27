@@ -36,93 +36,59 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         XCTAssertThrowsError(try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil))
     }
 
-    func testBuildCorrectUrlWithOneItemPath() {
+    func testBuildCorrectUrlWithOneItemPath() throws {
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         let resultURLString = "https://tinkoff.ru/test"
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
-            XCTAssertNotNil(urlRequest.url?.absoluteString, "URLRequest's url can't be nil")
-            XCTAssertEqual(urlRequest.url?.absoluteString, resultURLString)
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
+        XCTAssertEqual(urlRequest.url?.absoluteString, resultURLString)
     }
     
-    func testBuildCorrectUrlWithThreeItemsPath() {
+    func testBuildCorrectUrlWithThreeItemsPath() throws {
         let request = TestsNetworkRequest(path: ["test", "url", "builder"], httpMethod: .get)
         let resultURLString = "https://tinkoff.ru/test/url/builder"
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
-            XCTAssertNotNil(urlRequest.url?.absoluteString, "URLRequest's url can't be nil")
-            XCTAssertEqual(urlRequest.url?.absoluteString, resultURLString)
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
+        XCTAssertEqual(urlRequest.url?.absoluteString, resultURLString)
     }
     
-    func testBuilderSetHeadersFromRequest() {
+    func testBuilderSetHeadersFromRequest() throws {
         let headers = ["headerKey": "headerValue"]
         let request = TestsNetworkRequest(path: ["test"],
                                           httpMethod: .get,
                                           headers: headers)
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
-            XCTAssertNotNil(urlRequest.url?.absoluteString, "URLRequest's url can't be nil")
-            XCTAssertEqual(headers, urlRequest.allHTTPHeaderFields)
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
+        XCTAssertEqual(headers, urlRequest.allHTTPHeaderFields)
     }
     
-    func testJSONParametersEncoding() {
+    func testJSONParametersEncoding() throws {
         let parameters: [String: Any] = ["param1": true, "param2": "value2", "param3": 10]
         
         let request = TestsNetworkRequest(path: ["test"],
                                           httpMethod: .post,
                                           parameters: parameters)
         
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
-                                                         request: request,
-                                                         requestAdapter: nil)
-            XCTAssertNotNil(urlRequest.httpBody, "urlRequest's httpBody can't be nil")
-            
-            let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
-                                                                       options: []) as? [String: Any]
-            XCTAssertNotNil(urlRequestBodyJSON, "JSON from urlRequest's httpBody can't be nil")
-            
-            XCTAssertEqual(NSDictionary(dictionary: urlRequestBodyJSON!),
-                           NSDictionary(dictionary: parameters))
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                     request: request,
+                                                     requestAdapter: nil)
+        let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
+                                                                   options: []) as? [String: Any]
+        XCTAssertEqual(NSDictionary(dictionary: urlRequestBodyJSON!),
+                       NSDictionary(dictionary: parameters))
     }
     
-    func testJSONParametersEncodingSetCorrectContentTypeIfNotSetBefore() {
+    func testJSONParametersEncodingSetCorrectContentTypeIfNotSetBefore() throws {
         let parameters: [String: Any] = ["param1": true, "param2": "value2", "param3": 10]
         
         let request = TestsNetworkRequest(path: ["test"],
                                           httpMethod: .post,
                                           parameters: parameters)
         
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
-                                                         request: request,
-                                                         requestAdapter: nil)
-            XCTAssertNotNil(urlRequest.httpBody, "urlRequest's httpBody can't be nil")
-            
-            let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
-                                                                       options: []) as? [String: Any]
-            XCTAssertNotNil(urlRequestBodyJSON, "JSON from urlRequest's httpBody can't be nil")
-            
-            XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
-            
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                     request: request,
+                                                     requestAdapter: nil)
+        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
     }
     
-    func testJSONParametersEncodingDoesntSetContentTypeIfSetBefore() {
+    func testJSONParametersEncodingDoesntSetContentTypeIfSetBefore() throws {
         let parameters: [String: Any] = ["param1": true, "param2": "value2", "param3": 10]
         
         let request = TestsNetworkRequest(path: ["test"],
@@ -130,44 +96,29 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
                                           parameters: parameters,
                                           headers: ["Content-Type": "anything"])
         
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
-                                                         request: request,
-                                                         requestAdapter: nil)
-            XCTAssertNotNil(urlRequest.httpBody, "urlRequest's httpBody can't be nil")
-            
-            let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
-                                                                       options: []) as? [String: Any]
-            XCTAssertNotNil(urlRequestBodyJSON, "JSON from urlRequest's httpBody can't be nil")
-            
-            XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "anything")
-            
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                     request: request,
+                                                     requestAdapter: nil)
+        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "anything")
     }
     
-    func testBuilderCallsNetworkRequestAdapterParametersAndHeadersMethod() {
+    func testBuilderCallsNetworkRequestAdapterParametersAndHeadersMethod() throws {
         let mockRequestAdapter = MockNetworkRequestAdapter()
         
         let request = TestsNetworkRequest(path: ["test"],
                                           httpMethod: .post)
         
-        do {
-            _ = try builder.buildURLRequest(baseURL: baseURL,
+        _ = try builder.buildURLRequest(baseURL: baseURL,
                                         request: request,
                                         requestAdapter: mockRequestAdapter)
-            
-            XCTAssertTrue(mockRequestAdapter.isAdditionalHeadersMethodCalled,
-                          "additionalHeaders(for request: NetworkRequest) method must be called")
-            XCTAssertTrue(mockRequestAdapter.isAdditionalParametersMethodCalled,
-                          "additionalParameters(for request: NetworkRequest) method must be called")
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        
+        XCTAssertTrue(mockRequestAdapter.isAdditionalHeadersMethodCalled,
+                      "additionalHeaders(for request: NetworkRequest) method must be called")
+        XCTAssertTrue(mockRequestAdapter.isAdditionalParametersMethodCalled,
+                      "additionalParameters(for request: NetworkRequest) method must be called")
     }
     
-    func testBuilderAddAdditinalHeadersToEmptyRequestHeadersFromNetworkRequestAdapter() {
+    func testBuilderAddAdditinalHeadersToEmptyRequestHeadersFromNetworkRequestAdapter() throws {
         let mockRequestAdapter = MockNetworkRequestAdapter()
         let additionalHeaders = ["headerKey1": "headerValue1",
                                  "headerKey2": "headerValue2"]
@@ -176,18 +127,14 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         let request = TestsNetworkRequest(path: ["test"],
                                           httpMethod: .post)
         
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
-                                                         request: request,
-                                                         requestAdapter: mockRequestAdapter)
-            
-            XCTAssertEqual(urlRequest.allHTTPHeaderFields, additionalHeaders)
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                     request: request,
+                                                     requestAdapter: mockRequestAdapter)
+        
+        XCTAssertEqual(urlRequest.allHTTPHeaderFields, additionalHeaders)
     }
     
-    func testBuilderAddAdditinalHeadersToRequestHeadersFromNetworkRequestAdapter() {
+    func testBuilderAddAdditinalHeadersToRequestHeadersFromNetworkRequestAdapter() throws {
         let mockRequestAdapter = MockNetworkRequestAdapter()
         let additionalHeaders = ["headerKey1": "headerValue1",
                                  "headerKey2": "headerValue2"]
@@ -203,18 +150,14 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
                              "headerKey3": "headerValue3",
                              "Content-Type": "application/json"]
         
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
-                                                         request: request,
-                                                         requestAdapter: mockRequestAdapter)
-            
-            XCTAssertEqual(urlRequest.allHTTPHeaderFields, resultHeaders)
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                     request: request,
+                                                     requestAdapter: mockRequestAdapter)
+        
+        XCTAssertEqual(urlRequest.allHTTPHeaderFields, resultHeaders)
     }
     
-    func testBuilderAddAdditinalParametersToRequestFromNetworkRequestAdapter() {
+    func testBuilderAddAdditinalParametersToRequestFromNetworkRequestAdapter() throws {
         let mockRequestAdapter = MockNetworkRequestAdapter()
         let additionalParameters: HTTPParameters = ["additionalParamKey1": "additionalParamValue1",
                                                     "additionalParamKey2": false]
@@ -233,20 +176,13 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
             "additionalParamKey2": false
         ]
         
-        do {
-            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
-                                                         request: request,
-                                                         requestAdapter: mockRequestAdapter)
-            XCTAssertNotNil(urlRequest.httpBody, "urlRequest's httpBody can't be nil")
-            
-            let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
-                                                                       options: []) as? [String: Any]
-            XCTAssertNotNil(urlRequestBodyJSON, "JSON from urlRequest's httpBody can't be nil")
-            
-            XCTAssertEqual(NSDictionary(dictionary: urlRequestBodyJSON!),
-                           NSDictionary(dictionary: resultParameters))
-        } catch {
-            XCTFail("URLRequest build failed with: \(error)")
-        }
+        let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                     request: request,
+                                                     requestAdapter: mockRequestAdapter)
+        
+        let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
+                                                                   options: []) as? [String: Any]
+        XCTAssertEqual(NSDictionary(dictionary: urlRequestBodyJSON!),
+                       NSDictionary(dictionary: resultParameters))
     }
 }
