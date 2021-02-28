@@ -22,51 +22,51 @@ import UIKit
 
 public enum AcquiringSdkError: Error {
     case publicKey(String)
-
-    case url
 }
 
 ///
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
+    private let publicKey: SecKey
+    private let coreBuilder: CoreBuilder
+    private let api: API
+    
     public var fpsEnabled: Bool = false
 
     private var networkTransport: NetworkTransport
     private var terminalKey: String
     private var terminalPassword: String
-    private var publicKey: SecKey
     public private(set) var languageKey: AcquiringSdkLanguage?
     private var logger: LoggerDelegate?
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
+        do {
+            publicKey = try RSAEncryption.createPublicSecKey(publicKey: configuration.credential.publicKey)
+        } catch {
+            throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
+        }
+        
+        coreBuilder = CoreBuilder(configuration: configuration)
+        api = coreBuilder.buildAPI()
+        
         fpsEnabled = configuration.fpsEnabled
 
         terminalKey = configuration.credential.terminalKey
         terminalPassword = configuration.credential.password
-
-        if let publicKey: SecKey = try? RSAEncryption.createPublicSecKey(publicKey: configuration.credential.publicKey) {
-            self.publicKey = publicKey
-        } else {
-            throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
-        }
-
-        if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/") {
-            let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
-                                        systemName: UIDevice.current.systemName,
-                                        systemVersion: UIDevice.current.systemVersion)
-
-            let sessionConfiguration = URLSessionConfiguration.default
-            sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
-            sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-            
-            networkTransport = AcquaringNetworkTransport(urlDomain: url,
-                                                         session: URLSession(configuration: sessionConfiguration),
-                                                         deviceInfo: deviceInfo)
-        } else {
-            throw AcquiringSdkError.url
-        }
-
+        
+        let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/")!
+        let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
+                                    systemName: UIDevice.current.systemName,
+                                    systemVersion: UIDevice.current.systemVersion)
+        
+        let sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
+        sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
+        
+        networkTransport = AcquaringNetworkTransport(urlDomain: url,
+                                                     session: URLSession(configuration: sessionConfiguration),
+                                                     deviceInfo: deviceInfo)
         languageKey = configuration.language
         logger = configuration.logger
         networkTransport.logger = logger
