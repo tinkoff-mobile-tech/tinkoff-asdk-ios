@@ -29,21 +29,21 @@ struct CoreBuilder {
     }
     
     func buildAPI() -> API {
-        return AcquiringAPI(networkClient: buildNetworkClient(),
-                            apiCommonParametersProvider: buildAPIParametersProvider(
-                                terminalKey: configuration.credential.terminalKey,
-                                password: configuration.credential.password
-                            ),
+        return AcquiringAPI(networkClient: buildNetworkClient(
+                                requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey,
+                                                                           password: configuration.credential.password)),
                             apiResponseDecoder: buildAPIResponseDecoder())
     }
 }
 
 private extension CoreBuilder {
-    func buildNetworkClient() -> NetworkClient {
-        return DefaultNetworkClient(urlRequestPerfomer: buildURLSession(),
-                                    hostProvider: buildAPIHostProvider(),
-                                    requestBuilder: buildRequestBuilder(),
-                                    responseValidator: buildResponseValidator())
+    func buildNetworkClient(requestAdapter: NetworkRequestAdapter) -> NetworkClient {
+        let networkClient = DefaultNetworkClient(urlRequestPerfomer: buildURLSession(),
+                                                 hostProvider: buildAPIHostProvider(),
+                                                 requestBuilder: buildRequestBuilder(),
+                                                 responseValidator: buildResponseValidator())
+        networkClient.requestAdapter = requestAdapter
+        return networkClient
     }
     
     func buildURLSession() -> URLSession {

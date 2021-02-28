@@ -18,7 +18,6 @@
 //
 
 import Foundation
-import UIKit
 
 public enum AcquiringSdkError: Error {
     case publicKey(String)
@@ -106,7 +105,7 @@ public final class AcquiringSdk: NSObject {
         return networkTransport.myIpAddress()
     }
 
-    // MARK: - начало платежа
+    // MARK: - Payment Init
 
     /// Инициирует платежную сессию для платежа
     ///
@@ -114,14 +113,10 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
-    public func paymentInit(data: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentInitRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
+    public func paymentInit(data: PaymentInitData,
+                            completionHandler: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
+        let request = InitRequest(paymentInitData: data)
+        return api.performRequest(request, completion: completionHandler)
     }
 
     // MARK: - подтверждение платежа
@@ -347,4 +342,4 @@ public final class AcquiringSdk: NSObject {
             completionHandler(result)
         }
     }
-} // AcquiringSdk
+}
