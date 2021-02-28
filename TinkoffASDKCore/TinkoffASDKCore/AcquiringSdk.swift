@@ -45,7 +45,7 @@ public final class AcquiringSdk: NSObject {
         terminalKey = configuration.credential.terminalKey
         terminalPassword = configuration.credential.password
 
-        if let publicKey: SecKey = RSAEncryption.secKey(string: configuration.credential.publicKey) {
+        if let publicKey: SecKey = try? RSAEncryption.createPublicSecKey(publicKey: configuration.credential.publicKey) {
             self.publicKey = publicKey
         } else {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
@@ -95,7 +95,7 @@ public final class AcquiringSdk: NSObject {
     /// Обновляем информцию о реквизитах карты, добавляем шифрование
     private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
         if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
+            if let encodedCardData = try? RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
                 parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
             }
         }
