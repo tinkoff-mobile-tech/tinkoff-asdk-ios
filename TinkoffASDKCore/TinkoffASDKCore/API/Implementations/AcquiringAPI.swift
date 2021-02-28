@@ -33,8 +33,8 @@ final class AcquiringAPI: API {
     // MARK: - API
 
     func performRequest<Request: APIRequest>(_ request: Request,
-                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) {
-        networkClient.performRequest(request) { [weak self] response in
+                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) -> Cancellable {
+        return networkClient.performRequest(request) { [weak self] response in
             do {
                 let data = try response.result.get()
                 self?.handleResponseData(data,

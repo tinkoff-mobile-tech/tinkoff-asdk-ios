@@ -22,5 +22,5 @@ import Foundation
 
 protocol API {
     func performRequest<Request: APIRequest>(_ request: Request,
-                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void)
+                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) -> Cancellable
 }
