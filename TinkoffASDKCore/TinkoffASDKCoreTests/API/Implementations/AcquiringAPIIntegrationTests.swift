@@ -33,8 +33,6 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
     
     let apiResponseDecoder = AcquiringAPIResponseDecoder(decoder: JSONDecoder())
     lazy var api = AcquiringAPI(networkClient: networkClient,
-                                apiCommonParametersProvider: APIParametersProvider(customerKey: customerKey, terminalKey: terminalKey,
-                                                                                   tokenBuilder: AcquiringTokenBuilder(password: password)),
                                 apiResponseDecoder: apiResponseDecoder)
 
     func testCorrectPayloadIfCorrectResponseWithStandartFormat() {
