@@ -134,6 +134,22 @@ public final class AcquiringSdk: NSObject {
 
         return api.performRequest(request, completion: completionHandler)
     }
+    
+    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
+    ///
+    /// - Parameters:
+    ///   - data: `Check3DSRequestData`
+    ///   - completionHandler: результат операции `Check3DSVersionPayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func check3dsVersion(data: Check3DSRequestData,
+                                completionHandler: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
+        let request = Check3DSVersionRequest(check3DSRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             publicKey: publicKey)
+        
+        return api.performRequest(request, completion: completionHandler)
+    }
+
 
     // MARK: - подтверждение платежа
 
@@ -181,24 +197,6 @@ public final class AcquiringSdk: NSObject {
 
     public func confirmation3DSCompleteV2URL() -> URL {
         return networkTransport.complete3DSMethodV2URL
-    }
-
-    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случе ошибки.
-    public func check3dsVersion(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void) -> Cancellable {
-        let requestData = PaymentFinishRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
-        let request = Check3dsVersionRequest(data: requestData)
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
     }
 
     ///

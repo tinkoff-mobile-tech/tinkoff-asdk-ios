@@ -155,8 +155,8 @@ public struct DeviceInfoParams: Codable {
 
 public struct PaymentFinishRequestData: Codable {
     /// Номер платежа, полученного после инициализации платежа
-    var paymentId: Int64
-    var paymentSource: PaymentSourceData
+    public var paymentId: Int64
+    public var paymentSource: PaymentSourceData
 
     var sendEmail: Bool?
     var infoEmail: String?

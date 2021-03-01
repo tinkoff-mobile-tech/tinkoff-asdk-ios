@@ -53,6 +53,9 @@ struct APIConstants {
         static let encryptedPaymentData = "EncryptedPaymentData"
         static let route = "Route"
         static let source = "Source"
+        static let tdsServerTransID = "TdsServerTransID"
+        static let threeDSMethodURL = "ThreeDSMethodURL"
+        static let version = "Version"
     }
     
     struct Values {

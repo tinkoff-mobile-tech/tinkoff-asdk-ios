@@ -933,7 +933,9 @@ public class AcquiringUISDK: NSObject {
     }
 
     private func check3dsVersionAndFinishAuthorize(requestData: PaymentFinishRequestData, completionHandler: @escaping PaymentCompletionHandler) {
-        _ = acquiringSdk.check3dsVersion(data: requestData, completionHandler: { checkResponse in
+        let check3DSRequestData = Check3DSRequestData(paymentId: requestData.paymentId,
+                                                      paymentSource: requestData.paymentSource)
+        _ = acquiringSdk.check3dsVersion(data: check3DSRequestData, completionHandler: { checkResponse in
             switch checkResponse {
             case let .success(checkResult):
                 var finistRequestData = requestData
