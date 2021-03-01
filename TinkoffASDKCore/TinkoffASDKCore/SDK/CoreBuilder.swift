@@ -34,6 +34,10 @@ struct CoreBuilder {
                                                                            password: configuration.credential.password)),
                             apiResponseDecoder: buildAPIResponseDecoder())
     }
+    
+    func cardDataFormatter() -> CardDataFormatter {
+        return CardDataFormatter()
+    }
 }
 
 private extension CoreBuilder {
@@ -51,7 +55,7 @@ private extension CoreBuilder {
     }
     
     func buildURLSessionConfiguration(requestsTimeoutInterval: TimeInterval) -> URLSessionConfiguration {
-        let configuration = URLSessionConfiguration()
+        let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = requestsTimeoutInterval
         configuration.timeoutIntervalForResource = requestsTimeoutInterval
         return configuration
