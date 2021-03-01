@@ -21,5 +21,5 @@
 import Foundation
 
 protocol APIResponseDecoder {
-    func decode<Request: APIRequest>(data: Data, for: Request) throws -> APIResponse<Request.Payload>
+    func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload>
 }

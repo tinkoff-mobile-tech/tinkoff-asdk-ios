@@ -35,7 +35,9 @@ struct AcquiringTokenBuilder: APITokenBuilder {
                     request: TokenProvidableAPIRequest?) -> String {
         var tokenParameters = request?.parametersForToken ?? [:]
         tokenParameters[APIConstants.Keys.password] = password
-        tokenParameters = tokenParameters.merging(commonParameters, uniquingKeysWith: { _, new in new})
+        tokenParameters = tokenParameters.merging(commonParameters, uniquingKeysWith: { _, new in
+                                                    assertionFailure("keys duplicatiom while merging")
+                                                    return new })
         let tokenString = tokenParameters
             .sorted { $0.key < $1.key }
             .map { String(describing: $0.value) }

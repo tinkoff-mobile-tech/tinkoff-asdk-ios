@@ -23,17 +23,13 @@ import Foundation
 final class AcquiringAPI: API {
     private let environment: AcquiringSdkEnvironment
     private let networkClient: NetworkClient
-    private let apiCommonParametersProvider: APIParametersProvider
     private let apiResponseDecoder: APIResponseDecoder
     
     init(environment: AcquiringSdkEnvironment,
          networkClient: NetworkClient,
-         apiCommonParametersProvider: APIParametersProvider,
          apiResponseDecoder: APIResponseDecoder) {
         self.environment = environment
         self.networkClient = networkClient
-        self.apiCommonParametersProvider = apiCommonParametersProvider
-        self.networkClient.requestAdapter = apiCommonParametersProvider
         self.apiResponseDecoder = apiResponseDecoder
     }
     
