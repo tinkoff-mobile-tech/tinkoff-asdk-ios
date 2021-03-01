@@ -111,7 +111,7 @@ public final class AcquiringSdk: NSObject {
     ///
     /// - Parameters:
     ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - completionHandler: результат операции `InitPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     public func paymentInit(data: PaymentInitData,
                             completionHandler: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
@@ -123,7 +123,7 @@ public final class AcquiringSdk: NSObject {
     ///
     /// - Parameters:
     ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведеня платежа и `Error` - в случе ошибки.
+    ///   - completionHandler: результат операции `FinishAuthorizePayload` в случае удачного проведеня платежа и `Error` - в случе ошибки.
     public func paymentFinish(data: PaymentFinishRequestData,
                               completionHandler: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
 
