@@ -24,7 +24,7 @@
 
 "NetworkError.transportError" = "Ошибка сети";
 "NetworkError.serverError" = "Ошибка сервера";
-"NetworkError.emptyBody" = "Пустое тело в ответе";
+"NetworkError.emptyBody" = "Пустой ответ";
 
 "APIError.failureError" = "Ошибка API экваринга";
 "APIError.invalidResponse" = "Некорректный ответ API";
