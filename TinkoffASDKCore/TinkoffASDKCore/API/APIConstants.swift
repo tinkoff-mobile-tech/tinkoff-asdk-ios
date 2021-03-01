@@ -42,5 +42,21 @@ struct APIConstants {
         static let errorCode = "ErrorCode"
         static let errorMessage = "Message"
         static let errorDetails = "Details"
+        static let sendEmail = "SendEmail"
+        static let infoEmail = "InfoEmail"
+        static let ipAddress = "IP"
+        static let cardNumber = "PAN"
+        static let cardExpDate = "ExpDate"
+        static let cardCVV = "CVV"
+        static let cardId = "CardId"
+        static let cardData = "CardData"
+        static let encryptedPaymentData = "EncryptedPaymentData"
+        static let route = "Route"
+        static let source = "Source"
+    }
+    
+    struct Values {
+        static let acq = "ACQ"
+        static let applePaySource = "ApplePay"
     }
 }
