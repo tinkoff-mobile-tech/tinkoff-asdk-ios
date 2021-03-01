@@ -20,14 +20,14 @@
 
 import Foundation
 
-struct RSAEncryption {
+struct RSAEncryptor {
     
     enum Error: Swift.Error {
         case failedToCreatePublicSecKey
         case failedToEncryptStringWithPublicSecKey
     }
     
-    static func createPublicSecKey(publicKey: String) throws -> SecKey {
+    func createPublicSecKey(publicKey: String) throws -> SecKey {
         guard let data = Data(base64Encoded: publicKey) else { throw Error.failedToCreatePublicSecKey }
 
         var attributes: CFDictionary {
@@ -45,7 +45,7 @@ struct RSAEncryption {
         return secKey
     }
 
-    static func encrypt(string: String, publicKey: SecKey) throws -> String {
+    func encrypt(string: String, publicKey: SecKey) throws -> String {
         let buffer = [UInt8](string.utf8)
 
         var keySize = SecKeyGetBlockSize(publicKey)
@@ -58,8 +58,8 @@ struct RSAEncryption {
     }
 }
 
-private extension RSAEncryption {
-    static func stripBeginEndMarks(string: String) -> String {
+private extension RSAEncryptor {
+    func stripBeginEndMarks(string: String) -> String {
         return string.replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "").replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
     }
 }

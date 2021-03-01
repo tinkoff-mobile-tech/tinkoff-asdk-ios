@@ -41,7 +41,7 @@ public final class AcquiringSdk: NSObject {
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
         do {
-            publicKey = try RSAEncryption.createPublicSecKey(publicKey: configuration.credential.publicKey)
+            publicKey = try RSAEncryptor().createPublicSecKey(publicKey: configuration.credential.publicKey)
         } catch {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
         }
@@ -94,7 +94,7 @@ public final class AcquiringSdk: NSObject {
     /// Обновляем информцию о реквизитах карты, добавляем шифрование
     private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
         if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = try? RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
+            if let encodedCardData = try? RSAEncryptor().encrypt(string: cardData, publicKey: publicKey) {
                 parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
             }
         }
