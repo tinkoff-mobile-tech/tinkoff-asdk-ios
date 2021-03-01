@@ -87,7 +87,7 @@ public struct AcquiringConfiguration {
     }
 }
 
-public typealias PaymentCompletionHandler = ((_ result: Result<PaymentStatusResponse, Error>) -> Void)
+public typealias PaymentCompletionHandler = ((_ result: Result<GetStatePayload, Error>) -> Void)
 public typealias AddCardCompletionHandler = ((_ result: Result<AddCardStatusResponse, Error>) -> Void)
 
 /// Сканер для реквизитов карты
@@ -123,7 +123,7 @@ public class AcquiringUISDK: NSObject {
     private var startPaymentInitData: PaymentInitData?
     private var paymentInitPayload: InitPayload?
     private var onPaymentCompletionHandler: PaymentCompletionHandler?
-    private var finishPaymentStatusResponse: Result<PaymentStatusResponse, Error>?
+    private var finishPaymentState: Result<GetStatePayload, Error>?
 
     // 3ds web view Checking
     private weak var webViewController: WebViewController?
@@ -531,9 +531,10 @@ public class AcquiringUISDK: NSObject {
             switch fetchStatus {
             case let .object(response):
                 if completionStatus.contains(response.status) {
-                    self?.acquiringView?.closeVC(animated: true, completion: {
-                        completionHandler?(.success(response))
-                    })
+                    #warning("Раскомментировать и актуализировать, когда GetState переведу на новый api слой")
+//                    self?.acquiringView?.closeVC(animated: true, completion: {
+//                        completionHandler?(.success(response))
+//                    })
                 }
 
             default:
@@ -774,13 +775,14 @@ public class AcquiringUISDK: NSObject {
                         switch chargeResponse {
                         case let .success(successChargeResponse):
                             DispatchQueue.main.async { [weak self] in
-                                if self?.acquiringView != nil {
-                                    self?.acquiringView?.closeVC(animated: true, completion: {
-                                        self?.onPaymentCompletionHandler?(.success(successChargeResponse))
-                                    })
-                                } else {
-                                    self?.onPaymentCompletionHandler?(.success(successChargeResponse))
-                                }
+                                #warning("Раскомментировать и актуализировать, когда Charge переведу на новый api слой")
+//                                if self?.acquiringView != nil {
+//                                    self?.acquiringView?.closeVC(animated: true, completion: {
+//                                        self?.onPaymentCompletionHandler?(.success(successChargeResponse))
+//                                    })
+//                                } else {
+//                                    self?.onPaymentCompletionHandler?(.success(successChargeResponse))
+//                                }
                             }
 
                         case let .failure(error):
@@ -909,15 +911,9 @@ public class AcquiringUISDK: NSObject {
                         }
                     }
 
-                case let .done(response):
-                    completionHandler(.success(response))
-
-                case .unknown:
-                    let error = NSError(domain: finishResult.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
-                                        code: finishResult.errorCode,
-                                        userInfo: nil)
-
-                    completionHandler(.failure(error))
+                case .done:
+                    completionHandler(.success(finishResult.paymentState))
+//                    completionHandler(.success(response))
                 } // case .success
 
             case let .failure(error):
@@ -984,14 +980,11 @@ public class AcquiringUISDK: NSObject {
 
     private func cancelPayment() {
         if let paymentInitPayload = paymentInitPayload {
-            let paymentResponse = PaymentStatusResponse(success: false,
-                                                        errorCode: 0,
-                                                        errorMessage: nil,
-                                                        orderId: paymentInitPayload.orderId,
-                                                        paymentId: paymentInitPayload.paymentId,
-                                                        amount: paymentInitPayload.amount,
-                                                        status: .cancelled)
-            onPaymentCompletionHandler?(.success(paymentResponse))
+            let getStatePayload = GetStatePayload(paymentId: paymentInitPayload.paymentId,
+                                                  amount: paymentInitPayload.amount,
+                                                  orderId: paymentInitPayload.orderId,
+                                                  status: .cancelled)
+            onPaymentCompletionHandler?(.success(getStatePayload))
         }
     }
 
@@ -1370,7 +1363,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
     public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
         controller.dismiss(animated: true) {
-            if let result = self.finishPaymentStatusResponse {
+            if let result = self.finishPaymentState {
                 self.acquiringView?.closeVC(animated: true) {
                     self.onPaymentCompletionHandler?(result)
                 }
@@ -1389,9 +1382,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
         if let paymentId = paymentInitPayload?.paymentId {
             let paymentDataSource = PaymentSourceData.paymentData(payment.token.paymentData.base64EncodedString())
             let data = PaymentFinishRequestData(paymentId: paymentId,
-                                                paymentSource: paymentDataSource,
-                                                source: "ApplePay",
-                                                route: "ACQ")
+                                                paymentSource: paymentDataSource)
 
             finishAuthorize(requestData: data, treeDSmessageVersion: "1") { [weak self] finishResponse in
                 switch finishResponse {
@@ -1405,8 +1396,8 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
                         completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
                     }
                 }
-
-                self?.finishPaymentStatusResponse = finishResponse
+                
+                self?.finishPaymentState = finishResponse
             } // self.finishAuthorize
         }
     }
@@ -1478,7 +1469,8 @@ extension AcquiringUISDK: WKNavigationDelegate {
 
                         //
                         self?.webViewController?.dismiss(animated: true, completion: { [weak self] in
-                            self?.on3DSCheckingCompletionHandler?(.success(responseObject))
+                            #warning("Раскомментировать и актуализировать, когда responseObject будет парситься в GetStatePayload переведу на новый api слой")
+//                            self?.on3DSCheckingCompletionHandler?(.success(responseObject))
                         })
                     }
 

@@ -207,11 +207,12 @@ class BuyProductsViewController: UIViewController {
         return viewConfigration
     }
 
-    private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>) {
+    private func responseReviewing(_ response: Result<GetStatePayload, Error>) {
         switch response {
         case let .success(result):
             var message = NSLocalizedString("text.paymentStatusAmount", comment: "Покупка на сумму")
-            message.append(" \(Utils.formatAmount(result.amount)) ")
+            #warning("Раскомментировать и привести впорядок форматирование в Example")
+//            message.append(" \(Utils.formatAmount(result.amount)) ")
 
             if result.status == .cancelled {
                 message.append(NSLocalizedString("text.paymentStatusCancel", comment: "отменена"))

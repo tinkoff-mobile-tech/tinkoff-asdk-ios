@@ -118,6 +118,22 @@ public final class AcquiringSdk: NSObject {
         let request = InitRequest(paymentInitData: data)
         return api.performRequest(request, completion: completionHandler)
     }
+    
+    /// Подтверждает инициированный платеж передачей карточных данных
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentFinishRequestData`
+    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведеня платежа и `Error` - в случе ошибки.
+    public func paymentFinish(data: PaymentFinishRequestData,
+                              completionHandler: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
+
+        let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             publicKey: publicKey)
+
+        return api.performRequest(request, completion: completionHandler)
+    }
 
     // MARK: - подтверждение платежа
 
@@ -175,23 +191,6 @@ public final class AcquiringSdk: NSObject {
     public func check3dsVersion(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void) -> Cancellable {
         let requestData = PaymentFinishRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
         let request = Check3dsVersionRequest(data: requestData)
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    /// Подтверждает инициированный платеж передачей карточных данных
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведеня платежа и `Error` - в случе ошибки.
-    public func paymentFinish(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentFinishRequest(data: data)
         updateCardDataRequestParams(&request.parameters)
 
         let requestTokenParams: JSONObject = tokenParams(request: request)
