@@ -196,17 +196,17 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         fetchStatus = .loading
         DispatchQueue.main.async { startHandler?() }
 
-        let initGetCardListData = InitGetCardListData(customerKey: customerKey)
-        queryStatus = sdk?.сardList(data: initGetCardListData, responseDelegate: self, completionHandler: { [weak self] response in
+        let initGetCardListData = GetCardListData(customerKey: customerKey)
+        queryStatus = sdk?.сardList(data: initGetCardListData, completionHandler: { [weak self] response in
             var status: FetchStatus<[PaymentCard]> = .loading
             var responseError: Error?
             switch response {
             case let .failure(error):
                 responseError = error
                 status = FetchStatus.error(error)
-            case let .success(cardListResponse):
-                self?.dataSource = cardListResponse.cards
-                let activeCards = cardListResponse.cards.filter { (card) -> Bool in
+            case let .success(cards):
+                self?.dataSource = cards
+                let activeCards = cards.filter { (card) -> Bool in
                     card.status == .active
                 }
                 self?.activeCards = activeCards
@@ -251,27 +251,5 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     
     public func allItems() -> [PaymentCard] {
         return activeCards
-    }
-}
-
-extension CardListDataProvider: NetworkTransportResponseDelegate {
-    public func networkTransport(didCompleteRawTaskForRequest request: URLRequest, withData data: Data, response _: URLResponse, error _: Error?) throws -> ResponseOperation {
-        let cardLidt = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-
-        var parameters: [String: Any] = [:]
-        parameters.updateValue(true, forKey: "Success")
-        parameters.updateValue(0, forKey: "ErrorCode")
-
-        if let requestParamsData = request.httpBody, let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
-            if let terminalKey = requestParams["TerminalKey"] {
-                parameters.updateValue(terminalKey, forKey: "TerminalKey")
-            }
-        }
-
-        parameters.updateValue(cardLidt, forKey: "Cards")
-
-        let cardData: Data = try JSONSerialization.data(withJSONObject: parameters, options: [.sortedKeys])
-
-        return try JSONDecoder().decode(CardListResponse.self, from: cardData)
     }
 }

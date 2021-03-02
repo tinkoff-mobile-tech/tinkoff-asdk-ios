@@ -21,7 +21,7 @@ import Foundation
 
 // MARK: Список карт
 
-public struct InitGetCardListData: Codable {
+public struct GetCardListData: Codable {
     public var customerKey: String
 
     public enum CodingKeys: String, CodingKey {
@@ -49,11 +49,11 @@ public final class CardListRequest: RequestOperation, AcquiringRequestTokenParam
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [InitGetCardListData.CodingKeys.customerKey.rawValue]
+    public var tokenParamsKey: Set<String> = [GetCardListData.CodingKeys.customerKey.rawValue]
 
     ///
-    /// - Parameter requestData: `InitGetCardListData`
-    public init(data: InitGetCardListData) {
+    /// - Parameter requestData: `GetCardListData`
+    public init(data: GetCardListData) {
         if let json = try? data.encode2JSONObject() {
             parameters = json
         }
