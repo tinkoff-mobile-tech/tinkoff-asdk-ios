@@ -532,9 +532,9 @@ public class AcquiringUISDK: NSObject {
             case let .object(response):
                 if completionStatus.contains(response.status) {
                     #warning("Раскомментировать и актуализировать, когда GetState переведу на новый api слой")
-//                    self?.acquiringView?.closeVC(animated: true, completion: {
-//                        completionHandler?(.success(response))
-//                    })
+                    //                    self?.acquiringView?.closeVC(animated: true, completion: {
+                    //                        completionHandler?(.success(response))
+                    //                    })
                 }
 
             default:
@@ -912,7 +912,6 @@ public class AcquiringUISDK: NSObject {
 
                 case .done:
                     completionHandler(.success(finishResult.paymentState))
-//                    completionHandler(.success(response))
                 } // case .success
 
             case let .failure(error):
@@ -982,9 +981,9 @@ public class AcquiringUISDK: NSObject {
     private func cancelPayment() {
         if let paymentInitPayload = paymentInitPayload {
             let getStatePayload = GetPaymentStatePayload(paymentId: paymentInitPayload.paymentId,
-                                                  amount: paymentInitPayload.amount,
-                                                  orderId: paymentInitPayload.orderId,
-                                                  status: .cancelled)
+                                                         amount: paymentInitPayload.amount,
+                                                         orderId: paymentInitPayload.orderId,
+                                                         status: .cancelled)
             onPaymentCompletionHandler?(.success(getStatePayload))
         }
     }
@@ -1048,10 +1047,14 @@ public class AcquiringUISDK: NSObject {
                 DispatchQueue.main.async {
                     viewController?.viewWaiting.isHidden = true
                     switch response {
-                    case .success:
+                    case let .success(payload):
                         viewController?.onCancel = nil
                         viewController?.dismiss(animated: true, completion: {
-                            self?.onRandomAmountCheckingAddCardCompletionHandler?(response)
+                            let addCardStatusResponse = AddCardStatusResponse(success: true,
+                                                                              errorCode: 0,
+                                                                              requestKey: payload.requestKey,
+                                                                              cardId: payload.cardId)
+                            self?.onRandomAmountCheckingAddCardCompletionHandler?(.success(addCardStatusResponse))
                         })
                     case let .failure(error):
                         viewController?.dismiss(animated: true, completion: {
@@ -1144,7 +1147,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                                       confirmationHandler: { confirmationResponse, confirmationComplete in
                                         DispatchQueue.main.async { [weak self] in
                                             #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
-//                                            self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
+                                            self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
                                         }
                                       },
                                       completeHandler: { response in
@@ -1246,50 +1249,46 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             completion?(.failure(error))
         }
     }
-
-    private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
-        #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
-//        switch confirmationResponse.responseStatus {
-//        case let .needConfirmation3DS(confirmation3DSData):
-//            on3DSCheckingAddCardCompletionHandler = { response in
-//                confirmationComplete(response)
-//            }
-//
-//            present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
-//                self?.cancelAddCard()
-//            }
-//
-//        case let .needConfirmation3DSACS(confirmation3DSDataACS):
-//            on3DSCheckingAddCardCompletionHandler = { response in
-//                confirmationComplete(response)
-//            }
-//
-//            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
-//                self?.cancelAddCard()
-//            }
-//
-//        case let .needConfirmationRandomAmount(requestKey):
-//            onRandomAmountCheckingAddCardCompletionHandler = { response in
-//                confirmationComplete(response)
-//            }
-//
-//            presentRandomAmounChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
-//                self?.cancelAddCard()
-//            }
-//
-//        case let .done(response):
-//            confirmationComplete(.success(response))
-//
-//        case .unknown:
-//            let error = NSError(domain: confirmationResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
-//                                code: confirmationResponse.errorCode, userInfo: nil)
-//
-//            confirmationComplete(.failure(error))
-//        }
+    
+    private func checkConfirmAddCard(_ confirmationResponse: AttachCardPayload, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+        switch confirmationResponse.attachCardStatus {
+        case let .needConfirmation3DS(confirmation3DSData):
+            on3DSCheckingAddCardCompletionHandler = { response in
+                confirmationComplete(response)
+            }
+            
+            present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
+                self?.cancelAddCard()
+            }
+            
+        case let .needConfirmation3DSACS(confirmation3DSDataACS):
+            on3DSCheckingAddCardCompletionHandler = { response in
+                confirmationComplete(response)
+            }
+            
+            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
+                self?.cancelAddCard()
+            }
+            
+        case let .needConfirmationRandomAmount(requestKey):
+            onRandomAmountCheckingAddCardCompletionHandler = { response in
+                confirmationComplete(response)
+            }
+            
+            presentRandomAmounChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
+                self?.cancelAddCard()
+            }
+            
+        case .done:
+            confirmationComplete(.success(AddCardStatusResponse(success: true, errorCode: 0)))
+        }
     }
-
-    private func checkStateSubmitRandomAmount(amount: Double, requestKey: String, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
-        _ = acquiringSdk.chechRandomAmount(amount, requestKey: requestKey, responseDelegate: nil) { response in
+    
+    private func checkStateSubmitRandomAmount(amount: Double, requestKey: String, _ confirmationComplete: @escaping (Result<SubmitRandomAmountPayload, Error>) -> Void) {
+        let amountDecimal = NSDecimalNumber(value: amount)
+        let data = SubmitRandomAmountData(amount: Int64(amountDecimal.multiplying(byPowerOf10: 2).uint64Value),
+                                          requestKey: requestKey)
+        _ = acquiringSdk.checkRandomAmount(data: data) { response in
             confirmationComplete(response)
         }
     }

@@ -214,6 +214,18 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
+    ///
+    /// - Parameters:
+    ///   - amount: `Int64` сумма в копейках
+    ///   - requestKey: `String` идентификатор запроса на привязку карты
+    ///   - completionHandler: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func checkRandomAmount(data: SubmitRandomAmountData,
+                                  completionHandler: @escaping (_ result: Result<SubmitRandomAmountPayload, Error>) -> Void) -> Cancellable {
+        let request = SubmitRandomAmountRequest(submitRandomAmountData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
 
     // MARK: - подтверждение платежа
 
@@ -264,24 +276,6 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: - Cписок карт
-
-    ///
-    /// - Parameters:
-    ///   - amount: `Double` сумма с копейками
-    ///   - requestKey: `String` ключ для привязки карты
-    ///   - completionHandler: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func chechRandomAmount(_ amount: Double, requestKey: String, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = CheckRandomAmountRequest(requestData: CheckingRandomAmountData(amount: amount, requestKey: requestKey))
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
-            completionHandler(result)
-        }
-    }
 
     ///
     /// - Parameters:
