@@ -56,6 +56,7 @@ struct APIConstants {
         static let tdsServerTransID = "TdsServerTransID"
         static let threeDSMethodURL = "ThreeDSMethodURL"
         static let version = "Version"
+        static let requestKey = "RequestKey"
     }
     
     struct Values {

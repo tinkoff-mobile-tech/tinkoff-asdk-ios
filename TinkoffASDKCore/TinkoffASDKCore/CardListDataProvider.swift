@@ -105,19 +105,19 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     // MARK: Card List
 
     public func addCard(number: String, expDate: String, cvc: String, checkType: String,
-                        confirmationHandler: @escaping ((_ result: FinishAddCardResponse, _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Void),
+                        confirmationHandler: @escaping ((_ result: AttachCardPayload, _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Void),
                         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
     {
         // Step 1 init
         let initAddCardData = InitAddCardData(with: checkType, customerKey: customerKey)
-        queryStatus = sdk?.сardListAddCardInit(data: initAddCardData, completionHandler: { [weak self] responseInit in
+        queryStatus = sdk?.addCardInit(data: initAddCardData, completionHandler: { [weak self] responseInit in
             switch responseInit {
             case let .failure(error):
                 DispatchQueue.main.async { completeHandler(.failure(error)) }
             case let .success(initAddCardResponse):
                 // Step 2 finish
                 let finishData = FinishAddCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
-                self?.queryStatus = self?.sdk?.сardListAddCardFinish(data: finishData, responseDelegate: nil, completionHandler: { responseFinish in
+                self?.queryStatus = self?.sdk?.addCardFinish(data: finishData, completionHandler: { responseFinish in
                     switch responseFinish {
                     case let .failure(error):
                         DispatchQueue.main.async { completeHandler(.failure(error)) }

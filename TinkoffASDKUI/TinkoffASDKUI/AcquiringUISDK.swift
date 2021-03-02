@@ -1143,7 +1143,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                                       checkType: checkType,
                                       confirmationHandler: { confirmationResponse, confirmationComplete in
                                         DispatchQueue.main.async { [weak self] in
-                                            self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
+                                            #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
+//                                            self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
                                         }
                                       },
                                       completeHandler: { response in
@@ -1247,43 +1248,44 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 
     private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
-        switch confirmationResponse.responseStatus {
-        case let .needConfirmation3DS(confirmation3DSData):
-            on3DSCheckingAddCardCompletionHandler = { response in
-                confirmationComplete(response)
-            }
-
-            present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
-                self?.cancelAddCard()
-            }
-
-        case let .needConfirmation3DSACS(confirmation3DSDataACS):
-            on3DSCheckingAddCardCompletionHandler = { response in
-                confirmationComplete(response)
-            }
-
-            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
-                self?.cancelAddCard()
-            }
-
-        case let .needConfirmationRandomAmount(requestKey):
-            onRandomAmountCheckingAddCardCompletionHandler = { response in
-                confirmationComplete(response)
-            }
-
-            presentRandomAmounChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
-                self?.cancelAddCard()
-            }
-
-        case let .done(response):
-            confirmationComplete(.success(response))
-
-        case .unknown:
-            let error = NSError(domain: confirmationResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
-                                code: confirmationResponse.errorCode, userInfo: nil)
-
-            confirmationComplete(.failure(error))
-        }
+        #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
+//        switch confirmationResponse.responseStatus {
+//        case let .needConfirmation3DS(confirmation3DSData):
+//            on3DSCheckingAddCardCompletionHandler = { response in
+//                confirmationComplete(response)
+//            }
+//
+//            present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
+//                self?.cancelAddCard()
+//            }
+//
+//        case let .needConfirmation3DSACS(confirmation3DSDataACS):
+//            on3DSCheckingAddCardCompletionHandler = { response in
+//                confirmationComplete(response)
+//            }
+//
+//            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
+//                self?.cancelAddCard()
+//            }
+//
+//        case let .needConfirmationRandomAmount(requestKey):
+//            onRandomAmountCheckingAddCardCompletionHandler = { response in
+//                confirmationComplete(response)
+//            }
+//
+//            presentRandomAmounChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
+//                self?.cancelAddCard()
+//            }
+//
+//        case let .done(response):
+//            confirmationComplete(.success(response))
+//
+//        case .unknown:
+//            let error = NSError(domain: confirmationResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+//                                code: confirmationResponse.errorCode, userInfo: nil)
+//
+//            confirmationComplete(.failure(error))
+//        }
     }
 
     private func checkStateSubmitRandomAmount(amount: Double, requestKey: String, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
@@ -1309,7 +1311,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                                          checkType: checkType,
                                          confirmationHandler: { confirmationResponse, confirmationComplete in
                                              DispatchQueue.main.async { [weak self] in
-                                                 self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
+                                                #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
+//                                                 self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
                                              }
                                          },
                                          completeHandler: { response in

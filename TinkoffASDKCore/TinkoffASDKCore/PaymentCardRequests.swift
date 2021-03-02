@@ -235,7 +235,7 @@ class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
     }
 }
 
-public enum AddCardFinishResponseStatus {
+public enum AttachCardStatus {
     /// Требуется подтверждение 3DS v1.0
     case needConfirmation3DS(Confirmation3DSData)
 
@@ -246,10 +246,7 @@ public enum AddCardFinishResponseStatus {
     case needConfirmationRandomAmount(String)
 
     /// Успешная оплата
-    case done(AddCardStatusResponse)
-
-    /// что-то пошло не так
-    case unknown
+    case done
 }
 
 public struct FinishAddCardResponse: ResponseOperation {
@@ -259,7 +256,7 @@ public struct FinishAddCardResponse: ResponseOperation {
     public var errorDetails: String?
     public var terminalKey: String?
     public var paymentStatus: PaymentStatus
-    public var responseStatus: AddCardFinishResponseStatus
+    public var responseStatus: AttachCardStatus
     //
     var cardId: String?
 
@@ -288,7 +285,7 @@ public struct FinishAddCardResponse: ResponseOperation {
             paymentStatus = PaymentStatus(rawValue: statusValue)
         }
 
-        responseStatus = .unknown
+        responseStatus = .done
         switch paymentStatus {
         case .checking3ds, .hold3ds:
             if let confirmation3DS = try? Confirmation3DSData(from: decoder) {
@@ -302,13 +299,13 @@ public struct FinishAddCardResponse: ResponseOperation {
             responseStatus = .needConfirmationRandomAmount(requestKey)
 
         case .authorized, .confirmed, .checked3ds:
-            if let finishStatus = try? AddCardStatusResponse(from: decoder) {
-                responseStatus = .done(finishStatus)
+            if let _ = try? AddCardStatusResponse(from: decoder) {
+                responseStatus = .done
             }
 
         default:
-            if let finishStatus = try? AddCardStatusResponse(from: decoder) {
-                responseStatus = .done(finishStatus)
+            if let _ = try? AddCardStatusResponse(from: decoder) {
+                responseStatus = .done
             }
         }
 
@@ -329,8 +326,6 @@ public struct FinishAddCardResponse: ResponseOperation {
             try confirm3DSData.encode(to: encoder)
         case let .needConfirmationRandomAmount(confirmRandomAmountData):
             try confirmRandomAmountData.encode(to: encoder)
-        case let .done(responseStatus):
-            try responseStatus.encode(to: encoder)
         default:
             break
         }

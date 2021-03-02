@@ -185,6 +185,32 @@ public final class AcquiringSdk: NSObject {
         let request = GetCardListRequest(getCardListData: data)
         return api.performRequest(request, completion: completionHandler)
     }
+        
+    ///
+    /// - Parameters:
+    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
+    ///   - completionHandler: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func addCardInit(data: InitAddCardData,
+                            completionHandler: @escaping (_ result: Result<AddCardPayload, Error>) -> Void) -> Cancellable {
+        let request = AddCardRequest(initAddCardData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    ///
+    /// - Parameters:
+    ///   - data: `FinishAddCardData` информация о клиенте и типе новой карты
+    ///   - completionHandler: результат операции `AttachCardPayload` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func addCardFinish(data: FinishAddCardData,
+                              completionHandler: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
+        let request = AttachCardRequest(finishAddCardData: data,
+                                        encryptor: RSAEncryptor(),
+                                        cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                        publicKey: publicKey)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
 
     // MARK: - подтверждение платежа
 
@@ -235,38 +261,6 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: - Cписок карт
-
-    ///
-    /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardListAddCardInit(data: InitAddCardData, completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void) -> Cancellable {
-        let request = InitAddCardRequest(requestData: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    ///
-    /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardListAddCardFinish(data: FinishAddCardData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
-        let request = FinishAddCardRequest(requestData: data)
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
-            completionHandler(result)
-        }
-    }
 
     ///
     /// - Parameters:
