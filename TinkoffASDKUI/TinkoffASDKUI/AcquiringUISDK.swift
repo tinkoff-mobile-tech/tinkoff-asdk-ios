@@ -87,7 +87,7 @@ public struct AcquiringConfiguration {
     }
 }
 
-public typealias PaymentCompletionHandler = ((_ result: Result<GetStatePayload, Error>) -> Void)
+public typealias PaymentCompletionHandler = ((_ result: Result<GetPaymentStatePayload, Error>) -> Void)
 public typealias AddCardCompletionHandler = ((_ result: Result<AddCardStatusResponse, Error>) -> Void)
 
 /// Сканер для реквизитов карты
@@ -123,7 +123,7 @@ public class AcquiringUISDK: NSObject {
     private var startPaymentInitData: PaymentInitData?
     private var paymentInitPayload: InitPayload?
     private var onPaymentCompletionHandler: PaymentCompletionHandler?
-    private var finishPaymentState: Result<GetStatePayload, Error>?
+    private var finishPaymentState: Result<GetPaymentStatePayload, Error>?
 
     // 3ds web view Checking
     private weak var webViewController: WebViewController?
@@ -982,7 +982,7 @@ public class AcquiringUISDK: NSObject {
 
     private func cancelPayment() {
         if let paymentInitPayload = paymentInitPayload {
-            let getStatePayload = GetStatePayload(paymentId: paymentInitPayload.paymentId,
+            let getStatePayload = GetPaymentStatePayload(paymentId: paymentInitPayload.paymentId,
                                                   amount: paymentInitPayload.amount,
                                                   orderId: paymentInitPayload.orderId,
                                                   status: .cancelled)

@@ -20,13 +20,13 @@
 import Foundation
 
 public final class PaymentStatusServiceProvider: FetchServiceProtocol {
-    public typealias ObjectType = PaymentStatusResponse
+    public typealias ObjectType = GetPaymentStatePayload
 
     /// Текущее состояние сервиса проверки
-    public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknown
+    public var fetchStatus: FetchStatus<GetPaymentStatePayload> = .unknown
     var queryStatus: Cancellable?
     /// Слушатель состояния сервиса проверки
-    public var onStatusUpdated: ((FetchStatus<PaymentStatusResponse>) -> Void)?
+    public var onStatusUpdated: ((FetchStatus<GetPaymentStatePayload>) -> Void)?
     /// Платеж состояние которого проверяем
     private(set) var paymentId: Int64 = 0
     /// Частота обновления, не менее 10 сек
@@ -65,12 +65,12 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 
     // MARK: FetchDataSourceProtocol
 
-    public func fetch(startHandler: (() -> Void)?, completeHandler: @escaping (PaymentStatusResponse?, Error?) -> Void) {
+    public func fetch(startHandler: (() -> Void)?, completeHandler: @escaping (GetPaymentStatePayload?, Error?) -> Void) {
         fetchStatus = .loading
         startHandler?()
 
         queryStatus = sdk?.paymentOperationStatus(data: PaymentInfoData(paymentId: paymentId), completionHandler: { [weak self] response in
-            var status: FetchStatus<PaymentStatusResponse> = .loading
+            var status: FetchStatus<GetPaymentStatePayload> = .loading
             switch response {
             case let .failure(error):
                 status = FetchStatus.error(error)

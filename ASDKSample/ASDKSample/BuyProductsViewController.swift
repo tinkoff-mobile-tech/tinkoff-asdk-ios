@@ -207,7 +207,7 @@ class BuyProductsViewController: UIViewController {
         return viewConfigration
     }
 
-    private func responseReviewing(_ response: Result<GetStatePayload, Error>) {
+    private func responseReviewing(_ response: Result<GetPaymentStatePayload, Error>) {
         switch response {
         case let .success(result):
             var message = NSLocalizedString("text.paymentStatusAmount", comment: "Покупка на сумму")

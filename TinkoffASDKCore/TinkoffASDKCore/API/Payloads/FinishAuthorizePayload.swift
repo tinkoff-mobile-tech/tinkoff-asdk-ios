@@ -22,11 +22,11 @@ import Foundation
 
 public struct FinishAuthorizePayload: Decodable {
     public let status: PaymentStatus
-    public let paymentState: GetStatePayload
+    public let paymentState: GetPaymentStatePayload
     public let responseStatus: PaymentFinishResponseStatus
     
     public init(status: PaymentStatus,
-                paymentState: GetStatePayload,
+                paymentState: GetPaymentStatePayload,
                 responseStatus: PaymentFinishResponseStatus) {
         self.status = status
         self.paymentState = paymentState
@@ -34,7 +34,7 @@ public struct FinishAuthorizePayload: Decodable {
     }
     
     public init(from decoder: Decoder) throws {
-        paymentState = try GetStatePayload(from: decoder)
+        paymentState = try GetPaymentStatePayload(from: decoder)
         status = paymentState.status
         
         switch status {

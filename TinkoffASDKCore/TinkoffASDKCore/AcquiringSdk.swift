@@ -150,6 +150,18 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
 
+    ///
+    /// Получить статус платежа
+    /// - Parameters:
+    ///   - data: `PaymentInfoData`
+    ///   - completionHandler: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func paymentOperationStatus(data: PaymentInfoData,
+                                       completionHandler: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void) -> Cancellable {
+        let request = GetPaymentStateRequest(paymentInfoData: data)
+        
+        return api.performRequest(request, completion: completionHandler)
+    }
+
 
     // MARK: - подтверждение платежа
 
@@ -203,20 +215,6 @@ public final class AcquiringSdk: NSObject {
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
     public func chargePayment(data: PaymentChargeRequestData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentChargeRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    // MARK: - Статус операции
-
-    ///
-    /// Получить статус платежа
-    public func paymentOperationStatus(data: PaymentInfoData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentStatusRequest(data: data)
         let requestTokenParams: JSONObject = tokenParams(request: request)
         request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
