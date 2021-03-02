@@ -773,16 +773,15 @@ public class AcquiringUISDK: NSObject {
                     let chargeData = PaymentChargeRequestData(paymentId: initPayload.paymentId, parentPaymentId: parentPaymentId)
                     _ = self.acquiringSdk.chargePayment(data: chargeData, completionHandler: { chargeResponse in
                         switch chargeResponse {
-                        case let .success(successChargeResponse):
+                        case let .success(chargePayload):
                             DispatchQueue.main.async { [weak self] in
-                                #warning("Раскомментировать и актуализировать, когда Charge переведу на новый api слой")
-//                                if self?.acquiringView != nil {
-//                                    self?.acquiringView?.closeVC(animated: true, completion: {
-//                                        self?.onPaymentCompletionHandler?(.success(successChargeResponse))
-//                                    })
-//                                } else {
-//                                    self?.onPaymentCompletionHandler?(.success(successChargeResponse))
-//                                }
+                                if self?.acquiringView != nil {
+                                    self?.acquiringView?.closeVC(animated: true, completion: {
+                                        self?.onPaymentCompletionHandler?(.success(chargePayload.paymentState))
+                                    })
+                                } else {
+                                    self?.onPaymentCompletionHandler?(.success(chargePayload.paymentState))
+                                }
                             }
 
                         case let .failure(error):

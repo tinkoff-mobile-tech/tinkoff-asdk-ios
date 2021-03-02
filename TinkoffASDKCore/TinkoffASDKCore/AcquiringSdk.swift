@@ -161,6 +161,17 @@ public final class AcquiringSdk: NSObject {
         
         return api.performRequest(request, completion: completionHandler)
     }
+    
+    ///
+    /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    /// - Parameters:
+    ///   - data: `PaymentChargeRequestData`
+    ///   - completionHandler: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func chargePayment(data: PaymentChargeRequestData,
+                              completionHandler: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void) -> Cancellable {
+        let request = ChargePaymentRequest(paymentChargeRequestData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
 
 
     // MARK: - подтверждение платежа
@@ -209,18 +220,6 @@ public final class AcquiringSdk: NSObject {
 
     public func confirmation3DSCompleteV2URL() -> URL {
         return networkTransport.complete3DSMethodV2URL
-    }
-
-    ///
-    /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
-    public func chargePayment(data: PaymentChargeRequestData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentChargeRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
     }
 
     // MARK: - Cписок карт
