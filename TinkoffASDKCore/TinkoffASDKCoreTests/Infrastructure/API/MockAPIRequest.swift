@@ -1,6 +1,6 @@
 //
 //
-//  APIEnvironmentProvider.swift
+//  MockAPIRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,8 +18,19 @@
 //
 
 
+@testable import TinkoffASDKCore
 import Foundation
 
-protocol APIEnvironmentProvider {
-    var host: String { get }
+struct MockAPIRequest<Payload: Decodable>: APIRequest {
+    var requestPath: [String]
+    var httpMethod: HTTPMethod
+    var decodeStrategy: APIRequestDecodeStrategy
+    
+    init(requestPath: [String] = [],
+         httpMethod: HTTPMethod = .get,
+         decodeStrategy: APIRequestDecodeStrategy = .standart) {
+        self.requestPath = requestPath
+        self.httpMethod = httpMethod
+        self.decodeStrategy = decodeStrategy
+    }
 }

@@ -35,6 +35,6 @@ struct APIHostProvider: HTTPHostProvider {
     // MARK: - HTTPHostProvider
     
     func host() throws -> URL {
-        try apiURLBuilder.buildURL(environment: apiEnvironmentProvider.environment)
+        try apiURLBuilder.buildURL(host: apiEnvironmentProvider.host)
     }
 }

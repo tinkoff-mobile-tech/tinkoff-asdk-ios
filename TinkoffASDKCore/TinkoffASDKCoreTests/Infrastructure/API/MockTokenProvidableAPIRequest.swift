@@ -1,6 +1,6 @@
 //
 //
-//  APIEnvironmentProvider.swift
+//  MockTokenProvidableAPIRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,8 +18,15 @@
 //
 
 
+@testable import TinkoffASDKCore
 import Foundation
 
-protocol APIEnvironmentProvider {
-    var host: String { get }
+struct MockTokenProvidableAPIRequest: TokenProvidableAPIRequest {
+    var path: [String] = []
+    
+    var httpMethod: HTTPMethod = .get
+    
+    var parameters: HTTPParameters = [:]
+    
+    var tokenParameterKeysToIgnore: Set<String> = []
 }

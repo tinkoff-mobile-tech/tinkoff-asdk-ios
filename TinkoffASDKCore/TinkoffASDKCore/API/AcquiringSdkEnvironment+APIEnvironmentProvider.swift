@@ -21,7 +21,7 @@
 import Foundation
 
 extension AcquiringSdkEnvironment: APIEnvironmentProvider {
-    var environment: AcquiringSdkEnvironment {
-        self
+    var host: String {
+        rawValue
     }
 }

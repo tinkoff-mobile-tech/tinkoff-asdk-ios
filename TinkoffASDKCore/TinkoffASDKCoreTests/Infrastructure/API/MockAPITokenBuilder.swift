@@ -1,6 +1,6 @@
 //
 //
-//  APIEnvironmentProvider.swift
+//  MockAPITokenBuilder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,8 +18,14 @@
 //
 
 
+@testable import TinkoffASDKCore
 import Foundation
 
-protocol APIEnvironmentProvider {
-    var host: String { get }
+struct MockAPITokenBuilder: APITokenBuilder {
+    
+    var token: String = ""
+    
+    func buildToken(commonParameters: HTTPParameters, request: TokenProvidableAPIRequest?) -> String {
+        token
+    }
 }

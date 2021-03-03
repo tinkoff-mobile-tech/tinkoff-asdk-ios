@@ -21,14 +21,11 @@
 import Foundation
 
 final class AcquiringAPI: API {
-    private let environment: AcquiringSdkEnvironment
     private let networkClient: NetworkClient
     private let apiResponseDecoder: APIResponseDecoder
     
-    init(environment: AcquiringSdkEnvironment,
-         networkClient: NetworkClient,
+    init(networkClient: NetworkClient,
          apiResponseDecoder: APIResponseDecoder) {
-        self.environment = environment
         self.networkClient = networkClient
         self.apiResponseDecoder = apiResponseDecoder
     }
