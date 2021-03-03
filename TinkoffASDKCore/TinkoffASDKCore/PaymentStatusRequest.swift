@@ -19,24 +19,6 @@
 
 import Foundation
 
-public struct PaymentInfoData: Codable {
-    /// Номер заказа в системе Продавца
-    var paymentId: Int64
-
-    init(paymentId: Int64) {
-        self.paymentId = paymentId
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
-    }
-}
-
 class PaymentStatusRequest: RequestOperation, AcquiringRequestTokenParams {
     // MARK: RequestOperation
 

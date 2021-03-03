@@ -19,58 +19,6 @@
 
 import Foundation
 
-/// Тип возвращаемых данных для генерации QR-кода
-public enum PaymentInvoiceSBPSourceType: String, Codable {
-    /// `IMAGE` – В ответе возвращается SVG изображение QR-кода
-    case imageSVG = "IMAGE"
-
-    /// `PAYLOAD` – В ответе возвращается url с параметрами  (по-умолчанию)
-    case url = "PAYLOAD"
-
-    public init(rawValue: String) {
-        switch rawValue {
-        case "IMAGE": self = .imageSVG
-        default: self = .url
-        }
-    }
-}
-
-public struct PaymentInvoiceQRCodeData: Codable {
-    ///
-    /// Уникальный идентификатор транзакции в системе Банка
-    var paymentId: Int64
-
-    ///
-    /// Тип возвращаемых данных
-    var paymentInvoiceType: PaymentInvoiceSBPSourceType
-
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-        case paymentInvoiceType = "DataType"
-    }
-
-    public init(paymentId: Int64, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
-        self.paymentId = paymentId
-        self.paymentInvoiceType = paymentInvoiceType
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
-        if let typeValue = try? container.decode(String.self, forKey: .paymentInvoiceType) {
-            paymentInvoiceType = PaymentInvoiceSBPSourceType(rawValue: typeValue)
-        } else {
-            paymentInvoiceType = .url
-        }
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(paymentId, forKey: .paymentId)
-        try container.encode(paymentInvoiceType.rawValue, forKey: .paymentInvoiceType)
-    }
-}
-
 /// регистрирует QR и возвращает информацию о нем.
 /// Должен быть вызван после вызова метода `Init`
 public class PaymentInvoiceQRCodeRequest: RequestOperation, AcquiringRequestTokenParams {

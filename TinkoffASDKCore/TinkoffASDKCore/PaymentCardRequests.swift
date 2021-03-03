@@ -21,23 +21,6 @@ import Foundation
 
 // MARK: Список карт
 
-public struct GetCardListData: Codable {
-    public var customerKey: String
-
-    public enum CodingKeys: String, CodingKey {
-        case customerKey = "CustomerKey"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
-    }
-
-    public init(customerKey: String) {
-        self.customerKey = customerKey
-    }
-}
-
 public final class CardListRequest: RequestOperation, AcquiringRequestTokenParams {
     // MARK: RequestOperation
 
@@ -102,27 +85,6 @@ public struct CardListResponse: ResponseOperation {
 
 // MARK: Добавит карту
 
-public struct InitAddCardData: Codable {
-    public var checkType: String
-    public var customerKey: String
-
-    public enum CodingKeys: String, CodingKey {
-        case checkType = "CheckType"
-        case customerKey = "CustomerKey"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        checkType = try container.decode(String.self, forKey: .checkType)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
-    }
-
-    public init(with checkType: String, customerKey: String) {
-        self.checkType = checkType
-        self.customerKey = customerKey
-    }
-}
-
 public final class InitAddCardRequest: RequestOperation, AcquiringRequestTokenParams {
     // MARK: RequestOperation
 
@@ -174,41 +136,6 @@ public struct InitAddCardResponse: ResponseOperation {
         terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
         requestKey = try container.decode(String.self, forKey: .requestKey)
-    }
-}
-
-public struct FinishAddCardData: Codable {
-    var cardNumber: String
-    var expDate: String
-    var cvv: String
-    //
-    var requestKey: String
-
-    enum CodingKeys: String, CodingKey {
-        case cardNumber = "PAN"
-        case expDate = "ExpDate"
-        case cvv = "CVV"
-        //
-        case requestKey = "RequestKey"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        cardNumber = try container.decode(String.self, forKey: .cardNumber)
-        expDate = try container.decode(String.self, forKey: .expDate)
-        cvv = try container.decode(String.self, forKey: .cvv)
-        requestKey = try container.decode(String.self, forKey: .requestKey)
-    }
-
-    public init(cardNumber: String, expDate: String, cvv: String, requestKey: String) {
-        self.cardNumber = cardNumber
-        self.expDate = expDate
-        self.cvv = cvv
-        self.requestKey = requestKey
-    }
-
-    func cardData() -> String {
-        return "\(CodingKeys.cardNumber.rawValue)=\(cardNumber);\(CodingKeys.expDate.rawValue)=\(expDate);\(CodingKeys.cvv.rawValue)=\(cvv)"
     }
 }
 
@@ -387,27 +314,6 @@ public struct AddCardStatusResponse: ResponseOperation {
 } // AddCardStatusResponse
 
 // MARK: Удалить карту
-
-public struct InitDeactivateCardData: Codable {
-    public var cardId: String
-    public var customerKey: String
-
-    public enum CodingKeys: String, CodingKey {
-        case cardId = "CardId"
-        case customerKey = "CustomerKey"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        cardId = try container.decode(String.self, forKey: .cardId)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
-    }
-
-    public init(cardId: String, customerKey: String) {
-        self.cardId = cardId
-        self.customerKey = customerKey
-    }
-}
 
 public final class InitDeactivateCardRequest: RequestOperation, AcquiringRequestTokenParams {
     // MARK: RequestOperation

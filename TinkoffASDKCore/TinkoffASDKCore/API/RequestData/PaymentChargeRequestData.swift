@@ -42,26 +42,3 @@ public struct PaymentChargeRequestData: Codable {
         parentPaymentId = try container.decode(Int64.self, forKey: .parentPaymentId)
     }
 }
-
-class PaymentChargeRequest: RequestOperation, AcquiringRequestTokenParams {
-    // MARK: RequestOperation
-
-    var name: String = "Charge"
-
-    var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [PaymentChargeRequestData.CodingKeys.paymentId.rawValue,
-                                       PaymentChargeRequestData.CodingKeys.parentPaymentId.rawValue]
-
-    ///
-    /// - Parameter data: `FinishRequestData`
-    init(data: PaymentChargeRequestData) {
-        if let json = try? data.encode2JSONObject() {
-            parameters = json
-        }
-    }
-}
