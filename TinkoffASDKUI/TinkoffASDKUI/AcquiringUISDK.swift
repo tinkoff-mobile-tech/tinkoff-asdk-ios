@@ -1280,7 +1280,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             }
             
         case .done:
-            confirmationComplete(.success(AddCardStatusResponse(success: true, errorCode: 0)))
+            confirmationComplete(.success(AddCardStatusResponse(success: true, errorCode: 0, cardId: confirmationResponse.cardId)))
         }
     }
     

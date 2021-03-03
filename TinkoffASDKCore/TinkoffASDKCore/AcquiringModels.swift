@@ -122,7 +122,7 @@ public enum PaymentStatus: String, Decodable, Equatable {
     }
 }
 
-public enum PaymentCardStatus: String {
+public enum PaymentCardStatus: String, Decodable {
     case active = "A"
 
     case inactive = "I"

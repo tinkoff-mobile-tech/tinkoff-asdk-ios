@@ -216,9 +216,8 @@ public final class AcquiringSdk: NSObject {
     
     ///
     /// - Parameters:
-    ///   - amount: `Int64` сумма в копейках
-    ///   - requestKey: `String` идентификатор запроса на привязку карты
-    ///   - completionHandler: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
+    ///   - data: `SubmitRandomAmountData`
+    ///   - completionHandler: результат операции `SubmitRandomAmountPayload` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     public func checkRandomAmount(data: SubmitRandomAmountData,
                                   completionHandler: @escaping (_ result: Result<SubmitRandomAmountPayload, Error>) -> Void) -> Cancellable {
@@ -226,6 +225,16 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
+    ///
+    /// - Parameters:
+    ///   - completionHandler: результат операции `RemoveCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func deactivateCard(data: InitDeactivateCardData,
+                               completionHandler: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void) -> Cancellable {
+        let request = RemoveCardRequest(deactivateCardData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+
 
     // MARK: - подтверждение платежа
 
@@ -273,22 +282,6 @@ public final class AcquiringSdk: NSObject {
 
     public func confirmation3DSCompleteV2URL() -> URL {
         return networkTransport.complete3DSMethodV2URL
-    }
-
-    // MARK: - Cписок карт
-
-    ///
-    /// - Parameters:
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardListDeactivateCard(data: InitDeactivateCardData, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
-        let request = InitDeactivateCardRequest(requestData: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
     }
 
     // MARK: - Система быстрых платежей, оплата по QR-коду
