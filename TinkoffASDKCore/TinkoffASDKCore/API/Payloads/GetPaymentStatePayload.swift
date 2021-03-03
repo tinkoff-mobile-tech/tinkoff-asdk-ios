@@ -42,7 +42,10 @@ public struct GetPaymentStatePayload: Decodable {
         }
     }
     
-    public init(paymentId: Int64, amount: Int64, orderId: String, status: PaymentStatus) {
+    public init(paymentId: Int64,
+                amount: Int64,
+                orderId: String,
+                status: PaymentStatus) {
         self.paymentId = paymentId
         self.amount = amount
         self.orderId = orderId
