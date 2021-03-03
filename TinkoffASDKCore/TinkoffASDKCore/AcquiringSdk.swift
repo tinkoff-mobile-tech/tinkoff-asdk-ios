@@ -71,35 +71,6 @@ public final class AcquiringSdk: NSObject {
         networkTransport.logger = logger
     }
 
-    private func tokenParams(request: AcquiringRequestTokenParams & RequestOperation) -> JSONObject {
-        var tokenParams: JSONObject = [:]
-        tokenParams.updateValue(terminalKey, forKey: "TerminalKey")
-        tokenParams.updateValue(terminalPassword, forKey: "Password")
-        if let value = languageKey { tokenParams.updateValue(value, forKey: "Language") }
-
-        tokenParams.merge(request.tokenParams()) { (_, new) -> JSONValue in new }
-
-        let tokenSring: String = tokenParams.sorted(by: { (arg1, arg2) -> Bool in
-            arg1.key < arg2.key
-        }).map { (item) -> String? in
-            String(describing: item.value)
-        }.compactMap { $0 }.joined()
-
-        tokenParams.updateValue(tokenSring.sha256(), forKey: "Token")
-        tokenParams.removeValue(forKey: "Password")
-
-        return tokenParams
-    }
-
-    /// Обновляем информцию о реквизитах карты, добавляем шифрование
-    private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
-        if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = try? RSAEncryptor().encrypt(string: cardData, publicKey: publicKey) {
-                parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-            }
-        }
-    }
-
     /// Получить IP адресс
     public func networkIpAddress() -> IPAddress? {
         return coreBuilder.ipAddressProvider().ipAddress
