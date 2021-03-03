@@ -1,6 +1,6 @@
 //
 //
-//  GetQrPayload.swift
+//  GetStaticQrPayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,30 +20,20 @@
 
 import Foundation
 
-public struct GetQrPayload: Decodable {
+public struct GetStaticQrPayload: Decodable {
     public let qrCodeData: String
-    public let orderId: String
-    public let paymentId: Int64
     
     private enum CodingKeys: CodingKey {
         case qrCodeData
-        case orderId
-        case paymentId
         
         var stringValue: String {
             switch self {
             case .qrCodeData: return APIConstants.Keys.qrCodeData
-            case .orderId: return APIConstants.Keys.orderId
-            case .paymentId: return APIConstants.Keys.paymentId
             }
         }
     }
     
-    public init(qrCodeData: String,
-                orderId: String,
-                paymentId: Int64) {
+    public init(qrCodeData: String) {
         self.qrCodeData = qrCodeData
-        self.orderId = orderId
-        self.paymentId = paymentId
     }
 }

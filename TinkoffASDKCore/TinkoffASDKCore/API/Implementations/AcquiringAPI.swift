@@ -34,10 +34,10 @@ final class AcquiringAPI: API {
 
     func performRequest<Request: APIRequest>(_ request: Request,
                                              completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) -> Cancellable {
-        return networkClient.performRequest(request) { [weak self] response in
+        return networkClient.performRequest(request) { response in
             do {
                 let data = try response.result.get()
-                self?.handleResponseData(data,
+                self.handleResponseData(data,
                                          for: request,
                                          completion: completion)
             } catch {

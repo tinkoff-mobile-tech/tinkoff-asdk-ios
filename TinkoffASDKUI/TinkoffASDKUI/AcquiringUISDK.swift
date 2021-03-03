@@ -467,7 +467,7 @@ public class AcquiringUISDK: NSObject {
         }
     }
 
-    private func getStaticQRCode(completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void) {
+    private func getStaticQRCode(completionHandler: @escaping (_ result: Result<GetStaticQrPayload, Error>) -> Void) {
         _ = acquiringSdk.paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType.imageSVG, completionHandler: { response in
             completionHandler(response)
         })

@@ -20,7 +20,7 @@
 import Foundation
 
 /// Тип возвращаемых данных для генерации QR-кода
-public enum PaymentInvoiceSBPSourceType: String {
+public enum PaymentInvoiceSBPSourceType: String, Codable {
     /// `IMAGE` – В ответе возвращается SVG изображение QR-кода
     case imageSVG = "IMAGE"
 
