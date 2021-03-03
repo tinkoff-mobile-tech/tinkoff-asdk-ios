@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  APIVersion.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,14 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
+enum APIVersion {
+    case v1
+    case v2
+    
+    var path: String {
+        switch self {
+        case .v1: return "rest"
+        case .v2: return "v2"
+        }
     }
 }

@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  AcquiringSdkEnvironment+APIEnvironmentProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,8 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
+extension AcquiringSdkEnvironment: APIEnvironmentProvider {
+    var environment: AcquiringSdkEnvironment {
+        self
     }
 }

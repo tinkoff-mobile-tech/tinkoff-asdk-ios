@@ -21,5 +21,5 @@
 import Foundation
 
 protocol HTTPHostProvider {
-    var host: URL { get }
+    func host() throws -> URL
 }

@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  APITokenBuilder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,7 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
-    }
+protocol APITokenBuilder {
+    func buildToken(commonParameters: HTTPParameters,
+                    request: TokenProvidableAPIRequest?) -> String
 }

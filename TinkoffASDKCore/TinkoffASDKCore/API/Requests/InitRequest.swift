@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  InitRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,19 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
+struct InitRequest: APIRequest, TokenProvidableAPIRequest {
+    typealias Payload = InitPayload
+    
+    var requestPath: [String] { ["Init"] }
+    var httpMethod: HTTPMethod { .post }
+  
+    var parameters: HTTPParameters {
+        (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+    }
+
+    private let paymentInitData: PaymentInitData
+
+    init(paymentInitData: PaymentInitData) {
+        self.paymentInitData = paymentInitData
     }
 }

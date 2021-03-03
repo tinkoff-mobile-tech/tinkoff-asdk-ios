@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  API.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,7 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
-    }
+protocol API {
+    func performRequest<Request: APIRequest>(_ request: Request,
+                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void)
 }

@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  APIURLBuilder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,17 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
+struct APIURLBuilder {
+    enum Error: Swift.Error {
+        case failedToBuildAPIUrl
+    }
+    
+    func buildURL(environment: AcquiringSdkEnvironment) throws -> URL {
+        guard let environmentUrl = URL(string: "https://\(environment.rawValue)"),
+              let url = URL(string: environment.rawValue, relativeTo: environmentUrl) else {
+            throw Error.failedToBuildAPIUrl
+        }
+        
+        return url
     }
 }

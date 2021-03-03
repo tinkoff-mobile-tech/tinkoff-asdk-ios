@@ -1,6 +1,6 @@
 //
 //
-//  URL+HostProvider.swift
+//  APIResponseDecoder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,8 +20,6 @@
 
 import Foundation
 
-extension URL: HTTPHostProvider {
-    func host() throws -> URL {
-        return self
-    }
+protocol APIResponseDecoder {
+    func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload>
 }
