@@ -198,7 +198,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     }
 
     func myIpAddress() -> String? {
-        return IPAddressProvider.my()
+        return nil
     }
 
     func send<Operation: RequestOperation, Response: ResponseOperation>(operation: Operation, responseDelegate: NetworkTransportResponseDelegate? = nil, completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable {

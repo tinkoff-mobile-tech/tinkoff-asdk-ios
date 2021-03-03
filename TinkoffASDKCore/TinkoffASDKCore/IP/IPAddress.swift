@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol IPAddress {
+public protocol IPAddress {
     var stringValue: String { get }
     var fullStringValue: String { get }
     

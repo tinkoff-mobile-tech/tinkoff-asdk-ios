@@ -101,8 +101,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// Получить IP адресс
-    public func networkIpAddress() -> String? {
-        return networkTransport.myIpAddress()
+    public func networkIpAddress() -> IPAddress? {
+        return coreBuilder.ipAddressProvider().ipAddress
     }
 
     // MARK: - Платежи
