@@ -19,11 +19,11 @@
 
 import Foundation
 
-public final class Check3dsVersionRequest: PaymentFinishRequest {
-    override public var name: String {
-        return "Check3dsVersion"
-    }
-}
+//public final class Check3dsVersionRequest: PaymentFinishRequest {
+//    override public var name: String {
+//        return "Check3dsVersion"
+//    }
+//}
 
 public struct Checking3DSURLData {
     public var tdsServerTransID: String

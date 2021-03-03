@@ -162,20 +162,6 @@ class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
     }
 }
 
-public enum AttachCardStatus {
-    /// Требуется подтверждение 3DS v1.0
-    case needConfirmation3DS(Confirmation3DSData)
-
-    /// Требуется подтверждение 3DS v2.0
-    case needConfirmation3DSACS(Confirmation3DSDataACS)
-
-    /// Требуется подтвержить оплату указать сумму из смс для `requestKey`
-    case needConfirmationRandomAmount(String)
-
-    /// Успешная оплата
-    case done
-}
-
 public struct FinishAddCardResponse: ResponseOperation {
     public var success: Bool
     public var errorCode: Int
