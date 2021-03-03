@@ -1,6 +1,6 @@
 //
 //
-//  NetworkError.swift
+//  APIError.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,34 +17,40 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
-enum NetworkError: LocalizedError, CustomNSError {
-    case transportError(Error)
-    case serverError(statusCode: Int, data: Data?)
-    case noData
+enum APIError: LocalizedError, CustomNSError {
+    case invalidResponse
+    case failure(APIFailureError)
+    
+    // MARK: - CustomNSError
     
     var errorCode: Int {
         switch self {
-        case let .transportError(error):
-            return (error as NSError).code
-        case let .serverError(statusCode, _):
-            return statusCode
-        case .noData:
+        case .invalidResponse:
             return 0
+        case let .failure(apiFailureError):
+            return apiFailureError.errorCode
         }
     }
     
-    var errorDescription: String? {
-        let description: String
-        switch self {
-        case let .transportError(error):
-            description = "\(Localization.NetworkError.transportError): \(error.localizedDescription)"
-        case let .serverError(statusCode, _):
-            description = "\(Localization.NetworkError.serverError): \(statusCode)"
-        case .noData:
-            description = "\(Localization.NetworkError.emptyBody)"
+    var errorUserInfo: [String : Any] {
+        guard let errorDescription = errorDescription else {
+            return [:]
         }
-        return description
+        return [NSLocalizedDescriptionKey: errorDescription]
+    }
+    
+    // MARK: - LocalizedError
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidResponse:
+            return Localization.APIError.invalidResponse
+        case let .failure(apiFailureError):
+            return apiFailureError.errorDescription
+        }
     }
 }
+
