@@ -262,7 +262,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        return try networkTransport.createChecking3DSURL(requestData: data)
+        return try coreBuilder.threeDSURLRequestBuilder().build3DSCheckURLRequest(requestData: data)
     }
 
     /// callback URL для завершения 3ds подтверждения
@@ -275,9 +275,5 @@ public final class AcquiringSdk: NSObject {
 
     public func confirmation3DSTerminationV2URL() -> URL {
         return networkTransport.confirmation3DSTerminationV2URL
-    }
-
-    public func confirmation3DSCompleteV2URL() -> URL {
-        return networkTransport.complete3DSMethodV2URL
     }
 }

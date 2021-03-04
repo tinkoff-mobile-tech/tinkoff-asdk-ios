@@ -23,13 +23,13 @@ import Foundation
 struct ThreeDSURLBuilder {
     
     enum Three3DSURLType: String {
-        case ThreeDSCheckNotificationURL = "Complete3DSMethodv2"
+        case threeDSCheckNotificationURL = "Complete3DSMethodv2"
         case confirmation3DSTerminationURL = "Submit3DSAuthorization"
         case confirmation3DSTerminationV2URL = "Submit3DSAuthorizationV2"
         
         var apiVerion: APIVersion {
             switch self {
-            case .ThreeDSCheckNotificationURL: return .v2
+            case .threeDSCheckNotificationURL: return .v2
             case .confirmation3DSTerminationURL: return .v1
             case .confirmation3DSTerminationV2URL: return .v2
             }

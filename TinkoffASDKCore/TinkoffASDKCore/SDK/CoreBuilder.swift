@@ -42,6 +42,14 @@ struct CoreBuilder {
     func ipAddressProvider() -> IPAddressProvider {
         return IPAddressProvider(factory: IPAddressFactory())
     }
+    
+    func threeDSURLBuilder() -> ThreeDSURLBuilder {
+        return ThreeDSURLBuilder(apiHostProvider: buildAPIHostProvider())
+    }
+    
+    func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {
+        return ThreeDSURLRequestBuilder(threeDSURLBuilder: threeDSURLBuilder())
+    }
 }
 
 private extension CoreBuilder {

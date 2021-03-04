@@ -190,8 +190,8 @@ final class AcquaringNetworkTransport: NetworkTransport {
         var request = URLRequest(url: requestURL)
         request.httpMethod = "POST"
         setDefaultHTTPHeaders(for: &request)
-        //
-        let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransID)\",\"threeDSMethodNotificationURL\":\"\(requestData.notificationURL)\"}"
+        
+        let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransID)\"}"
         request.httpBody = try JSONSerialization.data(withJSONObject: ["threeDSMethodData": Data(base64Encoded: parameterValue)], options: [.sortedKeys])
 
         return request
