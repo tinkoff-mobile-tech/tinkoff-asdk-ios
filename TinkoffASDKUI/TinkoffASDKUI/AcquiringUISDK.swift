@@ -943,7 +943,7 @@ public class AcquiringUISDK: NSObject {
                     self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, presenter: self.acquiringView)
                     // собираем информацию о девайсе
                     let screenSize = UIScreen.main.bounds.size
-                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
+                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: (try? self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString) ?? "",
                                                       languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
                                                       screenWidth: Int(screenSize.width),
                                                       screenHeight: Int(screenSize.height))
@@ -1420,8 +1420,8 @@ extension AcquiringUISDK: WKNavigationDelegate {
                 return
             }
 
-            if stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationURL().absoluteString ?? "") ||
-                stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString ?? "")
+            if stringValue.hasSuffix((try? self?.acquiringSdk.confirmation3DSTerminationURL().absoluteString) ?? "") ||
+                stringValue.hasSuffix((try? self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString) ?? "")
             {
                 webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { value, error in
                     // debugPrint("document.getElementsByTagName('pre')[0].innerText = \(value ?? "" )")

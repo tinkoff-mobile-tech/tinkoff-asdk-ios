@@ -27,9 +27,47 @@ final class ThreeDSURLRequestBuilder {
     }
     
     let threeDSURLBuilder: ThreeDSURLBuilder
+    let deviceInfoProvider: DeviceInfoProvider
     
-    init(threeDSURLBuilder: ThreeDSURLBuilder) {
+    init(threeDSURLBuilder: ThreeDSURLBuilder,
+         deviceInfoProvider: DeviceInfoProvider) {
         self.threeDSURLBuilder = threeDSURLBuilder
+        self.deviceInfoProvider = deviceInfoProvider
+    }
+    
+    func buildConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS,
+                                     version: String) throws -> URLRequest {
+        guard let url = URL(string: requestData.acsUrl) else {
+            throw Error.incorrectThreeDSMethodURL(requestData.acsUrl)
+        }
+        
+        let creqJson = [APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransId,
+                        APIConstants.Keys.acsTransID: requestData.acsTransId,
+                        APIConstants.Keys.messageVersion: version,
+                        APIConstants.Keys.challengeWindowSize: "05",
+                        APIConstants.Keys.messageType: "CReq"]
+        let creq = try JSONSerialization.data(withJSONObject: creqJson,
+                                              options: .sortedKeys).base64EncodedString()
+        
+        return request(url: url, body: "\(APIConstants.Keys.creq)=\(creq)".data(using: .utf8))
+    }
+    
+    func buildConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest {
+        guard let url = URL(string: requestData.acsUrl) else {
+            throw Error.incorrectThreeDSMethodURL(requestData.acsUrl)
+        }
+        
+        let termUrl = (try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString) ?? ""
+        let parameters = [APIConstants.Keys.paReq: requestData.pareq,
+                          APIConstants.Keys.md: requestData.md,
+                          APIConstants.Keys.termUrl: termUrl]
+        
+        let allowedCharacterSet = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
+        let bodyString = parameters.map {
+            "\($0.key)=\("\($0.value)".addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? $0.value)"
+        }.joined(separator: "&")
+        
+        return request(url: url, body: bodyString.data(using: .utf8))
     }
     
     func build3DSCheckURLRequest(requestData: Checking3DSURLData) throws -> URLRequest {
@@ -37,17 +75,31 @@ final class ThreeDSURLRequestBuilder {
             throw Error.incorrectThreeDSMethodURL(requestData.threeDSMethodURL)
         }
         
-        var request = URLRequest(url: check3DSMethodURL)
-        request.httpMethod = HTTPMethod.post.rawValue
-        
         let threeDSMethodNotificationURL = (try? threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL).absoluteString) ?? ""
-        let threeDSMethodJson = ["threeDSServerTransID": requestData.tdsServerTransID,
-                                 "threeDSMethodNotificationURL": threeDSMethodNotificationURL]
+        let threeDSMethodJson = [APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransID,
+                                 APIConstants.Keys.threeDSMethodNotificationURL: threeDSMethodNotificationURL]
         let threeDSMethodData = try JSONSerialization.data(withJSONObject: threeDSMethodJson,
                                                            options: .sortedKeys).base64EncodedString()
         
-        request = try JSONEncoding().encode(request,
-                                            parameters: ["threeDSMethodData": threeDSMethodData])
+        return request(url: check3DSMethodURL, body: "\(APIConstants.Keys.threeDSMethodData)=\(threeDSMethodData)".data(using: .utf8))
+    }
+}
+
+private extension ThreeDSURLRequestBuilder {
+    func request(url: URL, body: Data?) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post.rawValue
+        request.httpBody = body
+        updateHeader(request: &request)
         return request
+    }
+    
+    
+    func updateHeader(request: inout URLRequest) {
+        request.setValue("application/x-www-form-urlencoded;", forHTTPHeaderField: "Content-Type")
+        request.setValue("text/html,application/xhtml+xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
+        
+        let userAgentString = "\(deviceInfoProvider.model)/\(deviceInfoProvider.systemName)/\(deviceInfoProvider.systemVersion)/TinkoffAcquiringSDK"
+        request.setValue(userAgentString, forHTTPHeaderField: "User-Agent")
     }
 }

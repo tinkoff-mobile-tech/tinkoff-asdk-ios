@@ -60,7 +60,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     private let apiPathV1: String = "rest"
     private let session: URLSession
     private let serializationFormat = JSONSerializationFormat.self
-    private let deviceInfo: DeviceInfo
+    private let deviceInfo: DeviceInfoProvider
 
     /// Логирование работы, реализаия `ASDKApiLoggerDelegate`
     weak var logger: LoggerDelegate?
@@ -70,7 +70,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// - Parameters:
     ///   - url: путь к серверу **Tinkoff Acquaring API**
     ///   - session: конфигурация URLSession по умолчанию используеться `URLSession.shared`,
-    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo) {
+    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfoProvider) {
         self.urlDomain = urlDomain
         self.session = session
         self.deviceInfo = deviceInfo

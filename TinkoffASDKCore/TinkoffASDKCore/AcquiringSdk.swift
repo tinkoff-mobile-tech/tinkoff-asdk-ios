@@ -32,7 +32,6 @@ public final class AcquiringSdk: NSObject {
     
     public var fpsEnabled: Bool = false
 
-    private var networkTransport: NetworkTransport
     private var terminalKey: String
     private var terminalPassword: String
     public private(set) var languageKey: AcquiringSdkLanguage?
@@ -54,21 +53,8 @@ public final class AcquiringSdk: NSObject {
         terminalKey = configuration.credential.terminalKey
         terminalPassword = configuration.credential.password
         
-        let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/")!
-        let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
-                                    systemName: UIDevice.current.systemName,
-                                    systemVersion: UIDevice.current.systemVersion)
-        
-        let sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
-        sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-        
-        networkTransport = AcquaringNetworkTransport(urlDomain: url,
-                                                     session: URLSession(configuration: sessionConfiguration),
-                                                     deviceInfo: deviceInfo)
         languageKey = configuration.language
         logger = configuration.logger
-        networkTransport.logger = logger
     }
 
     /// Получить IP адресс
@@ -242,7 +228,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        return try networkTransport.createConfirmation3DSRequest(requestData: data)
+        return try coreBuilder.threeDSURLRequestBuilder().buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтвержения платежа 3ds формы
@@ -252,9 +238,10 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
-        return try networkTransport.createConfirmation3DSRequestACS(requestData: data, messageVersion: messageVersion)
+        return try coreBuilder.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data,
+                                                                                         version: messageVersion)
     }
-
+    
     /// Проверяет параметры для 3ds формы
     ///
     /// - Parameters:
@@ -269,11 +256,11 @@ public final class AcquiringSdk: NSObject {
     ///
     /// - Returns:
     ///   - URL
-    public func confirmation3DSTerminationURL() -> URL {
-        return networkTransport.confirmation3DSTerminationURL
+    public func confirmation3DSTerminationURL() throws -> URL {
+        return try coreBuilder.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationURL)
     }
 
-    public func confirmation3DSTerminationV2URL() -> URL {
-        return networkTransport.confirmation3DSTerminationV2URL
+    public func confirmation3DSTerminationV2URL() throws -> URL {
+        return try coreBuilder.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
     }
 }

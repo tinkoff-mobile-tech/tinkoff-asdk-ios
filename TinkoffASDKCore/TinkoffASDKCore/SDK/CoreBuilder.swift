@@ -48,7 +48,12 @@ struct CoreBuilder {
     }
     
     func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {
-        return ThreeDSURLRequestBuilder(threeDSURLBuilder: threeDSURLBuilder())
+        return ThreeDSURLRequestBuilder(threeDSURLBuilder: threeDSURLBuilder(),
+                                        deviceInfoProvider: deviceInfoProvider())
+    }
+    
+    func deviceInfoProvider() -> DeviceInfoProvider {
+        return DefaultDeviceInfoProvider()
     }
 }
 

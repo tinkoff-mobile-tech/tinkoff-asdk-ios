@@ -21,10 +21,22 @@ import CommonCrypto
 import Foundation
 import Security
 
-struct DeviceInfo {
-    var model: String // = UIDevice.current.localizedModel
-    var systemName: String // = UIDevice.current.systemName
-    var systemVersion: String // = UIDevice.current.systemVersion
+protocol DeviceInfoProvider {
+    var model: String { get }
+    var systemName: String { get }
+    var systemVersion: String { get }
+}
+
+struct DefaultDeviceInfoProvider: DeviceInfoProvider {
+    var model: String {
+        UIDevice.current.localizedModel
+    }
+    var systemName: String {
+        UIDevice.current.systemName
+    }
+    var systemVersion: String {
+        UIDevice.current.systemVersion
+    }
 }
 
 // MARK: URL Session Conformance
