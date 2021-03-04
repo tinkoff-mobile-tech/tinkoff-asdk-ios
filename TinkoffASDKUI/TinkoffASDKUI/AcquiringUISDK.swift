@@ -119,6 +119,7 @@ public class AcquiringUISDK: NSObject {
     private weak var cardsListView: CardListDataSourceStatusListener?
     private var acquiringViewConfiguration: AcquiringViewConfiguration?
     private var acquiringConfiguration: AcquiringConfiguration?
+    private let uiSDKConfiguration: AcquiringUISDKConfiguration
     //
     private var startPaymentInitData: PaymentInitData?
     private var paymentInitPayload: InitPayload?
@@ -139,8 +140,10 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
-    public init(configuration: AcquiringSdkConfiguration) throws {
-        acquiringSdk = try AcquiringSdk(configuration: configuration)
+    public init(acquiringSdkConfiguration: AcquiringSdkConfiguration,
+                uiSDKConfiguration: AcquiringUISDKConfiguration) throws {
+        acquiringSdk = try AcquiringSdk(configuration: acquiringSdkConfiguration)
+        self.uiSDKConfiguration = uiSDKConfiguration
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
 
@@ -262,7 +265,7 @@ public class AcquiringUISDK: NSObject {
 
     /// Проверить есть ли возможность оплаты с помощью СБП
     public func canMakePaymentsSBP() -> Bool {
-        return acquiringSdk.fpsEnabled
+        return uiSDKConfiguration.fpsEnabled
     }
 
     public func presentPaymentSbpQrImage(on presentingViewController: UIViewController,

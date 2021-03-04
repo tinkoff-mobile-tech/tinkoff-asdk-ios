@@ -30,12 +30,7 @@ public final class AcquiringSdk: NSObject {
     private let coreBuilder: CoreBuilder
     private let api: API
     
-    public var fpsEnabled: Bool = false
-
-    private var terminalKey: String
-    private var terminalPassword: String
     public private(set) var languageKey: AcquiringSdkLanguage?
-    private var logger: LoggerDelegate?
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
@@ -48,13 +43,7 @@ public final class AcquiringSdk: NSObject {
         coreBuilder = CoreBuilder(configuration: configuration)
         api = coreBuilder.buildAPI()
         
-        fpsEnabled = configuration.fpsEnabled
-
-        terminalKey = configuration.credential.terminalKey
-        terminalPassword = configuration.credential.password
-        
         languageKey = configuration.language
-        logger = configuration.logger
     }
 
     /// Получить IP адресс

@@ -118,9 +118,11 @@ class CartTableViewController: UITableViewController {
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-            acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
+            
+            let uiSDKConfiguration = AcquiringUISDKConfiguration(fpsEnabled: AppSetting.shared.paySBP)
 
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+            if let sdk = try? AcquiringUISDK(acquiringSdkConfiguration: acquiringSDKConfiguration,
+                                             uiSDKConfiguration: uiSDKConfiguration) {
                 viewController.sdk = sdk
                 viewController.customerKey = StageTestData.customerKey
             }

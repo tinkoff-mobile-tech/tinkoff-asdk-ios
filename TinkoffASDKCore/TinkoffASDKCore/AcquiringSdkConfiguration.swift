@@ -51,8 +51,6 @@ public struct AcquiringSdkCredential {
 
 /// Кофигурация для экземпляра SDK
 public class AcquiringSdkConfiguration: NSObject {
-    public var fpsEnabled: Bool = false
-
     public private(set) var credential: AcquiringSdkCredential
 
     public private(set) var serverEnvironment: AcquiringSdkEnvironment

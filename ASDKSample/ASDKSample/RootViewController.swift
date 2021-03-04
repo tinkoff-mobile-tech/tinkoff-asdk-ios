@@ -138,12 +138,15 @@ class RootViewController: UITableViewController {
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
                                                       password: StageTestData.terminalPassword,
                                                       publicKey: StageTestData.testPublicKey)
-
+            
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
-
+            
+            let uiSDKConfiguration = AcquiringUISDKConfiguration(fpsEnabled: AppSetting.shared.paySBP)
+            
+            if let sdk = try? AcquiringUISDK(acquiringSdkConfiguration: acquiringSDKConfiguration,
+                                             uiSDKConfiguration: uiSDKConfiguration) {
+                
                 let viewConfigration = AcquiringViewConfiguration()
                 viewConfigration.viewTitle = NSLocalizedString("title.qrcode", comment: "QR-код")
 
@@ -167,9 +170,11 @@ class RootViewController: UITableViewController {
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-            acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
+            
+            let uiSDKConfiguration = AcquiringUISDKConfiguration(fpsEnabled: AppSetting.shared.paySBP)
 
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+            if let sdk = try? AcquiringUISDK(acquiringSdkConfiguration: acquiringSDKConfiguration,
+                                             uiSDKConfiguration: uiSDKConfiguration) {
                 viewController.scaner = self
                 viewController.sdk = sdk
                 viewController.customerKey = StageTestData.customerKey
@@ -224,8 +229,11 @@ class RootViewController: UITableViewController {
         }
 
         cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
+        
+        let uiSDKConfiguration = AcquiringUISDKConfiguration(fpsEnabled: AppSetting.shared.paySBP)
 
-        if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+        if let sdk = try? AcquiringUISDK(acquiringSdkConfiguration: acquiringSDKConfiguration,
+                                         uiSDKConfiguration: uiSDKConfiguration) {
             // открыть экран сиска карт
             addCardListView(sdk, customerKey, cardListViewConfigration)
             // или открыть экран добавлени карты

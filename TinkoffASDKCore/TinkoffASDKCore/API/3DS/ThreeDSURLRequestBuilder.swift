@@ -23,7 +23,7 @@ import Foundation
 final class ThreeDSURLRequestBuilder {
     
     enum Error: Swift.Error {
-        case incorrectThreeDSMethodURL(String)
+        case incorrectUrl(String)
     }
     
     let threeDSURLBuilder: ThreeDSURLBuilder
@@ -38,7 +38,7 @@ final class ThreeDSURLRequestBuilder {
     func buildConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS,
                                      version: String) throws -> URLRequest {
         guard let url = URL(string: requestData.acsUrl) else {
-            throw Error.incorrectThreeDSMethodURL(requestData.acsUrl)
+            throw Error.incorrectUrl(requestData.acsUrl)
         }
         
         let creqJson = [APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransId,
@@ -54,7 +54,7 @@ final class ThreeDSURLRequestBuilder {
     
     func buildConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest {
         guard let url = URL(string: requestData.acsUrl) else {
-            throw Error.incorrectThreeDSMethodURL(requestData.acsUrl)
+            throw Error.incorrectUrl(requestData.acsUrl)
         }
         
         let termUrl = (try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString) ?? ""
@@ -72,7 +72,7 @@ final class ThreeDSURLRequestBuilder {
     
     func build3DSCheckURLRequest(requestData: Checking3DSURLData) throws -> URLRequest {
         guard let check3DSMethodURL = URL(string: requestData.threeDSMethodURL) else {
-            throw Error.incorrectThreeDSMethodURL(requestData.threeDSMethodURL)
+            throw Error.incorrectUrl(requestData.threeDSMethodURL)
         }
         
         let threeDSMethodNotificationURL = (try? threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL).absoluteString) ?? ""
