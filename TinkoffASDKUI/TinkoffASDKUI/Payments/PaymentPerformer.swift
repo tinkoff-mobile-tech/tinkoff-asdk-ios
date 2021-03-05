@@ -20,11 +20,33 @@
 
 import TinkoffASDKCore
 
+protocol PaymentPerformerDataSource: AnyObject {
+    func hiddenWebViewToCollect3DSData() -> UIWebView?
+    func viewControllerToPresent() -> UIViewController
+}
+
+protocol PaymentPerformerDelegate: AnyObject {
+    func paymentPerformer(_ performer: PaymentPerformer,
+                          didFinishPayment: Payment,
+                          with state: GetPaymentStatePayload,
+                          cardId: String?,
+                          rebillId: String?)
+    
+    func paymentPerformer(_ performer: PaymentPerformer,
+                          didFailed error: Error)
+}
+
 final class PaymentPerformer {
+    private let acquiringSDK: AcquiringSdk
     private let paymentFactory: PaymentFactory
     private var payments = [Payment]()
     
-    init(paymentFactory: PaymentFactory) {
+    weak var dataSource: PaymentPerformerDataSource?
+    weak var delegate: PaymentPerformerDelegate?
+    
+    init(acquiringSDK: AcquiringSdk,
+         paymentFactory: PaymentFactory) {
+        self.acquiringSDK = acquiringSDK
         self.paymentFactory = paymentFactory
     }
     
@@ -38,7 +60,8 @@ final class PaymentPerformer {
     func performInitPayment(paymentOptions: PaymentOptions,
                             paymentSource: PaymentSourceData) {
         let payment = paymentFactory.createPayment(paymentSource: paymentSource,
-                                                   paymentFlow: .full(paymentOptions: paymentOptions))
+                                                   paymentFlow: .full(paymentOptions: paymentOptions),
+                                                   paymentDelegate: self)
         payment.start()
         payments.append(payment)
     }
@@ -48,8 +71,60 @@ final class PaymentPerformer {
                               customerOptions: CustomerOptions) {
         let payment = paymentFactory.createPayment(paymentSource: paymentSource,
                                                    paymentFlow: .finish(paymentId: paymentId,
-                                                                        customerOptions: customerOptions))
+                                                                        customerOptions: customerOptions),
+                                                   paymentDelegate: self)
         payment.start()
         payments.append(payment)
+    }
+}
+
+extension PaymentPerformer: PaymentDelegate {
+    func paymentDidFinish(_ payment: Payment,
+                          with state: GetPaymentStatePayload,
+                          cardId: String?,
+                          rebillId: String?) {
+        delegate?.paymentPerformer(self,
+                                   didFinishPayment: payment,
+                                   with: state,
+                                   cardId: cardId,
+                                   rebillId: rebillId)
+    }
+    
+    func paymentDidFailed(_ payment: Payment,
+                          with error: Error) {
+        delegate?.paymentPerformer(self, didFailed: error)
+    }
+    
+    func payment(_ payment: Payment,
+                 needToCollect3DSData checking3DSURLData: Checking3DSURLData,
+                 completion: @escaping (DeviceInfoParams) -> Void) {
+        guard let webView = dataSource?.hiddenWebViewToCollect3DSData(),
+              let request = try? acquiringSDK.createChecking3DSURL(data: checking3DSURLData) else {
+            return
+        }
+        
+        webView.loadRequest(request)
+        
+        // TODO: Device Info and call completion
+    }
+    
+    func payment(_ payment: Payment,
+                 need3DSConfirmation data: Confirmation3DSData,
+                 completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
+        guard let viewController = dataSource?.viewControllerToPresent() else {
+            fatalError()
+        }
+        
+        // TODO: Present web view
+    }
+    
+    func payment(_ payment: Payment,
+                 need3DSConfirmationACS data: Confirmation3DSDataACS,
+                 completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
+        guard let viewController = dataSource?.viewControllerToPresent() else {
+            fatalError()
+        }
+        
+        // TODO: Present web view
     }
 }

@@ -28,12 +28,14 @@ struct PaymentFactory {
     }
     
     func createPayment(paymentSource: PaymentSourceData,
-                       paymentFlow: PaymentFlow) -> Payment {
+                       paymentFlow: PaymentFlow,
+                       paymentDelegate: PaymentDelegate) -> Payment {
         switch paymentSource {
         case .cardNumber, .savedCard, .paymentData:
             return CardPayment(acquiringSDK: acquiringSDK,
                                paymentSource: paymentSource,
-                               paymentFlow: paymentFlow)
+                               paymentFlow: paymentFlow,
+                               delegate: paymentDelegate)
         case .parentPayment:
             print("return Charge")
             fatalError()

@@ -25,12 +25,24 @@ enum PaymentFlow {
     case finish(paymentId: PaymentId, customerOptions: CustomerOptions)
 }
 
+protocol PaymentDelegate: AnyObject {
+    func paymentDidFinish(_ payment: Payment,
+                          with state: GetPaymentStatePayload,
+                          cardId: String?,
+                          rebillId: String?)
+    func paymentDidFailed(_ payment: Payment,
+                          with error: Error)
+    func payment(_ payment: Payment,
+                 needToCollect3DSData checking3DSURLData: Checking3DSURLData,
+                 completion: @escaping (DeviceInfoParams) -> Void)
+    func payment(_ payment: Payment,
+                 need3DSConfirmation data: Confirmation3DSData,
+                 completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
+    func payment(_ payment: Payment,
+                 need3DSConfirmationACS data: Confirmation3DSDataACS,
+                 completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
+}
+
 protocol Payment: Cancellable {
-    var onSuccess: ((_ state: GetPaymentStatePayload, _ cardId: String?, _ rebillId: String?) -> Void)? { get set }
-    var needToCollect3DSData: ((Checking3DSURLData) -> DeviceInfoParams)? { get set }
-    var need3DSConfirmation: ((Confirmation3DSData) -> GetPaymentStatePayload)? { get set }
-    var need3DSConfirmationACS: ((Confirmation3DSDataACS) -> GetPaymentStatePayload)? { get set }
-    var onFailed: ((Error) -> Void)? { get set }
-    
     func start()
 }
