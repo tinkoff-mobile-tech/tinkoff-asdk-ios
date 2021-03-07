@@ -176,6 +176,7 @@ public final class AcquiringSdk: NSObject {
     // MARK: - Работа с картами
     
     ///
+    /// Получение всех сохраненных карт клиента
     /// - Parameters:
     ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
@@ -187,8 +188,9 @@ public final class AcquiringSdk: NSObject {
     }
         
     ///
+    /// Инициирует привязку карты к клиенту
     /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
+    ///   - data: `InitAddCardData` информация о клиенте и типе привязки карты
     ///   - completionHandler: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     public func addCardInit(data: InitAddCardData,
@@ -198,8 +200,9 @@ public final class AcquiringSdk: NSObject {
     }
     
     ///
+    /// Завершает привязку карты к клиенту
     /// - Parameters:
-    ///   - data: `FinishAddCardData` информация о клиенте и типе новой карты
+    ///   - data: `FinishAddCardData` информация о карте
     ///   - completionHandler: результат операции `AttachCardPayload` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     public func addCardFinish(data: FinishAddCardData,
