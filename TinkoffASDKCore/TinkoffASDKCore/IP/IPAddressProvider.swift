@@ -20,6 +20,7 @@
 
 import Foundation
 
+/// Позволяет получить текущий ip-адресс девайса
 public struct IPAddressProvider {
     var ipAddress: IPAddress? {
         return getDeviceIPAddresses().first

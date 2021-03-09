@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Протокол для общего взаимодействия с ip-адресом
 public protocol IPAddress {
     var stringValue: String { get }
     var fullStringValue: String { get }
