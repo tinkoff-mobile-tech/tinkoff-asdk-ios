@@ -30,7 +30,7 @@ public final class AcquiringSdk: NSObject {
     private let coreAssembly: CoreAssembly
     private let api: API
     
-    public private(set) var languageKey: AcquiringSdkLanguage?
+    public private(set) var languageKey: AcquiringSdkLanguage
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
@@ -43,7 +43,7 @@ public final class AcquiringSdk: NSObject {
         coreAssembly = CoreAssembly(configuration: configuration)
         api = coreAssembly.buildAPI()
         
-        languageKey = configuration.language
+        languageKey = configuration.language ?? .ru
     }
 
     /// Получить IP адресс
@@ -259,5 +259,9 @@ public final class AcquiringSdk: NSObject {
     
     public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
         return coreAssembly.threeDSWebViewHandler()
+    }
+    
+    public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
+        return coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize, language: languageKey)
     }
 }

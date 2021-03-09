@@ -19,10 +19,11 @@
 
 
 import TinkoffASDKCore
+import WebKit
 
 protocol PaymentPerformerDataSource: AnyObject {
-    func hiddenWebViewToCollect3DSData() -> UIWebView?
-    func viewControllerToPresent() -> UIViewController
+    func hiddenWebViewToCollect3DSData() -> WKWebView
+    func presentingViewControllerToPresent3DS() -> UIViewController
 }
 
 protocol PaymentPerformerDelegate: AnyObject {
@@ -36,28 +37,41 @@ protocol PaymentPerformerDelegate: AnyObject {
                           didFailed error: Error)
 }
 
-final class PaymentController: NSObject {
+final class PaymentController {
+    
+    // MARK: - Dependencies
+    
     private let acquiringSDK: AcquiringSdk
     private let paymentFactory: PaymentFactory
     private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
-    private var payment: Payment?
-    
-    private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
+    private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
     
     weak var dataSource: PaymentPerformerDataSource?
     weak var delegate: PaymentPerformerDelegate?
     
+    // MARK: - State
+    
+    private var payment: Payment?
+    
+    private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
+    
+    // MARK: - Init
+    
     init(acquiringSDK: AcquiringSdk,
          paymentFactory: PaymentFactory,
-         threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>) {
+         threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
+         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider) {
         self.acquiringSDK = acquiringSDK
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
+        self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
     }
     
     deinit {
         payment?.cancel()
     }
+    
+    // MARK: - Payments
     
     func performInitPayment(paymentOptions: PaymentOptions,
                             paymentSource: PaymentSourceData) {
@@ -133,7 +147,7 @@ private extension PaymentController {
             if #available(iOS 13.0, *) {
                 navigationController.isModalInPresentation = true
             }
-            self.dataSource?.viewControllerToPresent().present(navigationController, animated: true, completion: nil)
+            self.dataSource?.presentingViewControllerToPresent3DS().present(navigationController, animated: true, completion: nil)
             self.threeDSViewController = threeDSViewController
         }
     }
@@ -161,21 +175,26 @@ extension PaymentController: PaymentDelegate {
     
     func paymentDidFailed(_ payment: Payment,
                           with error: Error) {
-        threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.paymentPerformer(self, didFailed: error)
-        })
+        DispatchQueue.main.async {
+            self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.paymentPerformer(self, didFailed: error)
+            })
+        }
     }
     
     func payment(_ payment: Payment,
                  needToCollect3DSData checking3DSURLData: Checking3DSURLData,
                  completion: @escaping (DeviceInfoParams) -> Void) {
-        guard let webView = dataSource?.hiddenWebViewToCollect3DSData(),
-              let request = try? acquiringSDK.createChecking3DSURL(data: checking3DSURLData) else {
-            return
+        DispatchQueue.main.async {
+            guard let webView = self.dataSource?.hiddenWebViewToCollect3DSData(),
+                  let request = try? self.acquiringSDK.createChecking3DSURL(data: checking3DSURLData) else {
+                return
+            }
+            
+            webView.load(request)
+            completion(self.threeDSDeviceParamsProvider.deviceInfoParams)
         }
-        
-        webView.loadRequest(request)
     }
     
     func payment(_ payment: Payment,
