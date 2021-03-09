@@ -119,6 +119,7 @@ public class AcquiringUISDK: NSObject {
     private weak var cardsListView: CardListDataSourceStatusListener?
     private var acquiringViewConfiguration: AcquiringViewConfiguration?
     private var acquiringConfiguration: AcquiringConfiguration?
+    private let uiSDKConfiguration: AcquiringUISDKConfiguration
     //
     private var startPaymentInitData: PaymentInitData?
     private var paymentInitPayload: InitPayload?
@@ -139,8 +140,10 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
-    public init(configuration: AcquiringSdkConfiguration) throws {
-        acquiringSdk = try AcquiringSdk(configuration: configuration)
+    public init(acquiringSdkConfiguration: AcquiringSdkConfiguration,
+                uiSDKConfiguration: AcquiringUISDKConfiguration) throws {
+        acquiringSdk = try AcquiringSdk(configuration: acquiringSdkConfiguration)
+        self.uiSDKConfiguration = uiSDKConfiguration
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
 
@@ -262,7 +265,7 @@ public class AcquiringUISDK: NSObject {
 
     /// Проверить есть ли возможность оплаты с помощью СБП
     public func canMakePaymentsSBP() -> Bool {
-        return acquiringSdk.fpsEnabled
+        return uiSDKConfiguration.fpsEnabled
     }
 
     public func presentPaymentSbpQrImage(on presentingViewController: UIViewController,
@@ -940,10 +943,10 @@ public class AcquiringUISDK: NSObject {
                 // сбор информации для прохождения 3DS v2
                 if let tdsServerTransID = checkResult.tdsServerTransID, let threeDSMethodURL = checkResult.threeDSMethodURL {
                     // вызываем web view для проверки девайса
-                    self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
+                    self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, presenter: self.acquiringView)
                     // собираем информацию о девайсе
                     let screenSize = UIScreen.main.bounds.size
-                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
+                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: (try? self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString) ?? "",
                                                       languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
                                                       screenWidth: Int(screenSize.width),
                                                       screenHeight: Int(screenSize.height))
@@ -962,8 +965,8 @@ public class AcquiringUISDK: NSObject {
         })
     }
 
-    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
-        let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
+    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, presenter: AcquiringView?) {
+        let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL)
         guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
             return
         }
@@ -1420,8 +1423,8 @@ extension AcquiringUISDK: WKNavigationDelegate {
                 return
             }
 
-            if stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationURL().absoluteString ?? "") ||
-                stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString ?? "")
+            if stringValue.hasSuffix((try? self?.acquiringSdk.confirmation3DSTerminationURL().absoluteString) ?? "") ||
+                stringValue.hasSuffix((try? self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString) ?? "")
             {
                 webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { value, error in
                     // debugPrint("document.getElementsByTagName('pre')[0].innerText = \(value ?? "" )")

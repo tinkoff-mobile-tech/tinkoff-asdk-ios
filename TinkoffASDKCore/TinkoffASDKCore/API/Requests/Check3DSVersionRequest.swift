@@ -52,11 +52,13 @@ private extension Check3DSVersionRequest {
         switch requestData.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
+            // TODO: Log error
             if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
+            // TODO: Log error
             if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }

@@ -27,16 +27,10 @@ public enum AcquiringSdkError: Error {
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     private let publicKey: SecKey
-    private let coreBuilder: CoreBuilder
+    private let coreAssembly: CoreAssembly
     private let api: API
     
-    public var fpsEnabled: Bool = false
-
-    private var networkTransport: NetworkTransport
-    private var terminalKey: String
-    private var terminalPassword: String
     public private(set) var languageKey: AcquiringSdkLanguage?
-    private var logger: LoggerDelegate?
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
@@ -46,63 +40,15 @@ public final class AcquiringSdk: NSObject {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
         }
         
-        coreBuilder = CoreBuilder(configuration: configuration)
-        api = coreBuilder.buildAPI()
+        coreAssembly = CoreAssembly(configuration: configuration)
+        api = coreAssembly.buildAPI()
         
-        fpsEnabled = configuration.fpsEnabled
-
-        terminalKey = configuration.credential.terminalKey
-        terminalPassword = configuration.credential.password
-        
-        let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/")!
-        let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
-                                    systemName: UIDevice.current.systemName,
-                                    systemVersion: UIDevice.current.systemVersion)
-        
-        let sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
-        sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-        
-        networkTransport = AcquaringNetworkTransport(urlDomain: url,
-                                                     session: URLSession(configuration: sessionConfiguration),
-                                                     deviceInfo: deviceInfo)
         languageKey = configuration.language
-        logger = configuration.logger
-        networkTransport.logger = logger
-    }
-
-    private func tokenParams(request: AcquiringRequestTokenParams & RequestOperation) -> JSONObject {
-        var tokenParams: JSONObject = [:]
-        tokenParams.updateValue(terminalKey, forKey: "TerminalKey")
-        tokenParams.updateValue(terminalPassword, forKey: "Password")
-        if let value = languageKey { tokenParams.updateValue(value, forKey: "Language") }
-
-        tokenParams.merge(request.tokenParams()) { (_, new) -> JSONValue in new }
-
-        let tokenSring: String = tokenParams.sorted(by: { (arg1, arg2) -> Bool in
-            arg1.key < arg2.key
-        }).map { (item) -> String? in
-            String(describing: item.value)
-        }.compactMap { $0 }.joined()
-
-        tokenParams.updateValue(tokenSring.sha256(), forKey: "Token")
-        tokenParams.removeValue(forKey: "Password")
-
-        return tokenParams
-    }
-
-    /// Обновляем информцию о реквизитах карты, добавляем шифрование
-    private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
-        if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = try? RSAEncryptor().encrypt(string: cardData, publicKey: publicKey) {
-                parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-            }
-        }
     }
 
     /// Получить IP адресс
     public func networkIpAddress() -> IPAddress? {
-        return coreBuilder.ipAddressProvider().ipAddress
+        return coreAssembly.ipAddressProvider().ipAddress
     }
 
     // MARK: - Платежи
@@ -129,7 +75,7 @@ public final class AcquiringSdk: NSObject {
 
         let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
                                              encryptor: RSAEncryptor(),
-                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
                                              publicKey: publicKey)
 
         return api.performRequest(request, completion: completionHandler)
@@ -144,7 +90,7 @@ public final class AcquiringSdk: NSObject {
                                 completionHandler: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
         let request = Check3DSVersionRequest(check3DSRequestData: data,
                                              encryptor: RSAEncryptor(),
-                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
                                              publicKey: publicKey)
         
         return api.performRequest(request, completion: completionHandler)
@@ -209,7 +155,7 @@ public final class AcquiringSdk: NSObject {
                               completionHandler: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
         let request = AttachCardRequest(finishAddCardData: data,
                                         encryptor: RSAEncryptor(),
-                                        cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                        cardDataFormatter: coreAssembly.cardDataFormatter(),
                                         publicKey: publicKey)
         return api.performRequest(request, completion: completionHandler)
     }
@@ -271,7 +217,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        return try networkTransport.createConfirmation3DSRequest(requestData: data)
+        return try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтвержения платежа 3ds формы
@@ -281,9 +227,10 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
-        return try networkTransport.createConfirmation3DSRequestACS(requestData: data, messageVersion: messageVersion)
+        return try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data,
+                                                                                         version: messageVersion)
     }
-
+    
     /// Проверяет параметры для 3ds формы
     ///
     /// - Parameters:
@@ -291,22 +238,18 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        return try networkTransport.createChecking3DSURL(requestData: data)
+        return try coreAssembly.threeDSURLRequestBuilder().build3DSCheckURLRequest(requestData: data)
     }
 
     /// callback URL для завершения 3ds подтверждения
     ///
     /// - Returns:
     ///   - URL
-    public func confirmation3DSTerminationURL() -> URL {
-        return networkTransport.confirmation3DSTerminationURL
+    public func confirmation3DSTerminationURL() throws -> URL {
+        return try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationURL)
     }
 
-    public func confirmation3DSTerminationV2URL() -> URL {
-        return networkTransport.confirmation3DSTerminationV2URL
-    }
-
-    public func confirmation3DSCompleteV2URL() -> URL {
-        return networkTransport.complete3DSMethodV2URL
+    public func confirmation3DSTerminationV2URL() throws -> URL {
+        return try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
     }
 }

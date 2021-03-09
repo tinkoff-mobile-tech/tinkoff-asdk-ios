@@ -54,11 +54,22 @@ struct APIConstants {
         static let route = "Route"
         static let source = "Source"
         static let tdsServerTransID = "TdsServerTransID"
+        static let threeDSServerTransID = "threeDSServerTransID"
+        static let threeDSMethodNotificationURL = "threeDSMethodNotificationURL"
+        static let acsTransID = "acsTransID"
+        static let messageVersion = "messageVersion"
+        static let challengeWindowSize = "challengeWindowSize"
+        static let messageType = "messageType"
         static let threeDSMethodURL = "ThreeDSMethodURL"
+        static let threeDSMethodData = "threeDSMethodData"
         static let version = "Version"
         static let requestKey = "RequestKey"
         static let qrCodeData = "Data"
         static let dataType = "DataType"
+        static let paReq = "PaReq"
+        static let md = "MD"
+        static let termUrl = "TermUrl"
+        static let creq = "creq"
     }
     
     struct Values {

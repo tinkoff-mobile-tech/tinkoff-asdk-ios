@@ -1,6 +1,6 @@
 //
 //
-//  RemoveCardRequest.swift
+//  AcquiringUIConfiguration.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,20 +20,10 @@
 
 import Foundation
 
-struct RemoveCardRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = RemoveCardPayload
+public struct AcquiringUISDKConfiguration {
+    let fpsEnabled: Bool
     
-    var requestPath: [String] { ["RemoveCard"] }
-    var httpMethod: HTTPMethod { .post }
-  
-    var parameters: HTTPParameters {
-        // TODO: Log error
-        return (try? deactivateCardData.encode2JSONObject()) ?? [:]
-    }
-    
-    private let deactivateCardData: InitDeactivateCardData
-    
-    public init(deactivateCardData: InitDeactivateCardData) {
-        self.deactivateCardData = deactivateCardData
+    public init(fpsEnabled: Bool) {
+        self.fpsEnabled = fpsEnabled
     }
 }

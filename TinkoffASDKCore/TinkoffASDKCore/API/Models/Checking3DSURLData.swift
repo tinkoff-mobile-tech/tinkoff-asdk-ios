@@ -23,13 +23,10 @@ import Foundation
 public struct Checking3DSURLData {
     public let tdsServerTransID: String
     public let threeDSMethodURL: String
-    public let notificationURL: String
 
     public init(tdsServerTransID: String,
-                threeDSMethodURL: String,
-                notificationURL: String) {
+                threeDSMethodURL: String) {
         self.tdsServerTransID = tdsServerTransID
         self.threeDSMethodURL = threeDSMethodURL
-        self.notificationURL = notificationURL
     }
 }

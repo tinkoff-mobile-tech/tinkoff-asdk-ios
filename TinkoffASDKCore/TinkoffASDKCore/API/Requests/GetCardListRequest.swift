@@ -28,6 +28,7 @@ struct GetCardListRequest: APIRequest, TokenProvidableAPIRequest {
     var decodeStrategy: APIRequestDecodeStrategy { .clipped }
     
     var parameters: HTTPParameters {
+        // TODO: Log error
         return (try? getCardListData.encode2JSONObject()) ?? [:]
     }
     

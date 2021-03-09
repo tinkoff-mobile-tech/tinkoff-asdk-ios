@@ -1,6 +1,6 @@
 //
 //
-//  CoreBuilder.swift
+//  CoreAssembly.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct CoreBuilder {
+struct CoreAssembly {
     
     private let configuration: AcquiringSdkConfiguration
     
@@ -42,9 +42,22 @@ struct CoreBuilder {
     func ipAddressProvider() -> IPAddressProvider {
         return IPAddressProvider(factory: IPAddressFactory())
     }
+    
+    func threeDSURLBuilder() -> ThreeDSURLBuilder {
+        return ThreeDSURLBuilder(apiHostProvider: buildAPIHostProvider())
+    }
+    
+    func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {
+        return ThreeDSURLRequestBuilder(threeDSURLBuilder: threeDSURLBuilder(),
+                                        deviceInfoProvider: deviceInfoProvider())
+    }
+    
+    func deviceInfoProvider() -> DeviceInfoProvider {
+        return DefaultDeviceInfoProvider()
+    }
 }
 
-private extension CoreBuilder {
+private extension CoreAssembly {
     func buildNetworkClient(requestAdapter: NetworkRequestAdapter) -> NetworkClient {
         let networkClient = DefaultNetworkClient(urlRequestPerfomer: buildURLSession(),
                                                  hostProvider: buildAPIHostProvider(),
