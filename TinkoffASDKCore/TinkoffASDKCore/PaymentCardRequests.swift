@@ -367,9 +367,11 @@ public struct AddCardStatusResponse: ResponseOperation {
         cardId = try? container.decode(String.self, forKey: .cardId)
     }
 
-    public init(success: Bool, errorCode: Int) {
+    public init(success: Bool, errorCode: Int, requestKey: String? = nil, cardId: String? = nil) {
         self.success = success
         self.errorCode = errorCode
+        self.requestKey = requestKey
+        self.cardId = cardId
     }
 
     public func encode(to encoder: Encoder) throws {

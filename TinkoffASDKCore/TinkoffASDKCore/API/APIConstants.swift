@@ -57,6 +57,8 @@ struct APIConstants {
         static let threeDSMethodURL = "ThreeDSMethodURL"
         static let version = "Version"
         static let requestKey = "RequestKey"
+        static let qrCodeData = "Data"
+        static let dataType = "DataType"
     }
     
     struct Values {

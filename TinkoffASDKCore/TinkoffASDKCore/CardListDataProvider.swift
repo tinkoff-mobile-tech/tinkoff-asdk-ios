@@ -152,7 +152,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
         startHandler?()
 
-        queryStatus = sdk?.сardListDeactivateCard(data: initData, completionHandler: { [weak self] response in
+        queryStatus = sdk?.deactivateCard(data: initData, completionHandler: { [weak self] response in
             var status: FetchStatus<[PaymentCard]> = .loading
             var deactivatedCard: PaymentCard?
             switch response {

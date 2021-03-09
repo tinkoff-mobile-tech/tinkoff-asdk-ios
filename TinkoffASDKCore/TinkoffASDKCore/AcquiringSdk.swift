@@ -150,8 +150,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
 
-    ///
     /// Получить статус платежа
+    ///
     /// - Parameters:
     ///   - data: `PaymentInfoData`
     ///   - completionHandler: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случе ошибки.
@@ -162,8 +162,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
-    ///
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    ///
     /// - Parameters:
     ///   - data: `PaymentChargeRequestData`
     ///   - completionHandler: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случе ошибки.
@@ -175,8 +175,8 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: - Работа с картами
     
-    ///
     /// Получение всех сохраненных карт клиента
+    ///
     /// - Parameters:
     ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
@@ -187,8 +187,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
         
-    ///
     /// Инициирует привязку карты к клиенту
+    ///
     /// - Parameters:
     ///   - data: `InitAddCardData` информация о клиенте и типе привязки карты
     ///   - completionHandler: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
@@ -199,8 +199,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
-    ///
     /// Завершает привязку карты к клиенту
+    ///
     /// - Parameters:
     ///   - data: `FinishAddCardData` информация о карте
     ///   - completionHandler: результат операции `AttachCardPayload` в случае удачной регистрации карты и  `Error` - ошибка.
@@ -214,6 +214,53 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
+    /// Подтверждения карты путем блокировки случайной суммы
+    ///
+    /// - Parameters:
+    ///   - data: `SubmitRandomAmountData`
+    ///   - completionHandler: результат операции `SubmitRandomAmountPayload` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func checkRandomAmount(data: SubmitRandomAmountData,
+                                  completionHandler: @escaping (_ result: Result<SubmitRandomAmountPayload, Error>) -> Void) -> Cancellable {
+        let request = SubmitRandomAmountRequest(submitRandomAmountData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Удаление привязанной карты покупателя
+    ///
+    /// - Parameters:
+    ///   - completionHandler: результат операции `RemoveCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func deactivateCard(data: InitDeactivateCardData,
+                               completionHandler: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void) -> Cancellable {
+        let request = RemoveCardRequest(deactivateCardData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    // MARK: - СБП
+    
+    /// Сгенерировать QR-код для оплаты
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInvoiceQRCodeData` информация о заказе на оплату
+    ///   - completionHandler: результат операции `GetQrPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func paymentInvoiceQRCode(data: PaymentInvoiceQRCodeData,
+                                     completionHandler: @escaping (_ result: Result<GetQrPayload, Error>) -> Void) -> Cancellable {
+        let request = GetQrRequest(data: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInvoiceSBPSourceType` тип возвращаемых данных для генерации QR-кода
+    ///   - completionHandler: результат операции `GetStaticQrPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType, completionHandler: @escaping (_ result: Result<GetStaticQrPayload, Error>) -> Void) -> Cancellable {
+        let request = GetStaticQrRequest(sourceType: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
 
     // MARK: - подтверждение платежа
 
@@ -261,73 +308,5 @@ public final class AcquiringSdk: NSObject {
 
     public func confirmation3DSCompleteV2URL() -> URL {
         return networkTransport.complete3DSMethodV2URL
-    }
-
-    // MARK: - Cписок карт
-
-    ///
-    /// - Parameters:
-    ///   - amount: `Double` сумма с копейками
-    ///   - requestKey: `String` ключ для привязки карты
-    ///   - completionHandler: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func chechRandomAmount(_ amount: Double, requestKey: String, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = CheckRandomAmountRequest(requestData: CheckingRandomAmountData(amount: amount, requestKey: requestKey))
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
-            completionHandler(result)
-        }
-    }
-
-    ///
-    /// - Parameters:
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardListDeactivateCard(data: InitDeactivateCardData, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
-        let request = InitDeactivateCardRequest(requestData: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    // MARK: - Система быстрых платежей, оплата по QR-коду
-
-    /// Сгенерировать QR-код для оплаты
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentInvoiceQRCodeData` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func paymentInvoiceQRCode(data: PaymentInvoiceQRCodeData, completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentInvoiceQRCodeRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentInvoiceQRCodeResponseType` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType, completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentInvoiceQRCodeCollectorRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
     }
 }
