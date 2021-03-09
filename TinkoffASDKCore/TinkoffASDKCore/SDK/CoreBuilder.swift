@@ -38,6 +38,10 @@ struct CoreBuilder {
     func cardDataFormatter() -> CardDataFormatter {
         return CardDataFormatter()
     }
+    
+    func ipAddressProvider() -> IPAddressProvider {
+        return IPAddressProvider(factory: IPAddressFactory())
+    }
 }
 
 private extension CoreBuilder {
