@@ -163,10 +163,7 @@ public struct PaymentFinishRequestData: Codable {
     var deviceInfo: DeviceInfoParams?
     var ipAddress: String?
     var threeDSVersion: String?
-
-    var source: String?
-    var route: String?
-
+    
     public mutating func setDeviceInfo(info: DeviceInfoParams?) {
         deviceInfo = info
     }
@@ -190,14 +187,7 @@ public struct PaymentFinishRequestData: Codable {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
     }
-
-    public init(paymentId: Int64, paymentSource: PaymentSourceData, source: String, route: String) {
-        self.paymentId = paymentId
-        self.paymentSource = paymentSource
-        self.source = source
-        self.route = route
-    }
-
+    
     enum CodingKeys: String, CodingKey {
         case paymentId = "PaymentId"
         case paymentSource = "PaymentSource"
@@ -219,8 +209,6 @@ public struct PaymentFinishRequestData: Codable {
         infoEmail = try? container.decode(String.self, forKey: .infoEmail)
         deviceInfo = try? container.decode(DeviceInfoParams.self, forKey: .deviceInfo)
         ipAddress = try? container.decode(String.self, forKey: .ipAddress)
-        source = try? container.decode(String.self, forKey: .source)
-        route = try? container.decode(String.self, forKey: .route)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -231,8 +219,6 @@ public struct PaymentFinishRequestData: Codable {
         if infoEmail != nil { try? container.encode(infoEmail, forKey: .infoEmail) }
         if deviceInfo != nil { try? container.encode(deviceInfo, forKey: .deviceInfo) }
         if ipAddress != nil { try? container.encode(ipAddress, forKey: .ipAddress) }
-        if source != nil { try? container.encode(source, forKey: .source) }
-        if route != nil { try? container.encode(route, forKey: .route) }
     }
 }
 
@@ -280,25 +266,15 @@ public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams
             parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.deviceInfo.rawValue)
         }
 
-        if let source = data.source {
-            parameters?.updateValue(source, forKey: PaymentFinishRequestData.CodingKeys.source.rawValue)
-        }
-
-        if let route = data.route {
-            parameters?.updateValue(route, forKey: PaymentFinishRequestData.CodingKeys.route.rawValue)
-        }
-
         switch data.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let value = "\(PaymentSourceData.CodingKeys.cardNumber.rawValue)=\(number);\(PaymentSourceData.CodingKeys.cardExpDate.rawValue)=\(expDate);\(PaymentSourceData.CodingKeys.cardCVV.rawValue)=\(cvv)"
             parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-
         case let .savedCard(cardId, cvv):
             var value = ""
             if let cardCVV = cvv { value.append("\(PaymentSourceData.CodingKeys.cardCVV.rawValue)=\(cardCVV);") }
             value.append("\(PaymentSourceData.CodingKeys.savedCardId.rawValue)=\(cardId)")
             parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-
         case let .paymentData(token):
             parameters?.updateValue(token, forKey: PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue)
 
@@ -368,10 +344,7 @@ public enum PaymentFinishResponseStatus {
     case needConfirmation3DSACS(Confirmation3DSDataACS)
 
     /// Успешная оплата
-    case done(PaymentStatusResponse)
-
-    /// что-то пошло не так
-    case unknown
+    case done
 }
 
 public struct PaymentFinishResponse: ResponseOperation {
@@ -407,8 +380,8 @@ public struct PaymentFinishResponse: ResponseOperation {
         if let statusValue = try? container.decode(String.self, forKey: .paymentStatus) {
             paymentStatus = PaymentStatus(rawValue: statusValue)
         }
-
-        responseStatus = .unknown
+        
+        responseStatus = .done
         switch paymentStatus {
         case .checking3ds:
             if let confirmation3DS = try? Confirmation3DSData(from: decoder) {
@@ -418,13 +391,13 @@ public struct PaymentFinishResponse: ResponseOperation {
             }
 
         case .authorized, .confirmed, .checked3ds:
-            if let finishStatus = try? PaymentStatusResponse(from: decoder) {
-                responseStatus = .done(finishStatus)
+            if let _ = try? PaymentStatusResponse(from: decoder) {
+                responseStatus = .done
             }
 
         default:
-            if let finishStatus = try? PaymentStatusResponse(from: decoder) {
-                responseStatus = .done(finishStatus)
+            if let _ = try? PaymentStatusResponse(from: decoder) {
+                responseStatus = .done
             }
         }
     } // init
@@ -436,14 +409,5 @@ public struct PaymentFinishResponse: ResponseOperation {
         try? container.encode(errorMessage, forKey: .errorMessage)
         try? container.encode(errorDetails, forKey: .errorDetails)
         try? container.encode(terminalKey, forKey: .terminalKey)
-
-        switch responseStatus {
-        case let .needConfirmation3DS(confirm3DSData):
-            try confirm3DSData.encode(to: encoder)
-        case let .done(responseStatus):
-            try responseStatus.encode(to: encoder)
-        default:
-            break
-        }
     } // encode
 } // PaymentFinishResponse

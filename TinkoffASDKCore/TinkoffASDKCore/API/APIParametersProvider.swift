@@ -17,26 +17,21 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 final class APIParametersProvider: NetworkRequestAdapter {
     
-    private let customerKey: String
     private let terminalKey: String
     private let tokenBuilder: APITokenBuilder
     
-    init(customerKey: String,
-         terminalKey: String,
+    init(terminalKey: String,
          tokenBuilder: APITokenBuilder) {
-        self.customerKey = customerKey
         self.terminalKey = terminalKey
         self.tokenBuilder = tokenBuilder
     }
     
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
-        var commonParameters: HTTPParameters = [APIConstants.Keys.customerKey: customerKey,
-                                                APIConstants.Keys.terminalKey: terminalKey]
+        var commonParameters: HTTPParameters = [APIConstants.Keys.terminalKey: terminalKey]
         
         let token = tokenBuilder.buildToken(commonParameters: commonParameters,
                                             request: request as? TokenProvidableAPIRequest)

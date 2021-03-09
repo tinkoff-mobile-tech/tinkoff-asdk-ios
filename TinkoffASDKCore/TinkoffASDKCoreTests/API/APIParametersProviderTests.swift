@@ -24,10 +24,8 @@ import XCTest
 class APIParametersProviderTests: XCTestCase {
     
     var mockTokenBuilder = MockAPITokenBuilder()
-    let customerKey = "CustomerKey"
     let terminalKey = "TerminalKey"
-    lazy var apiParametersProvider = APIParametersProvider(customerKey: customerKey,
-                                                           terminalKey: terminalKey,
+    lazy var apiParametersProvider = APIParametersProvider(terminalKey: terminalKey,
                                                            tokenBuilder: mockTokenBuilder)
     
     override func setUp() {
@@ -43,7 +41,6 @@ class APIParametersProviderTests: XCTestCase {
         let expectedAdditionalParameters =
             [
                 APIConstants.Keys.terminalKey: terminalKey,
-                APIConstants.Keys.customerKey: customerKey,
                 APIConstants.Keys.token: token
             ]
         

@@ -21,51 +21,6 @@ import CommonCrypto
 import Foundation
 import Security
 
-struct RSAEncryption {
-    static func secKey(string: String?) -> SecKey? {
-        guard let publicKey = string else { return nil }
-
-        let keyString = publicKey.replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "").replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
-
-        guard let data = Data(base64Encoded: keyString) else { return nil }
-
-        var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeRSA,
-                    kSecAttrKeyClass: kSecAttrKeyClassPublic,
-                    kSecAttrKeySizeInBits: 2048,
-                    kSecReturnPersistentRef: kCFBooleanTrue!] as CFDictionary
-        }
-
-        var error: Unmanaged<CFError>?
-
-        guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
-            print(error.debugDescription)
-            return nil
-        }
-
-        return secKey
-    }
-
-    static func encrypt(string: String?, publicKey: String?) -> String? {
-        guard let secKey = secKey(string: publicKey) else { return nil }
-
-        return encrypt(string: string, publicKey: secKey)
-    }
-
-    static func encrypt(string: String?, publicKey: SecKey) -> String? {
-        guard let value = string else { return nil }
-
-        let buffer = [UInt8](value.utf8)
-
-        var keySize = SecKeyGetBlockSize(publicKey)
-        var keyBuffer = [UInt8](repeating: 0, count: keySize)
-
-        guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else { return nil }
-
-        return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
-    }
-}
-
 struct DeviceInfo {
     var model: String // = UIDevice.current.localizedModel
     var systemName: String // = UIDevice.current.systemName

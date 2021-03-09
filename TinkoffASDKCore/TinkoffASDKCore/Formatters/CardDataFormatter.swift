@@ -1,6 +1,6 @@
 //
 //
-//  API.swift
+//  CardDataFormatter.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,17 @@
 
 import Foundation
 
-protocol API {
-    func performRequest<Request: APIRequest>(_ request: Request,
-                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) -> Cancellable
+struct CardDataFormatter {
+    func formatCardData(cardNumber: String, expDate: String, cvv: String) -> String {
+        return "\(APIConstants.Keys.cardNumber)=\(cardNumber);\(APIConstants.Keys.cardExpDate)=\(expDate);\(APIConstants.Keys.cardCVV)=\(cvv)"
+    }
+    
+    func formatCardData(cardId: String, cvv: String?) -> String {
+        var result = ""
+        if let cvv = cvv {
+            result.append("\(APIConstants.Keys.cardCVV)=\(cvv);")
+        }
+        result.append("\(APIConstants.Keys.cardId)=\(cardId)")
+        return result
+    }
 }

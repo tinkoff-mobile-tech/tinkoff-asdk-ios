@@ -18,55 +18,54 @@
 //
 
 import Foundation
-import UIKit
 
 public enum AcquiringSdkError: Error {
     case publicKey(String)
-
-    case url
 }
 
 ///
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
+    private let publicKey: SecKey
+    private let coreBuilder: CoreBuilder
+    private let api: API
+    
     public var fpsEnabled: Bool = false
 
     private var networkTransport: NetworkTransport
     private var terminalKey: String
     private var terminalPassword: String
-    private var publicKey: SecKey
     public private(set) var languageKey: AcquiringSdkLanguage?
     private var logger: LoggerDelegate?
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
+        do {
+            publicKey = try RSAEncryptor().createPublicSecKey(publicKey: configuration.credential.publicKey)
+        } catch {
+            throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
+        }
+        
+        coreBuilder = CoreBuilder(configuration: configuration)
+        api = coreBuilder.buildAPI()
+        
         fpsEnabled = configuration.fpsEnabled
 
         terminalKey = configuration.credential.terminalKey
         terminalPassword = configuration.credential.password
-
-        if let publicKey: SecKey = RSAEncryption.secKey(string: configuration.credential.publicKey) {
-            self.publicKey = publicKey
-        } else {
-            throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
-        }
-
-        if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/") {
-            let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
-                                        systemName: UIDevice.current.systemName,
-                                        systemVersion: UIDevice.current.systemVersion)
-
-            let sessionConfiguration = URLSessionConfiguration.default
-            sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
-            sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-            
-            networkTransport = AcquaringNetworkTransport(urlDomain: url,
-                                                         session: URLSession(configuration: sessionConfiguration),
-                                                         deviceInfo: deviceInfo)
-        } else {
-            throw AcquiringSdkError.url
-        }
-
+        
+        let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/")!
+        let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
+                                    systemName: UIDevice.current.systemName,
+                                    systemVersion: UIDevice.current.systemVersion)
+        
+        let sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
+        sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
+        
+        networkTransport = AcquaringNetworkTransport(urlDomain: url,
+                                                     session: URLSession(configuration: sessionConfiguration),
+                                                     deviceInfo: deviceInfo)
         languageKey = configuration.language
         logger = configuration.logger
         networkTransport.logger = logger
@@ -95,7 +94,7 @@ public final class AcquiringSdk: NSObject {
     /// Обновляем информцию о реквизитах карты, добавляем шифрование
     private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
         if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
+            if let encodedCardData = try? RSAEncryptor().encrypt(string: cardData, publicKey: publicKey) {
                 parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
             }
         }
@@ -106,22 +105,34 @@ public final class AcquiringSdk: NSObject {
         return networkTransport.myIpAddress()
     }
 
-    // MARK: - начало платежа
+    // MARK: - Payment Init
 
     /// Инициирует платежную сессию для платежа
     ///
     /// - Parameters:
     ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - completionHandler: результат операции `InitPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
-    public func paymentInit(data: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentInitRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
+    public func paymentInit(data: PaymentInitData,
+                            completionHandler: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
+        let request = InitRequest(paymentInitData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Подтверждает инициированный платеж передачей карточных данных
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentFinishRequestData`
+    ///   - completionHandler: результат операции `FinishAuthorizePayload` в случае удачного проведеня платежа и `Error` - в случе ошибки.
+    public func paymentFinish(data: PaymentFinishRequestData,
+                              completionHandler: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
 
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
+        let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             publicKey: publicKey)
+
+        return api.performRequest(request, completion: completionHandler)
     }
 
     // MARK: - подтверждение платежа
@@ -180,23 +191,6 @@ public final class AcquiringSdk: NSObject {
     public func check3dsVersion(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void) -> Cancellable {
         let requestData = PaymentFinishRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
         let request = Check3dsVersionRequest(data: requestData)
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    /// Подтверждает инициированный платеж передачей карточных данных
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведеня платежа и `Error` - в случе ошибки.
-    public func paymentFinish(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentFinishRequest(data: data)
         updateCardDataRequestParams(&request.parameters)
 
         let requestTokenParams: JSONObject = tokenParams(request: request)
@@ -347,4 +341,4 @@ public final class AcquiringSdk: NSObject {
             completionHandler(result)
         }
     }
-} // AcquiringSdk
+}
