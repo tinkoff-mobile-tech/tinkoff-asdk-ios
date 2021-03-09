@@ -150,8 +150,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
 
-    ///
     /// Получить статус платежа
+    ///
     /// - Parameters:
     ///   - data: `PaymentInfoData`
     ///   - completionHandler: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случе ошибки.
@@ -162,8 +162,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
-    ///
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    ///
     /// - Parameters:
     ///   - data: `PaymentChargeRequestData`
     ///   - completionHandler: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случе ошибки.
@@ -175,8 +175,8 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: - Работа с картами
     
-    ///
     /// Получение всех сохраненных карт клиента
+    ///
     /// - Parameters:
     ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
@@ -187,8 +187,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
         
-    ///
     /// Инициирует привязку карты к клиенту
+    ///
     /// - Parameters:
     ///   - data: `InitAddCardData` информация о клиенте и типе привязки карты
     ///   - completionHandler: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
@@ -199,8 +199,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
-    ///
     /// Завершает привязку карты к клиенту
+    ///
     /// - Parameters:
     ///   - data: `FinishAddCardData` информация о карте
     ///   - completionHandler: результат операции `AttachCardPayload` в случае удачной регистрации карты и  `Error` - ошибка.
@@ -214,6 +214,7 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
+    /// Подтверждения карты путем блокировки случайной суммы
     ///
     /// - Parameters:
     ///   - data: `SubmitRandomAmountData`
@@ -225,6 +226,7 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
+    /// Удаление привязанной карты покупателя
     ///
     /// - Parameters:
     ///   - completionHandler: результат операции `RemoveCardPayload` в случае удачной регистрации и  `Error` - ошибка.
