@@ -27,6 +27,7 @@ struct RemoveCardRequest: APIRequest, TokenProvidableAPIRequest {
     var httpMethod: HTTPMethod { .post }
   
     var parameters: HTTPParameters {
+        // TODO: Log error
         return (try? deactivateCardData.encode2JSONObject()) ?? [:]
     }
     

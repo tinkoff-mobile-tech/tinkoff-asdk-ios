@@ -52,6 +52,7 @@ private extension AttachCardRequest {
         let formattedCardData = cardDataFormatter.formatCardData(cardNumber: requestData.cardNumber,
                                                                  expDate: requestData.expDate,
                                                                  cvv: requestData.cvv)
+        // TODO: Log error
         if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
             parameters[APIConstants.Keys.cardData] = encryptedCardData
         }

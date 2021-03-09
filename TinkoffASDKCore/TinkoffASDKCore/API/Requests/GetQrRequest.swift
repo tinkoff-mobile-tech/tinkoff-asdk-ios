@@ -27,6 +27,7 @@ struct GetQrRequest: APIRequest, TokenProvidableAPIRequest {
     var httpMethod: HTTPMethod { .post }
     
     var parameters: HTTPParameters {
+        // TODO: Log error
         return (try? data.encode2JSONObject()) ?? [:]
     }
     

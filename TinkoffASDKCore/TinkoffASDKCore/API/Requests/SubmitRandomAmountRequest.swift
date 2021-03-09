@@ -27,6 +27,7 @@ struct SubmitRandomAmountRequest: APIRequest, TokenProvidableAPIRequest {
     var httpMethod: HTTPMethod { .post }
     
     var parameters: HTTPParameters {
+        // TODO: Log error
         return (try? submitRandomAmountData.encode2JSONObject()) ?? [:]
     }
     

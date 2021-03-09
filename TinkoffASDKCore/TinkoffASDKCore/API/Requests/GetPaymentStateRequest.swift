@@ -27,6 +27,7 @@ public struct GetPaymentStateRequest: APIRequest, TokenProvidableAPIRequest {
     var httpMethod: HTTPMethod { .post }
     
     var parameters: HTTPParameters {
+        // TODO: Log error
         return (try? paymentInfoData.encode2JSONObject()) ?? [:]
     }
     

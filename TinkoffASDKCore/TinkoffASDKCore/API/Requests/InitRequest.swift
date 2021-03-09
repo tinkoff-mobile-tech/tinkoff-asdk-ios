@@ -27,6 +27,7 @@ struct InitRequest: APIRequest, TokenProvidableAPIRequest {
     var httpMethod: HTTPMethod { .post }
   
     var parameters: HTTPParameters {
+        // TODO: Log error
         return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 
