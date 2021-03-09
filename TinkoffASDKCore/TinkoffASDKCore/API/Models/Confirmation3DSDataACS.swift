@@ -30,18 +30,4 @@ public struct Confirmation3DSDataACS: Codable {
         case acsTransId = "AcsTransId"
         case tdsServerTransId = "TdsServerTransId"
     }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        acsUrl = try container.decode(String.self, forKey: .acsUrl)
-        acsTransId = try container.decode(String.self, forKey: .acsTransId)
-        tdsServerTransId = try container.decode(String.self, forKey: .tdsServerTransId)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(acsUrl, forKey: .acsUrl)
-        try container.encode(acsTransId, forKey: .acsTransId)
-        try container.encode(tdsServerTransId, forKey: .tdsServerTransId)
-    }
 }

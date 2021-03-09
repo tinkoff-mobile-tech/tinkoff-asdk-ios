@@ -910,7 +910,7 @@ public class AcquiringUISDK: NSObject {
                         }
                     }
 
-                case .done:
+                case .success:
                     completionHandler(.success(finishResult.paymentState))
                 } // case .success
 

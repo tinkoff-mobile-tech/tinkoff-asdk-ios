@@ -28,5 +28,5 @@ public enum PaymentFinishResponseStatus {
     case needConfirmation3DSACS(Confirmation3DSDataACS)
 
     /// Успешная оплата
-    case done
+    case success
 }

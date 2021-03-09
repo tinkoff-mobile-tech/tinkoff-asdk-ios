@@ -53,7 +53,7 @@ public struct FinishAuthorizePayload: Decodable {
                 )
             }
         default:
-            responseStatus = .done
+            responseStatus = .success
         }
     }
 }

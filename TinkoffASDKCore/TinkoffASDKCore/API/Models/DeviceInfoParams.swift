@@ -41,18 +41,6 @@ public struct DeviceInfoParams: Codable {
         case cresCallbackUrl
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        threeDSCompInd = try container.decode(String.self, forKey: .threeDSCompInd)
-        javaEnabled = try container.decode(String.self, forKey: .javaEnabled)
-        colorDepth = try container.decode(Int.self, forKey: .colorDepth)
-        language = try container.decode(String.self, forKey: .language)
-        timezone = try container.decode(Int.self, forKey: .timezone)
-        screenHeight = try container.decode(Int.self, forKey: .screenHeight)
-        screenWidth = try container.decode(Int.self, forKey: .screenWidth)
-        cresCallbackUrl = try container.decode(String.self, forKey: .cresCallbackUrl)
-    }
-
     public init(cresCallbackUrl: String, languageId: String = "ru", screenWidth: Int, screenHeight: Int, colorDepth: Int = 32) {
         threeDSCompInd = "Y"
         javaEnabled = "true"
@@ -62,17 +50,5 @@ public struct DeviceInfoParams: Codable {
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(threeDSCompInd, forKey: .threeDSCompInd)
-        try container.encode(javaEnabled, forKey: .javaEnabled)
-        try container.encode(colorDepth, forKey: .colorDepth)
-        try container.encode(language, forKey: .language)
-        try container.encode(timezone, forKey: .timezone)
-        try container.encode(screenHeight, forKey: .screenHeight)
-        try container.encode(screenWidth, forKey: .screenWidth)
-        try container.encode(cresCallbackUrl, forKey: .cresCallbackUrl)
     }
 }
