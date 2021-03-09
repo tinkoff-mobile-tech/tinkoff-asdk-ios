@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  GetPaymentStateRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,19 +20,19 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = InitPayload
+public struct GetPaymentStateRequest: APIRequest, TokenProvidableAPIRequest {
+    typealias Payload = GetPaymentStatePayload
     
-    var requestPath: [String] { ["Init"] }
+    var requestPath: [String] { ["GetState"] }
     var httpMethod: HTTPMethod { .post }
-  
+    
     var parameters: HTTPParameters {
-        return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        return (try? paymentInfoData.encode2JSONObject()) ?? [:]
     }
-
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
+    
+    private let paymentInfoData: PaymentInfoData
+    
+    init(paymentInfoData: PaymentInfoData) {
+        self.paymentInfoData = paymentInfoData
     }
 }

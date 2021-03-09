@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  ChargePaymentRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,19 +20,19 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = InitPayload
+struct ChargePaymentRequest: APIRequest, TokenProvidableAPIRequest {
+    typealias Payload = ChargePaymentPayload
     
-    var requestPath: [String] { ["Init"] }
+    var requestPath: [String] { ["Charge"] }
     var httpMethod: HTTPMethod { .post }
-  
+    
     var parameters: HTTPParameters {
-        return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        return (try? paymentChargeRequestData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
+    
+    private let paymentChargeRequestData: PaymentChargeRequestData
 
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
+    init(paymentChargeRequestData: PaymentChargeRequestData) {
+        self.paymentChargeRequestData = paymentChargeRequestData
     }
 }

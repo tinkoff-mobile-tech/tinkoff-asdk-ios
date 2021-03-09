@@ -105,7 +105,7 @@ public final class AcquiringSdk: NSObject {
         return networkTransport.myIpAddress()
     }
 
-    // MARK: - Payment Init
+    // MARK: - Платежи
 
     /// Инициирует платежную сессию для платежа
     ///
@@ -134,6 +134,86 @@ public final class AcquiringSdk: NSObject {
 
         return api.performRequest(request, completion: completionHandler)
     }
+    
+    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
+    ///
+    /// - Parameters:
+    ///   - data: `Check3DSRequestData`
+    ///   - completionHandler: результат операции `Check3DSVersionPayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func check3dsVersion(data: Check3DSRequestData,
+                                completionHandler: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
+        let request = Check3DSVersionRequest(check3DSRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             publicKey: publicKey)
+        
+        return api.performRequest(request, completion: completionHandler)
+    }
+
+    ///
+    /// Получить статус платежа
+    /// - Parameters:
+    ///   - data: `PaymentInfoData`
+    ///   - completionHandler: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func paymentOperationStatus(data: PaymentInfoData,
+                                       completionHandler: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void) -> Cancellable {
+        let request = GetPaymentStateRequest(paymentInfoData: data)
+        
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    ///
+    /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    /// - Parameters:
+    ///   - data: `PaymentChargeRequestData`
+    ///   - completionHandler: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func chargePayment(data: PaymentChargeRequestData,
+                              completionHandler: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void) -> Cancellable {
+        let request = ChargePaymentRequest(paymentChargeRequestData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+
+    // MARK: - Работа с картами
+    
+    ///
+    /// Получение всех сохраненных карт клиента
+    /// - Parameters:
+    ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
+    ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func сardList(data: GetCardListData,
+                          completionHandler: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
+        let request = GetCardListRequest(getCardListData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+        
+    ///
+    /// Инициирует привязку карты к клиенту
+    /// - Parameters:
+    ///   - data: `InitAddCardData` информация о клиенте и типе привязки карты
+    ///   - completionHandler: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func addCardInit(data: InitAddCardData,
+                            completionHandler: @escaping (_ result: Result<AddCardPayload, Error>) -> Void) -> Cancellable {
+        let request = AddCardRequest(initAddCardData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    ///
+    /// Завершает привязку карты к клиенту
+    /// - Parameters:
+    ///   - data: `FinishAddCardData` информация о карте
+    ///   - completionHandler: результат операции `AttachCardPayload` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func addCardFinish(data: FinishAddCardData,
+                              completionHandler: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
+        let request = AttachCardRequest(finishAddCardData: data,
+                                        encryptor: RSAEncryptor(),
+                                        cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                        publicKey: publicKey)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
 
     // MARK: - подтверждение платежа
 
@@ -183,98 +263,7 @@ public final class AcquiringSdk: NSObject {
         return networkTransport.complete3DSMethodV2URL
     }
 
-    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случе ошибки.
-    public func check3dsVersion(data: PaymentFinishRequestData, completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void) -> Cancellable {
-        let requestData = PaymentFinishRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
-        let request = Check3dsVersionRequest(data: requestData)
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    ///
-    /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
-    public func chargePayment(data: PaymentChargeRequestData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentChargeRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    // MARK: - Статус операции
-
-    ///
-    /// Получить статус платежа
-    public func paymentOperationStatus(data: PaymentInfoData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentStatusRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
     // MARK: - Cписок карт
-
-    ///
-    /// - Parameters:
-    ///   - data: `InitGetCardListData` информация о клиенте для получения списка сохраненных карт
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardList(data: InitGetCardListData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void) -> Cancellable {
-        let request = CardListRequest(data: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
-            completionHandler(result)
-        }
-    }
-
-    ///
-    /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardListAddCardInit(data: InitAddCardData, completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void) -> Cancellable {
-        let request = InitAddCardRequest(requestData: data)
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request) { result in
-            completionHandler(result)
-        }
-    }
-
-    ///
-    /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
-    ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func сardListAddCardFinish(data: FinishAddCardData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
-        let request = FinishAddCardRequest(requestData: data)
-        updateCardDataRequestParams(&request.parameters)
-
-        let requestTokenParams: JSONObject = tokenParams(request: request)
-        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
-            completionHandler(result)
-        }
-    }
 
     ///
     /// - Parameters:

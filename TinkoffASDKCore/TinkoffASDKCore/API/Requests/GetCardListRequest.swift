@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  GetCardListRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,19 +20,20 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = InitPayload
+struct GetCardListRequest: APIRequest, TokenProvidableAPIRequest {
+    typealias Payload = [PaymentCard]
     
-    var requestPath: [String] { ["Init"] }
+    var requestPath: [String] { ["GetCardList"] }
     var httpMethod: HTTPMethod { .post }
-  
+    var decodeStrategy: APIRequestDecodeStrategy { .clipped }
+    
     var parameters: HTTPParameters {
-        return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        return (try? getCardListData.encode2JSONObject()) ?? [:]
     }
-
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
+    
+    private let getCardListData: GetCardListData
+    
+    init(getCardListData: GetCardListData) {
+        self.getCardListData = getCardListData
     }
 }

@@ -1,6 +1,6 @@
 //
 //
-//  GetStatePayload.swift
+//  GetPaymentStatePayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct GetStatePayload: Decodable {
+public struct GetPaymentStatePayload: Decodable {
     public let paymentId: Int64
     public let amount: Int64
     public let orderId: String

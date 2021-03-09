@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  Check3DSRequestData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,19 +20,13 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = InitPayload
+public struct Check3DSRequestData {
+    let paymentId: Int64
+    let paymentSource: PaymentSourceData
     
-    var requestPath: [String] { ["Init"] }
-    var httpMethod: HTTPMethod { .post }
-  
-    var parameters: HTTPParameters {
-        return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
-
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
+    public init(paymentId: Int64,
+                paymentSource: PaymentSourceData) {
+        self.paymentId = paymentId
+        self.paymentSource = paymentSource
     }
 }

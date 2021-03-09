@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  AddCardPayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,19 +20,25 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
-    typealias Payload = InitPayload
+public struct AddCardPayload: Decodable, Equatable {
+    public let requestKey: String
     
-    var requestPath: [String] { ["Init"] }
-    var httpMethod: HTTPMethod { .post }
-  
-    var parameters: HTTPParameters {
-        return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+    private enum CodingKeys: CodingKey {
+        case requestKey
+        
+        var stringValue: String {
+            switch self {
+            case .requestKey: return APIConstants.Keys.requestKey
+            }
+        }
     }
-
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
+    
+    public init(requestKey: String) {
+        self.requestKey = requestKey
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        requestKey = try container.decode(String.self, forKey: .requestKey)
     }
 }
