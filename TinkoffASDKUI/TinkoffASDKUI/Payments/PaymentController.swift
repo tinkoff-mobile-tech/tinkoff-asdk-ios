@@ -1,6 +1,6 @@
 //
 //
-//  PaymentPerformer.swift
+//  PaymentController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -26,17 +26,17 @@ protocol PaymentPerformerDataSource: AnyObject {
 }
 
 protocol PaymentPerformerDelegate: AnyObject {
-    func paymentPerformer(_ performer: PaymentPerformer,
+    func paymentPerformer(_ performer: PaymentController,
                           didFinishPayment: Payment,
                           with state: GetPaymentStatePayload,
                           cardId: String?,
                           rebillId: String?)
     
-    func paymentPerformer(_ performer: PaymentPerformer,
+    func paymentPerformer(_ performer: PaymentController,
                           didFailed error: Error)
 }
 
-final class PaymentPerformer: NSObject {
+final class PaymentController: NSObject {
     private let acquiringSDK: AcquiringSdk
     private let paymentFactory: PaymentFactory
     private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
@@ -86,7 +86,7 @@ final class PaymentPerformer: NSObject {
     }
 }
 
-private extension PaymentPerformer {
+private extension PaymentController {
     func resetPaymentProcessIfNeeded(completion: @escaping () -> Void) {
         if let currentPayment = self.payment {
             currentPayment.cancel()
@@ -141,7 +141,7 @@ private extension PaymentPerformer {
 
 // MARK: - PaymentDelegate
 
-extension PaymentPerformer: PaymentDelegate {
+extension PaymentController: PaymentDelegate {
     func paymentDidFinish(_ payment: Payment,
                           with state: GetPaymentStatePayload,
                           cardId: String?,
