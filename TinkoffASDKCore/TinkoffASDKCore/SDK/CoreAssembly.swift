@@ -55,6 +55,11 @@ struct CoreAssembly {
     func deviceInfoProvider() -> DeviceInfoProvider {
         return DefaultDeviceInfoProvider()
     }
+    
+    func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
+        return ThreeDSWebViewHandler(threeDSURLBuilder: threeDSURLBuilder(),
+                                     jsonDecoder: buildJSONDecoder())
+    }
 }
 
 private extension CoreAssembly {

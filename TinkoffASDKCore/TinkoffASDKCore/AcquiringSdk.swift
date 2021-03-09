@@ -226,7 +226,7 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `Confirmation3DSData`
     /// - Returns:
     ///   - URLRequest
-    public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
+    public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String?) throws -> URLRequest {
         return try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data,
                                                                                          version: messageVersion)
     }
@@ -251,5 +251,13 @@ public final class AcquiringSdk: NSObject {
 
     public func confirmation3DSTerminationV2URL() throws -> URL {
         return try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
+    }
+    
+    public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
+        return coreAssembly.threeDSWebViewHandler()
+    }
+    
+    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
+        return coreAssembly.threeDSWebViewHandler()
     }
 }
