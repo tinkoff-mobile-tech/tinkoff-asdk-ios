@@ -41,7 +41,7 @@ public enum PaymentSourceData: Codable {
     ///
     /// - Parameters:
     ///   - rebuidId: идентификатор родительского платежа
-    case parentPayment(rebuidId: String)
+    case parentPayment(rebillId: String)
 
     /// при оплате с помощью **ApplePay**
     ///

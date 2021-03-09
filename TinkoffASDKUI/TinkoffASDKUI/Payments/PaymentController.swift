@@ -21,24 +21,37 @@
 import TinkoffASDKCore
 import WebKit
 
+/// Объект, предоставляющие для `PaymentController` UI-компоненты для совершения платежа
 public protocol PaymentPerformerUIProvider: AnyObject {
+    /// webView, в котором выполнится запрос для прохождения 3DSChecking
     func hiddenWebViewToCollect3DSData() -> WKWebView
+    /// viewController для модального показа экрана с 3DS Confirmation
     func presentingViewControllerToPresent3DS() -> UIViewController
 }
 
+/// Делегат событий для `PaymentController`
 public protocol PaymentControllerDelegate: AnyObject {
-    func paymentController(_ performer: PaymentController,
+    /// Оплата прошла успешно
+    func paymentController(_ controller: PaymentController,
                            didFinishPayment: Payment,
                            with state: GetPaymentStatePayload,
                            cardId: String?,
                            rebillId: String?)
     
-    func paymentController(_ performer: PaymentController,
+    /// Оплата была отменена
+    func paymentController(_ controller: PaymentController,
+                           paymentWasCancelled: Payment,
+                           cardId: String?,
+                           rebillId: String?)
+    
+    /// Возникла ошибка в процессе оплаты
+    func paymentController(_ controller: PaymentController,
                            didFailed error: Error,
                            cardId: String?,
                            rebillId: String?)
 }
 
+/// Контроллер с помощью которого можно совершать оплату
 public final class PaymentController {
     
     // MARK: - Dependencies
@@ -164,11 +177,20 @@ extension PaymentController: PaymentDelegate {
         DispatchQueue.main.async {
             self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
-                self.delegate?.paymentController(self,
-                                                 didFinishPayment: payment,
-                                                 with: state,
-                                                 cardId: cardId,
-                                                 rebillId: rebillId)
+                
+                if state.status == .cancelled {
+                    self.delegate?.paymentController(self,
+                                                     paymentWasCancelled: payment,
+                                                     cardId: cardId,
+                                                     rebillId: rebillId)
+                } else {
+                    
+                    self.delegate?.paymentController(self,
+                                                     didFinishPayment: payment,
+                                                     with: state,
+                                                     cardId: cardId,
+                                                     rebillId: rebillId)
+                }
             })
             self.threeDSViewController = nil
         }
