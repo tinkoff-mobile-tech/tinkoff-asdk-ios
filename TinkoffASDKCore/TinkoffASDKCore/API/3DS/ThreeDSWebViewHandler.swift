@@ -34,6 +34,11 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
     }
     
     public func handle(urlString: String, responseData data: Data) {
+        guard !urlString.hasSuffix("cancel.do") else {
+            didCancel?()
+            return
+        }
+        
         guard let confirmation3DSTerminationURLString = try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString,
               let confirmation3DSTerminationV2URLString = try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL).absoluteString
         else {

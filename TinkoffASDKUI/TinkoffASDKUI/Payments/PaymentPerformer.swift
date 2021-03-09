@@ -36,63 +36,135 @@ protocol PaymentPerformerDelegate: AnyObject {
                           didFailed error: Error)
 }
 
-final class PaymentPerformer {
+final class PaymentPerformer: NSObject {
     private let acquiringSDK: AcquiringSdk
     private let paymentFactory: PaymentFactory
-    private var payments = [Payment]()
+    private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
+    private var payment: Payment?
+    
+    private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
     
     weak var dataSource: PaymentPerformerDataSource?
     weak var delegate: PaymentPerformerDelegate?
     
     init(acquiringSDK: AcquiringSdk,
-         paymentFactory: PaymentFactory) {
+         paymentFactory: PaymentFactory,
+         threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>) {
         self.acquiringSDK = acquiringSDK
         self.paymentFactory = paymentFactory
+        self.threeDSHandler = threeDSHandler
     }
     
     deinit {
-        payments.forEach {
-            $0.cancel()
-        }
-        payments = []
+        payment?.cancel()
     }
     
     func performInitPayment(paymentOptions: PaymentOptions,
                             paymentSource: PaymentSourceData) {
-        let payment = paymentFactory.createPayment(paymentSource: paymentSource,
-                                                   paymentFlow: .full(paymentOptions: paymentOptions),
-                                                   paymentDelegate: self)
-        payment.start()
-        payments.append(payment)
+        resetPaymentProcessIfNeeded { [weak self] in
+            guard let self = self else { return }
+            let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
+                                                            paymentFlow: .full(paymentOptions: paymentOptions),
+                                                            paymentDelegate: self)
+            payment.start()
+            self.payment = payment
+        }
     }
     
     func performFinishPayment(paymentId: PaymentId,
                               paymentSource: PaymentSourceData,
                               customerOptions: CustomerOptions) {
-        let payment = paymentFactory.createPayment(paymentSource: paymentSource,
-                                                   paymentFlow: .finish(paymentId: paymentId,
-                                                                        customerOptions: customerOptions),
-                                                   paymentDelegate: self)
-        payment.start()
-        payments.append(payment)
+        resetPaymentProcessIfNeeded { [weak self] in
+            guard let self = self else { return }
+            let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
+                                                            paymentFlow: .finish(paymentId: paymentId,
+                                                                                 customerOptions: customerOptions),
+                                                            paymentDelegate: self)
+            payment.start()
+            self.payment = payment
+        }
     }
 }
+
+private extension PaymentPerformer {
+    func resetPaymentProcessIfNeeded(completion: @escaping () -> Void) {
+        if let currentPayment = self.payment {
+            currentPayment.cancel()
+            self.payment = nil
+        }
+        
+        if let threeDSViewController = threeDSViewController,
+           let threeDSPresentingViewController = threeDSViewController.presentingViewController {
+            
+            if threeDSPresentingViewController.isBeingDismissed {
+                threeDSPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil,
+                                                                               completion: { (_) in
+                                                                                completion()
+                                                                               })
+            } else {
+                threeDSPresentingViewController.dismiss(animated: true) {
+                    completion()
+                }
+            }
+            self.threeDSViewController = nil
+        } else {
+            completion()
+        }
+    }
+    
+    func startThreeDSConfirmation(for payment: Payment,
+                                  request: URLRequest,
+                                  confirmationCancelled: @escaping () -> Void,
+                                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
+        
+        threeDSHandler.didCancel = {
+            payment.cancel()
+            confirmationCancelled()
+        }
+        
+        threeDSHandler.didFinish = { result in
+            completion(result)
+        }
+        
+        DispatchQueue.main.async {
+            let threeDSViewController = ThreeDSViewController(urlRequest: request,
+                                                              handler: self.threeDSHandler)
+            let navigationController = UINavigationController(rootViewController: threeDSViewController)
+            if #available(iOS 13.0, *) {
+                navigationController.isModalInPresentation = true
+            }
+            self.dataSource?.viewControllerToPresent().present(navigationController, animated: true, completion: nil)
+            self.threeDSViewController = threeDSViewController
+        }
+    }
+}
+
+// MARK: - PaymentDelegate
 
 extension PaymentPerformer: PaymentDelegate {
     func paymentDidFinish(_ payment: Payment,
                           with state: GetPaymentStatePayload,
                           cardId: String?,
                           rebillId: String?) {
-        delegate?.paymentPerformer(self,
-                                   didFinishPayment: payment,
-                                   with: state,
-                                   cardId: cardId,
-                                   rebillId: rebillId)
+        DispatchQueue.main.async {
+            self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.paymentPerformer(self,
+                                                didFinishPayment: payment,
+                                                with: state,
+                                                cardId: cardId,
+                                                rebillId: rebillId)
+            })
+            self.threeDSViewController = nil
+        }
     }
     
     func paymentDidFailed(_ payment: Payment,
                           with error: Error) {
-        delegate?.paymentPerformer(self, didFailed: error)
+        threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.paymentPerformer(self, didFailed: error)
+        })
     }
     
     func payment(_ payment: Payment,
@@ -104,27 +176,37 @@ extension PaymentPerformer: PaymentDelegate {
         }
         
         webView.loadRequest(request)
-        
-        // TODO: Device Info and call completion
     }
     
     func payment(_ payment: Payment,
                  need3DSConfirmation data: Confirmation3DSData,
+                 confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
-        guard let viewController = dataSource?.viewControllerToPresent() else {
-            fatalError()
+        do {
+            let request = try self.acquiringSDK.createConfirmation3DSRequest(data: data)
+            startThreeDSConfirmation(for: payment,
+                                     request: request,
+                                     confirmationCancelled: confirmationCancelled,
+                                     completion: completion)
+        } catch {
+            completion(.failure(error))
         }
-        
-        // TODO: Present web view
     }
     
     func payment(_ payment: Payment,
                  need3DSConfirmationACS data: Confirmation3DSDataACS,
+                 version: String?,
+                 confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
-        guard let viewController = dataSource?.viewControllerToPresent() else {
-            fatalError()
+        do {
+            let request = try self.acquiringSDK.createConfirmation3DSRequestACS(data: data,
+                                                                                messageVersion: version)
+            startThreeDSConfirmation(for: payment,
+                                     request: request,
+                                     confirmationCancelled: confirmationCancelled,
+                                     completion: completion)
+        } catch {
+            completion(.failure(error))
         }
-        
-        // TODO: Present web view
     }
 }

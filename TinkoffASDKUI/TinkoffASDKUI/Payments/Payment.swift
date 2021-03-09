@@ -37,12 +37,16 @@ protocol PaymentDelegate: AnyObject {
                  completion: @escaping (DeviceInfoParams) -> Void)
     func payment(_ payment: Payment,
                  need3DSConfirmation data: Confirmation3DSData,
+                 confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
     func payment(_ payment: Payment,
                  need3DSConfirmationACS data: Confirmation3DSDataACS,
+                 version: String?,
+                 confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
 }
 
 protocol Payment: Cancellable {
+    var paymentId: PaymentId? { get }
     func start()
 }

@@ -27,6 +27,8 @@ final class CardPayment: Payment {
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
     
+    private(set) var paymentId: PaymentId?
+    
     private weak var delegate: PaymentDelegate?
     
     private var customerEmail: String? {
@@ -80,6 +82,8 @@ private extension CardPayment {
     }
     
     func check3DSVersion(paymentId: Int64) {
+        self.paymentId = paymentId
+        
         let data = Check3DSRequestData(paymentId: paymentId,
                                        paymentSource: paymentSource)
         let request = acquiringSDK.check3dsVersion(data: data) { [weak self] result in
@@ -96,14 +100,14 @@ private extension CardPayment {
         currentRequest?.store(newValue: request)
     }
     
-    func finishPayment(data: PaymentFinishRequestData) {
+    func finishPayment(data: PaymentFinishRequestData, threeDSVersion: String? = nil) {
         let request = acquiringSDK.paymentFinish(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
             
             switch result {
             case let .success(payload):
-                self.handlePaymentFinish(payload: payload)
+                self.handlePaymentFinish(payload: payload, threeDSVersion: threeDSVersion)
             case let .failure(error):
                 self.delegate?.paymentDidFailed(self, with: error)
             }
@@ -131,7 +135,7 @@ private extension CardPayment {
         data.setInfoEmail(customerEmail)
         
         let performPaymentFinish: (PaymentFinishRequestData) -> Void = {
-            self.finishPayment(data: $0)
+            self.finishPayment(data: $0, threeDSVersion: payload.version)
         }
         
         if let tdsServerTransID = payload.tdsServerTransID,
@@ -154,25 +158,40 @@ private extension CardPayment {
         }
     }
     
-    func handlePaymentFinish(payload: FinishAuthorizePayload) {
+    func handlePaymentFinish(payload: FinishAuthorizePayload, threeDSVersion: String?) {
         guard !self.isCancelled.wrappedValue else { return }
         
         switch payload.responseStatus {
-        case .done:
+        case .success:
             self.handlePaymentResult(.success(payload.paymentState))
         case let .needConfirmation3DS(data):
             delegate?.payment(self,
                               need3DSConfirmation: data,
+                              confirmationCancelled: { [weak self] in
+                                self?.handlePaymentCancelled(payload: payload)
+                              },
                               completion: { [weak self] result in
                                 self?.handlePaymentResult(result)
                               })
         case let .needConfirmation3DSACS(data):
             delegate?.payment(self,
                               need3DSConfirmationACS: data,
+                              version: threeDSVersion,
+                              confirmationCancelled: { [weak self] in
+                                self?.handlePaymentCancelled(payload: payload)
+                              },
                               completion: { [weak self] result in
                                 self?.handlePaymentResult(result)
                               })
         }
+    }
+    
+    func handlePaymentCancelled(payload: FinishAuthorizePayload) {
+        let cancelledState = GetPaymentStatePayload(paymentId: payload.paymentState.paymentId,
+                                                    amount: payload.paymentState.amount,
+                                                    orderId: payload.paymentState.orderId,
+                                                    status: .cancelled)
+        self.handlePaymentResult(.success(cancelledState))
     }
     
     func handlePaymentResult(_ result: Result<GetPaymentStatePayload, Error>) {
