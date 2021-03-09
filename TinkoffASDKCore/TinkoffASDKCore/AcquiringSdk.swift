@@ -27,7 +27,7 @@ public enum AcquiringSdkError: Error {
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     private let publicKey: SecKey
-    private let coreBuilder: CoreBuilder
+    private let coreAssembly: CoreAssembly
     private let api: API
     
     public private(set) var languageKey: AcquiringSdkLanguage?
@@ -40,15 +40,15 @@ public final class AcquiringSdk: NSObject {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
         }
         
-        coreBuilder = CoreBuilder(configuration: configuration)
-        api = coreBuilder.buildAPI()
+        coreAssembly = CoreAssembly(configuration: configuration)
+        api = coreAssembly.buildAPI()
         
         languageKey = configuration.language
     }
 
     /// Получить IP адресс
     public func networkIpAddress() -> IPAddress? {
-        return coreBuilder.ipAddressProvider().ipAddress
+        return coreAssembly.ipAddressProvider().ipAddress
     }
 
     // MARK: - Платежи
@@ -75,7 +75,7 @@ public final class AcquiringSdk: NSObject {
 
         let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
                                              encryptor: RSAEncryptor(),
-                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
                                              publicKey: publicKey)
 
         return api.performRequest(request, completion: completionHandler)
@@ -90,7 +90,7 @@ public final class AcquiringSdk: NSObject {
                                 completionHandler: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
         let request = Check3DSVersionRequest(check3DSRequestData: data,
                                              encryptor: RSAEncryptor(),
-                                             cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
                                              publicKey: publicKey)
         
         return api.performRequest(request, completion: completionHandler)
@@ -155,7 +155,7 @@ public final class AcquiringSdk: NSObject {
                               completionHandler: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
         let request = AttachCardRequest(finishAddCardData: data,
                                         encryptor: RSAEncryptor(),
-                                        cardDataFormatter: coreBuilder.cardDataFormatter(),
+                                        cardDataFormatter: coreAssembly.cardDataFormatter(),
                                         publicKey: publicKey)
         return api.performRequest(request, completion: completionHandler)
     }
@@ -217,7 +217,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        return try coreBuilder.threeDSURLRequestBuilder().buildConfirmation3DSRequest(requestData: data)
+        return try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтвержения платежа 3ds формы
@@ -227,7 +227,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
-        return try coreBuilder.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data,
+        return try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data,
                                                                                          version: messageVersion)
     }
     
@@ -238,7 +238,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        return try coreBuilder.threeDSURLRequestBuilder().build3DSCheckURLRequest(requestData: data)
+        return try coreAssembly.threeDSURLRequestBuilder().build3DSCheckURLRequest(requestData: data)
     }
 
     /// callback URL для завершения 3ds подтверждения
@@ -246,10 +246,10 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URL
     public func confirmation3DSTerminationURL() throws -> URL {
-        return try coreBuilder.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationURL)
+        return try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationURL)
     }
 
     public func confirmation3DSTerminationV2URL() throws -> URL {
-        return try coreBuilder.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
+        return try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
     }
 }
