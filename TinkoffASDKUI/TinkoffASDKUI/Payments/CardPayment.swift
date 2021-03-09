@@ -55,7 +55,7 @@ final class CardPayment: Payment {
         case let .full(paymentOptions):
             initPayment(data: PaymentInitData.data(with: paymentOptions))
         case let .finish(paymentId, _):
-            check3DSVersion(paymentId: paymentId)
+            check3DSVersion(data: .init(paymentId: paymentId, paymentSource: paymentSource))
         }
     }
     
@@ -75,26 +75,26 @@ private extension CardPayment {
             case let .success(payload):
                 self.handleInitResult(payload: payload)
             case let .failure(error):
-                self.delegate?.paymentDidFailed(self, with: error)
+                let (cardId, rebillId) = self.getCardAndRebillId()
+                self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
             }
         }
         currentRequest?.store(newValue: request)
     }
     
-    func check3DSVersion(paymentId: Int64) {
-        self.paymentId = paymentId
-        
-        let data = Check3DSRequestData(paymentId: paymentId,
-                                       paymentSource: paymentSource)
+    func check3DSVersion(data: Check3DSRequestData) {
+        self.paymentId = data.paymentId
+
         let request = acquiringSDK.check3dsVersion(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
             
             switch result {
             case let .success(payload):
-                self.handleCheck3DSResult(payload: payload, paymentId: paymentId)
+                self.handleCheck3DSResult(payload: payload, paymentId: data.paymentId)
             case let .failure(error):
-                self.delegate?.paymentDidFailed(self, with: error)
+                let (cardId, rebillId) = self.getCardAndRebillId()
+                self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
             }
         }
         currentRequest?.store(newValue: request)
@@ -109,7 +109,8 @@ private extension CardPayment {
             case let .success(payload):
                 self.handlePaymentFinish(payload: payload, threeDSVersion: threeDSVersion)
             case let .failure(error):
-                self.delegate?.paymentDidFailed(self, with: error)
+                let (cardId, rebillId) = self.getCardAndRebillId()
+                self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
             }
         }
         currentRequest?.store(newValue: request)
@@ -118,7 +119,7 @@ private extension CardPayment {
     func handleInitResult(payload: InitPayload) {
         switch paymentSource {
         case .cardNumber, .savedCard:
-            self.check3DSVersion(paymentId: payload.paymentId)
+            self.check3DSVersion(data: .init(paymentId: payload.paymentId, paymentSource: paymentSource))
         case .paymentData:
             var data = PaymentFinishRequestData(paymentId: payload.paymentId,
                                                 paymentSource: paymentSource)
@@ -205,7 +206,10 @@ private extension CardPayment {
                                        cardId: cardId,
                                        rebillId: rebillId)
         case let .failure(error):
-            delegate?.paymentDidFailed(self, with: error)
+            delegate?.paymentDidFailed(self,
+                                       with: error,
+                                       cardId: cardId,
+                                       rebillId: rebillId)
         }
     }
     

@@ -21,23 +21,25 @@
 import TinkoffASDKCore
 import WebKit
 
-protocol PaymentPerformerDataSource: AnyObject {
+public protocol PaymentPerformerUIProvider: AnyObject {
     func hiddenWebViewToCollect3DSData() -> WKWebView
     func presentingViewControllerToPresent3DS() -> UIViewController
 }
 
-protocol PaymentPerformerDelegate: AnyObject {
-    func paymentPerformer(_ performer: PaymentController,
-                          didFinishPayment: Payment,
-                          with state: GetPaymentStatePayload,
-                          cardId: String?,
-                          rebillId: String?)
+public protocol PaymentControllerDelegate: AnyObject {
+    func paymentController(_ performer: PaymentController,
+                           didFinishPayment: Payment,
+                           with state: GetPaymentStatePayload,
+                           cardId: String?,
+                           rebillId: String?)
     
-    func paymentPerformer(_ performer: PaymentController,
-                          didFailed error: Error)
+    func paymentController(_ performer: PaymentController,
+                           didFailed error: Error,
+                           cardId: String?,
+                           rebillId: String?)
 }
 
-final class PaymentController {
+public final class PaymentController {
     
     // MARK: - Dependencies
     
@@ -46,13 +48,12 @@ final class PaymentController {
     private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
     
-    weak var dataSource: PaymentPerformerDataSource?
-    weak var delegate: PaymentPerformerDelegate?
+    weak var uiProvider: PaymentPerformerUIProvider?
+    weak var delegate: PaymentControllerDelegate?
     
     // MARK: - State
     
     private var payment: Payment?
-    
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
     
     // MARK: - Init
@@ -73,8 +74,8 @@ final class PaymentController {
     
     // MARK: - Payments
     
-    func performInitPayment(paymentOptions: PaymentOptions,
-                            paymentSource: PaymentSourceData) {
+    public func performInitPayment(paymentOptions: PaymentOptions,
+                                   paymentSource: PaymentSourceData) {
         resetPaymentProcessIfNeeded { [weak self] in
             guard let self = self else { return }
             let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
@@ -85,9 +86,9 @@ final class PaymentController {
         }
     }
     
-    func performFinishPayment(paymentId: PaymentId,
-                              paymentSource: PaymentSourceData,
-                              customerOptions: CustomerOptions) {
+    public func performFinishPayment(paymentId: PaymentId,
+                                     paymentSource: PaymentSourceData,
+                                     customerOptions: CustomerOptions) {
         resetPaymentProcessIfNeeded { [weak self] in
             guard let self = self else { return }
             let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
@@ -147,7 +148,7 @@ private extension PaymentController {
             if #available(iOS 13.0, *) {
                 navigationController.isModalInPresentation = true
             }
-            self.dataSource?.presentingViewControllerToPresent3DS().present(navigationController, animated: true, completion: nil)
+            self.uiProvider?.presentingViewControllerToPresent3DS().present(navigationController, animated: true, completion: nil)
             self.threeDSViewController = threeDSViewController
         }
     }
@@ -163,22 +164,27 @@ extension PaymentController: PaymentDelegate {
         DispatchQueue.main.async {
             self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
-                self.delegate?.paymentPerformer(self,
-                                                didFinishPayment: payment,
-                                                with: state,
-                                                cardId: cardId,
-                                                rebillId: rebillId)
+                self.delegate?.paymentController(self,
+                                                 didFinishPayment: payment,
+                                                 with: state,
+                                                 cardId: cardId,
+                                                 rebillId: rebillId)
             })
             self.threeDSViewController = nil
         }
     }
     
     func paymentDidFailed(_ payment: Payment,
-                          with error: Error) {
+                          with error: Error,
+                          cardId: String?,
+                          rebillId: String?) {
         DispatchQueue.main.async {
             self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
-                self.delegate?.paymentPerformer(self, didFailed: error)
+                self.delegate?.paymentController(self,
+                                                 didFailed: error,
+                                                 cardId: cardId,
+                                                 rebillId: rebillId)
             })
         }
     }
@@ -187,7 +193,7 @@ extension PaymentController: PaymentDelegate {
                  needToCollect3DSData checking3DSURLData: Checking3DSURLData,
                  completion: @escaping (DeviceInfoParams) -> Void) {
         DispatchQueue.main.async {
-            guard let webView = self.dataSource?.hiddenWebViewToCollect3DSData(),
+            guard let webView = self.uiProvider?.hiddenWebViewToCollect3DSData(),
                   let request = try? self.acquiringSDK.createChecking3DSURL(data: checking3DSURLData) else {
                 return
             }

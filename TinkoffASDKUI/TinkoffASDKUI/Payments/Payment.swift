@@ -31,7 +31,9 @@ protocol PaymentDelegate: AnyObject {
                           cardId: String?,
                           rebillId: String?)
     func paymentDidFailed(_ payment: Payment,
-                          with error: Error)
+                          with error: Error,
+                          cardId: String?,
+                          rebillId: String?)
     func payment(_ payment: Payment,
                  needToCollect3DSData checking3DSURLData: Checking3DSURLData,
                  completion: @escaping (DeviceInfoParams) -> Void)
@@ -46,7 +48,7 @@ protocol PaymentDelegate: AnyObject {
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
 }
 
-protocol Payment: Cancellable {
+public protocol Payment: Cancellable {
     var paymentId: PaymentId? { get }
     func start()
 }

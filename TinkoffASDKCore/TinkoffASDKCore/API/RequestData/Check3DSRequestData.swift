@@ -21,8 +21,8 @@
 import Foundation
 
 public struct Check3DSRequestData {
-    let paymentId: Int64
-    let paymentSource: PaymentSourceData
+    public let paymentId: Int64
+    public let paymentSource: PaymentSourceData
     
     public init(paymentId: Int64,
                 paymentSource: PaymentSourceData) {
