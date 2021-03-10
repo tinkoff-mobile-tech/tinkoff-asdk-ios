@@ -154,7 +154,7 @@ public class AcquiringUISDK: NSObject {
     /// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
     
-    public func paymentController(uiProvider: PaymentPerformerUIProvider,
+    public func paymentController(uiProvider: PaymentControllerUIProvider,
                                   delegate: PaymentControllerDelegate) -> PaymentController {
         let paymentController = assembly.paymentController(acquiringSDK: acquiringSdk)
         paymentController.uiProvider = uiProvider

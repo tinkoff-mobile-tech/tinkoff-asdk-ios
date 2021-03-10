@@ -22,7 +22,7 @@ import TinkoffASDKCore
 import WebKit
 
 /// Объект, предоставляющие для `PaymentController` UI-компоненты для совершения платежа
-public protocol PaymentPerformerUIProvider: AnyObject {
+public protocol PaymentControllerUIProvider: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
     func hiddenWebViewToCollect3DSData() -> WKWebView
     /// viewController для модального показа экрана с 3DS Confirmation
@@ -61,7 +61,7 @@ public final class PaymentController {
     private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
     
-    weak var uiProvider: PaymentPerformerUIProvider?
+    weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
     
     // MARK: - State
