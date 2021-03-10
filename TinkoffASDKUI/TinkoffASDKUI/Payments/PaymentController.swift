@@ -83,13 +83,14 @@ public final class PaymentController {
     
     deinit {
         payment?.cancel()
+        payment = nil
     }
     
     // MARK: - Payments
     
     public func performInitPayment(paymentOptions: PaymentOptions,
                                    paymentSource: PaymentSourceData) {
-        resetPaymentProcessIfNeeded { [weak self] in
+        resetPaymentProcess { [weak self] in
             guard let self = self else { return }
             let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
                                                             paymentFlow: .full(paymentOptions: paymentOptions),
@@ -102,7 +103,7 @@ public final class PaymentController {
     public func performFinishPayment(paymentId: PaymentId,
                                      paymentSource: PaymentSourceData,
                                      customerOptions: CustomerOptions) {
-        resetPaymentProcessIfNeeded { [weak self] in
+        resetPaymentProcess { [weak self] in
             guard let self = self else { return }
             let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
                                                             paymentFlow: .finish(paymentId: paymentId,
@@ -115,27 +116,12 @@ public final class PaymentController {
 }
 
 private extension PaymentController {
-    func resetPaymentProcessIfNeeded(completion: @escaping () -> Void) {
-        if let currentPayment = self.payment {
-            currentPayment.cancel()
-            self.payment = nil
-        }
+    func resetPaymentProcess(completion: @escaping () -> Void) {
+        payment?.cancel()
+        payment = nil
         
-        if let threeDSViewController = threeDSViewController,
-           let threeDSPresentingViewController = threeDSViewController.presentingViewController {
-            
-            if threeDSPresentingViewController.isBeingDismissed {
-                threeDSPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil,
-                                                                               completion: { (_) in
-                                                                                completion()
-                                                                               })
-            } else {
-                threeDSPresentingViewController.dismiss(animated: true) {
-                    completion()
-                }
-            }
-            self.threeDSViewController = nil
-        } else {
+        dismissThreeDSViewControllerIfNeeded { [weak self] in
+            self?.threeDSViewController = nil
             completion()
         }
     }
@@ -155,6 +141,7 @@ private extension PaymentController {
         }
         
         DispatchQueue.main.async {
+            self.presentThreeDSViewController(urlRequest: request)
             let threeDSViewController = ThreeDSViewController(urlRequest: request,
                                                               handler: self.threeDSHandler)
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
@@ -163,6 +150,42 @@ private extension PaymentController {
             }
             self.uiProvider?.presentingViewControllerToPresent3DS().present(navigationController, animated: true, completion: nil)
             self.threeDSViewController = threeDSViewController
+        }
+    }
+    
+    func presentThreeDSViewController(urlRequest: URLRequest, completion: (() -> Void)? = nil) {
+        dismissThreeDSViewControllerIfNeeded {
+            let threeDSViewController = ThreeDSViewController(urlRequest: urlRequest,
+                                                              handler: self.threeDSHandler)
+            let navigationController = UINavigationController(rootViewController: threeDSViewController)
+            if #available(iOS 13.0, *) {
+                navigationController.isModalInPresentation = true
+            }
+            
+            self.uiProvider?.presentingViewControllerToPresent3DS().present(navigationController,
+                                                                            animated: true,
+                                                                            completion: completion)
+            self.threeDSViewController = threeDSViewController
+        }
+    }
+    
+    func dismissThreeDSViewControllerIfNeeded(completion: @escaping () -> Void) {
+        guard let threeDSViewController = threeDSViewController,
+              let threeDSPresentingViewController = threeDSViewController.presentingViewController else {
+            completion()
+            return
+        }
+        
+        if threeDSViewController.isBeingPresented {
+            threeDSPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+                threeDSPresentingViewController.dismiss(animated: true, completion: completion)
+            })
+        } else if threeDSViewController.isBeingDismissed {
+            threeDSPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+                completion()
+            })
+        } else {
+            threeDSPresentingViewController.dismiss(animated: true, completion: completion)
         }
     }
 }
@@ -175,7 +198,7 @@ extension PaymentController: PaymentDelegate {
                           cardId: String?,
                           rebillId: String?) {
         DispatchQueue.main.async {
-            self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
+            self.dismissThreeDSViewControllerIfNeeded { [weak self] in
                 guard let self = self else { return }
                 
                 if state.status == .cancelled {
@@ -191,8 +214,9 @@ extension PaymentController: PaymentDelegate {
                                                      cardId: cardId,
                                                      rebillId: rebillId)
                 }
-            })
+            }
             self.threeDSViewController = nil
+            self.payment = nil
         }
     }
     
@@ -201,13 +225,15 @@ extension PaymentController: PaymentDelegate {
                           cardId: String?,
                           rebillId: String?) {
         DispatchQueue.main.async {
-            self.threeDSViewController?.dismiss(animated: true, completion: { [weak self] in
+            self.dismissThreeDSViewControllerIfNeeded { [weak self] in
                 guard let self = self else { return }
                 self.delegate?.paymentController(self,
                                                  didFailed: error,
                                                  cardId: cardId,
                                                  rebillId: rebillId)
-            })
+            }
+            self.threeDSViewController = nil
+            self.payment = nil
         }
     }
     
