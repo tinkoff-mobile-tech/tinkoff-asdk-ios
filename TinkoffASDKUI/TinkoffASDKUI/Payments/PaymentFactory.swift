@@ -37,9 +37,10 @@ struct PaymentFactory {
                                       paymentFlow: paymentFlow,
                                       delegate: paymentDelegate)
         case .parentPayment:
-            // TODO: Next PR
-            print("return Charge")
-            fatalError()
+            return ChargePayment(acquiringSDK: acquiringSDK,
+                                 paymentSource: paymentSource,
+                                 paymentFlow: paymentFlow,
+                                 delegate: paymentDelegate)
         }
     }
 }

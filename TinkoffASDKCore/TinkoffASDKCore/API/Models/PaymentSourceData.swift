@@ -40,7 +40,7 @@ public enum PaymentSourceData {
     /// при оплате на основе родительского платежа
     ///
     /// - Parameters:
-    ///   - rebuidId: идентификатор родительского платежа
+    ///   - rebillId: идентификатор родительского платежа
     case parentPayment(rebillId: String)
 
     /// при оплате с помощью **ApplePay**
@@ -48,4 +48,17 @@ public enum PaymentSourceData {
     /// - Parameters:
     ///   - string: UTF-8 encoded JSON dictionary of encrypted payment data from `PKPaymentToken.paymentData`
     case paymentData(String)
+}
+
+public extension PaymentSourceData {
+    func getCardAndRebillId() -> (cardId: String?, rebillId: String?) {
+        switch self {
+        case .parentPayment(let rebillId):
+            return (nil, rebillId)
+        case .savedCard(let cardId, _):
+            return (cardId, nil)
+        default:
+            return (nil, nil)
+        }
+    }
 }

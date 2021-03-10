@@ -28,4 +28,20 @@ public struct OrderOptions {
     let shops: [Shop]?
     let receipts: [Receipt]?
     let savingAsParentPayment: Bool
+    
+    public init(orderId: String,
+                amount: Int64,
+                description: String? = nil,
+                receipt: Receipt? = nil,
+                shops: [Shop]? = nil,
+                receipts: [Receipt]? = nil,
+                savingAsParentPayment: Bool = false) {
+        self.orderId = orderId
+        self.amount = amount
+        self.description = description
+        self.receipt = receipt
+        self.shops = shops
+        self.receipts = receipts
+        self.savingAsParentPayment = savingAsParentPayment
+    }
 }
