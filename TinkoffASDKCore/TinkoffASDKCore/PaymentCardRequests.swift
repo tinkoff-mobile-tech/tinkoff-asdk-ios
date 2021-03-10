@@ -139,28 +139,6 @@ public struct InitAddCardResponse: ResponseOperation {
     }
 }
 
-class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
-    // MARK: RequestOperation
-
-    var name = "AttachCard"
-
-    var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [FinishAddCardData.CodingKeys.requestKey.rawValue,
-                                       PaymentFinishRequestData.CodingKeys.cardData.rawValue]
-
-    ///
-    /// - Parameter requestData: `FinishAddCardData`
-    init(requestData: FinishAddCardData) {
-        parameters = [:]
-        parameters?.updateValue(requestData.cardData(), forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-        parameters?.updateValue(requestData.requestKey, forKey: FinishAddCardData.CodingKeys.requestKey.rawValue)
-    }
-}
 
 public struct FinishAddCardResponse: ResponseOperation {
     public var success: Bool

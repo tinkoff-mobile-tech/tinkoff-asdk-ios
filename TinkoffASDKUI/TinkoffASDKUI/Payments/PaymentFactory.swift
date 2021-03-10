@@ -40,9 +40,6 @@ struct PaymentFactory {
             // TODO: Next PR
             print("return Charge")
             fatalError()
-        case .unknown:
-            // TODO: Log error
-            fatalError()
         }
     }
 }

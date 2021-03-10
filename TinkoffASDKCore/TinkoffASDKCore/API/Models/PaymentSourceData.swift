@@ -21,7 +21,7 @@
 import Foundation
 
 /// Источинк оплаты
-public enum PaymentSourceData: Codable {
+public enum PaymentSourceData {
     /// при оплате по реквизитам  карты
     ///
     /// - Parameters:
@@ -48,51 +48,4 @@ public enum PaymentSourceData: Codable {
     /// - Parameters:
     ///   - string: UTF-8 encoded JSON dictionary of encrypted payment data from `PKPaymentToken.paymentData`
     case paymentData(String)
-
-    case unknown
-
-    enum CodingKeys: String, CodingKey {
-        case cardNumber = "PAN"
-        case cardExpDate = "ExpDate"
-        case cardCVV = "CVV"
-        case savedCardId = "CardId"
-        case paymentData = "PaymentData"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self = .unknown
-
-        if let number = try? container.decode(String.self, forKey: .cardNumber),
-           let expDate = try? container.decode(String.self, forKey: .cardExpDate),
-           let cvv = try? container.decode(String.self, forKey: .cardCVV)
-        {
-            self = .cardNumber(number: number, expDate: expDate, cvv: cvv)
-        } else if let cardId = try? container.decode(String.self, forKey: .savedCardId) {
-            let cvv = try? container.decode(String.self, forKey: .cardCVV)
-            self = .savedCard(cardId: cardId, cvv: cvv)
-        } else if let paymentDataString = try? container.decode(String.self, forKey: .paymentData) {
-            self = .paymentData(paymentDataString)
-        }
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-        case let .cardNumber(number, expData, cvv):
-            try container.encode(number, forKey: .cardNumber)
-            try container.encode(expData, forKey: .cardExpDate)
-            try container.encode(cvv, forKey: .cardCVV)
-
-        case let .savedCard(cardId, cvv):
-            try container.encode(cardId, forKey: .savedCardId)
-            try container.encode(cvv, forKey: .cardCVV)
-
-        case let .paymentData(data):
-            try container.encode(data, forKey: .paymentData)
-
-        default:
-            break
-        }
-    }
 }
