@@ -37,10 +37,10 @@ struct PaymentFactory {
                                       paymentFlow: paymentFlow,
                                       delegate: paymentDelegate)
         case .parentPayment:
-            return ChargePayment(acquiringSDK: acquiringSDK,
-                                 paymentSource: paymentSource,
-                                 paymentFlow: paymentFlow,
-                                 delegate: paymentDelegate)
+            return ChargePaymentProcess(acquiringSDK: acquiringSDK,
+                                        paymentSource: paymentSource,
+                                        paymentFlow: paymentFlow,
+                                        delegate: paymentDelegate)
         }
     }
 }

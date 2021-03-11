@@ -1,6 +1,6 @@
 //
 //
-//  ChargePayment.swift
+//  ChargePaymentProcess.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import TinkoffASDKCore
 
-final class ChargePayment: Payment {
+final class ChargePaymentProcess: PaymentProcess {
     private let acquiringSDK: AcquiringSdk
     private let paymentSource: PaymentSourceData
     private let paymentFlow: PaymentFlow
@@ -29,7 +29,7 @@ final class ChargePayment: Payment {
     
     private(set) var paymentId: PaymentId?
     
-    private weak var delegate: PaymentDelegate?
+    private weak var delegate: PaymentProcessDelegate?
     
     private var customerEmail: String? {
         switch paymentFlow {
@@ -43,7 +43,7 @@ final class ChargePayment: Payment {
     init(acquiringSDK: AcquiringSdk,
          paymentSource: PaymentSourceData,
          paymentFlow: PaymentFlow,
-         delegate: PaymentDelegate) {
+         delegate: PaymentProcessDelegate) {
         self.acquiringSDK = acquiringSDK
         self.paymentSource = paymentSource
         self.paymentFlow = paymentFlow
@@ -65,7 +65,7 @@ final class ChargePayment: Payment {
     }
 }
 
-private extension ChargePayment {
+private extension ChargePaymentProcess {
     func initPayment(data: PaymentInitData) {
         let request = acquiringSDK.paymentInit(data: data) { [weak self] result in
             guard let self = self else { return }
