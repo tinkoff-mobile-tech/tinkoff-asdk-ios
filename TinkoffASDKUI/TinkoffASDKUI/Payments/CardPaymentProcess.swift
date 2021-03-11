@@ -131,7 +131,7 @@ private extension CardPaymentProcess {
         }
     }
     
-    func handleCheck3DSResult(payload: Check3DSVersionPayload, paymentId: Int64) {
+    func handleCheck3DSResult(payload: Check3DSVersionPayload, paymentId: PaymentId) {
         var data = PaymentFinishRequestData(paymentId: paymentId,
                                             paymentSource: paymentSource)
         data.setInfoEmail(customerEmail)

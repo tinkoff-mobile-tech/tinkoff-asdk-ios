@@ -136,7 +136,7 @@ class BuyProductsViewController: UIViewController {
     private func createPaymentData() -> PaymentInitData {
         let amount = productsAmount()
         let randomOrderId = String(Int64(arc4random()))
-        var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: customerKey)
+        var paymentData = PaymentInitData(amount: Int64(amount), orderId: randomOrderId, customerKey: customerKey)
         paymentData.description = "Краткое описние товара"
 
         var receiptItems: [Item] = []
@@ -289,7 +289,7 @@ class BuyProductsViewController: UIViewController {
         if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
             sdk.presentPaymentView(on: self,
                                    paymentData: createPaymentData(),
-                                   parentPatmentId: parentPaymentId,
+                                   parentPaymentId: parentPaymentId,
                                    configuration: acquiringViewConfiguration()) { [weak self] response in
                 complete()
                 self?.responseReviewing(response)

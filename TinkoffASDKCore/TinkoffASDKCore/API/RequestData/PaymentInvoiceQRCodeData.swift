@@ -39,7 +39,7 @@ public enum PaymentInvoiceSBPSourceType: String, Codable {
 public struct PaymentInvoiceQRCodeData: Codable {
     ///
     /// Уникальный идентификатор транзакции в системе Банка
-    var paymentId: Int64
+    var paymentId: PaymentId
 
     ///
     /// Тип возвращаемых данных
@@ -50,18 +50,23 @@ public struct PaymentInvoiceQRCodeData: Codable {
         case paymentInvoiceType = "DataType"
     }
 
-    public init(paymentId: Int64, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
+    public init(paymentId: PaymentId, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
         self.paymentId = paymentId
         self.paymentInvoiceType = paymentInvoiceType
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
         if let typeValue = try? container.decode(String.self, forKey: .paymentInvoiceType) {
             paymentInvoiceType = PaymentInvoiceSBPSourceType(rawValue: typeValue)
         } else {
             paymentInvoiceType = .url
+        }
+        if let paymentId = try? container.decode(PaymentId.self, forKey: .paymentId) {
+            self.paymentId = paymentId
+        } else {
+            let paymentIdNumber = try container.decode(Int64.self, forKey: .paymentId)
+            self.paymentId = String(paymentIdNumber)
         }
     }
 

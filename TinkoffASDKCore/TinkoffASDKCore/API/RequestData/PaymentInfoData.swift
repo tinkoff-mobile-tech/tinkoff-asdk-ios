@@ -22,9 +22,9 @@ import Foundation
 
 public struct PaymentInfoData: Codable {
     /// Номер заказа в системе Продавца
-    var paymentId: Int64
+    var paymentId: PaymentId
 
-    public init(paymentId: Int64) {
+    public init(paymentId: PaymentId) {
         self.paymentId = paymentId
     }
 
@@ -34,6 +34,6 @@ public struct PaymentInfoData: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
+        paymentId = try container.decode(PaymentId.self, forKey: .paymentId)
     }
 }

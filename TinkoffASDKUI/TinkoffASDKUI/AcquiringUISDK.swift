@@ -77,7 +77,7 @@ public class AcquiringViewConfiguration {
 public struct AcquiringConfiguration {
     public enum PaymentStage {
         case none
-        case paymentId(Int64)
+        case paymentId(PaymentId)
     }
 
     public let paymentStage: PaymentStage
@@ -231,7 +231,7 @@ public class AcquiringUISDK: NSObject {
             case let .paymentId(paymentId):
                 self?.paymentInitPayload = InitPayload(amount: paymentData.amount,
                                                        orderId: paymentData.orderId,
-                                                       paymentId: paymentId,
+                                                       paymentId: String(paymentId),
                                                        status: .unknown)
                 view.changedStatus(.ready)
             }
@@ -255,7 +255,7 @@ public class AcquiringUISDK: NSObject {
     /// Оплатить на основе родительского платежа, регулярный платеж
     public func presentPaymentView(on presentingViewController: UIViewController,
                                    paymentData: PaymentInitData,
-                                   parentPatmentId: Int64,
+                                   parentPaymentId: PaymentId,
                                    configuration: AcquiringViewConfiguration,
                                    completionHandler: @escaping PaymentCompletionHandler)
     {
@@ -263,7 +263,7 @@ public class AcquiringUISDK: NSObject {
         acquiringViewConfiguration = configuration
         onPaymentCompletionHandler = completionHandler
 
-        startChargeWith(paymentData, parentPaymentId: parentPatmentId, presentingViewController: presentingViewController, configuration: configuration)
+        startChargeWith(paymentData, parentPaymentId: parentPaymentId, presentingViewController: presentingViewController, configuration: configuration)
     }
 
     ///
@@ -320,7 +320,7 @@ public class AcquiringUISDK: NSObject {
         onPaymentCompletionHandler = completionHandler
         self.acquiringConfiguration = acquiringConfiguration
 
-        let presentSbpActivity: (Int64) -> Void = { [weak self] paymentId in
+        let presentSbpActivity: (PaymentId) -> Void = { [weak self] paymentId in
             self?.paymentInitPayload = InitPayload(amount: paymentData.amount,
                                                    orderId: paymentData.orderId,
                                                    paymentId: paymentId,
@@ -428,7 +428,7 @@ public class AcquiringUISDK: NSObject {
         self.acquiringConfiguration = acquiringConfiguration
         viewConfiguration.startViewHeight = 120
 
-        let presentApplePayActivity: (Int64) -> Void = { [weak self] paymentId in
+        let presentApplePayActivity: (PaymentId) -> Void = { [weak self] paymentId in
             self?.paymentInitPayload = InitPayload(amount: data.amount,
                                                    orderId: data.orderId,
                                                    paymentId: paymentId,
@@ -488,7 +488,7 @@ public class AcquiringUISDK: NSObject {
         })
     }
 
-    private func presentSbpActivity(paymentId: Int64, paymentInvoiceSource: PaymentInvoiceSBPSourceType, configuration: AcquiringViewConfiguration) {
+    private func presentSbpActivity(paymentId: PaymentId, paymentInvoiceSource: PaymentInvoiceSBPSourceType, configuration: AcquiringViewConfiguration) {
         let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: paymentId, paymentInvoiceType: paymentInvoiceSource)
         _ = acquiringSdk.paymentInvoiceQRCode(data: paymentInvoice) { [weak self] response in
             switch response {
@@ -537,7 +537,7 @@ public class AcquiringUISDK: NSObject {
         }
     }
 
-    private func sbpWaitingIncominPayment(paymentId: Int64, source: String, sourceType: PaymentInvoiceSBPSourceType) {
+    private func sbpWaitingIncominPayment(paymentId: PaymentId, source: String, sourceType: PaymentInvoiceSBPSourceType) {
         let completionStatus: [PaymentStatus] = [.confirmed, .checked3ds, .refunded, .reversed, .rejected]
         let completionHandler = onPaymentCompletionHandler
 
@@ -697,9 +697,9 @@ public class AcquiringUISDK: NSObject {
     private func paymentTryAgainWith3dsV1(_ data: PaymentInitData, completionHandler: @escaping PaymentCompletionHandler) {
         paymentInitPayload = nil
 
-        let repeatFinish: (Int64) -> Void = { [weak self] paymentId in
+        let repeatFinish: (PaymentId) -> Void = { [weak self] paymentId in
             if let cardRequisites = self?.acquiringView?.cardRequisites() {
-                var requestData = PaymentFinishRequestData(paymentId: paymentId, paymentSource: cardRequisites)
+                var requestData = PaymentFinishRequestData(paymentId: String(paymentId), paymentSource: cardRequisites)
                 requestData.setInfoEmail(self?.acquiringView?.infoEmail())
 
                 self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { finishResponse in
@@ -744,7 +744,7 @@ public class AcquiringUISDK: NSObject {
         onPaymentCompletionHandler = completionHandler
         self.acquiringConfiguration = acquiringConfiguration
 
-        let finishPay: (Int64) -> Void = { [weak self] paymentId in
+        let finishPay: (PaymentId) -> Void = { [weak self] paymentId in
             self?.paymentInitPayload = InitPayload(amount: initPaymentData.amount,
                                                    orderId: initPaymentData.orderId,
                                                    paymentId: paymentId,
@@ -777,7 +777,7 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: Charge
 
-    private func startChargeWith(_ paymentData: PaymentInitData, parentPaymentId: Int64, presentingViewController: UIViewController, configuration: AcquiringViewConfiguration) {
+    private func startChargeWith(_ paymentData: PaymentInitData, parentPaymentId: PaymentId, presentingViewController: UIViewController, configuration: AcquiringViewConfiguration) {
         var data = paymentData
         data.addPaymentData(["chargeFlag": "true"])
 
@@ -866,8 +866,8 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: FinishPay & Finish Authorize
 
-    private func finishPay(cardRequisites: PaymentSourceData, paymentId: Int64, infoEmail: String?) {
-        var requestData = PaymentFinishRequestData(paymentId: paymentId, paymentSource: cardRequisites)
+    private func finishPay(cardRequisites: PaymentSourceData, paymentId: PaymentId, infoEmail: String?) {
+        var requestData = PaymentFinishRequestData(paymentId: String(paymentId), paymentSource: cardRequisites)
         requestData.setInfoEmail(infoEmail)
         acquiringView?.changedStatus(.paymentWaiting(status: nil))
 
@@ -1116,11 +1116,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         return cardListDataProvider!.item(at: index)
     }
     
-    func getCardListCard(with cardId: String) -> PaymentCard? {
+    func getCardListCard(cardId: String) -> PaymentCard? {
         return cardListDataProvider!.item(with: cardId)
     }
     
-    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard? {
+    func getCardListCard(parentPaymentId: PaymentId) -> PaymentCard? {
         return cardListDataProvider!.item(with: parentPaymentId)
     }
     
@@ -1236,11 +1236,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         return try getCardListDataProvider().item(at: index)
     }
 
-    public func cardListCard(with cardId: String) throws -> PaymentCard? {
+    public func cardListCard(cardId: String) throws -> PaymentCard? {
         return try getCardListDataProvider().item(with: cardId)
     }
 
-    public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
+    public func cardListCard(parentPaymentId: PaymentId) throws -> PaymentCard? {
         return try getCardListDataProvider().item(with: parentPaymentId)
     }
     

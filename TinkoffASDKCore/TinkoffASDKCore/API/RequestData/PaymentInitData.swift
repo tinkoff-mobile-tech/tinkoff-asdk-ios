@@ -130,13 +130,4 @@ public struct PaymentInitData: Codable {
         self.customerKey = customerKey
         self.redirectDueDate = redirectDueDate
     }
-
-    public init(amount: NSDecimalNumber,
-                orderId: String,
-                customerKey: String?,
-                redirectDueDate: Date? = nil)
-    {
-        let int64Amount = Int64(amount.doubleValue * 100)
-        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate)
-    }
 }

@@ -23,7 +23,7 @@ import Foundation
 public struct InitPayload: Decodable, Equatable {
     public let amount: Int64
     public let orderId: String
-    public let paymentId: Int64
+    public let paymentId: PaymentId
     public let status: PaymentStatus
     
     private enum CodingKeys: CodingKey {
@@ -44,7 +44,7 @@ public struct InitPayload: Decodable, Equatable {
 
     public init(amount: Int64,
                 orderId: String,
-                paymentId: Int64,
+                paymentId: PaymentId,
                 status: PaymentStatus) {
         self.amount = amount
         self.orderId = orderId
@@ -54,16 +54,9 @@ public struct InitPayload: Decodable, Equatable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        paymentId = try container.decode(PaymentId.self, forKey: .paymentId)
         amount = try container.decode(Int64.self, forKey: .amount)
         orderId = try container.decode(String.self, forKey: .orderId)
         status = try container.decodeIfPresent(PaymentStatus.self, forKey: .status) ?? .unknown
-        
-        /// В доке API тип у `paymentId` указан как `number`, но по итогу почему-то приходит как `String`
-        if let stringPaymentId = try? container.decode(String.self, forKey: .paymentId),
-           let paymentId = Int64(stringPaymentId) {
-            self.paymentId = paymentId
-        } else {
-            paymentId = try container.decode(Int64.self, forKey: .paymentId)
-        }
     }
 }

@@ -38,7 +38,7 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
     func testCorrectPayloadIfCorrectResponseWithStandartFormat() {
         let amount: Int64 = 320
         let orderId = "12345"
-        let paymentId: Int64 = 999
+        let paymentId: PaymentId = "999"
         let status = PaymentStatus.new
         
         let responseString =
@@ -80,7 +80,7 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
     func testCorrectPayloadIfCorrectResponseWithClippedFormat() {
         let amount: Int64 = 320
         let orderId = "12345"
-        let paymentId: Int64 = 999
+        let paymentId: PaymentId = "999"
         let status = PaymentStatus.new
         
         let responseString =

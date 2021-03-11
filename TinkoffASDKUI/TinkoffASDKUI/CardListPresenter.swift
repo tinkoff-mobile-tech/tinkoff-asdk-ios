@@ -44,7 +44,7 @@ protocol CardListViewOutConnection: InputViewStatus {
 
     func presentCardList(dataSource: AcquiringCardListDataSourceDelegate?, in view: CardListViewInConenction, becomeFirstResponderListener: BecomeFirstResponderListener?, scaner: CardRequisitesScanerProtocol?)
 
-    func waitCVCInput(forCardWith parentPaymentId: Int64, fieldActivated: @escaping (() -> Void))
+    func waitCVCInput(forCardWith parentPaymentId: PaymentId, fieldActivated: @escaping (() -> Void))
 
     func updateView()
 
@@ -83,7 +83,7 @@ class CardListPresenter: NSObject {
     private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
     private lazy var inputCardCVCRequisitesPresenter: InputCardCVCRequisitesViewOutConnection = InputCardCVCRequisitesPresenter()
     private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
-    private var waitingInputCVCForParentPaymentId: Int64?
+    private var waitingInputCVCForParentPaymentId: PaymentId?
     private var waitingInputIndexPath: IndexPath?
     private var lastActiveCardIndexPath: IndexPath?
     
@@ -419,7 +419,7 @@ extension CardListPresenter: CardListViewOutConnection {
         pageStatusCollectionView = view.pageStatusCollectionView
     }
 
-    func waitCVCInput(forCardWith parentPaymentId: Int64, fieldActivated: @escaping (() -> Void)) {
+    func waitCVCInput(forCardWith parentPaymentId: PaymentId, fieldActivated: @escaping (() -> Void)) {
         waitingInputCVCForParentPaymentId = parentPaymentId
         pageStatusCollectionView?.isHidden = true
         cardListCollectionView?.isScrollEnabled = false
