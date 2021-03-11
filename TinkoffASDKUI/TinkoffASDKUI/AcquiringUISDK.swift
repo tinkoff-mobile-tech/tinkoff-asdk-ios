@@ -549,10 +549,9 @@ public class AcquiringUISDK: NSObject {
             switch fetchStatus {
             case let .object(response):
                 if completionStatus.contains(response.status) {
-                    #warning("Раскомментировать и актуализировать, когда GetState переведу на новый api слой")
-                    //                    self?.acquiringView?.closeVC(animated: true, completion: {
-                    //                        completionHandler?(.success(response))
-                    //                    })
+                    self?.acquiringView?.closeVC(animated: true, completion: {
+                        completionHandler?(.success(response))
+                    })
                 }
 
             default:
@@ -570,12 +569,7 @@ public class AcquiringUISDK: NSObject {
     }
 
     // MARK: Create and Setup AcquiringViewController
-
     
-    private func presentAcquiringPaymentView(presentingViewController: UIViewController,
-                                             customerKey: String?,
-                                             configuration: AcquiringViewConfiguration,
-                                             onPresenting: @escaping ((AcquiringView) -> Void))
     internal func presentAcquiringPaymentView(presentingViewController: UIViewController,
                                               customerKey: String?,
                                               configuration: AcquiringViewConfiguration,
@@ -1169,7 +1163,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                                       checkType: checkType,
                                       confirmationHandler: { confirmationResponse, confirmationComplete in
                                         DispatchQueue.main.async { [weak self] in
-                                            #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
                                             self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
                                         }
                                       },
@@ -1333,8 +1326,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                                          checkType: checkType,
                                          confirmationHandler: { confirmationResponse, confirmationComplete in
                                              DispatchQueue.main.async { [weak self] in
-                                                #warning("Раскомментировать и актуализировать под новую структуру ответа при добавлении карт")
-//                                                 self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
+                                                 self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
                                              }
                                          },
                                          completeHandler: { response in
