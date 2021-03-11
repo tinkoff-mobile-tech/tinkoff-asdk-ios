@@ -1,6 +1,6 @@
 //
 //
-//  Payment.swift
+//  PaymentProcess.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -25,30 +25,30 @@ enum PaymentFlow {
     case finish(paymentId: PaymentId, customerOptions: CustomerOptions)
 }
 
-protocol PaymentDelegate: AnyObject {
-    func paymentDidFinish(_ payment: Payment,
+protocol PaymentProcessDelegate: AnyObject {
+    func paymentDidFinish(_ paymentProcess: PaymentProcess,
                           with state: GetPaymentStatePayload,
                           cardId: String?,
                           rebillId: String?)
-    func paymentDidFailed(_ payment: Payment,
+    func paymentDidFailed(_ paymentProcess: PaymentProcess,
                           with error: Error,
                           cardId: String?,
                           rebillId: String?)
-    func payment(_ payment: Payment,
+    func payment(_ paymentProcess: PaymentProcess,
                  needToCollect3DSData checking3DSURLData: Checking3DSURLData,
                  completion: @escaping (DeviceInfoParams) -> Void)
-    func payment(_ payment: Payment,
+    func payment(_ paymentProcess: PaymentProcess,
                  need3DSConfirmation data: Confirmation3DSData,
                  confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
-    func payment(_ payment: Payment,
+    func payment(_ paymentProcess: PaymentProcess,
                  need3DSConfirmationACS data: Confirmation3DSDataACS,
                  version: String?,
                  confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
 }
 
-public protocol Payment: Cancellable {
+public protocol PaymentProcess: Cancellable {
     var paymentId: PaymentId? { get }
     func start()
 }

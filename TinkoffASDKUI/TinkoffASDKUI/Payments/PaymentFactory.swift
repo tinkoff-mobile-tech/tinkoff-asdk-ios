@@ -29,7 +29,7 @@ struct PaymentFactory {
     
     func createPayment(paymentSource: PaymentSourceData,
                        paymentFlow: PaymentFlow,
-                       paymentDelegate: PaymentDelegate) -> Payment {
+                       paymentDelegate: PaymentProcessDelegate) -> PaymentProcess {
         switch paymentSource {
         case .cardNumber, .savedCard, .paymentData:
             return CardPayment(acquiringSDK: acquiringSDK,

@@ -33,14 +33,14 @@ public protocol PaymentControllerUIProvider: AnyObject {
 public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата прошла успешно
     func paymentController(_ controller: PaymentController,
-                           didFinishPayment: Payment,
+                           didFinishPayment: PaymentProcess,
                            with state: GetPaymentStatePayload,
                            cardId: String?,
                            rebillId: String?)
     
     /// Оплата была отменена
     func paymentController(_ controller: PaymentController,
-                           paymentWasCancelled: Payment,
+                           paymentWasCancelled: PaymentProcess,
                            cardId: String?,
                            rebillId: String?)
     
@@ -66,7 +66,7 @@ public final class PaymentController {
     
     // MARK: - State
     
-    private var payment: Payment?
+    private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
     
     // MARK: - Init
@@ -82,8 +82,8 @@ public final class PaymentController {
     }
     
     deinit {
-        payment?.cancel()
-        payment = nil
+        paymentProcess?.cancel()
+        paymentProcess = nil
     }
     
     // MARK: - Payments
@@ -92,11 +92,11 @@ public final class PaymentController {
                                    paymentSource: PaymentSourceData) {
         resetPaymentProcess { [weak self] in
             guard let self = self else { return }
-            let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
-                                                            paymentFlow: .full(paymentOptions: paymentOptions),
-                                                            paymentDelegate: self)
-            payment.start()
-            self.payment = payment
+            let paymentProcess = self.paymentFactory.createPayment(paymentSource: paymentSource,
+                                                                   paymentFlow: .full(paymentOptions: paymentOptions),
+                                                                   paymentDelegate: self)
+            paymentProcess.start()
+            self.paymentProcess = paymentProcess
         }
     }
     
@@ -105,20 +105,20 @@ public final class PaymentController {
                                      customerOptions: CustomerOptions) {
         resetPaymentProcess { [weak self] in
             guard let self = self else { return }
-            let payment = self.paymentFactory.createPayment(paymentSource: paymentSource,
-                                                            paymentFlow: .finish(paymentId: paymentId,
-                                                                                 customerOptions: customerOptions),
-                                                            paymentDelegate: self)
-            payment.start()
-            self.payment = payment
+            let paymentProcess = self.paymentFactory.createPayment(paymentSource: paymentSource,
+                                                                   paymentFlow: .finish(paymentId: paymentId,
+                                                                                        customerOptions: customerOptions),
+                                                                   paymentDelegate: self)
+            paymentProcess.start()
+            self.paymentProcess = paymentProcess
         }
     }
 }
 
 private extension PaymentController {
     func resetPaymentProcess(completion: @escaping () -> Void) {
-        payment?.cancel()
-        payment = nil
+        paymentProcess?.cancel()
+        paymentProcess = nil
         
         dismissThreeDSViewControllerIfNeeded { [weak self] in
             self?.threeDSViewController = nil
@@ -126,13 +126,13 @@ private extension PaymentController {
         }
     }
     
-    func startThreeDSConfirmation(for payment: Payment,
+    func startThreeDSConfirmation(for paymentProcess: PaymentProcess,
                                   request: URLRequest,
                                   confirmationCancelled: @escaping () -> Void,
                                   completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
         
         threeDSHandler.didCancel = {
-            payment.cancel()
+            paymentProcess.cancel()
             confirmationCancelled()
         }
         
@@ -190,10 +190,10 @@ private extension PaymentController {
     }
 }
 
-// MARK: - PaymentDelegate
+// MARK: - PaymentProcessDelegate
 
-extension PaymentController: PaymentDelegate {
-    func paymentDidFinish(_ payment: Payment,
+extension PaymentController: PaymentProcessDelegate {
+    func paymentDidFinish(_ paymentProcess: PaymentProcess,
                           with state: GetPaymentStatePayload,
                           cardId: String?,
                           rebillId: String?) {
@@ -203,24 +203,24 @@ extension PaymentController: PaymentDelegate {
                 
                 if state.status == .cancelled {
                     self.delegate?.paymentController(self,
-                                                     paymentWasCancelled: payment,
+                                                     paymentWasCancelled: paymentProcess,
                                                      cardId: cardId,
                                                      rebillId: rebillId)
                 } else {
                     
                     self.delegate?.paymentController(self,
-                                                     didFinishPayment: payment,
+                                                     didFinishPayment: paymentProcess,
                                                      with: state,
                                                      cardId: cardId,
                                                      rebillId: rebillId)
                 }
             }
             self.threeDSViewController = nil
-            self.payment = nil
+            self.paymentProcess = nil
         }
     }
     
-    func paymentDidFailed(_ payment: Payment,
+    func paymentDidFailed(_ paymentProcess: PaymentProcess,
                           with error: Error,
                           cardId: String?,
                           rebillId: String?) {
@@ -233,11 +233,11 @@ extension PaymentController: PaymentDelegate {
                                                  rebillId: rebillId)
             }
             self.threeDSViewController = nil
-            self.payment = nil
+            self.paymentProcess = nil
         }
     }
     
-    func payment(_ payment: Payment,
+    func payment(_ paymentProcess: PaymentProcess,
                  needToCollect3DSData checking3DSURLData: Checking3DSURLData,
                  completion: @escaping (DeviceInfoParams) -> Void) {
         DispatchQueue.main.async {
@@ -251,13 +251,13 @@ extension PaymentController: PaymentDelegate {
         }
     }
     
-    func payment(_ payment: Payment,
+    func payment(_ paymentProcess: PaymentProcess,
                  need3DSConfirmation data: Confirmation3DSData,
                  confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void) {
         do {
             let request = try self.acquiringSDK.createConfirmation3DSRequest(data: data)
-            startThreeDSConfirmation(for: payment,
+            startThreeDSConfirmation(for: paymentProcess,
                                      request: request,
                                      confirmationCancelled: confirmationCancelled,
                                      completion: completion)
@@ -266,7 +266,7 @@ extension PaymentController: PaymentDelegate {
         }
     }
     
-    func payment(_ payment: Payment,
+    func payment(_ paymentProcess: PaymentProcess,
                  need3DSConfirmationACS data: Confirmation3DSDataACS,
                  version: String?,
                  confirmationCancelled: @escaping () -> Void,
@@ -274,7 +274,7 @@ extension PaymentController: PaymentDelegate {
         do {
             let request = try self.acquiringSDK.createConfirmation3DSRequestACS(data: data,
                                                                                 messageVersion: version)
-            startThreeDSConfirmation(for: payment,
+            startThreeDSConfirmation(for: paymentProcess,
                                      request: request,
                                      confirmationCancelled: confirmationCancelled,
                                      completion: completion)

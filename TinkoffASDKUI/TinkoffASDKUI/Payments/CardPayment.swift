@@ -20,7 +20,7 @@
 
 import TinkoffASDKCore
 
-final class CardPayment: Payment {
+final class CardPayment: PaymentProcess {
     private let acquiringSDK: AcquiringSdk
     private let paymentSource: PaymentSourceData
     private let paymentFlow: PaymentFlow
@@ -29,7 +29,7 @@ final class CardPayment: Payment {
     
     private(set) var paymentId: PaymentId?
     
-    private weak var delegate: PaymentDelegate?
+    private weak var delegate: PaymentProcessDelegate?
     
     private var customerEmail: String? {
         switch paymentFlow {
@@ -43,7 +43,7 @@ final class CardPayment: Payment {
     init(acquiringSDK: AcquiringSdk,
          paymentSource: PaymentSourceData,
          paymentFlow: PaymentFlow,
-         delegate: PaymentDelegate) {
+         delegate: PaymentProcessDelegate) {
         self.acquiringSDK = acquiringSDK
         self.paymentSource = paymentSource
         self.paymentFlow = paymentFlow
