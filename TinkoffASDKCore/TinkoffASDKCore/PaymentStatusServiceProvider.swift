@@ -28,7 +28,7 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
     /// Слушатель состояния сервиса проверки
     public var onStatusUpdated: ((FetchStatus<GetPaymentStatePayload>) -> Void)?
     /// Платеж состояние которого проверяем
-    private(set) var paymentId: Int64 = 0
+    private(set) var paymentId: PaymentId = ""
     /// Частота обновления, не менее 10 сек
     public var updateTimeInterval: TimeInterval = 5 {
         didSet {
@@ -40,7 +40,7 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 
     private weak var sdk: AcquiringSdk?
 
-    public init(sdk: AcquiringSdk?, paymentId: Int64, updateTimeInterval: TimeInterval = 5) {
+    public init(sdk: AcquiringSdk?, paymentId: PaymentId, updateTimeInterval: TimeInterval = 5) {
         self.sdk = sdk
         self.paymentId = paymentId
         self.updateTimeInterval = updateTimeInterval

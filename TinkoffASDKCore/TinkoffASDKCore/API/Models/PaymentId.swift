@@ -20,4 +20,4 @@
 
 import Foundation
 
-public typealias PaymentId = Int64
+public typealias PaymentId = String

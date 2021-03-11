@@ -173,7 +173,7 @@ public struct PaymentCard: Codable {
 
     /// Идентификатор родительского платежа
     /// Последний платеж с этой карты, который был  зарегистрирован как родительский платеж
-    public var parentPaymentId: Int64?
+    public var parentPaymentId: PaymentId?
 
     /// Срок годности карты в формате `MMYY`, например `1212`, для формата даты используем `expDateFormat`
     public var expDate: String?
@@ -192,17 +192,14 @@ public struct PaymentCard: Codable {
         cardId = try container.decode(String.self, forKey: .cardId)
         let statusRawValue = try container.decode(String.self, forKey: .status)
         status = PaymentCardStatus(rawValue: statusRawValue)
-
-        if let stringValue = try? container.decode(String.self, forKey: .parentPaymentId), let value = Int64(stringValue) {
-            parentPaymentId = value
-        } else {
-            parentPaymentId = try? container.decode(Int64.self, forKey: .parentPaymentId)
-        }
-
         expDate = try? container.decode(String.self, forKey: .expDate)
+        
+        
+        let parentPaymentId = try container.decode(PaymentId.self, forKey: .parentPaymentId)
+        self.parentPaymentId = parentPaymentId.isEmpty ? nil : parentPaymentId
     }
 
-    public init(pan: String, cardId: String, status: PaymentCardStatus, parentPaymentId: Int64?, expDate: String?) {
+    public init(pan: String, cardId: String, status: PaymentCardStatus, parentPaymentId: PaymentId?, expDate: String?) {
         self.pan = pan
         self.cardId = cardId
         self.status = status

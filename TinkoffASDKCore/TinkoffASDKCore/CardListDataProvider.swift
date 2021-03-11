@@ -60,7 +60,7 @@ public protocol FetchDataSourceProtocol: FetchServiceProtocol where ObjectType =
     /// Объект по идентификатору
     func item(with identifier: String?) -> U?
     /// Объект по идентификатору
-    func item(with parentPaymentIdentifier: Int64) -> U?
+    func item(with parentPaymentIdentifier: PaymentId) -> U?
     /// Все объекты
     func allItems() -> [U]
 }
@@ -239,7 +239,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         }
     }
 
-    public func item(with parentPaymentId: Int64) -> PaymentCard? {
+    public func item(with parentPaymentId: PaymentId) -> PaymentCard? {
         return dataSource.first { (card) -> Bool in
             if let cardParentPaymentId = card.parentPaymentId {
                 return parentPaymentId == cardParentPaymentId

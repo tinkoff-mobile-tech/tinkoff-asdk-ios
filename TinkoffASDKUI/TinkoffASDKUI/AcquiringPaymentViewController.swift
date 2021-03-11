@@ -30,9 +30,9 @@ protocol AcquiringCardListDataSourceDelegate: class {
     /// Получить карту
     func getCardListCard(at index: Int) -> PaymentCard
     /// Получить карту по cardId
-    func getCardListCard(with cardId: String) -> PaymentCard?
+    func getCardListCard(cardId: String) -> PaymentCard?
     /// Получить карту по parentPaymentId
-    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard?
+    func getCardListCard(parentPaymentId: PaymentId) -> PaymentCard?
     /// Получить все карты
     func getAllCards() -> [PaymentCard]
     /// Перезагрузить, обновить список карт
@@ -58,7 +58,7 @@ enum AcquiringViewStatus {
     /// статический qr-код для приема платежей
     case qrCodeStatic(qrCode: String, title: String?)
     /// для оплаты требуется ввести реквизиты карты CVC
-    case paymentWainingCVC(cardParentId: Int64)
+    case paymentWainingCVC(cardParentId: PaymentId)
     /// нет возможности оплатить, отображаем ошибку
     case error(Error)
 }

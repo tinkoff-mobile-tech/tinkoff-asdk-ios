@@ -21,10 +21,10 @@
 import Foundation
 
 public struct Check3DSRequestData {
-    public let paymentId: Int64
+    public let paymentId: PaymentId
     public let paymentSource: PaymentSourceData
     
-    public init(paymentId: Int64,
+    public init(paymentId: PaymentId,
                 paymentSource: PaymentSourceData) {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
