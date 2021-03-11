@@ -139,10 +139,13 @@ public class AcquiringUISDK: NSObject {
     // data providers
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
+    
+    private let assembly: UIAssembly
 
     public init(acquiringSdkConfiguration: AcquiringSdkConfiguration,
                 uiSDKConfiguration: AcquiringUISDKConfiguration) throws {
         acquiringSdk = try AcquiringSdk(configuration: acquiringSdkConfiguration)
+        assembly = UIAssembly(uiSDKConfiguration: uiSDKConfiguration)
         self.uiSDKConfiguration = uiSDKConfiguration
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
@@ -151,6 +154,15 @@ public class AcquiringUISDK: NSObject {
     /// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
     
+    public func paymentController(uiProvider: PaymentControllerUIProvider,
+                                  delegate: PaymentControllerDelegate) -> PaymentController {
+        let paymentController = assembly.paymentController(acquiringSDK: acquiringSdk)
+        paymentController.uiProvider = uiProvider
+        paymentController.delegate = delegate
+        
+        return paymentController
+    }
+
     public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
         let provider: CardListDataProvider
         if let cardListDataProvider = self.cardListDataProvider {
@@ -556,6 +568,7 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: Create and Setup AcquiringViewController
 
+    
     private func presentAcquiringPaymentView(presentingViewController: UIViewController,
                                              customerKey: String?,
                                              configuration: AcquiringViewConfiguration,
@@ -947,7 +960,7 @@ public class AcquiringUISDK: NSObject {
                     // собираем информацию о девайсе
                     let screenSize = UIScreen.main.bounds.size
                     let deviceInfo = DeviceInfoParams(cresCallbackUrl: (try? self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString) ?? "",
-                                                      languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
+                                                      languageId: self.acquiringSdk.languageKey.rawValue,
                                                       screenWidth: Int(screenSize.width),
                                                       screenHeight: Int(screenSize.height))
                     finistRequestData.setDeviceInfo(info: deviceInfo)

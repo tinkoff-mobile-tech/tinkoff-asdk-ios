@@ -1,6 +1,6 @@
 //
 //
-//  PaymentInfoData.swift
+//  PaymentId.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,20 +20,4 @@
 
 import Foundation
 
-public struct PaymentInfoData: Codable {
-    /// Номер заказа в системе Продавца
-    var paymentId: Int64
-
-    public init(paymentId: Int64) {
-        self.paymentId = paymentId
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
-    }
-}
+public typealias PaymentId = Int64

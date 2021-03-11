@@ -36,7 +36,7 @@ final class ThreeDSURLRequestBuilder {
     }
     
     func buildConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS,
-                                     version: String) throws -> URLRequest {
+                                        version: String) throws -> URLRequest {
         guard let url = URL(string: requestData.acsUrl) else {
             throw Error.incorrectUrl(requestData.acsUrl)
         }

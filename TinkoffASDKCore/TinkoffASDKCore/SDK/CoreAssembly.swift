@@ -55,6 +55,17 @@ struct CoreAssembly {
     func deviceInfoProvider() -> DeviceInfoProvider {
         return DefaultDeviceInfoProvider()
     }
+    
+    func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
+        return ThreeDSWebViewHandler(threeDSURLBuilder: threeDSURLBuilder(),
+                                     jsonDecoder: buildJSONDecoder())
+    }
+    
+    func threeDSDeviceParamsProvider(screenSize: CGSize, language: AcquiringSdkLanguage) -> ThreeDSDeviceParamsProvider {
+        return DefaultThreeDSDeviceParamsProvider(screenSize: screenSize,
+                                                  language: language,
+                                                  threeDSURLBuilder: threeDSURLBuilder())
+    }
 }
 
 private extension CoreAssembly {

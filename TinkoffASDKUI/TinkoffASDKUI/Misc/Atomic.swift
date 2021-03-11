@@ -1,6 +1,6 @@
 //
 //
-//  PaymentInfoData.swift
+//  Atomic.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,20 +20,29 @@
 
 import Foundation
 
-public struct PaymentInfoData: Codable {
-    /// Номер заказа в системе Продавца
-    var paymentId: Int64
-
-    public init(paymentId: Int64) {
-        self.paymentId = paymentId
+struct Atomic<Value> {
+    
+    private var value: Value
+    private let lock = NSLock()
+    
+    init(wrappedValue value: Value) {
+        self.value = value
     }
-
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
+    
+    var wrappedValue: Value {
+        get { return load() }
+        set { store(newValue: newValue) }
     }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
+    
+    func load() -> Value {
+        lock.lock()
+        defer { lock.unlock() }
+        return value
+    }
+    
+    mutating func store(newValue: Value) {
+        lock.lock()
+        defer { lock.unlock() }
+        value = newValue
     }
 }
