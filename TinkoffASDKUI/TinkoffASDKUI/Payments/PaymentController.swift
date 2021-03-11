@@ -25,8 +25,8 @@ import WebKit
 public protocol PaymentControllerUIProvider: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
     func hiddenWebViewToCollect3DSData() -> WKWebView
-    /// viewController для модального показа экрана с 3DS Confirmation
-    func presentingViewControllerToPresent3DS() -> UIViewController
+    /// viewController для модального показа экранов, необходимость в которых может возникнуть в процессе оплаты
+    func sourceViewControllerToPresent() -> UIViewController
 }
 
 /// Делегат событий для `PaymentController`
@@ -51,6 +51,29 @@ public protocol PaymentControllerDelegate: AnyObject {
                            rebillId: String?)
 }
 
+/// Объект, предоставляющий дополнительный данные для `PaymentController`
+public protocol PaymentControllerDataSource: AnyObject {}
+
+/// Объект, предоставляющий дополнительный данные для `PaymentController` в случае, если запрос `Charge` вернул ошибку `104`
+public protocol ChargePaymentControllerDataSource: PaymentControllerDataSource {
+    /// `AcquiringViewConfiguration` для отображения экрана оплаты с возможность ввести `CVC`
+    func paymentController(_ controller: PaymentController,
+                           viewConfigurationToRetry paymentProcess: PaymentProcess) -> AcquiringViewConfiguration
+    /// вызовется, если при инициации оплаты с `PaymentSourceData.parentPayment` не был предоставлен `CustomerKey` в `CustomerOptions`
+    func paymentController(_ controller: PaymentController,
+                           customerKeyToRetry chargePaymentProcess: PaymentProcess) -> String?
+    /// вызовется, если оплата была была инициирована через метод `performFinishPayment`
+    func paymentController(_ controller: PaymentController,
+                           paymentOptionsToRetry chargePaymentProcess: PaymentProcess) -> PaymentOptions?
+}
+
+public extension ChargePaymentControllerDataSource {
+    func paymentController(_ controller: PaymentController,
+                           customerKeyToRetry chargePaymentProcess: PaymentProcess) -> String? { return nil  }
+    func paymentController(_ controller: PaymentController,
+                           paymentOptionsToRetry chargePaymentProcess: PaymentProcess) -> PaymentOptions? { return nil }
+}
+
 /// Контроллер с помощью которого можно совершать оплату
 public final class PaymentController {
     
@@ -63,22 +86,29 @@ public final class PaymentController {
     
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
+    weak var dataSource: PaymentControllerDataSource?
     
     // MARK: - State
     
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
     
+    // MARK: - Temporary until refactor PaymentView!
+    
+    private let acquiringUISDK: AcquiringUISDK
+    
     // MARK: - Init
     
     init(acquiringSDK: AcquiringSdk,
          paymentFactory: PaymentFactory,
          threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
-         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider) {
+         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
+         acquiringUISDK: AcquiringUISDK /* temporary*/) {
         self.acquiringSDK = acquiringSDK
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
         self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
+        self.acquiringUISDK = acquiringUISDK
     }
     
     deinit {
@@ -142,14 +172,6 @@ private extension PaymentController {
         
         DispatchQueue.main.async {
             self.presentThreeDSViewController(urlRequest: request)
-            let threeDSViewController = ThreeDSViewController(urlRequest: request,
-                                                              handler: self.threeDSHandler)
-            let navigationController = UINavigationController(rootViewController: threeDSViewController)
-            if #available(iOS 13.0, *) {
-                navigationController.isModalInPresentation = true
-            }
-            self.uiProvider?.presentingViewControllerToPresent3DS().present(navigationController, animated: true, completion: nil)
-            self.threeDSViewController = threeDSViewController
         }
     }
     
@@ -162,7 +184,7 @@ private extension PaymentController {
                 navigationController.isModalInPresentation = true
             }
             
-            self.uiProvider?.presentingViewControllerToPresent3DS().present(navigationController,
+            self.uiProvider?.sourceViewControllerToPresent().present(navigationController,
                                                                             animated: true,
                                                                             completion: completion)
             self.threeDSViewController = threeDSViewController
@@ -207,7 +229,6 @@ extension PaymentController: PaymentProcessDelegate {
                                                      cardId: cardId,
                                                      rebillId: rebillId)
                 } else {
-                    
                     self.delegate?.paymentController(self,
                                                      didFinishPayment: paymentProcess,
                                                      with: state,
@@ -227,6 +248,7 @@ extension PaymentController: PaymentProcessDelegate {
         DispatchQueue.main.async {
             self.dismissThreeDSViewControllerIfNeeded { [weak self] in
                 guard let self = self else { return }
+                guard !self.interceptError(error, for: paymentProcess) else { return }
                 self.delegate?.paymentController(self,
                                                  didFailed: error,
                                                  cardId: cardId,
@@ -281,5 +303,103 @@ extension PaymentController: PaymentProcessDelegate {
         } catch {
             completion(.failure(error))
         }
+    }
+    func interceptError(_ error: Error, for paymentProcess: PaymentProcess) -> Bool {
+        let errorCode = (error as NSError).code
+        switch errorCode {
+        case 104:
+            return handleChargeRequireCVCInput(paymentProcess: paymentProcess)
+        default:
+            return false
+        }
+    }
+    
+    func handleChargeRequireCVCInput(paymentProcess: PaymentProcess) -> Bool {
+        guard let sourceViewController = uiProvider?.sourceViewControllerToPresent(),
+              let viewConfiguration = (dataSource as? ChargePaymentControllerDataSource)?.paymentController(self, viewConfigurationToRetry: paymentProcess)  else {
+            return false
+        }
+        
+        let customerKey: String?
+        let paymentOptions: PaymentOptions?
+        let parentPaymentId: PaymentId?
+        
+        switch paymentProcess.paymentFlow {
+        case let .full(processPaymentOptions):
+            paymentOptions = processPaymentOptions
+            customerKey = getCustomerKey(for: paymentProcess, customerOptions: processPaymentOptions.customerOptions)
+        case let .finish(_ , customerOptions):
+            paymentOptions = (dataSource as? ChargePaymentControllerDataSource)?.paymentController(self, paymentOptionsToRetry: paymentProcess)
+            customerKey = getCustomerKey(for: paymentProcess, customerOptions: customerOptions)
+        }
+        
+        switch paymentProcess.paymentSource {
+        case let .parentPayment(rebillId):
+            parentPaymentId = rebillId
+        default:
+            return false
+        }
+        
+        guard let repeatCustomerKey = customerKey,
+              let repeatPaymentOptions = paymentOptions,
+              let repeatParentPaymentId = parentPaymentId else {
+            return false
+        }
+        
+        repeatChargeWithCVCInput(paymentOptions: repeatPaymentOptions,
+                                 sourceViewController: sourceViewController,
+                                 viewConfiguration: viewConfiguration,
+                                 customerKey: repeatCustomerKey,
+                                 parentPaymentId: repeatParentPaymentId,
+                                 failedPaymentId: paymentProcess.paymentId)
+        return true
+    }
+    
+    func getCustomerKey(for paymentProcess: PaymentProcess, customerOptions: CustomerOptions) -> String? {
+        let customerKey: String?
+        if case let .customer(key, _) = customerOptions.customer {
+            customerKey = key
+        } else if let dataSourceKey = (dataSource as? ChargePaymentControllerDataSource)?.paymentController(self, customerKeyToRetry: paymentProcess) {
+            customerKey = dataSourceKey
+        } else {
+            customerKey = nil
+        }
+        return customerKey
+    }
+    
+    func repeatChargeWithCVCInput(paymentOptions: PaymentOptions,
+                                  sourceViewController: UIViewController,
+                                  viewConfiguration: AcquiringViewConfiguration,
+                                  customerKey: String,
+                                  parentPaymentId: PaymentId,
+                                  failedPaymentId: String?) {
+        let newOrderOptions = OrderOptions(orderId: paymentOptions.orderOptions.orderId,
+                                           amount: paymentOptions.orderOptions.amount,
+                                           description: paymentOptions.orderOptions.description,
+                                           receipt: paymentOptions.orderOptions.receipt,
+                                           shops: paymentOptions.orderOptions.shops,
+                                           receipts: paymentOptions.orderOptions.receipts,
+                                           savingAsParentPayment: true)
+        let newPaymentOptions = PaymentOptions(orderOptions: newOrderOptions,
+                                               customerOptions: paymentOptions.customerOptions,
+                                               failedPaymentId: failedPaymentId)
+        
+        // Temporary until refactor PaymentView! Remove ASAP!
+        
+        acquiringUISDK.setupCardListDataProvider(for: customerKey)
+        
+        acquiringUISDK.presentAcquiringPaymentView(presentingViewController: sourceViewController,
+                                                   customerKey: customerKey,
+                                                   configuration: viewConfiguration) { view in
+            view.changedStatus(.initWaiting)
+            view.changedStatus(.paymentWainingCVC(cardParentId: parentPaymentId))
+            
+            view.onTouchButtonPay = { [weak self, weak view] in
+                guard let cardRequisites = view?.cardRequisites() else { return }
+                self?.performInitPayment(paymentOptions: newPaymentOptions, paymentSource: cardRequisites)
+            }
+        }
+        
+        // Temporary until refactor PaymentView! Remove ASAP!
     }
 }

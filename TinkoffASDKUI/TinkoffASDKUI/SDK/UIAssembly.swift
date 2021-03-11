@@ -27,11 +27,13 @@ struct UIAssembly {
         self.uiSDKConfiguration = uiSDKConfiguration
     }
     
-    func paymentController(acquiringSDK: AcquiringSdk) -> PaymentController {
+    func paymentController(acquiringSDK: AcquiringSdk,
+                           acquiringUISDK: AcquiringUISDK /* temporary*/) -> PaymentController {
         return PaymentController(acquiringSDK: acquiringSDK,
                                  paymentFactory: paymentFactory(acquiringSDK: acquiringSDK),
                                  threeDSHandler: acquiringSDK.payment3DSHandler(),
-                                 threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()))
+                                 threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()),
+                                 acquiringUISDK: acquiringUISDK)
     }
 }
 

@@ -22,11 +22,11 @@ import TinkoffASDKCore
 
 final class CardPaymentProcess: PaymentProcess {
     private let acquiringSDK: AcquiringSdk
-    private let paymentSource: PaymentSourceData
-    private let paymentFlow: PaymentFlow
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
     
+    let paymentSource: PaymentSourceData
+    let paymentFlow: PaymentFlow
     private(set) var paymentId: PaymentId?
     
     private weak var delegate: PaymentProcessDelegate?

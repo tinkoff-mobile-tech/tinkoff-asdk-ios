@@ -117,7 +117,7 @@ public class AcquiringUISDK: NSObject {
     private var acquiringSdk: AcquiringSdk
     private weak var acquiringView: AcquiringView?
     private weak var cardsListView: CardListDataSourceStatusListener?
-    private var acquiringViewConfiguration: AcquiringViewConfiguration?
+    internal var acquiringViewConfiguration: AcquiringViewConfiguration?
     private var acquiringConfiguration: AcquiringConfiguration?
     private let uiSDKConfiguration: AcquiringUISDKConfiguration
     //
@@ -155,10 +155,13 @@ public class AcquiringUISDK: NSObject {
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
     
     public func paymentController(uiProvider: PaymentControllerUIProvider,
-                                  delegate: PaymentControllerDelegate) -> PaymentController {
-        let paymentController = assembly.paymentController(acquiringSDK: acquiringSdk)
+                                  delegate: PaymentControllerDelegate,
+                                  dataSource: PaymentControllerDataSource? = nil) -> PaymentController {
+        let paymentController = assembly.paymentController(acquiringSDK: acquiringSdk,
+                                                           acquiringUISDK: self)
         paymentController.uiProvider = uiProvider
         paymentController.delegate = delegate
+        paymentController.dataSource = dataSource
         
         return paymentController
     }
@@ -573,6 +576,10 @@ public class AcquiringUISDK: NSObject {
                                              customerKey: String?,
                                              configuration: AcquiringViewConfiguration,
                                              onPresenting: @escaping ((AcquiringView) -> Void))
+    internal func presentAcquiringPaymentView(presentingViewController: UIViewController,
+                                              customerKey: String?,
+                                              configuration: AcquiringViewConfiguration,
+                                              onPresenting: @escaping ((AcquiringView) -> Void))
     {
         self.presentingViewController = presentingViewController
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)

@@ -22,11 +22,11 @@ import TinkoffASDKCore
 
 final class ChargePaymentProcess: PaymentProcess {
     private let acquiringSDK: AcquiringSdk
-    private let paymentSource: PaymentSourceData
-    private let paymentFlow: PaymentFlow
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
     
+    let paymentSource: PaymentSourceData
+    let paymentFlow: PaymentFlow
     private(set) var paymentId: PaymentId?
     
     private weak var delegate: PaymentProcessDelegate?
@@ -55,6 +55,7 @@ final class ChargePaymentProcess: PaymentProcess {
         case let .full(paymentOptions):
             initPayment(data: PaymentInitData.data(with: paymentOptions, isCharge: true))
         case let .finish(paymentId, _):
+            self.paymentId = paymentId
             finishPayment(paymentId: paymentId)
         }
     }
@@ -105,6 +106,7 @@ private extension ChargePaymentProcess {
     func handleInitResult(payload: InitPayload) {
         let data = PaymentChargeRequestData(paymentId: payload.paymentId,
                                             parentPaymentId: getRebillId())
+        self.paymentId = payload.paymentId
         performCharge(data: data)
     }
     

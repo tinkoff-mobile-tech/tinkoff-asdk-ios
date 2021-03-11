@@ -18,15 +18,25 @@
 //
 
 
-import Foundation
+import TinkoffASDKCore
 
 public struct PaymentOptions {
     let orderOptions: OrderOptions
     let customerOptions: CustomerOptions
+    let failedPaymentId: PaymentId?
     
-    init(orderOptions: OrderOptions,
-         customerOptions: CustomerOptions) {
+    public init(orderOptions: OrderOptions,
+                customerOptions: CustomerOptions) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
+        self.failedPaymentId = nil
+    }
+    
+    init(orderOptions: OrderOptions,
+         customerOptions: CustomerOptions,
+         failedPaymentId: PaymentId?) {
+        self.orderOptions = orderOptions
+        self.customerOptions = customerOptions
+        self.failedPaymentId = failedPaymentId
     }
 }
