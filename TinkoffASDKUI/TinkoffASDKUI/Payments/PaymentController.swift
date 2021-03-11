@@ -21,7 +21,7 @@
 import TinkoffASDKCore
 import WebKit
 
-/// Объект, предоставляющие для `PaymentController` UI-компоненты для совершения платежа
+/// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа
 public protocol PaymentControllerUIProvider: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
     func hiddenWebViewToCollect3DSData() -> WKWebView

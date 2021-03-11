@@ -21,6 +21,12 @@
 import TinkoffASDKCore
 
 struct UIAssembly {
+    private let uiSDKConfiguration: AcquiringUISDKConfiguration
+    
+    init(uiSDKConfiguration: AcquiringUISDKConfiguration) {
+        self.uiSDKConfiguration = uiSDKConfiguration
+    }
+    
     func paymentController(acquiringSDK: AcquiringSdk) -> PaymentController {
         return PaymentController(acquiringSDK: acquiringSDK,
                                  paymentFactory: paymentFactory(acquiringSDK: acquiringSDK),

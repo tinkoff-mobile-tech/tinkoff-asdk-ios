@@ -145,7 +145,7 @@ public class AcquiringUISDK: NSObject {
     public init(acquiringSdkConfiguration: AcquiringSdkConfiguration,
                 uiSDKConfiguration: AcquiringUISDKConfiguration) throws {
         acquiringSdk = try AcquiringSdk(configuration: acquiringSdkConfiguration)
-        assembly = UIAssembly()
+        assembly = UIAssembly(uiSDKConfiguration: uiSDKConfiguration)
         self.uiSDKConfiguration = uiSDKConfiguration
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
