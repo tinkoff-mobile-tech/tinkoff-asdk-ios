@@ -20,7 +20,7 @@
 
 import TinkoffASDKCore
 
-final class CardPayment: PaymentProcess {
+final class CardPaymentProcess: PaymentProcess {
     private let acquiringSDK: AcquiringSdk
     private let paymentSource: PaymentSourceData
     private let paymentFlow: PaymentFlow
@@ -65,7 +65,7 @@ final class CardPayment: PaymentProcess {
     }
 }
 
-private extension CardPayment {
+private extension CardPaymentProcess {
     func initPayment(data: PaymentInitData) {
         let request = acquiringSDK.paymentInit(data: data) { [weak self] result in
             guard let self = self else { return }

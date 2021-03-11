@@ -32,10 +32,10 @@ struct PaymentFactory {
                        paymentDelegate: PaymentProcessDelegate) -> PaymentProcess {
         switch paymentSource {
         case .cardNumber, .savedCard, .paymentData:
-            return CardPayment(acquiringSDK: acquiringSDK,
-                               paymentSource: paymentSource,
-                               paymentFlow: paymentFlow,
-                               delegate: paymentDelegate)
+            return CardPaymentProcess(acquiringSDK: acquiringSDK,
+                                      paymentSource: paymentSource,
+                                      paymentFlow: paymentFlow,
+                                      delegate: paymentDelegate)
         case .parentPayment:
             // TODO: Next PR
             print("return Charge")
