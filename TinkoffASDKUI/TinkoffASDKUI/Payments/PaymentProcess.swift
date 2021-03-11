@@ -43,7 +43,7 @@ protocol PaymentProcessDelegate: AnyObject {
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
     func payment(_ paymentProcess: PaymentProcess,
                  need3DSConfirmationACS data: Confirmation3DSDataACS,
-                 version: String?,
+                 version: String,
                  confirmationCancelled: @escaping () -> Void,
                  completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void)
 }

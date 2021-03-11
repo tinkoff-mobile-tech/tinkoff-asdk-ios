@@ -176,9 +176,16 @@ private extension CardPaymentProcess {
                                 self?.handlePaymentResult(result)
                               })
         case let .needConfirmation3DSACS(data):
+            let version: String
+            if let threeDSVersion = threeDSVersion {
+                version = threeDSVersion
+            } else {
+                version = ""
+                // TODO: Log error
+            }
             delegate?.payment(self,
                               need3DSConfirmationACS: data,
-                              version: threeDSVersion,
+                              version: version,
                               confirmationCancelled: { [weak self] in
                                 self?.handlePaymentCancelled(payload: payload)
                               },

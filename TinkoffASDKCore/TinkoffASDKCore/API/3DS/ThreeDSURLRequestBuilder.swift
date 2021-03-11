@@ -36,14 +36,14 @@ final class ThreeDSURLRequestBuilder {
     }
     
     func buildConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS,
-                                     version: String?) throws -> URLRequest {
+                                        version: String) throws -> URLRequest {
         guard let url = URL(string: requestData.acsUrl) else {
             throw Error.incorrectUrl(requestData.acsUrl)
         }
         
         let creqJson = [APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransId,
                         APIConstants.Keys.acsTransID: requestData.acsTransId,
-                        APIConstants.Keys.messageVersion: version ?? "",
+                        APIConstants.Keys.messageVersion: version,
                         APIConstants.Keys.challengeWindowSize: "05",
                         APIConstants.Keys.messageType: "CReq"]
         let creq = try JSONSerialization.data(withJSONObject: creqJson,

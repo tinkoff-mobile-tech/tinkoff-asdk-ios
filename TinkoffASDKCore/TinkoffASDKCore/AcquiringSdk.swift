@@ -226,9 +226,9 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `Confirmation3DSData`
     /// - Returns:
     ///   - URLRequest
-    public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String?) throws -> URLRequest {
+    public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
         return try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data,
-                                                                                         version: messageVersion)
+                                                                                          version: messageVersion)
     }
     
     /// Проверяет параметры для 3ds формы
