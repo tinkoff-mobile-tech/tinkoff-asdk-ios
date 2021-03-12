@@ -127,8 +127,8 @@ private extension CardPaymentProcess {
             data.setInfoEmail(customerEmail)
             self.finishPayment(data: data)
         default:
-        // TODO: Log error
-        print("Only cardNumber, savedCard or paymentData PaymentSourceData available")
+            // TODO: Log error
+            assertionFailure("Only cardNumber, savedCard or paymentData PaymentSourceData available")
         }
     }
     

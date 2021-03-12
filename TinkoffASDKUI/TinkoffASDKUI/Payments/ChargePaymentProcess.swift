@@ -131,7 +131,7 @@ private extension ChargePaymentProcess {
             return rebillId
         default:
             // TODO: Log error
-            print("Only parentPayment PaymentSourceData available")
+            assertionFailure("Only parentPayment PaymentSourceData available")
             return ""
         }
     }
