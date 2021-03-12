@@ -134,7 +134,7 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func createPaymentData() -> PaymentInitData {
-        let amount = productsAmount()
+        let amount = productsAmount() * 100
         let randomOrderId = String(Int64(arc4random()))
         var paymentData = PaymentInitData(amount: Int64(amount), orderId: randomOrderId, customerKey: customerKey)
         paymentData.description = "Краткое описние товара"

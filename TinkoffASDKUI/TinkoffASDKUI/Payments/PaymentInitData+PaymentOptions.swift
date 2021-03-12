@@ -21,7 +21,8 @@
 import TinkoffASDKCore
 
 extension PaymentInitData {
-    static func data(with paymentOptions: PaymentOptions) -> PaymentInitData {
+    static func data(with paymentOptions: PaymentOptions,
+                     isCharge: Bool = false) -> PaymentInitData {
         let orderOptions = paymentOptions.orderOptions
         let customerOptions = paymentOptions.customerOptions
         
@@ -42,6 +43,15 @@ extension PaymentInitData {
         initData.receipt = orderOptions.receipt
         initData.shops = orderOptions.shops
         initData.receipts = orderOptions.receipts
+        
+        if isCharge {
+            initData.addPaymentData(["chargeFlag": "true"])
+        }
+        
+        if let failedPaymentId = paymentOptions.failedPaymentId {
+            initData.addPaymentData(["failMapiSessionId": "\(failedPaymentId)"])
+            initData.addPaymentData(["recurringType": "12"])
+        }
         
         return initData
     }
