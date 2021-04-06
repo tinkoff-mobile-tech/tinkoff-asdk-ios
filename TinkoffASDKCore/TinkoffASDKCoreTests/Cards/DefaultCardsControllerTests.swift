@@ -267,4 +267,65 @@ final class DefaultCardsControllerTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 5.0)
     }
+    
+    func testCardsControllerGetCardsWithActiveCardsPredicate() {
+        let cardsController = DefaultCardsController(customerKey: "customerKey",
+                                                     cardsLoader: mockCardsLoader)
+
+        let activeCards: [PaymentCard] = [.init(pan: "cardPan",
+                                                cardId: "cardId",
+                                                status: .active,
+                                                parentPaymentId: nil,
+                                                expDate: nil)]
+        let inactiveCards: [PaymentCard] = [.init(pan: "1111",
+                                                  cardId: "2222",
+                                                  status: .inactive,
+                                                  parentPaymentId: nil,
+                                                  expDate: nil)]
+        
+        let resultCards: [PaymentCard] = activeCards + inactiveCards
+        mockCardsLoader.result = .success(resultCards)
+        mockCardsLoader.timeout = 0.1
+
+        let expectation = XCTestExpectation()
+        cardsController.loadCards { result in
+            let cards = cardsController.getCards(predicates: .activeCards)
+            XCTAssertEqual(cards, activeCards)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 5.0)
+    }
+    
+    func testCardsControllerGetCardsWithTwoPredicates() {
+        let cardsController = DefaultCardsController(customerKey: "customerKey",
+                                                     cardsLoader: mockCardsLoader)
+
+        let activeCards: [PaymentCard] = [.init(pan: "cardPan",
+                                                cardId: "cardId",
+                                                status: .active,
+                                                parentPaymentId: nil,
+                                                expDate: nil)]
+        let inactiveCards: [PaymentCard] = [.init(pan: "1111",
+                                                  cardId: "2222",
+                                                  status: .inactive,
+                                                  parentPaymentId: nil,
+                                                  expDate: nil)]
+        let activeAndParentPaymentIdCards: [PaymentCard] = [.init(pan: "5555",
+                                                                  cardId: "6666",
+                                                                  status: .active,
+                                                                  parentPaymentId: "22222",
+                                                                  expDate: nil)]
+        
+        let resultCards: [PaymentCard] = activeCards + inactiveCards + activeAndParentPaymentIdCards
+        mockCardsLoader.result = .success(resultCards)
+        mockCardsLoader.timeout = 0.1
+
+        let expectation = XCTestExpectation()
+        cardsController.loadCards { result in
+            let cards = cardsController.getCards(predicates: .activeCards, .parentPaymentCards)
+            XCTAssertEqual(cards, activeAndParentPaymentIdCards)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 5.0)
+    }
 }

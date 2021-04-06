@@ -59,7 +59,7 @@ final class DefaultCardsController: CardsController {
         }
     }
     
-    func getCards() -> [PaymentCard] {
+    func getCards(predicates: PaymentCardPredicate...) -> [PaymentCard] {
         var returnValue = [PaymentCard]()
         if Thread.isMainThread {
             returnValue = cards
@@ -68,6 +68,9 @@ final class DefaultCardsController: CardsController {
                 returnValue = cards
             }
         }
+        
+        returnValue = getFilteredCards(cards: returnValue, predicates: predicates)
+        
         return returnValue
     }
     
@@ -125,6 +128,16 @@ private extension DefaultCardsController {
     
     func notifyListenersAboutCardsUpdate() {
         listeners.forEach { $0.value?.cardsControllerDidUpdateCards(self) }
+    }
+    
+    func getFilteredCards(cards: [PaymentCard], predicates: [PaymentCardPredicate]) -> [PaymentCard] {
+        return cards.filter { card in
+            var result = true
+            for predicate in predicates {
+                result = result && predicate.closure(card)
+            }
+            return result
+        }
     }
 }
 
