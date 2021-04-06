@@ -60,18 +60,30 @@ final class DefaultCardsController: CardsController {
     }
     
     func getCards() -> [PaymentCard] {
-        cards
+        var returnValue = [PaymentCard]()
+        if Thread.isMainThread {
+            returnValue = cards
+        } else {
+            queue.sync {
+                returnValue = cards
+            }
+        }
+        return returnValue
     }
     
     func addListener(_ listener: CardsControllerListener) {
-        var listeners = self.listeners.filter { $0.value != nil }
-        listeners.append(.init(value: listener))
-        self.listeners = listeners
+        queue.async {
+            var listeners = self.listeners.filter { $0.value != nil }
+            listeners.append(.init(value: listener))
+            self.listeners = listeners
+        }
     }
     
     func removeListener(_ listener: CardsControllerListener) {
-        let listeners = self.listeners.filter { $0.value !== listener }
-        self.listeners = listeners
+        queue.async {
+            let listeners = self.listeners.filter { $0.value !== listener }
+            self.listeners = listeners
+        }
     }
 }
 
@@ -98,7 +110,7 @@ private extension DefaultCardsController {
             self.cardsLoader.loadCards(customerKey: self.customerKey) { [weak self] result in
                 guard let self = self else { return }
                 self.queue.async {
-                    guard task.isCancelled else { return }
+                    guard !task.isCancelled else { return }
                     self.handleLoadedCardsResult(result)
                 }
             }

@@ -163,7 +163,7 @@ public enum PaymentCardCheckType: String {
 // MARK: -
 
 ///
-public struct PaymentCard: Codable {
+public struct PaymentCard: Codable, Equatable {
     /// Название карты, по умолчанию выставяется замаскированный номер, например `430000******0777`
     public var pan: String
 
