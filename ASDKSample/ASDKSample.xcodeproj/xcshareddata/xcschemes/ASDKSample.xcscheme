@@ -58,6 +58,16 @@
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8B5DD01CE09B225B9FED247AFFA4DC2E"
+               BuildableName = "TinkoffASDKUI-Unit-Tests.xctest"
+               BlueprintName = "TinkoffASDKUI-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

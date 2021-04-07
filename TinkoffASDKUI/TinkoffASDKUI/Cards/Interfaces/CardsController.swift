@@ -1,6 +1,6 @@
 //
 //
-//  PaymentCardPredicate.swift
+//  CardsController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,21 +18,18 @@
 //
 
 
-import Foundation
+import TinkoffASDKCore
 
-public struct PaymentCardPredicate {
+protocol CardsControllerListener: AnyObject {
+    func cardsControllerDidUpdateCards(_ cardsController: CardsController)
+}
+
+protocol CardsController {
+    var customerKey: String { get }
     
-    static var activeCards: PaymentCardPredicate {
-        PaymentCardPredicate(closure: { $0.status == .active })
-    }
+    func loadCards(completion: @escaping (Result<[PaymentCard], Error>) -> Void)
+    func getCards(predicates: PaymentCardPredicate...) -> [PaymentCard]
     
-    static var parentPaymentCards: PaymentCardPredicate {
-        PaymentCardPredicate(closure: { $0.parentPaymentId != nil })
-    }
-    
-    let closure: (PaymentCard) -> Bool
-    
-    init(closure: @escaping (PaymentCard) -> Bool) {
-        self.closure = closure
-    }
+    func addListener(_ listener: CardsControllerListener)
+    func removeListener(_ listener: CardsControllerListener)
 }

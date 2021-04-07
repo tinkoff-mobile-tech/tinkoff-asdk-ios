@@ -18,7 +18,8 @@
 //
 
 
-@testable import TinkoffASDKCore
+@testable import TinkoffASDKUI
+import TinkoffASDKCore
 import XCTest
 
 final class DefaultCardsControllerTests: XCTestCase {

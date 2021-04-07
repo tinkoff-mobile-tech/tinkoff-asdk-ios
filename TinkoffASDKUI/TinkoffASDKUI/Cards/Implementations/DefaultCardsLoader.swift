@@ -1,6 +1,6 @@
 //
 //
-//  MockCardsLoader.swift
+//  DefaultCardsLoader.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,19 +18,25 @@
 //
 
 
-@testable import TinkoffASDKCore
+import TinkoffASDKCore
 
-final class MockCardsLoader: CardsLoader {
-    var result: Result<[PaymentCard], Error> = .success([])
-    var timeout: TimeInterval = 1.0
-    var loadCardsTimesCalled = 0
+final class DefaultCardsLoader: CardsLoader {
     
-    
+    // Dependencies
+
+    private let acquiringSDK: AcquiringSdk
+
+    // MARK: - Init
+
+    init(acquiringSDK: AcquiringSdk) {
+        self.acquiringSDK = acquiringSDK
+    }
+
+    // MARK: - CardsLoader
+
     func loadCards(customerKey: String,
-                   completion: @escaping (Result<[PaymentCard], Error>) -> Void) {
-        loadCardsTimesCalled += 1
-        DispatchQueue.global().asyncAfter(deadline: .now() + timeout) {
-            completion(self.result)
-        }
+                   completion: @escaping (Result<[PaymentCard], Error>) -> Void) -> Cancellable {
+        return acquiringSDK.сardList(data: .init(customerKey: customerKey),
+                                      completionHandler: completion)
     }
 }

@@ -1,6 +1,6 @@
 //
 //
-//  CardsLoader.swift
+//  MockCardsControllerListener.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,9 +18,13 @@
 //
 
 
-import Foundation
+@testable import TinkoffASDKUI
 
-protocol CardsLoader {
-    func loadCards(customerKey: String,
-                   completion: @escaping (Result<[PaymentCard], Error>) -> Void)
+final class MockCardsControllerListener: CardsControllerListener {
+    
+    var cardsControllerDidUpdateCardsTimesCalled = 0
+    
+    func cardsControllerDidUpdateCards(_ cardsController: CardsController) {
+        cardsControllerDidUpdateCardsTimesCalled += 1
+    }
 }

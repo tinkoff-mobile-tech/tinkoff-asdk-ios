@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import TinkoffASDKCore
 
 final class DefaultCardsController: CardsController {
     

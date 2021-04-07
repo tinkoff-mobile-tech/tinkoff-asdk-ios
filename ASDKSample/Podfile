@@ -5,7 +5,7 @@ use_frameworks!
 target 'ASDKSample' do
 
 	pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
-	pod 'TinkoffASDKUI', :path => "../"
+	pod 'TinkoffASDKUI', :path => "../", :testspecs => ['Tests']
 
 	# Linting and Formatting
 

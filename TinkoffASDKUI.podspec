@@ -17,4 +17,7 @@ Pod::Spec.new do |spec|
 	spec.resource = "TinkoffASDKUI/TinkoffASDKUI/**/*.{lproj,strings,xib,xcassets,imageset}"
 	spec.dependency 'TinkoffASDKCore'
 
+	spec.test_spec 'Tests' do |test_spec|
+    	test_spec.source_files = 'TinkoffASDKUI/TinkoffASDKUITests/**/*.swift'
+  	end  
 end

@@ -1,6 +1,6 @@
 //
 //
-//  MockCardsControllerListener.swift
+//  CardsLoader.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,13 +18,11 @@
 //
 
 
-@testable import TinkoffASDKCore
+import TinkoffASDKCore
 
-final class MockCardsControllerListener: CardsControllerListener {
+protocol CardsLoader {
     
-    var cardsControllerDidUpdateCardsTimesCalled = 0
-    
-    func cardsControllerDidUpdateCards(_ cardsController: CardsController) {
-        cardsControllerDidUpdateCardsTimesCalled += 1
-    }
+    @discardableResult
+    func loadCards(customerKey: String,
+                   completion: @escaping (Result<[PaymentCard], Error>) -> Void) -> Cancellable
 }
