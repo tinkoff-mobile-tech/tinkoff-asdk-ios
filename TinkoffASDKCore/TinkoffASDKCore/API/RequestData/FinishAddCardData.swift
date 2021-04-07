@@ -47,6 +47,13 @@ public struct FinishAddCardData: Codable {
         self.cvv = cvv
         self.requestKey = requestKey
     }
+    
+    public init(cardData: CardData, requestKey: String) {
+        self.cardNumber = cardData.number
+        self.expDate = cardData.expDate
+        self.cvv = cardData.cvv
+        self.requestKey = requestKey
+    }
 
     func cardData() -> String {
         return "\(CodingKeys.cardNumber.rawValue)=\(cardNumber);\(CodingKeys.expDate.rawValue)=\(expDate);\(CodingKeys.cvv.rawValue)=\(cvv)"
