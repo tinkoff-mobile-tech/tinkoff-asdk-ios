@@ -141,11 +141,13 @@ public class AcquiringUISDK: NSObject {
     private var checkPaymentStatus: PaymentStatusServiceProvider?
     
     private let assembly: UIAssembly
+    private let cardsAssembly: CardsAssembly
 
     public init(acquiringSdkConfiguration: AcquiringSdkConfiguration,
                 uiSDKConfiguration: AcquiringUISDKConfiguration) throws {
         acquiringSdk = try AcquiringSdk(configuration: acquiringSdkConfiguration)
         assembly = UIAssembly(uiSDKConfiguration: uiSDKConfiguration)
+        cardsAssembly = CardsAssembly(acquiringSDK: acquiringSdk)
         self.uiSDKConfiguration = uiSDKConfiguration
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
@@ -164,6 +166,10 @@ public class AcquiringUISDK: NSObject {
         paymentController.dataSource = dataSource
         
         return paymentController
+    }
+    
+    public func cardsController(for customerKey: String) -> CardsController {
+        return cardsAssembly.getCardsController(customerKey: customerKey)
     }
 
     public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {

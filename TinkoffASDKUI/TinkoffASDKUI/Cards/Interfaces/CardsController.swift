@@ -20,11 +20,11 @@
 
 import TinkoffASDKCore
 
-protocol CardsControllerListener: AnyObject {
+public protocol CardsControllerListener: AnyObject {
     func cardsControllerDidUpdateCards(_ cardsController: CardsController)
 }
 
-protocol CardsController {
+public protocol CardsController {
     var customerKey: String { get }
     
     func loadCards(completion: @escaping (Result<[PaymentCard], Error>) -> Void)
