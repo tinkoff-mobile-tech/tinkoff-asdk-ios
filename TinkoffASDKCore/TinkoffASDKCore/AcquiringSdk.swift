@@ -183,6 +183,19 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completionHandler)
     }
     
+    /// Получение статуса привязки карты.
+    ///
+    /// - Parameters:
+    ///  - data: `AddCardStateData`
+    ///  - completionHandler: результат операции `GetAddCardStatePayload` в случае успешного запроса или `Error` - ошибка
+    /// - Returns: 'Cancellable'
+    
+    public func getAddCardState(data: AddCardStateData,
+                                completionHandler: @escaping (_ result: Result<GetAddCardStatePayload, Error>) -> Void) -> Cancellable {
+        let request = GetAddCardStateRequest(addCardStateData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
     // MARK: - СБП
     
     /// Сгенерировать QR-код для оплаты
