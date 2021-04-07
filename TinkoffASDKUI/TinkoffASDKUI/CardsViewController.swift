@@ -21,6 +21,12 @@ import TinkoffASDKCore
 import UIKit
 
 class CardsViewController: UIViewController {
+    enum State {
+        case loading
+        case error(Error)
+        case data
+    }
+    
     private enum TableSections: Int {
         case cards
         case addNew
@@ -31,11 +37,15 @@ class CardsViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var viewWaiting: UIView!
 
-    var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate!
+    var cardsController: CardsController!
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
 
     private var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
+    private var cards = [PaymentCard]()
+    private var state: State = .data {
+        didSet { tableView.reloadData() }
+    }
 
     private lazy var buttonClose: UIBarButtonItem = {
         if #available(iOS 13.0, *) {
@@ -44,7 +54,7 @@ class CardsViewController: UIViewController {
             return UIBarButtonItem(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeView(_:)))
         }
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -65,6 +75,9 @@ class CardsViewController: UIViewController {
         if presentingViewController != nil, navigationController != nil, navigationController?.viewControllers.count == 1 {
             navigationItem.setRightBarButton(buttonClose, animated: true)
         }
+        
+        cardsController.addListener(self)
+        loadCards()
     }
 
     @objc func closeView(_: UIBarButtonItem?) {
@@ -82,12 +95,27 @@ class CardsViewController: UIViewController {
             }
         }
     }
+    
+    private func loadCards() {
+        state = .loading
+        cardsController.loadCards { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                self.cards = self.cardsController.getCards(predicates: .activeCards)
+                self.state = .data
+            case let .failure(error):
+                self.cards = []
+                self.state = .error(error)
+            }
+        }
+    }
 
     private func cardListCell(for tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch cardListDataSourceDelegate.getCardListFetchStatus() {
-        case .unknown, .loading:
-            if indexPath.row < cardListDataSourceDelegate.getCardListNumberOfCards(), let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
-                let card = cardListDataSourceDelegate.getCardListCard(at: indexPath.row)
+        switch state {
+        case .loading:
+            if indexPath.row < cards.count, let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
+                let card = cards[indexPath.row]
 
                 cell.labelCardName.text = card.pan
                 cell.labelCardExpData.text = card.expDateFormat()
@@ -101,36 +129,35 @@ class CardsViewController: UIViewController {
 
                 return cell
             }
+        case .data:
+            if cards.isEmpty {
+                if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
+                    cell.labelStatus.text = AcqLoc.instance.localize("TinkoffAcquiring.text.status.cardListEmpty")
+                    cell.labelStatus.isHidden = false
+                    cell.buttonUpdate.isHidden = true
+                    cell.activityIndicator.stopAnimating()
 
-        case .object:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
-                let card = cardListDataSourceDelegate.getCardListCard(at: indexPath.row)
+                    return cell
+                }
+            } else {
+                if let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentCardTableViewCell") as? PaymentCardTableViewCell {
+                    let card = cards[indexPath.row]
 
-                cell.labelCardName.text = card.pan
-                cell.labelCardExpData.text = card.expDateFormat()
-                cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
-                    if let numbers = requisites, card.pan.hasPrefix(numbers) {
-                        cell?.imageViewLogo.image = icon
-                        cell?.imageViewLogo.isHidden = false
-                    } else {
-                        cell?.imageViewLogo.image = nil
-                        cell?.imageViewLogo.isHidden = true
-                    }
-                })
+                    cell.labelCardName.text = card.pan
+                    cell.labelCardExpData.text = card.expDateFormat()
+                    cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
+                        if let numbers = requisites, card.pan.hasPrefix(numbers) {
+                            cell?.imageViewLogo.image = icon
+                            cell?.imageViewLogo.isHidden = false
+                        } else {
+                            cell?.imageViewLogo.image = nil
+                            cell?.imageViewLogo.isHidden = true
+                        }
+                    })
 
-                return cell
+                    return cell
+                }
             }
-
-        case .empty:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
-                cell.labelStatus.text = AcqLoc.instance.localize("TinkoffAcquiring.text.status.cardListEmpty")
-                cell.labelStatus.isHidden = false
-                cell.buttonUpdate.isHidden = true
-                cell.activityIndicator.stopAnimating()
-
-                return cell
-            }
-
         case let .error(error):
             if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
                 if (error as NSError).code == 7 {
@@ -143,13 +170,13 @@ class CardsViewController: UIViewController {
                 cell.buttonUpdate.isHidden = false
                 cell.activityIndicator.stopAnimating()
                 cell.onButtonTouch = { [weak self] in
-                    self?.cardListDataSourceDelegate.cardListReload()
+                    self?.loadCards()
                 }
 
                 return cell
             }
         }
-
+        
         return tableView.defaultCell()
     }
 
@@ -187,7 +214,7 @@ class CardsViewController: UIViewController {
     private func showAddCardView() {
         // create
         let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
-        modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
+//        modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper
 
@@ -205,9 +232,8 @@ class CardsViewController: UIViewController {
 
     private func checkIfCellIsEditable(at indexPath: IndexPath) -> Bool {
         guard case .cards = tableViewSection[indexPath.section],
-              case .object = cardListDataSourceDelegate.getCardListFetchStatus()
+              case .data = state
         else { return false }
-
         return true
     }
 }
@@ -261,19 +287,15 @@ extension CardsViewController: UITableViewDataSource {
             return 1
 
         case .cards:
-            switch cardListDataSourceDelegate.getCardListFetchStatus() {
-            case .unknown:
-                return 1
-
+            switch state {
             case .loading:
-                return 1 + cardListDataSourceDelegate.getCardListNumberOfCards()
-
-            case .object:
-                return cardListDataSourceDelegate.getCardListNumberOfCards()
-
-            case .empty:
-                return 1
-
+                return 1 + cards.count
+            case .data:
+                if cards.isEmpty {
+                    return 1
+                } else {
+                    return cards.count
+                }
             case .error:
                 return 1
             }
@@ -310,22 +332,15 @@ extension CardsViewController: UITableViewDataSource {
             break
 
         case .cards:
-            cardListDataSourceDelegate.cardListToDeactivateCard(at: indexPath.row, startHandler: {
-                self.viewWaiting.isHidden = false
-            }) { result in
-                self.viewWaiting.isHidden = true
-                if result != nil {
-                    tableView.reloadData()
-                }
-            }
+            print("TODO: Deactivate card via controller")
+            // TODO: TODO: Deactivate card via controller
         } // switch tableViewSection
     }
 }
 
-extension CardsViewController: CardListDataSourceStatusListener {
-    // MARK: CardListDataSourceStatusListener
-
-    func cardsListUpdated(_: FetchStatus<[PaymentCard]>) {
-        tableView.reloadData()
+extension CardsViewController: CardsControllerListener {
+    func cardsControllerDidUpdateCards(_ cardsController: CardsController) {
+        self.cards = cardsController.getCards(predicates: .activeCards)
+        self.tableView.reloadData()
     }
 }

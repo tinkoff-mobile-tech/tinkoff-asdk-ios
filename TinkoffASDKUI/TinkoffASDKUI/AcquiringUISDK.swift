@@ -116,7 +116,6 @@ public class AcquiringUISDK: NSObject {
     //
     private var acquiringSdk: AcquiringSdk
     private weak var acquiringView: AcquiringView?
-    private weak var cardsListView: CardListDataSourceStatusListener?
     internal var acquiringViewConfiguration: AcquiringViewConfiguration?
     private var acquiringConfiguration: AcquiringConfiguration?
     private let uiSDKConfiguration: AcquiringUISDKConfiguration
@@ -633,20 +632,14 @@ public class AcquiringUISDK: NSObject {
 
         modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
             guard let self = self else { return }
+            guard let customerKey = customerKey else { return }
             
             let viewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
             viewController.scanerDataSource = modalViewController?.scanerDataSource
             viewController.alertViewHelper = modalViewController?.alertViewHelper
-            self.cardsListView = viewController
             
-            // проверяем, что cardListDataProvider не nil, поэтому мы можем
-            // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-            // будет краш из-за того, что там необходим force unwrap
-            // TODO: Отрефачить эту историю!
-            if self.cardListDataProvider != nil {
-                viewController.cardListDataSourceDelegate = self
-            }
-            
+            viewController.cardsController = self.cardsAssembly.getCardsController(customerKey: customerKey)
+
             let cardListNController = UINavigationController(rootViewController: viewController)
             if self.acquiringView != nil {
                 self.acquiringView?.presentVC(cardListNController, animated: true, completion: nil)
@@ -1105,7 +1098,6 @@ extension AcquiringUISDK: CardListDataSourceStatusListener {
     // MARK: CardListDataSourceStatusListener
 
     public func cardsListUpdated(_ status: FetchStatus<[PaymentCard]>) {
-        cardsListView?.cardsListUpdated(status)
         acquiringView?.cardsListUpdated(status)
     }
 }
@@ -1360,25 +1352,15 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         // create
         let modalViewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        // TODO: Отрефачить эту историю!
-        modalViewController.cardListDataSourceDelegate = self
+        modalViewController.cardsController = cardsAssembly.getCardsController(customerKey: customerKey)
         modalViewController.title = configuration.viewTitle
 
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
 
-        
-        cardsListView = modalViewController
         // present
         let presentationController = UINavigationController(rootViewController: modalViewController)
-        presentingViewController.present(presentationController, animated: true) {
-            _ = presentationController
-            // вызов setupCardListDataProvider выше гарантирует, что cardListDataProvider будет не nil
-            self.cardListDataProvider?.update()
-        }
+        presentingViewController.present(presentationController, animated: true)
     }
 }
 
