@@ -214,7 +214,7 @@ class CardsViewController: UIViewController {
     private func showAddCardView() {
         // create
         let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
-//        modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
+        modalViewController.cardsController = cardsController
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper
 

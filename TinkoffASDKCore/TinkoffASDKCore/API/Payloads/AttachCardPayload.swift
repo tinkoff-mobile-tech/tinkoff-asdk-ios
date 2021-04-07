@@ -25,17 +25,20 @@ public struct AttachCardPayload: Decodable {
     public let requestKey: String
     public let cardId: String?
     public let attachCardStatus: AttachCardStatus
+    public let rebillId: PaymentId?
     
     private enum CodingKeys: CodingKey {
         case status
         case requestKey
         case cardId
+        case rebillId
         
         var stringValue: String {
             switch self {
             case .status: return APIConstants.Keys.status
             case .requestKey: return APIConstants.Keys.requestKey
             case .cardId: return APIConstants.Keys.cardId
+            case .rebillId: return APIConstants.Keys.rebillId
             }
         }
     }
@@ -43,11 +46,13 @@ public struct AttachCardPayload: Decodable {
     public init(status: PaymentStatus,
                 requestKey: String,
                 cardId: String?,
-                attachCardStatus: AttachCardStatus) {
+                attachCardStatus: AttachCardStatus,
+                rebillId: PaymentId?) {
         self.status = status
         self.requestKey = requestKey
         self.cardId = cardId
         self.attachCardStatus = attachCardStatus
+        self.rebillId = rebillId
     }
     
     public init(from decoder: Decoder) throws {
@@ -55,6 +60,7 @@ public struct AttachCardPayload: Decodable {
         status = try container.decodeIfPresent(PaymentStatus.self, forKey: .status) ?? .unknown
         requestKey = try container.decode(String.self, forKey: .requestKey)
         cardId = try container.decodeIfPresent(String.self, forKey: .cardId)
+        rebillId = try container.decodeIfPresent(PaymentId.self, forKey: .rebillId)
         
         switch status {
         case .checking3ds, .hold3ds:

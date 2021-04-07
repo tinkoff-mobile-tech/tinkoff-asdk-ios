@@ -38,7 +38,7 @@ class AddNewCardViewController: PopUpViewContoller {
     //
     private var tableViewCells: [AddCardTableViewCells]!
     private var inputCardRequisitesController: InputCardRequisitesDataSource!
-    var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
+    var cardsController: CardsController!
     var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
@@ -67,19 +67,35 @@ class AddNewCardViewController: PopUpViewContoller {
                cardRequisitesValidator.validateCardCVC(cvc: cvc)
             {
                 viewWaiting.isHidden = false
-                cardListDataSourceDelegate?.cardListToAddCard(number: number,
-                                                            expDate: expDate,
-                                                            cvc: cvc,
-                                                            addCardViewPresenter: self,
-                                                            alertViewHelper: alertViewHelper,
-                                                            completeHandler: { [weak self] response in
-                                                                self?.closeViewController {
-                                                                    self?.completeHandler?(response)
-                                                                }
-                                                            })
+                cardsController.addCard(cardData: .init(number: number, expDate: expDate, cvv: cvc),
+                                        checkType: .no,
+                                        uiProvider: self) { result in
+                    switch result {
+                    case let .failure(error):
+                        print("AA")
+                    case let .success(card):
+                        print("dsds")
+                    }
+                }
+//                cardListDataSourceDelegate?.cardListToAddCard(number: number,
+//                                                            expDate: expDate,
+//                                                            cvc: cvc,
+//                                                            addCardViewPresenter: self,
+//                                                            alertViewHelper: alertViewHelper,
+//                                                            completeHandler: { [weak self] response in
+//                                                                self?.closeViewController {
+//                                                                    self?.completeHandler?(response)
+//                                                                }
+//                                                            })
             } // validate card requisites
         }
     } // onButtonAddTouch
+}
+
+extension AddNewCardViewController: CardsControllerAddCardProcessUIProvider {
+    func sourceViewControllerToPresent() -> UIViewController {
+        self
+    }
 }
 
 extension AddNewCardViewController: UITableViewDataSource {

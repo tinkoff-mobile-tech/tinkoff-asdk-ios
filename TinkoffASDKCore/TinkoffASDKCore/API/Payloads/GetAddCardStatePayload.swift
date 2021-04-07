@@ -25,7 +25,7 @@ public struct GetAddCardStatePayload: Decodable {
     public let status: PaymentStatus
     public let customerKey: String?
     public let cardId: String?
-    public let rebillId: String?
+    public let rebillId: PaymentId?
     
     private enum CodingKeys: CodingKey {
         case requestKey
@@ -49,7 +49,7 @@ public struct GetAddCardStatePayload: Decodable {
                 status: PaymentStatus,
                 customerKey: String?,
                 cardId: String?,
-                rebillId: String?) {
+                rebillId: PaymentId?) {
         self.requestKey = requestKey
         self.status = status
         self.customerKey = customerKey

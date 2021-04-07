@@ -200,11 +200,7 @@ public class AcquiringUISDK: NSObject {
 
         // create
         let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        // TODO: Отрефачить эту историю!
-        modalViewController.cardListDataSourceDelegate = self
+        modalViewController.cardsController = cardsAssembly.getCardsController(customerKey: customerKey)
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
 
@@ -1184,12 +1180,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         // create
         let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
-        
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        // TODO: Отрефачить эту историю!
-        modalViewController.cardListDataSourceDelegate = self
+
+        modalViewController.cardsController = cardsAssembly.getCardsController(customerKey: customerKey)
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
 

@@ -26,6 +26,7 @@ final class DefaultCardsController: CardsController {
     
     let customerKey: String
     private let cardsLoader: CardsLoader
+    private let acquiringSDK: AcquiringSdk
     
     // Listeners
     
@@ -37,12 +38,17 @@ final class DefaultCardsController: CardsController {
     private var completions = [(Result<[PaymentCard], Error>) -> Void]()
     private var cardsLoadTask: DispatchWorkItem?
     
+    private var addCardProcess: AddCardProcess?
+    private var addCardCompletion: ((Result<PaymentCard?, Error>) -> Void)?
+    
     // MARK: - Init
     
     init(customerKey: String,
-         cardsLoader: CardsLoader) {
+         cardsLoader: CardsLoader,
+         acquiringSDK: AcquiringSdk) {
         self.customerKey = customerKey
         self.cardsLoader = cardsLoader
+        self.acquiringSDK = acquiringSDK
     }
     
     // MARK: - CardsController
@@ -67,6 +73,18 @@ final class DefaultCardsController: CardsController {
         return returnValue
     }
     
+    func addCard(cardData: CardData,
+                 checkType: PaymentCardCheckType,
+                 uiProvider: CardsControllerAddCardProcessUIProvider,
+                 completion: @escaping (Result<PaymentCard?, Error>) -> Void) {
+        self.addCardCompletion = completion
+        let addCardProcess = DefaultAddCardProcess(acquiringSDK: acquiringSDK,
+                                                   customerKey: customerKey)
+        addCardProcess.addCard(cardData: cardData, checkType: checkType)
+        addCardProcess.delegate = self
+        self.addCardProcess = addCardProcess
+    }
+    
     func addListener(_ listener: CardsControllerListener) {
         DispatchQueue.safePerformOnMainQueueSync {
             var listeners = self.listeners.filter { $0.value != nil }
@@ -80,6 +98,36 @@ final class DefaultCardsController: CardsController {
             let listeners = self.listeners.filter { $0.value !== listener }
             self.listeners = listeners
         }
+    }
+}
+
+extension DefaultCardsController: AddCardProcessDelegate {
+    func addCardProcessDidFinish(_ addCardProcess: AddCardProcess, state: GetAddCardStatePayload) {
+        loadCards { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case let .success(cards):
+                self.addCardCompletion?(.success(cards.first(where: { $0.cardId == state.cardId })))
+            case .failure:
+                self.addCardCompletion?(.success(nil))
+            }
+        }
+    }
+    
+    func addCardProcessDidFailed(_ addCardProcess: AddCardProcess, error: Error) {
+        self.addCardCompletion?(.failure(error))
+    }
+    
+    func addCardProcess(_ addCardProcess: AddCardProcess, need3DSConfirmation data: Confirmation3DSData, confirmationCancelled: @escaping () -> Void, completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+        
+    }
+    
+    func addCardProcess(_ addCardProcess: AddCardProcess, need3DSConfirmationACS data: Confirmation3DSDataACS, confirmationCancelled: @escaping () -> Void, completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+        
+    }
+    
+    func addCardProcess(_ addCardProcess: AddCardProcess, needRandomAmountConfirmation requestKey: String, confirmationCancelled: @escaping () -> Void, completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+        
     }
 }
 

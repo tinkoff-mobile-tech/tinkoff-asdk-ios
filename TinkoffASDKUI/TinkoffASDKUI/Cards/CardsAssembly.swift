@@ -31,15 +31,25 @@ final class CardsAssembly {
     }
     
     func getCardsController(customerKey: String) -> CardsController {
-        let cardsController = cardsControllers[customerKey] ?? DefaultCardsController(customerKey: customerKey,
-                                                                                      cardsLoader: buildCardsLoader())
+        let cardsController = cardsControllers[customerKey] ?? buildCardsController(customerKey: customerKey)
         cardsControllers[customerKey] = cardsController
         return cardsController
     }
 }
 
 private extension CardsAssembly {
+    func buildCardsController(customerKey: String) -> CardsController {
+        DefaultCardsController(customerKey: customerKey,
+                               cardsLoader: buildCardsLoader(),
+                               acquiringSDK: acquiringSDK)
+    }
+    
     func buildCardsLoader() -> CardsLoader {
         DefaultCardsLoader(acquiringSDK: acquiringSDK)
+    }
+    
+    func buildAddCardProcess(customerKey: String) -> DefaultAddCardProcess {
+        DefaultAddCardProcess(acquiringSDK: acquiringSDK,
+                              customerKey: customerKey)
     }
 }
