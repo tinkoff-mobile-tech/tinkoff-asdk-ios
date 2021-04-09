@@ -21,7 +21,7 @@
 import TinkoffASDKCore
 
 final class DefaultAddCardProcess: AddCardProcess {
-    
+
     // Dependencies
     
     private let acquiringSDK: AcquiringSdk
@@ -33,6 +33,7 @@ final class DefaultAddCardProcess: AddCardProcess {
     
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
+    private var timer: DispatchSourceTimer?
     
     // MARK: - Init
     
@@ -46,6 +47,12 @@ final class DefaultAddCardProcess: AddCardProcess {
     
     func addCard(cardData: CardData, checkType: PaymentCardCheckType) {
         initCardAddition(cardData: cardData, checkType: checkType)
+    }
+    
+    func cancel() {
+        isCancelled.store(newValue: true)
+        currentRequest?.wrappedValue.cancel()
+        timer?.cancel()
     }
 }
 
@@ -90,10 +97,10 @@ private extension DefaultAddCardProcess {
             self?.handleAdditionCancelled(payload: payload)
         }
         
-        let completion: (Result<AddCardStatusResponse, Error>) -> Void = { [weak self] result in
-            self?.handleConfirmationResult(result)
+        let completion: (Result<Void, Error>) -> Void = { [weak self] result in
+            self?.handleConfirmationResult(requestKey: payload.requestKey, result)
         }
-        
+
         switch payload.attachCardStatus {
         case .done:
             let state = GetAddCardStatePayload(requestKey: payload.requestKey,
@@ -121,10 +128,35 @@ private extension DefaultAddCardProcess {
     }
     
     func handleAdditionCancelled(payload: AttachCardPayload) {
-        
+        delegate?.addCardProcessDidFinish(self, state: .init(requestKey: payload.requestKey,
+                                                             status: .cancelled,
+                                                             customerKey: customerKey,
+                                                             cardId: payload.cardId,
+                                                             rebillId: payload.rebillId))
     }
     
-    func handleConfirmationResult(_ result: Result<AddCardStatusResponse, Error>) {
-        
+    func handleConfirmationResult(requestKey: String, _ result: Result<Void, Error>) {
+        switch result {
+        case .success:
+            startAddCardCheck(requestKey: requestKey)
+        case let .failure(error):
+            delegate?.addCardProcessDidFailed(self, error: error)
+        }
+    }
+    
+    func startAddCardCheck(requestKey: String) {
+        let timer = DispatchSource.makeTimerSource()
+        timer.schedule(deadline: .now(), repeating: .seconds(5))
+        timer.setEventHandler { [weak self] in
+            guard let self = self else { return }
+            let request = self.acquiringSDK.getAddCardState(data: .init(requestKey: requestKey), completionHandler: { [weak self] result in
+                guard let self = self else { return }
+                guard case let .success(payload) = result else { return }
+                timer.cancel()
+                self.delegate?.addCardProcessDidFinish(self, state: payload)
+            })
+            self.currentRequest?.store(newValue: request)
+        }
+        timer.resume()
     }
 }

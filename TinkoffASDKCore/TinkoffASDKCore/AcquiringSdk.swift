@@ -269,8 +269,8 @@ public final class AcquiringSdk: NSObject {
     public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
         return coreAssembly.threeDSWebViewHandler()
     }
-    
-    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
+
+    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AddCardStatusResponse> {
         return coreAssembly.threeDSWebViewHandler()
     }
     

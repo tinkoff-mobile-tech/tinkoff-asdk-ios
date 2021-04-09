@@ -26,17 +26,17 @@ protocol AddCardProcessDelegate: AnyObject {
     func addCardProcess(_ addCardProcess: AddCardProcess,
                         need3DSConfirmation data: Confirmation3DSData,
                         confirmationCancelled: @escaping () -> Void,
-                        completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void)
+                        completion: @escaping (Result<Void, Error>) -> Void)
     func addCardProcess(_ addCardProcess: AddCardProcess,
                         need3DSConfirmationACS data: Confirmation3DSDataACS,
                         confirmationCancelled: @escaping () -> Void,
-                        completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void)
+                        completion: @escaping (Result<Void, Error>) -> Void)
     func addCardProcess(_ addCardProcess: AddCardProcess,
                         needRandomAmountConfirmation requestKey: String,
                         confirmationCancelled: @escaping () -> Void,
-                        completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void)
+                        completion: @escaping (Result<Void, Error>) -> Void)
 }
 
-protocol AddCardProcess {
+protocol AddCardProcess: Cancellable {
     func addCard(cardData: CardData, checkType: PaymentCardCheckType)
 }

@@ -20,13 +20,17 @@
 
 import TinkoffASDKCore
 
-public protocol CardsControllerAddCardProcessUIProvider: AnyObject {
-    /// viewController для модального показа экранов, необходимость в которых может возникнуть в процессе оплаты
+public protocol CardsControllerUIProvider: AnyObject {
+    /// viewController для модального показа экранов
     func sourceViewControllerToPresent() -> UIViewController
 }
 
 public protocol CardsControllerListener: AnyObject {
     func cardsControllerDidUpdateCards(_ cardsController: CardsController)
+}
+
+public enum CardsControllerError: Swift.Error {
+    case cancelled
 }
 
 public protocol CardsController {
@@ -37,7 +41,7 @@ public protocol CardsController {
     
     func addCard(cardData: CardData,
                  checkType: PaymentCardCheckType,
-                 uiProvider: CardsControllerAddCardProcessUIProvider,
+                 uiProvider: CardsControllerUIProvider,
                  completion: @escaping (Result<PaymentCard?, Error>) -> Void)
     
     func addListener(_ listener: CardsControllerListener)
