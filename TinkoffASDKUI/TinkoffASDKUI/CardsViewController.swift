@@ -37,6 +37,7 @@ class CardsViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var viewWaiting: UIView!
 
+    var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
     var cardsController: CardsController!
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
@@ -218,7 +219,10 @@ class CardsViewController: UIViewController {
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper
 
-        modalViewController.completeHandler = { [weak self] result in
+        modalViewController.addCardCheckType = { [weak self] in
+            self?.addCardNeedSetCheckTypeHandler?() ?? .no
+        }
+        modalViewController.onCardAddFinished = { [weak self] result in
             self?.showAlert(for: result)
         }
 

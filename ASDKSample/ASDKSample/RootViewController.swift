@@ -234,14 +234,13 @@ class RootViewController: UITableViewController {
 
         if let sdk = try? AcquiringUISDK(acquiringSdkConfiguration: acquiringSDKConfiguration,
                                          uiSDKConfiguration: uiSDKConfiguration) {
+            sdk.addCardNeedSetCheckTypeHandler = {
+                AppSetting.shared.addCardChekType
+            }
             // открыть экран сиска карт
             addCardListView(sdk, customerKey, cardListViewConfigration)
             // или открыть экран добавлени карты
             // addCardView(sdk, customerKey, cardListViewConfigration)
-
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
         }
     }
 }

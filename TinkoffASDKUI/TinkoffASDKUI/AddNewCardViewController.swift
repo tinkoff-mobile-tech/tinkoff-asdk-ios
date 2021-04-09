@@ -30,6 +30,8 @@ enum AddCardTableViewCells {
 class AddNewCardViewController: PopUpViewContoller {
     // MARK: AcquiringView
 
+    var addCardCheckType: (() -> PaymentCardCheckType)?
+    var onCardAddFinished: ((Result<PaymentCard?, Error>) -> Void)?
     var onTouchButtonShowCardList: (() -> Void)?
     var onTouchButtonPay: (() -> Void)?
     var onTouchButtonSBP: (() -> Void)?
@@ -68,31 +70,21 @@ class AddNewCardViewController: PopUpViewContoller {
             {
                 viewWaiting.isHidden = false
                 cardsController.addCard(cardData: .init(number: number, expDate: expDate, cvv: cvc),
-                                        checkType: .no,
-                                        uiProvider: self) { result in
-                    switch result {
-                    case let .failure(error):
-                        print("AA")
-                    case let .success(card):
-                        print("dsds")
+                                        checkType: addCardCheckType?() ?? .no,
+                                        uiProvider: self) { [weak self] result in
+                    guard let self = self else { return }
+                    DispatchQueue.main.async {
+                        self.closeViewController {
+                            self.onCardAddFinished?(result)
+                        }
                     }
                 }
-//                cardListDataSourceDelegate?.cardListToAddCard(number: number,
-//                                                            expDate: expDate,
-//                                                            cvc: cvc,
-//                                                            addCardViewPresenter: self,
-//                                                            alertViewHelper: alertViewHelper,
-//                                                            completeHandler: { [weak self] response in
-//                                                                self?.closeViewController {
-//                                                                    self?.completeHandler?(response)
-//                                                                }
-//                                                            })
             } // validate card requisites
         }
     } // onButtonAddTouch
 }
 
-extension AddNewCardViewController: CardsControllerAddCardProcessUIProvider {
+extension AddNewCardViewController: CardsControllerUIProvider {
     func sourceViewControllerToPresent() -> UIViewController {
         self
     }
