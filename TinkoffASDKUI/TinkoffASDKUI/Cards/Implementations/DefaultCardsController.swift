@@ -156,7 +156,7 @@ extension DefaultCardsController: CardAddingControllerDelegate {
     func cardAddingController(_ controller: CardAddingController,
                               didFinish: AddCardProcess,
                               state: GetAddCardStatePayload) {
-        performAsyncOnSyncQueue { [addCardCompletion] in
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded { [addCardCompletion] in
             if let cardId = state.cardId {
                 self.loadCards { result in
                     switch result {
@@ -174,14 +174,14 @@ extension DefaultCardsController: CardAddingControllerDelegate {
     
     func cardAddingController(_ controller: CardAddingController,
                               addCardWasCancelled: AddCardProcess) {
-        performAsyncOnSyncQueue {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.addCardCompletion?(.failure(CardsControllerError.cancelled))
         }
     }
     
     func cardAddingController(_ controller: CardAddingController,
                               didFailed error: Error) {
-        performAsyncOnSyncQueue {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.addCardCompletion?(.failure(error))
         }
     }

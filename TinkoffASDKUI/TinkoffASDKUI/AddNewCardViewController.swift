@@ -73,7 +73,7 @@ class AddNewCardViewController: PopUpViewContoller {
                                         checkType: addCardCheckType?() ?? .no,
                                         uiProvider: self) { [weak self] result in
                     guard let self = self else { return }
-                    DispatchQueue.main.async {
+                    DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
                         self.closeViewController {
                             self.onCardAddFinished?(result)
                         }

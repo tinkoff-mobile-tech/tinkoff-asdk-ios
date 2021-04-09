@@ -38,5 +38,5 @@ protocol AddCardProcessDelegate: AnyObject {
 }
 
 protocol AddCardProcess: Cancellable {
-    func addCard(cardData: CardData, checkType: PaymentCardCheckType)
+    func start()
 }

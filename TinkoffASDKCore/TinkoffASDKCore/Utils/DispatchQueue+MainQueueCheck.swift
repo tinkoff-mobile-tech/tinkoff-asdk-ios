@@ -35,7 +35,7 @@ extension DispatchQueue {
         return getSpecific(key: mainQueueSpecificKey) == mainQueueSpecificValue
     }
     
-    public static func safePerformOnMainQueueAsync(_ closure: () -> Void) {
+    public static func safePerformOnMainQueueAsyncIfNeeded(_ closure: () -> Void) {
         if isMainQueue {
             closure()
         } else {

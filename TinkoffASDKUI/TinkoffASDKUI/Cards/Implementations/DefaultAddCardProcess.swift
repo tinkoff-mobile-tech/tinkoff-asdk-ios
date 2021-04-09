@@ -26,6 +26,8 @@ final class DefaultAddCardProcess: AddCardProcess {
     
     private let acquiringSDK: AcquiringSdk
     private let customerKey: String
+    private let cardData: CardData
+    private let checkType: PaymentCardCheckType
     
     weak var delegate: AddCardProcessDelegate?
     
@@ -38,17 +40,21 @@ final class DefaultAddCardProcess: AddCardProcess {
     // MARK: - Init
     
     init(acquiringSDK: AcquiringSdk,
-         customerKey: String) {
+         customerKey: String,
+         cardData: CardData,
+         checkType: PaymentCardCheckType) {
         self.acquiringSDK = acquiringSDK
         self.customerKey = customerKey
+        self.cardData = cardData
+        self.checkType = checkType
     }
     
     // MARK: - AddCardProcess
     
-    func addCard(cardData: CardData, checkType: PaymentCardCheckType) {
+    func start() {
         initCardAddition(cardData: cardData, checkType: checkType)
     }
-    
+
     func cancel() {
         isCancelled.store(newValue: true)
         currentRequest?.wrappedValue.cancel()

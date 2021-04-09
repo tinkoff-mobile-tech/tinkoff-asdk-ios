@@ -51,9 +51,11 @@ final class DefaultCardAddingController: CardAddingController {
         resetProcess { [weak self] in
             guard let self = self else { return }
             let process = DefaultAddCardProcess(acquiringSDK: self.acquiringSDK,
-                                                customerKey: customerKey)
-            process.addCard(cardData: cardData, checkType: checkType)
+                                                customerKey: customerKey,
+                                                cardData: cardData,
+                                                checkType: checkType)
             process.delegate = self
+            process.start()
             self.process = process
         }
     }
@@ -62,7 +64,7 @@ final class DefaultCardAddingController: CardAddingController {
 extension DefaultCardAddingController: AddCardProcessDelegate {
     func addCardProcessDidFinish(_ addCardProcess: AddCardProcess,
                                  state: GetAddCardStatePayload) {
-        DispatchQueue.main.async {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
                 if state.status == .cancelled {
@@ -81,7 +83,7 @@ extension DefaultCardAddingController: AddCardProcessDelegate {
     
     func addCardProcessDidFailed(_ addCardProcess: AddCardProcess,
                                  error: Error) {
-        DispatchQueue.main.async {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
                 self.delegate?.cardAddingController(self, didFailed: error)
@@ -205,7 +207,7 @@ private extension DefaultCardAddingController {
                                        requestKey: String,
                                        confirmationCancelled: @escaping () -> Void,
                                        completion: @escaping (Result<Void, Error>) -> Void) {
-        DispatchQueue.main.async {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: Bundle(for: RandomAmounCheckingViewController.self))
                 
