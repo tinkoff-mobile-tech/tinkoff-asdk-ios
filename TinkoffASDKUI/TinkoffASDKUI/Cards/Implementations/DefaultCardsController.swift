@@ -132,16 +132,6 @@ private extension DefaultCardsController {
             return result
         }
     }
-    
-    func performInMainQueueSync(_ closure: () -> Void) {
-        if DispatchQueue.isMainQueue || Thread.isMainThread {
-            closure()
-        } else {
-            DispatchQueue.main.sync {
-                closure()
-            }
-        }
-    }
 }
 
 private struct WeakCardsControllerListener {
