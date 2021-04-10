@@ -26,7 +26,6 @@ final class DefaultCardsController: CardsController {
     
     let customerKey: String
     private let cardsLoader: CardsLoader
-    private let queue: DispatchQueue
     
     // Listeners
     
@@ -41,17 +40,15 @@ final class DefaultCardsController: CardsController {
     // MARK: - Init
     
     init(customerKey: String,
-         cardsLoader: CardsLoader,
-         queue: DispatchQueue = .main) {
+         cardsLoader: CardsLoader) {
         self.customerKey = customerKey
         self.cardsLoader = cardsLoader
-        self.queue = queue
     }
     
     // MARK: - CardsController
     
     func loadCards(completion: @escaping (Result<[PaymentCard], Error>) -> Void) {
-        queue.async {
+        DispatchQueue.safePerformOnMainQueueSync {
             self.completions.append(completion)
             self.cardsLoadTask?.cancel()
             self.cardsLoadTask = nil
@@ -61,21 +58,17 @@ final class DefaultCardsController: CardsController {
     
     func getCards(predicates: PaymentCardPredicate...) -> [PaymentCard] {
         var returnValue = [PaymentCard]()
-        if Thread.isMainThread {
+        DispatchQueue.safePerformOnMainQueueSync {
             returnValue = cards
-        } else {
-            queue.sync {
-                returnValue = cards
-            }
         }
-        
+
         returnValue = getFilteredCards(cards: returnValue, predicates: predicates)
         
         return returnValue
     }
     
     func addListener(_ listener: CardsControllerListener) {
-        queue.async {
+        DispatchQueue.safePerformOnMainQueueSync {
             var listeners = self.listeners.filter { $0.value != nil }
             listeners.append(.init(value: listener))
             self.listeners = listeners
@@ -83,7 +76,7 @@ final class DefaultCardsController: CardsController {
     }
     
     func removeListener(_ listener: CardsControllerListener) {
-        queue.async {
+        DispatchQueue.safePerformOnMainQueueSync {
             let listeners = self.listeners.filter { $0.value !== listener }
             self.listeners = listeners
         }
@@ -94,7 +87,7 @@ private extension DefaultCardsController {
     func performCardsLoading() {
         let cardsLoadTask = createCardsLoadingTask()
         self.cardsLoadTask = cardsLoadTask
-        self.queue.async(execute: cardsLoadTask)
+        cardsLoadTask.perform()
     }
     
     func handleLoadedCardsResult(_ result: Result<[PaymentCard], Error>) {
@@ -112,7 +105,7 @@ private extension DefaultCardsController {
             guard let self = self else { return }
             self.cardsLoader.loadCards(customerKey: self.customerKey) { [weak self] result in
                 guard let self = self else { return }
-                self.queue.async {
+                DispatchQueue.safePerformOnMainQueueSync {
                     guard !task.isCancelled else { return }
                     self.handleLoadedCardsResult(result)
                 }
