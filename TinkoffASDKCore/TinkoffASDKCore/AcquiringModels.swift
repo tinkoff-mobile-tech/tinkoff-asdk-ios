@@ -369,7 +369,7 @@ public enum Taxation: String {
         case "usn_income_outcome": self = .usnIncomeOutcome
         case "envd": self = .envd
         case "esn": self = .esn
-        case "parent": self = .parent
+        case "patent": self = .parent
         default: self = .osn
         }
     }
