@@ -187,6 +187,7 @@ public class AcquiringUISDK: NSObject {
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
+        modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)
@@ -616,6 +617,7 @@ public class AcquiringUISDK: NSObject {
             let viewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
             viewController.scanerDataSource = modalViewController?.scanerDataSource
             viewController.alertViewHelper = modalViewController?.alertViewHelper
+            viewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: self.style.bigButtonStyle))
             self.cardsListView = viewController
             
             // проверяем, что cardListDataProvider не nil, поэтому мы можем
@@ -1182,6 +1184,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
+        modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)
@@ -1351,6 +1354,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         // TODO: Отрефачить эту историю!
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.title = configuration.viewTitle
+        modalViewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: style.bigButtonStyle))
 
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper

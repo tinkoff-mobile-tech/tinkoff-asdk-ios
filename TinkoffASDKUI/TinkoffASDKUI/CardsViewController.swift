@@ -44,6 +44,16 @@ class CardsViewController: UIViewController {
             return UIBarButtonItem(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeView(_:)))
         }
     }()
+    
+    // MARK: - Style
+    
+    struct Style {
+        let addNewCardStyle: AddNewCardViewController.Style
+    }
+    
+    var style: Style?
+    
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -190,6 +200,7 @@ class CardsViewController: UIViewController {
         modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper
+        modalViewController.style = style?.addNewCardStyle
 
         modalViewController.completeHandler = { [weak self] result in
             self?.showAlert(for: result)
