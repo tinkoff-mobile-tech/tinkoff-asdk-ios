@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* rename `parent` case to `parent` in `Taxation` and fix incorrect key in init
+
 ## [2.2.2] - 2021-02-22
 
 ### Fixed
