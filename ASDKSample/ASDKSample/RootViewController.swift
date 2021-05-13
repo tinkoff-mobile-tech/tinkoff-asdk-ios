@@ -169,7 +169,8 @@ class RootViewController: UITableViewController {
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
 
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
+                                             style: TinkoffASDKUI.DefaultStyle()) {
                 viewController.scaner = self
                 viewController.sdk = sdk
                 viewController.customerKey = StageTestData.customerKey
@@ -225,7 +226,8 @@ class RootViewController: UITableViewController {
 
         cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
-        if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+        if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
+                                         style: TinkoffASDKUI.DefaultStyle()) {
             // открыть экран сиска карт
             addCardListView(sdk, customerKey, cardListViewConfigration)
             // или открыть экран добавлени карты

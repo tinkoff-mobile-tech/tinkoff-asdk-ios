@@ -115,6 +115,7 @@ public class AcquiringUISDK: NSObject {
     private weak var presentingViewController: UIViewController?
     //
     private var acquiringSdk: AcquiringSdk
+    private let style: Style
     private weak var acquiringView: AcquiringView?
     private weak var cardsListView: CardListDataSourceStatusListener?
     private var acquiringViewConfiguration: AcquiringViewConfiguration?
@@ -139,8 +140,10 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
-    public init(configuration: AcquiringSdkConfiguration) throws {
+    public init(configuration: AcquiringSdkConfiguration,
+                style: Style = DefaultStyle()) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
+        self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
 
@@ -559,7 +562,9 @@ public class AcquiringUISDK: NSObject {
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
         // create
-        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController", bundle: Bundle(for: AcquiringPaymentViewController.self))
+        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController",
+                                                                 bundle: Bundle(for: AcquiringPaymentViewController.self))
+        modalViewController.style = .init(payButtonStyle: style.bigButtonStyle)
 
         var fields: [AcquiringViewTableViewCells] = []
 

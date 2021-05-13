@@ -18,9 +18,22 @@ extension UIColor {
     }
 }
 
-public extension UIColor {
-    static var dynamic: Dynamic {
+extension UIColor {
+    static var asdk = ASDKColors()
+}
+struct ASDKColors {}
+
+extension ASDKColors {
+    var dynamic: Dynamic {
         return Dynamic()
+    }
+    
+    var yellow: UIColor {
+        return UIColor(hex: "#FFDD2D") ?? .clear
+    }
+    
+    var black: UIColor {
+        return UIColor(hex: "#333333") ?? .clear
     }
     
     struct Dynamic {
