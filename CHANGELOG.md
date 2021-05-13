@@ -4,6 +4,9 @@
 ### Fixed
 * rename `parent` case to `parent` in `Taxation` and fix incorrect key in init
 
+### Added
+* add `Style` to be able to customize big button style on add card and payment screens(https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/63)
+
 ## [2.2.2] - 2021-02-22
 
 ### Fixed
