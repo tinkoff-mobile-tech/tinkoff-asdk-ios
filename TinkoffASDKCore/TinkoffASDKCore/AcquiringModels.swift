@@ -360,7 +360,7 @@ public enum Taxation: String {
     case esn
 
     /// Патентная
-    case parent = "patent"
+    case patent = "patent"
 
     public init(rawValue: String) {
         switch rawValue {
@@ -369,7 +369,7 @@ public enum Taxation: String {
         case "usn_income_outcome": self = .usnIncomeOutcome
         case "envd": self = .envd
         case "esn": self = .esn
-        case "parent": self = .parent
+        case "patent": self = .patent
         default: self = .osn
         }
     }
