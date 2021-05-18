@@ -115,6 +115,7 @@ public class AcquiringUISDK: NSObject {
     private weak var presentingViewController: UIViewController?
     //
     private var acquiringSdk: AcquiringSdk
+    private let style: Style
     private weak var acquiringView: AcquiringView?
     private weak var cardsListView: CardListDataSourceStatusListener?
     private var acquiringViewConfiguration: AcquiringViewConfiguration?
@@ -139,8 +140,10 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
-    public init(configuration: AcquiringSdkConfiguration) throws {
+    public init(configuration: AcquiringSdkConfiguration,
+                style: Style = DefaultStyle()) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
+        self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
     }
 
@@ -184,6 +187,7 @@ public class AcquiringUISDK: NSObject {
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
+        modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)
@@ -559,7 +563,9 @@ public class AcquiringUISDK: NSObject {
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
         // create
-        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController", bundle: Bundle(for: AcquiringPaymentViewController.self))
+        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController",
+                                                                 bundle: Bundle(for: AcquiringPaymentViewController.self))
+        modalViewController.style = .init(payButtonStyle: style.bigButtonStyle)
 
         var fields: [AcquiringViewTableViewCells] = []
 
@@ -611,6 +617,7 @@ public class AcquiringUISDK: NSObject {
             let viewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
             viewController.scanerDataSource = modalViewController?.scanerDataSource
             viewController.alertViewHelper = modalViewController?.alertViewHelper
+            viewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: self.style.bigButtonStyle))
             self.cardsListView = viewController
             
             // проверяем, что cardListDataProvider не nil, поэтому мы можем
@@ -1177,6 +1184,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
+        modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)
@@ -1346,6 +1354,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         // TODO: Отрефачить эту историю!
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.title = configuration.viewTitle
+        modalViewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: style.bigButtonStyle))
 
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper

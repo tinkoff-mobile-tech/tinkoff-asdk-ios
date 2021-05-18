@@ -42,6 +42,16 @@ class AddNewCardViewController: PopUpViewContoller {
     var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
+    
+    // MARK: - Style
+    
+    struct Style {
+        let addCardButtonStyle: ButtonStyle
+    }
+    
+    var style: Style?
+    
+    // MARK: - View Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,6 +112,12 @@ extension AddNewCardViewController: UITableViewDataSource {
         case .requisites:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "InpuCardtRequisitesTableViewCell") as? InpuCardtRequisitesTableViewCell {
                 let accessoryView = Bundle(for: type(of: self)).loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
+                if let style = style {
+                    accessoryView?.buttonAction.backgroundColor = style.addCardButtonStyle.backgroundColor
+                    accessoryView?.buttonAction.tintColor = style.addCardButtonStyle.titleColor
+                } else {
+                    assertionFailure("must inject style via property")
+                }
 
                 inputCardRequisitesController.setup(responderListener: self,
                                                     inputView: cell,

@@ -112,6 +112,15 @@ extension AcquiringView {
 }
 
 class AcquiringPaymentViewController: PopUpViewContoller {
+    
+    // MARK: Style
+    
+    struct Style {
+        let payButtonStyle: ButtonStyle
+    }
+    
+    var style: Style?
+    
     // MARK: AcquiringView
 
     var onTouchButtonShowCardList: (() -> Void)?
@@ -438,8 +447,12 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
         case .buttonPay:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonTableViewCell") as? ButtonTableViewCell {
                 cell.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payByCard"), for: .normal)
-                cell.buttonAction.tintColor = UIColor(hex: "#333333")
-                cell.buttonAction.backgroundColor = UIColor(hex: "#FFDD2D")
+                if let style = style {
+                    cell.buttonAction.tintColor = style.payButtonStyle.titleColor
+                    cell.buttonAction.backgroundColor = style.payButtonStyle.backgroundColor
+                } else {
+                    assertionFailure("must inject style via property")
+                }
 
                 cell.onButtonTouch = { [weak self] in
                     if self?.validatePaymentForm() ?? false {
@@ -453,8 +466,8 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
         case .buttonPaySBP:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonTableViewCell") as? ButtonTableViewCell {
                 cell.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"), for: .normal)
-                cell.buttonAction.tintColor = UIColor.dynamic.button.sbp.tint
-                cell.buttonAction.backgroundColor = UIColor.dynamic.button.sbp.background
+                cell.buttonAction.tintColor = UIColor.asdk.dynamic.button.sbp.tint
+                cell.buttonAction.backgroundColor = UIColor.asdk.dynamic.button.sbp.background
                 cell.setButtonIcon(UIImage(named: "buttonIconSBP", in: Bundle(for: type(of: self)), compatibleWith: nil))
 
                 cell.onButtonTouch = { [weak self] in

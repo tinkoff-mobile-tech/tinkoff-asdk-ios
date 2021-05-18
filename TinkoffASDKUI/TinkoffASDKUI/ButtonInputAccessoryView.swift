@@ -39,7 +39,8 @@ class ButtonInputAccessoryView: UIView, InputAccessoryViewWithButton {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
+        backgroundColor = .clear
+        
         buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payByCard"), for: .normal)
         buttonAction.layer.cornerRadius = 16.0
         buttonAction.tintColor = UIColor(hex: "#333333")
