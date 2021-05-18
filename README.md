@@ -20,7 +20,7 @@ Acquiring SDK позволяет интегрировать Интернет-Э�
 
 ## Подключение
 Рекомендуется использовать [Cocoa Pods][cocoapods]. 
-Для подключения добавьте в файл Podfile зависимости:
+Для подключения добавьте в файл Podfile зависимости:
 ```c
 pod 'TinkoffASDKCore'
 pod 'TinkoffASDKUI'
@@ -193,6 +193,24 @@ if AppSetting.shared.paySBP {
 }
 // На каком яэыке отображется экран оплаты
 viewConfigration.localizableInfo = AcquiringViewConfigration.LocalizableInfo.init(lang: AppSetting.shared.languageId)
+```
+### Кастомизация
+
+Для того что бы кастомизировать UI компонента(цвет кнопки оплатить и т.д.), необходимо реализовать протокол `Style` и передать его экземпляр как параметр `style` при инициализации объекта SDK. 
+
+```
+import TinkoffASDKUI
+
+struct MyAwesomeStyle: Style {
+...
+}
+```
+
+```
+if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration, 
+				 style: MyAwesomeStyle()) {
+...
+}
 ```
 
 ### ASDKSample
