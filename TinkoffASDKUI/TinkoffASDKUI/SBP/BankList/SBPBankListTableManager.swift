@@ -22,6 +22,8 @@ import TinkoffASDKCore
 
 final class SBPBankListTableManager: NSObject {
     
+    var rowSelection: ((Int) -> Void)?
+    
     private let tableView: UITableView
     
     var banks = [SBPBank]() {
@@ -41,6 +43,7 @@ private extension SBPBankListTableManager {
     func setup() {
         tableView.register(SBPBankCell.self, forCellReuseIdentifier: String(describing: SBPBankCell.self))
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.separatorStyle = .none
     }
 }
@@ -62,5 +65,12 @@ extension SBPBankListTableManager: UITableViewDataSource {
         bankCell.bankTitleLabel.text = bank.name
         
         return bankCell
+    }
+}
+
+extension SBPBankListTableManager: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath) {
+        rowSelection?(indexPath.row)
     }
 }

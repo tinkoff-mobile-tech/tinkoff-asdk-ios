@@ -21,11 +21,23 @@
 import UIKit
 
 final class SBPBankListView: UIView {
+    
+    // MARK: - Style
+    
+    struct Style {
+        let continueButtonStyle: ButtonStyle
+    }
+    
+    let style: Style
+    
     let tableView = UITableView(frame: .zero, style: .plain)
     let headerView = SBPBankListHeaderView()
+    let continueButton = BigButton(type: .system)
+    let continueButtonContainer = UIView()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(style: Style) {
+        self.style = style
+        super.init(frame: .zero)
         setup()
     }
     
@@ -36,16 +48,31 @@ final class SBPBankListView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         layoutHeaderView()
+        tableView.contentInset.bottom = continueButtonContainer.bounds.height
     }
 }
 
 private extension SBPBankListView {
     func setup() {
         addSubview(tableView)
+        addSubview(continueButtonContainer)
+        continueButtonContainer.addSubview(continueButton)
         
         tableView.tableHeaderView = headerView
         
         backgroundColor = .white
+        continueButtonContainer.backgroundColor = .white
+        
+        continueButton.titleLabel?.font = UIFont.systemFont(ofSize: .buttonFontSize, weight: .regular)
+        continueButton.layer.cornerRadius = .buttonCornerRadius
+        continueButton.layer.masksToBounds = true
+        continueButton.setTitleColor(style.continueButtonStyle.titleColor,
+                                     for: .normal)
+        continueButton.setTitleColor(UIColor.asdk.darkGray,
+                                     for: .disabled)
+        continueButton.backgroundColors = [.normal: style.continueButtonStyle.backgroundColor,
+                                           .disabled: UIColor.asdk.lightGray,
+                                           .highlighted: style.continueButtonStyle.backgroundColor]
         
         setupConstraints()
     }
@@ -53,6 +80,8 @@ private extension SBPBankListView {
     func setupConstraints() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         headerView.translatesAutoresizingMaskIntoConstraints = false
+        continueButton.translatesAutoresizingMaskIntoConstraints = false
+        continueButtonContainer.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
@@ -62,7 +91,21 @@ private extension SBPBankListView {
             
             headerView.topAnchor.constraint(equalTo: tableView.topAnchor),
             headerView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
-            headerView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor)
+            headerView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
+            
+            continueButton.topAnchor.constraint(equalTo: continueButtonContainer.topAnchor,
+                                                constant: UIEdgeInsets.buttonInsets.top),
+            continueButton.leftAnchor.constraint(equalTo: continueButtonContainer.leftAnchor,
+                                                constant: UIEdgeInsets.buttonInsets.left),
+            continueButton.rightAnchor.constraint(equalTo: continueButtonContainer.rightAnchor,
+                                                constant: -UIEdgeInsets.buttonInsets.right),
+            continueButton.bottomAnchor.constraint(equalTo: continueButtonContainer.bottomAnchor,
+                                                constant: -UIEdgeInsets.buttonInsets.bottom),
+            continueButton.heightAnchor.constraint(equalToConstant: CGFloat.buttonHeight),
+            
+            continueButtonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
+            continueButtonContainer.leftAnchor.constraint(equalTo: leftAnchor),
+            continueButtonContainer.rightAnchor.constraint(equalTo: rightAnchor)
         ])
     }
     
@@ -84,4 +127,14 @@ private extension SBPBankListView {
         
         headerView.translatesAutoresizingMaskIntoConstraints = true
       }
+}
+
+private extension CGFloat {
+    static let buttonHeight: CGFloat = 56
+    static let buttonCornerRadius: CGFloat = 16
+    static let buttonFontSize: CGFloat = 17
+}
+
+private extension UIEdgeInsets {
+    static let buttonInsets: UIEdgeInsets = .init(top: 16, left: 16, bottom: 24, right: 16)
 }

@@ -47,9 +47,12 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
     
     private lazy var tableManager = SBPBankListTableManager(tableView: customView.tableView)
     
+    private let style: SBPBankListView.Style
+    
     // MARK: - Init
 
-    init() {
+    init(style: SBPBankListView.Style) {
+        self.style = style
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,7 +63,7 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
     // MARK: - View Life Cycle
     
     override func loadView() {
-        view = SBPBankListView()
+        view = SBPBankListView(style: style)
     }
     
     override func viewDidLoad() {
@@ -82,5 +85,14 @@ private extension SBPBankListViewController {
         customView.headerView.subtitleLabel.text = AcqLoc.instance.localize(
             "SBP.BanksList.Header.Subtitle"
         )
+        customView.continueButton.setTitle(AcqLoc.instance.localize(
+            "SBP.BanksList.Button.Title"
+        ), for: .normal)
+        
+        customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
+        
+        tableManager.rowSelection = { [weak self] index in
+            self?.customView.continueButton.isEnabled = true
+        }
     }
 }

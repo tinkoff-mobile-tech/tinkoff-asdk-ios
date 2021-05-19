@@ -33,14 +33,19 @@ public final class SBPBankListContainerViewController: UIViewController, Pullabl
     public var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
     private let sbpBanksService: SBPBanksService
+    private let style: Style
     
     private let loadingViewController = LoadingViewController()
-    private let banksListViewController = SBPBankListViewController()
+    private lazy var banksListViewController = SBPBankListViewController(
+        style: .init(continueButtonStyle: style.bigButtonStyle)
+    )
     
     private var isLoading = false
     
-    public init(sbpBanksService: SBPBanksService) {
+    public init(sbpBanksService: SBPBanksService,
+                style: Style) {
         self.sbpBanksService = sbpBanksService
+        self.style = style
         super.init(nibName: nil, bundle: nil)
     }
     
