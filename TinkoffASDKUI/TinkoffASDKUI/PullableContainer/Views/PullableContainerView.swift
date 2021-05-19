@@ -44,7 +44,7 @@ final class PullableContainerView: PassthroughView {
     func addContent(_ content: PullableContainerContent) {
         if let scrollableContent = content as? PullableContainerScrollableContent {
             scrollView = scrollableContent.scrollView
-            containerView.addSubview(scrollView)
+            containerView.addSubview(content.view)
             setupScrollableContentConstraints(content: content)
         } else {
             self.scrollView = UIScrollView()

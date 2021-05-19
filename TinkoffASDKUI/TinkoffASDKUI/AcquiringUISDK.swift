@@ -114,7 +114,7 @@ public protocol AcquiringAlertViewProtocol: class {
 public class AcquiringUISDK: NSObject {
     private weak var presentingViewController: UIViewController?
     //
-    private var acquiringSdk: AcquiringSdk
+    public var acquiringSdk: AcquiringSdk
     private let style: Style
     private weak var acquiringView: AcquiringView?
     private weak var cardsListView: CardListDataSourceStatusListener?

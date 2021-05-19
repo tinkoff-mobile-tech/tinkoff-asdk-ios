@@ -72,7 +72,7 @@ final class PullableContainerDragController {
             return dragViewHeight
         }
         let maximumHeight = delegate.pullableContainerDragControllerMaximumContentHeight(self)
-            - insets.bottom
+            + insets.bottom
             + insets.top
         return maximumHeight
     }

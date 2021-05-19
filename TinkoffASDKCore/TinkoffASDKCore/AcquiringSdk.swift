@@ -347,4 +347,10 @@ public final class AcquiringSdk: NSObject {
             completionHandler(result)
         }
     }
+    
+    public func loadSBPBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void) {
+        let loader = MockSBPBankLoader()
+        loader.loadBanks(completion: completion)
+    }
+    
 } // AcquiringSdk
