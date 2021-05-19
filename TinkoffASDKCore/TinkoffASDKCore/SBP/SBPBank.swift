@@ -30,4 +30,15 @@ public struct SBPBank: Decodable {
         case logoURL
         case schema
     }
+    
+//    public init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+////        static let win1251 = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.windowsCyrillic.rawValue)))
+//        let wrongCodingName = try container.decode(String.self, forKey: .name)
+//        let nameData = wrongCodingName.data(using: .windowsCP1251) ?? Data()
+//        name = String(data: nameData, encoding: .utf8) ?? ""
+//        
+//        logoURL = try container.decode(URL.self, forKey: .logoURL)
+//        schema = try container.decode(String.self, forKey: .schema)
+//    }
 }

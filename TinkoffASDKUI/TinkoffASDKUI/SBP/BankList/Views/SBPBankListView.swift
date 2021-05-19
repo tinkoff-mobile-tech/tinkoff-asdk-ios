@@ -22,6 +22,7 @@ import UIKit
 
 final class SBPBankListView: UIView {
     let tableView = UITableView(frame: .zero, style: .plain)
+    let headerView = SBPBankListHeaderView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,11 +32,18 @@ final class SBPBankListView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layoutHeaderView()
+    }
 }
 
 private extension SBPBankListView {
     func setup() {
         addSubview(tableView)
+        
+        tableView.tableHeaderView = headerView
         
         backgroundColor = .white
         
@@ -44,12 +52,36 @@ private extension SBPBankListView {
     
     func setupConstraints() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        headerView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
             tableView.leftAnchor.constraint(equalTo: leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            tableView.rightAnchor.constraint(equalTo: rightAnchor)
+            tableView.rightAnchor.constraint(equalTo: rightAnchor),
+            
+            headerView.topAnchor.constraint(equalTo: tableView.topAnchor),
+            headerView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            headerView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor)
         ])
     }
+    
+    func layoutHeaderView() {
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tableWidth = tableView.bounds.width
+        headerView.bounds.size.width = tableWidth
+        
+        headerView.setNeedsLayout()
+        headerView.layoutIfNeeded()
+        
+        let headerViewHeight = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        var headerFrame = headerView.frame
+        headerFrame.size.height = headerViewHeight
+        headerView.frame = headerFrame
+        
+        tableView.tableHeaderView = headerView
+        
+        headerView.translatesAutoresizingMaskIntoConstraints = true
+      }
 }

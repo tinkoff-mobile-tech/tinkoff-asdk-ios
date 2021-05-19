@@ -36,6 +36,10 @@ extension ASDKColors {
         return UIColor(hex: "#333333") ?? .clear
     }
     
+    var n3: UIColor {
+        return UIColor(hex: "#9299A2") ?? .clear
+    }
+    
     struct Dynamic {
         public struct Button {
             public struct Sbp {

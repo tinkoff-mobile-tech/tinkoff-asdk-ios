@@ -76,6 +76,11 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
 
 private extension SBPBankListViewController {
     func setup() {
-        
+        customView.headerView.titleLabel.text = AcqLoc.instance.localize(
+            "SBP.BanksList.Header.Title"
+        )
+        customView.headerView.subtitleLabel.text = AcqLoc.instance.localize(
+            "SBP.BanksList.Header.Subtitle"
+        )
     }
 }
