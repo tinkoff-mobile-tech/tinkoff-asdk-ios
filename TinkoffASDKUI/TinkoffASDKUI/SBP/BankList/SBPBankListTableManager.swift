@@ -45,6 +45,8 @@ private extension SBPBankListTableManager {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
+        tableView.rowHeight = .rowHeight
+        tableView.estimatedRowHeight = .rowHeight
     }
 }
 
@@ -73,4 +75,8 @@ extension SBPBankListTableManager: UITableViewDelegate {
                    didSelectRowAt indexPath: IndexPath) {
         rowSelection?(indexPath.row)
     }
+}
+
+private extension CGFloat {
+    static let rowHeight: CGFloat = 56
 }

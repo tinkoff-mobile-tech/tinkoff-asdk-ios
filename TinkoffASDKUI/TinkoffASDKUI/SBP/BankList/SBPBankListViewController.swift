@@ -27,7 +27,7 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
     }
     
     var contentHeight: CGFloat {
-        customView.tableView.contentSize.height
+        customView.tableView.contentSize.height + customView.continueButtonContainer.bounds.height
     }
     
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
@@ -90,9 +90,23 @@ private extension SBPBankListViewController {
         ), for: .normal)
         
         customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
+        customView.continueButton.addTarget(self,
+                                            action: #selector(didTapContinueButton),
+                                            for: .touchUpInside)
         
         tableManager.rowSelection = { [weak self] index in
             self?.customView.continueButton.isEnabled = true
         }
+    }
+    
+    @objc func didTapContinueButton() {
+        guard let selectedIndex = customView.tableView.indexPathForSelectedRow else {
+            return
+        }
+        
+        let bank = banks[selectedIndex.row]
+        UIApplication.shared.open(URL(string: "\(bank.schema)://")!,
+                                  options: [:],
+                                  completionHandler: nil)
     }
 }

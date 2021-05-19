@@ -48,7 +48,6 @@ final class SBPBankListView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         layoutHeaderView()
-        tableView.contentInset.bottom = continueButtonContainer.bounds.height
     }
 }
 
@@ -86,7 +85,7 @@ private extension SBPBankListView {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
             tableView.leftAnchor.constraint(equalTo: leftAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: continueButtonContainer.topAnchor),
             tableView.rightAnchor.constraint(equalTo: rightAnchor),
             
             headerView.topAnchor.constraint(equalTo: tableView.topAnchor),
