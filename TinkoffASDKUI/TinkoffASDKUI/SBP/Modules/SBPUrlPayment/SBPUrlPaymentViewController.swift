@@ -26,7 +26,9 @@ public enum PaymentSource {
     case paymentId(Int64)
 }
 
-final class SBPUrlPaymentViewController: UIViewController, PullableContainerScrollableContent {
+final class SBPUrlPaymentViewController: UIViewController, PullableContainerScrollableContent, CustomViewLoadable {
+    typealias CustomView = SBPUrlPaymentView
+    
     var scrollView: UIScrollView {
         banksListViewController.scrollView
     }
@@ -43,28 +45,40 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     private let sbpApplicationService: SBPApplicationService
     private let sbpPaymentService: SBPPaymentService
     private let paymentSource: PaymentSource
+    private let configuration: AcquiringViewConfiguration
     
     private let loadingViewController = LoadingViewController()
     private let banksListViewController: SBPBankListViewController
     
-    private var isLoading = false
+    private var isLoading = false {
+        didSet {
+            isLoading ? customView.showLoading() : customView.hideLoading()
+            contentHeightDidChange?(self)
+        }
+    }
     private var sbpURL: URL?
     
     init(paymentSource: PaymentSource,
          sbpBanksService: SBPBanksService,
          sbpApplicationService: SBPApplicationService,
          sbpPaymentService: SBPPaymentService,
-         banksListViewController: SBPBankListViewController) {
+         banksListViewController: SBPBankListViewController,
+         configuration: AcquiringViewConfiguration) {
         self.paymentSource = paymentSource
         self.sbpBanksService = sbpBanksService
         self.sbpApplicationService = sbpApplicationService
         self.sbpPaymentService = sbpPaymentService
         self.banksListViewController = banksListViewController
+        self.configuration = configuration
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func loadView() {
+        view = SBPUrlPaymentView()
     }
     
     override func viewDidLoad() {
@@ -76,13 +90,22 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
 
 private extension SBPUrlPaymentViewController {
     func setup() {
-        showBanksList()
+        setupContent()
         banksListViewController.delegate = self
+    }
+    
+    func setupContent() {
+        addChild(loadingViewController)
+        customView.placeLoadingView(loadingViewController.view)
+        loadingViewController.didMove(toParent: self)
+        
+        addChild(banksListViewController)
+        customView.placeContentView(banksListViewController.view)
+        banksListViewController.didMove(toParent: self)
     }
     
     func start() {
         isLoading = true
-        showLoading()
         
         sbpPaymentService.createSBPUrl(paymentSource: paymentSource) { [weak self] result in
             self?.handleSPBUrlCreation(result: result)
@@ -92,7 +115,9 @@ private extension SBPUrlPaymentViewController {
     func handleSPBUrlCreation(result: Result<URL, Error>) {
         switch result {
         case let .success(url):
-            sbpURL = url
+            DispatchQueue.main.async {
+                self.sbpURL = url
+            }
             loadBanks()
         case let .failure(error):
             handleError(error)
@@ -111,15 +136,25 @@ private extension SBPUrlPaymentViewController {
             return
         }
                 
-        isLoading = false
         banksListViewController.banksResult = .init(banks: availableBanks,
                                                     selectedIndex: result.selectedIndex)
-        contentHeightDidChange?(self)
-        hideLoading()
+        isLoading = false
     }
     
     func handleError(_ error: Error) {
+        let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
+        let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
         
+        dismiss(animated: true) { [configuration, presentingViewController] in
+            guard let presentingViewController = presentingViewController else { return }
+            if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle,
+                                                                           message: alertDescription,
+                                                                           dismissCompletion: nil) {
+                    presentingViewController.present(alert, animated: true, completion: nil)
+            } else {
+                AcquiringAlertViewController.create().present(on: presentingViewController, title: alertTitle)
+            }
+        }
     }
     
     func loadBanks() {
@@ -134,45 +169,6 @@ private extension SBPUrlPaymentViewController {
                 }
             }
         }
-    }
-    
-    func showLoading() {
-        addChild(loadingViewController)
-        view.addSubview(loadingViewController.view)
-        loadingViewController.didMove(toParent: self)
-        
-        loadingViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            loadingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            loadingViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            loadingViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            loadingViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor)
-        ])
-        contentHeightDidChange?(self)
-    }
-    
-    func hideLoading() {
-        loadingViewController.willMove(toParent: nil)
-        loadingViewController.view.removeFromSuperview()
-        loadingViewController.didMove(toParent: nil)
-    }
-    
-    func showBanksList() {
-        addChild(banksListViewController)
-        view.addSubview(banksListViewController.view)
-        banksListViewController.didMove(toParent: self)
-        
-        banksListViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            banksListViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            banksListViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            banksListViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            banksListViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor)
-        ])
-    }
-    
-    func showError() {
-        
     }
     
     func openBankApplication(bank: SBPBank) {
@@ -191,4 +187,3 @@ extension SBPUrlPaymentViewController: SBPBankListViewControllerDelegate {
         openBankApplication(bank: bank)
     }
 }
-

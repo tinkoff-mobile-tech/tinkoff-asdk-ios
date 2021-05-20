@@ -26,8 +26,9 @@ protocol SBPBankListViewControllerDelegate: AnyObject {
                                 didSelectBank bank: SBPBank)
 }
 
-final class SBPBankListViewController: UIViewController, PullableContainerScrollableContent {
-    
+final class SBPBankListViewController: UIViewController, PullableContainerScrollableContent, CustomViewLoadable {
+    typealias CustomView = SBPBankListView
+
     weak var delegate: SBPBankListViewControllerDelegate?
     
     var scrollView: UIScrollView {
@@ -39,10 +40,6 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
     }
     
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
-    
-    var customView: SBPBankListView {
-        view as! SBPBankListView
-    }
     
     var banksResult: LoadBanksResult? {
         get {
