@@ -235,10 +235,13 @@ public class AcquiringUISDK: NSObject {
                 self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
             }
         }
-
-        acquiringView?.onTouchButtonSBP = { [weak self] in
-            if let paymentId = self?.paymentInitResponseData?.paymentId {
-                self?.presentSbpActivity(paymentId: paymentId, paymentInvoiceSource: .url, configuration: configuration)
+        
+        acquiringView?.onTouchButtonSBP = { [weak self] viewController in
+            guard let self = self else { return }
+            if let paymentId = self.paymentInitResponseData?.paymentId {
+                let urlSBPViewController = self.urlSBPPaymentViewController(paymentSource: .paymentId(paymentId),
+                                                                            configuration: configuration)
+                viewController.present(urlSBPViewController, animated: true, completion: nil)
             }
         }
     }

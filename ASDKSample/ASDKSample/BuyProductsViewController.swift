@@ -308,15 +308,11 @@ class BuyProductsViewController: UIViewController {
         }
         // swiftformat:enable indent
     }
-
+    
     func generateSbpUrl() {
-        // swiftformat:disable indent
-        sdk.presentPaymentSbpUrl(on: self,
-                                 paymentData: createPaymentData(),
-                                 configuration: acquiringViewConfiguration()) { [weak self] response in
-            self?.responseReviewing(response)
-        }
-        // swiftformat:enable indent
+        let viewController = sdk.urlSBPPaymentViewController(paymentSource: .paymentData(createPaymentData()),
+                                                             configuration: acquiringViewConfiguration())
+        present(viewController, animated: true, completion: nil)
     }
 }
 
