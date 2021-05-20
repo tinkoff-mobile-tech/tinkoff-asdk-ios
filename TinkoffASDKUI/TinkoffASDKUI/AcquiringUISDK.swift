@@ -385,6 +385,8 @@ public class AcquiringUISDK: NSObject {
                 guard let self = self else { return }
                 let emptyViewController = self.sbpAssembly.noAvailableBanksViewController()
                 let navigationController = UINavigationController(rootViewController: emptyViewController)
+                navigationController.navigationBar.applyStyle(titleColor: UIColor.asdk.dynamic.text.primary,
+                                                              backgroundColor: UIColor.asdk.dynamic.background.elevation1)
                 presentingViewController?.present(navigationController, animated: true, completion: nil)
             })
         }

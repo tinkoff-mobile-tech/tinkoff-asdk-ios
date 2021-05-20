@@ -20,26 +20,51 @@
 
 import TinkoffASDKCore
 
-public protocol SBPBanksService {
-    func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void)
-    func defaultSelectionBankIndex(banks: [SBPBank]) -> Int?
+struct LoadBanksResult {
+    let banks: [SBPBank]
+    let selectedIndex: Int?
 }
 
-public final class DefaultSBPBanksService: SBPBanksService {
+protocol SBPBanksService {
+    func loadBanks(completion: @escaping (Result<LoadBanksResult, Error>) -> Void)
+}
+
+final class DefaultSBPBanksService: SBPBanksService {
     
     private let coreSDK: AcquiringSdk
     
-    public init(coreSDK: AcquiringSdk) {
+    init(coreSDK: AcquiringSdk) {
         self.coreSDK = coreSDK
     }
     
-    public func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void) {
-        coreSDK.loadSBPBanks { result in
-            completion(result)
+    func loadBanks(completion: @escaping (Result<LoadBanksResult, Error>) -> Void) {
+        coreSDK.loadSBPBanks { [weak self] result in
+            switch result {
+            case let .failure(error):
+                completion(.failure(error))
+            case let .success(banks):
+                self?.handleTinkoff(banks: banks, completion: completion)
+            }
         }
     }
-    
-    public func defaultSelectionBankIndex(banks: [SBPBank]) -> Int? {
-        return 3
+}
+
+private extension DefaultSBPBanksService {
+    func handleTinkoff(banks: [SBPBank],
+                       completion: @escaping (Result<LoadBanksResult, Error>) -> Void) {
+        guard let tinkoffIndex = banks.firstIndex(where: { $0.name.contains(String.tinkoffBankName) }) else {
+            completion(.success(LoadBanksResult(banks: banks, selectedIndex: nil)))
+            return
+        }
+        
+        var resultBanks = banks
+        let tinkoffBank = resultBanks.remove(at: tinkoffIndex)
+        resultBanks.insert(tinkoffBank, at: 0)
+        
+        completion(.success(LoadBanksResult(banks: resultBanks, selectedIndex: 0)))
     }
+}
+
+private extension String {
+    static let tinkoffBankName = "Тинькофф"
 }

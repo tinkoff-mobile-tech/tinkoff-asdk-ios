@@ -47,11 +47,16 @@ final class LoadingViewController: UIViewController, PullableContainerContent {
     func stopActivity() {
         activityIndicator.stopAnimating()
     }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateActivityIndicatorStyle()
+    }
 }
 
 private extension LoadingViewController {
     func setup() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.asdk.dynamic.background.elevation1
         view.addSubview(activityIndicator)
         
         activityIndicator.style = .gray
@@ -65,5 +70,18 @@ private extension LoadingViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.topAnchor.constraint(equalTo: view.topAnchor),
         ])
+    }
+    
+    func updateActivityIndicatorStyle() {
+        if #available(iOS 13.0, *) {
+            switch UITraitCollection.current.userInterfaceStyle {
+            case .dark:
+                activityIndicator.style = .white
+            case .light:
+                activityIndicator.style = .gray
+            default:
+                activityIndicator.style = .white
+            }
+        }
     }
 }

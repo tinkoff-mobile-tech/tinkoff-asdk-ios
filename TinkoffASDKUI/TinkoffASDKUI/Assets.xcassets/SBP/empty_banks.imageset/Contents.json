@@ -3,6 +3,16 @@
     {
       "filename" : "empty_banks.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "empty_banks-1.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

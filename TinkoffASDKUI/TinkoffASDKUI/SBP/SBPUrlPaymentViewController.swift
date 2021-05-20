@@ -99,8 +99,8 @@ private extension SBPUrlPaymentViewController {
         }
     }
     
-    func handleBanksLoaded(banks: [SBPBank]) {
-        let availableBanks = banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
+    func handleBanksLoaded(result: LoadBanksResult) {
+        let availableBanks = result.banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
         guard !availableBanks.isEmpty else {
             noBanksAppAvailable?(self)
             return
@@ -110,9 +110,10 @@ private extension SBPUrlPaymentViewController {
             openBankApplication(bank: availableBanks[0])
             return
         }
-        
+                
         isLoading = false
-        banksListViewController.banks = availableBanks
+        banksListViewController.banksResult = .init(banks: availableBanks,
+                                                    selectedIndex: result.selectedIndex)
         contentHeightDidChange?(self)
         hideLoading()
     }
@@ -125,8 +126,8 @@ private extension SBPUrlPaymentViewController {
         sbpBanksService.loadBanks { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case let .success(banks):
-                self.handleBanksLoaded(banks: banks)
+            case let .success(result):
+                self.handleBanksLoaded(result: result)
             case let .failure(error):
                 self.handleError(error)
             }

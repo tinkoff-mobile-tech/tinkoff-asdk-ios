@@ -44,12 +44,13 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
         view as! SBPBankListView
     }
     
-    var banks: [SBPBank] {
+    var banksResult: LoadBanksResult? {
         get {
-            tableManager.banks
+            tableManager.banksResult
         }
         set {
-            tableManager.banks = newValue
+            tableManager.banksResult = newValue
+            customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
         }
     }
     
@@ -110,7 +111,8 @@ private extension SBPBankListViewController {
     }
     
     @objc func didTapContinueButton() {
-        guard let selectedIndex = customView.tableView.indexPathForSelectedRow else {
+        guard let selectedIndex = customView.tableView.indexPathForSelectedRow,
+              let banks = banksResult?.banks else {
             return
         }
         let bank = banks[selectedIndex.row]
