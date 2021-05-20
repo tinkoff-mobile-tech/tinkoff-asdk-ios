@@ -20,14 +20,14 @@
 
 import Foundation
 
-struct SBPBankResponse: Decodable {
-    let banks: [SBPBank]
+public struct SBPBankResponse: Decodable {
+    public let banks: [SBPBank]
     
     enum CodingKeys: String, CodingKey {
         case banks = "dictionary"
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         var banksArray = try container.nestedUnkeyedContainer(forKey: .banks)
         var resultBanks = [SBPBank]()

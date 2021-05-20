@@ -42,8 +42,8 @@ final class DefaultSBPBanksService: SBPBanksService {
             switch result {
             case let .failure(error):
                 completion(.failure(error))
-            case let .success(banks):
-                self?.handleTinkoff(banks: banks, completion: completion)
+            case let .success(response):
+                self?.handleTinkoff(banks: response.banks, completion: completion)
             }
         }
     }

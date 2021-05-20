@@ -124,12 +124,14 @@ private extension SBPUrlPaymentViewController {
     
     func loadBanks() {
         sbpBanksService.loadBanks { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case let .success(result):
-                self.handleBanksLoaded(result: result)
-            case let .failure(error):
-                self.handleError(error)
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                switch result {
+                case let .success(result):
+                    self.handleBanksLoaded(result: result)
+                case let .failure(error):
+                    self.handleError(error)
+                }
             }
         }
     }
