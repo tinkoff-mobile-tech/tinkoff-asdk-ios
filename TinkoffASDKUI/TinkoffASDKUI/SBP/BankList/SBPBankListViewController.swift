@@ -21,7 +21,15 @@
 import UIKit
 import TinkoffASDKCore
 
+protocol SBPBankListViewControllerDelegate: AnyObject {
+    func bankListViewController(_ bankListViewController: SBPBankListViewController,
+                                didSelectBank bank: SBPBank)
+}
+
 final class SBPBankListViewController: UIViewController, PullableContainerScrollableContent {
+    
+    weak var delegate: SBPBankListViewControllerDelegate?
+    
     var scrollView: UIScrollView {
         customView.tableView
     }
@@ -103,10 +111,7 @@ private extension SBPBankListViewController {
         guard let selectedIndex = customView.tableView.indexPathForSelectedRow else {
             return
         }
-        
         let bank = banks[selectedIndex.row]
-        UIApplication.shared.open(URL(string: "\(bank.schema)://")!,
-                                  options: [:],
-                                  completionHandler: nil)
+        delegate?.bankListViewController(self, didSelectBank: bank)
     }
 }

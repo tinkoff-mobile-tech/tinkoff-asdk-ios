@@ -1,6 +1,6 @@
 //
 //
-//  SBPBankListContainerViewController.swift
+//  SBPUrlPaymentViewController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -21,7 +21,12 @@
 import UIKit
 import TinkoffASDKCore
 
-public final class SBPBankListContainerViewController: UIViewController, PullableContainerScrollableContent {
+public enum PaymentSource {
+    case paymentData(PaymentInitData)
+    case paymentId(Int64)
+}
+
+public final class SBPUrlPaymentViewController: UIViewController, PullableContainerScrollableContent {
     public var scrollView: UIScrollView {
         banksListViewController.scrollView
     }
@@ -33,19 +38,26 @@ public final class SBPBankListContainerViewController: UIViewController, Pullabl
     public var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
     private let sbpBanksService: SBPBanksService
-    private let style: Style
+    private let sbpApplicationService: SBPApplicationService
+    private let sbpPaymentService: SBPPaymentService
+    private let paymentSource: PaymentSource
     
     private let loadingViewController = LoadingViewController()
-    private lazy var banksListViewController = SBPBankListViewController(
-        style: .init(continueButtonStyle: style.bigButtonStyle)
-    )
+    private let banksListViewController: SBPBankListViewController
     
     private var isLoading = false
+    private var sbpURL: URL?
     
-    public init(sbpBanksService: SBPBanksService,
-                style: Style) {
+    init(paymentSource: PaymentSource,
+         sbpBanksService: SBPBanksService,
+         sbpApplicationService: SBPApplicationService,
+         sbpPaymentService: SBPPaymentService,
+         banksListViewController: SBPBankListViewController) {
+        self.paymentSource = paymentSource
         self.sbpBanksService = sbpBanksService
-        self.style = style
+        self.sbpApplicationService = sbpApplicationService
+        self.sbpPaymentService = sbpPaymentService
+        self.banksListViewController = banksListViewController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -56,28 +68,54 @@ public final class SBPBankListContainerViewController: UIViewController, Pullabl
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        loadBanks()
+        start()
     }
 }
 
-private extension SBPBankListContainerViewController {
+private extension SBPUrlPaymentViewController {
     func setup() {
         showBanksList()
+        banksListViewController.delegate = self
+    }
+    
+    func start() {
+        isLoading = true
+        showLoading()
+        
+        sbpPaymentService.createSBPUrl(paymentSource: paymentSource) { [weak self] result in
+            self?.handleSPBUrlCreation(result: result)
+        }
+    }
+    
+    func handleSPBUrlCreation(result: Result<URL, Error>) {
+        switch result {
+        case let .success(url):
+            sbpURL = url
+            loadBanks()
+        case let .failure(error):
+            handleError(error)
+        }
+    }
+    
+    func handleBanksLoaded(banks: [SBPBank]) {
+        isLoading = false
+        banksListViewController.banks = banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
+        contentHeightDidChange?(self)
+        hideLoading()
+    }
+    
+    func handleError(_ error: Error) {
+        
     }
     
     func loadBanks() {
-        isLoading = true
-        showLoading()
         sbpBanksService.loadBanks { [weak self] result in
             guard let self = self else { return }
-            self.isLoading = false
             switch result {
             case let .success(banks):
-                self.banksListViewController.banks = banks
-                self.hideLoading()
-                self.contentHeightDidChange?(self)
-            case .failure:
-                break
+                self.handleBanksLoaded(banks: banks)
+            case let .failure(error):
+                self.handleError(error)
             }
         }
     }
@@ -121,4 +159,14 @@ private extension SBPBankListContainerViewController {
         
     }
 }
- 
+
+extension SBPUrlPaymentViewController: SBPBankListViewControllerDelegate {
+    func bankListViewController(_ bankListViewController: SBPBankListViewController, didSelectBank bank: SBPBank) {
+        guard let url = self.sbpURL else {
+            return
+        }
+        
+        try? sbpApplicationService.openSBPUrl(url, in: bank, completion: nil)
+    }
+}
+

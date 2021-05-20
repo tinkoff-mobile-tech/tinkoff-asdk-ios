@@ -34,28 +34,12 @@ public final class DefaultSBPBanksService: SBPBanksService {
     }
     
     public func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void) {
-        coreSDK.loadSBPBanks { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case let .success(banks):
-                completion(.success(self.filterBanksAvailableForOpen(banks: banks)))
-            case let .failure(error):
-                completion(.failure(error))
-            }
+        coreSDK.loadSBPBanks { result in
+            completion(result)
         }
     }
     
     public func defaultSelectionBankIndex(banks: [SBPBank]) -> Int? {
         return 3
-    }
-}
-
-private extension DefaultSBPBanksService {
-    func filterBanksAvailableForOpen(banks: [SBPBank]) -> [SBPBank] {
-        let result = banks.filter {
-            guard let url = URL(string: "\($0.schema)://") else { return false }
-            return UIApplication.shared.canOpenURL(url)
-        }
-        return result
     }
 }

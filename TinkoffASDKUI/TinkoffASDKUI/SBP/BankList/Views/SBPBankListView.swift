@@ -82,11 +82,15 @@ private extension SBPBankListView {
         continueButton.translatesAutoresizingMaskIntoConstraints = false
         continueButtonContainer.translatesAutoresizingMaskIntoConstraints = false
         
+        let continueButtonBottomConstraint = continueButton.bottomAnchor.constraint(equalTo: continueButtonContainer.bottomAnchor,
+                                                                                    constant: -UIEdgeInsets.buttonInsets.bottom)
+        continueButtonBottomConstraint.priority = .defaultHigh
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.leftAnchor.constraint(equalTo: leftAnchor),
+            tableView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: continueButtonContainer.topAnchor),
-            tableView.rightAnchor.constraint(equalTo: rightAnchor),
+            tableView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor),
             
             headerView.topAnchor.constraint(equalTo: tableView.topAnchor),
             headerView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
@@ -98,9 +102,7 @@ private extension SBPBankListView {
                                                 constant: UIEdgeInsets.buttonInsets.left),
             continueButton.rightAnchor.constraint(equalTo: continueButtonContainer.rightAnchor,
                                                 constant: -UIEdgeInsets.buttonInsets.right),
-            continueButton.bottomAnchor.constraint(equalTo: continueButtonContainer.bottomAnchor,
-                                                constant: -UIEdgeInsets.buttonInsets.bottom),
-            continueButton.heightAnchor.constraint(equalToConstant: CGFloat.buttonHeight),
+            continueButtonBottomConstraint,
             
             continueButtonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
             continueButtonContainer.leftAnchor.constraint(equalTo: leftAnchor),

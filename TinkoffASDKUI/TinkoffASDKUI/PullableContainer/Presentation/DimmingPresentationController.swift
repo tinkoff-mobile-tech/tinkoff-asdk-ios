@@ -53,6 +53,7 @@ final class DimmingPresentationController: UIPresentationController {
     override func containerViewWillLayoutSubviews() {
         super.containerViewWillLayoutSubviews()
         dimmingView.frame = containerView?.bounds ?? .zero
+        presentedView?.frame = containerView?.bounds ?? .zero
     }
 }
 

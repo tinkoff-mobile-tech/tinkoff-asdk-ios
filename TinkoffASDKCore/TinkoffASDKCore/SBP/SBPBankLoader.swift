@@ -44,167 +44,167 @@ let json = """
     "version": "1.0",
     "dictionary": [
         {
-            "bankName": "ÐŸÐÐž ÐŸÑ€Ð¾Ð¼ÑÐ²ÑÐ·ÑŒÐ±Ð°Ð½Ðº",
+            "bankName": "ПАО Промсвязьбанк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000010.png",
             "schema": "bank100000000010"
         },
                 {
-            "bankName": "ÐŸÐÐž Ð¡ÐšÐ‘-Ð±Ð°Ð½Ðº",
+            "bankName": "ПАО СКБ-банк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000003.png",
             "schema": "bank100000000003"
         },
                 {
-            "bankName": "ÐÐž Ð“Ð°Ð·ÑÐ½ÐµÑ€Ð³Ð¾Ð±Ð°Ð½Ðº",
+            "bankName": "АО Газэнергобанк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000043.png",
             "schema": "bank100000000043"
         },
            {
-            "bankName": "ÐŸÐÐž ÐÐšÐ‘ ÐÐ’ÐÐÐ“ÐÐ Ð”",
+            "bankName": "ПАО АКБ АВАНГАРД",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000028.png",
             "schema": "bank100000000028"
         },
         {
-            "bankName": "ÐžÐžÐž ÐŸÐÐšÐž Ð­Ð›ÐŸÐ›ÐÐ¢",
+            "bankName": "ООО ПНКО ЭЛПЛАТ",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000086.png",
             "schema": "bank100000000086"
         },
         {
-            "bankName": "ÐÐšÐž Ð ÑƒÑÑÐºÐ¾Ðµ Ñ„Ð¸Ð½Ð°Ð½ÑÐ¾Ð²Ð¾Ðµ Ð¾Ð±Ñ‰ÐµÑÑ‚Ð²Ð¾",
+            "bankName": "НКО Русское финансовое общество",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000104.png",
             "schema": "bank100000000104"
         },
                 {
-            "bankName": "Ð ÐÐšÐ‘ Ð‘Ð°Ð½Ðº ÐŸÐÐž",
+            "bankName": "РНКБ Банк ПАО",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000011.png",
             "schema": "bank100000000011"
         },
                 {
-            "bankName": "ÐžÐžÐž Ð­ÐºÑÐ¿Ð¾Ð±Ð°Ð½Ðº",
+            "bankName": "ООО Экспобанк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000044.png",
             "schema": "bank100000000044"
         },
                 {
-            "bankName": "ÐÐž Ð‘Ð°Ð½Ðº ÐšÐšÐ‘",
+            "bankName": "АО Банк ККБ",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000054.png",
             "schema": "bank100000000054"
         },
                 {
-            "bankName": "Ð‘Ð°Ð½Ðº Ð’Ð‘Ð Ð  ÐÐž",
+            "bankName": "Банк ВБРР АО",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000049.png",
             "schema": "bank100000000049"
         },
                 {
-            "bankName": "ÐŸÐÐž ÐœÐžÐ¡ÐšÐžÐ’Ð¡ÐšÐ˜Ð™ ÐšÐ Ð•Ð”Ð˜Ð¢ÐÐ«Ð™ Ð‘ÐÐÐš",
+            "bankName": "ПАО МОСКОВСКИЙ КРЕДИТНЫЙ БАНК",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000025.png",
             "schema": "bank100000000025"
         },
                 {
-            "bankName": "RSB+ Ð‘Ð°Ð½Ðº Ð ÑƒÑÑÐºÐ¸Ð¹ Ð¡Ñ‚Ð°Ð½Ð´Ð°Ñ€Ñ‚",
+            "bankName": "RSB+ Банк Русский Стандарт",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000500.png",
             "schema": "bank100000000500"
         },
                 {
-            "bankName": "ÐÐž ÐÐ‘ Ð ÐžÐ¡Ð¡Ð˜Ð¯",
+            "bankName": "АО АБ РОССИЯ",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000095.png",
             "schema": "bank100000000095"
         },
                 {
-            "bankName": "Ð”Ð‘Ðž Ð¤Ð°ÐºÑ‚ÑƒÑ€Ð°",
+            "bankName": "ДБО Фактура",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000900.png",
             "schema": "bank100000000900"
         },
                 {
-            "bankName": "ÐÐž Ð Ð¾ÑÑÐµÐ»ÑŒÑ…Ð¾Ð·Ð±Ð°Ð½Ðº",
+            "bankName": "АО Россельхозбанк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000020.png",
             "schema": "bank100000000020"
         },
                 {
-            "bankName": "ÐÐž ÐšÐ‘ Ð¥Ð»Ñ‹Ð½Ð¾Ð²",
+            "bankName": "АО КБ Хлынов",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000056.png",
             "schema": "bank100000000056"
         },
                 {
-            "bankName": "Ð˜Ð½Ð²ÐµÑÑ‚Ð¸Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ð¹ Ð‘Ð°Ð½Ðº Ð’Ð•Ð¡Ð¢Ð ÐžÐžÐž",
+            "bankName": "Инвестиционный Банк ВЕСТА ООО",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000053.png",
             "schema": "bank100000000053"
         },
                 {
-            "bankName": "ÐÐž Ð®Ð½Ð¸ÐšÑ€ÐµÐ´Ð¸Ñ‚ Ð‘Ð°Ð½Ðº",
+            "bankName": "АО ЮниКредит Банк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000030.png",
             "schema": "bank100000000030"
         },
                 {
-            "bankName": "ÐÐž ÐšÐ‘ Ð¡Ð¾Ð»Ð¸Ð´Ð°Ñ€Ð½Ð¾ÑÑ‚ÑŒ",
+            "bankName": "АО КБ Солидарность",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000121.png",
             "schema": "bank100000000121"
                 },
                 {
-            "bankName": "ÐÐž ÐÐ›Ð¬Ð¤Ð-Ð‘ÐÐÐš",
+            "bankName": "АО АЛЬФА-БАНК",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000008.png",
             "schema": "bank100000000008"
                 },
                 {
-            "bankName": "ÐÐž Ð‘Ð°Ð½Ðº Ð”ÐžÐœ.Ð Ð¤",
+            "bankName": "АО Банк ДОМ.РФ",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000082.png",
             "schema": "bank100000000082"
                 },
         {
-            "bankName": "ÐžÐžÐž Ð¥Ð°ÐºÐ°ÑÑÐºÐ¸Ð¹ Ð¼ÑƒÐ½Ð¸Ñ†Ð¸Ð¿Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð±Ð°Ð½Ðº",
+            "bankName": "ООО Хакасский муниципальный банк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000127.png",
             "schema": "bank100000000127"
                 },
         {
-            "bankName": "ÐŸÐÐž ÐœÐ¢Ð¡-Ð‘Ð°Ð½Ðº",
+            "bankName": "ПАО МТС-Банк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000017.png",
             "schema": "bank100000000017"
                 },
         {
-            "bankName": "ÐÐž Ð‘Ð°Ð½Ðº ÐŸÐ¡ÐšÐ‘",
+            "bankName": "АО Банк ПСКБ",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000087.png",
             "schema": "bank100000000087"
                 },
         {
-            "bankName": "Ð‘Ð°Ð½Ðº Ð›ÐµÐ²Ð¾Ð±ÐµÑ€ÐµÐ¶Ð½Ñ‹Ð¹ ÐŸÐÐž",
+            "bankName": "Банк Левобережный ПАО",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000052.png",
             "schema": "bank100000000052"
                 },
         {
-            "bankName": "ÐÐž Ð Ð°Ð¹Ñ„Ñ„Ð°Ð¹Ð·ÐµÐ½Ð±Ð°Ð½Ðº",
+            "bankName": "АО Райффайзенбанк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000007.png",
             "schema": "bank100000000007"
                 },
         {
-            "bankName": "ÐŸÐÐž ÐÐš Ð‘ÐÐ Ð¡ Ð‘ÐÐÐš",
+            "bankName": "ПАО АК БАРС БАНК",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000006.png",
             "schema": "bank100000000006"
                 },
         {
-            "bankName": "ÐžÐžÐž ÐšÐ‘ Ð Ð¾ÑÑ‚Ð¤Ð¸Ð½Ð°Ð½Ñ",
+            "bankName": "ООО КБ РостФинанс",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000098.png",
             "schema": "bank100000000098"
                 },
         {
-            "bankName": "ÐŸÐÐž Ð‘Ñ‹ÑÑ‚Ñ€Ð¾Ð±Ð°Ð½Ðº",
+            "bankName": "ПАО Быстробанк",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000092.png",
             "schema": "bank100000000092"
                 },
         {
-            "bankName": "ÐÐž ÐœÐ¡ Ð‘Ð°Ð½Ðº Ð Ð£Ð¡",
+            "bankName": "АО МС Банк РУС",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000229.png",
             "schema": "bank100000000229"
                 },
                 {
-            "bankName": "ÐÐž ÐšÑ€ÐµÐ´Ð¸Ñ‚ Ð•Ð²Ñ€Ð¾Ð¿Ð° Ð‘Ð°Ð½Ðº Ð Ð¾ÑÑÐ¸Ñ",
+            "bankName": "АО Кредит Европа Банк Россия",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000027.png",
             "schema": "bank100000000027"
                 },
         {
-            "bankName": "Ð¢ÐµÑÑ‚Ð¾Ð²Ð¾Ðµ Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ 1",
+            "bankName": "Тестовое приложение 1",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000998.png",
             "schema": "bank100000000998"
         },
         {
-            "bankName": "Ð¢ÐµÑÑ‚Ð¾Ð²Ð¾Ðµ Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ 2",
+            "bankName": "Тестовое приложение 2",
             "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000999.png",
             "schema": "bank100000000999"
         }

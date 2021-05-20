@@ -33,6 +33,18 @@ public final class PullableContainerViewController: UIViewController {
 
     private var cachedViewHeight: CGFloat = 0
     
+    public override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+        get { dimmingTransitioningDelegate }
+        set {}
+    }
+    
+    public override var modalPresentationStyle: UIModalPresentationStyle {
+        get { .custom }
+        set {}
+    }
+    
+    private let dimmingTransitioningDelegate = DimmingTransitioningDelegate()
+    
     public init(content: PullableContainerContent & UIViewController) {
         self.content = content
         super.init(nibName: nil, bundle: nil)
@@ -113,7 +125,11 @@ private extension PullableContainerViewController {
         customView.containerViewHeightConstraint.constant = targetContentHeight
         customView.scrollView.isScrollEnabled = targetContentHeight >= maximumContentHeight
         
-        UIView.animate(withDuration: 0.1) {
+        UIView.animate(withDuration: 0.3,
+                       delay: 0,
+                       usingSpringWithDamping: 0.8,
+                       initialSpringVelocity: 2,
+                       options: .curveEaseInOut) {
             self.customView.layoutIfNeeded()
         }
     }
@@ -128,13 +144,17 @@ private extension PullableContainerViewController {
 
 extension PullableContainerViewController: PullableContainerDragControllerDelegate {
     func pullableContainerDragControllerDidEndDragging(_ controller: PullableContainerDragController) {
-        UIView.animate(withDuration: 0.1) {
+        UIView.animate(withDuration: 0.3,
+                       delay: 0,
+                       usingSpringWithDamping: 0.8,
+                       initialSpringVelocity: 2,
+                       options: .curveEaseInOut) {
             self.customView.layoutIfNeeded()
         }
     }
     
     func pullableContainerDragControllerDidCloseContainer(_ controller: PullableContainerDragController) {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
     
     func pullableContainerDragControllerMaximumContentHeight(_ controller: PullableContainerDragController) -> CGFloat {
