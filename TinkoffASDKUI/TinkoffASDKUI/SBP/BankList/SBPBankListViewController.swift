@@ -53,14 +53,15 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
         }
     }
     
-    private lazy var tableManager = SBPBankListTableManager(tableView: customView.tableView)
-    
     private let style: SBPBankListView.Style
+    private let tableManager: SBPBankListTableManager
     
     // MARK: - Init
 
-    init(style: SBPBankListView.Style) {
+    init(style: SBPBankListView.Style,
+         tableManager: SBPBankListTableManager) {
         self.style = style
+        self.tableManager = tableManager
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -102,6 +103,7 @@ private extension SBPBankListViewController {
                                             action: #selector(didTapContinueButton),
                                             for: .touchUpInside)
         
+        tableManager.setTableView(customView.tableView)
         tableManager.rowSelection = { [weak self] index in
             self?.customView.continueButton.isEnabled = true
         }
