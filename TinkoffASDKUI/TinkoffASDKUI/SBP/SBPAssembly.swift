@@ -30,13 +30,17 @@ final class SBPAssembly {
         self.coreSDK = coreSDK
         self.style = style
     }
-
+    
     func urlPaymentViewController(paymentSource: PaymentSource) -> SBPUrlPaymentViewController {
         SBPUrlPaymentViewController(paymentSource: paymentSource,
-                                           sbpBanksService: banksService,
-                                           sbpApplicationService: applicationService,
-                                           sbpPaymentService: paymentService,
-                                           banksListViewController: banksListViewController)
+                                    sbpBanksService: banksService,
+                                    sbpApplicationService: applicationService,
+                                    sbpPaymentService: paymentService,
+                                    banksListViewController: banksListViewController)
+    }
+    
+    func noAvailableBanksViewController() -> SBPNoAvailableBanksViewController {
+        SBPNoAvailableBanksViewController(style: .init(confirmButtonStyle: style.bigButtonStyle))
     }
 }
 

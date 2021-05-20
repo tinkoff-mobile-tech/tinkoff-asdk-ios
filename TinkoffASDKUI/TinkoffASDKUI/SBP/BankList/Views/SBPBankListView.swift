@@ -33,7 +33,7 @@ final class SBPBankListView: UIView {
     let tableView = UITableView(frame: .zero, style: .plain)
     let headerView = SBPBankListHeaderView()
     let continueButton = BigButton(type: .system)
-    let continueButtonContainer = UIView()
+    let continueButtonContainer = BigButtonContainer()
     
     init(style: Style) {
         self.style = style
@@ -55,16 +55,13 @@ private extension SBPBankListView {
     func setup() {
         addSubview(tableView)
         addSubview(continueButtonContainer)
-        continueButtonContainer.addSubview(continueButton)
+        continueButtonContainer.placeButton(continueButton)
         
         tableView.tableHeaderView = headerView
         
         backgroundColor = .white
-        continueButtonContainer.backgroundColor = .white
         
         continueButton.titleLabel?.font = UIFont.systemFont(ofSize: .buttonFontSize, weight: .regular)
-        continueButton.layer.cornerRadius = .buttonCornerRadius
-        continueButton.layer.masksToBounds = true
         continueButton.setTitleColor(style.continueButtonStyle.titleColor,
                                      for: .normal)
         continueButton.setTitleColor(UIColor.asdk.darkGray,
@@ -82,10 +79,6 @@ private extension SBPBankListView {
         continueButton.translatesAutoresizingMaskIntoConstraints = false
         continueButtonContainer.translatesAutoresizingMaskIntoConstraints = false
         
-        let continueButtonBottomConstraint = continueButton.bottomAnchor.constraint(equalTo: continueButtonContainer.bottomAnchor,
-                                                                                    constant: -UIEdgeInsets.buttonInsets.bottom)
-        continueButtonBottomConstraint.priority = .defaultHigh
-        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
             tableView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor),
@@ -95,14 +88,6 @@ private extension SBPBankListView {
             headerView.topAnchor.constraint(equalTo: tableView.topAnchor),
             headerView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
             headerView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
-            
-            continueButton.topAnchor.constraint(equalTo: continueButtonContainer.topAnchor,
-                                                constant: UIEdgeInsets.buttonInsets.top),
-            continueButton.leftAnchor.constraint(equalTo: continueButtonContainer.leftAnchor,
-                                                constant: UIEdgeInsets.buttonInsets.left),
-            continueButton.rightAnchor.constraint(equalTo: continueButtonContainer.rightAnchor,
-                                                constant: -UIEdgeInsets.buttonInsets.right),
-            continueButtonBottomConstraint,
             
             continueButtonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
             continueButtonContainer.leftAnchor.constraint(equalTo: leftAnchor),

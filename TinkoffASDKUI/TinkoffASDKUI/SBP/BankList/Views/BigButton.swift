@@ -23,6 +23,16 @@ import UIKit
 final class BigButton: UIButton {
     var backgroundColors: [UIControl.State: UIColor]?
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+    
     // MARK: - Button state
 
     override var isHighlighted: Bool {
@@ -46,6 +56,11 @@ final class BigButton: UIButton {
 }
 
 private extension BigButton {
+    func setup() {
+        layer.cornerRadius = .cornerRadius
+        layer.masksToBounds = true
+    }
+    
     func updateBackground() {
         guard let backgroundColors = backgroundColors else { return }
         let color: UIColor?
@@ -63,6 +78,7 @@ private extension BigButton {
 
 private extension CGFloat {
     static let height: CGFloat = 56
+    static let cornerRadius: CGFloat = 16
 }
 
 extension UIControl.State: Hashable {
