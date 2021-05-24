@@ -28,10 +28,15 @@ final class SBPBankListTableManager: NSObject {
     
     private let cellImageLoader: CellImageLoader
     
-    var banksResult: LoadBanksResult? {
+    var banks = [SBPBank]() {
         didSet {
             tableView?.reloadData()
-            guard let selectedIndex = banksResult?.selectedIndex else { return }
+        }
+    }
+    
+    var selectedIndex: Int? {
+        didSet {
+            guard let selectedIndex = selectedIndex else { return }
             tableView?.selectRow(at: IndexPath(row: selectedIndex, section: 0),
                                  animated: false,
                                  scrollPosition: .none)
@@ -68,20 +73,21 @@ private extension SBPBankListTableManager {
 extension SBPBankListTableManager: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        banksResult?.banks.count ?? 0
+        banks.count
     }
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let banks = banksResult?.banks,
-        let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
+        guard let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
                                                      for: indexPath) as? SBPBankCell else {
             return UITableViewCell()
         }
         
         let bank = banks[indexPath.row]
         
-        cellImageLoader.loadImage(url: bank.logoURL, cell: bankCell)
+        if let logoUrl = bank.logoURL {
+            cellImageLoader.loadImage(url: logoUrl, cell: bankCell)
+        }
         bankCell.bankTitleLabel.text = bank.name
         
         return bankCell

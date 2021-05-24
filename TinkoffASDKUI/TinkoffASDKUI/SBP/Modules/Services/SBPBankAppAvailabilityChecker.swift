@@ -1,6 +1,6 @@
 //
 //
-//  SBPApplicationService.swift
+//  SBPBankAppAvailabilityChecker.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,32 +20,15 @@
 
 import TinkoffASDKCore
 
-public protocol SBPApplicationService {
-    func canOpenBankApp(bank: SBPBank) -> Bool
-    func openSBPUrl(_ url: URL, in bankApplication: SBPBank, completion: ((Bool) -> Void)?) throws
-}
-
-public final class DefaultSBPApplicationService: SBPApplicationService {
-    
-    enum Error: Swift.Error {
-        case invalidSBPUrl
-    }
-    
+final class SBPBankAppAvailabilityChecker {
     private let application: UIApplication
     
     public init(application: UIApplication) {
         self.application = application
     }
     
-    public func canOpenBankApp(bank: SBPBank) -> Bool {
+    func checkIfBankAppAvailable(bank: SBPBank) -> Bool {
         guard let url = URL(string: "\(bank.schema)://") else { return false }
         return application.canOpenURL(url)
-    }
-    
-    public func openSBPUrl(_ url: URL, in bankApplication: SBPBank, completion: ((Bool) -> Void)?) throws {
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { throw Error.invalidSBPUrl }
-        components.scheme = bankApplication.schema
-        guard let resultUrl = components.url else { throw Error.invalidSBPUrl }
-        application.open(resultUrl, options: [:], completionHandler: completion)
     }
 }

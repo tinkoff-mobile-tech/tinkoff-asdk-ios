@@ -1,6 +1,6 @@
 //
 //
-//  SBPBank.swift
+//  BundleImageProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,24 +18,19 @@
 //
 
 
-import Foundation
+import UIKit
 
-public struct SBPBank: Decodable {
-    public let name: String
-    public let logoURL: URL?
-    public let schema: String
+final class BundleImageProvider {
+    private let screen: UIScreen
     
-    enum CodingKeys: String, CodingKey {
-        case name = "bankName"
-        case logoURL
-        case schema
+    init(screen: UIScreen) {
+        self.screen = screen
     }
     
-    public init(name: String,
-                logoURL: URL?,
-                schema: String) {
-        self.name = name
-        self.logoURL = logoURL
-        self.schema = schema
+    func urlForImage(named: String,
+                     imageExtension: String) -> URL? {
+        let bundle = Bundle(for: Self.self)
+        let name = "\(named)@\(Int(screen.scale))x"
+        return bundle.url(forResource: name, withExtension: imageExtension)
     }
 }

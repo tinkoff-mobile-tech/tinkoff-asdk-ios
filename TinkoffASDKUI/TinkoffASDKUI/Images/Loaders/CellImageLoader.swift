@@ -33,6 +33,24 @@ final class CellImageLoader {
     }
     
     func loadImage(url: URL, cell: ReusableCell) {
+        if url.isFileURL {
+            loadLocalImage(url: url, cell: cell)
+        } else {
+            loadRemoteImage(url: url, cell: cell)
+        }
+    }
+}
+
+private extension CellImageLoader {
+    func loadLocalImage(url: URL, cell: ReusableCell) {
+        guard let imageData = try? Data(contentsOf: url),
+              let image = UIImage(data: imageData) else {
+            return
+        }
+        cell.imageView?.image = image
+    }
+    
+    func loadRemoteImage(url: URL, cell: ReusableCell) {
         let uuid = imageLoader.loadImage(url: url) { [weak self] image in
             guard let self = self else { return image }
             return self.imageProcessors.reduce(image) { image, processor -> UIImage in

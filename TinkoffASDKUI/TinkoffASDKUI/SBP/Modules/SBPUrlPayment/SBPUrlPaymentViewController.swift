@@ -42,7 +42,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
     private let sbpBanksService: SBPBanksService
-    private let sbpApplicationService: SBPApplicationService
+    private let sbpApplicationService: SBPApplicationOpener
     private let sbpPaymentService: SBPPaymentService
     private let paymentSource: PaymentSource
     private let configuration: AcquiringViewConfiguration
@@ -60,7 +60,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     
     init(paymentSource: PaymentSource,
          sbpBanksService: SBPBanksService,
-         sbpApplicationService: SBPApplicationService,
+         sbpApplicationService: SBPApplicationOpener,
          sbpPaymentService: SBPPaymentService,
          banksListViewController: SBPBankListViewController,
          configuration: AcquiringViewConfiguration) {
@@ -124,20 +124,21 @@ private extension SBPUrlPaymentViewController {
         }
     }
     
-    func handleBanksLoaded(result: LoadBanksResult) {
-        let availableBanks = result.banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
-        guard !availableBanks.isEmpty else {
+    func handleBanksLoaded(banks: [SBPBank]) {
+        let result = sbpBanksService.checkBankAvailabilityAndHandleTinkoff(banks: banks)
+        
+        guard !result.banks.isEmpty else {
             noBanksAppAvailable?(self)
             return
         }
-        
-        guard availableBanks.count > 1 else {
-            openBankApplication(bank: availableBanks[0])
+
+        guard result.banks.count > 1 else {
+            openBankApplication(bank: result.banks[0])
             return
         }
                 
-        banksListViewController.banksResult = .init(banks: availableBanks,
-                                                    selectedIndex: result.selectedIndex)
+        banksListViewController.banks = result.banks
+        banksListViewController.selectedIndex = result.selectedIndex
         isLoading = false
     }
     
@@ -162,8 +163,8 @@ private extension SBPUrlPaymentViewController {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 switch result {
-                case let .success(result):
-                    self.handleBanksLoaded(result: result)
+                case let .success(banks):
+                    self.handleBanksLoaded(banks: banks)
                 case let .failure(error):
                     self.handleError(error)
                 }
