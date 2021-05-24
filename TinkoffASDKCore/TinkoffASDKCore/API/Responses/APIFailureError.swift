@@ -20,10 +20,10 @@
 
 import Foundation
 
-struct APIFailureError: LocalizedError, Decodable, CustomNSError {
-    let errorCode: Int
-    let errorMessage: String?
-    let errorDetails: String?
+public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
+    public let errorCode: Int
+    public let errorMessage: String?
+    public let errorDetails: String?
     
     private enum CodingKeys: CodingKey {
         case errorCode
@@ -41,7 +41,7 @@ struct APIFailureError: LocalizedError, Decodable, CustomNSError {
     
     // MARK: - CustomNSError
     
-    var errorUserInfo: [String : Any] {
+    public var errorUserInfo: [String : Any] {
         guard let errorDescription = errorDescription else {
             return [:]
         }
@@ -50,7 +50,7 @@ struct APIFailureError: LocalizedError, Decodable, CustomNSError {
     
     // MARK: - LocalizedError
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         var errorDescription = Localization.APIError.failureError
         if errorMessage != nil || errorDetails != nil { errorDescription += ": " }
         if let errorMessage = errorMessage {
@@ -65,7 +65,7 @@ struct APIFailureError: LocalizedError, Decodable, CustomNSError {
     
     // MARK: - Decodable
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let errorCodeString = try container.decode(String.self, forKey: .errorCode)

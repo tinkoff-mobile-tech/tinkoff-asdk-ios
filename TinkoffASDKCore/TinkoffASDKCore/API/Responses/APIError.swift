@@ -20,13 +20,13 @@
 
 import Foundation
 
-enum APIError: LocalizedError, CustomNSError {
+public enum APIError: LocalizedError, CustomNSError {
     case invalidResponse
     case failure(APIFailureError)
     
     // MARK: - CustomNSError
     
-    var errorCode: Int {
+    public var errorCode: Int {
         switch self {
         case .invalidResponse:
             return 0
@@ -35,7 +35,7 @@ enum APIError: LocalizedError, CustomNSError {
         }
     }
     
-    var errorUserInfo: [String : Any] {
+    public var errorUserInfo: [String : Any] {
         guard let errorDescription = errorDescription else {
             return [:]
         }
@@ -44,7 +44,7 @@ enum APIError: LocalizedError, CustomNSError {
     
     // MARK: - LocalizedError
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .invalidResponse:
             return Localization.APIError.invalidResponse
