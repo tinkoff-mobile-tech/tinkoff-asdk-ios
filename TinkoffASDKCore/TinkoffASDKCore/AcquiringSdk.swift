@@ -348,6 +348,11 @@ public final class AcquiringSdk: NSObject {
         }
     }
     
+    /// Загрузить список банков, через приложения которых можно совершить оплату СБП
+    ///
+    /// - Parameters:
+    ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
+    
     public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
         let loader = DefaultSBPBankLoader()
         loader.loadBanks(completion: completion)
