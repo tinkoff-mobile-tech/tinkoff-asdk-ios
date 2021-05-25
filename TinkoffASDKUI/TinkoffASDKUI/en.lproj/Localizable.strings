@@ -72,3 +72,5 @@
 
 "SBP.Error.Title" = "Error occured during transaction";
 "SBP.Error.Description" = "Try again";
+
+"SBP.OpenApplication.Error" = "Failed to open application";

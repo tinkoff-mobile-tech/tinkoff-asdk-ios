@@ -146,16 +146,8 @@ private extension SBPUrlPaymentViewController {
         let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
         let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
         
-        dismiss(animated: true) { [configuration, presentingViewController] in
-            guard let presentingViewController = presentingViewController else { return }
-            if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle,
-                                                                           message: alertDescription,
-                                                                           dismissCompletion: nil) {
-                    presentingViewController.present(alert, animated: true, completion: nil)
-            } else {
-                AcquiringAlertViewController.create().present(on: presentingViewController, title: alertTitle)
-            }
-        }
+        showAlert(title: alertTitle,
+                  description: alertDescription)
     }
     
     func loadBanks() {
@@ -177,9 +169,28 @@ private extension SBPUrlPaymentViewController {
             return
         }
         
-        try? sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
-            self?.dismiss(animated: true, completion: nil)
-        })
+        do {
+            try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
+                self?.dismiss(animated: true, completion: nil)
+            })
+        } catch {
+            showAlert(title: AcqLoc.instance.localize("SBP.OpenApplication.Error"),
+                      description: nil)
+        }
+    }
+    
+    func showAlert(title: String,
+                   description: String?) {
+        dismiss(animated: true) { [configuration, presentingViewController] in
+            guard let presentingViewController = presentingViewController else { return }
+            if let alert = configuration.alertViewHelper?.presentAlertView(title,
+                                                                           message: description,
+                                                                           dismissCompletion: nil) {
+                    presentingViewController.present(alert, animated: true, completion: nil)
+            } else {
+                AcquiringAlertViewController.create().present(on: presentingViewController, title: title)
+            }
+        }
     }
 }
 
