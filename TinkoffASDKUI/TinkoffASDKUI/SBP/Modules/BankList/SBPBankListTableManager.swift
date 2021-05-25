@@ -65,7 +65,7 @@ private extension SBPBankListTableManager {
         tableView?.estimatedRowHeight = .rowHeight
         
         cellImageLoader.setImageProcessors([SizeImageProcessor(size: CGSize(width: .cellImageSide, height: .cellImageSide),
-                                                              scale: UIScreen.main.scale),
+                                                               scale: UIScreen.main.scale),
                                             RoundImageProcessor()])
     }
 }

@@ -31,7 +31,7 @@ public extension UINavigationBar {
         shadowImage = UIImage()
         let backgroundImage = UIImage()
         setBackgroundImage(backgroundImage,
-                                         for: .default)
+                           for: .default)
         barStyle = .default
     }
 }
