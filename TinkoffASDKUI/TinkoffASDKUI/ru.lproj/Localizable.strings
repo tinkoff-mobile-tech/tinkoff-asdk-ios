@@ -72,3 +72,5 @@
 
 "SBP.Error.Title" = "Не удалось выполнить оплату через СБП";
 "SBP.Error.Description" = "Попробуйте еще раз";
+
+"SBP.OpenApplication.Error" = "Не удалось открыть приложение";

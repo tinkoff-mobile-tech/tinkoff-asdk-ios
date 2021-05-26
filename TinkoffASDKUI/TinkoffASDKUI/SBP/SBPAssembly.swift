@@ -48,11 +48,13 @@ final class SBPAssembly {
 
 private extension SBPAssembly {
     var banksService: SBPBanksService {
-        DefaultSBPBanksService(coreSDK: coreSDK)
+        DefaultSBPBanksService(coreSDK: coreSDK,
+                               bundleImageProvider: bundleImageProvider,
+                               bankAppAvailabilityChecker: bankAppAvailabilityChecker)
     }
     
-    var applicationService: SBPApplicationService {
-        DefaultSBPApplicationService(application: UIApplication.shared)
+    var applicationService: SBPApplicationOpener {
+        DefaultSBPApplicationOpener(application: UIApplication.shared)
     }
     
     var paymentService: SBPPaymentService {
@@ -68,7 +70,15 @@ private extension SBPAssembly {
         SBPBankListTableManager(cellImageLoader: cellImageLoader)
     }
     
+    var bankAppAvailabilityChecker: SBPBankAppAvailabilityChecker {
+        SBPBankAppAvailabilityChecker(application: UIApplication.shared)
+    }
+    
     var cellImageLoader: CellImageLoader {
         CellImageLoader(imageLoader: ImageLoader())
+    }
+    
+    var bundleImageProvider: BundleImageProvider {
+        BundleImageProvider(screen: UIScreen.main)
     }
 }

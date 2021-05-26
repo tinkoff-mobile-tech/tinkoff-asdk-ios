@@ -42,7 +42,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
     private let sbpBanksService: SBPBanksService
-    private let sbpApplicationService: SBPApplicationService
+    private let sbpApplicationService: SBPApplicationOpener
     private let sbpPaymentService: SBPPaymentService
     private let paymentSource: PaymentSource
     private let configuration: AcquiringViewConfiguration
@@ -60,7 +60,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     
     init(paymentSource: PaymentSource,
          sbpBanksService: SBPBanksService,
-         sbpApplicationService: SBPApplicationService,
+         sbpApplicationService: SBPApplicationOpener,
          sbpPaymentService: SBPPaymentService,
          banksListViewController: SBPBankListViewController,
          configuration: AcquiringViewConfiguration) {
@@ -124,20 +124,21 @@ private extension SBPUrlPaymentViewController {
         }
     }
     
-    func handleBanksLoaded(result: LoadBanksResult) {
-        let availableBanks = result.banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
-        guard !availableBanks.isEmpty else {
+    func handleBanksLoaded(banks: [SBPBank]) {
+        let result = sbpBanksService.checkBankAvailabilityAndHandleTinkoff(banks: banks)
+        
+        guard !result.banks.isEmpty else {
             noBanksAppAvailable?(self)
             return
         }
-        
-        guard availableBanks.count > 1 else {
-            openBankApplication(bank: availableBanks[0])
+
+        guard result.banks.count > 1 else {
+            openBankApplication(bank: result.banks[0])
             return
         }
                 
-        banksListViewController.banksResult = .init(banks: availableBanks,
-                                                    selectedIndex: result.selectedIndex)
+        banksListViewController.banks = result.banks
+        banksListViewController.selectedIndex = result.selectedIndex
         isLoading = false
     }
     
@@ -145,16 +146,8 @@ private extension SBPUrlPaymentViewController {
         let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
         let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
         
-        dismiss(animated: true) { [configuration, presentingViewController] in
-            guard let presentingViewController = presentingViewController else { return }
-            if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle,
-                                                                           message: alertDescription,
-                                                                           dismissCompletion: nil) {
-                    presentingViewController.present(alert, animated: true, completion: nil)
-            } else {
-                AcquiringAlertViewController.create().present(on: presentingViewController, title: alertTitle)
-            }
-        }
+        showAlert(title: alertTitle,
+                  description: alertDescription)
     }
     
     func loadBanks() {
@@ -162,8 +155,8 @@ private extension SBPUrlPaymentViewController {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 switch result {
-                case let .success(result):
-                    self.handleBanksLoaded(result: result)
+                case let .success(banks):
+                    self.handleBanksLoaded(banks: banks)
                 case let .failure(error):
                     self.handleError(error)
                 }
@@ -176,9 +169,28 @@ private extension SBPUrlPaymentViewController {
             return
         }
         
-        try? sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
-            self?.dismiss(animated: true, completion: nil)
-        })
+        do {
+            try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
+                self?.dismiss(animated: true, completion: nil)
+            })
+        } catch {
+            showAlert(title: AcqLoc.instance.localize("SBP.OpenApplication.Error"),
+                      description: nil)
+        }
+    }
+    
+    func showAlert(title: String,
+                   description: String?) {
+        dismiss(animated: true) { [configuration, presentingViewController] in
+            guard let presentingViewController = presentingViewController else { return }
+            if let alert = configuration.alertViewHelper?.presentAlertView(title,
+                                                                           message: description,
+                                                                           dismissCompletion: nil) {
+                    presentingViewController.present(alert, animated: true, completion: nil)
+            } else {
+                AcquiringAlertViewController.create().present(on: presentingViewController, title: title)
+            }
+        }
     }
 }
 

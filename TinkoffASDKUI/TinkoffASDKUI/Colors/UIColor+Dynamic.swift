@@ -51,7 +51,7 @@ extension ASDKColors {
     var n8: UIColor {
         return UIColor(hex: "#428BF9") ?? .clear
     }
-
+    
     var n14: UIColor {
         return UIColor(hex: "#FFFFFF") ?? .clear
     }
@@ -59,11 +59,11 @@ extension ASDKColors {
     var n15: UIColor {
         return UIColor(hex: "#000000") ?? .clear
     }
-
+    
     var n16: UIColor {
         return UIColor(hex: "#1C1C1E") ?? .clear
     }
-
+    
     var n18: UIColor {
         return UIColor(hex: "#2C2C2E") ?? .clear
     }
@@ -80,35 +80,37 @@ extension ASDKColors {
         public struct Background {
             public var base: UIColor {
                 return UIColor.dynamicColor(light: UIColor.asdk.n14,
-                                               dark: UIColor.asdk.n15)
+                                            dark: UIColor.asdk.n15)
             }
             
             public var elevation1: UIColor {
                 return UIColor.dynamicColor(light: UIColor.asdk.n14,
-                                               dark: UIColor.asdk.n16)
+                                            dark: UIColor.asdk.n16)
             }
             
             public var elevation2: UIColor {
                 return UIColor.dynamicColor(light: UIColor.asdk.n14,
-                                               dark: UIColor.asdk.n18)
+                                            dark: UIColor.asdk.n18)
             }
         }
         
         public struct Text {
             public var primary: UIColor {
                 return UIColor.dynamicColor(light: UIColor.asdk.textPrimary,
-                                               dark: UIColor.asdk.n7)
+                                            dark: UIColor.asdk.n7)
             }
         }
         
         public struct Button {
             public struct Sbp {
                 public var background: UIColor {
-                    return UIColor.dynamicColor(light: .black, dark: .white)
+                    return UIColor.dynamicColor(light: .black,
+                                                dark: .white)
                 }
                 
                 public var tint: UIColor {
-                    return UIColor.dynamicColor(light: .white, dark: .black)
+                    return UIColor.dynamicColor(light: .white,
+                                                dark: .black)
                 }
             }
             

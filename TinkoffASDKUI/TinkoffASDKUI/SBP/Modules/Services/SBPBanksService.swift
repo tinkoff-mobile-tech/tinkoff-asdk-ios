@@ -20,51 +20,66 @@
 
 import TinkoffASDKCore
 
-struct LoadBanksResult {
-    let banks: [SBPBank]
-    let selectedIndex: Int?
-}
-
 protocol SBPBanksService {
-    func loadBanks(completion: @escaping (Result<LoadBanksResult, Error>) -> Void)
+    func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void)
+    func checkBankAvailabilityAndHandleTinkoff(banks: [SBPBank]) -> (banks: [SBPBank], selectedIndex: Int?)
 }
 
 final class DefaultSBPBanksService: SBPBanksService {
     
     private let coreSDK: AcquiringSdk
+    private let bundleImageProvider: BundleImageProvider
+    private let bankAppAvailabilityChecker: SBPBankAppAvailabilityChecker
     
-    init(coreSDK: AcquiringSdk) {
+    init(coreSDK: AcquiringSdk,
+         bundleImageProvider: BundleImageProvider,
+         bankAppAvailabilityChecker: SBPBankAppAvailabilityChecker) {
         self.coreSDK = coreSDK
+        self.bundleImageProvider = bundleImageProvider
+        self.bankAppAvailabilityChecker = bankAppAvailabilityChecker
     }
     
-    func loadBanks(completion: @escaping (Result<LoadBanksResult, Error>) -> Void) {
-        coreSDK.loadSBPBanks { [weak self] result in
+    func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void) {
+        coreSDK.loadSBPBanks(completion: { result in
             switch result {
+            case let .success(result):
+                completion(.success(result.banks))
             case let .failure(error):
                 completion(.failure(error))
-            case let .success(response):
-                self?.handleTinkoff(banks: response.banks, completion: completion)
+            }
+        })
+    }
+    
+    func checkBankAvailabilityAndHandleTinkoff(banks: [SBPBank]) -> (banks: [SBPBank], selectedIndex: Int?) {
+        var selectedIndex: Int?
+        var resultBanks = banks.filter { bankAppAvailabilityChecker.checkIfBankAppAvailable(bank: $0) }
+        
+        if let tinkoffIndex = resultBanks.firstIndex(where: { $0.name.contains(String.tinkoffBankName) }) {
+            let tinkoff = resultBanks.remove(at: tinkoffIndex)
+            resultBanks.insert(tinkoff, at: 0)
+            selectedIndex = 0
+        } else {
+            let tinkoff = SBPBank(name: .tinkoffBankName,
+                                  logoURL: buildTinkoffIconUrl(),
+                                  schema: .tinkoffScheme)
+            if bankAppAvailabilityChecker.checkIfBankAppAvailable(bank: tinkoff) {
+                resultBanks.insert(tinkoff, at: 0)
+                selectedIndex = 0
             }
         }
+        
+        return (resultBanks, selectedIndex)
     }
-}
-
-private extension DefaultSBPBanksService {
-    func handleTinkoff(banks: [SBPBank],
-                       completion: @escaping (Result<LoadBanksResult, Error>) -> Void) {
-        guard let tinkoffIndex = banks.firstIndex(where: { $0.name.contains(String.tinkoffBankName) }) else {
-            completion(.success(LoadBanksResult(banks: banks, selectedIndex: nil)))
-            return
-        }
-        
-        var resultBanks = banks
-        let tinkoffBank = resultBanks.remove(at: tinkoffIndex)
-        resultBanks.insert(tinkoffBank, at: 0)
-        
-        completion(.success(LoadBanksResult(banks: resultBanks, selectedIndex: 0)))
+    
+    func buildTinkoffIconUrl() -> URL? {
+        bundleImageProvider.urlForImage(named: .tinkoffLogoName,
+                                        imageExtension: .tinkoffLogoExtension)
     }
 }
 
 private extension String {
     static let tinkoffBankName = "Тинькофф"
+    static let tinkoffScheme = "tinkoffbank"
+    static let tinkoffLogoName = "tinkoff_40"
+    static let tinkoffLogoExtension = "png"
 }

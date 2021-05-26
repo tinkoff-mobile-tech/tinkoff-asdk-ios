@@ -1,6 +1,6 @@
 //
 //
-//  UINavigationBar+Style.swift
+//  BundleImageProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,18 +20,17 @@
 
 import UIKit
 
-
-public extension UINavigationBar {
-    func applyStyle(titleColor: UIColor,
-                    backgroundColor: UIColor) {
-        barTintColor = backgroundColor
-        titleTextAttributes = [
-            .foregroundColor: titleColor
-        ]
-        shadowImage = UIImage()
-        let backgroundImage = UIImage()
-        setBackgroundImage(backgroundImage,
-                           for: .default)
-        barStyle = .default
+final class BundleImageProvider {
+    private let screen: UIScreen
+    
+    init(screen: UIScreen) {
+        self.screen = screen
+    }
+    
+    func urlForImage(named: String,
+                     imageExtension: String) -> URL? {
+        let bundle = Bundle(for: Self.self)
+        let name = "\(named)@\(Int(screen.scale))x"
+        return bundle.url(forResource: name, withExtension: imageExtension)
     }
 }

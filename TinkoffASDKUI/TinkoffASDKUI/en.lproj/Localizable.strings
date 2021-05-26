@@ -59,3 +59,18 @@
 "TinkoffAcquiring.view.title.savedCards" = "Saved cards";
 "TinkoffAcquiring.view.title.payQRCode" = "Payment by QR-code";
 "TinkoffAcquiring.view.title.confimration" = "Confirmation";
+
+// SBP Banks List
+"SBP.BanksList.Header.Title" = "Choose bank app";
+"SBP.BanksList.Header.Subtitle" = "Chosen app will be opened in order to confirm the purchase";
+"SBP.BanksList.Button.Title" = "Continue";
+
+"SBP.EmptyBanks.Title" = "No bank app is installed on your device";
+"SBP.EmptyBanks.Description" = "Install bank app that supports FPS to confirm the purchase";
+"SBP.EmptyBanks.ConfirmationButton.Title" = "OK";
+"SBP.EmptyBanks.InformationButton.Title" = "Check details on website";
+
+"SBP.Error.Title" = "Error occured during transaction";
+"SBP.Error.Description" = "Try again";
+
+"SBP.OpenApplication.Error" = "Failed to open application";
