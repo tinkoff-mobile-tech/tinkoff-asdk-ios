@@ -1,6 +1,6 @@
 //
 //
-//  SBPBankResponse.swift
+//  CustomViewLoadable.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,24 +18,18 @@
 //
 
 
-import Foundation
+import UIKit
 
-public struct SBPBankResponse: Decodable {
-    public let banks: [SBPBank]
-    
-    enum CodingKeys: String, CodingKey {
-        case banks = "dictionary"
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        var banksArray = try container.nestedUnkeyedContainer(forKey: .banks)
-        var resultBanks = [SBPBank]()
-        while !banksArray.isAtEnd {
-            let bank = try banksArray.decode(SBPBank.self)
-            resultBanks.append(bank)
+public protocol CustomViewLoadable {
+    associatedtype CustomView: UIView
+}
+
+public extension CustomViewLoadable where Self: UIViewController {
+    var customView: CustomView {
+        guard let customView = view as? CustomView else {
+            fatalError("Expected view to be of type \(CustomView.self) but got \(type(of: view)) instead")
         }
-        self.banks = resultBanks
+        return customView
     }
 }
 

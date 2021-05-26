@@ -28,9 +28,13 @@ final class SBPBankListTableManager: NSObject {
     
     private let cellImageLoader: CellImageLoader
     
-    var banks = [SBPBank]() {
+    var banksResult: LoadBanksResult? {
         didSet {
             tableView?.reloadData()
+            guard let selectedIndex = banksResult?.selectedIndex else { return }
+            tableView?.selectRow(at: IndexPath(row: selectedIndex, section: 0),
+                                 animated: false,
+                                 scrollPosition: .none)
         }
     }
     
@@ -64,13 +68,14 @@ private extension SBPBankListTableManager {
 extension SBPBankListTableManager: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        banks.count
+        banksResult?.banks.count ?? 0
     }
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
-                                                           for: indexPath) as? SBPBankCell else {
+        guard let banks = banksResult?.banks,
+        let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
+                                                     for: indexPath) as? SBPBankCell else {
             return UITableViewCell()
         }
         

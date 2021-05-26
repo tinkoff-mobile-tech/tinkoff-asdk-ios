@@ -20,13 +20,10 @@
 
 import UIKit
 
-final class SBPNoAvailableBanksViewController: UIViewController {
+final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoadable {
+    typealias CustomView = SBPNoAvailableBanksView
     
     private let style: SBPNoAvailableBanksView.Style
-    
-    private var customView: SBPNoAvailableBanksView {
-        view as! SBPNoAvailableBanksView
-    }
     
     init(style: SBPNoAvailableBanksView.Style) {
         self.style = style

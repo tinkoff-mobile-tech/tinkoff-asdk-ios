@@ -66,7 +66,7 @@ private extension SBPBankCell {
         
         bankTitleLabel.numberOfLines = 1
         bankTitleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        bankTitleLabel.textColor = UIColor.asdk.black
+        bankTitleLabel.textColor = UIColor.asdk.dynamic.text.primary
         
         setupConstraints()
     }

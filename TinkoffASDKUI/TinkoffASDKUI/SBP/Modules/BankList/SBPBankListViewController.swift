@@ -26,8 +26,9 @@ protocol SBPBankListViewControllerDelegate: AnyObject {
                                 didSelectBank bank: SBPBank)
 }
 
-final class SBPBankListViewController: UIViewController, PullableContainerScrollableContent {
-    
+final class SBPBankListViewController: UIViewController, PullableContainerScrollableContent, CustomViewLoadable {
+    typealias CustomView = SBPBankListView
+
     weak var delegate: SBPBankListViewControllerDelegate?
     
     var scrollView: UIScrollView {
@@ -40,16 +41,13 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
     
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
-    var customView: SBPBankListView {
-        view as! SBPBankListView
-    }
-    
-    var banks: [SBPBank] {
+    var banksResult: LoadBanksResult? {
         get {
-            tableManager.banks
+            tableManager.banksResult
         }
         set {
-            tableManager.banks = newValue
+            tableManager.banksResult = newValue
+            customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
         }
     }
     
@@ -110,7 +108,8 @@ private extension SBPBankListViewController {
     }
     
     @objc func didTapContinueButton() {
-        guard let selectedIndex = customView.tableView.indexPathForSelectedRow else {
+        guard let selectedIndex = customView.tableView.indexPathForSelectedRow,
+              let banks = banksResult?.banks else {
             return
         }
         let bank = banks[selectedIndex.row]

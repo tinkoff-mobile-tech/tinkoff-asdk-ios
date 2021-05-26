@@ -55,13 +55,7 @@ private extension SBPNoAvailableBanksView {
         addSubview(bottomStackView)
         addSubview(topContainerView)
         
-        let backgroundColor: UIColor
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
-        self.backgroundColor = backgroundColor
+        self.backgroundColor = UIColor.asdk.dynamic.background.elevation1
          
         topContainerView.addSubview(imageView)
         
@@ -79,6 +73,7 @@ private extension SBPNoAvailableBanksView {
                 
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .center
+        titleLabel.textColor = UIColor.asdk.dynamic.text.primary
         titleLabel.font = .systemFont(ofSize: .titleFontSize,
                                       weight: .medium)
         

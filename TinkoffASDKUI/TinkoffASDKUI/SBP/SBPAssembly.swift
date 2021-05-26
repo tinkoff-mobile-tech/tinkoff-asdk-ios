@@ -31,12 +31,14 @@ final class SBPAssembly {
         self.style = style
     }
     
-    func urlPaymentViewController(paymentSource: PaymentSource) -> SBPUrlPaymentViewController {
+    func urlPaymentViewController(paymentSource: PaymentSource,
+                                  configuration: AcquiringViewConfiguration) -> SBPUrlPaymentViewController {
         SBPUrlPaymentViewController(paymentSource: paymentSource,
                                     sbpBanksService: banksService,
                                     sbpApplicationService: applicationService,
                                     sbpPaymentService: paymentService,
-                                    banksListViewController: banksListViewController)
+                                    banksListViewController: banksListViewController,
+                                    configuration: configuration)
     }
     
     func noAvailableBanksViewController() -> SBPNoAvailableBanksViewController {

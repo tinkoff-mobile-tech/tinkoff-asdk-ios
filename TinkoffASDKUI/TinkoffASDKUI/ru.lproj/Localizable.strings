@@ -69,3 +69,6 @@
 "SBP.EmptyBanks.Description" = "Для оплаты через СБП необходимо иметь установленными банковские приложения";
 "SBP.EmptyBanks.ConfirmationButton.Title" = "Понятно";
 "SBP.EmptyBanks.InformationButton.Title" = "Информация на сайте СБП";
+
+"SBP.Error.Title" = "Не удалось выполнить оплату через СБП";
+"SBP.Error.Description" = "Попробуйте еще раз";

@@ -374,9 +374,11 @@ public class AcquiringUISDK: NSObject {
             } // getStaticQRCode
         }
     }
-    
-    public func urlSBPPaymentViewController(paymentSource: PaymentSource) -> UIViewController {
-        let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource)
+
+    public func urlSBPPaymentViewController(paymentSource: PaymentSource,
+                                            configuration: AcquiringViewConfiguration) -> UIViewController {
+        let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource,
+                                                                            configuration: configuration)
         let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
         
         urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _ in
@@ -385,6 +387,8 @@ public class AcquiringUISDK: NSObject {
                 guard let self = self else { return }
                 let emptyViewController = self.sbpAssembly.noAvailableBanksViewController()
                 let navigationController = UINavigationController(rootViewController: emptyViewController)
+                navigationController.navigationBar.applyStyle(titleColor: UIColor.asdk.dynamic.text.primary,
+                                                              backgroundColor: UIColor.asdk.dynamic.background.elevation1)
                 presentingViewController?.present(navigationController, animated: true, completion: nil)
             })
         }
