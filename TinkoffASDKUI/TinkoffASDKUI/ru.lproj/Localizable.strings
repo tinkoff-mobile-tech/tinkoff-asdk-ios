@@ -59,3 +59,8 @@
 "TinkoffAcquiring.view.title.savedCards" = "Сохраненные карты";
 "TinkoffAcquiring.view.title.payQRCode" = "Оплата по QR-коду";
 "TinkoffAcquiring.view.title.confimration" = "Подтверждение";
+
+// SBP Banks List
+"SBP.BanksList.Header.Title" = "Выберите банк";
+"SBP.BanksList.Header.Subtitle" = "Мы откроем приложение этого банка для подтверждения оплаты";
+"SBP.BanksList.Button.Title" = "Продолжить";

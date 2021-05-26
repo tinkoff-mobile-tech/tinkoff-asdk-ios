@@ -114,7 +114,7 @@ public protocol AcquiringAlertViewProtocol: class {
 public class AcquiringUISDK: NSObject {
     private weak var presentingViewController: UIViewController?
     //
-    private var acquiringSdk: AcquiringSdk
+    public var acquiringSdk: AcquiringSdk
     private let style: Style
     private weak var acquiringView: AcquiringView?
     private weak var cardsListView: CardListDataSourceStatusListener?
@@ -139,12 +139,15 @@ public class AcquiringUISDK: NSObject {
     // data providers
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
-
+    
+    private let sbpAssembly: SBPAssembly
+    
     public init(configuration: AcquiringSdkConfiguration,
                 style: Style = DefaultStyle()) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
+        self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
     }
 
     /// Вызывается кода пользователь привязывается карту.
@@ -370,6 +373,13 @@ public class AcquiringUISDK: NSObject {
                 } // switch response
             } // getStaticQRCode
         }
+    }
+    
+    public func urlSBPPaymentViewController(paymentSource: PaymentSource) -> UIViewController {
+        let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource)
+        let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
+        
+        return pullableContainerViewController
     }
 
     // MARK: ApplePay
