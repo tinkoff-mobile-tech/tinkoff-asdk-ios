@@ -20,7 +20,12 @@
 
 import UIKit
 
-final class SBPBankCell: UITableViewCell {
+final class SBPBankCell: UITableViewCell, ReusableCell {
+    override var imageView: UIImageView {
+        return logoImageView
+    }
+
+    var onReuse: (() -> Void)?
     
     let bankTitleLabel = UILabel()
     let logoImageView = UIImageView()
@@ -38,6 +43,13 @@ final class SBPBankCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         tickImageView.isHidden = !selected
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        tickImageView.isHidden = true
+        logoImageView.image = nil
+        onReuse?()
     }
 }
 

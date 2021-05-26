@@ -24,29 +24,40 @@ final class SBPBankListTableManager: NSObject {
     
     var rowSelection: ((Int) -> Void)?
     
-    private let tableView: UITableView
+    private var tableView: UITableView?
+    
+    private let cellImageLoader: CellImageLoader
     
     var banks = [SBPBank]() {
         didSet {
-            tableView.reloadData()
+            tableView?.reloadData()
         }
     }
     
-    init(tableView: UITableView) {
-        self.tableView = tableView
+    init(cellImageLoader: CellImageLoader) {
+        self.cellImageLoader = cellImageLoader
         super.init()
+        setup()
+    }
+    
+    func setTableView(_ tableView: UITableView) {
+        self.tableView = tableView
         setup()
     }
 }
 
 private extension SBPBankListTableManager {
     func setup() {
-        tableView.register(SBPBankCell.self, forCellReuseIdentifier: String(describing: SBPBankCell.self))
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.separatorStyle = .none
-        tableView.rowHeight = .rowHeight
-        tableView.estimatedRowHeight = .rowHeight
+        tableView?.register(SBPBankCell.self, forCellReuseIdentifier: SBPBankCell.reuseIdentifier)
+        tableView?.dataSource = self
+        tableView?.delegate = self
+        tableView?.separatorStyle = .none
+        tableView?.rowHeight = .rowHeight
+        tableView?.estimatedRowHeight = .rowHeight
+        
+        cellImageLoader.setImageProcessors([SizeImageProcessor(size: CGSize(width: .cellImageSide, height: .cellImageSide),
+                                                              scale: UIScreen.main.scale),
+                                            RoundImageProcessor()])
     }
 }
 
@@ -58,12 +69,14 @@ extension SBPBankListTableManager: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let bankCell = tableView.dequeueReusableCell(withIdentifier: String(describing: SBPBankCell.self),
+        guard let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
                                                            for: indexPath) as? SBPBankCell else {
             return UITableViewCell()
         }
         
         let bank = banks[indexPath.row]
+        
+        cellImageLoader.loadImage(url: bank.logoURL, cell: bankCell)
         bankCell.bankTitleLabel.text = bank.name
         
         return bankCell
@@ -79,4 +92,5 @@ extension SBPBankListTableManager: UITableViewDelegate {
 
 private extension CGFloat {
     static let rowHeight: CGFloat = 56
+    static let cellImageSide: CGFloat = 40
 }

@@ -58,6 +58,15 @@ private extension SBPAssembly {
     }
     
     var banksListViewController: SBPBankListViewController {
-        SBPBankListViewController(style: .init(continueButtonStyle: style.bigButtonStyle))
+        SBPBankListViewController(style: .init(continueButtonStyle: style.bigButtonStyle),
+                                  tableManager: banksListTableManager)
+    }
+    
+    var banksListTableManager: SBPBankListTableManager {
+        SBPBankListTableManager(cellImageLoader: cellImageLoader)
+    }
+    
+    var cellImageLoader: CellImageLoader {
+        CellImageLoader(imageLoader: ImageLoader())
     }
 }
