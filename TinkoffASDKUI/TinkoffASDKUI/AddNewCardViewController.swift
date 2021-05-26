@@ -32,7 +32,7 @@ class AddNewCardViewController: PopUpViewContoller {
 
     var onTouchButtonShowCardList: (() -> Void)?
     var onTouchButtonPay: (() -> Void)?
-    var onTouchButtonSBP: (() -> Void)?
+    var onTouchButtonSBP: ((UIViewController) -> Void)?
     var onCancelPayment: (() -> Void)?
 
     //

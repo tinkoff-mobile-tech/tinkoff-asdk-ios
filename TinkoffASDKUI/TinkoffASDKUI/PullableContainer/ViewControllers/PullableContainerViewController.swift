@@ -115,7 +115,10 @@ private extension PullableContainerViewController {
             panGestureRecognizer: panGesture
         )
         
-        dragHandlers = [panGestureHandler]
+        let scrollHandler = PullableContainerScrollDragHandler(dragController: dragController,
+                                                               scrollView: customView.scrollView)
+        
+        dragHandlers = [panGestureHandler, scrollHandler]
     }
     
     func updateContainerHeight(contentHeight: CGFloat) {

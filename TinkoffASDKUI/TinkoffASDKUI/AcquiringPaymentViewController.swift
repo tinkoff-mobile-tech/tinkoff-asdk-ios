@@ -98,7 +98,7 @@ protocol AcquiringView: class {
 
     var onTouchButtonShowCardList: (() -> Void)? { get set }
     var onTouchButtonPay: (() -> Void)? { get set }
-    var onTouchButtonSBP: (() -> Void)? { get set }
+    var onTouchButtonSBP: ((UIViewController) -> Void)? { get set }
     var onCancelPayment: (() -> Void)? { get set }
     ///
     func cardRequisites() -> PaymentSourceData?
@@ -125,7 +125,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
     var onTouchButtonShowCardList: (() -> Void)?
     var onTouchButtonPay: (() -> Void)?
-    var onTouchButtonSBP: (() -> Void)?
+    var onTouchButtonSBP: ((UIViewController) -> Void)?
     var onCancelPayment: (() -> Void)?
 
     // MARK: IBOutlets
@@ -471,9 +471,8 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
                 cell.setButtonIcon(UIImage(named: "buttonIconSBP", in: Bundle(for: type(of: self)), compatibleWith: nil))
 
                 cell.onButtonTouch = { [weak self] in
-                    if self?.validatePaymentForm() ?? false {
-                        self?.onTouchButtonSBP?()
-                    }
+                    guard let self = self else { return }
+                    self.onTouchButtonSBP?(self)
                 }
 
                 return cell
