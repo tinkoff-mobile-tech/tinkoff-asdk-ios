@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.4.0] - 2021-05-27
+
 ### Added
 * sbp bank selection sheet
 
