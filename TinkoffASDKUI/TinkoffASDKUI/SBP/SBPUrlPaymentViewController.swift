@@ -26,16 +26,18 @@ public enum PaymentSource {
     case paymentId(Int64)
 }
 
-public final class SBPUrlPaymentViewController: UIViewController, PullableContainerScrollableContent {
-    public var scrollView: UIScrollView {
+final class SBPUrlPaymentViewController: UIViewController, PullableContainerScrollableContent {
+    var scrollView: UIScrollView {
         banksListViewController.scrollView
     }
     
-    public var contentHeight: CGFloat {
+    var contentHeight: CGFloat {
         isLoading ? loadingViewController.contentHeight : banksListViewController.contentHeight
     }
     
-    public var contentHeightDidChange: ((PullableContainerContent) -> Void)?
+    var noBanksAppAvailable: ((UIViewController) -> Void)?
+    
+    var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
     private let sbpBanksService: SBPBanksService
     private let sbpApplicationService: SBPApplicationService
@@ -65,7 +67,7 @@ public final class SBPUrlPaymentViewController: UIViewController, PullableContai
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         start()
@@ -98,8 +100,19 @@ private extension SBPUrlPaymentViewController {
     }
     
     func handleBanksLoaded(banks: [SBPBank]) {
+        let availableBanks = banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
+        guard !availableBanks.isEmpty else {
+            noBanksAppAvailable?(self)
+            return
+        }
+        
+        guard availableBanks.count > 1 else {
+            openBankApplication(bank: availableBanks[0])
+            return
+        }
+        
         isLoading = false
-        banksListViewController.banks = banks.filter { sbpApplicationService.canOpenBankApp(bank: $0) }
+        banksListViewController.banks = availableBanks
         contentHeightDidChange?(self)
         hideLoading()
     }
@@ -158,15 +171,21 @@ private extension SBPUrlPaymentViewController {
     func showError() {
         
     }
-}
-
-extension SBPUrlPaymentViewController: SBPBankListViewControllerDelegate {
-    func bankListViewController(_ bankListViewController: SBPBankListViewController, didSelectBank bank: SBPBank) {
+    
+    func openBankApplication(bank: SBPBank) {
         guard let url = self.sbpURL else {
             return
         }
         
-        try? sbpApplicationService.openSBPUrl(url, in: bank, completion: nil)
+        try? sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
+            self?.dismiss(animated: true, completion: nil)
+        })
+    }
+}
+
+extension SBPUrlPaymentViewController: SBPBankListViewControllerDelegate {
+    func bankListViewController(_ bankListViewController: SBPBankListViewController, didSelectBank bank: SBPBank) {
+        openBankApplication(bank: bank)
     }
 }
 

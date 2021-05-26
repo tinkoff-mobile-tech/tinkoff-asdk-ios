@@ -379,6 +379,16 @@ public class AcquiringUISDK: NSObject {
         let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource)
         let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
         
+        urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _ in
+            let presentingViewController = pullableContainerViewController?.presentingViewController
+            pullableContainerViewController?.dismiss(animated: true, completion: { [weak self] in
+                guard let self = self else { return }
+                let emptyViewController = self.sbpAssembly.noAvailableBanksViewController()
+                let navigationController = UINavigationController(rootViewController: emptyViewController)
+                presentingViewController?.present(navigationController, animated: true, completion: nil)
+            })
+        }
+        
         return pullableContainerViewController
     }
 

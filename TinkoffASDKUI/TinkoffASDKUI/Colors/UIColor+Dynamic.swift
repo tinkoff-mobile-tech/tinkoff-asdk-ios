@@ -40,6 +40,10 @@ extension ASDKColors {
         return UIColor(hex: "#9299A2") ?? .clear
     }
     
+    var n8: UIColor {
+        return UIColor(hex: "#428BF9") ?? .clear
+    }
+    
     var lightGray: UIColor {
         return UIColor(hex: "#F7F7F7") ?? .clear
     }

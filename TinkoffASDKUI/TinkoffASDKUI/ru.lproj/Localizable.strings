@@ -64,3 +64,8 @@
 "SBP.BanksList.Header.Title" = "Выберите банк";
 "SBP.BanksList.Header.Subtitle" = "Мы откроем приложение этого банка для подтверждения оплаты";
 "SBP.BanksList.Button.Title" = "Продолжить";
+
+"SBP.EmptyBanks.Title" = "Не найдено ни одного банковского приложения";
+"SBP.EmptyBanks.Description" = "Для оплаты через СБП необходимо иметь установленными банковские приложения";
+"SBP.EmptyBanks.ConfirmationButton.Title" = "Понятно";
+"SBP.EmptyBanks.InformationButton.Title" = "Информация на сайте СБП";
