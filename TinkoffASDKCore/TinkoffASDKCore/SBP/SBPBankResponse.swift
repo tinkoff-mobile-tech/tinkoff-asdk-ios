@@ -32,7 +32,9 @@ public struct SBPBankResponse: Decodable {
         var banksArray = try container.nestedUnkeyedContainer(forKey: .banks)
         var resultBanks = [SBPBank]()
         while !banksArray.isAtEnd {
-            let bank = try banksArray.decode(SBPBank.self)
+            guard let bank = try? banksArray.decode(SBPBank.self) else {
+                continue
+            }
             resultBanks.append(bank)
         }
         self.banks = resultBanks
