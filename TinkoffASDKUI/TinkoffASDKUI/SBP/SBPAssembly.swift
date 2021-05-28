@@ -42,7 +42,8 @@ final class SBPAssembly {
     }
     
     func noAvailableBanksViewController() -> SBPNoAvailableBanksViewController {
-        SBPNoAvailableBanksViewController(style: .init(confirmButtonStyle: style.bigButtonStyle))
+        SBPNoAvailableBanksViewController(style: .init(confirmButtonStyle: style.bigButtonStyle),
+                                          urlOpener: applicationURLOpener)
     }
 }
 
@@ -80,5 +81,9 @@ private extension SBPAssembly {
     
     var bundleImageProvider: BundleImageProvider {
         BundleImageProvider(screen: UIScreen.main)
+    }
+    
+    var applicationURLOpener: URLOpener {
+        ApplicationURLOpener(application: .shared)
     }
 }
