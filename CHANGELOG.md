@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* open SBP information on no available banks screen
+
 ## [2.4.0] - 2021-05-27
 
 ### Added
