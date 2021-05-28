@@ -24,9 +24,12 @@ final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoada
     typealias CustomView = SBPNoAvailableBanksView
     
     private let style: SBPNoAvailableBanksView.Style
+    private let urlOpener: URLOpener
     
-    init(style: SBPNoAvailableBanksView.Style) {
+    init(style: SBPNoAvailableBanksView.Style,
+         urlOpener: URLOpener) {
         self.style = style
+        self.urlOpener = urlOpener
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -50,12 +53,9 @@ private extension SBPNoAvailableBanksViewController {
                                              in: Bundle(for: type(of: self)),
                                              compatibleWith: nil)
         
-        customView.confirmButton.addTarget(self,
-                                           action: #selector(close),
-                                           for: .touchUpInside)
-        
         setupLocalization()
-        setupCloseButton()
+        setupButtons()
+        setupNavigationButton()
     }
     
     func setupLocalization() {
@@ -73,7 +73,17 @@ private extension SBPNoAvailableBanksViewController {
         ), for: .normal)
     }
     
-    func setupCloseButton() {
+    func setupButtons() {
+        customView.confirmButton.addTarget(self,
+                                           action: #selector(close),
+                                           for: .touchUpInside)
+        
+        customView.informationButton.addTarget(self,
+                                               action: #selector(openInformation),
+                                               for: .touchUpInside)
+    }
+    
+    func setupNavigationButton() {
         let closeButton: UIBarButtonItem
         if #available(iOS 13.0, *) {
             closeButton = UIBarButtonItem(barButtonSystemItem: .close,
@@ -90,5 +100,15 @@ private extension SBPNoAvailableBanksViewController {
     
     @objc func close() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func openInformation() {
+        urlOpener.openUrl(.informationURL)
+    }
+}
+
+private extension URL {
+    static var informationURL: URL {
+        URL(string: "https://sbp.nspk.ru/participants/")!
     }
 }
