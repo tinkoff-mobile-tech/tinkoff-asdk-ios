@@ -24,19 +24,24 @@ public struct PaymentOptions {
     let orderOptions: OrderOptions
     let customerOptions: CustomerOptions
     let failedPaymentId: PaymentId?
+    let paymentData: [String: String]?
     
     public init(orderOptions: OrderOptions,
-                customerOptions: CustomerOptions) {
+                customerOptions: CustomerOptions,
+                paymentData: [String: String]? = nil) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
+        self.paymentData = paymentData
         self.failedPaymentId = nil
     }
     
     init(orderOptions: OrderOptions,
          customerOptions: CustomerOptions,
-         failedPaymentId: PaymentId?) {
+         failedPaymentId: PaymentId?,
+         paymentData: [String: String]? = nil) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
         self.failedPaymentId = failedPaymentId
+        self.paymentData = paymentData
     }
 }
