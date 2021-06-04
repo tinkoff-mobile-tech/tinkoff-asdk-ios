@@ -53,6 +53,10 @@ extension PaymentInitData {
             initData.addPaymentData(["recurringType": "12"])
         }
         
+        if let paymentData = paymentOptions.paymentData {
+            initData.addPaymentData(paymentData)
+        }
+        
         return initData
     }
 }
