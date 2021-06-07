@@ -215,6 +215,7 @@ class PopUpViewContoller: UIViewController {
 
     func pushToNavigationStackAndActivate(firstResponder textField: UIView?, completion: (() -> Void)? = nil) -> Bool {
         if panGesture.delegate == nil {
+            completion?()
             return true
         }
 
