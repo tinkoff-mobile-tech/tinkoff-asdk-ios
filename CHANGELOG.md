@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.4.2] - 2021-06-07
+
 ### Fixed
 * call completion in pushToNavigationStackAndActivate if was called more than once(https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/74)
 
