@@ -40,15 +40,13 @@ final class CardsAssembly {
 private extension CardsAssembly {
     func buildCardsController(customerKey: String) -> CardsController {
         
-        let addingCardController = buildAddingCardController()
+        let addCardController = buildAddCardController()
+        let removeCardController = buildRemoveCardController()
         
         let cardsController = DefaultCardsController(customerKey: customerKey,
                                                     cardsLoader: buildCardsLoader(),
-                                                    addingCardController: addingCardController,
-                                                    acquiringSDK: acquiringSDK)
-        
-        addingCardController.delegate = cardsController
-        addingCardController.uiProvider = cardsController
+                                                    addCardController: addCardController,
+                                                    removeCardController: removeCardController)
         
         return cardsController
     }
@@ -57,9 +55,12 @@ private extension CardsAssembly {
         DefaultCardsLoader(acquiringSDK: acquiringSDK)
     }
     
-    func buildAddingCardController() -> DefaultCardAddingController {
-        DefaultCardAddingController(acquiringSDK: acquiringSDK,
-                                    threeDSHandler: acquiringSDK.addCard3DSHandler())
+    func buildAddCardController() -> DefaultAddCardController {
+        DefaultAddCardController(acquiringSDK: acquiringSDK,
+                                 threeDSHandler: acquiringSDK.addCard3DSHandler())
     }
     
+    func buildRemoveCardController() -> DefaultRemoveCardController {
+        DefaultRemoveCardController(acquiringSDK: acquiringSDK)
+    }
 }

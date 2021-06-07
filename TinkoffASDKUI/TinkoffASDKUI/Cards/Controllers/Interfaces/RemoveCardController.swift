@@ -1,6 +1,6 @@
 //
 //
-//  CardRemoveController.swift
+//  RemoveCardController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import TinkoffASDKCore
 
-protocol CardRemoveController {
+protocol RemoveCardController {
     func removeCard(_ cardId: String,
                     customerKey: String,
                     completion: @escaping (Result<RemoveCardPayload, Error>) -> Void)

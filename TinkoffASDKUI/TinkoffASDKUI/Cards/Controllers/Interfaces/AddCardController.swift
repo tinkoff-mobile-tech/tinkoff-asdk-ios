@@ -1,6 +1,6 @@
 //
 //
-//  CardAddingController.swift
+//  AddCardController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,28 +20,19 @@
 
 import TinkoffASDKCore
 
-public protocol CardAddingControllerUIProvider: AnyObject {
+protocol AddCardControllerUIProvider: AnyObject {
     /// viewController для модального показа экранов, необходимость в которых может возникнуть в процессе добавления карты
     func sourceViewControllerToPresent() -> UIViewController
 }
 
-protocol CardAddingControllerDelegate: AnyObject {
-    /// Добавление карты прошло успешно
-    func cardAddingController(_ controller: CardAddingController,
-                              didFinish: AddCardProcess,
-                              state: GetAddCardStatePayload)
-    
-    /// Добавление карты было отменено
-    func cardAddingController(_ controller: CardAddingController,
-                              addCardWasCancelled: AddCardProcess)
-    
-    /// Возникла ошибка в процессе добавления карты
-    func cardAddingController(_ controller: CardAddingController,
-                              didFailed error: Error)
+enum AddCardControllerError: Swift.Error {
+    case confirmationCancelled
 }
 
-protocol CardAddingController {
+protocol AddCardController {
     func addCard(cardData: CardData,
                  customerKey: String,
-                 checkType: PaymentCardCheckType)
+                 checkType: PaymentCardCheckType,
+                 uiProvider: AddCardControllerUIProvider,
+                 completion: @escaping (Result<GetAddCardStatePayload, Error>) -> Void)
 }

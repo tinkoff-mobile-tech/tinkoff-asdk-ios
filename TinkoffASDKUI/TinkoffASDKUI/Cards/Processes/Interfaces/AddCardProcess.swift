@@ -23,6 +23,7 @@ import TinkoffASDKCore
 protocol AddCardProcessDelegate: AnyObject {
     func addCardProcessDidFinish(_ addCardProcess: AddCardProcess, state: GetAddCardStatePayload)
     func addCardProcessDidFailed(_ addCardProcess: AddCardProcess, error: Error)
+    func addCardProcessDidCancelConfirmation(_ addCardProcess: AddCardProcess)
     func addCardProcess(_ addCardProcess: AddCardProcess,
                         need3DSConfirmation data: Confirmation3DSData,
                         confirmationCancelled: @escaping () -> Void,

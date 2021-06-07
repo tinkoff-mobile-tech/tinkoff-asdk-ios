@@ -1,6 +1,6 @@
 //
 //
-//  DefaultCardAddingController.swift
+//  DefaultAddCardController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,20 +20,19 @@
 
 import TinkoffASDKCore
 
-final class DefaultCardAddingController: CardAddingController {
+final class DefaultAddCardController: AddCardController {
     
     // Dependencies
     
     private let acquiringSDK: AcquiringSdk
     private let threeDSHandler: ThreeDSWebViewHandler<AddCardStatusResponse>
     
-    weak var uiProvider: CardAddingControllerUIProvider?
-    weak var delegate: CardAddingControllerDelegate?
+    // MARK: - State
     
-    // State
-    
-    private var process: AddCardProcess?
+    private var currentAddProcess: AddCardProcess?
     private var confirmationViewController: UIViewController?
+    private var addCardCompletion: ((Result<GetAddCardStatePayload, Error>) -> Void)?
+    private weak var uiProvider: AddCardControllerUIProvider?
     
     // MARK: - Init
     
@@ -43,53 +42,75 @@ final class DefaultCardAddingController: CardAddingController {
         self.threeDSHandler = threeDSHandler
     }
     
-    // MARK: - CardAddingController
+    // MARK: - AddCardController
     
     func addCard(cardData: CardData,
                  customerKey: String,
-                 checkType: PaymentCardCheckType) {
-        resetProcess { [weak self] in
-            guard let self = self else { return }
+                 checkType: PaymentCardCheckType,
+                 uiProvider: AddCardControllerUIProvider,
+                 completion: @escaping (Result<GetAddCardStatePayload, Error>) -> Void) {
+        resetCurrentProcess { [weak self] in
+            self?.uiProvider = uiProvider
+            self?.addCardCompletion = completion
+            self?.startAddCard(cardData: cardData,
+                               customerKey: customerKey,
+                               checkType: checkType)
+        }
+    }
+}
+
+// MARK: - Start
+
+private extension DefaultAddCardController {
+    func startAddCard(cardData: CardData,
+                      customerKey: String,
+                      checkType: PaymentCardCheckType) {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             let process = DefaultAddCardProcess(acquiringSDK: self.acquiringSDK,
                                                 customerKey: customerKey,
                                                 cardData: cardData,
                                                 checkType: checkType)
             process.delegate = self
             process.start()
-            self.process = process
+            self.currentAddProcess = process
         }
     }
 }
 
-extension DefaultCardAddingController: AddCardProcessDelegate {
+// MARK: -
+
+extension DefaultAddCardController: AddCardProcessDelegate {
     func addCardProcessDidFinish(_ addCardProcess: AddCardProcess,
                                  state: GetAddCardStatePayload) {
         DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
-                if state.status == .cancelled {
-                    self.delegate?.cardAddingController(self,
-                                                        addCardWasCancelled: addCardProcess)
-                } else {
-                    self.delegate?.cardAddingController(self,
-                                                        didFinish: addCardProcess,
-                                                        state: state)
-                }
+                let completion = self.addCardCompletion
+                self.resetState()
+                completion?(.success(state))
             }
-            self.confirmationViewController = nil
-            self.process = nil
         }
     }
     
-    func addCardProcessDidFailed(_ addCardProcess: AddCardProcess,
-                                 error: Error) {
+    func addCardProcessDidFailed(_ addCardProcess: AddCardProcess, error: Error) {
         DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
-                self.delegate?.cardAddingController(self, didFailed: error)
+                let completion = self.addCardCompletion
+                self.resetState()
+                completion?(.failure(error))
             }
-            self.confirmationViewController = nil
-            self.process = nil
+        }
+    }
+    
+    func addCardProcessDidCancelConfirmation(_ addCardProcess: AddCardProcess) {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
+            self.dismissConfirmationIfNeeded { [weak self] in
+                guard let self = self else { return }
+                let completion = self.addCardCompletion
+                self.resetState()
+                completion?(.failure(AddCardControllerError.confirmationCancelled))
+            }
         }
     }
     
@@ -110,7 +131,8 @@ extension DefaultCardAddingController: AddCardProcessDelegate {
     
     func addCardProcess(_ addCardProcess: AddCardProcess,
                         need3DSConfirmationACS data: Confirmation3DSDataACS,
-                        confirmationCancelled: @escaping () -> Void, completion: @escaping (Result<Void, Error>) -> Void) {
+                        confirmationCancelled: @escaping () -> Void,
+                        completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             let request = try self.acquiringSDK.createConfirmation3DSRequestACS(data: data, messageVersion: "1.0")
             startThreeDSConfirmation(for: addCardProcess,
@@ -133,44 +155,15 @@ extension DefaultCardAddingController: AddCardProcessDelegate {
     }
 }
 
-private extension DefaultCardAddingController {
-    func resetProcess(completion: @escaping () -> Void) {
-        process?.cancel()
-        process = nil
-        
-        dismissConfirmationIfNeeded { [weak self] in
-            self?.confirmationViewController = nil
-            completion()
-        }
-    }
-    
-    func dismissConfirmationIfNeeded(completion: @escaping () -> Void) {
-        guard let confirmationViewController = confirmationViewController,
-              let confirmationPresentingViewController = confirmationViewController.presentingViewController else {
-            completion()
-            return
-        }
-        
-        if confirmationViewController.isBeingPresented {
-            confirmationPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
-                confirmationPresentingViewController.dismiss(animated: true, completion: completion)
-            })
-        } else if confirmationViewController.isBeingDismissed {
-            confirmationPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
-                completion()
-            })
-        } else {
-            confirmationPresentingViewController.dismiss(animated: true, completion: completion)
-        }
-    }
-    
+// MARK: - Confirmation
+
+private extension DefaultAddCardController {
     func startThreeDSConfirmation(for addCardProcess: AddCardProcess,
                                   request: URLRequest,
                                   confirmationCancelled: @escaping () -> Void,
                                   completion: @escaping (Result<Void, Error>) -> Void) {
         
         threeDSHandler.didCancel = {
-            addCardProcess.cancel()
             confirmationCancelled()
         }
         
@@ -183,7 +176,7 @@ private extension DefaultCardAddingController {
             }
         }
         
-        DispatchQueue.main.async {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.presentThreeDSViewController(urlRequest: request)
         }
     }
@@ -239,6 +232,45 @@ private extension DefaultCardAddingController {
                 self?.uiProvider?.sourceViewControllerToPresent().present(navigationController, animated: true)
                 self?.confirmationViewController = navigationController
             }
+        }
+    }
+}
+
+// MARK: - Reset
+
+private extension DefaultAddCardController {
+    func resetCurrentProcess(completion: @escaping () -> Void) {
+        dismissConfirmationIfNeeded { [weak self] in
+            self?.currentAddProcess?.cancel()
+            self?.resetState()
+            completion()
+        }
+    }
+    
+    func resetState() {
+        currentAddProcess = nil
+        addCardCompletion = nil
+        uiProvider = nil
+        confirmationViewController = nil
+    }
+    
+    func dismissConfirmationIfNeeded(completion: @escaping () -> Void) {
+        guard let confirmationViewController = confirmationViewController,
+              let confirmationPresentingViewController = confirmationViewController.presentingViewController else {
+            completion()
+            return
+        }
+        
+        if confirmationViewController.isBeingPresented {
+            confirmationPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+                confirmationPresentingViewController.dismiss(animated: true, completion: completion)
+            })
+        } else if confirmationViewController.isBeingDismissed {
+            confirmationPresentingViewController.transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+                completion()
+            })
+        } else {
+            confirmationPresentingViewController.dismiss(animated: true, completion: completion)
         }
     }
 }

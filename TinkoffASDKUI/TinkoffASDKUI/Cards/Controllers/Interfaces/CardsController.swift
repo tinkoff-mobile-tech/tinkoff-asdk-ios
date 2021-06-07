@@ -43,6 +43,7 @@ public protocol CardsController {
                  checkType: PaymentCardCheckType,
                  uiProvider: CardsControllerUIProvider,
                  completion: @escaping (Result<PaymentCard?, Error>) -> Void)
+    func removeCard(cardId: String, completion: @escaping (Result<String, Error>) -> Void)
     
     func addListener(_ listener: CardsControllerListener)
     func removeListener(_ listener: CardsControllerListener)

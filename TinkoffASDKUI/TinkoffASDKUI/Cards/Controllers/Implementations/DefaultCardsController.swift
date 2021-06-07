@@ -26,8 +26,8 @@ final class DefaultCardsController: CardsController {
     
     let customerKey: String
     private let cardsLoader: CardsLoader
-    private let addingCardController: CardAddingController
-    private let acquiringSDK: AcquiringSdk
+    private let addCardController: AddCardController
+    private let removeCardController: RemoveCardController
     
     // Listeners
     
@@ -39,25 +39,24 @@ final class DefaultCardsController: CardsController {
     private var completions = [(Result<[PaymentCard], Error>) -> Void]()
     private var cardsLoadTask: DispatchWorkItem?
     
-    private var addCardCompletion: ((Result<PaymentCard?, Error>) -> Void)?
     private weak var uiProvider: CardsControllerUIProvider?
     
     // MARK: - Init
     
     init(customerKey: String,
          cardsLoader: CardsLoader,
-         addingCardController: CardAddingController,
-         acquiringSDK: AcquiringSdk) {
+         addCardController: AddCardController,
+         removeCardController: RemoveCardController) {
         self.customerKey = customerKey
         self.cardsLoader = cardsLoader
-        self.addingCardController = addingCardController
-        self.acquiringSDK = acquiringSDK
+        self.addCardController = addCardController
+        self.removeCardController = removeCardController
     }
     
     // MARK: - CardsController
     
     func loadCards(completion: @escaping (Result<[PaymentCard], Error>) -> Void) {
-        DispatchQueue.safePerformOnMainQueueSync {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.completions.append(completion)
             self.cardsLoadTask?.cancel()
             self.cardsLoadTask = nil
@@ -80,13 +79,24 @@ final class DefaultCardsController: CardsController {
                  checkType: PaymentCardCheckType,
                  uiProvider: CardsControllerUIProvider,
                  completion: @escaping (Result<PaymentCard?, Error>) -> Void) {
-        self.addCardCompletion = completion
-        self.uiProvider = uiProvider
-        addingCardController.addCard(cardData: cardData, customerKey: customerKey, checkType: checkType)
+        addCardController.addCard(cardData: cardData,
+                                  customerKey: customerKey,
+                                  checkType: checkType,
+                                  uiProvider: self) { [weak self] result in
+            self?.addCardResultHandler(result: result,
+                                       completion: completion)
+        }
+    }
+    
+    func removeCard(cardId: String,
+                    completion: @escaping (Result<String, Error>) -> Void) {
+        removeCardController.removeCard(cardId, customerKey: customerKey) { [weak self] result in
+            self?.removeCardResultHandler(cardId: cardId, result: result, completion: completion)
+        }
     }
     
     func addListener(_ listener: CardsControllerListener) {
-        DispatchQueue.safePerformOnMainQueueSync {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             var listeners = self.listeners.filter { $0.value != nil }
             listeners.append(.init(value: listener))
             self.listeners = listeners
@@ -94,9 +104,59 @@ final class DefaultCardsController: CardsController {
     }
     
     func removeListener(_ listener: CardsControllerListener) {
-        DispatchQueue.safePerformOnMainQueueSync {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             let listeners = self.listeners.filter { $0.value !== listener }
             self.listeners = listeners
+        }
+    }
+}
+
+// MARK: - Add/Remove Handling
+
+private extension DefaultCardsController {
+    func addCardResultHandler(result: Result<GetAddCardStatePayload, Error>,
+                              completion: @escaping (Result<PaymentCard?, Error>) -> Void) {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
+            switch result {
+            case let .success(payload):
+                if let cardId = payload.cardId {
+                    self.loadCards { result in
+                        switch result {
+                        case let .success(cards):
+                            completion(.success(cards.first(where: { $0.cardId == cardId })))
+                        case .failure:
+                            completion(.success(nil))
+                        }
+                    }
+                } else {
+                    completion(.success(nil))
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func removeCardResultHandler(cardId: String,
+                                 result: Result<RemoveCardPayload, Error>,
+                                 completion: @escaping (Result<String, Error>) -> Void) {
+        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
+            switch result {
+            case .success:
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                    self.loadCards { result in
+                        switch result {
+                        case .success:
+                            completion(.success(cardId))
+                        case .failure:
+                            completion(.success(cardId))
+                        }
+                    }
+                }
+                
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
     }
 }
@@ -123,7 +183,7 @@ private extension DefaultCardsController {
             guard let self = self else { return }
             self.cardsLoader.loadCards(customerKey: self.customerKey) { [weak self] result in
                 guard let self = self else { return }
-                DispatchQueue.safePerformOnMainQueueSync {
+                DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
                     guard !task.isCancelled else { return }
                     self.handleLoadedCardsResult(result)
                 }
@@ -152,42 +212,7 @@ private extension DefaultCardsController {
     }
 }
 
-extension DefaultCardsController: CardAddingControllerDelegate {
-    func cardAddingController(_ controller: CardAddingController,
-                              didFinish: AddCardProcess,
-                              state: GetAddCardStatePayload) {
-        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded { [addCardCompletion] in
-            if let cardId = state.cardId {
-                self.loadCards { result in
-                    switch result {
-                    case let .success(cards):
-                        addCardCompletion?(.success(cards.first(where: { $0.cardId == cardId })))
-                    case .failure:
-                        addCardCompletion?(.success(nil))
-                    }
-                }
-            } else {
-                self.addCardCompletion?(.success(nil))
-            }
-        }
-    }
-    
-    func cardAddingController(_ controller: CardAddingController,
-                              addCardWasCancelled: AddCardProcess) {
-        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
-            self.addCardCompletion?(.failure(CardsControllerError.cancelled))
-        }
-    }
-    
-    func cardAddingController(_ controller: CardAddingController,
-                              didFailed error: Error) {
-        DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
-            self.addCardCompletion?(.failure(error))
-        }
-    }
-}
-
-extension DefaultCardsController: CardAddingControllerUIProvider {
+extension DefaultCardsController: AddCardControllerUIProvider {
     func sourceViewControllerToPresent() -> UIViewController {
         guard let uiProvider = uiProvider else {
             assertionFailure("DefaultCardsController must has uiProvider")

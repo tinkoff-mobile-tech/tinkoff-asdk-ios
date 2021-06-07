@@ -100,7 +100,7 @@ private extension DefaultAddCardProcess {
         guard !isCancelled.wrappedValue else { return }
         
         let confirmationCancelled: () -> Void = { [weak self] in
-            self?.handleAdditionCancelled(payload: payload)
+            self?.handleAdditionCancelled()
         }
         
         let completion: (Result<Void, Error>) -> Void = { [weak self] result in
@@ -133,12 +133,8 @@ private extension DefaultAddCardProcess {
         }
     }
     
-    func handleAdditionCancelled(payload: AttachCardPayload) {
-        delegate?.addCardProcessDidFinish(self, state: .init(requestKey: payload.requestKey,
-                                                             status: .cancelled,
-                                                             customerKey: customerKey,
-                                                             cardId: payload.cardId,
-                                                             rebillId: payload.rebillId))
+    func handleAdditionCancelled() {
+        delegate?.addCardProcessDidCancelConfirmation(self)
     }
     
     func handleConfirmationResult(requestKey: String, _ result: Result<Void, Error>) {
