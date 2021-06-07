@@ -79,6 +79,7 @@ final class DefaultCardsController: CardsController {
                  checkType: PaymentCardCheckType,
                  uiProvider: CardsControllerUIProvider,
                  completion: @escaping (Result<PaymentCard?, Error>) -> Void) {
+        self.uiProvider = uiProvider
         addCardController.addCard(cardData: cardData,
                                   customerKey: customerKey,
                                   checkType: checkType,

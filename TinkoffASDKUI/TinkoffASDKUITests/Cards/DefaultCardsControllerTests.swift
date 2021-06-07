@@ -33,7 +33,9 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerLoadCardsCompletionCalledIfCallLoadCardsOneTime() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
         
         let resultCards: [PaymentCard] = [.init(pan: "cardPan",
                                                 cardId: "cardId",
@@ -58,7 +60,9 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerCachedCardsIfCallLoadCardsOneTime() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
         
         let resultCards: [PaymentCard] = [.init(pan: "cardPan",
                                                 cardId: "cardId",
@@ -78,7 +82,9 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerCallsCompletionForTwoLoadCardsCallsWithResultOfSecondCallIfLoadCardsCalledSecondTimeBeforeFirstCallFinished() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                             cardsLoader: mockCardsLoader)
+                                                             cardsLoader: mockCardsLoader,
+                                                             addCardController: MockAddCardController(),
+                                                             removeCardController: MockRemoveCardController())
         
         let firstResultCards: [PaymentCard] = [.init(pan: "cardPan",
                                                      cardId: "cardId",
@@ -131,7 +137,9 @@ final class DefaultCardsControllerTests: XCTestCase {
 
     func testCardsControllerHasCacheForTwoLoadCardsCallsWithResultOfSecondCallIfLoadCardsCalledSecondTimeBeforeFirstCallFinished() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
         
         let firstResultCards: [PaymentCard] = [.init(pan: "cardPan",
                                                      cardId: "cardId",
@@ -174,7 +182,9 @@ final class DefaultCardsControllerTests: XCTestCase {
 
     func testCardsControllerNotifyListenersIfLoadedCards() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
         
         let listener = MockCardsControllerListener()
         cardsController.addListener(listener)
@@ -197,7 +207,10 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerNotifyListenerOnlyOneTimeIfLoadCardsCalledSecondTimeBeforeFirstCallFinished() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
+
         
         let listener = MockCardsControllerListener()
         cardsController.addListener(listener)
@@ -224,7 +237,10 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerNotifyListenerOnlyTwoTimeIfLoadCardsCalledSecondTimeAfterFirstCallFinished() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
+
         
         let listener = MockCardsControllerListener()
         cardsController.addListener(listener)
@@ -251,7 +267,10 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerNoDeadlockIfGetCardsFromMainQueue() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
+
 
         let resultCards: [PaymentCard] = [.init(pan: "cardPan",
                                                 cardId: "cardId",
@@ -271,7 +290,10 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerGetCardsWithActiveCardsPredicate() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
+
 
         let activeCards: [PaymentCard] = [.init(pan: "cardPan",
                                                 cardId: "cardId",
@@ -299,7 +321,10 @@ final class DefaultCardsControllerTests: XCTestCase {
     
     func testCardsControllerGetCardsWithTwoPredicates() {
         let cardsController = DefaultCardsController(customerKey: "customerKey",
-                                                     cardsLoader: mockCardsLoader)
+                                                     cardsLoader: mockCardsLoader,
+                                                     addCardController: MockAddCardController(),
+                                                     removeCardController: MockRemoveCardController())
+
 
         let activeCards: [PaymentCard] = [.init(pan: "cardPan",
                                                 cardId: "cardId",
