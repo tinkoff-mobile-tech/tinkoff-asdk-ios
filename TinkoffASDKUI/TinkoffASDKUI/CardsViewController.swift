@@ -83,16 +83,12 @@ class CardsViewController: UIViewController {
 
     @objc func closeView(_: UIBarButtonItem?) {
         if let presetingVC = presentingViewController {
-            presetingVC.dismiss(animated: true) {
-                //
-            }
+            presetingVC.dismiss(animated: true)
         } else {
             if let nav = navigationController {
                 nav.popViewController(animated: true)
             } else {
-                dismiss(animated: true) {
-                    //
-                }
+                dismiss(animated: true)
             }
         }
     }
@@ -336,8 +332,11 @@ extension CardsViewController: UITableViewDataSource {
             break
 
         case .cards:
-            print("TODO: Deactivate card via controller")
-            // TODO: TODO: Deactivate card via controller
+            let cardId = cards[indexPath.row].cardId
+            viewWaiting.isHidden = false
+            cardsController.removeCard(cardId: cardId) { [weak self] result in
+                self?.viewWaiting.isHidden = true
+            }
         } // switch tableViewSection
     }
 }
