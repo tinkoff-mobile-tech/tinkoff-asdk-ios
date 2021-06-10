@@ -33,7 +33,6 @@ public final class AcquiringSdk: NSObject {
 
     private var networkTransport: NetworkTransport
     private var terminalKey: String
-    private var terminalPassword: String
     private var publicKey: SecKey
     public private(set) var languageKey: AcquiringSdkLanguage?
     private var logger: LoggerDelegate?
@@ -43,7 +42,6 @@ public final class AcquiringSdk: NSObject {
         fpsEnabled = configuration.fpsEnabled
 
         terminalKey = configuration.credential.terminalKey
-        terminalPassword = configuration.credential.password
 
         if let publicKey: SecKey = RSAEncryption.secKey(string: configuration.credential.publicKey) {
             self.publicKey = publicKey
@@ -75,7 +73,6 @@ public final class AcquiringSdk: NSObject {
     private func tokenParams(request: AcquiringRequestTokenParams & RequestOperation) -> JSONObject {
         var tokenParams: JSONObject = [:]
         tokenParams.updateValue(terminalKey, forKey: "TerminalKey")
-        tokenParams.updateValue(terminalPassword, forKey: "Password")
         if let value = languageKey { tokenParams.updateValue(value, forKey: "Language") }
 
         tokenParams.merge(request.tokenParams()) { (_, new) -> JSONValue in new }
