@@ -77,7 +77,7 @@ private extension DefaultAddCardController {
     }
 }
 
-// MARK: -
+// MARK: - AddCardProcessDelegate
 
 extension DefaultAddCardController: AddCardProcessDelegate {
     func addCardProcessDidFinish(_ addCardProcess: AddCardProcess,
@@ -85,9 +85,7 @@ extension DefaultAddCardController: AddCardProcessDelegate {
         DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
-                let completion = self.addCardCompletion
-                self.resetState()
-                completion?(.success(state))
+                self.finish(with: .success(state))
             }
         }
     }
@@ -96,9 +94,7 @@ extension DefaultAddCardController: AddCardProcessDelegate {
         DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
-                let completion = self.addCardCompletion
-                self.resetState()
-                completion?(.failure(error))
+                self.finish(with: .failure(error))
             }
         }
     }
@@ -107,9 +103,7 @@ extension DefaultAddCardController: AddCardProcessDelegate {
         DispatchQueue.safePerformOnMainQueueAsyncIfNeeded {
             self.dismissConfirmationIfNeeded { [weak self] in
                 guard let self = self else { return }
-                let completion = self.addCardCompletion
-                self.resetState()
-                completion?(.failure(AddCardControllerError.confirmationCancelled))
+                self.finish(with: .failure(AddCardControllerError.confirmationCancelled))
             }
         }
     }
@@ -239,6 +233,12 @@ private extension DefaultAddCardController {
 // MARK: - Reset
 
 private extension DefaultAddCardController {
+    func finish(with result: Result<GetAddCardStatePayload, Error>) {
+        let completion = self.addCardCompletion
+        self.resetState()
+        completion?(result)
+    }
+    
     func resetCurrentProcess(completion: @escaping () -> Void) {
         dismissConfirmationIfNeeded { [weak self] in
             self?.currentAddProcess?.cancel()
