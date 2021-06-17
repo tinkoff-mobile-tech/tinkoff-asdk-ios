@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.4.3] - 2021-06-17
+
 ### Added
 * add rexml gem to Gemfile
 * dispatch handleError call on main queue in handleSPBUrlCreation method
