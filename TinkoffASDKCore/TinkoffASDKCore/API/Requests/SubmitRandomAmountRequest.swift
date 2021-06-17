@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct SubmitRandomAmountRequest: APIRequest, TokenProvidableAPIRequest {
+struct SubmitRandomAmountRequest: APIRequest {
     typealias Payload = SubmitRandomAmountPayload
     
     var requestPath: [String] { ["SubmitRandomAmount"] }

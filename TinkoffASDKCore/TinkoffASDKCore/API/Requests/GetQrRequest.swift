@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct GetQrRequest: APIRequest, TokenProvidableAPIRequest {
+struct GetQrRequest: APIRequest {
     typealias Payload = GetQrPayload
     
     var requestPath: [String] { ["GetQr"] }

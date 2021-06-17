@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct GetCardListRequest: APIRequest, TokenProvidableAPIRequest {
+struct GetCardListRequest: APIRequest {
     typealias Payload = [PaymentCard]
     
     var requestPath: [String] { ["GetCardList"] }

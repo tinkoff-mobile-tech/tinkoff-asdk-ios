@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct RemoveCardRequest: APIRequest, TokenProvidableAPIRequest {
+struct RemoveCardRequest: APIRequest {
     typealias Payload = RemoveCardPayload
     
     var requestPath: [String] { ["RemoveCard"] }

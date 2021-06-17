@@ -136,7 +136,6 @@ class RootViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      password: StageTestData.terminalPassword,
                                                       publicKey: StageTestData.testPublicKey)
             
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
@@ -165,7 +164,6 @@ class RootViewController: UITableViewController {
             let product = dataSource[indexPath.row]
 
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      password: StageTestData.terminalPassword,
                                                       publicKey: StageTestData.testPublicKey)
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
@@ -213,7 +211,6 @@ class RootViewController: UITableViewController {
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
         let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                  password: StageTestData.terminalPassword,
                                                   publicKey: StageTestData.testPublicKey)
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)

@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct ChargePaymentRequest: APIRequest, TokenProvidableAPIRequest {
+struct ChargePaymentRequest: APIRequest {
     typealias Payload = ChargePaymentPayload
     
     var requestPath: [String] { ["Charge"] }

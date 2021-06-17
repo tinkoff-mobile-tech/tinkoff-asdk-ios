@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct AttachCardRequest: APIRequest, TokenProvidableAPIRequest {
+struct AttachCardRequest: APIRequest {
     typealias Payload = AttachCardPayload
     
     var requestPath: [String] { ["AttachCard"] }

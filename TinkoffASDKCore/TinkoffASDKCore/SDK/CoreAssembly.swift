@@ -29,10 +29,11 @@ struct CoreAssembly {
     }
     
     func buildAPI() -> API {
-        return AcquiringAPI(networkClient: buildNetworkClient(
-                                requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey,
-                                                                           password: configuration.credential.password)),
-                            apiResponseDecoder: buildAPIResponseDecoder())
+        return AcquiringAPI(
+            networkClient: buildNetworkClient(
+                requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey)),
+            apiResponseDecoder: buildAPIResponseDecoder()
+        )
     }
     
     func cardDataFormatter() -> CardDataFormatter {
@@ -106,14 +107,8 @@ private extension CoreAssembly {
                                apiURLBuilder: buildAPIURLBuilder())
     }
     
-    func buildAPIParametersProvider(terminalKey: String,
-                                    password: String) -> APIParametersProvider {
-        return APIParametersProvider(terminalKey: terminalKey,
-                                     tokenBuilder: buildAPITokenBuilder(password: password))
-    }
-    
-    func buildAPITokenBuilder(password: String) -> APITokenBuilder {
-        return AcquiringTokenBuilder(password: password)
+    func buildAPIParametersProvider(terminalKey: String) -> APIParametersProvider {
+        return APIParametersProvider(terminalKey: terminalKey)
     }
     
     func buildAPIResponseDecoder() -> APIResponseDecoder {

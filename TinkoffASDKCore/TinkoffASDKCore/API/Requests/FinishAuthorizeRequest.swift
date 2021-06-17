@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct FinishAuthorizeRequest: APIRequest, TokenProvidableAPIRequest {
+struct FinishAuthorizeRequest: APIRequest {
     typealias Payload = FinishAuthorizePayload
     
     var requestPath: [String] { ["FinishAuthorize"] }

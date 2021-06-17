@@ -22,21 +22,13 @@ import Foundation
 final class APIParametersProvider: NetworkRequestAdapter {
     
     private let terminalKey: String
-    private let tokenBuilder: APITokenBuilder
     
-    init(terminalKey: String,
-         tokenBuilder: APITokenBuilder) {
+    init(terminalKey: String) {
         self.terminalKey = terminalKey
-        self.tokenBuilder = tokenBuilder
     }
     
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
-        var commonParameters: HTTPParameters = [APIConstants.Keys.terminalKey: terminalKey]
-        
-        let token = tokenBuilder.buildToken(commonParameters: commonParameters,
-                                            request: request as? TokenProvidableAPIRequest)
-        commonParameters[APIConstants.Keys.token] = token
-        
+        let commonParameters: HTTPParameters = [APIConstants.Keys.terminalKey: terminalKey]
         return commonParameters
     }
 }

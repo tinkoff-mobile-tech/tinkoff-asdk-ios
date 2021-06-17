@@ -27,7 +27,6 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
     
     let customerKey = "CustomerKey"
     let terminalKey = "TerminalKey"
-    let password = "12345678"
     
     let networkClient = MockNetworkClient()
     

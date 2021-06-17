@@ -34,17 +34,14 @@ public enum AcquiringSdkEnvironment: String {
 
 public struct AcquiringSdkCredential {
     public var terminalKey: String
-    public var password: String
     public var publicKey: String
 
     /// - Parameters:
     ///   - terminalKey: ключ терминала. Выдается после подключения к **Тинькофф Эквайринг API**
-    ///   - password: пароль от терминала. Выдается вместе с `terminalKey`
     ///   - publicKey: публичный ключ. Выдается вместе с `terminalKey`
     /// - Returns: AcquiringSdkCredential
-    public init(terminalKey: String, password: String, publicKey: String) {
+    public init(terminalKey: String, publicKey: String) {
         self.terminalKey = terminalKey
-        self.password = password
         self.publicKey = publicKey
     }
 }
