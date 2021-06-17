@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+* add rexml gem to Gemfile
+
 ## [2.4.2] - 2021-06-07
 
 ### Fixed
