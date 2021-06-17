@@ -70,6 +70,25 @@ public final class AcquiringSdk: NSObject {
         networkTransport.logger = logger
     }
 
+    private func tokenParams(request: AcquiringRequestTokenParams & RequestOperation) -> JSONObject {
+        var tokenParams: JSONObject = [:]
+        tokenParams.updateValue(terminalKey, forKey: "TerminalKey")
+        if let value = languageKey { tokenParams.updateValue(value, forKey: "Language") }
+
+        tokenParams.merge(request.tokenParams()) { (_, new) -> JSONValue in new }
+
+        let tokenSring: String = tokenParams.sorted(by: { (arg1, arg2) -> Bool in
+            arg1.key < arg2.key
+        }).map { (item) -> String? in
+            String(describing: item.value)
+        }.compactMap { $0 }.joined()
+
+        tokenParams.updateValue(tokenSring.sha256(), forKey: "Token")
+        tokenParams.removeValue(forKey: "Password")
+
+        return tokenParams
+    }
+
     /// Обновляем информцию о реквизитах карты, добавляем шифрование
     private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
         if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
@@ -94,6 +113,8 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func paymentInit(data: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentInitRequest(data: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
@@ -158,6 +179,9 @@ public final class AcquiringSdk: NSObject {
         let request = Check3dsVersionRequest(data: requestData)
         updateCardDataRequestParams(&request.parameters)
 
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
+
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
         }
@@ -172,6 +196,9 @@ public final class AcquiringSdk: NSObject {
         let request = PaymentFinishRequest(data: data)
         updateCardDataRequestParams(&request.parameters)
 
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
+
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
         }
@@ -181,6 +208,8 @@ public final class AcquiringSdk: NSObject {
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
     public func chargePayment(data: PaymentChargeRequestData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentChargeRequest(data: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
@@ -193,6 +222,8 @@ public final class AcquiringSdk: NSObject {
     /// Получить статус платежа
     public func paymentOperationStatus(data: PaymentInfoData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentStatusRequest(data: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
@@ -206,8 +237,10 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `InitGetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completionHandler: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
-    func сardList(data: InitGetCardListData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void) -> Cancellable {
+    public func сardList(data: InitGetCardListData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void) -> Cancellable {
         let request = CardListRequest(data: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
             completionHandler(result)
@@ -221,6 +254,8 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func сardListAddCardInit(data: InitAddCardData, completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void) -> Cancellable {
         let request = InitAddCardRequest(requestData: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
@@ -235,6 +270,9 @@ public final class AcquiringSdk: NSObject {
     public func сardListAddCardFinish(data: FinishAddCardData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
         let request = FinishAddCardRequest(requestData: data)
         updateCardDataRequestParams(&request.parameters)
+
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
             completionHandler(result)
@@ -251,6 +289,9 @@ public final class AcquiringSdk: NSObject {
         let request = CheckRandomAmountRequest(requestData: CheckingRandomAmountData(amount: amount, requestKey: requestKey))
         updateCardDataRequestParams(&request.parameters)
 
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
+
         return networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
             completionHandler(result)
         }
@@ -262,6 +303,8 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func сardListDeactivateCard(data: InitDeactivateCardData, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
         let request = InitDeactivateCardRequest(requestData: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
@@ -278,7 +321,9 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func paymentInvoiceQRCode(data: PaymentInvoiceQRCodeData, completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentInvoiceQRCodeRequest(data: data)
- 
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
+
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
         }
@@ -292,6 +337,8 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType, completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentInvoiceQRCodeCollectorRequest(data: data)
+        let requestTokenParams: JSONObject = tokenParams(request: request)
+        request.parameters?.merge(requestTokenParams) { (_, new) -> JSONValue in new }
 
         return networkTransport.send(operation: request) { result in
             completionHandler(result)
