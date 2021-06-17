@@ -22,17 +22,20 @@ import Foundation
 
 class APIResponse<Model: Decodable>: Decodable {
     let success: Bool
+    let errorCode: Int
     let terminalKey: String?
     let result: Swift.Result<Model, APIFailureError>
     
     private enum CodingKeys: CodingKey {
         case success
         case terminalKey
+        case errorCode
         
         var stringValue: String {
             switch self {
             case .success: return APIConstants.Keys.success
             case .terminalKey: return APIConstants.Keys.terminalKey
+            case .errorCode: return APIConstants.Keys.errorCode
             }
         }
     }
@@ -42,7 +45,9 @@ class APIResponse<Model: Decodable>: Decodable {
         
         terminalKey = try container.decodeIfPresent(String.self, forKey: .terminalKey)
         success = try container.decode(Bool.self, forKey: .success)
-        result = success
+        let errorCodeString = try container.decode(String.self, forKey: .errorCode)
+        errorCode = Int(errorCodeString) ?? 0
+        result = errorCode == 0
             ? .success(try Model(from: decoder))
             : .failure(try APIFailureError(from: decoder))
     }
@@ -53,5 +58,6 @@ class APIResponse<Model: Decodable>: Decodable {
         self.success = success
         self.terminalKey = terminalKey
         self.result = result
+        self.errorCode = 0
     }
 }
