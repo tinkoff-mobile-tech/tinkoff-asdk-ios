@@ -3,6 +3,7 @@
 
 ### Added
 * add rexml gem to Gemfile
+* dispatch handleError call on main queue in handleSPBUrlCreation method
 
 ## [2.4.2] - 2021-06-07
 
