@@ -120,7 +120,9 @@ private extension SBPUrlPaymentViewController {
             }
             loadBanks()
         case let .failure(error):
-            handleError(error)
+            DispatchQueue.main.async {
+                self.handleError(error)
+            }
         }
     }
     
