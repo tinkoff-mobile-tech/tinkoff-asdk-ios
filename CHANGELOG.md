@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Updated
+* remove password from SDK
+* remove token building and usage for API requests
+
 ## [2.4.3] - 2021-06-17
 
 ### Added
