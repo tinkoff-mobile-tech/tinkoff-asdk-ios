@@ -48,7 +48,8 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
                 "\(APIConstants.Keys.amount)": \(amount),
                 "\(APIConstants.Keys.orderId)": "\(orderId)",
                 "\(APIConstants.Keys.paymentId)": "\(paymentId)",
-                "\(APIConstants.Keys.status)": "\(status.rawValue)"
+                "\(APIConstants.Keys.status)": "\(status.rawValue)",
+                "\(APIConstants.Keys.errorCode)": "0"
             }
         """
         let responseData = responseString.data(using: .utf8)

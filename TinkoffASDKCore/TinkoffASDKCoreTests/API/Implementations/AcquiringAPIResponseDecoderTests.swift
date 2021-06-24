@@ -35,6 +35,7 @@ class AcquiringAPIResponseDecoderTests: XCTestCase {
             {
                 "\(APIConstants.Keys.success)": true,
                 "\(APIConstants.Keys.terminalKey)": "terminalKey",
+                "\(APIConstants.Keys.errorCode)": "0",
                 "parameter1": "parameter1value",
                 "parameter2": 302
             }
