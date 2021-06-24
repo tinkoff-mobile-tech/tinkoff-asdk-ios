@@ -111,7 +111,7 @@ private extension ChargePaymentProcess {
     }
     
     func handleChargeResult(payload: ChargePaymentPayload) {
-        guard isCancelled.wrappedValue else { return }
+        guard !isCancelled.wrappedValue else { return }
         
         let (cardId, rebillId) = paymentSource.getCardAndRebillId()
         delegate?.paymentDidFinish(self,
