@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct GetPaymentStateRequest: APIRequest, TokenProvidableAPIRequest {
+public struct GetPaymentStateRequest: APIRequest {
     typealias Payload = GetPaymentStatePayload
     
     var requestPath: [String] { ["GetState"] }

@@ -34,7 +34,6 @@ struct APIConstants {
         static let status = "Status"
         static let receipts = "Receipts"
         static let redirectDueDate = "RedirectDueDate"
-        static let password = "Password"
         static let terminalKey = "TerminalKey"
         static let paymentId = "PaymentId"
         static let token = "Token"

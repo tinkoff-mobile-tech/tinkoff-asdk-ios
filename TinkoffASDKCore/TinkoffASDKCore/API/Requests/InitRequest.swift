@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct InitRequest: APIRequest, TokenProvidableAPIRequest {
+struct InitRequest: APIRequest {
     typealias Payload = InitPayload
     
     var requestPath: [String] { ["Init"] }

@@ -23,25 +23,15 @@ import XCTest
 
 class APIParametersProviderTests: XCTestCase {
     
-    var mockTokenBuilder = MockAPITokenBuilder()
     let terminalKey = "TerminalKey"
-    lazy var apiParametersProvider = APIParametersProvider(terminalKey: terminalKey,
-                                                           tokenBuilder: mockTokenBuilder)
-    
-    override func setUp() {
-        mockTokenBuilder.token = ""
-    }
+    lazy var apiParametersProvider = APIParametersProvider(terminalKey: terminalKey)
     
     func testProvidedAdditionalParametersContainCustomerKeyTerminalKeyAndToken() {
-        let token = "tokenFromBuilder"
-        mockTokenBuilder.token = token
-        
         let mockRequest = MockAPIRequest<String>()
         
         let expectedAdditionalParameters =
             [
-                APIConstants.Keys.terminalKey: terminalKey,
-                APIConstants.Keys.token: token
+                APIConstants.Keys.terminalKey: terminalKey
             ]
         
         let additionalParameters = apiParametersProvider.additionalParameters(for: mockRequest)

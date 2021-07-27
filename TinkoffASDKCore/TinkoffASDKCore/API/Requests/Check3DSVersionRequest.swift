@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct Check3DSVersionRequest: APIRequest, TokenProvidableAPIRequest {
+struct Check3DSVersionRequest: APIRequest {
     typealias Payload = Check3DSVersionPayload
     
     var requestPath: [String] { ["Check3dsVersion"] }
