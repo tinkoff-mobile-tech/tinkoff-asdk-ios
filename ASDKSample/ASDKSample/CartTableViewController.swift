@@ -113,7 +113,6 @@ class CartTableViewController: UITableViewController {
             }
 
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      password: StageTestData.terminalPassword,
                                                       publicKey: StageTestData.testPublicKey)
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
