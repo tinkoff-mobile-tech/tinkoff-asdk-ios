@@ -166,7 +166,7 @@ private extension CardPaymentProcess {
         
         switch payload.responseStatus {
         case .success:
-            self.handlePaymentResult(.success(payload.paymentState))
+            self.handlePaymentResult(.success(payload.paymentState), rebillId: payload.rebillId)
         case let .needConfirmation3DS(data):
             delegate?.payment(self,
                               need3DSConfirmation: data,
@@ -174,7 +174,7 @@ private extension CardPaymentProcess {
                                 self?.handlePaymentCancelled(payload: payload)
                               },
                               completion: { [weak self] result in
-                                self?.handlePaymentResult(result)
+                                self?.handlePaymentResult(result, rebillId: payload.rebillId)
                               })
         case let .needConfirmation3DSACS(data):
             let version: String
@@ -191,7 +191,7 @@ private extension CardPaymentProcess {
                                 self?.handlePaymentCancelled(payload: payload)
                               },
                               completion: { [weak self] result in
-                                self?.handlePaymentResult(result)
+                                self?.handlePaymentResult(result, rebillId: payload.rebillId)
                               })
         }
     }
@@ -201,23 +201,23 @@ private extension CardPaymentProcess {
                                                     amount: payload.paymentState.amount,
                                                     orderId: payload.paymentState.orderId,
                                                     status: .cancelled)
-        self.handlePaymentResult(.success(cancelledState))
+        self.handlePaymentResult(.success(cancelledState), rebillId: payload.rebillId)
     }
     
-    func handlePaymentResult(_ result: Result<GetPaymentStatePayload, Error>) {
-        let (cardId, rebillId) = paymentSource.getCardAndRebillId()
+    func handlePaymentResult(_ result: Result<GetPaymentStatePayload, Error>, rebillId: String?) {
+        let (sourceCardId, sourceRebillId) = paymentSource.getCardAndRebillId()
         
         switch result {
         case let .success(payload):
             delegate?.paymentDidFinish(self,
                                        with: payload,
-                                       cardId: cardId,
-                                       rebillId: rebillId)
+                                       cardId: sourceCardId,
+                                       rebillId: rebillId ?? sourceRebillId)
         case let .failure(error):
             delegate?.paymentDidFailed(self,
                                        with: error,
-                                       cardId: cardId,
-                                       rebillId: rebillId)
+                                       cardId: sourceCardId,
+                                       rebillId: rebillId ?? sourceRebillId)
         }
     }
 }
