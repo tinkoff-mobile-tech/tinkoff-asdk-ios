@@ -170,8 +170,13 @@ final class AcquaringNetworkTransport: NetworkTransport {
         setDefaultHTTPHeaders(for: &request)
         //
         let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransId)\",\"acsTransID\":\"\(requestData.acsTransId)\",\"messageVersion\":\"\(messageVersion)\",\"challengeWindowSize\":\"05\",\"messageType\":\"CReq\"}"
-        let parameterValueString = Data(parameterValue.utf8).base64EncodedString()
-        request.httpBody = Data("creq=\(parameterValueString)".utf8)
+        let encodedString = Data(parameterValue.utf8).base64EncodedString()
+        
+        /// Remove padding
+        /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
+        let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
+        
+        request.httpBody = Data("creq=\(noPaddingEncodedString)".utf8)
 
         return request
     }
