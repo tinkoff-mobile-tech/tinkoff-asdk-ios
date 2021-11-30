@@ -49,7 +49,11 @@ final class ThreeDSURLRequestBuilder {
         let creq = try JSONSerialization.data(withJSONObject: creqJson,
                                               options: .sortedKeys).base64EncodedString()
         
-        return request(url: url, body: "\(APIConstants.Keys.creq)=\(creq)".data(using: .utf8))
+        /// Remove padding
+        /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
+        let noPaddingCreq = creq.replacingOccurrences(of: "=", with: "")
+        
+        return request(url: url, body: "\(APIConstants.Keys.creq)=\(noPaddingCreq)".data(using: .utf8))
     }
     
     func buildConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest {
