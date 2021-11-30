@@ -391,7 +391,14 @@ public class AcquiringUISDK: NSObject {
 
     public struct ApplePayConfiguration {
         public var merchantIdentifier: String = "merchant.tcsbank.ApplePayTestMerchantId"
-        public var supportedNetworks: [PKPaymentNetwork] = [PKPaymentNetwork.masterCard, PKPaymentNetwork.visa]
+        public var supportedNetworks: [PKPaymentNetwork] {
+            if #available(iOS 14.5, *) {
+                return [.masterCard, .visa, .mir]
+            } else {
+                return [.masterCard, .visa]
+            }
+        }
+        
         public var capabilties = PKMerchantCapability(arrayLiteral: .capability3DS, .capabilityCredit, .capabilityDebit)
 
         public var countryCode: String = "RU"
