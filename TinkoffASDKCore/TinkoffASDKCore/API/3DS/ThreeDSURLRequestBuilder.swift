@@ -87,7 +87,9 @@ final class ThreeDSURLRequestBuilder {
         let threeDSMethodData = try JSONSerialization.data(withJSONObject: threeDSMethodJson,
                                                            options: .sortedKeys).base64EncodedString()
         
-        return request(url: check3DSMethodURL, body: "\(APIConstants.Keys.threeDSMethodData)=\(threeDSMethodData)".data(using: .utf8))
+        let noPaddingThreeDSMethodData = threeDSMethodData.replacingOccurrences(of: "=", with: "")
+        
+        return request(url: check3DSMethodURL, body: "\(APIConstants.Keys.threeDSMethodData)=\(noPaddingThreeDSMethodData)".data(using: .utf8))
     }
 }
 
