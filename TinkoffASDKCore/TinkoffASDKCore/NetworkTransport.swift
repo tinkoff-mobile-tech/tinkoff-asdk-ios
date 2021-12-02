@@ -197,7 +197,13 @@ final class AcquaringNetworkTransport: NetworkTransport {
         setDefaultHTTPHeaders(for: &request)
         //
         let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransID)\",\"threeDSMethodNotificationURL\":\"\(requestData.notificationURL)\"}"
-        request.httpBody = try JSONSerialization.data(withJSONObject: ["threeDSMethodData": Data(base64Encoded: parameterValue)], options: [.sortedKeys])
+        let encodedString = Data(parameterValue.utf8).base64EncodedString()
+        
+        /// Remove padding
+        /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
+        let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["threeDSMethodData": Data(base64Encoded: noPaddingEncodedString)], options: [.sortedKeys])
 
         return request
     }
