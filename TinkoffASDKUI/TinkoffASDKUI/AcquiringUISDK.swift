@@ -142,12 +142,16 @@ public class AcquiringUISDK: NSObject {
     
     private let sbpAssembly: SBPAssembly
     
+    private weak var logger: LoggerDelegate?
+    
+    
     public init(configuration: AcquiringSdkConfiguration,
                 style: Style = DefaultStyle()) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
+        self.logger = configuration.logger
     }
 
     /// Вызывается кода пользователь привязывается карту.
@@ -432,6 +436,8 @@ public class AcquiringUISDK: NSObject {
                                        acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
                                        paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler)
     {
+        logger?.print("👹:Start Apple Pay Flow;")
+        
         let request = PKPaymentRequest()
         request.merchantIdentifier = paymentConfiguration.merchantIdentifier
         request.supportedNetworks = paymentConfiguration.supportedNetworks
@@ -454,21 +460,29 @@ public class AcquiringUISDK: NSObject {
             self?.paymentInitResponseData = PaymentInitResponseData(amount: data.amount,
                                                                     orderId: data.orderId,
                                                                     paymentId: paymentId)
+            self?.logger?.print("👹:create and set paymentInitResponseData")
+            self?.logger?.print("👹:call presentApplePayActivity")
             self?.presentApplePayActivity(request)
         }
 
-        presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: viewConfiguration) { _ in
+        logger?.print("👹:Start Acquiring Payment View presentation;")
+        presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: viewConfiguration) { [weak self] _ in
+            self?.logger?.print("👹:Acquiring Payment View presented")
             switch acquiringConfiguration.paymentStage {
             case .none:
-                self.initPay(paymentData: data) { [weak self] response in
+                self?.logger?.print("👹:Start init")
+                self?.initPay(paymentData: data) { [weak self] response in
                     switch response {
                     case let .success(initResponse):
+                        self?.logger?.print("👹:Finish init with success")
                         self?.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: initResponse)
                         DispatchQueue.main.async {
+                            self?.logger?.print("👹:Start apple pay activity presentation")
                             presentApplePayActivity(initResponse.paymentId)
                         }
 
                     case let .failure(error):
+                        self?.logger?.print("👹:Finish init with error: \(error)")
                         self?.paymentInitResponseData = nil
                         DispatchQueue.main.async {
                             self?.acquiringView?.closeVC(animated: true) {
@@ -478,13 +492,16 @@ public class AcquiringUISDK: NSObject {
                     }
                 }
             case let .paymentId(paymentId):
+                self?.logger?.print("👹:Start apple pay activity presentation with provided paymentId")
                 presentApplePayActivity(paymentId)
             }
         }
     }
 
     private func presentApplePayActivity(_ request: PKPaymentRequest) {
+        logger?.print("👹:Start PKPaymentAuthorizationViewController creation")
         guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
+            logger?.print("👹:PKPaymentAuthorizationViewController creation failed")
             acquiringView?.closeVC(animated: true) {
                 let error = NSError(domain: AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
                                     code: 0,
@@ -498,7 +515,9 @@ public class AcquiringUISDK: NSObject {
 
         viewController.delegate = self
 
-        acquiringView?.presentVC(viewController, animated: true) { // [weak self] in
+        logger?.print("👹: Start PKPaymentAuthorizationViewController presentation from \(String(describing: acquiringView))")
+        acquiringView?.presentVC(viewController, animated: true) { [weak self] in
+            self?.logger?.print("👹: PKPaymentAuthorizationViewController was presented from\(String(describing: self?.acquiringView))")
             // self?.acquiringView.setViewHeight(viewController.view.frame.height)
         }
     }
@@ -1021,7 +1040,9 @@ public class AcquiringUISDK: NSObject {
     }
 
     private func cancelPayment() {
+        logger?.print("👹: Cancel payment called")
         if let paymentInitResponseData = paymentInitResponseData {
+            logger?.print("👹: Cancel payment called; paymentInitResponseData != nil")
             let paymentResponse = PaymentStatusResponse(success: false,
                                                         errorCode: 0,
                                                         errorMessage: nil,
@@ -1409,14 +1430,17 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     // MARK: PKPaymentAuthorizationViewControllerDelegate
 
     public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        controller.dismiss(animated: true) {
-            if let result = self.finishPaymentStatusResponse {
-                self.acquiringView?.closeVC(animated: true) {
-                    self.onPaymentCompletionHandler?(result)
+        logger?.print("👹: PKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewControllerDidFinish")
+        controller.dismiss(animated: true) { [weak self] in
+            if let result = self?.finishPaymentStatusResponse {
+                self?.logger?.print("👹: paymentAuthorizationViewControllerDidFinish finishPaymentStatusResponse != nil")
+                self?.acquiringView?.closeVC(animated: true) {
+                    self?.onPaymentCompletionHandler?(result)
                 }
             } else {
-                self.acquiringView?.closeVC(animated: true) {
-                    self.cancelPayment()
+                self?.logger?.print("👹: paymentAuthorizationViewControllerDidFinish finishPaymentStatusResponse == nil")
+                self?.acquiringView?.closeVC(animated: true) {
+                    self?.cancelPayment()
                 }
             }
         }
@@ -1426,21 +1450,26 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
                                                    didAuthorizePayment payment: PKPayment,
                                                    handler completion: @escaping (PKPaymentAuthorizationResult) -> Void)
     {
+        logger?.print("👹: PKPaymentAuthorizationViewControllerDelegate didAuthorizePayment: \(payment)")
         if let paymentId = paymentInitResponseData?.paymentId {
+            logger?.print("👹: didAuthorizePayment: \(payment) paymentInitResponseData != nil")
             let paymentDataSource = PaymentSourceData.paymentData(payment.token.paymentData.base64EncodedString())
             let data = PaymentFinishRequestData(paymentId: paymentId,
                                                 paymentSource: paymentDataSource,
                                                 source: "ApplePay",
                                                 route: "ACQ")
-
+            
+            logger?.print("👹: Start Finish authorize")
             finishAuthorize(requestData: data, treeDSmessageVersion: "1") { [weak self] finishResponse in
                 switch finishResponse {
                 case let .failure(error):
+                    self?.logger?.print("👹: Finish authorize failed with error: \(error)")
                     DispatchQueue.main.async {
                         completion(PKPaymentAuthorizationResult(status: .failure, errors: [error]))
                     }
 
                 case .success:
+                    self?.logger?.print("👹: Finish authorize success")
                     DispatchQueue.main.async {
                         completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
                     }
@@ -1448,6 +1477,8 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
                 self?.finishPaymentStatusResponse = finishResponse
             } // self.finishAuthorize
+        } else {
+            logger?.print("👹: didAuthorizePayment: \(payment) paymentInitResponseData == nil")
         }
     }
 }
