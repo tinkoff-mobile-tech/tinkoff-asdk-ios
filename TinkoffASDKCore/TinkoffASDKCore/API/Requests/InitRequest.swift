@@ -28,7 +28,10 @@ struct InitRequest: APIRequest {
   
     var parameters: HTTPParameters {
         // TODO: Log error
-        return (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        
+        return (try? paymentInitData
+                    .withDefaultParameters
+                    .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 
     private let paymentInitData: PaymentInitData
