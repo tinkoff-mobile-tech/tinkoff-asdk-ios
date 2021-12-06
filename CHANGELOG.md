@@ -1,6 +1,12 @@
 # Changelog
 ## [Unreleased]
 
+## [2.5.1] - 2021-12-06
+
+### Updated
+* remove base64 encoding paddings for creq and ThreeDSMethod
+* add mir support to default apple pay configuration
+
 ## [2.5.0] - 2021-07-27
 
 ### Updated

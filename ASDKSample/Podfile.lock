@@ -1,9 +1,9 @@
 PODS:
   - SwiftFormat/CLI (0.47.2)
   - SwiftLint (0.40.3)
-  - TinkoffASDKCore (2.5.0)
-  - TinkoffASDKCore/Tests (2.5.0)
-  - TinkoffASDKUI (2.5.0):
+  - TinkoffASDKCore (2.5.1)
+  - TinkoffASDKCore/Tests (2.5.1)
+  - TinkoffASDKUI (2.5.1):
     - TinkoffASDKCore
 
 DEPENDENCIES:
@@ -27,8 +27,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   SwiftFormat: 0315a7115b15fd4ea2d043d5f5c22e3c98f84078
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
-  TinkoffASDKCore: 63bb667f9f438e7d66465c11a2ea4a06f86d4e67
-  TinkoffASDKUI: 2fb830e1649edd511ab5baec4fdbf36fb2b16e77
+  TinkoffASDKCore: 745571057f9bf0ebb1c69a035b6aadbec3738a16
+  TinkoffASDKUI: e20d7a454db60c88b48f7901dc382aa807112cb6
 
 PODFILE CHECKSUM: 624c75ef2cd3b1e0422f01c7b3085404cbb1258a
 
