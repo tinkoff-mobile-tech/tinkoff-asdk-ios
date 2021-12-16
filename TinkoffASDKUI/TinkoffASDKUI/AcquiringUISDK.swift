@@ -497,6 +497,65 @@ public class AcquiringUISDK: NSObject {
             }
         }
     }
+    
+    // MARK: - Apple Pay Experimental
+    
+    public func performPaymentWithApplePay(paymentData: PaymentInitData,
+                                           paymentToken: PKPaymentToken,
+                                           acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
+                                           completionHandler: @escaping PaymentCompletionHandler) {
+        logger?.print("👻: performPaymentWithApplePay start")
+        switch acquiringConfiguration.paymentStage {
+        case .none:
+            logger?.print("👻: performPaymentWithApplePay with init stage")
+            initPay(paymentData: paymentData) { [weak self] result in
+                switch result {
+                case let .failure(error):
+                    self?.logger?.print("👻: init failed with error: \(error)")
+                    completionHandler(.failure(error))
+                case let .success(initResponse):
+                    self?.logger?.print("👻: init success with \(initResponse)")
+                    self?.finishAuthorizeWithApplePayPaymentToken(paymentToken: paymentToken,
+                                                                  paymentId: initResponse.paymentId,
+                                                                  completionHandler: completionHandler)
+                }
+            }
+        case let .paymentId(paymentId):
+            logger?.print("👻: performPaymentWithApplePay without init stage")
+            finishAuthorizeWithApplePayPaymentToken(paymentToken: paymentToken,
+                                                    paymentId: paymentId,
+                                                    completionHandler: completionHandler)
+        }
+    }
+    
+    private func finishAuthorizeWithApplePayPaymentToken(paymentToken: PKPaymentToken,
+                                                         paymentId: Int64,
+                                                         completionHandler: @escaping PaymentCompletionHandler) {
+        logger?.print("👻: apple pay finish authorize start")
+        let sourceData = PaymentSourceData.paymentData(paymentToken.paymentData.base64EncodedString())
+        let finishAuthorizeData = PaymentFinishRequestData(paymentId: paymentId,
+                                                           paymentSource: sourceData,
+                                                           source: "ApplePay",
+                                                           route: "ACQ")
+        
+        finishAuthorize(requestData: finishAuthorizeData,
+                        treeDSmessageVersion: "1") { [weak self] result in
+            switch result {
+            case let .failure(error):
+                self?.logger?.print("👻: apple pay finish authorize failed with error: \(error)")
+                DispatchQueue.main.async {
+                    completionHandler(.failure(error))
+                }
+            case let .success(response):
+                self?.logger?.print("👻: apple pay finish authorize success with response: \(response)")
+                DispatchQueue.main.async {
+                    completionHandler(.success(response))
+                }
+            }
+        }
+    }
+    
+    // MARK: -
 
     private func presentApplePayActivity(_ request: PKPaymentRequest) {
         logger?.print("👹:Start PKPaymentAuthorizationViewController creation")
