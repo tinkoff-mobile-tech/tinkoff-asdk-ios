@@ -128,7 +128,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
     func createConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.acsUrl) else {
-            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: Bundle(for: type(of: self)),
+            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: .tinkoffASDKCoreResources,
                                                     comment: "Can't create confirmation request"), code: 1, userInfo: try requestData.encode2JSONObject())
         }
 
@@ -161,7 +161,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// - Returns:  throws `URLRequest`
     func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.acsUrl) else {
-            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: Bundle(for: type(of: self)),
+            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: .tinkoffASDKCoreResources,
                                                     comment: "Can't create confirmation request"), code: 1, userInfo: try requestData.encode2JSONObject())
         }
 
@@ -188,7 +188,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// - Returns:  throws `URLRequest`
     func createChecking3DSURL(requestData: Checking3DSURLData) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.threeDSMethodURL) else {
-            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: Bundle(for: type(of: self)),
+            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: .tinkoffASDKCoreResources,
                                                     comment: "Can't create request"), code: 1, userInfo: nil)
         }
 
@@ -273,7 +273,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
             // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
             guard acquiringResponse.success else {
-                var errorMessage: String = NSLocalizedString("TinkoffAcquiring.response.error.statusFalse", tableName: nil, bundle: Bundle(for: type(of: self)),
+                var errorMessage: String = NSLocalizedString("TinkoffAcquiring.response.error.statusFalse", tableName: nil, bundle: .tinkoffASDKCoreResources,
                                                              comment: "Acquiring Error Response 'Success: false'")
                 if let message = acquiringResponse.errorMessage {
                     errorMessage = message
