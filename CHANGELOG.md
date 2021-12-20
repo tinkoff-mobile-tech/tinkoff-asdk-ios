@@ -3,6 +3,7 @@
 
 ### Added
 * add sending the PayType parameter to the Init method 
+* add completion handler to urlSBPPaymentViewController AcquiringUISDK method
 
 ## [2.5.1] - 2021-12-06
 
