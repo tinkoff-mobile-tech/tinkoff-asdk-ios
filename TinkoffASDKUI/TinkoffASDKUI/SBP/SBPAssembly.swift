@@ -32,13 +32,17 @@ final class SBPAssembly {
     }
     
     func urlPaymentViewController(paymentSource: PaymentSource,
-                                  configuration: AcquiringViewConfiguration) -> SBPUrlPaymentViewController {
+                                  configuration: AcquiringViewConfiguration,
+                                  completionHandler: PaymentCompletionHandler?) -> SBPUrlPaymentViewController {
         SBPUrlPaymentViewController(paymentSource: paymentSource,
+                                    paymentService: paymentService,
                                     sbpBanksService: banksService,
                                     sbpApplicationService: applicationService,
-                                    sbpPaymentService: paymentService,
+                                    sbpPaymentService: sbpPaymentService,
                                     banksListViewController: banksListViewController,
-                                    configuration: configuration)
+                                    configuration: configuration,
+                                    completion: completionHandler
+        )
     }
     
     func noAvailableBanksViewController() -> SBPNoAvailableBanksViewController {
@@ -58,7 +62,11 @@ private extension SBPAssembly {
         DefaultSBPApplicationOpener(application: UIApplication.shared)
     }
     
-    var paymentService: SBPPaymentService {
+    var paymentService: PaymentService {
+        DefaultPaymentService(coreSDK: coreSDK)
+    }
+    
+    var sbpPaymentService: SBPPaymentService {
         DefaultSBPPaymentService(coreSDK: coreSDK)
     }
     
