@@ -43,7 +43,7 @@ public final class PullableContainerViewController: UIViewController {
         set {}
     }
     
-    private let dimmingTransitioningDelegate = DimmingTransitioningDelegate()
+    private lazy var dimmingTransitioningDelegate = DimmingTransitioningDelegate(dimmingPresentationControllerDelegate: self)
     
     public init(content: PullableContainerContent & UIViewController) {
         self.content = content
@@ -158,9 +158,22 @@ extension PullableContainerViewController: PullableContainerDragControllerDelega
     
     func pullableContainerDragControllerDidCloseContainer(_ controller: PullableContainerDragController) {
         dismiss(animated: true)
+        content.willBeClosed()
+        transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
+            self?.content.wasClosed()
+        })
     }
     
     func pullableContainerDragControllerMaximumContentHeight(_ controller: PullableContainerDragController) -> CGFloat {
         calculateMaximumContentHeight()
+    }
+}
+
+extension PullableContainerViewController: DimmingPresentationControllerDelegate {
+    func didDismissByDimmingViewTap(dimmingPresentationController: DimmingPresentationController) {
+        content.willBeClosed()
+        transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
+            self?.content.wasClosed()
+        })
     }
 }

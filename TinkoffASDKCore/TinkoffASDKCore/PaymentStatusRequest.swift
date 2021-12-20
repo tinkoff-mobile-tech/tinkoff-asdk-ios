@@ -23,7 +23,7 @@ public struct PaymentInfoData: Codable {
     /// Номер заказа в системе Продавца
     var paymentId: Int64
 
-    init(paymentId: Int64) {
+    public init(paymentId: Int64) {
         self.paymentId = paymentId
     }
 

@@ -21,7 +21,7 @@
 import TinkoffASDKCore
 
 public protocol SBPPaymentService {
-    func createSBPUrl(paymentSource: PaymentSource,
+    func createSBPUrl(paymentId: Int64,
                       completion: ((Result<URL, Error>) -> Void)?)
 }
 
@@ -32,32 +32,13 @@ public final class DefaultSBPPaymentService: SBPPaymentService {
         self.coreSDK = coreSDK
     }
     
-    public func createSBPUrl(paymentSource: PaymentSource,
+    public func createSBPUrl(paymentId: Int64,
                              completion: ((Result<URL, Error>) -> Void)?) {
-        switch paymentSource {
-        case let .paymentData(data):
-            initPayment(paymentData: data,
-                        completion: completion)
-        case let .paymentId(paymentId):
-            requestSBPUrl(paymentId: paymentId, completion: completion)
-        }
+        requestSBPUrl(paymentId: paymentId, completion: completion)
     }
 }
 
 private extension DefaultSBPPaymentService {
-    func initPayment(paymentData: PaymentInitData,
-                     completion: ((Result<URL, Error>) -> Void)?) {
-        _ = coreSDK.paymentInit(data: paymentData) { [weak self] result in
-            switch result {
-            case let .failure(error):
-                completion?(.failure(error))
-            case let .success(initResponse):
-                self?.requestSBPUrl(paymentId: initResponse.paymentId,
-                                    completion: completion)
-            }
-        }
-    }
-    
     func requestSBPUrl(paymentId: Int64,
                        completion: ((Result<URL, Error>) -> Void)?) {
         let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: paymentId, paymentInvoiceType: .url)

@@ -21,10 +21,19 @@
 import UIKit
 
 public final class DimmingTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
+    
+    private weak var dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?
+    
+    init(dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?) {
+        self.dimmingPresentationControllerDelegate = dimmingPresentationControllerDelegate
+    }
+    
     public func presentationController(forPresented presented: UIViewController,
                                 presenting: UIViewController?,
                                 source: UIViewController) -> UIPresentationController? {
-        return DimmingPresentationController(presentedViewController: presented,
-                                             presenting: presenting)
+        let controller = DimmingPresentationController(presentedViewController: presented,
+                                                       presenting: presenting)
+        controller.dimmingPresentationControllerDelegate = dimmingPresentationControllerDelegate
+        return controller
     }
 }
