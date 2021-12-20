@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.0] - 2021-12-19
+
 ### Added
 * add sending the PayType parameter to the Init method 
 * add completion handler to urlSBPPaymentViewController AcquiringUISDK method
