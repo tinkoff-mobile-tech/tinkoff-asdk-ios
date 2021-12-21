@@ -62,10 +62,10 @@ class CardsViewController: UIViewController {
             title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.savedCards")
         }
 
-        tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PaymentCardTableViewCell")
-        tableView.register(UINib(nibName: "StatusTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "StatusTableViewCell")
-        tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "AddCardTableViewCell")
-        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
+        tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "PaymentCardTableViewCell")
+        tableView.register(UINib(nibName: "StatusTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "StatusTableViewCell")
+        tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "AddCardTableViewCell")
+        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -196,7 +196,7 @@ class CardsViewController: UIViewController {
 
     private func showAddCardView() {
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
+        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .asdkUIResources)
         modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper

@@ -24,7 +24,7 @@ extension Bundle {
     
     private class TinkoffASDKUIResourcesToken {}
     
-    static var tinkoffASDKResources: Bundle {
+    static var asdkUIResources: Bundle {
         Bundle(for: TinkoffASDKUIResourcesToken.self)
             .url(forResource: .asdkUIResourceName, withExtension: .asdkUIResourceExtension)
             .flatMap(Bundle.init(url:)) ?? Bundle(for: TinkoffASDKUIResourcesToken.self)

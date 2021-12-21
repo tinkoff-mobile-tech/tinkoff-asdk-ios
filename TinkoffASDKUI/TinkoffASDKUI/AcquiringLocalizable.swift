@@ -35,14 +35,7 @@ class AcqLoc: AcquiringLocalize {
 
     func setup(lang: String? = nil, table name: String? = nil, bundle: Bundle?) {
         tableName = name
-        if let b = bundle {
-            self.bundle = b
-        } else {
-            self.bundle = Bundle(for: type(of: self))
-            if let languageId = lang, let path = self.bundle.path(forResource: languageId, ofType: "lproj") {
-                self.bundle = Bundle(path: path)
-            }
-        }
+        self.bundle = bundle ?? .asdkUIResources
     }
 
     func localize(_ string: String) -> String {

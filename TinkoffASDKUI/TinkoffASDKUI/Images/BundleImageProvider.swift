@@ -27,10 +27,7 @@ final class BundleImageProvider {
         self.screen = screen
     }
     
-    func urlForImage(named: String,
-                     imageExtension: String) -> URL? {
-        let bundle = Bundle(for: Self.self)
-        let name = "\(named)@\(Int(screen.scale))x"
-        return bundle.url(forResource: name, withExtension: imageExtension)
+    func urlForImage(named: String, imageExtension: String) -> URL? {
+        Bundle.asdkUIResources.url(forResource: "\(named)@\(Int(screen.scale))x", withExtension: imageExtension)
     }
 }

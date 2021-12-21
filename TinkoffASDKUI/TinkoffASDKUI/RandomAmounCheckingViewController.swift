@@ -46,9 +46,9 @@ class RandomAmounCheckingViewController: ConfirmViewController {
 
         tableViewCells = [.title, .textField, .secureLogos]
 
-        tableView.register(UINib(nibName: "TextFieldTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "TextFieldTableViewCell")
-        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "AmountTableViewCell")
-        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PSLogoTableViewCell")
+        tableView.register(UINib(nibName: "TextFieldTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "TextFieldTableViewCell")
+        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "AmountTableViewCell")
+        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "PSLogoTableViewCell")
 
         tableView.dataSource = self
     }
@@ -176,7 +176,7 @@ extension RandomAmounCheckingViewController: UITextFieldDelegate {
     // MARK: UITextFieldDelegate
 
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        if let accessoryView = Bundle(for: type(of: self)).loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView {
+        if let accessoryView = Bundle.asdkUIResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView {
             accessoryView.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.confirm"), for: .normal)
             accessoryView.onButtonTouchUpInside = { [weak self] in
                 self?.onButtonAddTouch()
