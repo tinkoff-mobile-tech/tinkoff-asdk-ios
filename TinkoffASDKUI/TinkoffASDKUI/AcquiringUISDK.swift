@@ -379,9 +379,11 @@ public class AcquiringUISDK: NSObject {
     }
 
     public func urlSBPPaymentViewController(paymentSource: PaymentSource,
-                                            configuration: AcquiringViewConfiguration) -> UIViewController {
+                                            configuration: AcquiringViewConfiguration,
+                                            completionHandler: PaymentCompletionHandler? = nil) -> UIViewController {
         let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource,
-                                                                            configuration: configuration)
+                                                                            configuration: configuration,
+                                                                            completionHandler: completionHandler)
         let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
         
         urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _ in

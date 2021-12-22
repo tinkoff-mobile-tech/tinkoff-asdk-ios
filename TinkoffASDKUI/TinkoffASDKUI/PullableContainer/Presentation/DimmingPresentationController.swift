@@ -20,7 +20,13 @@
 
 import UIKit
 
+protocol DimmingPresentationControllerDelegate: AnyObject {
+    func didDismissByDimmingViewTap(dimmingPresentationController: DimmingPresentationController)
+}
+
 final class DimmingPresentationController: UIPresentationController {
+     
+    weak var dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?
     
     private let dimmingView = DimmingView()
     
@@ -69,6 +75,7 @@ private extension DimmingPresentationController {
     }
     
     @objc func dismissTapGestureAction(_ recognizer: UITapGestureRecognizer) {
+        dimmingPresentationControllerDelegate?.didDismissByDimmingViewTap(dimmingPresentationController: self)
         presentedViewController.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 }

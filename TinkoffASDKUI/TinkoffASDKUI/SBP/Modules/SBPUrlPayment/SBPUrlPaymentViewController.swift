@@ -26,6 +26,10 @@ public enum PaymentSource {
     case paymentId(Int64)
 }
 
+public enum SBPUrlPaymentViewControllerError: Error {
+    case failedToOpenBankApp(SBPBank)
+}
+
 final class SBPUrlPaymentViewController: UIViewController, PullableContainerScrollableContent, CustomViewLoadable {
     typealias CustomView = SBPUrlPaymentView
     
@@ -41,11 +45,13 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
+    private let paymentService: PaymentService
     private let sbpBanksService: SBPBanksService
     private let sbpApplicationService: SBPApplicationOpener
     private let sbpPaymentService: SBPPaymentService
     private let paymentSource: PaymentSource
     private let configuration: AcquiringViewConfiguration
+    private let completion: PaymentCompletionHandler?
     
     private let loadingViewController = LoadingViewController()
     private let banksListViewController: SBPBankListViewController
@@ -57,19 +63,24 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
         }
     }
     private var sbpURL: URL?
+    private var paymentStatusResponse: PaymentStatusResponse?
     
     init(paymentSource: PaymentSource,
+         paymentService: PaymentService,
          sbpBanksService: SBPBanksService,
          sbpApplicationService: SBPApplicationOpener,
          sbpPaymentService: SBPPaymentService,
          banksListViewController: SBPBankListViewController,
-         configuration: AcquiringViewConfiguration) {
+         configuration: AcquiringViewConfiguration,
+         completion: PaymentCompletionHandler?) {
         self.paymentSource = paymentSource
+        self.paymentService = paymentService
         self.sbpBanksService = sbpBanksService
         self.sbpApplicationService = sbpApplicationService
         self.sbpPaymentService = sbpPaymentService
         self.banksListViewController = banksListViewController
         self.configuration = configuration
+        self.completion = completion
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -85,6 +96,17 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
         super.viewDidLoad()
         setup()
         start()
+    }
+    
+    func wasClosed() {
+        let response = PaymentStatusResponse(success: false,
+                                             errorCode: 0,
+                                             errorMessage: nil,
+                                             orderId: paymentStatusResponse?.orderId ?? "",
+                                             paymentId: paymentStatusResponse?.paymentId ?? 0,
+                                             amount: paymentStatusResponse?.amount.int64Value ?? 0,
+                                             status: .cancelled)
+        completion?(.success(response))
     }
 }
 
@@ -107,7 +129,38 @@ private extension SBPUrlPaymentViewController {
     func start() {
         isLoading = true
         
-        sbpPaymentService.createSBPUrl(paymentSource: paymentSource) { [weak self] result in
+        switch paymentSource {
+        case let .paymentId(paymentId):
+            paymentService.getPaymentStatus(paymentId: paymentId) { [weak self] result in
+                switch result {
+                case let .failure(error):
+                    self?.handleError(error)
+                case let .success(response):
+                    self?.paymentStatusResponse = response
+                    self?.createSPBUrl(paymentId: paymentId)
+                }
+            }
+        case let .paymentData(initData):
+            paymentService.initPaymentWith(paymentData: initData) { [weak self] result in
+                switch result {
+                case let .failure(error):
+                    self?.handleError(error)
+                case let .success(response):
+                    self?.paymentStatusResponse = .init(success: true,
+                                                        errorCode: 0,
+                                                        errorMessage: nil,
+                                                        orderId: response.orderId,
+                                                        paymentId: response.paymentId,
+                                                        amount: response.amount,
+                                                        status: .new)
+                    self?.createSPBUrl(paymentId: response.paymentId)
+                }
+            }
+        }
+    }
+    
+    func createSPBUrl(paymentId: Int64) {
+        sbpPaymentService.createSBPUrl(paymentId: paymentId) { [weak self] result in
             self?.handleSPBUrlCreation(result: result)
         }
     }
@@ -145,11 +198,14 @@ private extension SBPUrlPaymentViewController {
     }
     
     func handleError(_ error: Error) {
-        let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
-        let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
-        
-        showAlert(title: alertTitle,
-                  description: alertDescription)
+        DispatchQueue.main.async {
+            let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
+            let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
+            
+            self.showAlert(title: alertTitle,
+                           description: alertDescription,
+                           error: error)
+        }
     }
     
     func loadBanks() {
@@ -158,7 +214,9 @@ private extension SBPUrlPaymentViewController {
                 guard let self = self else { return }
                 switch result {
                 case let .success(banks):
-                    self.handleBanksLoaded(banks: banks)
+                    DispatchQueue.main.async {
+                        self.handleBanksLoaded(banks: banks)
+                    }
                 case let .failure(error):
                     self.handleError(error)
                 }
@@ -174,24 +232,30 @@ private extension SBPUrlPaymentViewController {
         do {
             try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
                 self?.dismiss(animated: true, completion: nil)
+                if let paymentStatus = self?.paymentStatusResponse {
+                    self?.completion?(.success(paymentStatus))
+                }
             })
         } catch {
             showAlert(title: AcqLoc.instance.localize("SBP.OpenApplication.Error"),
-                      description: nil)
+                      description: nil,
+                      error: SBPUrlPaymentViewControllerError.failedToOpenBankApp(bank))
         }
     }
     
     func showAlert(title: String,
-                   description: String?) {
-        dismiss(animated: true) { [configuration, presentingViewController] in
+                   description: String?,
+                   error: Error) {
+        dismiss(animated: true) { [weak self, configuration, presentingViewController] in
             guard let presentingViewController = presentingViewController else { return }
             if let alert = configuration.alertViewHelper?.presentAlertView(title,
                                                                            message: description,
                                                                            dismissCompletion: nil) {
-                    presentingViewController.present(alert, animated: true, completion: nil)
+                presentingViewController.present(alert, animated: true, completion: nil)
             } else {
                 AcquiringAlertViewController.create().present(on: presentingViewController, title: title)
             }
+            self?.completion?(.failure(error))
         }
     }
 }

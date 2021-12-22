@@ -24,6 +24,13 @@ public protocol PullableContainerContent: AnyObject {
     var view: UIView! { get }
     var contentHeight: CGFloat { get }
     var contentHeightDidChange: ((PullableContainerContent) -> Void)? { get set }
+    func willBeClosed()
+    func wasClosed()
+}
+
+extension PullableContainerContent {
+    func willBeClosed() {}
+    func wasClosed() {}
 }
 
 public protocol PullableContainerScrollableContent: PullableContainerContent {
