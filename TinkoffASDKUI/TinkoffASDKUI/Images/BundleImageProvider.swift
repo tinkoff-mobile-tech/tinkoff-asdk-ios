@@ -28,6 +28,6 @@ final class BundleImageProvider {
     }
     
     func urlForImage(named: String, imageExtension: String) -> URL? {
-        Bundle.asdkUIResources.url(forResource: "\(named)@\(Int(screen.scale))x", withExtension: imageExtension)
+        Bundle.uiResources.url(forResource: "\(named)@\(Int(screen.scale))x", withExtension: imageExtension)
     }
 }

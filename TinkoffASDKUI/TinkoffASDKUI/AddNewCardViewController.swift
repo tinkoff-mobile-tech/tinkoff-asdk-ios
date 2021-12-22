@@ -60,9 +60,9 @@ class AddNewCardViewController: PopUpViewContoller {
 
         inputCardRequisitesController = InputCardRequisitesController()
 
-        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
-        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "AmountTableViewCell")
-        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "PSLogoTableViewCell")
+        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
+        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AmountTableViewCell")
+        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PSLogoTableViewCell")
 
         tableView.dataSource = self
     }
@@ -111,7 +111,7 @@ extension AddNewCardViewController: UITableViewDataSource {
 
         case .requisites:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "InpuCardtRequisitesTableViewCell") as? InpuCardtRequisitesTableViewCell {
-                let accessoryView = Bundle.asdkUIResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
+                let accessoryView = Bundle.uiResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
                 if let style = style {
                     accessoryView?.buttonAction.backgroundColor = style.addCardButtonStyle.backgroundColor
                     accessoryView?.buttonAction.tintColor = style.addCardButtonStyle.titleColor

@@ -22,16 +22,16 @@ import Foundation
 
 extension Bundle {
     
-    private class TinkoffASDKUIResourcesToken {}
+    private class UIResourcesToken {}
     
-    static var asdkUIResources: Bundle {
-        Bundle(for: TinkoffASDKUIResourcesToken.self)
-            .url(forResource: .asdkUIResourceName, withExtension: .asdkUIResourceExtension)
-            .flatMap(Bundle.init(url:)) ?? Bundle(for: TinkoffASDKUIResourcesToken.self)
+    static var uiResources: Bundle {
+        Bundle(for: UIResourcesToken.self)
+            .url(forResource: .resourceName, withExtension: .bundleExtension)
+            .flatMap(Bundle.init(url:)) ?? Bundle(for: UIResourcesToken.self)
     }
 }
 
 private extension String {
-    static let asdkUIResourceName = "TinkoffASDKUIResources"
-    static let asdkUIResourceExtension = "bundle"
+    static let resourceName = "TinkoffASDKUIResources"
+    static let bundleExtension = "bundle"
 }

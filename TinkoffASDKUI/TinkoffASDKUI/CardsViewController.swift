@@ -62,10 +62,10 @@ class CardsViewController: UIViewController {
             title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.savedCards")
         }
 
-        tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "PaymentCardTableViewCell")
-        tableView.register(UINib(nibName: "StatusTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "StatusTableViewCell")
-        tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "AddCardTableViewCell")
-        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: .asdkUIResources), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
+        tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PaymentCardTableViewCell")
+        tableView.register(UINib(nibName: "StatusTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "StatusTableViewCell")
+        tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AddCardTableViewCell")
+        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -196,7 +196,7 @@ class CardsViewController: UIViewController {
 
     private func showAddCardView() {
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .asdkUIResources)
+        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
         modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper

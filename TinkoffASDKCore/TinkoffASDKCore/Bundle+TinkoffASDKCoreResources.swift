@@ -22,11 +22,16 @@ import Foundation
 
 extension Bundle {
     
-    private class TinkoffASDKCoreResources {}
+    private class CoreResourcesToken {}
     
-    static var tinkoffASDKCoreResources: Bundle {
-        Bundle(for: TinkoffASDKCoreResources.self)
-            .url(forResource: "TinkoffASDKCoreResources", withExtension: "bundle")
-            .flatMap(Bundle.init(url:)) ?? .main
+    static var coreResources: Bundle {
+        Bundle(for: CoreResourcesToken.self)
+            .url(forResource: .resourceName, withExtension: .bundleExtension)
+            .flatMap(Bundle.init(url:)) ?? Bundle(for: CoreResourcesToken.self)
     }
+}
+
+private extension String {
+    static let resourceName = "TinkoffASDKCoreResources"
+    static let bundleExtension = "bundle"
 }

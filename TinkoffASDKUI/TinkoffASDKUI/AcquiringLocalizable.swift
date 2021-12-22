@@ -35,7 +35,7 @@ class AcqLoc: AcquiringLocalize {
 
     func setup(lang: String? = nil, table name: String? = nil, bundle: Bundle?) {
         tableName = name
-        self.bundle = bundle ?? .asdkUIResources
+        self.bundle = bundle ?? .uiResources
     }
 
     func localize(_ string: String) -> String {

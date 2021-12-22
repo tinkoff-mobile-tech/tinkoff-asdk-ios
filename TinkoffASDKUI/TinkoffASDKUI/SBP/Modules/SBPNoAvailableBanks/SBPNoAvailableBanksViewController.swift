@@ -49,7 +49,7 @@ final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoada
 
 private extension SBPNoAvailableBanksViewController {
     func setup() {
-        customView.imageView.image = UIImage(named: "empty_banks", in: .asdkUIResources, compatibleWith: nil)
+        customView.imageView.image = UIImage(named: "empty_banks", in: .uiResources, compatibleWith: nil)
         setupLocalization()
         setupButtons()
         setupNavigationButton()

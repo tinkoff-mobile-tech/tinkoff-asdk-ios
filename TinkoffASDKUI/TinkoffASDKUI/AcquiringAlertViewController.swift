@@ -27,7 +27,7 @@ public enum AcquiringAlertIconType {
 
 class AcquiringAlertViewController: UIViewController {
     static func create() -> AcquiringAlertViewController {
-        let alert = AcquiringAlertViewController(nibName: "AcquiringAlertViewController", bundle: .asdkUIResources)
+        let alert = AcquiringAlertViewController(nibName: "AcquiringAlertViewController", bundle: .uiResources)
         alert.modalPresentationStyle = .overCurrentContext
         alert.modalTransitionStyle = .crossDissolve
         _ = alert.view
@@ -122,9 +122,9 @@ class AcquiringAlertViewController: UIViewController {
         case let .icon(img):
             imageViewAletIcon.image = img
         case .error:
-            imageViewAletIcon.image = UIImage(named: "cancel", in: .asdkUIResources, compatibleWith: nil)
+            imageViewAletIcon.image = UIImage(named: "cancel", in: .uiResources, compatibleWith: nil)
         default:
-            imageViewAletIcon.image = UIImage(named: "done", in: .asdkUIResources, compatibleWith: nil)
+            imageViewAletIcon.image = UIImage(named: "done", in: .uiResources, compatibleWith: nil)
         }
 
         labelAlertTitle.text = title

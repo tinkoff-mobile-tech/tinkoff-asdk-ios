@@ -203,7 +203,7 @@ class InputCardRequisitesController: NSObject {
     private func activateScanerButton() {
         if cardRequisitesScaner != nil {
             inputView?.buttonRight.isHidden = false
-            inputView?.buttonRight.setImage(UIImage(named: "scan", in: .asdkUIResources, compatibleWith: nil), for: .normal)
+            inputView?.buttonRight.setImage(UIImage(named: "scan", in: .uiResources, compatibleWith: nil), for: .normal)
             inputView?.onButtonRightTouch = onScanner
         } else {
             inputView?.buttonRight.isHidden = true
@@ -214,7 +214,7 @@ class InputCardRequisitesController: NSObject {
 
     private func activateNextButton() {
         inputView?.buttonRight.isHidden = false
-        inputView?.buttonRight.setImage(UIImage(named: "next", in: .asdkUIResources, compatibleWith: nil), for: .normal)
+        inputView?.buttonRight.setImage(UIImage(named: "next", in: .uiResources, compatibleWith: nil), for: .normal)
         inputView?.onButtonRightTouch = onNext
     }
 }
