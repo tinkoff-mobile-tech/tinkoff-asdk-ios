@@ -24,7 +24,7 @@ extension Bundle {
     
     private class CoreResourcesToken {}
     
-    static var tinkoffASDKCoreResources: Bundle {
+    static var coreResources: Bundle {
         Bundle(for: CoreResourcesToken.self)
             .url(forResource: .resourceName, withExtension: .bundleExtension)
             .flatMap(Bundle.init(url:)) ?? Bundle(for: CoreResourcesToken.self)
