@@ -1,6 +1,11 @@
 # Changelog
 ## [Unreleased]
 
+## [2.5.2] - 2021-12-29
+
+### Added
+* add method to perform payment with apple pay payment token
+
 ## [2.5.1] - 2021-12-06
 
 ### Updated
