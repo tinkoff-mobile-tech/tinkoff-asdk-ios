@@ -20,6 +20,7 @@
 import TinkoffASDKCore
 import TinkoffASDKUI
 import UIKit
+import PassKit
 
 // TODO: Separate BuyProductsViewController in several files/classes
 // swiftlint:disable file_length
@@ -266,12 +267,30 @@ class BuyProductsViewController: UIViewController {
     }
 
     func payByApplePay() {
-        sdk.presentPaymentApplePay(on: self,
-                                   paymentData: createPaymentData(),
-                                   viewConfiguration: AcquiringViewConfiguration(),
-                                   paymentConfiguration: paymentApplePayConfiguration) { [weak self] response in
-                self?.responseReviewing(response)
+        
+        let paymentData = createPaymentData()
+        
+        let request = PKPaymentRequest()
+        request.merchantIdentifier = paymentApplePayConfiguration.merchantIdentifier
+        request.supportedNetworks = paymentApplePayConfiguration.supportedNetworks
+        request.merchantCapabilities = paymentApplePayConfiguration.capabilties
+        request.countryCode = paymentApplePayConfiguration.countryCode
+        request.currencyCode = paymentApplePayConfiguration.currencyCode
+        request.shippingContact = paymentApplePayConfiguration.shippingContact
+        request.billingContact = paymentApplePayConfiguration.billingContact
+
+        request.paymentSummaryItems = [
+            PKPaymentSummaryItem(label: paymentData.description ?? "",
+                                 amount: NSDecimalNumber(value: Double(paymentData.amount) / Double(100.0)))
+        ]
+        
+        guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
+            return
         }
+        
+        viewController.delegate = self
+                
+        present(viewController, animated: true, completion: nil)
     }
 
     func payAndSaveAsParent() {
@@ -590,4 +609,27 @@ extension BuyProductsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {}
+}
+
+extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegate {
+    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController,
+                                            didAuthorizePayment payment: PKPayment,
+                                            handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+        let initData = createPaymentData()
+        
+        sdk.performPaymentWithApplePay(paymentData: initData,
+                                       paymentToken: payment.token,
+                                       acquiringConfiguration: .init(paymentStage: .none)) { result in
+            switch result {
+            case let .failure(error):
+                completion(.init(status: .failure, errors: [error]))
+            case let .success(_):
+                completion(.init(status: .success, errors: nil))
+            }
+        }
+    }
 }
