@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.1] - 2021-01-21
+
 ### Updated
 * using resource_bundles instead of resources in podspec
 
