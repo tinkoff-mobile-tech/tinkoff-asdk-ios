@@ -35,12 +35,6 @@ struct Localization {
 
 private extension Localization {
     static func localizationString(key: String) -> String {
-        return BundleProvider.bundle.localizedString(forKey: key, value: nil, table: nil)
-    }
-}
-
-private final class BundleProvider {
-    static var bundle: Bundle {
-        return Bundle(for: BundleProvider.self)
+        Bundle.coreResources.localizedString(forKey: key, value: nil, table: nil)
     }
 }

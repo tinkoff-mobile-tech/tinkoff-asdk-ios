@@ -211,16 +211,16 @@ public class CardRequisitesBrandInfo: CardRequisites, CardRequisitesBrandInfoPro
         case .unrecognized:
             break
         case .mastercard:
-            result = UIImage(named: "mc_logo", in: Bundle(for: type(of: self)), compatibleWith: nil)
+            result = UIImage(named: "mc_logo", in: .uiResources, compatibleWith: nil)
             size = sizeLogoPaymentSystem
         case .visa:
-            result = UIImage(named: "visa_logo", in: Bundle(for: type(of: self)), compatibleWith: nil)
+            result = UIImage(named: "visa_logo", in: .uiResources, compatibleWith: nil)
             size = sizeLogoPaymentSystem
         case .mir:
-            result = UIImage(named: "mir_logo", in: Bundle(for: type(of: self)), compatibleWith: nil)
+            result = UIImage(named: "mir_logo", in: .uiResources, compatibleWith: nil)
             size = sizeLogoPaymentSystem
         case .maestro:
-            result = UIImage(named: "maestro_logo", in: Bundle(for: type(of: self)), compatibleWith: nil)
+            result = UIImage(named: "maestro_logo", in: .uiResources, compatibleWith: nil)
             size = sizeLogoPaymentSystem
         }
 
