@@ -182,7 +182,7 @@ public class AcquiringUISDK: NSObject {
         setupCardListDataProvider(for: customerKey)
 
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
+        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
         // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
         // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
         // будет краш из-за того, что там необходим force unwrap
@@ -599,8 +599,7 @@ public class AcquiringUISDK: NSObject {
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
         // create
-        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController",
-                                                                 bundle: Bundle(for: AcquiringPaymentViewController.self))
+        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController", bundle: .uiResources)
         modalViewController.style = .init(payButtonStyle: style.bigButtonStyle)
 
         var fields: [AcquiringViewTableViewCells] = []
@@ -650,7 +649,7 @@ public class AcquiringUISDK: NSObject {
         modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
             guard let self = self else { return }
             
-            let viewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
+            let viewController = CardsViewController(nibName: "CardsViewController", bundle: .uiResources)
             viewController.scanerDataSource = modalViewController?.scanerDataSource
             viewController.alertViewHelper = modalViewController?.alertViewHelper
             viewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: self.style.bigButtonStyle))
@@ -1040,7 +1039,7 @@ public class AcquiringUISDK: NSObject {
     }
 
     fileprivate func presentWebView(on _: AcquiringView?, load request: URLRequest, onCancel: @escaping (() -> Void)) {
-        let viewController = WebViewController(nibName: "WebViewController", bundle: Bundle(for: WebViewController.self))
+        let viewController = WebViewController(nibName: "WebViewController", bundle: .uiResources)
         webViewController = viewController
         viewController.onCancel = { [weak self] in
             if self?.acquiringView != nil {
@@ -1082,7 +1081,7 @@ public class AcquiringUISDK: NSObject {
     }
 
     private func presentRandomAmounChecking(with requestKey: String, presenter _: AcquiringView?, alertViewHelper: AcquiringAlertViewProtocol?, onCancel: @escaping (() -> Void)) {
-        let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: Bundle(for: RandomAmounCheckingViewController.self))
+        let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: .uiResources)
 
         viewController.onCancel = {
             onCancel()
@@ -1211,7 +1210,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         setupCardListDataProvider(for: customerKey)
 
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
+        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
         
         // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
         // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
@@ -1383,7 +1382,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         setupCardListDataProvider(for: customerKey)
 
         // create
-        let modalViewController = CardsViewController(nibName: "CardsViewController", bundle: Bundle(for: CardsViewController.self))
+        let modalViewController = CardsViewController(nibName: "CardsViewController", bundle: .uiResources)
         // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
         // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
         // будет краш из-за того, что там необходим force unwrap

@@ -1,6 +1,6 @@
 //
 //
-//  BundleImageProvider.swift
+//  Bundle+TinkoffASDKUI.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,16 +18,20 @@
 //
 
 
-import UIKit
+import Foundation
 
-final class BundleImageProvider {
-    private let screen: UIScreen
+extension Bundle {
     
-    init(screen: UIScreen) {
-        self.screen = screen
-    }
+    private class UIResourcesToken {}
     
-    func urlForImage(named: String, imageExtension: String) -> URL? {
-        Bundle.uiResources.url(forResource: "\(named)@\(Int(screen.scale))x", withExtension: imageExtension)
+    static var uiResources: Bundle {
+        Bundle(for: UIResourcesToken.self)
+            .url(forResource: .resourceName, withExtension: .bundleExtension)
+            .flatMap(Bundle.init(url:)) ?? Bundle(for: UIResourcesToken.self)
     }
+}
+
+private extension String {
+    static let resourceName = "TinkoffASDKUIResources"
+    static let bundleExtension = "bundle"
 }
