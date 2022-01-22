@@ -240,7 +240,8 @@ public class AcquiringUISDK: NSObject {
             guard let self = self else { return }
             if let paymentId = self.paymentInitResponseData?.paymentId {
                 let urlSBPViewController = self.urlSBPPaymentViewController(paymentSource: .paymentId(paymentId),
-                                                                            configuration: configuration)
+                                                                            configuration: configuration,
+                                                                            completionHandler: completionHandler)
                 viewController.present(urlSBPViewController, animated: true, completion: nil)
             }
         }
