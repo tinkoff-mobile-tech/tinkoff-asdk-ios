@@ -30,7 +30,6 @@ struct InitRequest: APIRequest {
         // TODO: Log error
         
         return (try? paymentInitData
-                    .withDefaultParameters
                     .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 

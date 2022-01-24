@@ -1,6 +1,6 @@
 //
 //
-//  PaymentInitData+DefaultParams.swift
+//  PaymentInitDataParamsEnricher.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,14 +20,18 @@
 
 import Foundation
 
-extension PaymentInitData {
-    var withDefaultParameters: PaymentInitData {
-        var paymentData = self
-        
+protocol IPaymentInitDataParamsEnricher {
+    func enrich(_ paymentInitData: PaymentInitData) -> PaymentInitData
+}
+
+final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
+    func enrich(_ paymentInitData: PaymentInitData) -> PaymentInitData {
+        var paymentData = paymentInitData
+
         let additionalParams: [String: String] = [
             .connectionType: String.mobileSDK,
-            .version: Bundle.main.infoDictionary?[.bundleInfoDictionaryVersionKey] as? String
-        ].compactMapValues { $0 }
+            .version: Version.versionString
+        ]
         
         paymentData.addPaymentData(additionalParams)
         return paymentData
@@ -40,5 +44,4 @@ private extension String {
     static let mobileSDK = "mobile_sdk"
     static let connectionType = "connection_type"
     static let version = "sdk_version"
-    static let bundleInfoDictionaryVersionKey = "CFBundleShortVersionString"
 }
