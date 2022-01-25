@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.2] - 2021-01-26
+
 ### Updated
 * handle SBP bank selection cancellation
 * poll payment status when open bank application
