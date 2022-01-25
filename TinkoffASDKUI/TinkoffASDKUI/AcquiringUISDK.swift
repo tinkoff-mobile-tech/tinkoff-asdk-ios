@@ -142,12 +142,16 @@ public class AcquiringUISDK: NSObject {
     
     private let sbpAssembly: SBPAssembly
     
+    private weak var logger: LoggerDelegate?
+    
+    
     public init(configuration: AcquiringSdkConfiguration,
                 style: Style = DefaultStyle()) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
+        self.logger = configuration.logger
     }
 
     /// Вызывается кода пользователь привязывается карту.
@@ -459,10 +463,10 @@ public class AcquiringUISDK: NSObject {
             self?.presentApplePayActivity(request)
         }
 
-        presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: viewConfiguration) { _ in
+        presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: viewConfiguration) { [weak self] _ in
             switch acquiringConfiguration.paymentStage {
             case .none:
-                self.initPay(paymentData: data) { [weak self] response in
+                self?.initPay(paymentData: data) { [weak self] response in
                     switch response {
                     case let .success(initResponse):
                         self?.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: initResponse)
@@ -484,6 +488,57 @@ public class AcquiringUISDK: NSObject {
             }
         }
     }
+    
+    // MARK: - Apple Pay Experimental
+    
+    public func performPaymentWithApplePay(paymentData: PaymentInitData,
+                                           paymentToken: PKPaymentToken,
+                                           acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
+                                           completionHandler: @escaping PaymentCompletionHandler) {
+        switch acquiringConfiguration.paymentStage {
+        case .none:
+            initPay(paymentData: paymentData) { [weak self] result in
+                switch result {
+                case let .failure(error):
+                    completionHandler(.failure(error))
+                case let .success(initResponse):
+                    self?.finishAuthorizeWithApplePayPaymentToken(paymentToken: paymentToken,
+                                                                  paymentId: initResponse.paymentId,
+                                                                  completionHandler: completionHandler)
+                }
+            }
+        case let .paymentId(paymentId):
+            finishAuthorizeWithApplePayPaymentToken(paymentToken: paymentToken,
+                                                    paymentId: paymentId,
+                                                    completionHandler: completionHandler)
+        }
+    }
+    
+    private func finishAuthorizeWithApplePayPaymentToken(paymentToken: PKPaymentToken,
+                                                         paymentId: Int64,
+                                                         completionHandler: @escaping PaymentCompletionHandler) {
+        let sourceData = PaymentSourceData.paymentData(paymentToken.paymentData.base64EncodedString())
+        let finishAuthorizeData = PaymentFinishRequestData(paymentId: paymentId,
+                                                           paymentSource: sourceData,
+                                                           source: "ApplePay",
+                                                           route: "ACQ")
+        
+        finishAuthorize(requestData: finishAuthorizeData,
+                        treeDSmessageVersion: "1") { [weak self] result in
+            switch result {
+            case let .failure(error):
+                DispatchQueue.main.async {
+                    completionHandler(.failure(error))
+                }
+            case let .success(response):
+                DispatchQueue.main.async {
+                    completionHandler(.success(response))
+                }
+            }
+        }
+    }
+    
+    // MARK: -
 
     private func presentApplePayActivity(_ request: PKPaymentRequest) {
         guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
@@ -500,7 +555,7 @@ public class AcquiringUISDK: NSObject {
 
         viewController.delegate = self
 
-        acquiringView?.presentVC(viewController, animated: true) { // [weak self] in
+        acquiringView?.presentVC(viewController, animated: true) { [weak self] in
             // self?.acquiringView.setViewHeight(viewController.view.frame.height)
         }
     }
@@ -1410,14 +1465,14 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     // MARK: PKPaymentAuthorizationViewControllerDelegate
 
     public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        controller.dismiss(animated: true) {
-            if let result = self.finishPaymentStatusResponse {
-                self.acquiringView?.closeVC(animated: true) {
-                    self.onPaymentCompletionHandler?(result)
+        controller.dismiss(animated: true) { [weak self] in
+            if let result = self?.finishPaymentStatusResponse {
+                self?.acquiringView?.closeVC(animated: true) {
+                    self?.onPaymentCompletionHandler?(result)
                 }
             } else {
-                self.acquiringView?.closeVC(animated: true) {
-                    self.cancelPayment()
+                self?.acquiringView?.closeVC(animated: true) {
+                    self?.cancelPayment()
                 }
             }
         }
@@ -1433,7 +1488,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
                                                 paymentSource: paymentDataSource,
                                                 source: "ApplePay",
                                                 route: "ACQ")
-
+            
             finishAuthorize(requestData: data, treeDSmessageVersion: "1") { [weak self] finishResponse in
                 switch finishResponse {
                 case let .failure(error):
