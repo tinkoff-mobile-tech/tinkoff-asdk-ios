@@ -230,7 +230,8 @@ private extension SBPUrlPaymentViewController {
         }
         
         do {
-            try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] _ in
+            try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] result in
+                guard result else { return }
                 self?.dismiss(animated: true, completion: nil)
                 if let paymentStatus = self?.paymentStatusResponse {
                     self?.completion?(.success(paymentStatus))
