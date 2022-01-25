@@ -64,6 +64,8 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     }
     private var sbpURL: URL?
     private var paymentStatusResponse: PaymentStatusResponse?
+    private var isPollingPaymentStatus = false
+    private var paymentStatusRequestCount: Int = .paymentStatusRequestLimit
     
     init(paymentSource: PaymentSource,
          paymentService: PaymentService,
@@ -99,6 +101,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     }
     
     func wasClosed() {
+        isPollingPaymentStatus = false
         let response = PaymentStatusResponse(success: false,
                                              errorCode: 0,
                                              errorMessage: nil,
@@ -186,12 +189,12 @@ private extension SBPUrlPaymentViewController {
             noBanksAppAvailable?(self)
             return
         }
-
+        
         guard result.banks.count > 1 else {
             openBankApplication(bank: result.banks[0])
             return
         }
-                
+        
         banksListViewController.banks = result.banks
         banksListViewController.selectedIndex = result.selectedIndex
         isLoading = false
@@ -231,16 +234,56 @@ private extension SBPUrlPaymentViewController {
         
         do {
             try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] result in
-                guard result else { return }
-                self?.dismiss(animated: true, completion: nil)
-                if let paymentStatus = self?.paymentStatusResponse {
-                    self?.completion?(.success(paymentStatus))
-                }
+                self?.handleBankApplicationOpen(result: result)
             })
         } catch {
             showAlert(title: AcqLoc.instance.localize("SBP.OpenApplication.Error"),
                       description: nil,
                       error: SBPUrlPaymentViewControllerError.failedToOpenBankApp(bank))
+        }
+    }
+    
+    func handleBankApplicationOpen(result: Bool) {
+        guard result else { return }
+        guard let paymentId = paymentStatusResponse?.paymentId else {
+            dismiss(animated: true)
+            return
+        }
+        isLoading = true
+        startPaymentStatusPolling(paymentId: paymentId)
+    }
+    
+    func startPaymentStatusPolling(paymentId: Int64) {
+        isPollingPaymentStatus = true
+        paymentService.getPaymentStatus(paymentId: paymentId) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                switch result {
+                case let .failure(error):
+                    guard self.paymentStatusRequestCount > 0 else {
+                        self.isPollingPaymentStatus = false
+                        self.handleError(error)
+                        return
+                    }
+                    self.paymentStatusRequestCount -= 1
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
+                        self?.startPaymentStatusPolling(paymentId: paymentId)
+                    }
+                case let .success(response):
+                    self.paymentStatusRequestCount = .paymentStatusRequestLimit
+                    switch response.status {
+                    case .new, .unknown:
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
+                            self?.startPaymentStatusPolling(paymentId: paymentId)
+                        }
+                    default:
+                        self.isPollingPaymentStatus = false
+                        self.dismiss(animated: true) { [weak self] in
+                            self?.completion?(.success(response))
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -265,4 +308,12 @@ extension SBPUrlPaymentViewController: SBPBankListViewControllerDelegate {
     func bankListViewController(_ bankListViewController: SBPBankListViewController, didSelectBank bank: SBPBank) {
         openBankApplication(bank: bank)
     }
+}
+
+private extension Int {
+    static let paymentStatusRequestLimit = 5
+}
+
+private extension TimeInterval {
+    static let paymentStatusPollingInterval: TimeInterval = 5
 }
