@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
 	spec.name = "TinkoffASDKUI"
-	spec.version = '3.0.0-alpha7'
+	spec.version = '3.0.0-alpha9'
 	spec.summary = 'Мобильный SDK'
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
@@ -14,7 +14,9 @@ Pod::Spec.new do |spec|
 	spec.ios.deployment_target = '11.0'
 	spec.source = { :git => 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS.git', :tag => spec.version }
 	spec.source_files = 'TinkoffASDKUI/TinkoffASDKUI/**/*.swift'
-	spec.resource = "TinkoffASDKUI/TinkoffASDKUI/**/*.{lproj,strings,xib,xcassets,imageset}"
+  spec.resource_bundles = {
+    'TinkoffASDKUIResources' => ['TinkoffASDKUI/TinkoffASDKUI/**/*.{lproj,strings,xib,xcassets,imageset}']
+  }
 	spec.dependency 'TinkoffASDKCore'
 
 end
