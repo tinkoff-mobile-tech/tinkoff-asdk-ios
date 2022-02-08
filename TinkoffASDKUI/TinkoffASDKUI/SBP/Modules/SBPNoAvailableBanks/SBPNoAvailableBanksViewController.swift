@@ -19,17 +19,24 @@
 
 
 import UIKit
+import TinkoffASDKCore
 
 final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoadable {
     typealias CustomView = SBPNoAvailableBanksView
     
     private let style: SBPNoAvailableBanksView.Style
     private let urlOpener: URLOpener
+    private let paymentStatusResponse: PaymentStatusResponse
+    private let completionHandler: PaymentCompletionHandler?
     
     init(style: SBPNoAvailableBanksView.Style,
-         urlOpener: URLOpener) {
+         urlOpener: URLOpener,
+         paymentStatusResponse: PaymentStatusResponse,
+         completionHandler: PaymentCompletionHandler? = nil) {
         self.style = style
         self.urlOpener = urlOpener
+        self.paymentStatusResponse = paymentStatusResponse
+        self.completionHandler = completionHandler
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -96,7 +103,10 @@ private extension SBPNoAvailableBanksViewController {
     }
     
     @objc func close() {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: { [weak self] in
+            guard let self = self else { return }
+            self.completionHandler?(.success(self.paymentStatusResponse))
+        })
     }
     
     @objc func openInformation() {

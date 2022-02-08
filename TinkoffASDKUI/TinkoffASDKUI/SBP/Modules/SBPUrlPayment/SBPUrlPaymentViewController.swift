@@ -41,7 +41,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
         isLoading ? loadingViewController.contentHeight : banksListViewController.contentHeight
     }
     
-    var noBanksAppAvailable: ((UIViewController) -> Void)?
+    var noBanksAppAvailable: ((UIViewController, PaymentStatusResponse) -> Void)?
     
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
@@ -102,14 +102,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     
     func wasClosed() {
         isPollingPaymentStatus = false
-        let response = PaymentStatusResponse(success: false,
-                                             errorCode: 0,
-                                             errorMessage: nil,
-                                             orderId: paymentStatusResponse?.orderId ?? "",
-                                             paymentId: paymentStatusResponse?.paymentId ?? 0,
-                                             amount: paymentStatusResponse?.amount.int64Value ?? 0,
-                                             status: .cancelled)
-        completion?(.success(response))
+        completion?(.success(cancelledResponse))
     }
 }
 
@@ -186,7 +179,7 @@ private extension SBPUrlPaymentViewController {
         let result = sbpBanksService.checkBankAvailabilityAndHandleTinkoff(banks: banks)
         
         guard !result.banks.isEmpty else {
-            noBanksAppAvailable?(self)
+            noBanksAppAvailable?(self, cancelledResponse)
             return
         }
         
@@ -301,6 +294,16 @@ private extension SBPUrlPaymentViewController {
             }
             self?.completion?(.failure(error))
         }
+    }
+    
+    var cancelledResponse: PaymentStatusResponse {
+        PaymentStatusResponse(success: false,
+                              errorCode: 0,
+                              errorMessage: nil,
+                              orderId: paymentStatusResponse?.orderId ?? "",
+                              paymentId: paymentStatusResponse?.paymentId ?? 0,
+                              amount: paymentStatusResponse?.amount.int64Value ?? 0,
+                              status: .cancelled)
     }
 }
 

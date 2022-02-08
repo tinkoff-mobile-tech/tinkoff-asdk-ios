@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+## Updated
+* sbp - call callback with cancelled state on no banks app screen(MIC-4624)
+
 ## [2.6.2] - 2021-01-26
 
 ### Updated

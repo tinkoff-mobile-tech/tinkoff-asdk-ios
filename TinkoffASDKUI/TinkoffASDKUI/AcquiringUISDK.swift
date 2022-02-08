@@ -391,11 +391,17 @@ public class AcquiringUISDK: NSObject {
                                                                             completionHandler: completionHandler)
         let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
         
-        urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _ in
+        urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
             let presentingViewController = pullableContainerViewController?.presentingViewController
             pullableContainerViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
-                let emptyViewController = self.sbpAssembly.noAvailableBanksViewController()
+                let emptyViewController = self.sbpAssembly.noAvailableBanksViewController(
+                    paymentStatusResponse: paymentStatusResponse,
+                    paymentCompletionHandler: completionHandler
+                )
+                if #available(iOS 13.0, *) {
+                    emptyViewController.isModalInPresentation = true
+                }
                 let navigationController = UINavigationController(rootViewController: emptyViewController)
                 navigationController.navigationBar.applyStyle(titleColor: UIColor.asdk.dynamic.text.primary,
                                                               backgroundColor: UIColor.asdk.dynamic.background.elevation1)
