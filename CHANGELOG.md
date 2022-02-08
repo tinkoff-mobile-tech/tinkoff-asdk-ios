@@ -4,6 +4,9 @@
 ## Updated
 * sbp - call callback with cancelled state on no banks app screen(MIC-4624)
 
+## Fixed
+* added missed completion call in AcquiringUISDK for SBP(https://github.com/Tinkoff/AcquiringSdk_IOS/pull/112)
+
 ## [2.6.2] - 2021-01-26
 
 ### Updated
