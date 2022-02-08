@@ -45,9 +45,12 @@ final class SBPAssembly {
         )
     }
     
-    func noAvailableBanksViewController() -> SBPNoAvailableBanksViewController {
+    func noAvailableBanksViewController(paymentStatusResponse: PaymentStatusResponse,
+                                        paymentCompletionHandler: PaymentCompletionHandler?) -> SBPNoAvailableBanksViewController {
         SBPNoAvailableBanksViewController(style: .init(confirmButtonStyle: style.bigButtonStyle),
-                                          urlOpener: applicationURLOpener)
+                                          urlOpener: applicationURLOpener,
+                                          paymentStatusResponse: paymentStatusResponse,
+                                          completionHandler: paymentCompletionHandler)
     }
 }
 
