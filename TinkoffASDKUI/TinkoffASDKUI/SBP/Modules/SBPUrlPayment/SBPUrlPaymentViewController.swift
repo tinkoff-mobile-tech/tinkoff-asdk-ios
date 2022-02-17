@@ -242,6 +242,7 @@ private extension SBPUrlPaymentViewController {
             dismiss(animated: true)
             return
         }
+        loadingViewController.configure(with: AcqLoc.instance.localize("SBP.LoadingStatus.Title"))
         isLoading = true
         startPaymentStatusPolling(paymentId: paymentId)
     }
@@ -265,7 +266,7 @@ private extension SBPUrlPaymentViewController {
                 case let .success(response):
                     self.paymentStatusRequestCount = .paymentStatusRequestLimit
                     switch response.status {
-                    case .new, .unknown:
+                    case .new, .unknown, .formShowed:
                         DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
                             self?.startPaymentStatusPolling(paymentId: paymentId)
                         }
