@@ -28,6 +28,7 @@ final class LoadingViewController: UIViewController, PullableContainerContent {
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
     
     private let activityIndicator = UIActivityIndicatorView()
+    private let statusLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +49,10 @@ final class LoadingViewController: UIViewController, PullableContainerContent {
         activityIndicator.stopAnimating()
     }
     
+    func configure(with text: String) {
+        statusLabel.text = text
+    }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateActivityIndicatorStyle()
@@ -58,6 +63,10 @@ private extension LoadingViewController {
     func setup() {
         view.backgroundColor = UIColor.asdk.dynamic.background.elevation1
         view.addSubview(activityIndicator)
+        view.addSubview(statusLabel)
+        
+        statusLabel.textColor = UIColor.asdk.n3
+        statusLabel.font = .boldSystemFont(ofSize: .statusLabelFontSize)
         
         activityIndicator.style = .gray
         setupContraints()
@@ -65,10 +74,16 @@ private extension LoadingViewController {
     
     func setupContraints() {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        
+        statusLabel.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.topAnchor.constraint(equalTo: view.topAnchor),
+        ])
+        
+        NSLayoutConstraint.activate([
+            statusLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: .statusLabelOffset),
+            statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
@@ -84,4 +99,11 @@ private extension LoadingViewController {
             }
         }
     }
+}
+
+// MARK: - Constants
+
+private extension CGFloat {
+    static let statusLabelOffset = 12 as CGFloat
+    static let statusLabelFontSize = 13 as CGFloat
 }

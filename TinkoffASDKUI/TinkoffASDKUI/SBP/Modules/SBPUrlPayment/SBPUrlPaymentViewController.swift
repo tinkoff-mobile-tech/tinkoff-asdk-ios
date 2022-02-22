@@ -90,6 +90,12 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIApplication.didBecomeActiveNotification,
+                                                  object: nil)
+    }
+    
     override func loadView() {
         view = SBPUrlPaymentView()
     }
@@ -110,6 +116,16 @@ private extension SBPUrlPaymentViewController {
     func setup() {
         setupContent()
         banksListViewController.delegate = self
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleActiveState),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
+    }
+    
+    @objc func handleActiveState() {
+        if !isPollingPaymentStatus, let paymentId = paymentStatusResponse?.paymentId {
+            startPaymentStatusPolling(paymentId: paymentId)
+        }
     }
     
     func setupContent() {
@@ -238,12 +254,8 @@ private extension SBPUrlPaymentViewController {
     
     func handleBankApplicationOpen(result: Bool) {
         guard result else { return }
-        guard let paymentId = paymentStatusResponse?.paymentId else {
-            dismiss(animated: true)
-            return
-        }
+        loadingViewController.configure(with: AcqLoc.instance.localize("SBP.LoadingStatus.Title"))
         isLoading = true
-        startPaymentStatusPolling(paymentId: paymentId)
     }
     
     func startPaymentStatusPolling(paymentId: Int64) {
@@ -265,7 +277,7 @@ private extension SBPUrlPaymentViewController {
                 case let .success(response):
                     self.paymentStatusRequestCount = .paymentStatusRequestLimit
                     switch response.status {
-                    case .new, .unknown:
+                    case .new, .unknown, .formShowed:
                         DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
                             self?.startPaymentStatusPolling(paymentId: paymentId)
                         }
