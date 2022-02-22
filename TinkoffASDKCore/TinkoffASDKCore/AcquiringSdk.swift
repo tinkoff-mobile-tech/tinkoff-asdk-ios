@@ -101,7 +101,10 @@ public final class AcquiringSdk: NSObject {
     ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     public func paymentInit(data: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) -> Cancellable {
-        let request = PaymentInitRequest(data: data)
+        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
+        let enrichedData = paramsEnricher.enrich(data)
+        
+        let request = PaymentInitRequest(data: enrichedData)
         let commonParameters: JSONObject = createCommonParameters()
         request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
 

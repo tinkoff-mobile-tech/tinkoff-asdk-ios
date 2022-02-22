@@ -74,3 +74,5 @@
 "SBP.Error.Description" = "Попробуйте еще раз";
 
 "SBP.OpenApplication.Error" = "Не удалось открыть приложение";
+"SBP.LoadingStatus.Title" = "Ожидаем подтверждения платежа";
+

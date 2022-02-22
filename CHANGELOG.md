@@ -1,6 +1,12 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.4] - 2021-02-22
+
+## Added
+* connection type and SDK version with every request
+* SBP fixes
+
 ## [2.6.3] - 2021-02-09
 
 ## Updated

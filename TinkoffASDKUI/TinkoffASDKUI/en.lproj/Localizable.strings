@@ -74,3 +74,4 @@
 "SBP.Error.Description" = "Try again";
 
 "SBP.OpenApplication.Error" = "Failed to open application";
+"SBP.LoadingStatus.Title" = "Payment confirmation awaiting";
