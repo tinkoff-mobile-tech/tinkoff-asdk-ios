@@ -82,10 +82,10 @@ final class AcquaringNetworkTransport: NetworkTransport {
         request.httpMethod = "POST"
 
         if let body = operation.parameters {
-            logger?.print("🛫 Start POST request: \(request.description), with paramaters: \(body)")
+            logger?.log("🛫 Start POST request: \(request.description), with paramaters: \(body)")
             request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
         } else {
-            logger?.print("🛫 Start POST request: \(request.description)")
+            logger?.log("🛫 Start POST request: \(request.description)")
         }
 
         return request
@@ -140,7 +140,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
         parameters.removeValue(forKey: "ACSUrl")
         parameters.updateValue(confirmation3DSTerminationURL.absoluteString, forKey: "TermUrl")
 
-        logger?.print("Start 3DS Confirmation WebView POST request: \(request.description), with paramaters: \(parameters)")
+        logger?.log("Start 3DS Confirmation WebView POST request: \(request.description), with paramaters: \(parameters)")
 
         let paramsString = parameters.compactMap { (item) -> String? in
             let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
@@ -225,12 +225,12 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
         let task = session.dataTask(with: request) { data, response, networkError in
             if let error = networkError {
-                responseLoger?.print("🛬 End request: \(request.description), with: \(error.localizedDescription)")
+                responseLoger?.log("🛬 End request: \(request.description), with: \(error.localizedDescription)")
                 return completionHandler(.failure(error))
             }
 
             if let responseData = data, let string = String(data: responseData, encoding: .utf8) {
-                responseLoger?.print("🛬 End request: \(request.description), with response data:\n\(string)")
+                responseLoger?.log("🛬 End request: \(request.description), with response data:\n\(string)")
             }
 
             // HTTPURLResponse

@@ -19,18 +19,18 @@
 
 import Foundation
 
-public protocol LoggerDelegate: class {
-    func print(_ value: String, file: String, function: String, line: Int)
+public protocol LoggerDelegate: AnyObject {
+    func log(_ value: String, file: String, function: String, line: Int)
 }
 
 public extension LoggerDelegate {
-    func print(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
-        print(value, file: file, function: function, line: line)
+    func log(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
+        log(value, file: file, function: function, line: line)
     }
 }
 
 public class AcquiringLoggerDefault: NSObject, LoggerDelegate {
-    public func print(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
+    public func log(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = file.split(separator: "/").last ?? ""
         let threadName = Thread.isMainThread ? "main thread" : String(Thread.current.description)
 
