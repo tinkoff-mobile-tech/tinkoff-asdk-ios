@@ -199,9 +199,17 @@ public class AcquiringUISDK: NSObject {
         modalViewController.completeHandler = { result in
             completeHandler(result)
         }
+        
+        modalViewController.cancelCompletion = {
+            completeHandler(.success(nil))
+        }
 
         // present
         let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: presentingViewController)
+        presentationController.cancelCompletion = {
+            completeHandler(.success(nil))
+        }
+        
         modalViewController.transitioningDelegate = presentationController
         presentingViewController.present(modalViewController, animated: true, completion: {
             _ = presentationController

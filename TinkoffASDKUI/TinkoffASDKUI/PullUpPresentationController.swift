@@ -23,6 +23,8 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
     private let topCornerRadius: CGFloat = 12.0
     private var dimmingView: UIView?
     private var presentationWrappingView: UIView?
+    
+    var cancelCompletion: (() -> Void)?
 
     override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
@@ -138,7 +140,9 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
     // MARK: Tap Gesture Recognizer
 
     @IBAction func dimmingViewTapped(_: UITapGestureRecognizer) {
-        presentingViewController.dismiss(animated: true, completion: nil)
+        presentingViewController.dismiss(animated: true) { [weak self] in
+            self?.cancelCompletion?()
+        }
     }
 
     // MARK: UIViewControllerAnimatedTransitioning

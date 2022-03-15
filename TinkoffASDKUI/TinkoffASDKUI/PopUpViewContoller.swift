@@ -34,6 +34,7 @@ class PopUpViewContoller: UIViewController {
     }()
 
     private var disappearComletionHandler: (() -> Void)?
+    var cancelCompletion: (() -> Void)?
 
     private var lastCurrentHeight: CGFloat?
 
@@ -107,10 +108,11 @@ class PopUpViewContoller: UIViewController {
         super.viewDidDisappear(animated)
 
         disappearComletionHandler?()
+        disappearComletionHandler = nil
     }
 
     @objc private func closeView(_: UIBarButtonItem?) {
-        closeViewController()
+        closeViewController { [weak self] in self?.cancelCompletion?() }
     }
 
     @objc func closeViewController(_ complete: (() -> Void)? = nil) {
@@ -199,7 +201,7 @@ class PopUpViewContoller: UIViewController {
                     newHeight = currentPopUpViewMaxHeight
                     _ = pushToNavigationStackAndActivate(firstResponder: view.firstResponder)
                 } else if modalMinHeight - newHeight > 44 {
-                    closeViewController()
+                    closeViewController { [weak self] in self?.cancelCompletion?() }
                 }
 
             case .ended:
