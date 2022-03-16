@@ -249,6 +249,7 @@ class PopUpViewContoller: UIViewController {
         } else if let parentViewController = presentingViewController {
             dismiss(animated: false) {
                 let nav = UINavigationController(rootViewController: self)
+                nav.presentationController?.delegate = self
                 parentViewController.present(nav, animated: false) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         completion?()
@@ -322,5 +323,11 @@ extension PopUpViewContoller: UIGestureRecognizerDelegate {
         }
 
         return true
+    }
+}
+
+extension PopUpViewContoller: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        cancelCompletion?()
     }
 }
