@@ -1,0 +1,5 @@
+import_from_git(
+  url: "https://github.com/tinkoff-mobile-tech/workflows.git", # The URL of the repository to import the Fastfile from.
+  branch: "add_ios", # The branch to checkout on the repository.
+  path: "fastlane/Fastfile" # The path of the Fastfile in the repository.
+)
