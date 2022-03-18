@@ -34,6 +34,8 @@ class PopUpViewContoller: UIViewController {
     }()
 
     private var disappearComletionHandler: (() -> Void)?
+    var cancelCompletion: (() -> Void)?
+    var popupStyle: AcquiringViewConfiguration.PopupStyle = .dynamic
 
     private var lastCurrentHeight: CGFloat?
 
@@ -107,10 +109,11 @@ class PopUpViewContoller: UIViewController {
         super.viewDidDisappear(animated)
 
         disappearComletionHandler?()
+        disappearComletionHandler = nil
     }
 
     @objc private func closeView(_: UIBarButtonItem?) {
-        closeViewController()
+        closeViewController { [weak self] in self?.cancelCompletion?() }
     }
 
     @objc func closeViewController(_ complete: (() -> Void)? = nil) {
@@ -199,7 +202,7 @@ class PopUpViewContoller: UIViewController {
                     newHeight = currentPopUpViewMaxHeight
                     _ = pushToNavigationStackAndActivate(firstResponder: view.firstResponder)
                 } else if modalMinHeight - newHeight > 44 {
-                    closeViewController()
+                    closeViewController { [weak self] in self?.cancelCompletion?() }
                 }
 
             case .ended:
@@ -214,6 +217,8 @@ class PopUpViewContoller: UIViewController {
     }
 
     func pushToNavigationStackAndActivate(firstResponder textField: UIView?, completion: (() -> Void)? = nil) -> Bool {
+        guard case .dynamic = popupStyle else { return true }
+        
         if panGesture.delegate == nil {
             completion?()
             return true
@@ -247,6 +252,7 @@ class PopUpViewContoller: UIViewController {
         } else if let parentViewController = presentingViewController {
             dismiss(animated: false) {
                 let nav = UINavigationController(rootViewController: self)
+                nav.presentationController?.delegate = self
                 parentViewController.present(nav, animated: false) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         completion?()
@@ -320,5 +326,11 @@ extension PopUpViewContoller: UIGestureRecognizerDelegate {
         }
 
         return true
+    }
+}
+
+extension PopUpViewContoller: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        cancelCompletion?()
     }
 }

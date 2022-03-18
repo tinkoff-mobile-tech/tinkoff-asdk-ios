@@ -35,6 +35,15 @@ public class AcquiringViewConfiguration {
         /// показывать кнопку оплаты Системы Быстрых Платежей
         case buttonPaySPB
     }
+    
+    /// Стиль popup-экранов.
+    public enum PopupStyle {
+        /// Отображается только как bottom sheet.
+        case bottomSheet
+        /// Отображается как bottom sheet.
+        /// При растягивании до верхней границы экран пушится в UINavigationController.
+        case dynamic
+    }
 
     public struct FeaturesOptions {
         var fpsEnabled: Bool = false
@@ -70,6 +79,7 @@ public class AcquiringViewConfiguration {
     public var fields: [InfoFields] = []
     public var viewTitle: String?
     public var startViewHeight: CGFloat?
+    public var popupStyle: PopupStyle = .dynamic
 
     public init() {}
 }
@@ -194,14 +204,23 @@ public class AcquiringUISDK: NSObject {
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
+        modalViewController.popupStyle = configuration.popupStyle
         modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)
         }
+        
+        modalViewController.cancelCompletion = {
+            completeHandler(.success(nil))
+        }
 
         // present
         let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: presentingViewController)
+        presentationController.cancelCompletion = {
+            completeHandler(.success(nil))
+        }
+        
         modalViewController.transitioningDelegate = presentationController
         presentingViewController.present(modalViewController, animated: true, completion: {
             _ = presentationController
