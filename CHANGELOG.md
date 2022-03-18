@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+## Added
+* add parameter to configure pullup fullscreen behaviour
+* add pullup close completion closure(MIC-4824) 
+
 ## [2.6.4] - 2021-02-22
 
 ## Added
