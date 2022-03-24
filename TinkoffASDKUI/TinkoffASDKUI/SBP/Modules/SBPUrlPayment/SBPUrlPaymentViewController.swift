@@ -26,6 +26,11 @@ public enum PaymentSource {
     case paymentId(Int64)
 }
 
+public enum SBPError: Swift.Error {
+    /// Превышен лимит запросов статуса платежа
+    case requestLimitExceeded
+}
+
 public enum SBPUrlPaymentViewControllerError: Error {
     case failedToOpenBankApp(SBPBank)
 }
@@ -65,7 +70,8 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
     private var sbpURL: URL?
     private var paymentStatusResponse: PaymentStatusResponse?
     private var isPollingPaymentStatus = false
-    private var paymentStatusRequestCount: Int = .paymentStatusRequestLimit
+    private var errorPaymentStatusRequestCount = Int.paymentStatusRequestLimit
+    private var paymentStatusRequestCount = Int.paymentStatusRequestLimit
     
     init(paymentSource: PaymentSource,
          paymentService: PaymentService,
@@ -265,19 +271,27 @@ private extension SBPUrlPaymentViewController {
                 guard let self = self else { return }
                 switch result {
                 case let .failure(error):
-                    guard self.paymentStatusRequestCount > 0 else {
+                    guard self.errorPaymentStatusRequestCount > 0 else {
                         self.isPollingPaymentStatus = false
                         self.handleError(error)
                         return
                     }
-                    self.paymentStatusRequestCount -= 1
+                    self.errorPaymentStatusRequestCount -= 1
                     DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
                         self?.startPaymentStatusPolling(paymentId: paymentId)
                     }
                 case let .success(response):
-                    self.paymentStatusRequestCount = .paymentStatusRequestLimit
+                    self.errorPaymentStatusRequestCount = .paymentStatusRequestLimit
+                    self.paymentStatusRequestCount -= 1
                     switch response.status {
                     case .new, .unknown, .formShowed:
+                        guard self.paymentStatusRequestCount > 0 else {
+                            self.isPollingPaymentStatus = false
+                            self.dismiss(animated: true) { [weak self] in
+                                self?.completion?(.failure(SBPError.requestLimitExceeded))
+                            }
+                            return
+                        }
                         DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
                             self?.startPaymentStatusPolling(paymentId: paymentId)
                         }
