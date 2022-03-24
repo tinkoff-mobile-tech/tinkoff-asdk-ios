@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.6] - 2021-03-25
+
 ## Fixed
 * sbp close callback issue(MIC-4782)
 
