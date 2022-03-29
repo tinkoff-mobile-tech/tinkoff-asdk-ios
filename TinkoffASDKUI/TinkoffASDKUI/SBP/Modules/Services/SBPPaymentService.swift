@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import TinkoffASDKCore
 
 public protocol SBPPaymentService {
@@ -55,5 +54,3 @@ private extension DefaultSBPPaymentService {
         }
     }
 }
-
-

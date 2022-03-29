@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 extension UIViewController {
@@ -37,4 +36,3 @@ extension UIViewController {
                                                                      completion: completion)
     }
 }
-

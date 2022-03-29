@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class BigButtonContainer: UIView {
@@ -66,4 +65,3 @@ private extension BigButtonContainer {
 private extension UIEdgeInsets {
     static let buttonInsets: UIEdgeInsets = .init(top: 16, left: 16, bottom: 24, right: 16)
 }
-

@@ -120,8 +120,7 @@ public struct PaymentStatusResponse: ResponseOperation {
                 orderId: String,
                 paymentId: Int64,
                 amount: Int64,
-                status: PaymentStatus)
-    {
+                status: PaymentStatus) {
         self.success = success
         self.errorCode = errorCode
         self.errorMessage = errorMessage

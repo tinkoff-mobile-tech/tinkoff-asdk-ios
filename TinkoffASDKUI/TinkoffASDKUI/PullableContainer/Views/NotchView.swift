@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class NotchView: UIView {
@@ -43,4 +42,3 @@ private extension NotchView {
         layer.masksToBounds = true
     }
 }
-

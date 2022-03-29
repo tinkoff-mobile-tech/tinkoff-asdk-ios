@@ -78,7 +78,9 @@ open class InputMaskTextFieldDelegate: MaskedTextFieldDelegate {
 
     override open var debugDescription: String {
         return _affineFormats.reduce(mask.debugDescription) { (debugDescription: String, affineFormat: String) -> String in
+            // swiftlint: disable force_try
             try! debugDescription + "\n" + InputMask.getOrCreate(withFormat: affineFormat).debugDescription
+            // swiftlint: enable force_try
         }
     }
 }
@@ -88,7 +90,9 @@ internal extension InputMaskTextFieldDelegate {
         let primaryAffinity: Int = calculateAffinity(ofMask: mask, forText: text, caretPosition: caretPosition, autocomplete: autocomplete)
 
         var masks: [(InputMask, Int)] = affineFormats.map { (affineFormat: String) -> (InputMask, Int) in
+            // swiftlint: disable force_try
             let mask: InputMask = try! InputMask.getOrCreate(withFormat: affineFormat)
+            // swiftlint: enable force_try
             let affinity: Int = self.calculateAffinity(ofMask: mask, forText: text, caretPosition: caretPosition, autocomplete: autocomplete)
 
             return (mask, affinity)

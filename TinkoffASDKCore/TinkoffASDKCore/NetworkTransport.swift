@@ -260,7 +260,9 @@ final class AcquaringNetworkTransport: NetworkTransport {
                     return
                 }
 
+                // swiftlint: disable force_cast
                 completionHandler(.success(delegatedResponse as! Response))
+                // swiftlint: enable force_cast
                 return
             }
 

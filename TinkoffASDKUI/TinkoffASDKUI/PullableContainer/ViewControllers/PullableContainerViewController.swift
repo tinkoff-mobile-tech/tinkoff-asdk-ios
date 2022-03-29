@@ -17,13 +17,14 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 public final class PullableContainerViewController: UIViewController {
     
     private var customView: PullableContainerView {
+        // swiftlint: disable force_cast
         return view as! PullableContainerView
+        // swiftlint: enable force_cast
     }
     
     private let content: PullableContainerContent & UIViewController

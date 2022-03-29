@@ -125,8 +125,7 @@ public struct PaymentInitData: Codable {
                 orderId: String,
                 customerKey: String?,
                 redirectDueDate: Date? = nil,
-                payType: PayType? = nil)
-    {
+                payType: PayType? = nil) {
         self.amount = amount
         self.orderId = orderId
         self.customerKey = customerKey
@@ -138,8 +137,7 @@ public struct PaymentInitData: Codable {
                 orderId: String,
                 customerKey: String?,
                 redirectDueDate: Date? = nil,
-                payType: PayType? = nil)
-    {
+                payType: PayType? = nil) {
         let int64Amount = Int64(amount.doubleValue * 100)
         self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate, payType: payType)
     }
@@ -244,8 +242,7 @@ public struct PaymentInitResponseData {
 
     public init(amount: Int64,
                 orderId: String,
-                paymentId: Int64)
-    {
+                paymentId: Int64) {
         self.amount = amount
         self.orderId = orderId
         self.paymentId = paymentId

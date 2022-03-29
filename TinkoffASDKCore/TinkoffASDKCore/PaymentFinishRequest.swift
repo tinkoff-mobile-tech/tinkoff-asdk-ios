@@ -64,8 +64,7 @@ public enum PaymentSourceData: Codable {
 
         if let number = try? container.decode(String.self, forKey: .cardNumber),
            let expDate = try? container.decode(String.self, forKey: .cardExpDate),
-           let cvv = try? container.decode(String.self, forKey: .cardCVV)
-        {
+           let cvv = try? container.decode(String.self, forKey: .cardCVV) {
             self = .cardNumber(number: number, expDate: expDate, cvv: cvv)
         } else if let cardId = try? container.decode(String.self, forKey: .savedCardId) {
             let cvv = try? container.decode(String.self, forKey: .cardCVV)

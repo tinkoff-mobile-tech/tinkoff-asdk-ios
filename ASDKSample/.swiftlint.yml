@@ -1,4 +1,4 @@
-warning_threshold: 254
+warning_threshold: 1
 
 included:
 - ../Development

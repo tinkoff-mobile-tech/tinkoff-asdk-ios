@@ -866,8 +866,7 @@ public class Receipt: Codable {
                 agentData: AgentData?,
                 supplierInfo: SupplierInfo?,
                 customer: String?,
-                customerInn: String?)
-    {
+                customerInn: String?) {
         self.shopCode = shopCode
         self.email = email
         self.taxation = taxation

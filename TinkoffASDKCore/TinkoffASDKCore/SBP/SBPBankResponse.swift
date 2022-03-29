@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct SBPBankResponse: Decodable {
@@ -40,4 +39,3 @@ public struct SBPBankResponse: Decodable {
         self.banks = resultBanks
     }
 }
-

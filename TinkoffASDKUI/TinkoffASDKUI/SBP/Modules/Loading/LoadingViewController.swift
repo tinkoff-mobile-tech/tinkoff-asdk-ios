@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class LoadingViewController: UIViewController, PullableContainerContent {
@@ -78,7 +77,7 @@ private extension LoadingViewController {
 
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.topAnchor.constraint(equalTo: view.topAnchor),
+            activityIndicator.topAnchor.constraint(equalTo: view.topAnchor)
         ])
         
         NSLayoutConstraint.activate([

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 import TinkoffASDKCore
 
@@ -111,7 +110,7 @@ private extension SBPBankListViewController {
                                             for: .touchUpInside)
         
         tableManager.setTableView(customView.tableView)
-        tableManager.rowSelection = { [weak self] index in
+        tableManager.rowSelection = { [weak self] _ in
             self?.customView.continueButton.isEnabled = true
         }
     }

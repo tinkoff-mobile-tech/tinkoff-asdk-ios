@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 protocol DimmingPresentationControllerDelegate: AnyObject {
@@ -79,4 +78,3 @@ private extension DimmingPresentationController {
         presentedViewController.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 }
-

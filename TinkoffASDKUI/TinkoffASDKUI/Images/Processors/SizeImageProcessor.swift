@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class SizeImageProcessor: ImageProcessor {
@@ -36,7 +35,7 @@ final class SizeImageProcessor: ImageProcessor {
     }
     
     func processImage(_ image: UIImage) -> UIImage {
-        return imageRenderer.image { context in
+        return imageRenderer.image { _ in
             let path = UIBezierPath(ovalIn: CGRect(origin: .zero, size: imageSize))
             path.addClip()
             image.draw(in: CGRect(origin: .zero, size: imageSize))

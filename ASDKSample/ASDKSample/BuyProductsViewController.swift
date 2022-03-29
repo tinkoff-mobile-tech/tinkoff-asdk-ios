@@ -136,7 +136,9 @@ class BuyProductsViewController: UIViewController {
 
     private func createPaymentData() -> PaymentInitData {
         let amount = productsAmount()
+        // swiftlint: disable legacy_random
         let randomOrderId = String(Int64(arc4random()))
+        // swiftlint: enable legacy_random
         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: customerKey)
         paymentData.description = "Краткое описние товара"
 
@@ -627,7 +629,7 @@ extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegat
             switch result {
             case let .failure(error):
                 completion(.init(status: .failure, errors: [error]))
-            case let .success(_):
+            case let .success:
                 completion(.init(status: .success, errors: nil))
             }
         }

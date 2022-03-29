@@ -330,8 +330,7 @@ extension InputCardRequisitesController: InputCardRequisitesDataSource {
     func setup(responderListener: BecomeFirstResponderListener?,
                inputView: InputRequisitesViewInConnection?,
                inputAccessoryView: InputAccessoryViewWithButton? = nil,
-               scaner: CardRequisitesScanerProtocol? = nil)
-    {
+               scaner: CardRequisitesScanerProtocol? = nil) {
         becomeFirstResponderListener = responderListener
         self.inputView = inputView
         inputAccessoryViewWithButton = inputAccessoryView

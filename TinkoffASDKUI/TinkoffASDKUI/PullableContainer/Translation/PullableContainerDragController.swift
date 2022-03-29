@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 protocol PullableContainerDragControllerDelegate: AnyObject {
@@ -80,6 +79,6 @@ final class PullableContainerDragController {
 
 private extension CGFloat {
     static let dismissVelocityTreshold: CGFloat = 1500
-    static let dismissDragProportionTreshold: CGFloat = 1/4
+    static let dismissDragProportionTreshold: CGFloat = 1 / 4
     static let maximumDragOffset: CGFloat = 50
 }

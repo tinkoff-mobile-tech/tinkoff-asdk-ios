@@ -106,8 +106,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
     public func addCard(number: String, expDate: String, cvc: String, checkType: String,
                         confirmationHandler: @escaping ((_ result: FinishAddCardResponse, _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Void),
-                        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
-    {
+                        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
         // Step 1 init
         let initAddCardData = InitAddCardData(with: checkType, customerKey: customerKey)
         queryStatus = sdk?.сardListAddCardInit(data: initAddCardData, completionHandler: { [weak self] responseInit in

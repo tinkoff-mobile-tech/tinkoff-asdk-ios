@@ -27,7 +27,9 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
 
         set(newFormat) {
             _maskFormat = newFormat
+            // swiftlint: disable force_try
             mask = try! InputMask.getOrCreate(withFormat: newFormat)
+            // swiftlint: enable force_try
         }
     }
 
@@ -55,7 +57,9 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
 
     public init(format: String) {
         _maskFormat = format
+        // swiftlint: disable force_try
         mask = try! InputMask.getOrCreate(withFormat: format)
+        // swiftlint: enable force_try
         _autocomplete = false
         _autocompleteOnFocus = false
         super.init()
