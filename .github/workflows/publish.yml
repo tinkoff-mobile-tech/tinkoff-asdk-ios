@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
     inputs:
       bump_type:
-        default: "patch"
         required: true
         type: string
         description: "bump type for version"

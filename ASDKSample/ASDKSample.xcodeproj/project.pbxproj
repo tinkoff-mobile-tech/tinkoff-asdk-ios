@@ -293,12 +293,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2C9C7EE5239FBCB400DE4071 /* Build configuration list for PBXNativeTarget "ASDKSample" */;
 			buildPhases = (
+				D7F4A4E825558AE900A8AD95 /* SwiftLint */,
 				6CFAB7742899CF1424BA2DC0 /* [CP] Check Pods Manifest.lock */,
 				2C9C7EB7239FBCB200DE4071 /* Sources */,
 				2C9C7EB8239FBCB200DE4071 /* Frameworks */,
 				2C9C7EB9239FBCB200DE4071 /* Resources */,
 				F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */,
-				D7F4A4E825558AE900A8AD95 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -463,7 +463,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\" ..\n";
 		};
 		F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
