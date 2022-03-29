@@ -1,6 +1,20 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.6] - 2021-03-25
+
+## Fixed
+* sbp close callback issue(MIC-4782)
+
+## Added
+* sbp payment status polling limit(MIC-4817)
+
+## [2.6.5] - 2021-03-18
+
+## Added
+* add parameter to configure pullup fullscreen behaviour
+* add pullup close completion closure(MIC-4824) 
+
 ## [2.6.4] - 2021-02-22
 
 ## Added

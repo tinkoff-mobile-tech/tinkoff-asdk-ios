@@ -74,7 +74,7 @@ private extension DimmingPresentationController {
     }
     
     @objc func dismissTapGestureAction(_ recognizer: UITapGestureRecognizer) {
-        dimmingPresentationControllerDelegate?.didDismissByDimmingViewTap(dimmingPresentationController: self)
         presentedViewController.presentingViewController?.dismiss(animated: true, completion: nil)
+        dimmingPresentationControllerDelegate?.didDismissByDimmingViewTap(dimmingPresentationController: self)
     }
 }
