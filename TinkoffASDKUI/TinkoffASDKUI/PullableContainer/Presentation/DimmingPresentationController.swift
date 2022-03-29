@@ -42,9 +42,9 @@ final class DimmingPresentationController: UIPresentationController {
         containerView?.layoutIfNeeded()
         dimmingView.prepareForPresentationTransition()
         presentedViewController.transitionCoordinator?.animate(alongsideTransition: { [dimmingView] _ in
-            dimmingView.performPresentationTransition()
-        },
-        completion: nil)
+                                                                   dimmingView.performPresentationTransition()
+                                                               },
+                                                               completion: nil)
     }
     
     override func dismissalTransitionWillBegin() {

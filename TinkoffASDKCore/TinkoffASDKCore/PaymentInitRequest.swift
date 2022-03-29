@@ -93,17 +93,17 @@ public struct PaymentInitData: Codable {
         redirectDueDate = try? container.decode(Date.self, forKey: .redirectDueDate)
 
         if let payTypeValue = try? container.decode(String.self, forKey: .payType) {
-            payType = PayType(rawValue: payTypeValue)
+            self.payType = PayType(rawValue: payTypeValue)
         }
 
         if let value = try? container.decode(String.self, forKey: .savingAsParentPayment), value.uppercased() == "Y" {
-            savingAsParentPayment = true
+            self.savingAsParentPayment = true
         }
 
-        paymentFormData = try? container.decode([String: String].self, forKey: .paymentFormData)
-        receipt = try? container.decode(Receipt.self, forKey: .receipt)
-        shops = try? container.decode([Shop].self, forKey: .shops)
-        receipts = try? container.decode([Receipt].self, forKey: .receipts)
+        self.paymentFormData = try? container.decode([String: String].self, forKey: .paymentFormData)
+        self.receipt = try? container.decode(Receipt.self, forKey: .receipt)
+        self.shops = try? container.decode([Shop].self, forKey: .shops)
+        self.receipts = try? container.decode([Receipt].self, forKey: .receipts)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -155,16 +155,18 @@ public final class PaymentInitRequest: RequestOperation, AcquiringRequestTokenPa
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [PaymentInitData.CodingKeys.amount.rawValue,
-                                              PaymentInitData.CodingKeys.orderId.rawValue,
-                                              PaymentInitData.CodingKeys.customerKey.rawValue,
-                                              PaymentInitData.CodingKeys.savingAsParentPayment.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        PaymentInitData.CodingKeys.amount.rawValue,
+        PaymentInitData.CodingKeys.orderId.rawValue,
+        PaymentInitData.CodingKeys.customerKey.rawValue,
+        PaymentInitData.CodingKeys.savingAsParentPayment.rawValue
+    ]
 
     ///
     /// - Parameter data: `PaymentInitPaymentData`
     public init(data: PaymentInitData) {
         if let json = try? data.encode2JSONObject(dateEncodingStrategy: .iso8601) {
-            parameters = json
+            self.parameters = json
         }
     }
 }
@@ -199,24 +201,24 @@ public struct PaymentInitResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
-        amount = try container.decode(Int64.self, forKey: .amount)
+        self.amount = try container.decode(Int64.self, forKey: .amount)
         /// orderId
-        orderId = try container.decode(String.self, forKey: .orderId)
+        self.orderId = try container.decode(String.self, forKey: .orderId)
         /// paymentId
         if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
-            paymentId = value
+            self.paymentId = value
         } else {
-            paymentId = try container.decode(Int64.self, forKey: .paymentId)
+            self.paymentId = try container.decode(Int64.self, forKey: .paymentId)
         }
 
         if let statusValue = try? container.decode(String.self, forKey: .status) {
-            status = PaymentStatus(rawValue: statusValue)
+            self.status = PaymentStatus(rawValue: statusValue)
         } else {
-            status = .unknown
+            self.status = .unknown
         }
     }
 
@@ -249,8 +251,8 @@ public struct PaymentInitResponseData {
     }
 
     public init(paymentInitResponse: PaymentInitResponse) {
-        amount = paymentInitResponse.amount
-        orderId = paymentInitResponse.orderId
-        paymentId = paymentInitResponse.paymentId
+        self.amount = paymentInitResponse.amount
+        self.orderId = paymentInitResponse.orderId
+        self.paymentId = paymentInitResponse.paymentId
     }
 }

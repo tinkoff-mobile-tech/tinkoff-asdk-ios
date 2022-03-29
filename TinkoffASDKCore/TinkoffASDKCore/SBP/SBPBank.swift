@@ -23,13 +23,13 @@ public struct SBPBank: Decodable {
     public let name: String
     public let logoURL: URL?
     public let schema: String
-    
+
     enum CodingKeys: String, CodingKey {
         case name = "bankName"
         case logoURL
         case schema
     }
-    
+
     public init(name: String,
                 logoURL: URL?,
                 schema: String) {

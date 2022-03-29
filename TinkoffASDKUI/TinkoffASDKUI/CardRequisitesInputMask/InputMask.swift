@@ -37,7 +37,7 @@ public class InputMask: CustomDebugStringConvertible, CustomStringConvertible {
     ///
     /// - throws: ```CompilerError``` if format string is incorrect.
     public required init(format: String) throws {
-        initialState = try InputMaskBuilder().build(formatString: format)
+        self.initialState = try InputMaskBuilder().build(formatString: format)
     }
 
     /// Constructor.
@@ -109,15 +109,11 @@ public class InputMask: CustomDebugStringConvertible, CustomStringConvertible {
             }
         }
 
-        return Result(
-            formattedText: CaretString(
-                string: modifiedString,
-                caretPosition: modifiedString.index(modifiedString.startIndex, offsetBy: modifiedCaretPosition)
-            ),
-            extractedValue: extractedValue,
-            affinity: affinity,
-            complete: noMandatoryCharactersLeftAfterState(state)
-        )
+        return Result(formattedText: CaretString(string: modifiedString,
+                                                 caretPosition: modifiedString.index(modifiedString.startIndex, offsetBy: modifiedCaretPosition)),
+                      extractedValue: extractedValue,
+                      affinity: affinity,
+                      complete: noMandatoryCharactersLeftAfterState(state))
     }
 
     /// Generate placeholder.

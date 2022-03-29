@@ -129,11 +129,11 @@ public struct DeviceInfoParams: Codable {
     }
 
     public init(cresCallbackUrl: String, languageId: String = "ru", screenWidth: Int, screenHeight: Int, colorDepth: Int = 32) {
-        threeDSCompInd = "Y"
-        javaEnabled = "true"
+        self.threeDSCompInd = "Y"
+        self.javaEnabled = "true"
         self.colorDepth = colorDepth
-        language = languageId
-        timezone = TimeZone.current.secondsFromGMT() / 60
+        self.language = languageId
+        self.timezone = TimeZone.current.secondsFromGMT() / 60
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
@@ -248,19 +248,21 @@ public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.cardData.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.source.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.route.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
+        PaymentFinishRequestData.CodingKeys.cardData.rawValue,
+        PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
+        PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
+        PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
+        PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
+        PaymentFinishRequestData.CodingKeys.source.rawValue,
+        PaymentFinishRequestData.CodingKeys.route.rawValue
+    ]
 
     ///
     /// - Parameter data: `PaymentFinishRequestData`
     public init(data: PaymentFinishRequestData) {
-        parameters = [:]
+        self.parameters = [:]
         parameters?.updateValue(data.paymentId, forKey: PaymentFinishRequestData.CodingKeys.paymentId.rawValue)
 
         if let value = data.sendEmail {
@@ -398,32 +400,32 @@ public struct PaymentFinishResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
-        paymentStatus = .unknown
+        self.paymentStatus = .unknown
         if let statusValue = try? container.decode(String.self, forKey: .paymentStatus) {
-            paymentStatus = PaymentStatus(rawValue: statusValue)
+            self.paymentStatus = PaymentStatus(rawValue: statusValue)
         }
 
-        responseStatus = .unknown
+        self.responseStatus = .unknown
         switch paymentStatus {
         case .checking3ds:
             if let confirmation3DS = try? Confirmation3DSData(from: decoder) {
-                responseStatus = .needConfirmation3DS(confirmation3DS)
+                self.responseStatus = .needConfirmation3DS(confirmation3DS)
             } else if let confirmation3DSACS = try? Confirmation3DSDataACS(from: decoder) {
-                responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
+                self.responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
             }
 
         case .authorized, .confirmed, .checked3ds:
             if let finishStatus = try? PaymentStatusResponse(from: decoder) {
-                responseStatus = .done(finishStatus)
+                self.responseStatus = .done(finishStatus)
             }
 
         default:
             if let finishStatus = try? PaymentStatusResponse(from: decoder) {
-                responseStatus = .done(finishStatus)
+                self.responseStatus = .done(finishStatus)
             }
         }
     } // init

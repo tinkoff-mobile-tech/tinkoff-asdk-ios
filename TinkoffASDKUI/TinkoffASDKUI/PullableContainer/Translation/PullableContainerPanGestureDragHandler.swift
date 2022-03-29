@@ -22,14 +22,14 @@ import UIKit
 final class PullableContainerPanGestureDragHandler: PullableContainerDragHandler {
     private weak var dragController: PullableContainerDragController?
     private let panGestureRecognizer: UIPanGestureRecognizer
-    
+
     init(dragController: PullableContainerDragController?,
          panGestureRecognizer: UIPanGestureRecognizer) {
         self.dragController = dragController
         self.panGestureRecognizer = panGestureRecognizer
         setup()
     }
-    
+
     func cancel() {
         panGestureRecognizer.isEnabled = false
         panGestureRecognizer.isEnabled = true
@@ -40,7 +40,7 @@ private extension PullableContainerPanGestureDragHandler {
     func setup() {
         panGestureRecognizer.addTarget(self, action: #selector(panGestureAction(_:)))
     }
-    
+
     @objc func panGestureAction(_ recognizer: UIPanGestureRecognizer) {
         let yTranslation = panGestureRecognizer.translation(in: panGestureRecognizer.view).y
         switch recognizer.state {

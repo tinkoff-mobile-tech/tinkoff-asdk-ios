@@ -54,7 +54,7 @@ class PaymentStatusRequest: RequestOperation, AcquiringRequestTokenParams {
     /// - Parameter data: `PaymentFinishRequestData`
     init(data: PaymentInfoData) {
         if let json = try? data.encode2JSONObject() {
-            parameters = json
+            self.parameters = json
         }
     }
 }
@@ -88,18 +88,18 @@ public struct PaymentStatusResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
 
         // orderId
-        orderId = try container.decode(String.self, forKey: .orderId)
+        self.orderId = try container.decode(String.self, forKey: .orderId)
 
         // paymentId
         if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
-            paymentId = value
+            self.paymentId = value
         } else {
-            paymentId = try container.decode(Int64.self, forKey: .paymentId)
+            self.paymentId = try container.decode(Int64.self, forKey: .paymentId)
         }
 
         // amount
@@ -108,9 +108,9 @@ public struct PaymentStatusResponse: ResponseOperation {
 
         // status
         if let statusValue = try? container.decode(String.self, forKey: .status) {
-            status = PaymentStatus(rawValue: statusValue)
+            self.status = PaymentStatus(rawValue: statusValue)
         } else {
-            status = .unknown
+            self.status = .unknown
         }
     }
 

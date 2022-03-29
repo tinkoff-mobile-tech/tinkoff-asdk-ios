@@ -24,13 +24,13 @@ protocol URLOpener {
 }
 
 final class ApplicationURLOpener: URLOpener {
-    
+
     private let application: UIApplication
-    
+
     init(application: UIApplication) {
         self.application = application
     }
-    
+
     func openUrl(_ url: URL) {
         application.open(url,
                          options: [:],

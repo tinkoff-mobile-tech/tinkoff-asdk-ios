@@ -39,9 +39,9 @@ public final class AcquiringSdk: NSObject {
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
-        fpsEnabled = configuration.fpsEnabled
+        self.fpsEnabled = configuration.fpsEnabled
 
-        terminalKey = configuration.credential.terminalKey
+        self.terminalKey = configuration.credential.terminalKey
 
         if let publicKey: SecKey = RSAEncryption.secKey(string: configuration.credential.publicKey) {
             self.publicKey = publicKey
@@ -57,16 +57,16 @@ public final class AcquiringSdk: NSObject {
             let sessionConfiguration = URLSessionConfiguration.default
             sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
             sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-            
-            networkTransport = AcquaringNetworkTransport(urlDomain: url,
-                                                         session: URLSession(configuration: sessionConfiguration),
-                                                         deviceInfo: deviceInfo)
+
+            self.networkTransport = AcquaringNetworkTransport(urlDomain: url,
+                                                              session: URLSession(configuration: sessionConfiguration),
+                                                              deviceInfo: deviceInfo)
         } else {
             throw AcquiringSdkError.url
         }
 
-        languageKey = configuration.language
-        logger = configuration.logger
+        self.languageKey = configuration.language
+        self.logger = configuration.logger
         networkTransport.logger = logger
     }
 
@@ -103,7 +103,7 @@ public final class AcquiringSdk: NSObject {
     public func paymentInit(data: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) -> Cancellable {
         let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
         let enrichedData = paramsEnricher.enrich(data)
-        
+
         let request = PaymentInitRequest(data: enrichedData)
         let commonParameters: JSONObject = createCommonParameters()
         request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
@@ -336,15 +336,14 @@ public final class AcquiringSdk: NSObject {
             completionHandler(result)
         }
     }
-    
+
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
     ///
     /// - Parameters:
     ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
-    
+
     public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
         let loader = DefaultSBPBankLoader()
         loader.loadBanks(completion: completion)
     }
-    
 } // AcquiringSdk

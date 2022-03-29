@@ -31,7 +31,7 @@ final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
             .connectionType: String.mobileSDK,
             .version: Version.versionString
         ]
-        
+
         paymentData.addPaymentData(additionalParams)
         return paymentData
     }

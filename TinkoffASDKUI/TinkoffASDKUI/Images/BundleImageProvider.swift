@@ -21,11 +21,11 @@ import UIKit
 
 final class BundleImageProvider {
     private let screen: UIScreen
-    
+
     init(screen: UIScreen) {
         self.screen = screen
     }
-    
+
     func urlForImage(named: String, imageExtension: String) -> URL? {
         Bundle.uiResources.url(forResource: "\(named)@\(Int(screen.scale))x", withExtension: imageExtension)
     }

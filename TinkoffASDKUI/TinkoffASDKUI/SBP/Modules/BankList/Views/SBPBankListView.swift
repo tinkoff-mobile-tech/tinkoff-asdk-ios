@@ -40,6 +40,7 @@ final class SBPBankListView: UIView {
         setup()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -65,9 +66,11 @@ private extension SBPBankListView {
                                      for: .normal)
         continueButton.setTitleColor(UIColor.asdk.darkGray,
                                      for: .disabled)
-        continueButton.backgroundColors = [.normal: style.continueButtonStyle.backgroundColor,
-                                           .disabled: UIColor.asdk.lightGray,
-                                           .highlighted: style.continueButtonStyle.backgroundColor]
+        continueButton.backgroundColors = [
+            .normal: style.continueButtonStyle.backgroundColor,
+            .disabled: UIColor.asdk.lightGray,
+            .highlighted: style.continueButtonStyle.backgroundColor
+        ]
         
         setupConstraints()
     }
@@ -111,7 +114,7 @@ private extension SBPBankListView {
         tableView.tableHeaderView = headerView
         
         headerView.translatesAutoresizingMaskIntoConstraints = true
-      }
+    }
 }
 
 private extension CGFloat {

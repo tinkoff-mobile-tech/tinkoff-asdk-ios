@@ -28,6 +28,7 @@ final class BigButtonContainer: UIView {
         setup()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -46,9 +47,9 @@ final class BigButtonContainer: UIView {
         
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor,
-                                                constant: UIEdgeInsets.buttonInsets.top),
+                                        constant: UIEdgeInsets.buttonInsets.top),
             button.leftAnchor.constraint(equalTo: leftAnchor,
-                                                 constant: UIEdgeInsets.buttonInsets.left),
+                                         constant: UIEdgeInsets.buttonInsets.left),
             button.rightAnchor.constraint(equalTo: rightAnchor,
                                           constant: -UIEdgeInsets.buttonInsets.right),
             buttonBottomConstraint

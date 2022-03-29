@@ -9,11 +9,11 @@ import Foundation
 
 struct IPv4Address: TinkoffASDKCore.IPAddress {
     var stringValue: String
-    
+
     var fullStringValue: String {
         return stringValue
     }
-    
+
     init?(_ stringValue: String) {
         let validator = IPAddressValidator()
         guard validator.validateIPAddress(stringValue, type: .v4) else {

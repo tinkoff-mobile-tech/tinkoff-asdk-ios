@@ -19,11 +19,11 @@
 
 import UIKit
 
-protocol BecomeFirstResponderListener: class {
+protocol BecomeFirstResponderListener: AnyObject {
     func textFieldShouldBecomeFirstResponder(_ textField: UITextField) -> Bool
 }
 
-protocol InputCardRequisitesDataSource: class {
+protocol InputCardRequisitesDataSource: AnyObject {
     func setup(responderListener: BecomeFirstResponderListener?,
                inputView: InputRequisitesViewInConnection?,
                inputAccessoryView: InputAccessoryViewWithButton?,

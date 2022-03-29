@@ -19,7 +19,7 @@
 
 import Foundation
 
-public protocol LoggerDelegate: class {
+public protocol LoggerDelegate: AnyObject {
     func print(_ value: String, file: String, function: String, line: Int)
 }
 

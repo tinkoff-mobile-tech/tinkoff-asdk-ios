@@ -42,15 +42,15 @@ class AddNewCardViewController: PopUpViewContoller {
     var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
-    
+
     // MARK: - Style
-    
+
     struct Style {
         let addCardButtonStyle: ButtonStyle
     }
-    
+
     var style: Style?
-    
+
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {
@@ -77,15 +77,15 @@ class AddNewCardViewController: PopUpViewContoller {
                cardRequisitesValidator.validateCardCVC(cvc: cvc) {
                 viewWaiting.isHidden = false
                 cardListDataSourceDelegate?.cardListToAddCard(number: number,
-                                                            expDate: expDate,
-                                                            cvc: cvc,
-                                                            addCardViewPresenter: self,
-                                                            alertViewHelper: alertViewHelper,
-                                                            completeHandler: { [weak self] response in
-                                                                self?.closeViewController {
-                                                                    self?.completeHandler?(response)
-                                                                }
-                                                            })
+                                                              expDate: expDate,
+                                                              cvc: cvc,
+                                                              addCardViewPresenter: self,
+                                                              alertViewHelper: alertViewHelper,
+                                                              completeHandler: { [weak self] response in
+                                                                  self?.closeViewController {
+                                                                      self?.completeHandler?(response)
+                                                                  }
+                                                              })
             } // validate card requisites
         }
     } // onButtonAddTouch

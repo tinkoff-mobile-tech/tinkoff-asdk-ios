@@ -34,7 +34,7 @@ private extension FormatSanitizer {
 
         for char in string {
             if char == "[" {
-                if currentBlock.count > 0 {
+                if !currentBlock.isEmpty {
                     blocks.append(currentBlock)
                 }
 

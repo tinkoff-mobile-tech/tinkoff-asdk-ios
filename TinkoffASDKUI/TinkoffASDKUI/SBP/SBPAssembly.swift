@@ -40,8 +40,7 @@ final class SBPAssembly {
                                     sbpPaymentService: sbpPaymentService,
                                     banksListViewController: banksListViewController,
                                     configuration: configuration,
-                                    completion: completionHandler
-        )
+                                    completion: completionHandler)
     }
     
     func noAvailableBanksViewController(paymentStatusResponse: PaymentStatusResponse,

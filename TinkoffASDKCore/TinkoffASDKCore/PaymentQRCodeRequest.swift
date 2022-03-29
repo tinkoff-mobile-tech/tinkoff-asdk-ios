@@ -58,9 +58,9 @@ public struct PaymentInvoiceQRCodeData: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         paymentId = try container.decode(Int64.self, forKey: .paymentId)
         if let typeValue = try? container.decode(String.self, forKey: .paymentInvoiceType) {
-            paymentInvoiceType = PaymentInvoiceSBPSourceType(rawValue: typeValue)
+            self.paymentInvoiceType = PaymentInvoiceSBPSourceType(rawValue: typeValue)
         } else {
-            paymentInvoiceType = .url
+            self.paymentInvoiceType = .url
         }
     }
 
@@ -84,14 +84,16 @@ public class PaymentInvoiceQRCodeRequest: RequestOperation, AcquiringRequestToke
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [PaymentInvoiceQRCodeData.CodingKeys.paymentId.rawValue,
-                                              PaymentInvoiceQRCodeData.CodingKeys.paymentInvoiceType.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        PaymentInvoiceQRCodeData.CodingKeys.paymentId.rawValue,
+        PaymentInvoiceQRCodeData.CodingKeys.paymentInvoiceType.rawValue
+    ]
 
     ///
     /// - Parameter data: `PaymentInvoiceQRCodeData`
     public init(data: PaymentInvoiceQRCodeData) {
         if let json = try? data.encode2JSONObject() {
-            parameters = json
+            self.parameters = json
         }
     }
 }
@@ -129,21 +131,21 @@ public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
 
         // orderId
-        orderId = try container.decode(String.self, forKey: .orderId)
+        self.orderId = try container.decode(String.self, forKey: .orderId)
 
         // paymentId
         if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
-            paymentId = value
+            self.paymentId = value
         } else {
-            paymentId = try container.decode(Int64.self, forKey: .paymentId)
+            self.paymentId = try container.decode(Int64.self, forKey: .paymentId)
         }
 
-        qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
+        self.qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -181,7 +183,7 @@ public final class PaymentInvoiceQRCodeCollectorRequest: RequestOperation, Acqui
     ///
     /// - Parameter data: `PaymentInvoiceQRCodeResponseType`
     public init(data: PaymentInvoiceSBPSourceType) {
-        parameters = [:]
+        self.parameters = [:]
         parameters?.updateValue(data.rawValue, forKey: PaymentInvoiceQRCodeData.CodingKeys.paymentInvoiceType.rawValue)
     }
 }
@@ -216,11 +218,11 @@ public struct PaymentInvoiceQRCodeCollectorResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
-        qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
+        self.qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
     }
 
     public func encode(to encoder: Encoder) throws {

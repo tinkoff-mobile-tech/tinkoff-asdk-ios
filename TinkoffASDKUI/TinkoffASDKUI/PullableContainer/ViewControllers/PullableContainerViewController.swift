@@ -34,12 +34,12 @@ public final class PullableContainerViewController: UIViewController {
 
     private var cachedViewHeight: CGFloat = 0
     
-    public override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+    override public var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         get { dimmingTransitioningDelegate }
         set {}
     }
     
-    public override var modalPresentationStyle: UIModalPresentationStyle {
+    override public var modalPresentationStyle: UIModalPresentationStyle {
         get { .custom }
         set {}
     }
@@ -51,22 +51,23 @@ public final class PullableContainerViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - View Life Cycle
     
-    public override func loadView() {
+    override public func loadView() {
         view = PullableContainerView()
     }
     
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
     
-    public override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if cachedViewHeight != view.bounds.height {
             cachedViewHeight = view.bounds.height
@@ -76,7 +77,7 @@ public final class PullableContainerViewController: UIViewController {
         }
     }
     
-    public override func viewSafeAreaInsetsDidChange() {
+    override public func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         dragController?.insets.bottom = view.safeAreaInsets.bottom
     }
@@ -111,10 +112,8 @@ private extension PullableContainerViewController {
         let panGesture = UIPanGestureRecognizer()
         customView.dragView.addGestureRecognizer(panGesture)
         
-        let panGestureHandler = PullableContainerPanGestureDragHandler(
-            dragController: dragController,
-            panGestureRecognizer: panGesture
-        )
+        let panGestureHandler = PullableContainerPanGestureDragHandler(dragController: dragController,
+                                                                       panGestureRecognizer: panGesture)
         
         let scrollHandler = PullableContainerScrollDragHandler(dragController: dragController,
                                                                scrollView: customView.scrollView)
@@ -134,7 +133,7 @@ private extension PullableContainerViewController {
                        usingSpringWithDamping: 0.8,
                        initialSpringVelocity: 2,
                        options: .curveEaseInOut) {
-            self.customView.layoutIfNeeded()
+                self.customView.layoutIfNeeded()
         }
     }
     
@@ -153,7 +152,7 @@ extension PullableContainerViewController: PullableContainerDragControllerDelega
                        usingSpringWithDamping: 0.8,
                        initialSpringVelocity: 2,
                        options: .curveEaseInOut) {
-            self.customView.layoutIfNeeded()
+                self.customView.layoutIfNeeded()
         }
     }
     

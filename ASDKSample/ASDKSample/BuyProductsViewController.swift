@@ -17,10 +17,10 @@
 //  limitations under the License.
 //
 
+import PassKit
 import TinkoffASDKCore
 import TinkoffASDKUI
 import UIKit
-import PassKit
 
 // TODO: Separate BuyProductsViewController in several files/classes
 // swiftlint:disable file_length
@@ -80,7 +80,7 @@ class BuyProductsViewController: UIViewController {
             buttonAddToCart.isEnabled = false
             buttonAddToCart.title = nil
         }
-        
+
         updateTableViewCells()
     }
 
@@ -269,9 +269,9 @@ class BuyProductsViewController: UIViewController {
     }
 
     func payByApplePay() {
-        
+
         let paymentData = createPaymentData()
-        
+
         let request = PKPaymentRequest()
         request.merchantIdentifier = paymentApplePayConfiguration.merchantIdentifier
         request.supportedNetworks = paymentApplePayConfiguration.supportedNetworks
@@ -285,13 +285,13 @@ class BuyProductsViewController: UIViewController {
             PKPaymentSummaryItem(label: paymentData.description ?? "",
                                  amount: NSDecimalNumber(value: Double(paymentData.amount) / Double(100.0)))
         ]
-        
+
         guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
             return
         }
-        
+
         viewController.delegate = self
-                
+
         present(viewController, animated: true, completion: nil)
     }
 
@@ -329,7 +329,7 @@ class BuyProductsViewController: UIViewController {
         }
         // swiftformat:enable indent
     }
-    
+
     func generateSbpUrl() {
         let viewController = sdk.urlSBPPaymentViewController(paymentSource: .paymentData(createPaymentData()),
                                                              configuration: acquiringViewConfiguration())
@@ -617,21 +617,21 @@ extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegat
     func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
-    
+
     func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController,
                                             didAuthorizePayment payment: PKPayment,
                                             handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
         let initData = createPaymentData()
-        
+
         sdk.performPaymentWithApplePay(paymentData: initData,
                                        paymentToken: payment.token,
                                        acquiringConfiguration: .init(paymentStage: .none)) { result in
-            switch result {
-            case let .failure(error):
-                completion(.init(status: .failure, errors: [error]))
-            case let .success:
-                completion(.init(status: .success, errors: nil))
-            }
+                switch result {
+                case let .failure(error):
+                    completion(.init(status: .failure, errors: [error]))
+                case let .success:
+                    completion(.init(status: .success, errors: nil))
+                }
         }
     }
 }

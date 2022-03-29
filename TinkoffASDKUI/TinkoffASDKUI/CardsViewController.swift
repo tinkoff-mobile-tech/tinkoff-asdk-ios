@@ -44,15 +44,15 @@ class CardsViewController: UIViewController {
             return UIBarButtonItem(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeView(_:)))
         }
     }()
-    
+
     // MARK: - Style
-    
+
     struct Style {
         let addNewCardStyle: AddNewCardViewController.Style
     }
-    
+
     var style: Style?
-    
+
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {
@@ -324,10 +324,10 @@ extension CardsViewController: UITableViewDataSource {
             cardListDataSourceDelegate.cardListToDeactivateCard(at: indexPath.row, startHandler: {
                 self.viewWaiting.isHidden = false
             }) { result in
-                self.viewWaiting.isHidden = true
-                if result != nil {
-                    tableView.reloadData()
-                }
+                    self.viewWaiting.isHidden = true
+                    if result != nil {
+                        tableView.reloadData()
+                    }
             }
         } // switch tableViewSection
     }

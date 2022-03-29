@@ -39,9 +39,7 @@ private extension InputMaskBuilder {
             throw InputMaskBuildError.wrongFormat
         }
 
-        return FreeState(
-            child: try build(String(string.dropFirst()), valueable: false, fixed: false),
-            ownCharacter: char
-        )
+        return FreeState(child: try build(String(string.dropFirst()), valueable: false, fixed: false),
+                         ownCharacter: char)
     }
 }

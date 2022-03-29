@@ -17,8 +17,8 @@
 //  limitations under the License.
 //
 
-import UIKit
 import TinkoffASDKCore
+import UIKit
 
 final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoadable {
     typealias CustomView = SBPNoAvailableBanksView
@@ -39,6 +39,7 @@ final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoada
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

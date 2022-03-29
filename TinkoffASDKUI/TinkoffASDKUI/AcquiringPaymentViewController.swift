@@ -22,7 +22,7 @@ import UIKit
 import WebKit
 
 /// получение информации для отрисовки списка карт
-protocol AcquiringCardListDataSourceDelegate: class {
+protocol AcquiringCardListDataSourceDelegate: AnyObject {
     /// Количество доступных, активных карт
     func getCardListNumberOfCards() -> Int
     /// Статус обновления списока карт
@@ -81,7 +81,7 @@ enum AcquiringViewTableViewCells {
     case email(value: String?, placeholder: String)
 }
 
-protocol AcquiringView: class {
+protocol AcquiringView: AnyObject {
     func setCells(_ value: [AcquiringViewTableViewCells])
 
     func changedStatus(_ status: AcquiringViewStatus)
@@ -103,7 +103,7 @@ protocol AcquiringView: class {
     ///
     func cardRequisites() -> PaymentSourceData?
     func infoEmail() -> String?
-    
+
     func setPaymentType(_ paymentType: PaymentType)
 }
 
@@ -112,15 +112,15 @@ extension AcquiringView {
 }
 
 class AcquiringPaymentViewController: PopUpViewContoller {
-    
+
     // MARK: Style
-    
+
     struct Style {
         let payButtonStyle: ButtonStyle
     }
-    
+
     var style: Style?
-    
+
     // MARK: AcquiringView
 
     var onTouchButtonShowCardList: (() -> Void)?
@@ -137,7 +137,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
             updateTableViewCells()
         }
     }
-    
+
     private var paymentType: PaymentType = .standart {
         didSet {
             cardListPresenter.setPaymentType(paymentType)
@@ -159,16 +159,18 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        registerCells(["ScrollableTableViewCell",
-                       "ButtonTableViewCell",
-                       "StatusTableViewCell",
-                       "ResistanceSpaceTableViewCell",
-                       "QRCodeWebTableViewCell",
-                       "QRCodeImageTableViewCell",
-                       "AmountTableViewCell",
-                       "PSLogoTableViewCell",
-                       "LabelTableViewCell",
-                       "TextFieldTableViewCell"], for: tableView)
+        registerCells([
+            "ScrollableTableViewCell",
+            "ButtonTableViewCell",
+            "StatusTableViewCell",
+            "ResistanceSpaceTableViewCell",
+            "QRCodeWebTableViewCell",
+            "QRCodeImageTableViewCell",
+            "AmountTableViewCell",
+            "PSLogoTableViewCell",
+            "LabelTableViewCell",
+            "TextFieldTableViewCell"
+        ], for: tableView)
 
         tableViewCells = [.waitingInitPayment]
         tableView.dataSource = self
@@ -290,9 +292,9 @@ class AcquiringPaymentViewController: PopUpViewContoller {
         switch cardListPresenter.requisies() {
         case let .savedCard(_, cvc):
             let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-            
+
             var validationResult = true
-            
+
             if case .paymentWainingCVC = paymentStatus {
                 validationResult = cardRequisitesValidator.validateCardCVC(cvc: cvc)
             } else {
@@ -303,7 +305,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
                     validationResult = true
                 }
             }
-            
+
             if !validationResult {
                 cardListPresenter.setStatus(.error, statusText: nil)
             }
@@ -595,7 +597,7 @@ extension AcquiringPaymentViewController: AcquiringView {
 
         return nil
     }
-    
+
     func setPaymentType(_ paymentType: PaymentType) {
         self.paymentType = paymentType
     }

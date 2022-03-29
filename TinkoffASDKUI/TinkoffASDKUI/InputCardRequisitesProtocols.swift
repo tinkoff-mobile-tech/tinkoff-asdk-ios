@@ -42,7 +42,7 @@ protocol CardRequisitesInputMaskProtocol {
     func seriliazeExpiredDate(date: String?) -> (year: Int, month: Int)
 }
 
-protocol CardRequisitesScanerProtocol: class {
+protocol CardRequisitesScanerProtocol: AnyObject {
     func startScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void)
 }
 

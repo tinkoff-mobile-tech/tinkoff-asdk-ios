@@ -69,7 +69,7 @@ private extension PullableContainerScrollDragHandler {
                 }
                 let movingOffset = yTranslation - translatingBeginOffset
                 dragController?.didDragWith(offset: movingOffset)
-                self.scrollView.contentOffset = .zero
+                scrollView.contentOffset = .zero
             } else {
                 if isMoving {
                     scrollView.setContentOffset(.zero, animated: false)
@@ -78,7 +78,6 @@ private extension PullableContainerScrollDragHandler {
                     isMoving = !(movingOffset < 0)
                 }
             }
-            break
         case .cancelled, .ended:
             if isMoving {
                 dragController?.didEndDragging(offset: yTranslation, velocity: yVelocity)

@@ -17,8 +17,8 @@
 //  limitations under the License.
 //
 
-import UIKit
 import TinkoffASDKCore
+import UIKit
 
 public enum PaymentSource {
     case paymentData(PaymentInitData)
@@ -61,6 +61,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
             contentHeightDidChange?(self)
         }
     }
+
     private var sbpURL: URL?
     private var paymentStatusResponse: PaymentStatusResponse?
     private var isPollingPaymentStatus = false
@@ -85,6 +86,7 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -236,7 +238,7 @@ private extension SBPUrlPaymentViewController {
     }
     
     func openBankApplication(bank: SBPBank) {
-        guard let url = self.sbpURL else {
+        guard let url = sbpURL else {
             return
         }
         

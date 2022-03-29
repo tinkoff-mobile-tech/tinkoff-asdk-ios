@@ -21,11 +21,11 @@ import TinkoffASDKCore
 
 final class SBPBankAppAvailabilityChecker {
     private let application: UIApplication
-    
+
     public init(application: UIApplication) {
         self.application = application
     }
-    
+
     func checkIfBankAppAvailable(bank: SBPBank) -> Bool {
         guard let url = URL(string: "\(bank.schema)://") else { return false }
         return application.canOpenURL(url)

@@ -67,13 +67,13 @@ public struct Check3dsVersionResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
-        tdsServerTransID = try? container.decode(String.self, forKey: .tdsServerTransID)
-        threeDSMethodURL = try? container.decode(String.self, forKey: .threeDSMethodURL)
-        version = try container.decode(String.self, forKey: .version)
+        self.tdsServerTransID = try? container.decode(String.self, forKey: .tdsServerTransID)
+        self.threeDSMethodURL = try? container.decode(String.self, forKey: .threeDSMethodURL)
+        self.version = try container.decode(String.self, forKey: .version)
     } // init
 
     public func encode(to encoder: Encoder) throws {

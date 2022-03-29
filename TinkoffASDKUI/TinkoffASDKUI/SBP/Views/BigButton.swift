@@ -21,17 +21,17 @@ import UIKit
 
 final class BigButton: UIButton {
     var backgroundColors: [UIControl.State: UIColor]?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
     }
-    
+
     // MARK: - Button state
 
     override var isHighlighted: Bool {
@@ -47,7 +47,7 @@ final class BigButton: UIButton {
             updateBackground()
         }
     }
-    
+
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric,
                height: .height)
@@ -59,7 +59,7 @@ private extension BigButton {
         layer.cornerRadius = .cornerRadius
         layer.masksToBounds = true
     }
-    
+
     func updateBackground() {
         guard let backgroundColors = backgroundColors else { return }
         let color: UIColor?

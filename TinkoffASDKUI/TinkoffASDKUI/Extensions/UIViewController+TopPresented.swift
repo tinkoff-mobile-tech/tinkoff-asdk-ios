@@ -27,12 +27,12 @@ extension UIViewController {
             return self
         }
     }
-    
+
     func presentOnTop(viewController: UIViewController,
                       animated: Bool,
                       completion: (() -> Void)? = nil) {
-        self.topPresentedViewControllerOrSelfIfNotPresenting.present(viewController,
-                                                                     animated: animated,
-                                                                     completion: completion)
+        topPresentedViewControllerOrSelfIfNotPresenting.present(viewController,
+                                                                animated: animated,
+                                                                completion: completion)
     }
 }

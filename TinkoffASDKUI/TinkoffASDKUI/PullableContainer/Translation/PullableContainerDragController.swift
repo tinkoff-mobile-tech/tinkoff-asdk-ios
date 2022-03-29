@@ -61,7 +61,7 @@ final class PullableContainerDragController {
     }
     
     private func calculateDragViewHeight(offset: CGFloat) -> CGFloat {
-        let resultOffset = max(-.maximumDragOffset, (offset < 0 ? offset / 2 : offset))
+        let resultOffset = max(-.maximumDragOffset, offset < 0 ? offset / 2 : offset)
         let resultHeight = min(maximumDragViewHeight(), dragViewHeight - resultOffset)
         return resultHeight
     }

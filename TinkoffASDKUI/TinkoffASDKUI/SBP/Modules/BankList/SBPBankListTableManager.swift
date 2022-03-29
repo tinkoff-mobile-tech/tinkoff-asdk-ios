@@ -56,9 +56,11 @@ final class SBPBankListTableManager: NSObject {
 
 private extension SBPBankListTableManager {
     func setup() {
-        cellImageLoader.setImageProcessors([SizeImageProcessor(size: CGSize(width: .cellImageSide, height: .cellImageSide),
-                                                               scale: UIScreen.main.scale),
-                                            RoundImageProcessor()])
+        cellImageLoader.setImageProcessors([
+            SizeImageProcessor(size: CGSize(width: .cellImageSide, height: .cellImageSide),
+                               scale: UIScreen.main.scale),
+            RoundImageProcessor()
+        ])
     }
     
     func setupTableView() {
@@ -80,7 +82,7 @@ extension SBPBankListTableManager: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
-                                                     for: indexPath) as? SBPBankCell else {
+                                                           for: indexPath) as? SBPBankCell else {
             return UITableViewCell()
         }
         

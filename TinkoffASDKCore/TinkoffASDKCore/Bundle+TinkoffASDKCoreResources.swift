@@ -20,9 +20,9 @@
 import Foundation
 
 extension Bundle {
-    
+
     private class CoreResourcesToken {}
-    
+
     static var coreResources: Bundle {
         Bundle(for: CoreResourcesToken.self)
             .url(forResource: .resourceName, withExtension: .bundleExtension)
