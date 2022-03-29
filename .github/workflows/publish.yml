@@ -12,9 +12,6 @@ jobs:
   publish:
     uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.publish.yml@add_ios
     with:
-      xcodeproj_path: "TinkoffID.xcodeproj"
-      scheme_name: "TinkoffID-Package"
-      podspec_name: "TinkoffID.podspec"
       bump_type: ${{ inputs.bump_type }}
     secrets:
       cocapods_trunk_token: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
