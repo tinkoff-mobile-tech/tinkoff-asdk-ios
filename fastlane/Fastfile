@@ -3,3 +3,12 @@ import_from_git(
   branch: "add_ios", # The branch to checkout on the repository.
   path: "fastlane/Fastfile" # The path of the Fastfile in the repository.
 )
+
+override_lane :extend_bump_version do |options|
+  version_swift="TinkoffASDKCore/TinkoffASDKCore/Version.swift"
+  relative_file_path = "../" + version_swift
+  data = File.read(relative_file_path)
+  data = data.gsub(/versionString = \"([\d.]+)\"/, "versionString = \"#{options[:version]}\"")
+  File.write(relative_file_path, data)
+  [version_swift]
+end
