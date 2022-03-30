@@ -1,7 +1,6 @@
 warning_threshold: 254
 
 included:
-- ../Development
 - ./
 
 excluded:

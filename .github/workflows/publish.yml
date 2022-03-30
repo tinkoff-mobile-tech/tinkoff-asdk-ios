@@ -10,7 +10,7 @@ on:
 
 jobs:
   publish:
-    uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.publish.yml@add_ios
+    uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.publish.yml@v1
     with:
       bump_type: ${{ inputs.bump_type }}
     secrets:
