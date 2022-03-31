@@ -64,7 +64,8 @@ public enum PaymentSourceData: Codable {
 
         if let number = try? container.decode(String.self, forKey: .cardNumber),
            let expDate = try? container.decode(String.self, forKey: .cardExpDate),
-           let cvv = try? container.decode(String.self, forKey: .cardCVV) {
+           let cvv = try? container.decode(String.self, forKey: .cardCVV)
+        {
             self = .cardNumber(number: number, expDate: expDate, cvv: cvv)
         } else if let cardId = try? container.decode(String.self, forKey: .savedCardId) {
             let cvv = try? container.decode(String.self, forKey: .cardCVV)
@@ -129,11 +130,11 @@ public struct DeviceInfoParams: Codable {
     }
 
     public init(cresCallbackUrl: String, languageId: String = "ru", screenWidth: Int, screenHeight: Int, colorDepth: Int = 32) {
-        self.threeDSCompInd = "Y"
-        self.javaEnabled = "true"
+        threeDSCompInd = "Y"
+        javaEnabled = "true"
         self.colorDepth = colorDepth
-        self.language = languageId
-        self.timezone = TimeZone.current.secondsFromGMT() / 60
+        language = languageId
+        timezone = TimeZone.current.secondsFromGMT() / 60
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
@@ -248,21 +249,19 @@ public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
-        PaymentFinishRequestData.CodingKeys.cardData.rawValue,
-        PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
-        PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
-        PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
-        PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
-        PaymentFinishRequestData.CodingKeys.source.rawValue,
-        PaymentFinishRequestData.CodingKeys.route.rawValue
-    ]
+    public var tokenParamsKey: Set<String> = [PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.cardData.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.source.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.route.rawValue]
 
     ///
     /// - Parameter data: `PaymentFinishRequestData`
     public init(data: PaymentFinishRequestData) {
-        self.parameters = [:]
+        parameters = [:]
         parameters?.updateValue(data.paymentId, forKey: PaymentFinishRequestData.CodingKeys.paymentId.rawValue)
 
         if let value = data.sendEmail {
@@ -400,32 +399,32 @@ public struct PaymentFinishResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
-        self.paymentStatus = .unknown
+        paymentStatus = .unknown
         if let statusValue = try? container.decode(String.self, forKey: .paymentStatus) {
-            self.paymentStatus = PaymentStatus(rawValue: statusValue)
+            paymentStatus = PaymentStatus(rawValue: statusValue)
         }
 
-        self.responseStatus = .unknown
+        responseStatus = .unknown
         switch paymentStatus {
         case .checking3ds:
             if let confirmation3DS = try? Confirmation3DSData(from: decoder) {
-                self.responseStatus = .needConfirmation3DS(confirmation3DS)
+                responseStatus = .needConfirmation3DS(confirmation3DS)
             } else if let confirmation3DSACS = try? Confirmation3DSDataACS(from: decoder) {
-                self.responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
+                responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
             }
 
         case .authorized, .confirmed, .checked3ds:
             if let finishStatus = try? PaymentStatusResponse(from: decoder) {
-                self.responseStatus = .done(finishStatus)
+                responseStatus = .done(finishStatus)
             }
 
         default:
             if let finishStatus = try? PaymentStatusResponse(from: decoder) {
-                self.responseStatus = .done(finishStatus)
+                responseStatus = .done(finishStatus)
             }
         }
     } // init

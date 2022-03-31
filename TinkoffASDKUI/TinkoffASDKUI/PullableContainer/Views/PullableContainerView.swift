@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 final class PullableContainerView: PassthroughView {
@@ -34,7 +35,6 @@ final class PullableContainerView: PassthroughView {
         setup()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -47,7 +47,7 @@ final class PullableContainerView: PassthroughView {
             containerView.addSubview(content.view)
             setupScrollableContentConstraints(content: content)
         } else {
-            scrollView = UIScrollView()
+            self.scrollView = UIScrollView()
             containerView.addSubview(scrollView)
             scrollView.addSubview(content.view)
             setupNonScrollableContentConstraints(content: content)

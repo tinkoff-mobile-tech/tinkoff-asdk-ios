@@ -194,12 +194,12 @@ public struct PaymentCard: Codable {
         status = PaymentCardStatus(rawValue: statusRawValue)
 
         if let stringValue = try? container.decode(String.self, forKey: .parentPaymentId), let value = Int64(stringValue) {
-            self.parentPaymentId = value
+            parentPaymentId = value
         } else {
-            self.parentPaymentId = try? container.decode(Int64.self, forKey: .parentPaymentId)
+            parentPaymentId = try? container.decode(Int64.self, forKey: .parentPaymentId)
         }
 
-        self.expDate = try? container.decode(String.self, forKey: .expDate)
+        expDate = try? container.decode(String.self, forKey: .expDate)
     }
 
     public init(pan: String, cardId: String, status: PaymentCardStatus, parentPaymentId: Int64?, expDate: String?) {
@@ -360,7 +360,7 @@ public enum Taxation: String {
     case esn
 
     /// Патентная
-    case patent
+    case patent = "patent"
 
     public init(rawValue: String) {
         switch rawValue {
@@ -532,17 +532,17 @@ public struct AgentData: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let agent = try? container.decode(String.self, forKey: .agentSign) {
-            self.agentSign = AgentSign(rawValue: agent)
+            agentSign = AgentSign(rawValue: agent)
         } else {
-            self.agentSign = .another
+            agentSign = .another
         }
-        self.operationName = try? container.decode(String.self, forKey: .operationName)
-        self.phones = try? container.decode([String].self, forKey: .phones)
-        self.receiverPhones = try? container.decode([String].self, forKey: .receiverPhones)
-        self.transferPhones = try? container.decode([String].self, forKey: .transferPhones)
-        self.operatorName = try? container.decode(String.self, forKey: .operatorName)
-        self.operatorAddress = try? container.decode(String.self, forKey: .operatorAddress)
-        self.operatorInn = try? container.decode(String.self, forKey: .operatorInn)
+        operationName = try? container.decode(String.self, forKey: .operationName)
+        phones = try? container.decode([String].self, forKey: .phones)
+        receiverPhones = try? container.decode([String].self, forKey: .receiverPhones)
+        transferPhones = try? container.decode([String].self, forKey: .transferPhones)
+        operatorName = try? container.decode(String.self, forKey: .operatorName)
+        operatorAddress = try? container.decode(String.self, forKey: .operatorAddress)
+        operatorInn = try? container.decode(String.self, forKey: .operatorInn)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -600,7 +600,7 @@ public struct SupplierInfo: Codable {
 ///
 /// Информация о товаре
 public struct Item: Codable {
-
+    
     /// Сумма в копейках. Целочисленное значение не более 10 знаков.
     var price: Int64 = 0
 
@@ -659,22 +659,22 @@ public struct Item: Codable {
         name = try? container.decode(String.self, forKey: .name)
         amount = try container.decode(Int64.self, forKey: .amount)
         if let taxValue = try? container.decode(String.self, forKey: .tax) {
-            self.tax = Tax(rawValue: taxValue)
+            tax = Tax(rawValue: taxValue)
         }
-        self.ean13 = try? container.decode(String.self, forKey: .ean13)
-        self.shopCode = try? container.decode(String.self, forKey: .shopCode)
-        self.measurementUnit = try? container.decode(String.self, forKey: .measurementUnit)
+        ean13 = try? container.decode(String.self, forKey: .ean13)
+        shopCode = try? container.decode(String.self, forKey: .shopCode)
+        measurementUnit = try? container.decode(String.self, forKey: .measurementUnit)
 
         if let paymentMethodValue = try? container.decode(String.self, forKey: .paymentMethod) {
-            self.paymentMethod = PaymentMethod(rawValue: paymentMethodValue)
+            paymentMethod = PaymentMethod(rawValue: paymentMethodValue)
         }
         if let paymentObjectValue = try? container.decode(String.self, forKey: .paymentObject) {
-            self.paymentObject = PaymentObject(rawValue: paymentObjectValue)
+            paymentObject = PaymentObject(rawValue: paymentObjectValue)
         }
-        self.agentData = try? container.decode(AgentData.self, forKey: .agentData)
-        self.supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
+        agentData = try? container.decode(AgentData.self, forKey: .agentData)
+        supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
     }
-
+    
     public init(amount: Int64,
                 price: Int64,
                 name: String,
@@ -848,14 +848,14 @@ public class Receipt: Codable {
         shopCode = try? container.decode(String.self, forKey: .shopCode)
         email = try? container.decode(String.self, forKey: .email)
         if let value = try? container.decode(String.self, forKey: .taxation) {
-            self.taxation = Taxation(rawValue: value)
+            taxation = Taxation(rawValue: value)
         }
-        self.phone = try? container.decode(String.self, forKey: .phone)
-        self.items = try? container.decode([Item].self, forKey: .items)
-        self.agentData = try? container.decode(AgentData.self, forKey: .agentData)
-        self.supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
-        self.customer = try? container.decode(String.self, forKey: .customer)
-        self.customerInn = try? container.decode(String.self, forKey: .customerInn)
+        phone = try? container.decode(String.self, forKey: .phone)
+        items = try? container.decode([Item].self, forKey: .items)
+        agentData = try? container.decode(AgentData.self, forKey: .agentData)
+        supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
+        customer = try? container.decode(String.self, forKey: .customer)
+        customerInn = try? container.decode(String.self, forKey: .customerInn)
     }
 
     public init(shopCode: String?,
@@ -866,7 +866,8 @@ public class Receipt: Codable {
                 agentData: AgentData?,
                 supplierInfo: SupplierInfo?,
                 customer: String?,
-                customerInn: String?) {
+                customerInn: String?)
+    {
         self.shopCode = shopCode
         self.email = email
         self.taxation = taxation

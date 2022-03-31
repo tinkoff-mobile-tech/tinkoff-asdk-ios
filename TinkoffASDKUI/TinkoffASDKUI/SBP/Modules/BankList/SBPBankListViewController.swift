@@ -17,8 +17,9 @@
 //  limitations under the License.
 //
 
-import TinkoffASDKCore
+
 import UIKit
+import TinkoffASDKCore
 
 protocol SBPBankListViewControllerDelegate: AnyObject {
     func bankListViewController(_ bankListViewController: SBPBankListViewController,
@@ -71,7 +72,6 @@ final class SBPBankListViewController: UIViewController, PullableContainerScroll
         super.init(nibName: nil, bundle: nil)
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -111,7 +111,7 @@ private extension SBPBankListViewController {
                                             for: .touchUpInside)
         
         tableManager.setTableView(customView.tableView)
-        tableManager.rowSelection = { [weak self] _ in
+        tableManager.rowSelection = { [weak self] index in
             self?.customView.continueButton.isEnabled = true
         }
     }

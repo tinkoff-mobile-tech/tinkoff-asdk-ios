@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import TinkoffASDKCore
 
 public protocol SBPPaymentService {
@@ -26,11 +27,11 @@ public protocol SBPPaymentService {
 
 public final class DefaultSBPPaymentService: SBPPaymentService {
     private let coreSDK: AcquiringSdk
-
+    
     public init(coreSDK: AcquiringSdk) {
         self.coreSDK = coreSDK
     }
-
+    
     public func createSBPUrl(paymentId: Int64,
                              completion: ((Result<URL, Error>) -> Void)?) {
         requestSBPUrl(paymentId: paymentId, completion: completion)
@@ -54,3 +55,5 @@ private extension DefaultSBPPaymentService {
         }
     }
 }
+
+

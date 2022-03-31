@@ -51,7 +51,7 @@ protocol CardListViewOutConnection: InputViewStatus {
     var didSelectSBPItem: (() -> Void)? { get set }
 
     var didSelectShowCardList: (() -> Void)? { get set }
-
+    
     func setPaymentType(_ paymentType: PaymentType)
 }
 
@@ -86,7 +86,7 @@ class CardListPresenter: NSObject {
     private var waitingInputCVCForParentPaymentId: Int64?
     private var waitingInputIndexPath: IndexPath?
     private var lastActiveCardIndexPath: IndexPath?
-
+    
     private var paymentType: PaymentType = .standart
 
     private func setupCardListCollectionView(_ collectionView: UICollectionView) {
@@ -127,8 +127,8 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
         switch dataSource?.getCardListFetchStatus() {
         case .object:
             let cards = getCardsForCurrentPaymentType()
-
-            for index in 0 ..< cards.count {
+            
+            for index in 0..<cards.count {
                 cellIndex.append(CellInfo(type: .card, index: index))
                 if let parentPaymentId = waitingInputCVCForParentPaymentId, cards[index].parentPaymentId == parentPaymentId {
                     waitingInputIndexPath = IndexPath(item: index, section: 0)
@@ -163,11 +163,11 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
                 case .object:
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PaymentCardCollectionViewCell", for: indexPath) as? PaymentCardCollectionViewCell {
                         let cards = getCardsForCurrentPaymentType()
-
+                        
                         let card = cards[cellInfo.index]
                         cell.labelCardName.text = card.pan
                         cell.labelCardExpData.text = card.expDateFormat()
-
+                        
                         cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
                             if let numbers = requisites, card.pan.hasPrefix(numbers) {
                                 cell?.imageViewLogo.image = icon
@@ -177,7 +177,7 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
                                 cell?.imageViewLogo.isHidden = true
                             }
                         })
-
+                        
                         if let parentPaymentId = waitingInputCVCForParentPaymentId, parentPaymentId == card.parentPaymentId {
                             cell.textFieldCardCVC.isHidden = false
                             inputCardCVCRequisitesPresenter.present(responderListener: becomeFirstResponderListener, inputView: cell)
@@ -438,7 +438,7 @@ extension CardListPresenter: CardListViewOutConnection {
             }
         }
     }
-
+    
     func setPaymentType(_ paymentType: PaymentType) {
         self.paymentType = paymentType
     }

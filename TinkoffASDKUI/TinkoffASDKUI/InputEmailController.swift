@@ -39,7 +39,8 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
                  preFilledValue: String?,
                  textFieldCell: InputFieldTableViewCellStatusProtocol,
                  tableView: UITableView,
-                 firstResponderListener: BecomeFirstResponderListener?) {
+                 firstResponderListener: BecomeFirstResponderListener?)
+    {
         if let value = hint {
             self.hint = value
         } else {

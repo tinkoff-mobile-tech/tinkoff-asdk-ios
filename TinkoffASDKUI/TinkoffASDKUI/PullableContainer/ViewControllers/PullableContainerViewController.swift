@@ -17,14 +17,13 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 public final class PullableContainerViewController: UIViewController {
     
     private var customView: PullableContainerView {
-        // swiftlint: disable force_cast
         return view as! PullableContainerView
-        // swiftlint: enable force_cast
     }
     
     private let content: PullableContainerContent & UIViewController
@@ -34,12 +33,12 @@ public final class PullableContainerViewController: UIViewController {
 
     private var cachedViewHeight: CGFloat = 0
     
-    override public var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+    public override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         get { dimmingTransitioningDelegate }
         set {}
     }
     
-    override public var modalPresentationStyle: UIModalPresentationStyle {
+    public override var modalPresentationStyle: UIModalPresentationStyle {
         get { .custom }
         set {}
     }
@@ -51,23 +50,22 @@ public final class PullableContainerViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - View Life Cycle
     
-    override public func loadView() {
+    public override func loadView() {
         view = PullableContainerView()
     }
     
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
     
-    override public func viewDidLayoutSubviews() {
+    public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if cachedViewHeight != view.bounds.height {
             cachedViewHeight = view.bounds.height
@@ -77,7 +75,7 @@ public final class PullableContainerViewController: UIViewController {
         }
     }
     
-    override public func viewSafeAreaInsetsDidChange() {
+    public override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         dragController?.insets.bottom = view.safeAreaInsets.bottom
     }
@@ -112,8 +110,10 @@ private extension PullableContainerViewController {
         let panGesture = UIPanGestureRecognizer()
         customView.dragView.addGestureRecognizer(panGesture)
         
-        let panGestureHandler = PullableContainerPanGestureDragHandler(dragController: dragController,
-                                                                       panGestureRecognizer: panGesture)
+        let panGestureHandler = PullableContainerPanGestureDragHandler(
+            dragController: dragController,
+            panGestureRecognizer: panGesture
+        )
         
         let scrollHandler = PullableContainerScrollDragHandler(dragController: dragController,
                                                                scrollView: customView.scrollView)
@@ -133,7 +133,7 @@ private extension PullableContainerViewController {
                        usingSpringWithDamping: 0.8,
                        initialSpringVelocity: 2,
                        options: .curveEaseInOut) {
-                self.customView.layoutIfNeeded()
+            self.customView.layoutIfNeeded()
         }
     }
     
@@ -152,7 +152,7 @@ extension PullableContainerViewController: PullableContainerDragControllerDelega
                        usingSpringWithDamping: 0.8,
                        initialSpringVelocity: 2,
                        options: .curveEaseInOut) {
-                self.customView.layoutIfNeeded()
+            self.customView.layoutIfNeeded()
         }
     }
     

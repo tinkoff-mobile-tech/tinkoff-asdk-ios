@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import TinkoffASDKCore
 
 public protocol SBPApplicationOpener {
@@ -27,13 +28,13 @@ public final class DefaultSBPApplicationOpener: SBPApplicationOpener {
     enum Error: Swift.Error {
         case invalidSBPUrl
     }
-
+    
     private let application: UIApplication
-
+    
     public init(application: UIApplication) {
         self.application = application
     }
-
+    
     public func openSBPUrl(_ url: URL, in bankApplication: SBPBank, completion: ((Bool) -> Void)?) throws {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { throw Error.invalidSBPUrl }
         components.scheme = bankApplication.schema

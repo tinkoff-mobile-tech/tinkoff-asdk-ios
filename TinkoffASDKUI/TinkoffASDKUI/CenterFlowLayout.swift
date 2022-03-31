@@ -94,9 +94,7 @@ class CollectionViewCenteredFlowLayout: UICollectionViewFlowLayout {
                     continue
                 }
                 // copying is required to avoid "UICollectionViewFlowLayout cache mismatched frame"
-                // swiftlint: disable force_cast
                 let currentItemAttributes = layoutAttributes.copy() as! UICollectionViewLayoutAttributes
-                // swiftlint: enable force_cast
                 // if the current frame, once stretched to the full row doesn't intersect the previous frame then they are on different rows
                 if previousFrame != nil, !currentItemAttributes.frame.intersects(CGRect(x: -.greatestFiniteMagnitude, y: previousFrame!.origin.y, width: .infinity, height: previousFrame!.size.height)) {
                     cells.append([])
@@ -126,9 +124,7 @@ class CollectionViewCenteredFlowLayout: UICollectionViewFlowLayout {
                     continue
                 }
                 // copying is required to avoid "UICollectionViewFlowLayout cache mismatched frame"
-                // swiftlint: disable force_cast
                 let currentItemAttributes = layoutAttributes.copy() as! UICollectionViewLayoutAttributes
-                // swiftlint: enable force_cast
                 // if the current frame, once stretched to the full column doesn't intersect the previous frame then they are on different columns
                 if previousFrame != nil, !currentItemAttributes.frame.intersects(CGRect(x: previousFrame!.origin.x, y: -.greatestFiniteMagnitude, width: previousFrame!.size.width, height: .infinity)) {
                     cells.append([])

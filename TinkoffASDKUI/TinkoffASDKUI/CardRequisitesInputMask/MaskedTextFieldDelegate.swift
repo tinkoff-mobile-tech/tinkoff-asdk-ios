@@ -27,9 +27,7 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
 
         set(newFormat) {
             _maskFormat = newFormat
-            // swiftlint: disable force_try
             mask = try! InputMask.getOrCreate(withFormat: newFormat)
-            // swiftlint: enable force_try
         }
     }
 
@@ -56,12 +54,10 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     open weak var listener: MaskedTextFieldDelegateListener?
 
     public init(format: String) {
-        self._maskFormat = format
-        // swiftlint: disable force_try
-        self.mask = try! InputMask.getOrCreate(withFormat: format)
-        // swiftlint: enable force_try
-        self._autocomplete = false
-        self._autocompleteOnFocus = false
+        _maskFormat = format
+        mask = try! InputMask.getOrCreate(withFormat: format)
+        _autocomplete = false
+        _autocompleteOnFocus = false
         super.init()
     }
 
@@ -70,8 +66,10 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     }
 
     open func put(text: String, into field: UITextField) {
-        let result: InputMask.Result = mask.apply(toText: CaretString(string: text, caretPosition: text.endIndex),
-                                                  autocomplete: _autocomplete)
+        let result: InputMask.Result = mask.apply(
+            toText: CaretString(string: text, caretPosition: text.endIndex),
+            autocomplete: _autocomplete
+        )
 
         field.text = result.formattedText.string
 
@@ -139,8 +137,10 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     open func deleteText(inRange range: NSRange, inField field: UITextField) -> (String, Bool) {
         let text: String = replaceCharacters(inText: field.text, range: range, withCharacters: "")
 
-        let result: InputMask.Result = mask.apply(toText: CaretString(string: text, caretPosition: text.index(text.startIndex, offsetBy: range.location)),
-                                                  autocomplete: false)
+        let result: InputMask.Result = mask.apply(
+            toText: CaretString(string: text, caretPosition: text.index(text.startIndex, offsetBy: range.location)),
+            autocomplete: false
+        )
 
         field.text = result.formattedText.string
         setCaretPosition(range.location, inField: field)
@@ -151,8 +151,10 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     open func modifyText(inRange range: NSRange, inField field: UITextField, withText text: String) -> (String, Bool) {
         let updatedText: String = replaceCharacters(inText: field.text, range: range, withCharacters: text)
 
-        let result: InputMask.Result = mask.apply(toText: CaretString(string: updatedText, caretPosition: updatedText.index(updatedText.startIndex, offsetBy: caretPosition(inField: field) + text.count)),
-                                                  autocomplete: autocomplete)
+        let result: InputMask.Result = mask.apply(
+            toText: CaretString(string: updatedText, caretPosition: updatedText.index(updatedText.startIndex, offsetBy: caretPosition(inField: field) + text.count)),
+            autocomplete: autocomplete
+        )
 
         field.text = result.formattedText.string
         let position: Int = result.formattedText.string.distance(from: result.formattedText.string.startIndex, to: result.formattedText.caretPosition)
@@ -184,8 +186,10 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     open func textFieldShouldClear(_ textField: UITextField) -> Bool {
         let shouldClear: Bool = listener?.textFieldShouldClear?(textField) ?? true
         if shouldClear {
-            let result: InputMask.Result = mask.apply(toText: CaretString(string: "", caretPosition: "".endIndex),
-                                                      autocomplete: autocomplete)
+            let result: InputMask.Result = mask.apply(
+                toText: CaretString(string: "", caretPosition: "".endIndex),
+                autocomplete: autocomplete
+            )
 
             listener?.textField?(textField, didFillMask: result.complete, extractValue: result.extractedValue)
         }
@@ -222,7 +226,7 @@ public extension MaskedTextFieldDelegate {
 
 internal extension MaskedTextFieldDelegate {
     func isDeletion(inRange range: NSRange, string: String) -> Bool {
-        return range.length > 0 && string.isEmpty
+        return range.length > 0 && string.count == 0
     }
 
     func replaceCharacters(inText text: String?, range: NSRange, withCharacters newText: String) -> String {

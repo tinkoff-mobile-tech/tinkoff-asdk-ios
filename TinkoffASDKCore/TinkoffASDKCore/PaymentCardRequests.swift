@@ -55,7 +55,7 @@ public final class CardListRequest: RequestOperation, AcquiringRequestTokenParam
     /// - Parameter requestData: `InitGetCardListData`
     public init(data: InitGetCardListData) {
         if let json = try? data.encode2JSONObject() {
-            self.parameters = json
+            parameters = json
         }
     }
 }
@@ -134,16 +134,14 @@ public final class InitAddCardRequest: RequestOperation, AcquiringRequestTokenPa
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        InitAddCardData.CodingKeys.checkType.rawValue,
-        InitAddCardData.CodingKeys.customerKey.rawValue
-    ]
+    public var tokenParamsKey: Set<String> = [InitAddCardData.CodingKeys.checkType.rawValue,
+                                              InitAddCardData.CodingKeys.customerKey.rawValue]
 
     ///
     /// - Parameter requestData: `InitAddCardData`
     public init(requestData: InitAddCardData) {
         if let json = try? requestData.encode2JSONObject() {
-            self.parameters = json
+            parameters = json
         }
     }
 }
@@ -171,11 +169,11 @@ public struct InitAddCardResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
-        self.requestKey = try container.decode(String.self, forKey: .requestKey)
+        requestKey = try container.decode(String.self, forKey: .requestKey)
     }
 }
 
@@ -225,15 +223,13 @@ class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [
-        FinishAddCardData.CodingKeys.requestKey.rawValue,
-        PaymentFinishRequestData.CodingKeys.cardData.rawValue
-    ]
+    var tokenParamsKey: Set<String> = [FinishAddCardData.CodingKeys.requestKey.rawValue,
+                                       PaymentFinishRequestData.CodingKeys.cardData.rawValue]
 
     ///
     /// - Parameter requestData: `FinishAddCardData`
     init(requestData: FinishAddCardData) {
-        self.parameters = [:]
+        parameters = [:]
         parameters?.updateValue(requestData.cardData(), forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
         parameters?.updateValue(requestData.requestKey, forKey: FinishAddCardData.CodingKeys.requestKey.rawValue)
     }
@@ -283,22 +279,22 @@ public struct FinishAddCardResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
 
-        self.paymentStatus = .unknown
+        paymentStatus = .unknown
         if let statusValue = try? container.decode(String.self, forKey: .paymentStatus) {
-            self.paymentStatus = PaymentStatus(rawValue: statusValue)
+            paymentStatus = PaymentStatus(rawValue: statusValue)
         }
 
-        self.responseStatus = .unknown
+        responseStatus = .unknown
         switch paymentStatus {
         case .checking3ds, .hold3ds:
             if let confirmation3DS = try? Confirmation3DSData(from: decoder) {
-                self.responseStatus = .needConfirmation3DS(confirmation3DS)
+                responseStatus = .needConfirmation3DS(confirmation3DS)
             } else if let confirmation3DSACS = try? Confirmation3DSDataACS(from: decoder) {
-                self.responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
+                responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
             }
 
         case .loop:
@@ -307,17 +303,17 @@ public struct FinishAddCardResponse: ResponseOperation {
 
         case .authorized, .confirmed, .checked3ds:
             if let finishStatus = try? AddCardStatusResponse(from: decoder) {
-                self.responseStatus = .done(finishStatus)
+                responseStatus = .done(finishStatus)
             }
 
         default:
             if let finishStatus = try? AddCardStatusResponse(from: decoder) {
-                self.responseStatus = .done(finishStatus)
+                responseStatus = .done(finishStatus)
             }
         }
 
         //
-        self.cardId = try? container.decode(String.self, forKey: .cardId)
+        cardId = try? container.decode(String.self, forKey: .cardId)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -368,12 +364,12 @@ public struct AddCardStatusResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
         requestKey? = try container.decode(String.self, forKey: .requestKey)
-        self.cardId = try? container.decode(String.self, forKey: .cardId)
+        cardId = try? container.decode(String.self, forKey: .cardId)
     }
 
     public init(success: Bool, errorCode: Int) {
@@ -427,16 +423,14 @@ public final class InitDeactivateCardRequest: RequestOperation, AcquiringRequest
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        InitDeactivateCardData.CodingKeys.cardId.rawValue,
-        InitDeactivateCardData.CodingKeys.customerKey.rawValue
-    ]
+    public var tokenParamsKey: Set<String> = [InitDeactivateCardData.CodingKeys.cardId.rawValue,
+                                              InitDeactivateCardData.CodingKeys.customerKey.rawValue]
 
     ///
     /// - Parameter requestData: `InitDeactivateCardData`
     public init(requestData: InitDeactivateCardData) {
         if let json = try? requestData.encode2JSONObject() {
-            self.parameters = json
+            parameters = json
         }
     }
 }

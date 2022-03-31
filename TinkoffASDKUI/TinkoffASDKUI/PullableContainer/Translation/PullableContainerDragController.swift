@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 protocol PullableContainerDragControllerDelegate: AnyObject {
@@ -61,7 +62,7 @@ final class PullableContainerDragController {
     }
     
     private func calculateDragViewHeight(offset: CGFloat) -> CGFloat {
-        let resultOffset = max(-.maximumDragOffset, offset < 0 ? offset / 2 : offset)
+        let resultOffset = max(-.maximumDragOffset, (offset < 0 ? offset / 2 : offset))
         let resultHeight = min(maximumDragViewHeight(), dragViewHeight - resultOffset)
         return resultHeight
     }
@@ -79,6 +80,6 @@ final class PullableContainerDragController {
 
 private extension CGFloat {
     static let dismissVelocityTreshold: CGFloat = 1500
-    static let dismissDragProportionTreshold: CGFloat = 1 / 4
+    static let dismissDragProportionTreshold: CGFloat = 1/4
     static let maximumDragOffset: CGFloat = 50
 }

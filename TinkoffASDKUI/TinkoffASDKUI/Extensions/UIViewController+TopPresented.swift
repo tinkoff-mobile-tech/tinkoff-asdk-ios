@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 extension UIViewController {
@@ -27,12 +28,13 @@ extension UIViewController {
             return self
         }
     }
-
+    
     func presentOnTop(viewController: UIViewController,
                       animated: Bool,
                       completion: (() -> Void)? = nil) {
-        topPresentedViewControllerOrSelfIfNotPresenting.present(viewController,
-                                                                animated: animated,
-                                                                completion: completion)
+        self.topPresentedViewControllerOrSelfIfNotPresenting.present(viewController,
+                                                                     animated: animated,
+                                                                     completion: completion)
     }
 }
+

@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 final class SBPBankListHeaderView: UIView {
@@ -29,7 +30,6 @@ final class SBPBankListHeaderView: UIView {
         setup()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

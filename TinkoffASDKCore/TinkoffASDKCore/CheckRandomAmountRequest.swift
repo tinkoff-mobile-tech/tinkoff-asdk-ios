@@ -59,16 +59,14 @@ final class CheckRandomAmountRequest: RequestOperation, AcquiringRequestTokenPar
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        CheckingRandomAmountData.CodingKeys.amount.rawValue,
-        CheckingRandomAmountData.CodingKeys.requestKey.rawValue
-    ]
+    public var tokenParamsKey: Set<String> = [CheckingRandomAmountData.CodingKeys.amount.rawValue,
+                                              CheckingRandomAmountData.CodingKeys.requestKey.rawValue]
 
     ///
     /// - Parameter requestData: `CheckingRandomAmountData`
     public init(requestData: CheckingRandomAmountData) {
         if let json = try? requestData.encode2JSONObject() {
-            self.parameters = json
+            parameters = json
         }
     }
 }

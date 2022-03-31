@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 final class SBPNoAvailableBanksView: UIView {
@@ -44,7 +45,6 @@ final class SBPNoAvailableBanksView: UIView {
         setup()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -55,7 +55,7 @@ private extension SBPNoAvailableBanksView {
         addSubview(bottomStackView)
         addSubview(topContainerView)
         
-        backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        self.backgroundColor = UIColor.asdk.dynamic.background.elevation1
          
         topContainerView.addSubview(imageView)
         

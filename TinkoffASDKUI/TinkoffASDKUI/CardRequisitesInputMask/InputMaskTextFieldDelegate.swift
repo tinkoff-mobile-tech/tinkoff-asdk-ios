@@ -19,20 +19,22 @@ open class InputMaskTextFieldDelegate: MaskedTextFieldDelegate {
     }
 
     public init(primaryFormat: String, affineFormats: [String]) {
-        self._affineFormats = affineFormats
+        _affineFormats = affineFormats
         super.init(format: primaryFormat)
     }
 
     override public init(format: String) {
-        self._affineFormats = []
+        _affineFormats = []
         super.init(format: format)
     }
 
     override open func put(text: String, into field: UITextField) {
         let mask: InputMask = pickMask(forText: text, caretPosition: text.endIndex, autocomplete: autocomplete)
 
-        let result: InputMask.Result = mask.apply(toText: CaretString(string: text, caretPosition: text.endIndex),
-                                                  autocomplete: autocomplete)
+        let result: InputMask.Result = mask.apply(
+            toText: CaretString(string: text, caretPosition: text.endIndex),
+            autocomplete: autocomplete
+        )
 
         field.text = result.formattedText.string
 
@@ -46,8 +48,10 @@ open class InputMaskTextFieldDelegate: MaskedTextFieldDelegate {
         let text: String = replaceCharacters(inText: field.text, range: range, withCharacters: "")
         let mask: InputMask = pickMask(forText: text, caretPosition: text.index(text.startIndex, offsetBy: range.location), autocomplete: false)
 
-        let result: InputMask.Result = mask.apply(toText: CaretString(string: text, caretPosition: text.index(text.startIndex, offsetBy: range.location)),
-                                                  autocomplete: false)
+        let result: InputMask.Result = mask.apply(
+            toText: CaretString(string: text, caretPosition: text.index(text.startIndex, offsetBy: range.location)),
+            autocomplete: false
+        )
 
         field.text = result.formattedText.string
         setCaretPosition(range.location, inField: field)
@@ -60,8 +64,10 @@ open class InputMaskTextFieldDelegate: MaskedTextFieldDelegate {
 
         let mask: InputMask = pickMask(forText: updatedText, caretPosition: updatedText.index(updatedText.startIndex, offsetBy: caretPosition(inField: field) + text.count), autocomplete: autocomplete)
 
-        let result: InputMask.Result = mask.apply(toText: CaretString(string: updatedText, caretPosition: updatedText.index(updatedText.startIndex, offsetBy: caretPosition(inField: field) + text.count)),
-                                                  autocomplete: autocomplete)
+        let result: InputMask.Result = mask.apply(
+            toText: CaretString(string: updatedText, caretPosition: updatedText.index(updatedText.startIndex, offsetBy: caretPosition(inField: field) + text.count)),
+            autocomplete: autocomplete
+        )
 
         field.text = result.formattedText.string
         let position: Int = result.formattedText.string.distance(from: result.formattedText.string.startIndex, to: result.formattedText.caretPosition)
@@ -72,9 +78,7 @@ open class InputMaskTextFieldDelegate: MaskedTextFieldDelegate {
 
     override open var debugDescription: String {
         return _affineFormats.reduce(mask.debugDescription) { (debugDescription: String, affineFormat: String) -> String in
-            // swiftlint: disable force_try
             try! debugDescription + "\n" + InputMask.getOrCreate(withFormat: affineFormat).debugDescription
-            // swiftlint: enable force_try
         }
     }
 }
@@ -84,9 +88,7 @@ internal extension InputMaskTextFieldDelegate {
         let primaryAffinity: Int = calculateAffinity(ofMask: mask, forText: text, caretPosition: caretPosition, autocomplete: autocomplete)
 
         var masks: [(InputMask, Int)] = affineFormats.map { (affineFormat: String) -> (InputMask, Int) in
-            // swiftlint: disable force_try
             let mask: InputMask = try! InputMask.getOrCreate(withFormat: affineFormat)
-            // swiftlint: enable force_try
             let affinity: Int = self.calculateAffinity(ofMask: mask, forText: text, caretPosition: caretPosition, autocomplete: autocomplete)
 
             return (mask, affinity)
@@ -115,7 +117,9 @@ internal extension InputMaskTextFieldDelegate {
     }
 
     func calculateAffinity(ofMask mask: InputMask, forText text: String, caretPosition: String.Index, autocomplete: Bool) -> Int {
-        return mask.apply(toText: CaretString(string: text, caretPosition: caretPosition),
-                          autocomplete: autocomplete).affinity
+        return mask.apply(
+            toText: CaretString(string: text, caretPosition: caretPosition),
+            autocomplete: autocomplete
+        ).affinity
     }
 }

@@ -160,7 +160,7 @@ class PopUpViewContoller: UIViewController {
         coordinator.animate(alongsideTransition: { _ in
             //
         }) { [weak self] _ in
-                self?.updateView()
+            self?.updateView()
         }
     }
 
@@ -230,13 +230,13 @@ class PopUpViewContoller: UIViewController {
         didAppearTextFieldNeedBecomeFirstResponder = textField
 
         if let presentingNavigationController = presentingViewController as? UINavigationController {
-
+            
             /// Sometimes PopUpViewController may be presenting other UIViewController
             /// in that case when we call dismiss this presented UIViewController will be dismissed
             /// and when we call `nav.pushViewController(self, animated: false)` after it
             /// happens issue like that https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/14
             /// To prevent it we dismiss any possible presented UIViewController and after that perform self dismiss
-
+            
             dismissPresentedIfNeeded(animated: true) { [weak self] in
                 guard let self = self else { return }
                 self.dismiss(animated: false) {
@@ -246,7 +246,7 @@ class PopUpViewContoller: UIViewController {
                     }
                 }
             }
-
+            
             return false
 
         } else if let parentViewController = presentingViewController {
@@ -295,11 +295,11 @@ class PopUpViewContoller: UIViewController {
                         self.presentationController?.containerView?.setNeedsLayout()
                         self.presentationController?.containerView?.layoutIfNeeded()
                     }) { [weak self] complete in
-                            if complete {
-                                if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
-                                    _ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder)
-                                }
+                        if complete {
+                            if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
+                                _ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder)
                             }
+                        }
                     } // UIView.animate complete
                 } // firstRespondetTop > preferredContentSize.height
 

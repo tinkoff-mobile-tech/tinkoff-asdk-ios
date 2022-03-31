@@ -53,7 +53,7 @@ public class AcquiringSdkConfiguration: NSObject {
     public private(set) var credential: AcquiringSdkCredential
 
     public private(set) var serverEnvironment: AcquiringSdkEnvironment
-
+    
     public private(set) var requestsTimeoutInterval: TimeInterval
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
@@ -69,7 +69,7 @@ public class AcquiringSdkConfiguration: NSObject {
 
     /// Показывать ошибки после выполнения запроса
     public var showErrorAlert: Bool = true
-
+    
     ///
     /// - Parameters:
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
@@ -83,7 +83,7 @@ public class AcquiringSdkConfiguration: NSObject {
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.serverEnvironment = server
     }
-
+    
     public convenience init(credential: AcquiringSdkCredential,
                             server: AcquiringSdkEnvironment = .test) {
         self.init(credential: credential,

@@ -54,16 +54,14 @@ class PaymentChargeRequest: RequestOperation, AcquiringRequestTokenParams {
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [
-        PaymentChargeRequestData.CodingKeys.paymentId.rawValue,
-        PaymentChargeRequestData.CodingKeys.parentPaymentId.rawValue
-    ]
+    var tokenParamsKey: Set<String> = [PaymentChargeRequestData.CodingKeys.paymentId.rawValue,
+                                       PaymentChargeRequestData.CodingKeys.parentPaymentId.rawValue]
 
     ///
     /// - Parameter data: `FinishRequestData`
     init(data: PaymentChargeRequestData) {
         if let json = try? data.encode2JSONObject() {
-            self.parameters = json
+            parameters = json
         }
     }
 }

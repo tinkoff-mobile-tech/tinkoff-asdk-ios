@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 final class SBPUrlPaymentView: UIView {
@@ -31,7 +32,6 @@ final class SBPUrlPaymentView: UIView {
         setup()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

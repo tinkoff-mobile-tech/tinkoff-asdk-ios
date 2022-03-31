@@ -114,9 +114,7 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
 
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
         if container === presentedViewController {
-            // swiftlint: disable force_cast
             return (container as! UIViewController).preferredContentSize
-            // swiftlint: enable force_cast
         } else {
             return super.size(forChildContentContainer: container, withParentContainerSize: parentSize)
         }

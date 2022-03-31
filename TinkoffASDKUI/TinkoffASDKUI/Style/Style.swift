@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 public protocol Style {
@@ -25,14 +26,14 @@ public protocol Style {
 
 public struct DefaultStyle: Style {
     public let bigButtonStyle: ButtonStyle = .init(backgroundColor: UIColor.asdk.yellow,
-                                                   titleColor: UIColor.asdk.black)
+                                            titleColor: UIColor.asdk.black)
     public init() {}
 }
 
 public struct ButtonStyle {
     let backgroundColor: UIColor
     let titleColor: UIColor
-
+    
     public init(backgroundColor: UIColor,
                 titleColor: UIColor) {
         self.backgroundColor = backgroundColor

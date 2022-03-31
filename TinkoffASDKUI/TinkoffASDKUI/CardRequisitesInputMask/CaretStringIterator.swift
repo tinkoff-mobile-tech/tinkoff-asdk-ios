@@ -14,7 +14,7 @@ class CaretStringIterator {
     /// - returns: Initialized `CaretStringIterator` pointing at the beginning of provided `CaretString.string`
     init(caretString: CaretString) {
         self.caretString = caretString
-        self.currentIndex = self.caretString.string.startIndex
+        currentIndex = self.caretString.string.startIndex
     }
 
     /// Inspect, whether `CaretStringIterator` has reached `CaretString.caretPosition` or not.

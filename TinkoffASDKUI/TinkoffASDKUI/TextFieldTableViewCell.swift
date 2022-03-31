@@ -27,7 +27,7 @@ enum InputFieldTableViewCellStatus: Int {
     case disable
 }
 
-protocol InputViewStatus: AnyObject {
+protocol InputViewStatus: class {
     var colorNormal: UIColor { get }
     var colorError: UIColor { get }
     var colorDisable: UIColor { get }

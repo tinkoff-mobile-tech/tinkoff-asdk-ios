@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 final class DimmingView: UIView {
@@ -34,7 +35,6 @@ final class DimmingView: UIView {
         setup()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -47,7 +47,7 @@ final class DimmingView: UIView {
         alpha = minimumAlpha
     }
     
-    func prepareForDimissalTransition() {}
+    func prepareForDimissalTransition() { }
     
     func performDismissalTransition() {
         alpha = dismissedAlpha

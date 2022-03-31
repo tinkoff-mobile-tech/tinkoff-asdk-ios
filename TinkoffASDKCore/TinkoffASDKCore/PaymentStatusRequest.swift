@@ -54,7 +54,7 @@ class PaymentStatusRequest: RequestOperation, AcquiringRequestTokenParams {
     /// - Parameter data: `PaymentFinishRequestData`
     init(data: PaymentInfoData) {
         if let json = try? data.encode2JSONObject() {
-            self.parameters = json
+            parameters = json
         }
     }
 }
@@ -88,18 +88,18 @@ public struct PaymentStatusResponse: ResponseOperation {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         success = try container.decode(Bool.self, forKey: .success)
         errorCode = try Int(container.decode(String.self, forKey: .errorCode))!
-        self.errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        self.errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        self.terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
+        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
+        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
 
         // orderId
-        self.orderId = try container.decode(String.self, forKey: .orderId)
+        orderId = try container.decode(String.self, forKey: .orderId)
 
         // paymentId
         if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
-            self.paymentId = value
+            paymentId = value
         } else {
-            self.paymentId = try container.decode(Int64.self, forKey: .paymentId)
+            paymentId = try container.decode(Int64.self, forKey: .paymentId)
         }
 
         // amount
@@ -108,9 +108,9 @@ public struct PaymentStatusResponse: ResponseOperation {
 
         // status
         if let statusValue = try? container.decode(String.self, forKey: .status) {
-            self.status = PaymentStatus(rawValue: statusValue)
+            status = PaymentStatus(rawValue: statusValue)
         } else {
-            self.status = .unknown
+            status = .unknown
         }
     }
 
@@ -120,7 +120,8 @@ public struct PaymentStatusResponse: ResponseOperation {
                 orderId: String,
                 paymentId: Int64,
                 amount: Int64,
-                status: PaymentStatus) {
+                status: PaymentStatus)
+    {
         self.success = success
         self.errorCode = errorCode
         self.errorMessage = errorMessage

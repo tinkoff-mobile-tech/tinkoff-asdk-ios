@@ -16,7 +16,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-// swiftlint: disable file_length
 
 import PassKit
 import TinkoffASDKCore
@@ -102,7 +101,7 @@ public typealias PaymentCompletionHandler = ((_ result: Result<PaymentStatusResp
 public typealias AddCardCompletionHandler = ((_ result: Result<AddCardStatusResponse, Error>) -> Void)
 
 /// Сканер для реквизитов карты
-public protocol AcquiringScanerProtocol: AnyObject {
+public protocol AcquiringScanerProtocol: class {
     ///
     /// - Parameters:
     ///   - completion: результат сканирования, номер карты `number`, год `yy`, месяц `mm`
@@ -111,7 +110,7 @@ public protocol AcquiringScanerProtocol: AnyObject {
 }
 
 /// Отображение не стандартного AlertView если в приложении используется не UIAlertController
-public protocol AcquiringAlertViewProtocol: AnyObject {
+public protocol AcquiringAlertViewProtocol: class {
     ///
     /// - Parameters:
     ///   - title: заголовок
@@ -121,7 +120,7 @@ public protocol AcquiringAlertViewProtocol: AnyObject {
     func presentAlertView(_ title: String?, message: String?, dismissCompletion: (() -> Void)?) -> UIViewController?
 }
 
-// swiftlint:disable type_body_length
+///
 public class AcquiringUISDK: NSObject {
     private weak var presentingViewController: UIViewController?
     //
@@ -150,14 +149,15 @@ public class AcquiringUISDK: NSObject {
     // data providers
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
-
+    
     private let sbpAssembly: SBPAssembly
-
+    
     private weak var logger: LoggerDelegate?
-
+    
+    
     public init(configuration: AcquiringSdkConfiguration,
                 style: Style = DefaultStyle()) throws {
-        self.acquiringSdk = try AcquiringSdk(configuration: configuration)
+        acquiringSdk = try AcquiringSdk(configuration: configuration)
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
@@ -167,7 +167,7 @@ public class AcquiringUISDK: NSObject {
     /// Вызывается кода пользователь привязывается карту.
     /// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
-
+    
     public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
         let provider: CardListDataProvider
         if let cardListDataProvider = self.cardListDataProvider {
@@ -177,8 +177,8 @@ public class AcquiringUISDK: NSObject {
         } else {
             provider = CardListDataProvider(sdk: acquiringSdk, customerKey: customer)
         }
-
-        cardListDataProvider = provider
+        
+        self.cardListDataProvider = provider
 
         if statusListener == nil {
             cardListDataProvider?.dataSourceStatusListener = self
@@ -233,7 +233,8 @@ public class AcquiringUISDK: NSObject {
                                    paymentData: PaymentInitData,
                                    configuration: AcquiringViewConfiguration,
                                    acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-                                   completionHandler: @escaping PaymentCompletionHandler) {
+                                   completionHandler: @escaping PaymentCompletionHandler)
+    {
         onPaymentCompletionHandler = completionHandler
         acquiringViewConfiguration = configuration
         self.acquiringConfiguration = acquiringConfiguration
@@ -252,11 +253,12 @@ public class AcquiringUISDK: NSObject {
 
         acquiringView?.onTouchButtonPay = { [weak self] in
             if let cardRequisites = self?.acquiringView?.cardRequisites(),
-               let paymentId = self?.paymentInitResponseData?.paymentId {
+               let paymentId = self?.paymentInitResponseData?.paymentId
+            {
                 self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
             }
         }
-
+        
         acquiringView?.onTouchButtonSBP = { [weak self] viewController in
             guard let self = self else { return }
             if let paymentId = self.paymentInitResponseData?.paymentId {
@@ -274,7 +276,8 @@ public class AcquiringUISDK: NSObject {
                                    paymentData: PaymentInitData,
                                    parentPatmentId: Int64,
                                    configuration: AcquiringViewConfiguration,
-                                   completionHandler: @escaping PaymentCompletionHandler) {
+                                   completionHandler: @escaping PaymentCompletionHandler)
+    {
         self.presentingViewController = presentingViewController
         acquiringViewConfiguration = configuration
         onPaymentCompletionHandler = completionHandler
@@ -300,13 +303,14 @@ public class AcquiringUISDK: NSObject {
                                          paymentData: PaymentInitData,
                                          configuration: AcquiringViewConfiguration,
                                          acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-                                         completionHandler: @escaping PaymentCompletionHandler) {
+                                         completionHandler: @escaping PaymentCompletionHandler)
+    {
         presentPaymentSbp(on: presentingViewController,
                           paymentInvoiceSource: .imageSVG,
                           paymentData: paymentData,
                           configuration: configuration,
                           acquiringConfiguration: acquiringConfiguration) { response in
-                completionHandler(response)
+            completionHandler(response)
         }
     }
 
@@ -314,13 +318,14 @@ public class AcquiringUISDK: NSObject {
                                      paymentData: PaymentInitData,
                                      configuration: AcquiringViewConfiguration,
                                      acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-                                     completionHandler: @escaping PaymentCompletionHandler) {
+                                     completionHandler: @escaping PaymentCompletionHandler)
+    {
         presentPaymentSbp(on: presentingViewController,
                           paymentInvoiceSource: .url,
                           paymentData: paymentData,
                           configuration: configuration,
                           acquiringConfiguration: acquiringConfiguration) { response in
-                completionHandler(response)
+            completionHandler(response)
         }
     }
 
@@ -329,7 +334,8 @@ public class AcquiringUISDK: NSObject {
                                    paymentData: PaymentInitData,
                                    configuration: AcquiringViewConfiguration,
                                    acquiringConfiguration: AcquiringConfiguration,
-                                   completionHandler: @escaping PaymentCompletionHandler) {
+                                   completionHandler: @escaping PaymentCompletionHandler)
+    {
         onPaymentCompletionHandler = completionHandler
         self.acquiringConfiguration = acquiringConfiguration
 
@@ -403,13 +409,15 @@ public class AcquiringUISDK: NSObject {
                                                                             configuration: configuration,
                                                                             completionHandler: completionHandler)
         let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
-
+        
         urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
             let presentingViewController = pullableContainerViewController?.presentingViewController
             pullableContainerViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
-                let emptyViewController = self.sbpAssembly.noAvailableBanksViewController(paymentStatusResponse: paymentStatusResponse,
-                                                                                          paymentCompletionHandler: completionHandler)
+                let emptyViewController = self.sbpAssembly.noAvailableBanksViewController(
+                    paymentStatusResponse: paymentStatusResponse,
+                    paymentCompletionHandler: completionHandler
+                )
                 if #available(iOS 13.0, *) {
                     emptyViewController.isModalInPresentation = true
                 }
@@ -419,7 +427,7 @@ public class AcquiringUISDK: NSObject {
                 presentingViewController?.present(navigationController, animated: true, completion: nil)
             })
         }
-
+        
         return pullableContainerViewController
     }
 
@@ -434,7 +442,7 @@ public class AcquiringUISDK: NSObject {
                 return [.masterCard, .visa]
             }
         }
-
+        
         public var capabilties = PKMerchantCapability(arrayLiteral: .capability3DS, .capabilityCredit, .capabilityDebit)
 
         public var countryCode: String = "RU"
@@ -454,7 +462,8 @@ public class AcquiringUISDK: NSObject {
                                        paymentData data: PaymentInitData,
                                        viewConfiguration: AcquiringViewConfiguration,
                                        acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-                                       paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler) {
+                                       paymentConfiguration: AcquiringUISDK.ApplePayConfiguration, completionHandler: @escaping PaymentCompletionHandler)
+    {
         let request = PKPaymentRequest()
         request.merchantIdentifier = paymentConfiguration.merchantIdentifier
         request.supportedNetworks = paymentConfiguration.supportedNetworks
@@ -465,7 +474,7 @@ public class AcquiringUISDK: NSObject {
         request.billingContact = paymentConfiguration.billingContact
 
         request.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: data.description ?? "", amount: NSDecimalNumber(value: Double(data.amount) / Double(100.0)))
+            PKPaymentSummaryItem(label: data.description ?? "", amount: NSDecimalNumber(value: Double(data.amount) / Double(100.0))),
         ]
 
         self.presentingViewController = presentingViewController
@@ -505,9 +514,9 @@ public class AcquiringUISDK: NSObject {
             }
         }
     }
-
+    
     // MARK: - Apple Pay Experimental
-
+    
     public func performPaymentWithApplePay(paymentData: PaymentInitData,
                                            paymentToken: PKPaymentToken,
                                            acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
@@ -530,7 +539,7 @@ public class AcquiringUISDK: NSObject {
                                                     completionHandler: completionHandler)
         }
     }
-
+    
     private func finishAuthorizeWithApplePayPaymentToken(paymentToken: PKPaymentToken,
                                                          paymentId: Int64,
                                                          completionHandler: @escaping PaymentCompletionHandler) {
@@ -539,22 +548,22 @@ public class AcquiringUISDK: NSObject {
                                                            paymentSource: sourceData,
                                                            source: "ApplePay",
                                                            route: "ACQ")
-
+        
         finishAuthorize(requestData: finishAuthorizeData,
                         treeDSmessageVersion: "1") { [weak self] result in
-                switch result {
-                case let .failure(error):
-                    DispatchQueue.main.async {
-                        completionHandler(.failure(error))
-                    }
-                case let .success(response):
-                    DispatchQueue.main.async {
-                        completionHandler(.success(response))
-                    }
+            switch result {
+            case let .failure(error):
+                DispatchQueue.main.async {
+                    completionHandler(.failure(error))
                 }
+            case let .success(response):
+                DispatchQueue.main.async {
+                    completionHandler(.success(response))
+                }
+            }
         }
     }
-
+    
     // MARK: -
 
     private func presentApplePayActivity(_ request: PKPaymentRequest) {
@@ -665,7 +674,8 @@ public class AcquiringUISDK: NSObject {
     private func presentAcquiringPaymentView(presentingViewController: UIViewController,
                                              customerKey: String?,
                                              configuration: AcquiringViewConfiguration,
-                                             onPresenting: @escaping ((AcquiringView) -> Void)) {
+                                             onPresenting: @escaping ((AcquiringView) -> Void))
+    {
         self.presentingViewController = presentingViewController
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
@@ -706,7 +716,7 @@ public class AcquiringUISDK: NSObject {
         modalViewController.alertViewHelper = configuration.alertViewHelper
 
         acquiringView = modalViewController
-
+        
         if let key = customerKey {
             setupCardListDataProvider(for: key)
             cardListDataProvider?.update()
@@ -719,13 +729,13 @@ public class AcquiringUISDK: NSObject {
 
         modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
             guard let self = self else { return }
-
+            
             let viewController = CardsViewController(nibName: "CardsViewController", bundle: .uiResources)
             viewController.scanerDataSource = modalViewController?.scanerDataSource
             viewController.alertViewHelper = modalViewController?.alertViewHelper
             viewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: self.style.bigButtonStyle))
             self.cardsListView = viewController
-
+            
             // проверяем, что cardListDataProvider не nil, поэтому мы можем
             // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
             // будет краш из-за того, что там необходим force unwrap
@@ -733,7 +743,7 @@ public class AcquiringUISDK: NSObject {
             if self.cardListDataProvider != nil {
                 viewController.cardListDataSourceDelegate = self
             }
-
+            
             let cardListNController = UINavigationController(rootViewController: viewController)
             if self.acquiringView != nil {
                 self.acquiringView?.presentVC(cardListNController, animated: true, completion: nil)
@@ -830,7 +840,8 @@ public class AcquiringUISDK: NSObject {
                     infoEmail: String?,
                     configuration: AcquiringViewConfiguration,
                     acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-                    completionHandler: @escaping PaymentCompletionHandler) {
+                    completionHandler: @escaping PaymentCompletionHandler)
+    {
         self.presentingViewController = presentingViewController
         startPaymentInitData = initPaymentData
         acquiringViewConfiguration = configuration
@@ -1125,12 +1136,12 @@ public class AcquiringUISDK: NSObject {
             viewController.webView.navigationDelegate = self
             viewController.webView.load(request)
         }
-
+        
         let navigationController = UINavigationController(rootViewController: viewController)
         presentingViewController?.presentOnTop(viewController: navigationController,
                                                animated: true,
                                                completion: {
-                                                   onPresenting()
+                                                onPresenting()
                                                })
     }
 
@@ -1183,14 +1194,12 @@ public class AcquiringUISDK: NSObject {
                 }
             }
         }
-
+        
         let navigationController = UINavigationController(rootViewController: viewController)
         presentingViewController?.presentOnTop(viewController: navigationController,
                                                animated: true)
     }
 }
-
-// swiftlint:enable type_body_length
 
 extension AcquiringUISDK: CardListDataSourceStatusListener {
     // MARK: CardListDataSourceStatusListener
@@ -1205,31 +1214,31 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     func getCardListNumberOfCards() -> Int {
         return cardListDataProvider!.count()
     }
-
+    
     func getCardListFetchStatus() -> FetchStatus<[PaymentCard]> {
         return cardListDataProvider!.fetchStatus
     }
-
+    
     func getCardListCard(at index: Int) -> PaymentCard {
         return cardListDataProvider!.item(at: index)
     }
-
+    
     func getCardListCard(with cardId: String) -> PaymentCard? {
         return cardListDataProvider!.item(with: cardId)
     }
-
+    
     func getCardListCard(with parentPaymentId: Int64) -> PaymentCard? {
         return cardListDataProvider!.item(with: parentPaymentId)
     }
-
+    
     func getAllCards() -> [PaymentCard] {
         return cardListDataProvider!.allItems()
     }
-
+    
     func cardListReload() {
         cardListDataProvider!.update()
     }
-
+    
     func cardListToDeactivateCard(at index: Int,
                                   startHandler: (() -> Void)?,
                                   completion: ((PaymentCard?) -> Void)?) {
@@ -1237,10 +1246,10 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         cardListDataProvider!.deactivateCard(cardId: card.cardId, startHandler: {
             startHandler?()
         }) { card in
-                completion?(card)
+            completion?(card)
         }
     }
-
+    
     func cardListToAddCard(number: String,
                            expDate: String,
                            cvc: String,
@@ -1253,23 +1262,23 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         } else {
             checkType = PaymentCardCheckType.no.rawValue
         }
-
+        
         cardListDataProvider!.addCard(number: number,
                                       expDate: expDate,
                                       cvc: cvc,
                                       checkType: checkType,
                                       confirmationHandler: { confirmationResponse, confirmationComplete in
-                                          DispatchQueue.main.async { [weak self] in
-                                              self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
-                                          }
+                                        DispatchQueue.main.async { [weak self] in
+                                            self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
+                                        }
                                       },
                                       completeHandler: { response in
-                                          DispatchQueue.main.async {
-                                              completeHandler(response)
-                                          }
+                                        DispatchQueue.main.async {
+                                            completeHandler(response)
+                                        }
                                       })
     }
-
+    
     func presentAddCard(on presentingViewController: UIViewController,
                         customerKey: String,
                         configuration: AcquiringViewConfiguration,
@@ -1283,7 +1292,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         // create
         let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
-
+        
         // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
         // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
         // будет краш из-за того, что там необходим force unwrap
@@ -1304,13 +1313,13 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             _ = presentationController
         })
     }
-
+    
     // MARK: AcquiringPaymentCardLidtDataSourceDelegate
-
+    
     public enum SDKError: Error {
         case noCustomerKey
     }
-
+    
     private func getCardListDataProvider() throws -> CardListDataProvider {
         guard let cardListDataProvider = self.cardListDataProvider else {
             throw SDKError.noCustomerKey
@@ -1341,7 +1350,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
         return try getCardListDataProvider().item(with: parentPaymentId)
     }
-
+    
     public func allCards() throws -> [PaymentCard] {
         return try getCardListDataProvider().allItems()
     }
@@ -1357,7 +1366,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             cardListProvider.deactivateCard(cardId: card.cardId, startHandler: {
                 startHandler?()
             }) { card in
-                    completion?(.success(card))
+                completion?(.success(card))
             }
         } catch {
             completion?(.failure(error))
@@ -1411,7 +1420,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 
     func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
-
+        
         do {
             let cardListDataProvider = try getCardListDataProvider()
             let checkType: String
@@ -1450,7 +1459,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         if self.presentingViewController == nil {
             self.presentingViewController = presentingViewController
         }
-
+        
         setupCardListDataProvider(for: customerKey)
 
         // create
@@ -1466,6 +1475,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
 
+        
         cardsListView = modalViewController
         // present
         let presentationController = UINavigationController(rootViewController: modalViewController)
@@ -1496,14 +1506,15 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
     public func paymentAuthorizationViewController(_: PKPaymentAuthorizationViewController,
                                                    didAuthorizePayment payment: PKPayment,
-                                                   handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+                                                   handler completion: @escaping (PKPaymentAuthorizationResult) -> Void)
+    {
         if let paymentId = paymentInitResponseData?.paymentId {
             let paymentDataSource = PaymentSourceData.paymentData(payment.token.paymentData.base64EncodedString())
             let data = PaymentFinishRequestData(paymentId: paymentId,
                                                 paymentSource: paymentDataSource,
                                                 source: "ApplePay",
                                                 route: "ACQ")
-
+            
             finishAuthorize(requestData: data, treeDSmessageVersion: "1") { [weak self] finishResponse in
                 switch finishResponse {
                 case let .failure(error):
@@ -1538,7 +1549,8 @@ extension AcquiringUISDK: WKNavigationDelegate {
             }
 
             if stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationURL().absoluteString ?? "") ||
-                stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString ?? "") {
+                stringValue.hasSuffix(self?.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString ?? "")
+            {
                 webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { value, error in
                     // debugPrint("document.getElementsByTagName('pre')[0].innerText = \(value ?? "" )")
                     guard let responseString = value as? String, let data = responseString.data(using: .utf8) else {

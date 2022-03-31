@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 final class SBPBankCell: UITableViewCell, ReusableCell {
@@ -35,7 +36,6 @@ final class SBPBankCell: UITableViewCell, ReusableCell {
         setup()
     }
     
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

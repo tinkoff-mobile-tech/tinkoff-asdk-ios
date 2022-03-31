@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import UIKit
 
 protocol DimmingPresentationControllerDelegate: AnyObject {
@@ -42,9 +43,9 @@ final class DimmingPresentationController: UIPresentationController {
         containerView?.layoutIfNeeded()
         dimmingView.prepareForPresentationTransition()
         presentedViewController.transitionCoordinator?.animate(alongsideTransition: { [dimmingView] _ in
-                                                                   dimmingView.performPresentationTransition()
-                                                               },
-                                                               completion: nil)
+            dimmingView.performPresentationTransition()
+        },
+        completion: nil)
     }
     
     override func dismissalTransitionWillBegin() {
@@ -78,3 +79,4 @@ private extension DimmingPresentationController {
         dimmingPresentationControllerDelegate?.didDismissByDimmingViewTap(dimmingPresentationController: self)
     }
 }
+

@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
 final class ImageLoader {
@@ -38,7 +39,7 @@ final class ImageLoader {
         
         let uuid = UUID()
         
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self else { return }
             guard error == nil else {
                 self.handleError(error!, completion: completion)

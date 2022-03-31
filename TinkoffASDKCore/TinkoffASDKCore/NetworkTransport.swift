@@ -21,7 +21,7 @@ import Foundation
 
 // MARK: NetworkTransport
 
-protocol NetworkTransport: AnyObject {
+protocol NetworkTransport: class {
     var logger: LoggerDelegate? { get set }
     var confirmation3DSTerminationURL: URL { get }
     var confirmation3DSTerminationV2URL: URL { get }
@@ -171,11 +171,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
         //
         let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransId)\",\"acsTransID\":\"\(requestData.acsTransId)\",\"messageVersion\":\"\(messageVersion)\",\"challengeWindowSize\":\"05\",\"messageType\":\"CReq\"}"
         let encodedString = Data(parameterValue.utf8).base64EncodedString()
-
+        
         /// Remove padding
         /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
         let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
-
+        
         request.httpBody = Data("creq=\(noPaddingEncodedString)".utf8)
 
         return request
@@ -198,11 +198,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
         //
         let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransID)\",\"threeDSMethodNotificationURL\":\"\(requestData.notificationURL)\"}"
         let encodedString = Data(parameterValue.utf8).base64EncodedString()
-
+        
         /// Remove padding
         /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
         let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
-
+        
         request.httpBody = try JSONSerialization.data(withJSONObject: ["threeDSMethodData": Data(base64Encoded: noPaddingEncodedString)], options: [.sortedKeys])
 
         return request
@@ -260,9 +260,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
                     return
                 }
 
-                // swiftlint: disable force_cast
                 completionHandler(.success(delegatedResponse as! Response))
-                // swiftlint: enable force_cast
                 return
             }
 

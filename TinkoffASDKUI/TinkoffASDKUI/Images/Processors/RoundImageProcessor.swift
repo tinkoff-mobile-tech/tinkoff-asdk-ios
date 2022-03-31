@@ -17,10 +17,11 @@
 //  limitations under the License.
 //
 
+
 final class RoundImageProcessor: ImageProcessor {
     func processImage(_ image: UIImage) -> UIImage {
         let imageRenderer = UIGraphicsImageRenderer(size: image.size)
-        return imageRenderer.image { _ in
+        return imageRenderer.image { context in
             let path = UIBezierPath(ovalIn: CGRect(origin: .zero, size: image.size))
             path.addClip()
             image.draw(in: CGRect(origin: .zero, size: image.size))

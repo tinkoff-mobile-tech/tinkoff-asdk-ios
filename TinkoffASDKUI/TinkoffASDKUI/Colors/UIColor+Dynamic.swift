@@ -21,7 +21,6 @@ extension UIColor {
 extension UIColor {
     static var asdk = ASDKColors()
 }
-
 struct ASDKColors {}
 
 extension ASDKColors {

@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import TinkoffASDKCore
 
 final class SBPAssembly {
@@ -40,7 +41,8 @@ final class SBPAssembly {
                                     sbpPaymentService: sbpPaymentService,
                                     banksListViewController: banksListViewController,
                                     configuration: configuration,
-                                    completion: completionHandler)
+                                    completion: completionHandler
+        )
     }
     
     func noAvailableBanksViewController(paymentStatusResponse: PaymentStatusResponse,

@@ -30,12 +30,10 @@ struct RSAEncryption {
         guard let data = Data(base64Encoded: keyString) else { return nil }
 
         var attributes: CFDictionary {
-            return [
-                kSecAttrKeyType: kSecAttrKeyTypeRSA,
-                kSecAttrKeyClass: kSecAttrKeyClassPublic,
-                kSecAttrKeySizeInBits: 2048,
-                kSecReturnPersistentRef: kCFBooleanTrue!
-            ] as CFDictionary
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA,
+                    kSecAttrKeyClass: kSecAttrKeyClassPublic,
+                    kSecAttrKeySizeInBits: 2048,
+                    kSecReturnPersistentRef: kCFBooleanTrue!] as CFDictionary
         }
 
         var error: Unmanaged<CFError>?
@@ -76,7 +74,7 @@ struct DeviceInfo {
 
 // MARK: URL Session Conformance
 
-public protocol Cancellable: AnyObject {
+public protocol Cancellable: class {
     func cancel()
 }
 
@@ -182,7 +180,7 @@ public enum IPAddressProvider {
     static func my() -> String? {
         let addresses = getIPAddresses()
         let ipAddressFactory = IPAddressFactory()
-
+        
         return addresses.compactMap { ipAddressFactory.ipAddress(with: $0) }.first?.fullStringValue
     }
 }

@@ -19,7 +19,7 @@ extension UIViewController {
                     completion?()
                 })
             } else {
-                dismiss(animated: animated) {
+                self.dismiss(animated: animated) {
                     completion?()
                 }
             }
