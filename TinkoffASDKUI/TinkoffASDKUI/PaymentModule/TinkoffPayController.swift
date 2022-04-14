@@ -27,4 +27,20 @@ final class TinkoffPayController {
             }
         }
     }
+    
+    func getTinkoffPayLink(paymentId: Int64,
+                           version: GetTinkoffPayStatusResponse.Status.Version,
+                           completion: @escaping (Result<URL, Error>) -> Void) -> Cancellable {
+        return sdk.getTinkoffPayLink(paymentId: paymentId,
+                                     version: version) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case let .failure(error):
+                    completion(.failure(error))
+                case let .success(response):
+                    completion(.success(response.redirectUrl))
+                }
+            }
+        }
+    }
 }

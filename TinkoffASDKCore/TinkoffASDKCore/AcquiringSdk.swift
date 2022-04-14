@@ -351,7 +351,17 @@ public final class AcquiringSdk: NSObject {
     
     public func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void) -> Cancellable {
         let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey)
-        return networkTransport.send(operation: request) { (result) in
+        return networkTransport.send(operation: request) { result in
+            completion(result)
+        }
+    }
+    
+    public func getTinkoffPayLink(paymentId: Int64,
+                                  version: GetTinkoffPayStatusResponse.Status.Version,
+                                  completion: @escaping (Result<GetTinkoffLinkResponse, Error>) -> Void) -> Cancellable {
+        let request = GetTinkoffLinkRequest(paymentId: paymentId,
+                                            version: version)
+        return networkTransport.send(operation: request) { result in
             completion(result)
         }
     }
