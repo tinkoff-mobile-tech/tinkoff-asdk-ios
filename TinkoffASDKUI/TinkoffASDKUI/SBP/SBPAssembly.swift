@@ -31,18 +31,42 @@ final class SBPAssembly {
         self.style = style
     }
     
-    func urlPaymentViewController(paymentSource: PaymentSource,
-                                  configuration: AcquiringViewConfiguration,
-                                  completionHandler: PaymentCompletionHandler?) -> SBPUrlPaymentViewController {
-        SBPUrlPaymentViewController(paymentSource: paymentSource,
-                                    paymentService: paymentService,
-                                    sbpBanksService: banksService,
-                                    sbpApplicationService: applicationService,
-                                    sbpPaymentService: sbpPaymentService,
-                                    banksListViewController: banksListViewController,
-                                    configuration: configuration,
-                                    completion: completionHandler
-        )
+//    func urlPaymentViewController(paymentSource: PaymentSource,
+//                                  configuration: AcquiringViewConfiguration,
+//                                  completionHandler: PaymentCompletionHandler?) -> SBPUrlPaymentViewController {
+//        
+//        SBPUrlPaymentViewController(paymentSource: paymentSource,
+//                                    paymentService: paymentService,
+//                                    sbpBanksService: banksService,
+//                                    sbpApplicationService: applicationService,
+//                                    sbpPaymentService: sbpPaymentService,
+//                                    banksListViewController: banksListViewController,
+//                                    configuration: configuration,
+//                                    completion: completionHandler
+//        )
+//    }
+    
+    func paymentPollingViewController(content: SBPBankListViewController,
+                                      paymentSource: PaymentSource,
+                                      configuration: AcquiringViewConfiguration,
+                                      completionHandler: PaymentCompletionHandler?) -> PaymentPollingViewController<SBPBankListViewController> {
+        let paymentPollingViewController = PaymentPollingViewController(contentViewController: content,
+                                                                        paymentService: paymentService,
+                                                                        configuration: configuration,
+                                                                        completion: completionHandler)
+        return paymentPollingViewController
+    }
+
+    func banksListViewController(paymentSource: PaymentSource,
+                                 configuration: AcquiringViewConfiguration,
+                                 completionHandler: PaymentCompletionHandler?) -> SBPBankListViewController {
+        SBPBankListViewController(paymentSource: paymentSource,
+                                  paymentService: paymentService,
+                                  sbpBanksService: banksService,
+                                  sbpApplicationService: applicationService,
+                                  sbpPaymentService: sbpPaymentService,
+                                  style: .init(continueButtonStyle: style.bigButtonStyle),
+                                  tableManager: banksListTableManager)
     }
     
     func noAvailableBanksViewController(paymentStatusResponse: PaymentStatusResponse,
@@ -73,10 +97,10 @@ private extension SBPAssembly {
         DefaultSBPPaymentService(coreSDK: coreSDK)
     }
     
-    var banksListViewController: SBPBankListViewController {
-        SBPBankListViewController(style: .init(continueButtonStyle: style.bigButtonStyle),
-                                  tableManager: banksListTableManager)
-    }
+//    var banksListViewController: SBPBankListViewController {
+//        SBPBankListViewController(style: .init(continueButtonStyle: style.bigButtonStyle),
+//                                  tableManager: banksListTableManager)
+//    }
     
     var banksListTableManager: SBPBankListTableManager {
         SBPBankListTableManager(cellImageLoader: cellImageLoader)

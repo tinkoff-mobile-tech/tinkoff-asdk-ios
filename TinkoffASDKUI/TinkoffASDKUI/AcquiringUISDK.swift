@@ -456,12 +456,16 @@ public class AcquiringUISDK: NSObject {
     public func urlSBPPaymentViewController(paymentSource: PaymentSource,
                                             configuration: AcquiringViewConfiguration,
                                             completionHandler: PaymentCompletionHandler? = nil) -> UIViewController {
-        let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource,
-                                                                            configuration: configuration,
-                                                                            completionHandler: completionHandler)
-        let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
+        let bankListViewController = sbpAssembly.banksListViewController(paymentSource: paymentSource,
+                                                                         configuration: configuration,
+                                                                         completionHandler: completionHandler)
+        let paymentPollingViewController = sbpAssembly.paymentPollingViewController(content: bankListViewController,
+                                                                                    paymentSource: paymentSource,
+                                                                                    configuration: configuration,
+                                                                                    completionHandler: completionHandler)
+        let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
         
-        urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
+        bankListViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
             let presentingViewController = pullableContainerViewController?.presentingViewController
             pullableContainerViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
