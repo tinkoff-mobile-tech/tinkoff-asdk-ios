@@ -79,6 +79,7 @@ enum AcquiringViewTableViewCells {
     case buttonPaySBP
     case secureLogos
     case email(value: String?, placeholder: String)
+    case tinkoffPay
 }
 
 protocol AcquiringView: class {
@@ -153,6 +154,9 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
+    
+    var acquiringPaymentController: AcquiringPaymentController?
+    var tinkoffPayStatus: GetTinkoffPayStatusResponse.Status?
 
     // MARK: Lifecycle
 
@@ -172,6 +176,8 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
         tableViewCells = [.waitingInitPayment]
         tableView.dataSource = self
+        
+        acquiringPaymentController?.loadCardsAndCheckTinkoffPayAvailability()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -225,6 +231,13 @@ class AcquiringPaymentViewController: PopUpViewContoller {
             tableViewCells.append(.buttonPaySBP)
         }
 
+        switch tinkoffPayStatus {
+        case .allowed(_):
+            tableViewCells.append(.tinkoffPay)
+        default:
+            return
+        }
+        
         tableViewCells.append(.secureLogos)
         tableViewCells.append(.empty(height: 44))
     }
@@ -598,5 +611,21 @@ extension AcquiringPaymentViewController: AcquiringView {
     
     func setPaymentType(_ paymentType: PaymentType) {
         self.paymentType = paymentType
+    }
+}
+
+extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didUpdateCards status: FetchStatus<[PaymentCard]>) {
+        cardsListUpdated(status)
+    }
+    
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didUpdateTinkoffPayAvailability status: GetTinkoffPayStatusResponse.Status) {
+        self.tinkoffPayStatus = status
+    }
+    
+    func acquiringPaymentControllerDidFinishPreparation(_ acquiringPaymentController: AcquiringPaymentController) {
+        self.paymentStatus = .ready
     }
 }
