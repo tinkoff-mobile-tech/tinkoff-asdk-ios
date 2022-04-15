@@ -8,25 +8,15 @@
 import UIKit
 import TinkoffASDKCore
 
-//public enum PaymentSource {
-//    case paymentData(PaymentInitData)
-//    case paymentId(Int64)
-//}
-//
 public enum PaymentPollingError: Swift.Error {
     /// Превышен лимит запросов статуса платежа
     case requestLimitExceeded
 }
-//
-//public enum SBPUrlPaymentViewControllerError: Error {
-//    case failedToOpenBankApp(SBPBank)
-//}
 
 protocol PaymentPollingContent: UIViewController & PullableContainerScrollableContent {
     var didStartLoading: ((String) -> Void)? { get set}
     var didStopLoading: (() -> Void)? { get set}
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)? { get set }
-    var didFail: ((Error) -> Void)? { get set }
     var paymentStatusResponse: (() -> PaymentStatusResponse?)? { get set }
     var showAlert: ((_ title: String, _ description: String?, _ error: Error) -> Void)? { get set }
 }
@@ -110,7 +100,6 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
 
 private extension PaymentPollingViewController {
     func setup() {
-        setupContent()
         contentViewController.didStartLoading = { [weak self] statusText in
             self?.loadingViewController.configure(with: statusText)
             self?.isLoading = true
@@ -131,6 +120,8 @@ private extension PaymentPollingViewController {
         contentViewController.showAlert = { [weak self] title, description, error in
             self?.showAlert(title: title, description: description, error: error)
         }
+        
+        setupContent()
     }
     
     func setupContent() {

@@ -30,24 +30,8 @@ final class SBPAssembly {
         self.coreSDK = coreSDK
         self.style = style
     }
-    
-//    func urlPaymentViewController(paymentSource: PaymentSource,
-//                                  configuration: AcquiringViewConfiguration,
-//                                  completionHandler: PaymentCompletionHandler?) -> SBPUrlPaymentViewController {
-//        
-//        SBPUrlPaymentViewController(paymentSource: paymentSource,
-//                                    paymentService: paymentService,
-//                                    sbpBanksService: banksService,
-//                                    sbpApplicationService: applicationService,
-//                                    sbpPaymentService: sbpPaymentService,
-//                                    banksListViewController: banksListViewController,
-//                                    configuration: configuration,
-//                                    completion: completionHandler
-//        )
-//    }
-    
+
     func paymentPollingViewController(content: SBPBankListViewController,
-                                      paymentSource: PaymentSource,
                                       configuration: AcquiringViewConfiguration,
                                       completionHandler: PaymentCompletionHandler?) -> PaymentPollingViewController<SBPBankListViewController> {
         let paymentPollingViewController = PaymentPollingViewController(contentViewController: content,
@@ -57,10 +41,10 @@ final class SBPAssembly {
         return paymentPollingViewController
     }
 
-    func banksListViewController(paymentSource: PaymentSource,
+    func banksListViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
                                  configuration: AcquiringViewConfiguration,
                                  completionHandler: PaymentCompletionHandler?) -> SBPBankListViewController {
-        SBPBankListViewController(paymentSource: paymentSource,
+        SBPBankListViewController(acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
                                   paymentService: paymentService,
                                   sbpBanksService: banksService,
                                   sbpApplicationService: applicationService,
@@ -96,11 +80,6 @@ private extension SBPAssembly {
     var sbpPaymentService: SBPPaymentService {
         DefaultSBPPaymentService(coreSDK: coreSDK)
     }
-    
-//    var banksListViewController: SBPBankListViewController {
-//        SBPBankListViewController(style: .init(continueButtonStyle: style.bigButtonStyle),
-//                                  tableManager: banksListTableManager)
-//    }
     
     var banksListTableManager: SBPBankListTableManager {
         SBPBankListTableManager(cellImageLoader: cellImageLoader)

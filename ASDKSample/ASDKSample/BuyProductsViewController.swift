@@ -329,8 +329,13 @@ class BuyProductsViewController: UIViewController {
     }
     
     func generateSbpUrl() {
-        let viewController = sdk.urlSBPPaymentViewController(paymentSource: .paymentData(createPaymentData()),
-                                                             configuration: acquiringViewConfiguration())
+        let acquiringPaymentStageConfiguration = AcquiringPaymentStageConfiguration(
+            paymentStage: .`init`(paymentData: createPaymentData())
+        )
+        let viewController = sdk.urlSBPPaymentViewController(
+            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+            configuration: acquiringViewConfiguration()
+        )
         present(viewController, animated: true, completion: nil)
     }
 }

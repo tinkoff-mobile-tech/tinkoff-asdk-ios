@@ -100,9 +100,9 @@ protocol AcquiringView: class {
     var onTouchButtonShowCardList: (() -> Void)? { get set }
     var onTouchButtonPay: (() -> Void)? { get set }
     var onTouchButtonSBP: ((UIViewController) -> Void)? { get set }
+    var onTinkoffPayButton: ((GetTinkoffPayStatusResponse.Status.Version, UIViewController) -> Void)? { get set }
     var onCancelPayment: (() -> Void)? { get set }
     var onInitFinished: ((Result<Int64, Error>) -> Void)? { get set }
-    var onSbpInitFinished: ((Result<Int64, Error>, UIViewController) -> Void)? { get set }
     ///
     func cardRequisites() -> PaymentSourceData?
     func infoEmail() -> String?
@@ -116,8 +116,8 @@ extension AcquiringView {
         get { nil }
         set {}
     }
-    
-    var onSbpInitFinished: ((Result<Int64, Error>, UIViewController) -> Void)? {
+
+    var onTinkoffPayButton: ((GetTinkoffPayStatusResponse.Status.Version, UIViewController) -> Void)? {
         get { nil }
         set {}
     }
@@ -138,9 +138,9 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     var onTouchButtonShowCardList: (() -> Void)?
     var onTouchButtonPay: (() -> Void)?
     var onTouchButtonSBP: ((UIViewController) -> Void)?
+    var onTinkoffPayButton: ((GetTinkoffPayStatusResponse.Status.Version, UIViewController) -> Void)?
     var onCancelPayment: (() -> Void)?
     var onInitFinished: ((Result<Int64, Error>) -> Void)?
-    var onSbpInitFinished: ((Result<Int64, Error>, UIViewController) -> Void)?
 
     // MARK: IBOutlets
 
@@ -353,8 +353,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     
     @objc private func handleTinkoffPayButtonTouch(sender: TinkoffPayButton) {
         guard case let .allowed(version: version) = tinkoffPayStatus else { return }
-        self.paymentStatus = .paymentWaiting(status: "dsds")
-        acquiringPaymentController?.performTinkoffPayPayment(version: version)
+        onTinkoffPayButton?(version, self)
     }
 }
 
@@ -504,7 +503,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
                 cell.onButtonTouch = { [weak self] in
                     guard let self = self else { return }
-                    self.acquiringPaymentController?.performSBPPayment()
+                    self.onTouchButtonSBP?(self)
                 }
 
                 return cell
@@ -670,15 +669,5 @@ extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
     func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
                                     didPaymentInitWith result: Result<Int64, Error>) {
         onInitFinished?(result)
-    }
-    
-    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didGetTinkoffPayURL url: URL) {
-        
-    }
-    
-    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didPaymentInitForSBPWith result: Result<Int64, Error>) {
-        onSbpInitFinished?(result, self)
     }
 }

@@ -76,3 +76,11 @@
 "SBP.OpenApplication.Error" = "Не удалось открыть приложение";
 "SBP.LoadingStatus.Title" = "Ожидаем подтверждения платежа";
 
+// Tinkoff Pay
+"TP.Error.Title" = "Не удалось выполнить оплату через Tinkoff Pay";
+"TP.Error.Description" = "Попробуйте еще раз";
+
+"TP.LoadingStatus.Title" = "Ожидаем подтверждения платежа";
+
+
+

@@ -169,6 +169,7 @@ public class AcquiringUISDK: NSObject {
     private var checkPaymentStatus: PaymentStatusServiceProvider?
     
     private let sbpAssembly: SBPAssembly
+    private let tinkoffPayAssembly: TinkoffPayAssembly
     
     private weak var logger: LoggerDelegate?
     
@@ -179,6 +180,7 @@ public class AcquiringUISDK: NSObject {
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
+        self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk)
         self.logger = configuration.logger
     }
 
@@ -265,6 +267,7 @@ public class AcquiringUISDK: NSObject {
         self.presentPaymentView(on: presentingViewController,
                                 acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
                                 configuration: configuration,
+                                tinkoffPayDelegate: tinkoffPayDelegate,
                                 completionHandler: completionHandler)
     }
     
@@ -294,7 +297,8 @@ public class AcquiringUISDK: NSObject {
                                     customerKey: customerKey,
                                     configuration: configuration,
                                     loadCardsOutside: false,
-                                    acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration)
+                                    acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                                    tinkoffPayDelegate: tinkoffPayDelegate)
         
         acquiringView?.onInitFinished = { [weak self] result in
             switch result {
@@ -307,17 +311,30 @@ public class AcquiringUISDK: NSObject {
             }
         }
         
-        acquiringView?.onSbpInitFinished = { [weak self] result, viewController in
+        acquiringView?.onTinkoffPayButton = { [weak self] version, viewController in
             guard let self = self else { return }
-            switch result {
-            case let .success(paymentId):
-                let urlSBPViewController = self.urlSBPPaymentViewController(paymentSource: .paymentId(paymentId),
-                                                                            configuration: configuration,
-                                                                            completionHandler: completionHandler)
-                viewController.present(urlSBPViewController, animated: true, completion: nil)
-            case let .failure(error):
-                self.onPaymentCompletionHandler?(.failure(error))
-            }
+            let tinkoffPayViewController = self.tinkoffPayAssembly.tinkoffPayPaymentViewController(
+                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                tinkoffPayVersion: version
+            )
+            let paymentPollingViewController = self.tinkoffPayAssembly.paymentPollingViewController(
+                content: tinkoffPayViewController,
+                configuration: configuration,
+                completionHandler: completionHandler
+            )
+            
+            let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
+            viewController.present(pullableContainerViewController, animated: true)
+        }
+        
+        acquiringView?.onTouchButtonSBP = { [weak self] viewController in
+            guard let self = self else { return }
+            let urlSBPViewController = self.urlSBPPaymentViewController(
+                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                configuration: configuration,
+                completionHandler: completionHandler
+            )
+            viewController.present(urlSBPViewController, animated: true, completion: nil)
         }
     }
 
@@ -453,14 +470,15 @@ public class AcquiringUISDK: NSObject {
         }
     }
 
-    public func urlSBPPaymentViewController(paymentSource: PaymentSource,
+    public func urlSBPPaymentViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
                                             configuration: AcquiringViewConfiguration,
                                             completionHandler: PaymentCompletionHandler? = nil) -> UIViewController {
-        let bankListViewController = sbpAssembly.banksListViewController(paymentSource: paymentSource,
-                                                                         configuration: configuration,
-                                                                         completionHandler: completionHandler)
+        let bankListViewController = sbpAssembly.banksListViewController(
+            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+            configuration: configuration,
+            completionHandler: completionHandler
+        )
         let paymentPollingViewController = sbpAssembly.paymentPollingViewController(content: bankListViewController,
-                                                                                    paymentSource: paymentSource,
                                                                                     configuration: configuration,
                                                                                     completionHandler: completionHandler)
         let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)

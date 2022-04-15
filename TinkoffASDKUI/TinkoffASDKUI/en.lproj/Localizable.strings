@@ -75,3 +75,9 @@
 
 "SBP.OpenApplication.Error" = "Failed to open application";
 "SBP.LoadingStatus.Title" = "Payment confirmation awaiting";
+
+// Tinkoff Pay
+"TP.Error.Title" = "Error occured during transaction";
+"TP.Error.Description" = "Try again";
+
+"TP.LoadingStatus.Title" = "Payment confirmation awaiting";

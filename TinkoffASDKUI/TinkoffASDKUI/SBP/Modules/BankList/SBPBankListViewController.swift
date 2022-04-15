@@ -26,7 +26,6 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
     var didStartLoading: ((String) -> Void)?
     var didStopLoading: (() -> Void)?
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)?
-    var didFail: ((Error) -> Void)?
     var noBanksAppAvailable: ((UIViewController, PaymentStatusResponse) -> Void)?
     var paymentStatusResponse: (() -> PaymentStatusResponse?)?
     var showAlert: ((String, String?, Error) -> Void)?
@@ -62,7 +61,7 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
         }
     }
     
-    private let paymentSource: PaymentSource
+    private let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
     private let paymentService: PaymentService
     private let sbpBanksService: SBPBanksService
     private let sbpApplicationService: SBPApplicationOpener
@@ -74,14 +73,14 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
     
     // MARK: - Init
 
-    init(paymentSource: PaymentSource,
+    init(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
          paymentService: PaymentService,
          sbpBanksService: SBPBanksService,
          sbpApplicationService: SBPApplicationOpener,
          sbpPaymentService: SBPPaymentService,
          style: SBPBankListView.Style,
          tableManager: SBPBankListTableManager) {
-        self.paymentSource = paymentSource
+        self.acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration
         self.paymentService = paymentService
         self.sbpBanksService = sbpBanksService
         self.sbpApplicationService = sbpApplicationService
@@ -147,22 +146,22 @@ private extension SBPBankListViewController {
     func start() {
         didStartLoading?("")
         
-        switch paymentSource {
-        case let .paymentId(paymentId):
+        switch acquiringPaymentStageConfiguration.paymentStage {
+        case let .finish(paymentId):
             paymentService.getPaymentStatus(paymentId: paymentId) { [weak self] result in
                 switch result {
                 case let .failure(error):
-                    self?.didFail?(error)
+                    self?.handleError(error)
                 case let .success(response):
                     self?.didUpdatePaymentStatusResponse?(response)
                     self?.createSPBUrl(paymentId: paymentId)
                 }
             }
-        case let .paymentData(initData):
-            paymentService.initPaymentWith(paymentData: initData) { [weak self] result in
+        case let .`init`(paymentData):
+            paymentService.initPaymentWith(paymentData: paymentData) { [weak self] result in
                 switch result {
                 case let .failure(error):
-                    self?.didFail?(error)
+                    self?.handleError(error)
                 case let .success(response):
                     let statusResponse: PaymentStatusResponse = .init(success: true,
                                                                       errorCode: 0,
@@ -193,7 +192,7 @@ private extension SBPBankListViewController {
             loadBanks()
         case let .failure(error):
             DispatchQueue.main.async {
-                self.didFail?(error)
+                self.handleError(error)
             }
         }
     }
@@ -208,7 +207,7 @@ private extension SBPBankListViewController {
                         self.handleBanksLoaded(banks: banks)
                     }
                 case let .failure(error):
-                    self.didFail?(error)
+                    self.handleError(error)
                 }
             }
         }
@@ -251,6 +250,17 @@ private extension SBPBankListViewController {
     func handleBankApplicationOpen(result: Bool) {
         guard result else { return }
         didStartLoading?(AcqLoc.instance.localize("SBP.LoadingStatus.Title"))
+    }
+    
+    func handleError(_ error: Error) {
+        DispatchQueue.main.async {
+            let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
+            let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
+            
+            self.showAlert?(alertTitle,
+                            alertDescription,
+                            error)
+        }
     }
     
     var cancelledResponse: PaymentStatusResponse {
