@@ -10,9 +10,14 @@ import TinkoffASDKCore
 final class TinkoffPayAssembly {
     
     private let coreSDK: AcquiringSdk
+    private let tinkoffPayStatusCacheLifeTime: TimeInterval
     
-    init(coreSDK: AcquiringSdk) {
+    private var cachedTinkoffPayController: TinkoffPayController?
+    
+    init(coreSDK: AcquiringSdk,
+         tinkoffPayStatusCacheLifeTime: TimeInterval) {
         self.coreSDK = coreSDK
+        self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
     }
     
     func paymentPollingViewController(content: TinkoffPayPaymentViewController,
@@ -32,15 +37,23 @@ final class TinkoffPayAssembly {
                                         tinkoffPayVersion: tinkoffPayVersion,
                                         application: UIApplication.shared)
     }
+    
+    var tinkoffPayController: TinkoffPayController {
+        if let cachedTinkoffPayController = cachedTinkoffPayController {
+            return cachedTinkoffPayController
+        } else {
+            let tinkoffPayController = TinkoffPayController(sdk: coreSDK,
+                                                            tinkoffPayStatusCacheLifeTime: tinkoffPayStatusCacheLifeTime)
+            self.cachedTinkoffPayController = tinkoffPayController
+            return tinkoffPayController
+        }
+    }
 }
 
 private extension TinkoffPayAssembly {
+    
     var paymentService: PaymentService {
         DefaultPaymentService(coreSDK: coreSDK)
-    }
-    
-    var tinkoffPayController: TinkoffPayController {
-        TinkoffPayController(sdk: coreSDK)
     }
     
     var applicationURLOpener: URLOpener {

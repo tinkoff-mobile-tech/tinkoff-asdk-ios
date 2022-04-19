@@ -181,7 +181,8 @@ public class AcquiringUISDK: NSObject {
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
-        self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk)
+        self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk,
+                                                     tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
         self.logger = configuration.logger
     }
 
@@ -248,6 +249,7 @@ public class AcquiringUISDK: NSObject {
         })
     }
 
+    @available(*, deprecated, message: "Use presentPaymentView(on presentingViewController: UIViewController, acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration, configuration: AcquiringViewConfiguration,tinkoffPayDelegate: TinkoffPayDelegate? = nil,completionHandler: @escaping PaymentCompletionHandler instead")
     ///
     /// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
     public func presentPaymentView(on presentingViewController: UIViewController,
@@ -824,7 +826,7 @@ public class AcquiringUISDK: NSObject {
         if let acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration {
             let acquiringPaymentController = AcquiringPaymentController(
                 acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-                tinkoffPayController: TinkoffPayController(sdk: acquiringSdk),
+                tinkoffPayController: tinkoffPayAssembly.tinkoffPayController,
                 payController: PayController(sdk: acquiringSdk),
                 cardListDataProvider: injectableCardListProvider
             )

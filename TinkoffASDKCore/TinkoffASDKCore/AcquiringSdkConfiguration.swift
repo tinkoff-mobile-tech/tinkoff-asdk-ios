@@ -70,15 +70,20 @@ public class AcquiringSdkConfiguration: NSObject {
     /// Показывать ошибки после выполнения запроса
     public var showErrorAlert: Bool = true
     
+    /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
+    public var tinkoffPayStatusCacheLifeTime: TimeInterval = .defaultTinkoffPayStatusCacheLifeTime
+    
     ///
     /// - Parameters:
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
+    ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     /// - Returns: AcquiringSdkConfiguration
     public init(credential: AcquiringSdkCredential,
                 server: AcquiringSdkEnvironment = .test,
-                requestsTimeoutInterval: TimeInterval) {
+                requestsTimeoutInterval: TimeInterval,
+                tinkoffPayStatusCacheLifeTime: TimeInterval) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.serverEnvironment = server
@@ -88,10 +93,12 @@ public class AcquiringSdkConfiguration: NSObject {
                             server: AcquiringSdkEnvironment = .test) {
         self.init(credential: credential,
                   server: server,
-                  requestsTimeoutInterval: .defaultRequestsTimeoutInterval)
+                  requestsTimeoutInterval: .defaultRequestsTimeoutInterval,
+                  tinkoffPayStatusCacheLifeTime: .defaultTinkoffPayStatusCacheLifeTime)
     }
 }
 
 private extension TimeInterval {
     static let defaultRequestsTimeoutInterval: TimeInterval = 40
+    static let defaultTinkoffPayStatusCacheLifeTime: TimeInterval = 300
 }

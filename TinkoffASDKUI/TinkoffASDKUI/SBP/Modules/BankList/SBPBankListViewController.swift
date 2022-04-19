@@ -21,6 +21,10 @@
 import UIKit
 import TinkoffASDKCore
 
+public enum SBPPaymentError: Error {
+    case failedToOpenBankApp(SBPBank)
+}
+
 final class SBPBankListViewController: UIViewController, PaymentPollingContent, CustomViewLoadable {
     
     var didStartLoading: ((String) -> Void)?
@@ -245,7 +249,7 @@ private extension SBPBankListViewController {
         } catch {
             showAlert?(AcqLoc.instance.localize("SBP.OpenApplication.Error"),
                        nil,
-                       SBPUrlPaymentViewControllerError.failedToOpenBankApp(bank))
+                       SBPPaymentError.failedToOpenBankApp(bank))
         }
     }
     
