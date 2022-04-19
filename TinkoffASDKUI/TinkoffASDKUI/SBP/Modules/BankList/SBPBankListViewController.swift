@@ -29,6 +29,7 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
     var noBanksAppAvailable: ((UIViewController, PaymentStatusResponse) -> Void)?
     var paymentStatusResponse: (() -> PaymentStatusResponse?)?
     var showAlert: ((String, String?, Error) -> Void)?
+    var didStartPayment: (() -> Void)?
     
     typealias CustomView = SBPBankListView
     
@@ -238,6 +239,7 @@ private extension SBPBankListViewController {
         
         do {
             try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] result in
+                self?.didStartPayment?()
                 self?.handleBankApplicationOpen(result: result)
             })
         } catch {

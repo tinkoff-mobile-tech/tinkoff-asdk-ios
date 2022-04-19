@@ -14,6 +14,7 @@ final class TinkoffPayPaymentViewController: UIViewController, PaymentPollingCon
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)?
     var paymentStatusResponse: (() -> PaymentStatusResponse?)?
     var showAlert: ((String, String?, Error) -> Void)?
+    var didStartPayment: (() -> Void)?
     
     var scrollView: UIScrollView { UIScrollView() }
     
