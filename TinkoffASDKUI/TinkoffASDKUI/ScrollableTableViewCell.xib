@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -24,7 +24,7 @@
                         <constraints>
                             <constraint firstAttribute="height" constant="86" id="UIZ-Bk-F1Y"/>
                         </constraints>
-                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="1" minimumInteritemSpacing="1" id="7n4-UE-h2a" customClass="CenterFlowLayout" customModule="TinkoffASDKUIResources" customModuleProvider="target">
+                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="1" minimumInteritemSpacing="1" id="7n4-UE-h2a" customClass="CenterFlowLayout" customModule="TinkoffASDKUI">
                             <size key="itemSize" width="298" height="109"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -37,7 +37,7 @@
                         <constraints>
                             <constraint firstAttribute="height" constant="40" id="2UZ-yJ-b0K"/>
                         </constraints>
-                        <collectionViewLayout key="collectionViewLayout" id="shd-yW-BJO" customClass="CollectionViewCenteredFlowLayout" customModule="TinkoffASDKUIResources" customModuleProvider="target"/>
+                        <collectionViewLayout key="collectionViewLayout" id="shd-yW-BJO" customClass="CollectionViewCenteredFlowLayout" customModule="TinkoffASDKUI"/>
                     </collectionView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
