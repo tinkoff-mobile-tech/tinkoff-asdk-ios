@@ -61,7 +61,9 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func paymentInit(data: PaymentInitData,
                             completionHandler: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
-        let request = InitRequest(paymentInitData: data)
+        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
+        let enrichedData = paramsEnricher.enrich(data)
+        let request = InitRequest(paymentInitData: enrichedData)
         return api.performRequest(request, completion: completionHandler)
     }
     
