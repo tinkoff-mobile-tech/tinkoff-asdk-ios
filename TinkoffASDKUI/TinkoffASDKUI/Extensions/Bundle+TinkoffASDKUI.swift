@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  Bundle+TinkoffASDKUI.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,22 +20,18 @@
 
 import Foundation
 
-struct InitRequest: APIRequest {
-    typealias Payload = InitPayload
+extension Bundle {
     
-    var requestPath: [String] { ["Init"] }
-    var httpMethod: HTTPMethod { .post }
-  
-    var parameters: HTTPParameters {
-        // TODO: Log error
-        
-        return (try? paymentInitData
-                    .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+    private class UIResourcesToken {}
+    
+    static var uiResources: Bundle {
+        Bundle(for: UIResourcesToken.self)
+            .url(forResource: .resourceName, withExtension: .bundleExtension)
+            .flatMap(Bundle.init(url:)) ?? Bundle(for: UIResourcesToken.self)
     }
+}
 
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
-    }
+private extension String {
+    static let resourceName = "TinkoffASDKUIResources"
+    static let bundleExtension = "bundle"
 }

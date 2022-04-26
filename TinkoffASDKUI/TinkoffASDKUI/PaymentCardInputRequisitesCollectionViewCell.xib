@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PaymentCardInputRequisitesCollectionViewCell" id="gTV-IL-0wX" customClass="PaymentCardInputRequisitesCollectionViewCell" customModule="TinkoffASDKUI" customModuleProvider="target">
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PaymentCardInputRequisitesCollectionViewCell" id="gTV-IL-0wX" customClass="PaymentCardInputRequisitesCollectionViewCell" customModule="TinkoffASDKUI">
             <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -36,12 +37,12 @@
                                     <action selector="onButtonRightTouchUpInside:" destination="gTV-IL-0wX" eventType="touchUpInside" id="Up1-h7-Gqd"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="j6N-J6-vhI" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI" customModuleProvider="target">
+                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="j6N-J6-vhI" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI">
                                 <rect key="frame" x="52" y="26.5" width="202" height="22"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                             </textField>
-                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3jT-bT-0lU" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI" customModuleProvider="target">
+                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3jT-bT-0lU" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI">
                                 <rect key="frame" x="136" y="26.5" width="48" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="Qj9-HE-Lp0"/>
@@ -49,7 +50,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                             </textField>
-                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aZn-oT-eI5" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI" customModuleProvider="target">
+                            <textField hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aZn-oT-eI5" customClass="UITextFieldCardRequisites" customModule="TinkoffASDKUI">
                                 <rect key="frame" x="262" y="27" width="44" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="8Cy-AN-EHz"/>
@@ -63,7 +64,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFf-re-5Rl">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFf-re-5Rl">
                                 <rect key="frame" x="44" y="22.5" width="92" height="30"/>
                                 <connections>
                                     <action selector="onCardNumberTouchUpInside:" destination="gTV-IL-0wX" eventType="touchUpInside" id="4Fi-0q-yVI"/>
@@ -71,13 +72,13 @@
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mlj-wQ-cKP">
                                 <rect key="frame" x="46" y="52.5" width="208" height="1"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="uqy-Qr-xId"/>
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="WFf-re-5Rl" firstAttribute="leading" secondItem="hOV-Yt-4Nz" secondAttribute="trailing" id="7m5-H5-QRy"/>
                             <constraint firstAttribute="trailing" secondItem="yaX-Wb-UjN" secondAttribute="trailing" constant="14" id="8SZ-hl-XcP"/>
@@ -105,13 +106,13 @@
                     </view>
                 </subviews>
             </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="blN-kc-AkU" secondAttribute="trailing" id="038-OQ-ljD"/>
                 <constraint firstItem="blN-kc-AkU" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="8" id="1B7-9J-PJd"/>
                 <constraint firstItem="blN-kc-AkU" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="5hm-JL-Pl6"/>
                 <constraint firstAttribute="bottom" secondItem="blN-kc-AkU" secondAttribute="bottom" constant="8" id="fX6-ey-fvi"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <size key="customSize" width="320" height="91"/>
             <connections>
                 <outlet property="buttonRight" destination="yaX-Wb-UjN" id="3aC-Be-XUj"/>
@@ -129,4 +130,9 @@
             <point key="canvasLocation" x="-193.125" y="89.260563380281695"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

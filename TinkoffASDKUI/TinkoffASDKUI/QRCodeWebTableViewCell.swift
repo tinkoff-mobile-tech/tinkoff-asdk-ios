@@ -73,7 +73,7 @@ class QRCodeWebTableViewCell: UITableViewCell {
             </body>
             </html>
             """
-        webView.loadHTMLString(smartHTML, baseURL: Bundle(for: type(of: self)).bundleURL)
+        webView.loadHTMLString(smartHTML, baseURL: Bundle.uiResources.bundleURL)
     }
 
     @IBAction func buttonShareTouchUpInside(_: UIButton) {

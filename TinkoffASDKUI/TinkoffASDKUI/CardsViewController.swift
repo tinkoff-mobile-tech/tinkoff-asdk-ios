@@ -52,10 +52,10 @@ class CardsViewController: UIViewController {
             title = AcqLoc.instance.localize("TinkoffAcquiring.view.title.savedCards")
         }
 
-        tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PaymentCardTableViewCell")
-        tableView.register(UINib(nibName: "StatusTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "StatusTableViewCell")
-        tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "AddCardTableViewCell")
-        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
+        tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PaymentCardTableViewCell")
+        tableView.register(UINib(nibName: "StatusTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "StatusTableViewCell")
+        tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AddCardTableViewCell")
+        tableView.register(UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InputCardRequisitesTableViewCell")
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -186,7 +186,7 @@ class CardsViewController: UIViewController {
 
     private func showAddCardView() {
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: Bundle(for: AddNewCardViewController.self))
+        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
         modalViewController.cardListDataSourceDelegate = cardListDataSourceDelegate
         modalViewController.scanerDataSource = scanerDataSource
         modalViewController.alertViewHelper = alertViewHelper

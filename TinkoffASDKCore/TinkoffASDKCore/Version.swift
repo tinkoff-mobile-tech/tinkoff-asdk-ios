@@ -1,6 +1,6 @@
 //
 //
-//  InitRequest.swift
+//  Version.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,22 +20,7 @@
 
 import Foundation
 
-struct InitRequest: APIRequest {
-    typealias Payload = InitPayload
-    
-    var requestPath: [String] { ["Init"] }
-    var httpMethod: HTTPMethod { .post }
-  
-    var parameters: HTTPParameters {
-        // TODO: Log error
-        
-        return (try? paymentInitData
-                    .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
-
-    private let paymentInitData: PaymentInitData
-
-    init(paymentInitData: PaymentInitData) {
-        self.paymentInitData = paymentInitData
-    }
+/// Текущая версия компонента
+struct Version {
+    static let versionString = "3.0.0-alpha9"
 }

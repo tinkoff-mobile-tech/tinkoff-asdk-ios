@@ -50,9 +50,9 @@ class AddNewCardViewController: PopUpViewContoller {
 
         inputCardRequisitesController = InputCardRequisitesController()
 
-        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
-        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "AmountTableViewCell")
-        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: "PSLogoTableViewCell")
+        tableView.register(UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InputCardRequisitesTableViewCell")
+        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AmountTableViewCell")
+        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PSLogoTableViewCell")
 
         tableView.dataSource = self
     }
@@ -100,8 +100,8 @@ extension AddNewCardViewController: UITableViewDataSource {
             }
 
         case .requisites:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "InpuCardtRequisitesTableViewCell") as? InpuCardtRequisitesTableViewCell {
-                let accessoryView = Bundle(for: type(of: self)).loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "InputCardRequisitesTableViewCell") as? InputCardRequisitesTableViewCell {
+                let accessoryView = Bundle.uiResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
 
                 inputCardRequisitesController.setup(responderListener: self,
                                                     inputView: cell,

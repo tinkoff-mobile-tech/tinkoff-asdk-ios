@@ -193,7 +193,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
     private func registerCells(_ names: [String], for table: UITableView) {
         names.forEach { name in
-            table.register(UINib(nibName: name, bundle: Bundle(for: type(of: self))), forCellReuseIdentifier: name)
+            table.register(UINib(nibName: name, bundle: .uiResources), forCellReuseIdentifier: name)
         }
     }
 
@@ -455,7 +455,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
                 cell.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"), for: .normal)
                 cell.buttonAction.tintColor = UIColor.dynamic.button.sbp.tint
                 cell.buttonAction.backgroundColor = UIColor.dynamic.button.sbp.background
-                cell.setButtonIcon(UIImage(named: "buttonIconSBP", in: Bundle(for: type(of: self)), compatibleWith: nil))
+                cell.setButtonIcon(UIImage(named: "buttonIconSBP", in: .uiResources, compatibleWith: nil))
 
                 cell.onButtonTouch = { [weak self] in
                     if self?.validatePaymentForm() ?? false {

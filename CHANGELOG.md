@@ -1,9 +1,6 @@
 # Changelog
 ## [Unreleased]
 
-### Added
-* add sending the PayType parameter to the Init method
-
 ## [2.2.2] - 2021-02-22
 
 ### Fixed
