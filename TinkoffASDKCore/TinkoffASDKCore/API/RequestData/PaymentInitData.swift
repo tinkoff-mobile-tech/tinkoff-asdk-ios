@@ -111,6 +111,7 @@ public struct PaymentInitData: Codable {
         try container.encode(amount, forKey: .amount)
         try container.encode(orderId, forKey: .orderId)
         try container.encodeIfPresent(customerKey, forKey: .customerKey)
+        try container.encodeIfPresent(payType?.rawValue, forKey: .payType)
         if description != nil { try? container.encode(description, forKey: .description) }
         if redirectDueDate != nil { try? container.encode(redirectDueDate, forKey: .redirectDueDate) }
         if let value = savingAsParentPayment, value == true { try container.encode("Y", forKey: .savingAsParentPayment) }
@@ -123,11 +124,13 @@ public struct PaymentInitData: Codable {
     public init(amount: Int64,
                 orderId: String,
                 customerKey: String?,
-                redirectDueDate: Date? = nil)
+                redirectDueDate: Date? = nil,
+                payType: PayType? = nil)
     {
         self.amount = amount
         self.orderId = orderId
         self.customerKey = customerKey
         self.redirectDueDate = redirectDueDate
+        self.payType = payType
     }
 }
