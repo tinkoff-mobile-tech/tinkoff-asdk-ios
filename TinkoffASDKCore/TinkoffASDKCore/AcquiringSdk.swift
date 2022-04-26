@@ -347,4 +347,13 @@ public final class AcquiringSdk: NSObject {
         loader.loadBanks(completion: completion)
     }
     
+    ///
+    
+    public func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void) -> Cancellable {
+        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey)
+        return networkTransport.send(operation: request) { (result) in
+            completion(result)
+        }
+    }
+    
 } // AcquiringSdk

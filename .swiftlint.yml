@@ -1,4 +1,4 @@
-warning_threshold: 35
+warning_threshold: 165
 
 included:
 - ./

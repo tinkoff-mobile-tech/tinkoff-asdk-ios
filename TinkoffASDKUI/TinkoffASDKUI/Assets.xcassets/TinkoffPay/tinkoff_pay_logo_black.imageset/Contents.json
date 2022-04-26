@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "tinkoff_pay_logo_black.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
