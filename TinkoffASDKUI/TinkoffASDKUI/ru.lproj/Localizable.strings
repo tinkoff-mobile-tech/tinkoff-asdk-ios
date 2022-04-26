@@ -82,5 +82,10 @@
 
 "TP.LoadingStatus.Title" = "Ожидаем подтверждения платежа";
 
+"TP.NoTinkoffBankApp.Title" = "У вас не установлено Tinkoff";
+"TP.NoTinkoffBankApp.Description" = "Скачайте приложение или выберите другой способ оплаты";
+"TP.NoTinkoffBankApp.Button.Install" = "Установить";
+"TP.NoTinkoffBankApp.Button.Сancel" = "Отменить";
+
 
 

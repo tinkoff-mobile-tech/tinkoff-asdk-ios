@@ -27,7 +27,7 @@ class ButtonTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        buttonAction.layer.cornerRadius = 16.0
+        buttonAction.layer.cornerRadius = 4
         buttonAction.layer.borderWidth = 1
         updateColors()
     }

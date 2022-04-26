@@ -19,6 +19,7 @@ protocol PaymentPollingContent: UIViewController & PullableContainerScrollableCo
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)? { get set }
     var paymentStatusResponse: (() -> PaymentStatusResponse?)? { get set }
     var showAlert: ((_ title: String, _ description: String?, _ error: Error) -> Void)? { get set }
+    var didStartPayment: (() -> Void)? { get set }
 }
 
 final class PaymentPollingViewController<ContentViewController: PaymentPollingContent>: UIViewController, PullableContainerScrollableContent, CustomViewLoadable {
@@ -49,6 +50,7 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
     
     private var paymentStatusResponse: PaymentStatusResponse?
     private var isPollingPaymentStatus = false
+    private var didStartPayment = false
     private var errorPaymentStatusRequestCount = Int.paymentStatusRequestLimit
     private var paymentStatusRequestCount = Int.paymentStatusRequestLimit
     
@@ -92,7 +94,7 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
     }
     
     @objc private func handleActiveState() {
-        if !isPollingPaymentStatus, let paymentId = paymentStatusResponse?.paymentId {
+        if !isPollingPaymentStatus, didStartPayment, let paymentId = paymentStatusResponse?.paymentId {
             startPaymentStatusPolling(paymentId: paymentId)
         }
     }
@@ -119,6 +121,10 @@ private extension PaymentPollingViewController {
         
         contentViewController.showAlert = { [weak self] title, description, error in
             self?.showAlert(title: title, description: description, error: error)
+        }
+        
+        contentViewController.didStartPayment = { [weak self] in
+            self?.didStartPayment = true
         }
         
         setupContent()

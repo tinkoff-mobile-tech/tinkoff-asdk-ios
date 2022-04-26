@@ -14,6 +14,7 @@ final class TinkoffPayPaymentViewController: UIViewController, PaymentPollingCon
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)?
     var paymentStatusResponse: (() -> PaymentStatusResponse?)?
     var showAlert: ((String, String?, Error) -> Void)?
+    var didStartPayment: (() -> Void)?
     
     var scrollView: UIScrollView { UIScrollView() }
     
@@ -109,12 +110,23 @@ private extension TinkoffPayPaymentViewController {
     }
     
     func openTinkoffPayDeeplink(url: URL) {
-        didStartLoading?(AcqLoc.instance.localize("TP.LoadingStatus.Title"))
         guard application.canOpenURL(url) else {
-            // TODO: Alert if needed
+            handleTinkoffAppNotInstalled()
             return
         }
-        application.open(url)
+        
+        application.open(url, options: [:]) { [weak self] result in
+            self?.handleTinkoffApplicationOpen(result: result)
+        }
+    }
+    
+    func handleTinkoffApplicationOpen(result: Bool) {
+        if result {
+            didStartPayment?()
+            didStartLoading?(AcqLoc.instance.localize("TP.LoadingStatus.Title"))
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
     }
     
     func handleError(_ error: Error) {
@@ -124,6 +136,33 @@ private extension TinkoffPayPaymentViewController {
             
             self.showAlert?(alertTitle, alertDescription, error)
         }
+    }
+    
+    func handleTinkoffAppNotInstalled() {
+        didStopLoading?()
+        let alertController = UIAlertController(title: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Title"),
+                                                message: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Description"),
+                                                preferredStyle: .alert)
+        let installAction = UIAlertAction(title: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Button.Install"),
+                                          style: .default) { [weak self] _ in
+            self?.application.open(.tinkoffBankStoreURL)
+            self?.dismiss(animated: true)
+        }
+        
+        let cancelAction = UIAlertAction(title: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Button.Сancel"),
+                                         style: .cancel) { [weak self] _ in
+            self?.dismiss(animated: true)
+        }
+        
+        alertController.addAction(installAction)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true)
+    }
+}
+
+private extension URL {
+    static var tinkoffBankStoreURL: URL {
+        URL(string: "https://apps.apple.com/ru/app/tinkoff-mobile-banking/id455652438")!
     }
 }
 

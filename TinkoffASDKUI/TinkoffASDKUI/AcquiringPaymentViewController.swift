@@ -129,6 +129,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     
     struct Style {
         let payButtonStyle: ButtonStyle
+        let tinkoffPayButtonStyle: TinkoffPayButton.DynamicStyle
     }
     
     var style: Style?
@@ -186,6 +187,8 @@ class AcquiringPaymentViewController: PopUpViewContoller {
                        "PSLogoTableViewCell",
                        "LabelTableViewCell",
                        "TextFieldTableViewCell"], for: tableView)
+        tableView.register(ContainerTableViewCell.self,
+                           forCellReuseIdentifier: ContainerTableViewCell.reuseIdentifier)
 
         tableViewCells = [.waitingInitPayment]
         tableView.dataSource = self
@@ -240,7 +243,6 @@ class AcquiringPaymentViewController: PopUpViewContoller {
             if case AcquiringViewTableViewCells.buttonPaySBP = item { return true }
             return false
         }) != nil {
-            tableViewCells.append(.separatorLabel)
             tableViewCells.append(.buttonPaySBP)
         }
 
@@ -525,24 +527,23 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
                 return cell
             }
         case .tinkoffPay:
-            let cell = UITableViewCell(frame: .zero)
-            let btn = TinkoffPayButton(style: .black)
-            btn.addTarget(self,
-                          action: #selector(handleTinkoffPayButtonTouch),
-                          for: .touchUpInside)
-            btn.translatesAutoresizingMaskIntoConstraints = false
-            cell.contentView.addSubview(btn)
-            NSLayoutConstraint.activate([
-//                btn.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
-//                btn.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor),
-//                btn.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor),
-//                btn.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor),
+            if let cell = tableView.dequeueReusableCell(
+                withIdentifier: ContainerTableViewCell.reuseIdentifier
+            ) as? ContainerTableViewCell {
                 
-                btn.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
-                btn.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: 30),
-                btn.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -30),
-            ])
-            return cell
+                let btn: TinkoffPayButton
+                if let style = style {
+                    btn = TinkoffPayButton(dynamicStyle: style.tinkoffPayButtonStyle)
+                } else {
+                    btn = TinkoffPayButton()
+                }
+                
+                btn.addTarget(self,
+                              action: #selector(handleTinkoffPayButtonTouch),
+                              for: .touchUpInside)
+                cell.setContent(btn, insets: UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20))
+                return cell
+            }
         }
 
         return tableView.defaultCell()

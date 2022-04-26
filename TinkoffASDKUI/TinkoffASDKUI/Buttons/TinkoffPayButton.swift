@@ -20,6 +20,18 @@
 import UIKit
 
 public final class TinkoffPayButton: UIButton {
+    
+    public struct DynamicStyle {
+        let lightStyle: Style
+        let darkStyle: Style
+        
+        public init(lightStyle: Style,
+                    darkStyle: Style) {
+            self.lightStyle = lightStyle
+            self.darkStyle = darkStyle
+        }
+    }
+    
     public struct Style {
         public enum Color {
             case black
@@ -84,12 +96,31 @@ public final class TinkoffPayButton: UIButton {
         }
     }
     
-    private let style: Style
+    private var style: Style {
+        didSet {
+            updateStyle()
+        }
+    }
+    private var dynamicStyle: DynamicStyle?
     
-    public init(style: Style) {
+    public init(style: Style = .black) {
         self.style = style
         super.init(frame: .zero)
         setup()
+    }
+    
+    convenience init(dynamicStyle: DynamicStyle) {
+        if #available(iOS 13.0, *) {
+            switch UITraitCollection.current.userInterfaceStyle {
+            case .dark:
+                self.init(style: dynamicStyle.darkStyle)
+            default:
+                self.init(style: dynamicStyle.lightStyle)
+            }
+        } else {
+            self.init(style: dynamicStyle.lightStyle)
+        }
+        self.dynamicStyle = dynamicStyle
     }
     
     required init?(coder: NSCoder) {
@@ -99,10 +130,29 @@ public final class TinkoffPayButton: UIButton {
     public override var intrinsicContentSize: CGSize {
         .init(width: .minimumWidth, height: .minimumHeight)
     }
+    
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard let dynamicStyle = dynamicStyle else {
+            return
+        }
+        if #available(iOS 13.0, *) {
+            switch UITraitCollection.current.userInterfaceStyle {
+            case .dark:
+                self.style = dynamicStyle.darkStyle
+            default:
+                self.style = dynamicStyle.lightStyle
+            }
+        }
+    }
 }
 
 private extension TinkoffPayButton {
     func setup() {
+        updateStyle()
+    }
+    
+    func updateStyle() {
         if #available(iOS 15.0, *) {
             var configuration = UIButton.Configuration.plain()
             configuration.image = style.image

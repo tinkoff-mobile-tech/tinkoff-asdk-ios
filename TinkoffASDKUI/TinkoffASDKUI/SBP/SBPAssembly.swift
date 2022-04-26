@@ -42,8 +42,7 @@ final class SBPAssembly {
     }
 
     func banksListViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
-                                 configuration: AcquiringViewConfiguration,
-                                 completionHandler: PaymentCompletionHandler?) -> SBPBankListViewController {
+                                 configuration: AcquiringViewConfiguration) -> SBPBankListViewController {
         SBPBankListViewController(acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
                                   paymentService: paymentService,
                                   sbpBanksService: banksService,

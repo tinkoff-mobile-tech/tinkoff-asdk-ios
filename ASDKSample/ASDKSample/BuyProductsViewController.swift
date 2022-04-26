@@ -165,6 +165,7 @@ class BuyProductsViewController: UIViewController {
     private func acquiringViewConfiguration() -> AcquiringViewConfiguration {
         let viewConfigration = AcquiringViewConfiguration()
         viewConfigration.scaner = scaner
+        viewConfigration.tinkoffPayButtonStyle = .init(lightStyle: .whiteBordered, darkStyle: .blackBordered)
 
         viewConfigration.fields = []
         // InfoFields.amount
