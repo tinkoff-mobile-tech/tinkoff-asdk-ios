@@ -121,7 +121,6 @@ final class SBPUrlPaymentViewController: UIViewController, PullableContainerScro
 private extension SBPUrlPaymentViewController {
     func setup() {
         setupContent()
-        banksListViewController.delegate = self
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(handleActiveState),
                                                name: UIApplication.didBecomeActiveNotification,
@@ -330,12 +329,6 @@ private extension SBPUrlPaymentViewController {
                               paymentId: paymentStatusResponse?.paymentId ?? 0,
                               amount: paymentStatusResponse?.amount.int64Value ?? 0,
                               status: .cancelled)
-    }
-}
-
-extension SBPUrlPaymentViewController: SBPBankListViewControllerDelegate {
-    func bankListViewController(_ bankListViewController: SBPBankListViewController, didSelectBank bank: SBPBank) {
-        openBankApplication(bank: bank)
     }
 }
 
