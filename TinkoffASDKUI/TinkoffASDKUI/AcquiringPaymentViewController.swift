@@ -79,6 +79,7 @@ enum AcquiringViewTableViewCells {
     case buttonPaySBP
     case secureLogos
     case email(value: String?, placeholder: String)
+    case tinkoffPay
 }
 
 protocol AcquiringView: class {
@@ -100,6 +101,8 @@ protocol AcquiringView: class {
     var onTouchButtonPay: (() -> Void)? { get set }
     var onTouchButtonSBP: ((UIViewController) -> Void)? { get set }
     var onCancelPayment: (() -> Void)? { get set }
+    var onInitFinished: ((Result<Int64, Error>) -> Void)? { get set }
+    var onSbpInitFinished: ((Result<Int64, Error>, UIViewController) -> Void)? { get set }
     ///
     func cardRequisites() -> PaymentSourceData?
     func infoEmail() -> String?
@@ -109,6 +112,15 @@ protocol AcquiringView: class {
 
 extension AcquiringView {
     func setPaymentType(_ paymentType: PaymentType) {}
+    var onInitFinished: ((Result<Int64, Error>) -> Void)? {
+        get { nil }
+        set {}
+    }
+    
+    var onSbpInitFinished: ((Result<Int64, Error>, UIViewController) -> Void)? {
+        get { nil }
+        set {}
+    }
 }
 
 class AcquiringPaymentViewController: PopUpViewContoller {
@@ -127,6 +139,8 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     var onTouchButtonPay: (() -> Void)?
     var onTouchButtonSBP: ((UIViewController) -> Void)?
     var onCancelPayment: (() -> Void)?
+    var onInitFinished: ((Result<Int64, Error>) -> Void)?
+    var onSbpInitFinished: ((Result<Int64, Error>, UIViewController) -> Void)?
 
     // MARK: IBOutlets
 
@@ -153,6 +167,9 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
+    
+    var acquiringPaymentController: AcquiringPaymentController?
+    var tinkoffPayStatus: GetTinkoffPayStatusResponse.Status?
 
     // MARK: Lifecycle
 
@@ -172,6 +189,8 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
         tableViewCells = [.waitingInitPayment]
         tableView.dataSource = self
+        
+        acquiringPaymentController?.loadCardsAndCheckTinkoffPayAvailability()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -225,6 +244,13 @@ class AcquiringPaymentViewController: PopUpViewContoller {
             tableViewCells.append(.buttonPaySBP)
         }
 
+        switch tinkoffPayStatus {
+        case .allowed(_):
+            tableViewCells.append(.tinkoffPay)
+        default:
+            return
+        }
+        
         tableViewCells.append(.secureLogos)
         tableViewCells.append(.empty(height: 44))
     }
@@ -323,6 +349,12 @@ class AcquiringPaymentViewController: PopUpViewContoller {
                 return false
             }
         }
+    }
+    
+    @objc private func handleTinkoffPayButtonTouch(sender: TinkoffPayButton) {
+        guard case let .allowed(version: version) = tinkoffPayStatus else { return }
+        self.paymentStatus = .paymentWaiting(status: "dsds")
+        acquiringPaymentController?.performTinkoffPayPayment(version: version)
     }
 }
 
@@ -456,7 +488,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
                 cell.onButtonTouch = { [weak self] in
                     if self?.validatePaymentForm() ?? false {
-                        self?.onTouchButtonPay?()
+                        self?.acquiringPaymentController?.performPayment()
                     }
                 }
 
@@ -472,7 +504,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
                 cell.onButtonTouch = { [weak self] in
                     guard let self = self else { return }
-                    self.onTouchButtonSBP?(self)
+                    self.acquiringPaymentController?.performSBPPayment()
                 }
 
                 return cell
@@ -493,6 +525,25 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
                 return cell
             }
+        case .tinkoffPay:
+            let cell = UITableViewCell(frame: .zero)
+            let btn = TinkoffPayButton(style: .black)
+            btn.addTarget(self,
+                          action: #selector(handleTinkoffPayButtonTouch),
+                          for: .touchUpInside)
+            btn.translatesAutoresizingMaskIntoConstraints = false
+            cell.contentView.addSubview(btn)
+            NSLayoutConstraint.activate([
+//                btn.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
+//                btn.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor),
+//                btn.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor),
+//                btn.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor),
+                
+                btn.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
+                btn.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: 30),
+                btn.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -30),
+            ])
+            return cell
         }
 
         return tableView.defaultCell()
@@ -598,5 +649,36 @@ extension AcquiringPaymentViewController: AcquiringView {
     
     func setPaymentType(_ paymentType: PaymentType) {
         self.paymentType = paymentType
+    }
+}
+
+extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didUpdateCards status: FetchStatus<[PaymentCard]>) {
+        cardsListUpdated(status)
+    }
+    
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didUpdateTinkoffPayAvailability status: GetTinkoffPayStatusResponse.Status) {
+        tinkoffPayStatus = status
+    }
+    
+    func acquiringPaymentControllerDidFinishPreparation(_ acquiringPaymentController: AcquiringPaymentController) {
+        paymentStatus = .ready
+    }
+    
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didPaymentInitWith result: Result<Int64, Error>) {
+        onInitFinished?(result)
+    }
+    
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didGetTinkoffPayURL url: URL) {
+        
+    }
+    
+    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
+                                    didPaymentInitForSBPWith result: Result<Int64, Error>) {
+        onSbpInitFinished?(result, self)
     }
 }
