@@ -65,7 +65,7 @@ class CardsViewController: UIViewController {
         tableView.register(UINib(nibName: "PaymentCardTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PaymentCardTableViewCell")
         tableView.register(UINib(nibName: "StatusTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "StatusTableViewCell")
         tableView.register(UINib(nibName: "AddCardTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AddCardTableViewCell")
-        tableView.register(UINib(nibName: "InpuCardtRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InpuCardtRequisitesTableViewCell")
+        tableView.register(UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InputCardRequisitesTableViewCell")
 
         tableView.dataSource = self
         tableView.delegate = self

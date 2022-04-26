@@ -1,5 +1,5 @@
 //
-//  InpuCardtRequisitesTableViewCell.swift
+//  InputCardRequisitesTableViewCell.swift
 //  TinkoffASDKUI
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,7 +19,7 @@
 
 import UIKit
 
-class InpuCardtRequisitesTableViewCell: UITableViewCell, InputRequisitesViewInConnection {
+class InputCardRequisitesTableViewCell: UITableViewCell, InputRequisitesViewInConnection {
     @IBOutlet var viewBorder: UIView!
     @IBOutlet var imageViewPSLogo: UIImageView!
     @IBOutlet var imageViewPSLogoWidth: NSLayoutConstraint!
