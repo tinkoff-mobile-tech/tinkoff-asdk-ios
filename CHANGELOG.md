@@ -1,6 +1,11 @@
 # Changelog
 ## [Unreleased]
 
+## [2.6.7] - 2022-04-26Z
+
+## Fixed
+* fixed incorrect module for some classes in xibs
+
 ## [2.6.6] - 2021-03-25
 
 ## Fixed
