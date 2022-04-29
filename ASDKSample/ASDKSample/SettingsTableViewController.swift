@@ -23,6 +23,7 @@ import UIKit
 class AppSetting {
 
     private let keySBP = "SettingKeySBP"
+    private let keyTinkoffPay = "SettingKeyTinkoffPay"
     private let keyShowEmailField = "SettingKeyShowEmailField"
     private let keyKindForAlertView = "KindForAlertView"
     private let keyAddCardCheckType = "AddCardChekType"
@@ -33,6 +34,13 @@ class AppSetting {
         didSet {
             UserDefaults.standard.set(paySBP, forKey: keySBP)
             UserDefaults.standard.synchronize()
+        }
+    }
+    
+    /// TinkoffPay
+    var tinkoffPay: Bool = false {
+        didSet {
+            UserDefaults.standard.set(tinkoffPay, forKey: keyTinkoffPay)
         }
     }
 
@@ -71,6 +79,7 @@ class AppSetting {
         let usd = UserDefaults.standard
 
         self.paySBP = usd.bool(forKey: keySBP)
+        self.tinkoffPay = usd.bool(forKey: keyTinkoffPay)
         self.showEmailField = usd.bool(forKey: keyShowEmailField)
         self.acquiring = usd.bool(forKey: keyKindForAlertView)
         if let value = usd.value(forKey: keyAddCardCheckType) as? String {
@@ -86,6 +95,8 @@ class SettingsTableViewController: UITableViewController {
     enum TableViewCellType {
         /// включить оплату с помощью `Системы Быстрых Платежей`
         case paySBP
+        /// включить оплату с помощью `TinkoffPay`
+        case tinkoffPay
         /// показывать на форме оплаты поле для ввода email
         case showEmail
         /// использовать алерты из Aquaring SDK
@@ -122,7 +133,7 @@ class SettingsTableViewController: UITableViewController {
         availableLanguage.append("ru")
         availableLanguage.append("en")
 
-        tableViewCells = [.paySBP, .showEmail, .acquiring, .addCardCheckType, .language]
+        tableViewCells = [.paySBP, .tinkoffPay, .showEmail, .acquiring, .addCardCheckType, .language]
     }
 
     // MARK: - Table view data source
@@ -156,7 +167,25 @@ class SettingsTableViewController: UITableViewController {
 
                 return cell
             }
+        case .tinkoffPay:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.nibName) as? SwitchTableViewCell {
+                let value = AppSetting.shared.tinkoffPay
+                cell.switcher.isOn = value
 
+                let title = value
+                    ? NSLocalizedString("status.sbp.on", comment: "Включены")
+                    : NSLocalizedString("status.sbp.off", comment: "Выключены")
+
+                cell.labelTitle.text = title
+                cell.onSwitcherChange = { swither in
+                    AppSetting.shared.tinkoffPay = swither.isOn
+                    tableView.beginUpdates()
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                    tableView.endUpdates()
+                }
+
+                return cell
+            }
         case .showEmail:
             if let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.nibName) as? SwitchTableViewCell {
                 let value = AppSetting.shared.showEmailField
@@ -250,6 +279,8 @@ class SettingsTableViewController: UITableViewController {
         switch tableViewCells[section] {
         case .paySBP:
             return NSLocalizedString("title.fasterPayments", comment: "Система Быстрых Платежей")
+        case .tinkoffPay:
+            return NSLocalizedString("TinkoffPay", comment: "TinkoffPay")
         case .showEmail:
             return NSLocalizedString("title.showEmailField", comment: "")
         case .acquiring:
@@ -265,7 +296,8 @@ class SettingsTableViewController: UITableViewController {
         switch tableViewCells[section] {
         case .paySBP:
             return NSLocalizedString("text.payBySBP.description", comment: "")
-
+        case .tinkoffPay:
+            return ""
         case .showEmail:
             return NSLocalizedString("text.showEmailField", comment: "")
 

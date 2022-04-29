@@ -31,7 +31,10 @@ protocol NetworkTransport: class {
     func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest
     func createChecking3DSURL(requestData: Checking3DSURLData) throws -> URLRequest
     func myIpAddress() -> String?
-    func send<Operation: RequestOperation, Response: ResponseOperation>(operation: Operation, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable
+    func send<Operation: RequestOperation,
+              Response: ResponseOperation>(operation: Operation,
+                                           responseDelegate: NetworkTransportResponseDelegate?,
+                                           completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable
 }
 
 extension NetworkTransport {
@@ -79,13 +82,13 @@ final class AcquaringNetworkTransport: NetworkTransport {
     private func createRequest<Operation: RequestOperation>(for operation: Operation) throws -> URLRequest {
         var request = URLRequest(url: urlDomain.appendingPathComponent(apiPathV2).appendingPathComponent(operation.name))
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
+        request.httpMethod = operation.requestMethod.rawValue
 
         if let body = operation.parameters {
-            logger?.print("🛫 Start POST request: \(request.description), with paramaters: \(body)")
+            logger?.print("🛫 Start \(operation.requestMethod.rawValue) request: \(request.description), with paramaters: \(body)")
             request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
         } else {
-            logger?.print("🛫 Start POST request: \(request.description)")
+            logger?.print("🛫 Start \(operation.requestMethod.rawValue) request: \(request.description)")
         }
 
         return request

@@ -75,3 +75,14 @@
 
 "SBP.OpenApplication.Error" = "Failed to open application";
 "SBP.LoadingStatus.Title" = "Payment confirmation awaiting";
+
+// Tinkoff Pay
+"TP.Error.Title" = "Error occured during transaction";
+"TP.Error.Description" = "Try again";
+
+"TP.LoadingStatus.Title" = "Payment confirmation awaiting";
+
+"TP.NoTinkoffBankApp.Title" = "Tinkoff Bank is not installed";
+"TP.NoTinkoffBankApp.Description" = "Download the app or choose another payment method";
+"TP.NoTinkoffBankApp.Button.Install" = "Install";
+"TP.NoTinkoffBankApp.Button.Сancel" = "Cancel";
