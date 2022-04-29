@@ -230,27 +230,36 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
     func setupTableViewCellForPayment() {
         userTableViewCells.forEach { item in
-            if case AcquiringViewTableViewCells.buttonPaySBP = item {
-            } else {
+            if case AcquiringViewTableViewCells.buttonPaySBP = item {}
+            else if case AcquiringViewTableViewCells.tinkoffPay = item {}
+            else {
                 tableViewCells.append(item)
             }
         }
 
         tableViewCells.append(.cardList)
         tableViewCells.append(.buttonPay)
-
+        
         if userTableViewCells.first(where: { (item) -> Bool in
             if case AcquiringViewTableViewCells.buttonPaySBP = item { return true }
             return false
         }) != nil {
             tableViewCells.append(.buttonPaySBP)
         }
+        
+        var isTinkoffPayEnabled = userTableViewCells.first(where: { item -> Bool in
+            if case AcquiringViewTableViewCells.tinkoffPay = item { return true } else { return false } })
+        != nil
 
         switch tinkoffPayStatus {
         case .allowed(_):
-            tableViewCells.append(.tinkoffPay)
+            isTinkoffPayEnabled = isTinkoffPayEnabled && true
         default:
-            return
+            isTinkoffPayEnabled = false
+        }
+        
+        if isTinkoffPayEnabled {
+            tableViewCells.append(.tinkoffPay)
         }
         
         tableViewCells.append(.secureLogos)

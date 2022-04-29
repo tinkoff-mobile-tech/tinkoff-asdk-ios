@@ -198,11 +198,9 @@ class BuyProductsViewController: UIViewController {
             viewConfigration.fields.append(emailField)
         }
 
-        // fields.append InfoFields.buttonPaySPB
-        if AppSetting.shared.paySBP {
-            viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.buttonPaySPB)
-        }
-
+        viewConfigration.featuresOptions.fpsEnabled = AppSetting.shared.paySBP
+        viewConfigration.featuresOptions.tinkoffPayEnabled = AppSetting.shared.tinkoffPay
+        
         viewConfigration.viewTitle = NSLocalizedString("title.pay", comment: "Оплата")
         viewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
@@ -243,7 +241,12 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfiguration) {
-        sdk.presentPaymentView(on: self, paymentData: paymentData, configuration: viewConfigration) { [weak self] response in
+        sdk.presentPaymentView(on: self,
+                               acquiringPaymentStageConfiguration: .init(
+                                paymentStage: .`init`(paymentData: paymentData)
+                               ),
+                               configuration: viewConfigration,
+                               tinkoffPayDelegate: nil) { [weak self] response in
             self?.responseReviewing(response)
         }
     }
@@ -519,7 +522,7 @@ extension BuyProductsViewController: UITableViewDataSource {
                 return cell
             }
         }
-
+    
         return tableView.defaultCell()
     }
 

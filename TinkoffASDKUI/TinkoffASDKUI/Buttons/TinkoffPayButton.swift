@@ -109,7 +109,7 @@ public final class TinkoffPayButton: UIButton {
         setup()
     }
     
-    convenience init(dynamicStyle: DynamicStyle) {
+    public convenience init(dynamicStyle: DynamicStyle) {
         if #available(iOS 13.0, *) {
             switch UITraitCollection.current.userInterfaceStyle {
             case .dark:
