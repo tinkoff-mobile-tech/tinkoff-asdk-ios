@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.7.0] - 2022-04-29Z
+
 ## Updated
 * rename TinkoffLogger method to log
 
