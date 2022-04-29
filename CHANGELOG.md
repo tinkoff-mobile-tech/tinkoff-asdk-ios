@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+## Updated
+* rename TinkoffLogger method to log
+
 ## Added
 * TinkoffPay(MIC-4863)
 
