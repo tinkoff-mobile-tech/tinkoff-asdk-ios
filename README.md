@@ -108,9 +108,13 @@ pod 'TinkoffASDKUI'
 </array>
 ```
 
+**TinkoffPay на экране оплаты**
+
+При открытии экрана оплаты SDK проверит наличие возможности оплаты через TinkoffPay и, в зависимости от результата, отобразит кнопку оплаты. 
+Отключить отображение кнопки программно можно с помощью параметра `tinkoffPayEnabled` в `featuresOptions` в конфигурации `AcquiringViewConfiguration`.
 
 
- Совершить платеж можно через общий экран оплаты, вызвав метод у экземпляра `AcquiringUISDK`.
+Совершить платеж можно через общий экран оплаты, вызвав метод у экземпляра `AcquiringUISDK`.
 
 ```
 func presentPaymentView(on presentingViewController: UIViewController,
@@ -120,13 +124,33 @@ func presentPaymentView(on presentingViewController: UIViewController,
                        completionHandler: @escaping PaymentCompletionHandler)
 ```
 
-В момент показа шторки, будет совершен запрос, который проверит, доступна ли оплата через TinkoffPay для вашего терминала и в случае доступности отобразится кнопка для совершения оплаты.
+В момент показа экрана оплаты, будет совершен запрос, который проверит, доступна ли оплата через TinkoffPay для вашего терминала и в случае доступности отобразится кнопка для совершения оплаты.
 
-Ответ на запрос проверки доступности TinkoffPay кэшируется на некоторое время. Значение по-умолчанию 300 секунд. Его можно сконфигурировать через параметр `tinkoffPayStatusCacheLifeTime` у объекта`AcquiringSdkConfiguration`, который используется при инициализации `AcquiringUISDK`.
+Для определения возможности оплаты через TinkoffPay SDK посылает запрос на https://securepay.tinkoff.ru/v2/TinkoffPay/terminals/$terminalKey/status.
+
+Ответ на запрос кэшируется на некоторое время. Значение по-умолчанию 300 секунд. Его можно сконфигурировать через параметр `tinkoffPayStatusCacheLifeTime` у объекта`AcquiringSdkConfiguration`, который используется при инициализации `AcquiringUISDK`.
 
 Посредством реализации протокола `TinkoffPayDelegate` можно получит сообщение о том, что оплата через Tinkoff Pay недоступна.
 
 Можно сконфигурировать стиль кнопки TinkoffPay через параметр `tinkoffPayButtonStyle` у `AcquiringViewConfiguration`.
+
+**TinkoffPay внутри вашего приложения**
+
+Для отображения кнопки оплаты через Tinkoff Pay внутри вашего приложения (вне экрана оплаты, предоставляемого SDK) необходимо:
+
+1. Самостоятельно вызвать метод определения доступности оплаты через Tinkoff Pay. Для этого можно использовать метод 
+```
+func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void)
+```
+2. При наличии возможности оплаты отобразить кнопку оплаты через Tinkoff Pay в вашем приложении.
+3. По нажатию кнопки вызвать метод(параметр `GetTinkoffPayStatusResponse.Status.Version` получен на 1 шаге) и показать полученный из метода ViewController.
+```
+func tinkoffPayViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+                              configuration: AcquiringViewConfiguration,
+                              version: GetTinkoffPayStatusResponse.Status.Version,
+                              completionHandler: PaymentCompletionHandler? = nil) -> UIViewController
+```
+Задача по закрытию ViewController, полученный из метода, ложится на плечи пользователя в момент вызова `completionHandler`.
 
 ##### API
 

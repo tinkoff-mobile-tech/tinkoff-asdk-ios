@@ -24,7 +24,6 @@ import WebKit
 
 public protocol TinkoffPayDelegate: AnyObject {
     func tinkoffPayIsNotAllowed()
-    func tinkoffPayInitFailed(error: Error)
 }
 
 public class AcquiringViewConfiguration {
@@ -37,8 +36,8 @@ public class AcquiringViewConfiguration {
         case detail(title: NSAttributedString)
         /// поле ввода email, куда выслать чек - результат оплаты
         case email(value: String?, placeholder: String)
-        /// показывать кнопку оплаты Системы Быстрых Платежей
-        case buttonPaySPB
+//        /// показывать кнопку оплаты Системы Быстрых Платежей
+//        case buttonPaySPB
     }
     
     /// Стиль popup-экранов.
@@ -51,7 +50,8 @@ public class AcquiringViewConfiguration {
     }
 
     public struct FeaturesOptions {
-        var fpsEnabled: Bool = false
+        public var fpsEnabled: Bool = true
+        public var tinkoffPayEnabled: Bool = true
 
         init() {}
     }
@@ -316,22 +316,18 @@ public class AcquiringUISDK: NSObject {
         
         acquiringView?.onTinkoffPayButton = { [weak self] version, paymentViewController in
             guard let self = self else { return }
-            let tinkoffPayViewController = self.tinkoffPayAssembly.tinkoffPayPaymentViewController(
-                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-                tinkoffPayVersion: version
-            )
-            let paymentPollingViewController = self.tinkoffPayAssembly.paymentPollingViewController(
-                content: tinkoffPayViewController,
-                configuration: configuration,
-                completionHandler: { [weak paymentViewController] result in
+            let tinkoffPayViewController = self.tinkoffPayViewController(acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                                                                         configuration: configuration,
+                                                                         version: version) { [weak paymentViewController] result in
+                // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
+                paymentViewController?.dismiss(animated: true, completion: {
+                    // Закрываем AcquiringPaymentViewController
                     (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
                         completionHandler(result)
                     })
-                }
-            )
-            
-            let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
-            paymentViewController.present(pullableContainerViewController, animated: true)
+                })
+            }
+            paymentViewController.present(tinkoffPayViewController, animated: true)
         }
         
         acquiringView?.onTouchButtonSBP = { [weak self] paymentViewController in
@@ -340,8 +336,12 @@ public class AcquiringUISDK: NSObject {
                 acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
                 configuration: configuration,
                 completionHandler: { [weak paymentViewController] result in
-                    (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
-                        completionHandler(result)
+                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
+                    paymentViewController?.dismiss(animated: true, completion: {
+                        // Закрываем AcquiringPaymentViewController
+                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
+                            completionHandler(result)
+                        })
                     })
                 }
             )
@@ -510,6 +510,25 @@ public class AcquiringUISDK: NSObject {
             })
         }
         
+        return pullableContainerViewController
+    }
+    
+    // MARK: - TinkoffPay
+    
+    public func tinkoffPayViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+                                         configuration: AcquiringViewConfiguration,
+                                         version: GetTinkoffPayStatusResponse.Status.Version,
+                                         completionHandler: PaymentCompletionHandler? = nil) -> UIViewController {
+        let tinkoffPayViewController = self.tinkoffPayAssembly.tinkoffPayPaymentViewController(
+            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+            tinkoffPayVersion: version
+        )
+        let paymentPollingViewController = self.tinkoffPayAssembly.paymentPollingViewController(
+            content: tinkoffPayViewController,
+            configuration: configuration,
+            completionHandler: completionHandler)
+        
+        let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
         return pullableContainerViewController
     }
 
@@ -787,13 +806,20 @@ public class AcquiringUISDK: NSObject {
             case let .detail(title):
                 fields.append(.productDetail(title: title))
                 estimatedViewHeight += 50
-            case .buttonPaySPB:
-                fields.append(.buttonPaySBP)
-                estimatedViewHeight += 120
             case let .email(value, placeholder):
                 fields.append(.email(value: value, placeholder: placeholder))
                 estimatedViewHeight += 64
             }
+        }
+        
+        if configuration.featuresOptions.fpsEnabled {
+            fields.append(.buttonPaySBP)
+            estimatedViewHeight += 120
+        }
+        
+        if configuration.featuresOptions.tinkoffPayEnabled {
+            fields.append(.tinkoffPay)
+            estimatedViewHeight += 58
         }
 
         modalViewController.modalMinHeight = estimatedViewHeight

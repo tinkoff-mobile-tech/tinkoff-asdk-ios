@@ -154,16 +154,17 @@ private extension PaymentPollingViewController {
     func showAlert(title: String,
                    description: String?,
                    error: Error) {
-        dismiss(animated: true) { [weak self, configuration, presentingViewController] in
-            guard let presentingViewController = presentingViewController else { return }
-            if let alert = configuration.alertViewHelper?.presentAlertView(title,
-                                                                           message: description,
-                                                                           dismissCompletion: nil) {
-                presentingViewController.present(alert, animated: true, completion: nil)
-            } else {
-                AcquiringAlertViewController.create().present(on: presentingViewController, title: title)
-            }
+        let dismissClosure: (() -> Void)? = { [weak self] in
             self?.completion?(.failure(error))
+        }
+        if let alert = configuration.alertViewHelper?.presentAlertView(title,
+                                                                       message: description,
+                                                                       dismissCompletion: dismissClosure) {
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            AcquiringAlertViewController.create().present(on: self,
+                                                          title: title,
+                                                          dismissClosure: dismissClosure)
         }
     }
     
@@ -190,9 +191,7 @@ private extension PaymentPollingViewController {
                     case .new, .unknown, .formShowed:
                         guard self.paymentStatusRequestCount > 0 else {
                             self.isPollingPaymentStatus = false
-                            self.dismiss(animated: true) { [weak self] in
-                                self?.completion?(.failure(PaymentPollingError.requestLimitExceeded))
-                            }
+                            self.completion?(.failure(PaymentPollingError.requestLimitExceeded))
                             return
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + .paymentStatusPollingInterval) { [weak self] in
@@ -200,9 +199,7 @@ private extension PaymentPollingViewController {
                         }
                     default:
                         self.isPollingPaymentStatus = false
-                        self.dismiss(animated: true) { [weak self] in
-                            self?.completion?(.success(response))
-                        }
+                        self.completion?(.success(response))
                     }
                 }
             }
