@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+## Updated
+* rename TinkoffLogger method to log
+
 ## [2.6.6] - 2021-03-25
 
 ## Fixed
