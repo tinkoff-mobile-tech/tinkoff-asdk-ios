@@ -331,7 +331,7 @@ if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
 - Баги и feature-реквесты можно направлять в раздел [issues][issues]
 - Документация на сайте, описание [API методов][server-api]
 
-[acquiring]: https://oplata.tinkoff.ru
+[acquiring]: https://www.tinkoff.ru/kassa/
 [applepay]: https://developer.apple.com/documentation/passkit/apple_pay
 [cocoapods]: https://cocoapods.org
 [img-pay]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/payscreen.png
