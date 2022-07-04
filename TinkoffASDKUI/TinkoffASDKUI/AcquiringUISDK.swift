@@ -651,7 +651,7 @@ public class AcquiringUISDK: NSObject {
                                                            route: "ACQ")
         
         finishAuthorize(requestData: finishAuthorizeData,
-                        treeDSmessageVersion: "1") { [weak self] result in
+                        treeDSmessageVersion: "1") { result in
             switch result {
             case let .failure(error):
                 DispatchQueue.main.async {
@@ -682,7 +682,7 @@ public class AcquiringUISDK: NSObject {
 
         viewController.delegate = self
 
-        acquiringView?.presentVC(viewController, animated: true) { [weak self] in
+        acquiringView?.presentVC(viewController, animated: true) { [] in
             // self?.acquiringView.setViewHeight(viewController.view.frame.height)
         }
     }
