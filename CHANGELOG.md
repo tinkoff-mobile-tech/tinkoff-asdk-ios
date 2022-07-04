@@ -1,7 +1,15 @@
 # Changelog
 ## [Unreleased]
 
-## [2.7.0] - 2022-04-29Z
+## [2.8.0] - 2022-07-04
+
+## Added
+* parameter shouldValidateCardExpiryDate for validateCardExpiredDate method
+
+## Updated
+* changed default behavior for shouldValidateCardExpiryDate parameter to false
+
+## [2.7.0] - 2022-04-29
 
 ## Updated
 * rename TinkoffLogger method to log
@@ -9,7 +17,7 @@
 ## Added
 * TinkoffPay(MIC-4863)
 
-## [2.6.7] - 2022-04-26Z
+## [2.6.7] - 2022-04-26
 
 ## Fixed
 * fixed incorrect module for some classes in xibs
