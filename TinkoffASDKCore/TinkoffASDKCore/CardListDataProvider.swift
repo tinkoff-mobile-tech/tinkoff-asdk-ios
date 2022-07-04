@@ -66,7 +66,7 @@ public protocol FetchDataSourceProtocol: FetchServiceProtocol where ObjectType =
 }
 
 /// Для отслеживания состояния
-public protocol CardListDataSourceStatusListener: class {
+public protocol CardListDataSourceStatusListener: AnyObject {
     /// Список карт обновился
     func cardsListUpdated(_ status: FetchStatus<[PaymentCard]>)
 }

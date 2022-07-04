@@ -621,6 +621,7 @@ extension BuyProductsViewController: UITableViewDelegate {
 }
 
 extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegate {
+    
     func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
@@ -629,14 +630,13 @@ extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegat
                                             didAuthorizePayment payment: PKPayment,
                                             handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
         let initData = createPaymentData()
-        
         sdk.performPaymentWithApplePay(paymentData: initData,
                                        paymentToken: payment.token,
                                        acquiringConfiguration: .init(paymentStage: .none)) { result in
             switch result {
             case let .failure(error):
                 completion(.init(status: .failure, errors: [error]))
-            case let .success(_):
+            case .success(_):
                 completion(.init(status: .success, errors: nil))
             }
         }
