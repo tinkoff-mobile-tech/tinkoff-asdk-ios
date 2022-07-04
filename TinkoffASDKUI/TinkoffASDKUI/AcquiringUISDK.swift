@@ -120,7 +120,7 @@ public typealias PaymentCompletionHandler = ((_ result: Result<PaymentStatusResp
 public typealias AddCardCompletionHandler = ((_ result: Result<AddCardStatusResponse, Error>) -> Void)
 
 /// Сканер для реквизитов карты
-public protocol AcquiringScanerProtocol: class {
+public protocol AcquiringScanerProtocol: AnyObject {
     ///
     /// - Parameters:
     ///   - completion: результат сканирования, номер карты `number`, год `yy`, месяц `mm`
@@ -129,7 +129,7 @@ public protocol AcquiringScanerProtocol: class {
 }
 
 /// Отображение не стандартного AlertView если в приложении используется не UIAlertController
-public protocol AcquiringAlertViewProtocol: class {
+public protocol AcquiringAlertViewProtocol: AnyObject {
     ///
     /// - Parameters:
     ///   - title: заголовок
@@ -651,7 +651,7 @@ public class AcquiringUISDK: NSObject {
                                                            route: "ACQ")
         
         finishAuthorize(requestData: finishAuthorizeData,
-                        treeDSmessageVersion: "1") { [weak self] result in
+                        treeDSmessageVersion: "1") { result in
             switch result {
             case let .failure(error):
                 DispatchQueue.main.async {
@@ -682,7 +682,7 @@ public class AcquiringUISDK: NSObject {
 
         viewController.delegate = self
 
-        acquiringView?.presentVC(viewController, animated: true) { [weak self] in
+        acquiringView?.presentVC(viewController, animated: true) { [] in
             // self?.acquiringView.setViewHeight(viewController.view.frame.height)
         }
     }

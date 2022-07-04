@@ -27,6 +27,10 @@ protocol CardRequisitesValidatorProtocol {
     func validateCardNumber(number: String?) -> Bool
 
     func validateCardExpiredDate(year: Int, month: Int) -> Bool
+    
+    func validateCardExpiredDate(year: Int,
+                                 month: Int,
+                                 shouldValidateCardExpiryDate: Bool) -> Bool
 
     /// Validate ExpiredDate in format `MMYY`
     func validateCardExpiredDate(value: String?) -> Bool
@@ -42,7 +46,7 @@ protocol CardRequisitesInputMaskProtocol {
     func seriliazeExpiredDate(date: String?) -> (year: Int, month: Int)
 }
 
-protocol CardRequisitesScanerProtocol: class {
+protocol CardRequisitesScanerProtocol: AnyObject {
     func startScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void)
 }
 
@@ -154,8 +158,22 @@ class CardRequisitesValidator: CardRequisites, CardRequisitesValidatorProtocol {
 
         return false
     }
+    
+    func validateCardExpiredDate(year: Int,
+                                 month: Int) -> Bool {
+        return validateCardExpiredDate(year: year,
+                                       month: month,
+                                       shouldValidateCardExpiryDate: false)
+    }
 
-    func validateCardExpiredDate(year: Int, month: Int) -> Bool {
+    func validateCardExpiredDate(year: Int,
+                                 month: Int,
+                                 shouldValidateCardExpiryDate: Bool = false) -> Bool {
+        
+        if !shouldValidateCardExpiryDate {
+            return true
+        }
+        
         let date = Date()
         let calendar = Calendar.current
 
@@ -166,8 +184,10 @@ class CardRequisitesValidator: CardRequisites, CardRequisitesValidatorProtocol {
     }
 
     func validateCardExpiredDate(value: String?) -> Bool {
-        if let inputValue = value, let mount = Int(inputValue.prefix(2)), let year = Int(inputValue.suffix(2)), mount > 0, mount < 13 {
-            return validateCardExpiredDate(year: year, month: mount)
+        if let inputValue = value,
+            let month = Int(inputValue.prefix(2)),
+            let year = Int(inputValue.suffix(2)), month > 0, month < 13 {
+            return validateCardExpiredDate(year: year, month: month)
         }
 
         return false

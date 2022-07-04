@@ -21,7 +21,7 @@ import Foundation
 
 // MARK: NetworkTransport
 
-protocol NetworkTransport: class {
+protocol NetworkTransport: AnyObject {
     var logger: LoggerDelegate? { get set }
     var confirmation3DSTerminationURL: URL { get }
     var confirmation3DSTerminationV2URL: URL { get }

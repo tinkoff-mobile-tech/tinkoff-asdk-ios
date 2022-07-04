@@ -22,7 +22,7 @@ import UIKit
 import WebKit
 
 /// получение информации для отрисовки списка карт
-protocol AcquiringCardListDataSourceDelegate: class {
+protocol AcquiringCardListDataSourceDelegate: AnyObject {
     /// Количество доступных, активных карт
     func getCardListNumberOfCards() -> Int
     /// Статус обновления списока карт
@@ -82,7 +82,7 @@ enum AcquiringViewTableViewCells {
     case tinkoffPay
 }
 
-protocol AcquiringView: class {
+protocol AcquiringView: AnyObject {
     func setCells(_ value: [AcquiringViewTableViewCells])
 
     func changedStatus(_ status: AcquiringViewStatus)
