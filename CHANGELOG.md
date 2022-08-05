@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* [MIC-6021] Fix logger's crash
+
 ## [2.8.0] - 2022-07-04
 
 ## Added
