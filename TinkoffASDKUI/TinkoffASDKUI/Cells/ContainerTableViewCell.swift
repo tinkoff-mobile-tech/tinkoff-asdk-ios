@@ -63,6 +63,7 @@ final class ContainerTableViewCell: UITableViewCell, ReusableCell {
 
 private extension ContainerTableViewCell {
     func setup() {
+        selectionStyle = .none
         contentView.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

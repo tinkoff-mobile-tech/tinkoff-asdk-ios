@@ -366,6 +366,10 @@ class AcquiringPaymentViewController: PopUpViewContoller {
         guard case let .allowed(version: version) = tinkoffPayStatus else { return }
         onTinkoffPayButton?(version, self)
     }
+
+    @objc private func sbpButtonTapped() {
+        onTouchButtonSBP?(self)
+    }
 }
 
 extension AcquiringPaymentViewController: UITableViewDataSource {
@@ -506,20 +510,13 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
             }
 
         case .buttonPaySBP:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonTableViewCell") as? ButtonTableViewCell {
-                cell.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"), for: .normal)
-                cell.buttonAction.tintColor = UIColor.asdk.dynamic.button.sbp.tint
-                cell.buttonAction.backgroundColor = UIColor.asdk.dynamic.button.sbp.background
-                cell.setButtonIcon(UIImage(named: "buttonIconSBP", in: .uiResources, compatibleWith: nil))
-
-                cell.onButtonTouch = { [weak self] in
-                    guard let self = self else { return }
-                    self.onTouchButtonSBP?(self)
-                }
-
-                return cell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ContainerTableViewCell.reuseIdentifier) as? ContainerTableViewCell else {
+                break
             }
-
+            let button = ASDKButton(style: .sbpPayment)
+            button.addTarget(self, action: #selector(sbpButtonTapped), for: .touchUpInside)
+            cell.setContent(button, insets: .buttonInContainerInsets)
+            return cell
         case .secureLogos:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "PSLogoTableViewCell") as? PSLogoTableViewCell {
                 return cell
@@ -550,7 +547,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
                 btn.addTarget(self,
                               action: #selector(handleTinkoffPayButtonTouch),
                               for: .touchUpInside)
-                cell.setContent(btn, insets: UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20))
+                cell.setContent(btn, insets: .buttonInContainerInsets)
                 return cell
             }
         }
@@ -679,5 +676,13 @@ extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
     func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
                                     didPaymentInitWith result: Result<Int64, Error>) {
         onInitFinished?(result)
+    }
+}
+
+// MARK: - UIEdgeInsets + Constants
+
+private extension UIEdgeInsets {
+    static var buttonInContainerInsets: UIEdgeInsets {
+        UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20)
     }
 }
