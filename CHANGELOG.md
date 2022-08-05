@@ -2,7 +2,9 @@
 ## [Unreleased]
 
 ### Fixed
+
 * [MIC-6021] Fix logger's crash
+* [MIC-6012] Flickering buttons in the payment form
 
 ## [2.8.0] - 2022-07-04
 
