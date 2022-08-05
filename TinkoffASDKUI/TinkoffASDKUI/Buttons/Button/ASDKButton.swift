@@ -1,6 +1,6 @@
 //
 //
-//  Button.swift
+//  ASDKButton.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import Foundation
 
-final class Button: UIButton {
+final class ASDKButton: UIButton {
     // MARK: Style
 
     struct Style {

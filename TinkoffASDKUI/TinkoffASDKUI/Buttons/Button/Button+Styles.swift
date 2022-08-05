@@ -20,9 +20,9 @@
 
 import Foundation
 
-extension Button.Style {
-    static var sbpPayment: Button.Style {
-        Button.Style(
+extension ASDKButton.Style {
+    static var sbpPayment: ASDKButton.Style {
+        ASDKButton.Style(
             title: Title(
                 text: AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"),
                 color: .asdk.dynamic.background.elevation1,

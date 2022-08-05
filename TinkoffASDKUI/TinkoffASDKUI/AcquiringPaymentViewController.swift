@@ -513,9 +513,9 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ContainerTableViewCell.reuseIdentifier) as? ContainerTableViewCell else {
                 break
             }
-            let button = Button(style: .sbpPayment)
+            let button = ASDKButton(style: .sbpPayment)
             button.addTarget(self, action: #selector(sbpButtonTapped), for: .touchUpInside)
-            cell.setContent(button, insets: UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20))
+            cell.setContent(button, insets: .buttonInContainerInsets)
             return cell
         case .secureLogos:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "PSLogoTableViewCell") as? PSLogoTableViewCell {
@@ -547,7 +547,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
                 btn.addTarget(self,
                               action: #selector(handleTinkoffPayButtonTouch),
                               for: .touchUpInside)
-                cell.setContent(btn, insets: UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20))
+                cell.setContent(btn, insets: .buttonInContainerInsets)
                 return cell
             }
         }
@@ -676,5 +676,13 @@ extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
     func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
                                     didPaymentInitWith result: Result<Int64, Error>) {
         onInitFinished?(result)
+    }
+}
+
+// MARK: - UIEdgeInsets + Constants
+
+private extension UIEdgeInsets {
+    static var buttonInContainerInsets: UIEdgeInsets {
+        UIEdgeInsets(top: 7, left: 20, bottom: 7, right: 20)
     }
 }
