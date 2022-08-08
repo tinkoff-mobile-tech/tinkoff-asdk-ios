@@ -27,7 +27,7 @@ protocol IPaymentSystemImageResolver {
 final class PaymentSystemImageResolver: IPaymentSystemImageResolver {
     private let paymentSystemResolver: IPaymentSystemResolver
 
-    init(paymentSystemResolver: IPaymentSystemResolver) {
+    init(paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver()) {
         self.paymentSystemResolver = paymentSystemResolver
     }
 
