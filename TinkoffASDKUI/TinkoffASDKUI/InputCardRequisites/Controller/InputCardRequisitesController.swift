@@ -104,6 +104,7 @@ class InputCardRequisitesController: NSObject {
     private func onScanerResult(_ number: String?, _ mm: Int?, _ yy: Int?) {
         if let valueNumber = number, requisitesInputValidator.validate(inputPAN: number) {
             if let textField = inputView?.textFieldCardNumber {
+                maskedTextFieldCardNumberDelegate.maskFormat = inputMaskResolver.panMask(for: nil)
                 maskedTextFieldCardNumberDelegate.put(text: valueNumber, into: textField)
 
                 inputView?.buttonRight.isHidden = true
