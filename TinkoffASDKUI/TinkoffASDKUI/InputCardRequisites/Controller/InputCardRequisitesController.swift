@@ -135,7 +135,7 @@ class InputCardRequisitesController: NSObject {
         self?.activateStep(.inputCardExpDate)
     }
 
-    func activateStep(_ inputState: InputState) {
+    private func activateStep(_ inputState: InputState) {
         inputView?.labelShortCardNumber.isHidden = true
         inputView?.textFieldCardNumber.isHidden = true
         inputView?.textFieldCardExpDate.isHidden = true
@@ -148,7 +148,7 @@ class InputCardRequisitesController: NSObject {
         case .inputCardNumber:
             inputView?.textFieldCardNumber.isHidden = false
             inputView?.textFieldCardNumber.becomeFirstResponder()
-            if requisitesInputValidator.validate(inputPAN: inputView?.textFieldCardNumber.text) {
+            if requisitesInputValidator.validate(inputPAN: inputCardNumber) {
                 activateNextButton()
             } else {
                 activateScanerButton()
