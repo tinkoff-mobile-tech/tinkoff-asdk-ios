@@ -1,5 +1,5 @@
 //
-//  InputCardRequisitesLegacy.swift
+//  InputCardRequisitesProtocolsDeprecated.swift
 //  TinkoffASDKUI
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,12 +19,14 @@
 
 import UIKit
 
-// TODO: Remove redundant classes
-
+// TODO: MIC-6013 Remove redundant entities
+@available(*, deprecated, message: "The protocol is deprecated and will be removed in the next releases")
 public protocol CardRequisitesBrandInfoProtocol {
     func cardBrandInfo(numbers: String?, completion: @escaping (_ requisites: String?, _ icon: UIImage?, _ iconSize: CGSize) -> Void)
 }
 
+// TODO: MIC-6013 Remove redundant entities
+@available(*, deprecated, message: "The class is deprecated and will be removed in the next releases")
 public class CardRequisites {
     public init() {}
 
@@ -67,6 +69,8 @@ public class CardRequisites {
     }
 }
 
+// TODO: MIC-6013 Remove redundant entities
+@available(*, deprecated, message: "The class is deprecated and will be removed in the next releases")
 public class CardRequisitesBrandInfo: CardRequisites, CardRequisitesBrandInfoProtocol {
     private let sizeLogoBrand = CGSize(width: 56, height: 36)
     private let sizeLogoPaymentSystem = CGSize(width: 21, height: 11)
