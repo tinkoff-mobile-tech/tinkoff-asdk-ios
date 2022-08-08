@@ -42,7 +42,7 @@ enum PaymentType {
 protocol CardListViewOutConnection: InputViewStatus {
     func requisies() -> CardRequisitesState
 
-    func presentCardList(dataSource: AcquiringCardListDataSourceDelegate?, in view: CardListViewInConenction, becomeFirstResponderListener: BecomeFirstResponderListener?, scaner: CardRequisitesScanerProtocol?)
+    func presentCardList(dataSource: AcquiringCardListDataSourceDelegate?, in view: CardListViewInConenction, becomeFirstResponderListener: BecomeFirstResponderListener?, scaner: ICardRequisitesScanner?)
 
     func waitCVCInput(forCardWith parentPaymentId: Int64, fieldActivated: @escaping (() -> Void))
 
@@ -60,7 +60,7 @@ class CardListPresenter: NSObject {
 
     var didSelectSBPItem: (() -> Void)?
     var didSelectShowCardList: (() -> Void)?
-    weak var scaner: CardRequisitesScanerProtocol?
+    weak var scaner: ICardRequisitesScanner?
 
     // MARK: private
 
@@ -407,7 +407,7 @@ extension CardListPresenter: CardListViewOutConnection {
         return CardRequisitesState.requisites(number: requisites.number, expDate: requisites.expDate, cvc: requisites.cvc)
     }
 
-    func presentCardList(dataSource: AcquiringCardListDataSourceDelegate?, in view: CardListViewInConenction, becomeFirstResponderListener: BecomeFirstResponderListener?, scaner: CardRequisitesScanerProtocol?) {
+    func presentCardList(dataSource: AcquiringCardListDataSourceDelegate?, in view: CardListViewInConenction, becomeFirstResponderListener: BecomeFirstResponderListener?, scaner: ICardRequisitesScanner?) {
         self.dataSource = dataSource
         self.becomeFirstResponderListener = becomeFirstResponderListener
         self.scaner = scaner

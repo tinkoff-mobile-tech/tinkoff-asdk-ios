@@ -326,16 +326,16 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
         switch cardListPresenter.requisies() {
         case let .savedCard(_, cvc):
-            let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
+            let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
             
             var validationResult = true
             
             if case .paymentWainingCVC = paymentStatus {
-                validationResult = cardRequisitesValidator.validateCardCVC(cvc: cvc)
+                validationResult = cardRequisitesValidator.validate(inputCVC: cvc)
             } else {
                 switch paymentType {
                 case .standart:
-                    validationResult = cardRequisitesValidator.validateCardCVC(cvc: cvc)
+                    validationResult = cardRequisitesValidator.validate(inputCVC: cvc)
                 case .recurrent:
                     validationResult = true
                 }
@@ -348,8 +348,10 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
         case let .requisites(number, expDate, cvc):
             if let number = number, let expDate = expDate, let cvc = cvc {
-                let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-                if cardRequisitesValidator.validateCardNumber(number: number), cardRequisitesValidator.validateCardExpiredDate(value: expDate), cardRequisitesValidator.validateCardCVC(cvc: cvc) {
+                let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
+                if cardRequisitesValidator.validate(inputPAN: number),
+                   cardRequisitesValidator.validate(inputValidThru: expDate),
+                   cardRequisitesValidator.validate(inputCVC: cvc) {
                     return true
                 } else {
                     cardListPresenter.setStatus(.error, statusText: nil)
@@ -564,7 +566,7 @@ extension AcquiringPaymentViewController: BecomeFirstResponderListener {
     }
 }
 
-extension AcquiringPaymentViewController: CardRequisitesScanerProtocol {
+extension AcquiringPaymentViewController: ICardRequisitesScanner {
     func startScanner(completion: @escaping (String?, Int?, Int?) -> Void) {
         if let scanerView = scanerDataSource?.presentScanner(completion: { numbers, mm, yy in
             completion(numbers, mm, yy)
@@ -632,8 +634,10 @@ extension AcquiringPaymentViewController: AcquiringView {
 
         case let .requisites(number, expDate, cvc):
             if let number = number, let expDate = expDate, let cvc = cvc {
-                let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-                if cardRequisitesValidator.validateCardNumber(number: number), cardRequisitesValidator.validateCardExpiredDate(value: expDate), cardRequisitesValidator.validateCardCVC(cvc: cvc) {
+                let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
+                if cardRequisitesValidator.validate(inputPAN: number),
+                   cardRequisitesValidator.validate(inputValidThru: expDate),
+                   cardRequisitesValidator.validate(inputCVC: cvc) {
                     return PaymentSourceData.cardNumber(number: number, expDate: expDate, cvv: cvc)
                 }
             }

@@ -70,11 +70,10 @@ class AddNewCardViewController: PopUpViewContoller {
     private func onButtonAddTouch() {
         let requisites = inputCardRequisitesController.requisies()
         if let number = requisites.number, let expDate = requisites.expDate, let cvc = requisites.cvc {
-            let cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-
-            if cardRequisitesValidator.validateCardNumber(number: number),
-               cardRequisitesValidator.validateCardExpiredDate(value: expDate),
-               cardRequisitesValidator.validateCardCVC(cvc: cvc)
+            let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
+            if cardRequisitesValidator.validate(inputPAN: number),
+               cardRequisitesValidator.validate(inputValidThru: expDate),
+               cardRequisitesValidator.validate(inputCVC: cvc)
             {
                 viewWaiting.isHidden = false
                 cardListDataSourceDelegate?.cardListToAddCard(number: number,
@@ -151,7 +150,7 @@ extension AddNewCardViewController: BecomeFirstResponderListener {
     }
 }
 
-extension AddNewCardViewController: CardRequisitesScanerProtocol {
+extension AddNewCardViewController: ICardRequisitesScanner {
     func startScanner(completion: @escaping (String?, Int?, Int?) -> Void) {
         if let scanerView = scanerDataSource?.presentScanner(completion: { numbers, mm, yy in
             completion(numbers, mm, yy)
