@@ -82,7 +82,7 @@ class CardListPresenter: NSObject {
     private lazy var inputCardRequisitesController: InputCardRequisitesDataSource = InputCardRequisitesController()
     private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
     private lazy var inputCardCVCRequisitesPresenter: InputCardCVCRequisitesViewOutConnection = InputCardCVCRequisitesPresenter()
-    private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
+    private let paymentSystemImageResolver: IPaymentSystemImageResolver = PaymentSystemImageResolver()
     private var waitingInputCVCForParentPaymentId: Int64?
     private var waitingInputIndexPath: IndexPath?
     private var lastActiveCardIndexPath: IndexPath?
@@ -167,16 +167,10 @@ extension CardListPresenter: UICollectionViewDelegate, UICollectionViewDelegateF
                         let card = cards[cellInfo.index]
                         cell.labelCardName.text = card.pan
                         cell.labelCardExpData.text = card.expDateFormat()
-                        
-                        cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
-                            if let numbers = requisites, card.pan.hasPrefix(numbers) {
-                                cell?.imageViewLogo.image = icon
-                                cell?.imageViewLogo.isHidden = false
-                            } else {
-                                cell?.imageViewLogo.image = nil
-                                cell?.imageViewLogo.isHidden = true
-                            }
-                        })
+
+                        let paymentSystemImage = paymentSystemImageResolver.resolve(by: card.pan)
+                        cell.imageViewLogo?.image = paymentSystemImage
+                        cell.imageViewLogo?.isHidden = paymentSystemImage == nil
                         
                         if let parentPaymentId = waitingInputCVCForParentPaymentId, parentPaymentId == card.parentPaymentId {
                             cell.textFieldCardCVC.isHidden = false
