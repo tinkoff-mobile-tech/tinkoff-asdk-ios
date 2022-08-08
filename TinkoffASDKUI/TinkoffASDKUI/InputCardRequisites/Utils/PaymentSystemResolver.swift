@@ -55,6 +55,14 @@ final class PaymentSystemResolver: IPaymentSystemResolver {
         }
     }
 
+    // MARK: Constants
+
+    private enum Constants {
+        static let binLength = 6
+    }
+
+    // MARK: Payment System's Regex Map
+
     private let paymentSystemsRegexes: [PaymentSystemDecision.PaymentSystem: NSRegularExpression] = [
         .visa: Pattern.visa,
         .masterCard: Pattern.masterCard,
@@ -67,8 +75,12 @@ final class PaymentSystemResolver: IPaymentSystemResolver {
     func resolve(by inputPAN: String?) -> PaymentSystemDecision {
         guard let inputPAN = inputPAN else { return .unrecognized }
 
+        // Для проверки на соответствие регулярному выражению достаточно
+        // использовать только BIN (первые 6 цифр номера карты)
+        let inputBIN = String(inputPAN.prefix(Constants.binLength))
+
         let matchedPaymentSystems = paymentSystemsRegexes
-            .filter { _, regex in inputPAN.matches(with: regex) }
+            .filter { _, regex in inputBIN.matches(with: regex) }
             .map(\.key)
 
         switch matchedPaymentSystems.first {
