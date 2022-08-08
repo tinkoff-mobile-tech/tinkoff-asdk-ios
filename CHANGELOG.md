@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-5938] Extend input mask for card's PAN
+
 ## [2.8.1] - 2022-08-05Z
 
 ### Fixed
