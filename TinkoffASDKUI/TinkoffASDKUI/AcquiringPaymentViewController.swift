@@ -501,9 +501,11 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
                 }
 
                 cell.onButtonTouch = { [weak self] in
-                    if self?.validatePaymentForm() ?? false {
-                        self?.acquiringPaymentController?.performPayment()
-                    }
+                    guard let self = self,
+                          self.validatePaymentForm() else { return }
+
+                    let action = self.onTouchButtonPay ?? self.acquiringPaymentController?.performPayment
+                    action?()
                 }
 
                 return cell
