@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.9.0] - 2022-08-12Z
+
 ### Fixed
 
 * [MIC-6099] The payment button touch handling in the payment form, with a recurring payment
