@@ -268,6 +268,7 @@ public class AcquiringUISDK: NSObject {
         }
         
         self.presentPaymentView(on: presentingViewController,
+                                customerKey: paymentData.customerKey,
                                 acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
                                 configuration: configuration,
                                 tinkoffPayDelegate: tinkoffPayDelegate,
@@ -277,6 +278,7 @@ public class AcquiringUISDK: NSObject {
     ///
     /// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
     public func presentPaymentView(on presentingViewController: UIViewController,
+                                   customerKey: String? = nil,
                                    acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
                                    configuration: AcquiringViewConfiguration,
                                    tinkoffPayDelegate: TinkoffPayDelegate? = nil,
@@ -285,7 +287,7 @@ public class AcquiringUISDK: NSObject {
         onPaymentCompletionHandler = completionHandler
         acquiringViewConfiguration = configuration
         
-        var customerKey: String?
+        var customerKey = customerKey
         var acquiringConfiguration: AcquiringConfiguration
         switch acquiringPaymentStageConfiguration.paymentStage {
         case let .`init`(paymentData):
