@@ -1250,6 +1250,15 @@ public class AcquiringUISDK: NSObject {
                                                         amount: paymentInitResponseData.amount,
                                                         status: .cancelled)
             onPaymentCompletionHandler?(.success(paymentResponse))
+        } else {
+            let paymentCanceledResponse = PaymentStatusResponse(success: false,
+                                                                errorCode: 0,
+                                                                errorMessage: AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel"),
+                                                                orderId: "",
+                                                                paymentId: 0,
+                                                                amount: 0,
+                                                                status: .cancelled)
+            onPaymentCompletionHandler?(.success(paymentCanceledResponse))
         }
     }
 
