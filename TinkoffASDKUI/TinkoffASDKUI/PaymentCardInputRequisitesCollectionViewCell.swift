@@ -19,7 +19,7 @@
 
 import UIKit
 
-protocol InputRequisitesViewInConnection: class {
+protocol InputRequisitesViewInConnection: AnyObject {
     var imageViewPSLogo: UIImageView! { get }
     var imageViewPSLogoWidth: NSLayoutConstraint! { get }
 

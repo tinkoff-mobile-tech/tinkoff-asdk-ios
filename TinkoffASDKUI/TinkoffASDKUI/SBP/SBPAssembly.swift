@@ -30,19 +30,26 @@ final class SBPAssembly {
         self.coreSDK = coreSDK
         self.style = style
     }
-    
-    func urlPaymentViewController(paymentSource: PaymentSource,
-                                  configuration: AcquiringViewConfiguration,
-                                  completionHandler: PaymentCompletionHandler?) -> SBPUrlPaymentViewController {
-        SBPUrlPaymentViewController(paymentSource: paymentSource,
-                                    paymentService: paymentService,
-                                    sbpBanksService: banksService,
-                                    sbpApplicationService: applicationService,
-                                    sbpPaymentService: sbpPaymentService,
-                                    banksListViewController: banksListViewController,
-                                    configuration: configuration,
-                                    completion: completionHandler
-        )
+
+    func paymentPollingViewController(content: SBPBankListViewController,
+                                      configuration: AcquiringViewConfiguration,
+                                      completionHandler: PaymentCompletionHandler?) -> PaymentPollingViewController<SBPBankListViewController> {
+        let paymentPollingViewController = PaymentPollingViewController(contentViewController: content,
+                                                                        paymentService: paymentService,
+                                                                        configuration: configuration,
+                                                                        completion: completionHandler)
+        return paymentPollingViewController
+    }
+
+    func banksListViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+                                 configuration: AcquiringViewConfiguration) -> SBPBankListViewController {
+        SBPBankListViewController(acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                                  paymentService: paymentService,
+                                  sbpBanksService: banksService,
+                                  sbpApplicationService: applicationService,
+                                  sbpPaymentService: sbpPaymentService,
+                                  style: .init(continueButtonStyle: style.bigButtonStyle),
+                                  tableManager: banksListTableManager)
     }
     
     func noAvailableBanksViewController(paymentStatusResponse: PaymentStatusResponse,
@@ -71,11 +78,6 @@ private extension SBPAssembly {
     
     var sbpPaymentService: SBPPaymentService {
         DefaultSBPPaymentService(coreSDK: coreSDK)
-    }
-    
-    var banksListViewController: SBPBankListViewController {
-        SBPBankListViewController(style: .init(continueButtonStyle: style.bigButtonStyle),
-                                  tableManager: banksListTableManager)
     }
     
     var banksListTableManager: SBPBankListTableManager {

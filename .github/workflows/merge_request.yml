@@ -1,0 +1,8 @@
+name: merge request
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1

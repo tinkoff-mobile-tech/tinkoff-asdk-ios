@@ -1,8 +1,39 @@
 # Changelog
 ## [Unreleased]
 
+## [2.9.0] - 2022-08-12Z
+
+### Fixed
+
+* [MIC-6099] The payment button touch handling in the payment form, with a recurring payment
+
+## [2.8.1] - 2022-08-05Z
+
+### Fixed
+
+* [MIC-6021] Fix logger's crash
+* [MIC-6012] Flickering buttons in the payment form
+
+## [2.8.0] - 2022-07-04
+
+## Added
+* parameter shouldValidateCardExpiryDate for validateCardExpiredDate method
+
+## Updated
+* changed default behavior for shouldValidateCardExpiryDate parameter to false
+
+## [2.7.0] - 2022-04-29
+
 ## Updated
 * rename TinkoffLogger method to log
+
+## Added
+* TinkoffPay(MIC-4863)
+
+## [2.6.7] - 2022-04-26
+
+## Fixed
+* fixed incorrect module for some classes in xibs
 
 ## [2.6.6] - 2021-03-25
 

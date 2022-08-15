@@ -22,6 +22,10 @@ import TinkoffASDKCore
 import UIKit
 import WebKit
 
+public protocol TinkoffPayDelegate: AnyObject {
+    func tinkoffPayIsNotAllowed()
+}
+
 public class AcquiringViewConfiguration {
     ///
     /// Поля на форме оплаты
@@ -32,8 +36,8 @@ public class AcquiringViewConfiguration {
         case detail(title: NSAttributedString)
         /// поле ввода email, куда выслать чек - результат оплаты
         case email(value: String?, placeholder: String)
-        /// показывать кнопку оплаты Системы Быстрых Платежей
-        case buttonPaySPB
+//        /// показывать кнопку оплаты Системы Быстрых Платежей
+//        case buttonPaySPB
     }
     
     /// Стиль popup-экранов.
@@ -46,7 +50,8 @@ public class AcquiringViewConfiguration {
     }
 
     public struct FeaturesOptions {
-        var fpsEnabled: Bool = false
+        public var fpsEnabled: Bool = true
+        public var tinkoffPayEnabled: Bool = true
 
         init() {}
     }
@@ -80,8 +85,22 @@ public class AcquiringViewConfiguration {
     public var viewTitle: String?
     public var startViewHeight: CGFloat?
     public var popupStyle: PopupStyle = .dynamic
+    public var tinkoffPayButtonStyle: TinkoffPayButton.DynamicStyle = .init(lightStyle: .black, darkStyle: .white)
 
     public init() {}
+}
+
+public struct AcquiringPaymentStageConfiguration {
+    public enum PaymentStage {
+        case `init`(paymentData: PaymentInitData)
+        case finish(paymentId: Int64)
+    }
+    
+    public let paymentStage: PaymentStage
+
+    public init(paymentStage: PaymentStage) {
+        self.paymentStage = paymentStage
+    }
 }
 
 public struct AcquiringConfiguration {
@@ -101,7 +120,7 @@ public typealias PaymentCompletionHandler = ((_ result: Result<PaymentStatusResp
 public typealias AddCardCompletionHandler = ((_ result: Result<AddCardStatusResponse, Error>) -> Void)
 
 /// Сканер для реквизитов карты
-public protocol AcquiringScanerProtocol: class {
+public protocol AcquiringScanerProtocol: AnyObject {
     ///
     /// - Parameters:
     ///   - completion: результат сканирования, номер карты `number`, год `yy`, месяц `mm`
@@ -110,7 +129,7 @@ public protocol AcquiringScanerProtocol: class {
 }
 
 /// Отображение не стандартного AlertView если в приложении используется не UIAlertController
-public protocol AcquiringAlertViewProtocol: class {
+public protocol AcquiringAlertViewProtocol: AnyObject {
     ///
     /// - Parameters:
     ///   - title: заголовок
@@ -151,6 +170,7 @@ public class AcquiringUISDK: NSObject {
     private var checkPaymentStatus: PaymentStatusServiceProvider?
     
     private let sbpAssembly: SBPAssembly
+    private let tinkoffPayAssembly: TinkoffPayAssembly
     
     private weak var logger: LoggerDelegate?
     
@@ -161,6 +181,8 @@ public class AcquiringUISDK: NSObject {
         self.style = style
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
+        self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk,
+                                                     tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
         self.logger = configuration.logger
     }
 
@@ -227,46 +249,105 @@ public class AcquiringUISDK: NSObject {
         })
     }
 
+    @available(*, deprecated, message: "Use presentPaymentView(on presentingViewController: UIViewController, acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration, configuration: AcquiringViewConfiguration,tinkoffPayDelegate: TinkoffPayDelegate? = nil,completionHandler: @escaping PaymentCompletionHandler instead")
     ///
     /// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
     public func presentPaymentView(on presentingViewController: UIViewController,
                                    paymentData: PaymentInitData,
                                    configuration: AcquiringViewConfiguration,
                                    acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
+                                   tinkoffPayDelegate: TinkoffPayDelegate? = nil,
+                                   completionHandler: @escaping PaymentCompletionHandler)
+    {
+        let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
+        switch acquiringConfiguration.paymentStage {
+        case .none:
+            acquiringPaymentStageConfiguration = .init(paymentStage: .`init`(paymentData: paymentData))
+        case let .paymentId(paymentId):
+            acquiringPaymentStageConfiguration = .init(paymentStage: .finish(paymentId: paymentId))
+        }
+        
+        self.presentPaymentView(on: presentingViewController,
+                                customerKey: paymentData.customerKey,
+                                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                                configuration: configuration,
+                                tinkoffPayDelegate: tinkoffPayDelegate,
+                                completionHandler: completionHandler)
+    }
+    
+    ///
+    /// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
+    public func presentPaymentView(on presentingViewController: UIViewController,
+                                   customerKey: String? = nil,
+                                   acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+                                   configuration: AcquiringViewConfiguration,
+                                   tinkoffPayDelegate: TinkoffPayDelegate? = nil,
                                    completionHandler: @escaping PaymentCompletionHandler)
     {
         onPaymentCompletionHandler = completionHandler
         acquiringViewConfiguration = configuration
+        
+        var customerKey = customerKey
+        var acquiringConfiguration: AcquiringConfiguration
+        switch acquiringPaymentStageConfiguration.paymentStage {
+        case let .`init`(paymentData):
+            customerKey = paymentData.customerKey
+            acquiringConfiguration = .init(paymentStage: .none)
+        case let .finish(paymentId):
+            acquiringConfiguration = .init(paymentStage: .paymentId(paymentId))
+        }
         self.acquiringConfiguration = acquiringConfiguration
 
-        presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: paymentData.customerKey, configuration: configuration) { [weak self] view in
-            switch acquiringConfiguration.paymentStage {
-            case .none:
-                self?.startPay(paymentData)
-            case let .paymentId(paymentId):
-                self?.paymentInitResponseData = PaymentInitResponseData(amount: paymentData.amount,
-                                                                        orderId: paymentData.orderId,
-                                                                        paymentId: paymentId)
-                view.changedStatus(.ready)
-            }
-        }
-
-        acquiringView?.onTouchButtonPay = { [weak self] in
-            if let cardRequisites = self?.acquiringView?.cardRequisites(),
-               let paymentId = self?.paymentInitResponseData?.paymentId
-            {
-                self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
+        presentAcquiringPaymentView(presentingViewController: presentingViewController,
+                                    customerKey: customerKey,
+                                    configuration: configuration,
+                                    loadCardsOutside: false,
+                                    acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                                    tinkoffPayDelegate: tinkoffPayDelegate)
+        
+        acquiringView?.onInitFinished = { [weak self] result in
+            switch result {
+            case let .success(paymentId):
+                if let cardRequisites = self?.acquiringView?.cardRequisites(){
+                    self?.finishPay(cardRequisites: cardRequisites, paymentId: paymentId, infoEmail: self?.acquiringView?.infoEmail())
+                }
+            case let .failure(error):
+                self?.onPaymentCompletionHandler?(.failure(error))
             }
         }
         
-        acquiringView?.onTouchButtonSBP = { [weak self] viewController in
+        acquiringView?.onTinkoffPayButton = { [weak self] version, paymentViewController in
             guard let self = self else { return }
-            if let paymentId = self.paymentInitResponseData?.paymentId {
-                let urlSBPViewController = self.urlSBPPaymentViewController(paymentSource: .paymentId(paymentId),
-                                                                            configuration: configuration,
-                                                                            completionHandler: completionHandler)
-                viewController.present(urlSBPViewController, animated: true, completion: nil)
+            let tinkoffPayViewController = self.tinkoffPayViewController(acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                                                                         configuration: configuration,
+                                                                         version: version) { [weak paymentViewController] result in
+                // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
+                paymentViewController?.dismiss(animated: true, completion: {
+                    // Закрываем AcquiringPaymentViewController
+                    (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
+                        completionHandler(result)
+                    })
+                })
             }
+            paymentViewController.present(tinkoffPayViewController, animated: true)
+        }
+        
+        acquiringView?.onTouchButtonSBP = { [weak self] paymentViewController in
+            guard let self = self else { return }
+            let urlSBPViewController = self.urlSBPPaymentViewController(
+                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                configuration: configuration,
+                completionHandler: { [weak paymentViewController] result in
+                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
+                    paymentViewController?.dismiss(animated: true, completion: {
+                        // Закрываем AcquiringPaymentViewController
+                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
+                            completionHandler(result)
+                        })
+                    })
+                }
+            )
+            paymentViewController.present(urlSBPViewController, animated: true, completion: nil)
         }
     }
 
@@ -402,15 +483,18 @@ public class AcquiringUISDK: NSObject {
         }
     }
 
-    public func urlSBPPaymentViewController(paymentSource: PaymentSource,
+    public func urlSBPPaymentViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
                                             configuration: AcquiringViewConfiguration,
                                             completionHandler: PaymentCompletionHandler? = nil) -> UIViewController {
-        let urlPaymentViewController = sbpAssembly.urlPaymentViewController(paymentSource: paymentSource,
-                                                                            configuration: configuration,
-                                                                            completionHandler: completionHandler)
-        let pullableContainerViewController = PullableContainerViewController(content: urlPaymentViewController)
+        let bankListViewController = sbpAssembly.banksListViewController(
+            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+            configuration: configuration)
+        let paymentPollingViewController = sbpAssembly.paymentPollingViewController(content: bankListViewController,
+                                                                                    configuration: configuration,
+                                                                                    completionHandler: completionHandler)
+        let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
         
-        urlPaymentViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
+        bankListViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
             let presentingViewController = pullableContainerViewController?.presentingViewController
             pullableContainerViewController?.dismiss(animated: true, completion: { [weak self] in
                 guard let self = self else { return }
@@ -428,6 +512,25 @@ public class AcquiringUISDK: NSObject {
             })
         }
         
+        return pullableContainerViewController
+    }
+    
+    // MARK: - TinkoffPay
+    
+    public func tinkoffPayViewController(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+                                         configuration: AcquiringViewConfiguration,
+                                         version: GetTinkoffPayStatusResponse.Status.Version,
+                                         completionHandler: PaymentCompletionHandler? = nil) -> UIViewController {
+        let tinkoffPayViewController = self.tinkoffPayAssembly.tinkoffPayPaymentViewController(
+            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+            tinkoffPayVersion: version
+        )
+        let paymentPollingViewController = self.tinkoffPayAssembly.paymentPollingViewController(
+            content: tinkoffPayViewController,
+            configuration: configuration,
+            completionHandler: completionHandler)
+        
+        let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
         return pullableContainerViewController
     }
 
@@ -550,7 +653,7 @@ public class AcquiringUISDK: NSObject {
                                                            route: "ACQ")
         
         finishAuthorize(requestData: finishAuthorizeData,
-                        treeDSmessageVersion: "1") { [weak self] result in
+                        treeDSmessageVersion: "1") { result in
             switch result {
             case let .failure(error):
                 DispatchQueue.main.async {
@@ -581,7 +684,7 @@ public class AcquiringUISDK: NSObject {
 
         viewController.delegate = self
 
-        acquiringView?.presentVC(viewController, animated: true) { [weak self] in
+        acquiringView?.presentVC(viewController, animated: true) { [] in
             // self?.acquiringView.setViewHeight(viewController.view.frame.height)
         }
     }
@@ -674,15 +777,21 @@ public class AcquiringUISDK: NSObject {
     private func presentAcquiringPaymentView(presentingViewController: UIViewController,
                                              customerKey: String?,
                                              configuration: AcquiringViewConfiguration,
-                                             onPresenting: @escaping ((AcquiringView) -> Void))
+                                             loadCardsOutside: Bool = true,
+                                             acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration? = nil,
+                                             tinkoffPayDelegate: TinkoffPayDelegate? = nil,
+                                             onPresenting: (((AcquiringView) -> Void))? = nil)
     {
         self.presentingViewController = presentingViewController
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
         // create
-        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController", bundle: .uiResources)
-        modalViewController.style = .init(payButtonStyle: style.bigButtonStyle)
+        let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController",
+                                                                 bundle: .uiResources)
 
+        modalViewController.style = .init(payButtonStyle: style.bigButtonStyle,
+                                          tinkoffPayButtonStyle: configuration.tinkoffPayButtonStyle)
+        
         var fields: [AcquiringViewTableViewCells] = []
 
         var estimatedViewHeight: CGFloat = 300
@@ -699,13 +808,20 @@ public class AcquiringUISDK: NSObject {
             case let .detail(title):
                 fields.append(.productDetail(title: title))
                 estimatedViewHeight += 50
-            case .buttonPaySPB:
-                fields.append(.buttonPaySBP)
-                estimatedViewHeight += 120
             case let .email(value, placeholder):
                 fields.append(.email(value: value, placeholder: placeholder))
                 estimatedViewHeight += 64
             }
+        }
+        
+        if configuration.featuresOptions.fpsEnabled {
+            fields.append(.buttonPaySBP)
+            estimatedViewHeight += 120
+        }
+        
+        if configuration.featuresOptions.tinkoffPayEnabled {
+            fields.append(.tinkoffPay)
+            estimatedViewHeight += 58
         }
 
         modalViewController.modalMinHeight = estimatedViewHeight
@@ -717,25 +833,44 @@ public class AcquiringUISDK: NSObject {
 
         acquiringView = modalViewController
         
+        var injectableCardListProvider: CardListDataProvider?
         if let key = customerKey {
-            setupCardListDataProvider(for: key)
-            cardListDataProvider?.update()
-            // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-            // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-            // будет краш из-за того, что там необходим force unwrap
-            // TODO: Отрефачить эту историю!
-            modalViewController.cardListDataSourceDelegate = self
+            if loadCardsOutside {
+                setupCardListDataProvider(for: key)
+                cardListDataProvider?.update()
+                // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
+                // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
+                // будет краш из-за того, что там необходим force unwrap
+                // TODO: Отрефачить эту историю!
+                modalViewController.cardListDataSourceDelegate = self
+                injectableCardListProvider = nil
+            } else {
+                setupCardListDataProvider(for: key)
+                modalViewController.cardListDataSourceDelegate = self
+                injectableCardListProvider = self.cardListDataProvider
+            }
+        }
+        
+        if let acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration {
+            let acquiringPaymentController = AcquiringPaymentController(
+                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                tinkoffPayController: tinkoffPayAssembly.tinkoffPayController,
+                payController: PayController(sdk: acquiringSdk),
+                cardListDataProvider: injectableCardListProvider
+            )
+            acquiringPaymentController.delegate = modalViewController
+            modalViewController.acquiringPaymentController = acquiringPaymentController
         }
 
         modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
             guard let self = self else { return }
-            
+
             let viewController = CardsViewController(nibName: "CardsViewController", bundle: .uiResources)
             viewController.scanerDataSource = modalViewController?.scanerDataSource
             viewController.alertViewHelper = modalViewController?.alertViewHelper
             viewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: self.style.bigButtonStyle))
             self.cardsListView = viewController
-            
+
             // проверяем, что cardListDataProvider не nil, поэтому мы можем
             // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
             // будет краш из-за того, что там необходим force unwrap
@@ -743,7 +878,7 @@ public class AcquiringUISDK: NSObject {
             if self.cardListDataProvider != nil {
                 viewController.cardListDataSourceDelegate = self
             }
-            
+
             let cardListNController = UINavigationController(rootViewController: viewController)
             if self.acquiringView != nil {
                 self.acquiringView?.presentVC(cardListNController, animated: true, completion: nil)
@@ -757,11 +892,14 @@ public class AcquiringUISDK: NSObject {
         }
 
         // present
-        let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: presentingViewController)
+        let presentationController = PullUpPresentationController(presentedViewController: modalViewController,
+                                                                  presenting: presentingViewController)
         modalViewController.transitioningDelegate = presentationController
-        presentingViewController.present(modalViewController, animated: true, completion: {
+        presentingViewController.present(modalViewController,
+                                         animated: true,
+                                         completion: {
             _ = presentationController
-            onPresenting(modalViewController)
+            onPresenting?(modalViewController)
         })
     }
 
@@ -1112,6 +1250,15 @@ public class AcquiringUISDK: NSObject {
                                                         amount: paymentInitResponseData.amount,
                                                         status: .cancelled)
             onPaymentCompletionHandler?(.success(paymentResponse))
+        } else {
+            let paymentCanceledResponse = PaymentStatusResponse(success: false,
+                                                                errorCode: 0,
+                                                                errorMessage: AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel"),
+                                                                orderId: "",
+                                                                paymentId: 0,
+                                                                amount: 0,
+                                                                status: .cancelled)
+            onPaymentCompletionHandler?(.success(paymentCanceledResponse))
         }
     }
 

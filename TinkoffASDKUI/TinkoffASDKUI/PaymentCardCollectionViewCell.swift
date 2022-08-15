@@ -19,7 +19,7 @@
 
 import UIKit
 
-protocol InputCardCVCRequisitesPresenterProtocol: class {
+protocol InputCardCVCRequisitesPresenterProtocol: AnyObject {
     var textFieldCardCVC: UITextFieldCardRequisites! { get }
 }
 

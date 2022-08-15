@@ -27,6 +27,15 @@ public protocol RequestOperation {
 
     /// Параметры которые отправляем на сервер в теле запроса
     var parameters: JSONObject? { get set }
+    
+    /// Типа запроса
+    var requestMethod: RequestMethod { get }
+}
+
+public extension RequestOperation {
+    var requestMethod: RequestMethod {
+        .post
+    }
 }
 
 protocol AcquiringRequestOperation: RequestOperation {

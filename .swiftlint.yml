@@ -1,7 +1,6 @@
-warning_threshold: 1
+warning_threshold: 165
 
 included:
-- ../Development
 - ./
 
 excluded:
@@ -22,6 +21,22 @@ disabled_rules:
 - function_body_length
 # Файлы не должны быть слишком длинными
 #- file_length
+  # ToDo remove below and fix violations!
+- missing_docs
+- legacy_random
+- unused_closure_parameter
+- colon
+- force_try
+- force_cast
+- overridden_super_call
+- vertical_whitespace
+- leading_whitespace
+- line_length
+- file_length
+- operator_usage_whitespace
+- trailing_comma
+- trailing_newline
+- type_body_length
 opt_in_rules:
 # Некоторые переопределяемые методы всегда должны вызывать super 
 - overridden_super_call

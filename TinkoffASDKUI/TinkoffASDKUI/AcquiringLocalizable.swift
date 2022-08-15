@@ -19,7 +19,7 @@
 
 import Foundation
 
-protocol AcquiringLocalize: class {
+protocol AcquiringLocalize: AnyObject {
     func localize(_ string: String) -> String
 
     func setup(lang: String?, table name: String?, bundle: Bundle?)

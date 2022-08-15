@@ -47,11 +47,13 @@ class AcquiringAlertViewController: UIViewController {
         didSet {
             if alertTouch == false {
                 if closedFromTimer == true {
-                    dismiss(animated: true, completion: nil)
+                    dismiss(animated: true, completion: { [weak self] in self?.dimissCompletionClosure?() })
                 }
             }
         }
     }
+    
+    private var dimissCompletionClosure: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,7 +85,7 @@ class AcquiringAlertViewController: UIViewController {
     // MARK: Tap Gesture Recognizer
 
     @IBAction private func dimmingViewTapped(_: UITapGestureRecognizer) {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: { [weak self] in self?.dimissCompletionClosure?() })
     }
 
     @IBAction private func alertViewTapped(_ gesture: UITapGestureRecognizer) {
@@ -92,7 +94,7 @@ class AcquiringAlertViewController: UIViewController {
             if autoCloseTime > 0 {
                 alertTouch = true
             } else {
-                dismiss(animated: true, completion: nil)
+                dismiss(animated: true, completion: { [weak self] in self?.dimissCompletionClosure?() })
             }
 
         case .ended, .cancelled, .failed:
@@ -107,7 +109,9 @@ class AcquiringAlertViewController: UIViewController {
         if autoCloseTime > 0 {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                 if let value = self?.alertTouch, value == false {
-                    self?.dismiss(animated: true, completion: nil)
+                    self?.dismiss(animated: true, completion: { [weak self] in
+                        self?.dimissCompletionClosure?()
+                    })
                 } else {
                     self?.closedFromTimer = true
                 }
@@ -115,7 +119,11 @@ class AcquiringAlertViewController: UIViewController {
         }
     }
 
-    public func present(on presentingViewController: UIViewController, title: String, icon: AcquiringAlertIconType = .success, autoCloseTime: TimeInterval = 3) {
+    public func present(on presentingViewController: UIViewController,
+                        title: String,
+                        icon: AcquiringAlertIconType = .success,
+                        autoCloseTime: TimeInterval = 3,
+                        dismissClosure: (() -> Void)? = nil) {
         self.autoCloseTime = autoCloseTime
 
         switch icon {
@@ -128,6 +136,8 @@ class AcquiringAlertViewController: UIViewController {
         }
 
         labelAlertTitle.text = title
+        
+        self.dimissCompletionClosure = dismissClosure
 
         presentingViewController.present(self, animated: true)
     }
