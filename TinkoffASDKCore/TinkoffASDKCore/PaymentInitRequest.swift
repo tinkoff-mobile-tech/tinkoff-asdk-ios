@@ -55,6 +55,10 @@ public struct PaymentInitData: Codable {
     public var receipts: [Receipt]?
     /// Cрок жизни ссылки.
     public var redirectDueDate: Date?
+    /// Страница успеха
+    public var successURL: String?
+    /// Страница ошибки
+    public var failURL: String?
 
     public mutating func addPaymentData(_ additionalData: [String: String]) {
         var updatedData: [String: String] = [:]
@@ -82,6 +86,8 @@ public struct PaymentInitData: Codable {
         case shops = "Shops"
         case receipts = "Receipts"
         case redirectDueDate = "RedirectDueDate"
+        case successURL = "SuccessURL"
+        case failURL = "FailURL"
     }
 
     public init(from decoder: Decoder) throws {
@@ -104,6 +110,8 @@ public struct PaymentInitData: Codable {
         receipt = try? container.decode(Receipt.self, forKey: .receipt)
         shops = try? container.decode([Shop].self, forKey: .shops)
         receipts = try? container.decode([Receipt].self, forKey: .receipts)
+        successURL = try? container.decode(String.self, forKey: .successURL)
+        failURL = try? container.decode(String.self, forKey: .failURL)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -119,29 +127,37 @@ public struct PaymentInitData: Codable {
         if shops != nil { try? container.encode(shops, forKey: .shops) }
         if receipts != nil { try? container.encode(receipts, forKey: .receipts) }
         if paymentFormData != nil { try? container.encode(paymentFormData, forKey: .paymentFormData) }
+        if successURL != nil { try? container.encode(successURL, forKey: .successURL) }
+        if failURL != nil { try? container.encode(failURL, forKey: .failURL) }
     }
 
     public init(amount: Int64,
                 orderId: String,
                 customerKey: String?,
                 redirectDueDate: Date? = nil,
-                payType: PayType? = nil)
+                payType: PayType? = nil,
+                successURL: String? = nil,
+                failURL: String? = nil)
     {
         self.amount = amount
         self.orderId = orderId
         self.customerKey = customerKey
         self.redirectDueDate = redirectDueDate
         self.payType = payType
+        self.successURL = successURL
+        self.failURL = failURL
     }
 
     public init(amount: NSDecimalNumber,
                 orderId: String,
                 customerKey: String?,
                 redirectDueDate: Date? = nil,
-                payType: PayType? = nil)
+                payType: PayType? = nil,
+                successURL: String? = nil,
+                failURL: String? = nil)
     {
         let int64Amount = Int64(amount.doubleValue * 100)
-        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate, payType: payType)
+        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate, payType: payType, successURL: successURL, failURL: failURL)
     }
 }
 
