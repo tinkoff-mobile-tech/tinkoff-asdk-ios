@@ -53,11 +53,12 @@ class APIResponse<Model: Decodable>: Decodable {
     }
     
     init(success: Bool,
+         errorCode: Int,
          terminalKey: String?,
          result: Swift.Result<Model, APIFailureError>) {
         self.success = success
         self.terminalKey = terminalKey
         self.result = result
-        self.errorCode = 0
+        self.errorCode = errorCode
     }
 }

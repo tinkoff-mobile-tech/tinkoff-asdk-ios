@@ -24,17 +24,32 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
     public let errorCode: Int
     public let errorMessage: String?
     public let errorDetails: String?
-    
+    public let terminalKey: String?
+    public let status: String?
+    public let orderId: String?
+    public let paymentId: String?
+    public let amount: Int?
+
     private enum CodingKeys: CodingKey {
         case errorCode
         case errorMessage
         case errorDetails
-        
+        case terminalKey
+        case status
+        case orderId
+        case paymentId
+        case amount
+
         var stringValue: String {
             switch self {
             case .errorCode: return APIConstants.Keys.errorCode
             case .errorDetails: return APIConstants.Keys.errorDetails
             case .errorMessage: return APIConstants.Keys.errorMessage
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .status: return APIConstants.Keys.status
+            case .orderId: return APIConstants.Keys.orderId
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .amount: return APIConstants.Keys.amount
             }
         }
     }
@@ -72,5 +87,10 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
         errorCode = Int(errorCodeString) ?? 0
         errorMessage = try container.decodeIfPresent(String.self, forKey: .errorMessage)
         errorDetails = try container.decodeIfPresent(String.self, forKey: .errorDetails)
+        terminalKey = try container.decodeIfPresent(String.self, forKey: .terminalKey)
+        status = try container.decodeIfPresent(String.self, forKey: .status)
+        orderId = try container.decodeIfPresent(String.self, forKey: .orderId)
+        paymentId = try container.decodeIfPresent(String.self, forKey: .paymentId)
+        amount = try container.decodeIfPresent(Int.self, forKey: .amount)
     }
 }

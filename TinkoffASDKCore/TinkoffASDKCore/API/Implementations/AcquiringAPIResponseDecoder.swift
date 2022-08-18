@@ -46,10 +46,22 @@ private extension AcquiringAPIResponseDecoder {
     
     func decodeClipped<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
         do {
-            let payload = try JSONDecoder().decode(Payload.self, from: data)
-            return APIResponse(success: true,
-                               terminalKey: nil,
-                               result: .success(payload))
+            let decoder = JSONDecoder()
+
+            let error = try? decoder.decode(APIFailureError.self, from: data)
+
+            if let error = error, error.errorCode != 0 {
+                return APIResponse(success: false,
+                                   errorCode: error.errorCode,
+                                   terminalKey: nil,
+                                   result: .failure(error))
+            } else {
+                let payload = try decoder.decode(Payload.self, from: data)
+                return APIResponse(success: true,
+                                   errorCode: 0,
+                                   terminalKey: nil,
+                                   result: .success(payload))
+            }
         } catch {
             return try decodeStandart(data: data)
         }
