@@ -21,6 +21,7 @@ import PassKit
 import TinkoffASDKCore
 import UIKit
 import WebKit
+import ThreeDSWrapper
 
 public protocol TinkoffPayDelegate: AnyObject {
     func tinkoffPayIsNotAllowed()
@@ -172,6 +173,10 @@ public class AcquiringUISDK: NSObject {
     private let sbpAssembly: SBPAssembly
     private let tinkoffPayAssembly: TinkoffPayAssembly
     
+    // App based
+    private let appBasedTimeoutResolver = AppBasedTimeoutResolver()
+    private let appBasedThreeDSController: AppBasedThreeDSController
+    
     private weak var logger: LoggerDelegate?
     
     
@@ -183,6 +188,9 @@ public class AcquiringUISDK: NSObject {
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk,
                                                      tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
+        self.appBasedThreeDSController = AppBasedThreeDSController(acquiringSdk: acquiringSdk,
+                                                                   env: configuration.serverEnvironment,
+                                                                   language: configuration.language)
         self.logger = configuration.logger
     }
 
@@ -1166,7 +1174,30 @@ public class AcquiringUISDK: NSObject {
                             self?.cancelPayment()
                         }
                     }
-
+                case let .needConfirmation3DS2AppBased(appBasedData):
+                    self.appBasedThreeDSController.completionHandler = { response in
+                        completionHandler(response)
+                    }
+                    self.appBasedThreeDSController.cancelHandler = { [weak self] in
+                        if self?.acquiringView != nil {
+                            self?.acquiringView?.closeVC(animated: true, completion: {
+                                self?.cancelPayment()
+                            })
+                        } else {
+                            self?.cancelPayment()
+                        }
+                    }
+                    
+                    let challengeParams = ChallengeParameters()
+                    
+                    challengeParams.setAcsTransactionId(appBasedData.acsTransId)
+                    challengeParams.set3DSServerTransactionId(appBasedData.tdsServerTransId)
+                    challengeParams.setAcsRefNumber(appBasedData.acsRefNumber)
+                    challengeParams.setAcsSignedContent(appBasedData.acsSignedContent)
+                    let timeout = self.appBasedTimeoutResolver.challengeValue
+                    
+                    self.appBasedThreeDSController.doChallenge(with: challengeParams,
+                                                               timeout: timeout)
                 case let .done(response):
                     completionHandler(.success(response))
 
@@ -1198,24 +1229,26 @@ public class AcquiringUISDK: NSObject {
         _ = acquiringSdk.check3dsVersion(data: requestData, completionHandler: { checkResponse in
             switch checkResponse {
             case let .success(checkResult):
-                var finistRequestData = requestData
-                // сбор информации для прохождения 3DS v2
-                if let tdsServerTransID = checkResult.tdsServerTransID, let threeDSMethodURL = checkResult.threeDSMethodURL {
-                    // вызываем web view для проверки девайса
-                    self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
+                // Прохождение 3DS v2
+                if checkResult.tdsServerTransID != nil {
                     // собираем информацию о девайсе
-                    let screenSize = UIScreen.main.bounds.size
-                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
-                                                      languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
-                                                      screenWidth: Int(screenSize.width),
-                                                      screenHeight: Int(screenSize.height))
-                    finistRequestData.setDeviceInfo(info: deviceInfo)
-                    finistRequestData.setThreeDSVersion(checkResult.version)
-                    finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress())
-                }
-                // завершаем оплату
-                self.finishAuthorize(requestData: finistRequestData, treeDSmessageVersion: checkResult.version) { finishResponse in
-                    completionHandler(finishResponse)
+                    
+                    self.appBasedThreeDSController.obtainAuthParams(with: checkResult.paymentSystem,
+                                                                    messageVersion: checkResult.version) { result in
+                        do {
+                            self.handleThreeDSV2Flow(messageVersion: checkResult.version,
+                                                     finishRequestData: requestData,
+                                                     authParams: try result.get(),
+                                                     completionHandler: completionHandler)
+                        } catch {
+                            completionHandler(.failure(error))
+                        }
+                    }
+                } else {
+                    // завершаем оплату
+                    self.finishAuthorize(requestData: requestData, treeDSmessageVersion: checkResult.version) { finishResponse in
+                        completionHandler(finishResponse)
+                    }
                 }
 
             case let .failure(error):
@@ -1223,20 +1256,32 @@ public class AcquiringUISDK: NSObject {
             }
         })
     }
+    
+    private func handleThreeDSV2Flow(messageVersion: String,
+                                     finishRequestData: PaymentFinishRequestData,
+                                     authParams: AuthenticationRequestParameters,
+                                     completionHandler: @escaping PaymentCompletionHandler) {
+        var requestData = finishRequestData
+        let screenSize = UIScreen.main.bounds.size
 
-    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
-        let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
-        guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            if presenter != nil {
-                presenter?.checkDeviceFor3DSData(with: request)
-            } else {
-                self.webViewFor3DSChecking = WKWebView()
-                self.webViewFor3DSChecking?.load(request)
-            }
+        let deviceInfo = DeviceInfoParams(cresCallbackUrl: acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
+                                          languageId: acquiringSdk.languageKey?.rawValue ?? "ru",
+                                          screenWidth: Int(screenSize.width),
+                                          screenHeight: Int(screenSize.height),
+                                          sdkAppID: authParams.getSDKAppID(),
+                                          sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
+                                          sdkReferenceNumber: authParams.getSDKReferenceNumber(),
+                                          sdkTransID: authParams.getSDKTransactionID(),
+                                          sdkMaxTimeout: appBasedTimeoutResolver.mapiValue,
+                                          sdkEncData: authParams.getDeviceData())
+        
+        requestData.setDeviceInfo(info: deviceInfo)
+        requestData.setThreeDSVersion(messageVersion)
+        requestData.setIpAddress(acquiringSdk.networkIpAddress())
+        
+        finishAuthorize(requestData: requestData,
+                        treeDSmessageVersion: messageVersion) { finishResponse in
+            completionHandler(finishResponse)
         }
     }
 

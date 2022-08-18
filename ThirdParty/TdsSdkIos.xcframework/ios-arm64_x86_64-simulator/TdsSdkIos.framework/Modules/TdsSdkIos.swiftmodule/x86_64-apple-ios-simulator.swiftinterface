@@ -1,0 +1,286 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.6.1 (swiftlang-5.6.0.323.66 clang-1316.0.20.12)
+// swift-module-flags: -target x86_64-apple-ios12.3-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name TdsSdkIos
+import AdSupport
+import CommonCrypto
+import Compression
+import CoreLocation
+import Foundation
+import LocalAuthentication
+import Security
+import Swift
+@_exported import TdsSdkIos
+import UIKit
+import WebKit
+import _Concurrency
+public class AuthenticationRequestParameters {
+  public init(deviceData: Swift.String, sdkTransId: Swift.String, sdkAppID: Swift.String, sdkReferenceNum: Swift.String, ephemeralPublic: Swift.String)
+  public func getDeviceData() -> Swift.String
+  public func getSDKTransactionID() -> Swift.String
+  public func getSDKAppID() -> Swift.String
+  public func getSDKReferenceNumber() -> Swift.String
+  public func getSDKEphemeralPublicKey() -> Swift.String
+  public func getMessageVersion() -> Swift.String
+  @objc deinit
+}
+public class Warning {
+  public init(severity: TdsSdkIos.Severity, id: Swift.String, message: Swift.String)
+  public func getSeverity() -> TdsSdkIos.Severity
+  public func getId() -> Swift.String
+  public func getMessage() -> Swift.String
+  @objc deinit
+}
+public class ProtocolErrorEvent {
+  public init(sdkTransactionID: Swift.String, errorMessage: TdsSdkIos.ErrorMessage)
+  public func getSdkTransactionID() -> Swift.String
+  public func getErrorMessage() -> TdsSdkIos.ErrorMessage
+  @objc deinit
+}
+public class ToolbarCustomization : TdsSdkIos.Customization {
+  override public init()
+  public func setBackgroundColor(_ backgroundColor: Swift.String)
+  public func getBackgroundColor() -> Swift.String
+  public func setHeaderText(_ headerText: Swift.String)
+  public func getHeaderText() -> Swift.String
+  public func setButtonText(_ buttonText: Swift.String)
+  public func getButtonText() -> Swift.String
+  @objc deinit
+}
+public class LabelCustomization : TdsSdkIos.Customization {
+  override public init()
+  public func setHeadingTextColor(_ headingTextColor: Swift.String)
+  public func getHeadingTextColor() -> Swift.String
+  public func setHeadingTextFontName(_ headingTextFontName: Swift.String)
+  public func getHeadingTextFontName() -> Swift.String
+  public func setHeadingTextFontSize(_ headingTextFontSize: Swift.Int)
+  public func getHeadingTextFontSize() -> Swift.Int
+  @objc deinit
+}
+public class UiCustomization {
+  public init()
+  public func setButtonCustomization(buttonCustomization: TdsSdkIos.ButtonCustomization, buttonType: TdsSdkIos.ButtonType)
+  public func getButtonCustomization(_ buttonType: TdsSdkIos.ButtonType) -> TdsSdkIos.ButtonCustomization?
+  public func setToolbarCusomization(_ toolbarCusomization: TdsSdkIos.ToolbarCustomization)
+  public func getToolbarCusomization() -> TdsSdkIos.ToolbarCustomization?
+  public func setLabelCustomization(_ labelCustomization: TdsSdkIos.LabelCustomization)
+  public func getLabelCustomization() -> TdsSdkIos.LabelCustomization?
+  public func setTextBoxCustomization(_ textBoxCustomization: TdsSdkIos.TextBoxCustomization)
+  public func getTextBoxCustomization() -> TdsSdkIos.TextBoxCustomization?
+  @objc deinit
+}
+public class ThreeDS2Service {
+  public init()
+  public func setCertProducer(_ transactionCertsProducer: TdsSdkIos.TransactionCertsProducerProtocol)
+  public func initialize(configParameters: TdsSdkIos.ConfigParameters, uiCustomization: TdsSdkIos.UiCustomization?, locale: Foundation.Locale) throws
+  public func cleanup()
+  public func getSDKVersion() -> Swift.String
+  public func getWarnings() -> Swift.Array<TdsSdkIos.Warning>
+  public func createTransaction(directoryServerID: Swift.String, messageVersion: Swift.String) throws -> TdsSdkIos.Transaction
+  @objc deinit
+}
+public class RuntimeErrorEvent {
+  public init(errorCode: Swift.String, errorMessage: Swift.String)
+  public func getErrorCode() -> Swift.String
+  public func getErrorMessage() -> Swift.String
+  @objc deinit
+}
+public enum ButtonType {
+  case VERIFY
+  case CONTINUE
+  case NEXT
+  case CANCEL
+  case RESEND
+  case SUBMIT
+  public static func == (a: TdsSdkIos.ButtonType, b: TdsSdkIos.ButtonType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol TransactionCertsProducerProtocol {
+  func getCerts(_ directoryServerID: Swift.String) throws -> TdsSdkIos.TransactionCerts
+}
+public struct TransactionCerts {
+  public let deviceInfoEncCertDerBytes: Foundation.Data
+  public let dsRootCADerBytes: Foundation.Data
+  public let algorithm: TdsSdkIos.CertAlgorithm
+  public var directoryServerIDAkaRID: Swift.String?
+  public init(deviceInfoEncCertDerBytes: Foundation.Data, dsRootCADerBytes: Foundation.Data, algorithm: TdsSdkIos.CertAlgorithm)
+  public init(deviceInfoEncCertDerBytes: Foundation.Data, dsRootCADerBytes: Foundation.Data, algorithm: TdsSdkIos.CertAlgorithm, directoryServerIDAkaRID: Swift.String)
+}
+public class TextBoxCustomization : TdsSdkIos.Customization {
+  override public init()
+  public func setBorderWidth(_ borderWidth: Swift.Int)
+  public func getBorderWidth() -> Swift.Int
+  public func setBorderColor(_ borderColor: Swift.String)
+  public func getBorderColor() -> Swift.String
+  public func setCornerRadius(_ cornerRadius: Swift.Int)
+  public func getCornerRadius() -> Swift.Int
+  @objc deinit
+}
+public protocol ChallengeStatusReceiver {
+  func completed(_ completionEvent: TdsSdkIos.CompletionEvent)
+  func cancelled()
+  func timedout()
+  func protocolError(_ protocolErrorEvent: TdsSdkIos.ProtocolErrorEvent)
+  func runtimeError(_ runtimeErrorEvent: TdsSdkIos.RuntimeErrorEvent)
+}
+public class ButtonCustomization : TdsSdkIos.Customization {
+  override public init()
+  public func setBackgroundColor(_ backgroundColor: Swift.String)
+  public func getBackgroundColor() -> Swift.String
+  public func setCornerRadius(_ cornerRadius: Swift.Int)
+  public func getCornerRadius() -> Swift.Int
+  @objc deinit
+}
+public struct SevurityWarning {
+}
+public enum Severity {
+  case LOW
+  case MEDIUM
+  case HIGH
+  public static func == (a: TdsSdkIos.Severity, b: TdsSdkIos.Severity) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class ProgressDialog : UIKit.UIActivityIndicatorView {
+  @_Concurrency.MainActor(unsafe) public init(_ controller: UIKit.UIViewController?)
+  @_Concurrency.MainActor(unsafe) public func start()
+  @_Concurrency.MainActor(unsafe) public func stop()
+  @_Concurrency.MainActor(unsafe) public func show()
+  @_Concurrency.MainActor(unsafe) public func close()
+  @objc deinit
+}
+public struct DevInfoCert {
+  public init(certFilename: Swift.String, rootCACertFilename: Swift.String, directoryServerIDAkaRID: Swift.String, certAlgorithm: TdsSdkIos.CertAlgorithm, bundle: Foundation.Bundle? = nil)
+}
+public enum CertAlgorithm {
+  case RSA
+  case EC
+  public static func == (a: TdsSdkIos.CertAlgorithm, b: TdsSdkIos.CertAlgorithm) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class Transaction {
+  public func getAuthenticationRequestParameters() throws -> TdsSdkIos.AuthenticationRequestParameters
+  public func doChallenge(challengeParameters: TdsSdkIos.ChallengeParameters, challengeStatusReceiver: TdsSdkIos.ChallengeStatusReceiver, timeout: Swift.Int)
+  public func getProgressView() -> TdsSdkIos.ProgressDialog
+  public func close()
+  @objc deinit
+}
+public class ChallengeParameters {
+  public init()
+  public func set3DSServerTransactionId(_ tdsServerTransactionId: Swift.String)
+  public func get3DSServerTransactionId() throws -> Swift.String
+  public func setAcsTransactionId(_ acsTransactionId: Swift.String)
+  public func getAcsTransactionId() throws -> Swift.String
+  public func setAcsRefNumber(_ acsRefNumber: Swift.String)
+  public func getAcsRefNumber() throws -> Swift.String
+  public func setAcsSignedContent(_ acsSignedContent: Swift.String)
+  public func getAcsSignedContent() throws -> Swift.String
+  public func setTreeDSRequestorAppURL(_ tdsRequestorAppURL: Swift.String)
+  public func getTreeDSRequestorAppURL() throws -> Swift.String
+  @objc deinit
+}
+public class Customization {
+  public init()
+  public init(textFontName: Swift.String, textColor: Swift.String, textFontSize: Swift.Int)
+  public func setTextFontName(_ textFontName: Swift.String)
+  public func getTextFontName() -> Swift.String
+  public func setTextColor(_ textColor: Swift.String)
+  public func getTextColor() -> Swift.String
+  public func setTextFontSize(_ textFontSize: Swift.Int)
+  public func getTextFontSize() -> Swift.Int
+  @objc deinit
+}
+public enum ParameterUnavailableReason : Swift.String {
+  case MARKET_OR_REGIONAL_RESTRICTION
+  case PLATFORM_NOT_SUPPORTED
+  case COLLECTION_NOT_POSSIBLE_WITHOUT_USER_PERMISSION
+  case VALUE_IS_EMPTY_OR_BLANK
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public class ErrorMessage {
+  public init(errorCode: Swift.String, errorDescription: Swift.String, errorDetails: Swift.String, transactionID: Swift.String)
+  public func getErrorCode() -> Swift.String
+  public func getErrorDescription() -> Swift.String
+  public func getErrorDetails() -> Swift.String
+  public func getTransactionID() -> Swift.String
+  @objc deinit
+}
+public class CompletionEvent {
+  public init(sdkTransactionID: Swift.String, transactionStatus: Swift.String)
+  public func getSdkTransactionID() -> Swift.String
+  public func getTransactionStatus() -> Swift.String
+  @objc deinit
+}
+public enum DeviceInfoParameter : Swift.String {
+  case PLATFORM
+  case DEVICE_MODEL
+  case OS_NAME
+  case OS_VERSION
+  case LOCALE
+  case TIME_ZONE
+  case ADVERTISING_ID
+  case SCREEN_RESOLUTION
+  case DEVICE_NAME
+  case IP_ADDRESS
+  case LATITUDE
+  case LONGITUDE
+  case WTF_PARAM
+  case SDK_APP_ID
+  case SDK_VERSION
+  case IDENTIFIER_FOR_VENDOR
+  case USER_INTERFACE_IDIOM
+  case FONT_FAMILY_NAMES
+  case FONT_NAMES_FOR_FAMILY_NAME
+  case SYSTEM_FONT
+  case LABEL_FONT_SIZE
+  case BUTTON_FONT_SIZE
+  case SMALL_SYSTEM_FONT_SIZE
+  case SYSTEM_FONT_SIZE
+  case SYSTEM_LOCALE
+  case AVAILABLE_LOCALES
+  case PREFERRED_LANGUAGES
+  case DEFAULT_TIME_ZONE
+  case APPS_RECIPT
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum SdkError : Swift.Error {
+  case invalidInputException(message: Swift.String)
+  case invalidAcsResponseException(message: Swift.String)
+  case httpRequestException(message: Swift.String)
+}
+public class ConfigParameters {
+  final public let devInfoCerts: [Swift.String : TdsSdkIos.DevInfoCert]
+  public init()
+  public init(_ devInfoCerts: [Swift.String : TdsSdkIos.DevInfoCert])
+  public func addParam(group: Swift.String?, paramName: Swift.String, paramValue: Swift.String?) throws
+  public func getParamValue(group: Swift.String?, paramName: Swift.String) throws -> Swift.String?
+  public func removeParam(group: Swift.String?, paramName: Swift.String) throws -> Swift.String?
+  @objc deinit
+}
+extension TdsSdkIos.ButtonType : Swift.Equatable {}
+extension TdsSdkIos.ButtonType : Swift.Hashable {}
+extension TdsSdkIos.Severity : Swift.Equatable {}
+extension TdsSdkIos.Severity : Swift.Hashable {}
+extension TdsSdkIos.CertAlgorithm : Swift.Equatable {}
+extension TdsSdkIos.CertAlgorithm : Swift.Hashable {}
+extension TdsSdkIos.ParameterUnavailableReason : Swift.Equatable {}
+extension TdsSdkIos.ParameterUnavailableReason : Swift.Hashable {}
+extension TdsSdkIos.ParameterUnavailableReason : Swift.RawRepresentable {}
+extension TdsSdkIos.DeviceInfoParameter : Swift.Equatable {}
+extension TdsSdkIos.DeviceInfoParameter : Swift.Hashable {}
+extension TdsSdkIos.DeviceInfoParameter : Swift.RawRepresentable {}

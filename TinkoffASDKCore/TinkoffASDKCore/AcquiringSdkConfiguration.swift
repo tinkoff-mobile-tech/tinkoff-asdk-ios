@@ -32,6 +32,11 @@ public enum AcquiringSdkEnvironment: String {
     case prod = "securepay.tinkoff.ru"
 }
 
+public enum ConfigSdkEnvironment: String {
+    case test = "ca-3ds2-test.cdn-tinkoff.ru"
+    case prod = "ca-3ds2-prod.cdn-tinkoff.ru"
+}
+
 public struct AcquiringSdkCredential {
     public var terminalKey: String
     public var publicKey: String
@@ -53,6 +58,8 @@ public class AcquiringSdkConfiguration: NSObject {
     public private(set) var credential: AcquiringSdkCredential
 
     public private(set) var serverEnvironment: AcquiringSdkEnvironment
+    
+    public private(set) var configEnvironment: ConfigSdkEnvironment
     
     public private(set) var requestsTimeoutInterval: TimeInterval
 
@@ -82,15 +89,18 @@ public class AcquiringSdkConfiguration: NSObject {
     /// - Returns: AcquiringSdkConfiguration
     public init(credential: AcquiringSdkCredential,
                 server: AcquiringSdkEnvironment = .test,
+                config: ConfigSdkEnvironment = .test,
                 requestsTimeoutInterval: TimeInterval,
                 tinkoffPayStatusCacheLifeTime: TimeInterval) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.serverEnvironment = server
+        self.configEnvironment = config
     }
     
     public convenience init(credential: AcquiringSdkCredential,
-                            server: AcquiringSdkEnvironment = .test) {
+                            server: AcquiringSdkEnvironment = .test,
+                            config: ConfigSdkEnvironment = .test) {
         self.init(credential: credential,
                   server: server,
                   requestsTimeoutInterval: .defaultRequestsTimeoutInterval,

@@ -49,7 +49,8 @@ public final class AcquiringSdk: NSObject {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
         }
 
-        if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/") {
+        if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
+           let certsUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
             let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
                                         systemName: UIDevice.current.systemName,
                                         systemVersion: UIDevice.current.systemVersion)
@@ -59,6 +60,7 @@ public final class AcquiringSdk: NSObject {
             sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
             
             networkTransport = AcquaringNetworkTransport(urlDomain: url,
+                                                         certsDomain: certsUrl,
                                                          session: URLSession(configuration: sessionConfiguration),
                                                          deviceInfo: deviceInfo)
         } else {
@@ -366,4 +368,19 @@ public final class AcquiringSdk: NSObject {
         }
     }
     
+    @discardableResult
+    public func getConfig(completion: @escaping (Result<GetConfigResponse, Error>) -> Void) -> Cancellable {
+        let request = GetConfigRequest()
+        return networkTransport.sendConfigRequest(operation: request, completionHandler: completion)
+    }
+    
+    @discardableResult
+    public func submit3DSAuthorizationV2(cres: String,
+                                         completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
+        let cresData = CresData(cres: cres)
+        let request = ThreeDSV2AuthorizationRequest(data: cresData)
+        return networkTransport.send(operation: request) { result in
+            completion(result)
+        }
+    }
 } // AcquiringSdk
