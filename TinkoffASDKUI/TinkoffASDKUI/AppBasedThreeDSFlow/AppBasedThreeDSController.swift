@@ -224,6 +224,12 @@ private extension AppBasedThreeDSController {
             self.progressView?.close()
         }
     }
+    
+    func clear() {
+        transaction = nil
+        progressView = nil
+        challengeParams = nil
+    }
 }
 
 // MARK: - ChallengeStatusReceiver Delegate
@@ -234,17 +240,20 @@ extension AppBasedThreeDSController: ChallengeStatusReceiver {
         let cresValue = buildCresValue(with: completionEvent.getTransactionStatus())
         acquiringSdk.submit3DSAuthorizationV2(cres: cresValue) { [weak self] result in
             self?.completionHandler?(result)
+            self?.clear()
         }
     }
     
     func cancelled() {
         finishTransaction()
         cancelHandler?()
+        clear()
     }
     
     func timedout() {
         finishTransaction()
         completionHandler?(.failure(AppBasedFlowError.timeout))
+        clear()
     }
     
     func protocolError(_ protocolErrorEvent: ProtocolErrorEvent) {
@@ -254,6 +263,7 @@ extension AppBasedThreeDSController: ChallengeStatusReceiver {
         
         completionHandler?(.failure(NSError(domain: errorDescription,
                                             code: errorCode)))
+        clear()
     }
     
     func runtimeError(_ runtimeErrorEvent: RuntimeErrorEvent) {
@@ -263,6 +273,7 @@ extension AppBasedThreeDSController: ChallengeStatusReceiver {
         
         completionHandler?(.failure(NSError(domain: errorDescription,
                                             code: errorCode)))
+        clear()
     }
 }
 
