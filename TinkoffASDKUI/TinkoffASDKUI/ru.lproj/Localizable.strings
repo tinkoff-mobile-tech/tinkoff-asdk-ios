@@ -87,5 +87,6 @@
 "TP.NoTinkoffBankApp.Button.Install" = "Установить";
 "TP.NoTinkoffBankApp.Button.Сancel" = "Отменить";
 
-
-
+// 3ds app-based
+"TinkoffAcquiring.threeds.cancelAuth" = "Отменить";
+"TinkoffAcquiring.threeds.acceptAuth" = "Подтверждение";

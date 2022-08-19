@@ -1,6 +1,6 @@
 //
 //
-//  AppBasedThreeDSController.swift
+//  TDSController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -21,87 +21,52 @@
 import TinkoffASDKCore
 import ThreeDSWrapper
 
-final class AppBasedThreeDSController {
+final class TDSController {
     
-    // MARK: - Dependencies
+    // Dependencies
     
-    private let tdsWrapper: TDSWrapper
     private let acquiringSdk: AcquiringSdk
+    private let tdsWrapper: TDSWrapper
+    private let tdsCertsManager: ITDSCertsManager
     
-    // MARK: - 3ds sdk properties
+    // 3ds sdk properties
     
     private var transaction: Transaction?
     private var progressView: ProgressDialog?
     private var challengeParams: ChallengeParameters?
     
-    // MARK: - Transaction completion handler
+    // Transaction completion handler
     
     var completionHandler: PaymentCompletionHandler?
     var cancelHandler: (() -> Void)?
     
-    // MARK: - Init
+    // Init
     
     init(acquiringSdk: AcquiringSdk,
-         env: AcquiringSdkEnvironment,
-         language: AcquiringSdkLanguage?) {
-        let locale: Locale
-        
-        switch language {
-        case .ru:
-            locale = Locale(identifier: .russian)
-        case .en:
-            locale = Locale(identifier: .english)
-        default:
-            locale = Locale(identifier: .russian)
-        }
-        
-        let sdkConfiguration = TDSWrapper.SDKConfiguration(uiCustomization: nil,
-                                                           locale: locale)
-        self.tdsWrapper = TDSWrapper(sdkConfiguration: sdkConfiguration,
-                                     wrapperConfiguration: .init(environment: env == .test ? .test : .production))
+         tdsWrapper: TDSWrapper,
+         tdsCertsManager: ITDSCertsManager) {
         self.acquiringSdk = acquiringSdk
+        self.tdsWrapper = tdsWrapper
+        self.tdsCertsManager = tdsCertsManager
     }
     
-    enum AppBasedFlowError: Swift.Error {
-        case invalidPaymentSystem
-        case invalidDirectoryServerID
-        case invalidConfigCertParams
-        case updatingCertsError([CertificateUpdatingRequest : TDSWrapperError])
-        case timeout
-    }
-    
+    /// Получает необходимые параметры для проведения 3дс
     func obtainAuthParams(with paymentSystem: String,
                           messageVersion: String,
                           completion: @escaping (Result<AuthenticationRequestParameters, Error>) -> Void) {
-        acquiringSdk.getConfig { [weak self] result in
+        tdsCertsManager.checkAndUpdateCertsIfNeeded(for: paymentSystem) { result in
             do {
-                let certs = try result.get().certificates
-                
-                let matchingCerts = certs.filter { $0.paymentSystem == paymentSystem }
-                
-                guard let matchingDirectoryServerID = matchingCerts.first?.directoryServerID else {
-                    completion(.failure(AppBasedFlowError.invalidPaymentSystem))
-                    return
-                }
-                
-                self?.compareAndUpdateWrapperCertsIfNeeded(with: matchingCerts, completion: { [weak self] result in
-                    do {
-                        guard let self = self else { return }
-                        _ = try result.get()
-                        let authParams = try self.startAppBasedFlow(directoryServerID: matchingDirectoryServerID,
-                                                                     messageVersion: messageVersion)
-                        completion(.success(authParams))
-                    } catch {
-                        completion(.failure(error))
-                    }
-                })
-                
+                let matchingDirectoryServerID = try result.get()
+                let authParams = try self.startAppBasedFlow(directoryServerID: matchingDirectoryServerID,
+                                                             messageVersion: messageVersion)
+                completion(.success(authParams))
             } catch {
                 completion(.failure(error))
             }
         }
     }
     
+    /// Начинает испытание на стороне 3дс-сдк
     func doChallenge(with challengeParams: ChallengeParameters, timeout: Int) {
         self.challengeParams = challengeParams
         transaction?.doChallenge(challengeParameters: challengeParams,
@@ -112,40 +77,7 @@ final class AppBasedThreeDSController {
 
 // MARK: - Private
 
-private extension AppBasedThreeDSController {
-    
-    func compareAndUpdateWrapperCertsIfNeeded(with configCerts: [CertificateData],
-                                              completion: @escaping (Result<Void, Error>) -> Void) {
-        var certificateUpdatingRequests = [CertificateUpdatingRequest]()
-        
-        configCerts.forEach {
-            guard let wrapperMatchingCert = getWrapperMatchingCert(for: $0.directoryServerID, type: $0.type) else {
-                return
-            }
-            
-            if wrapperMatchingCert.sha256Fingerprint != $0.sha256Fingerprint || $0.forceUpdateFlag {
-                do {
-                    let certificateUpdatingRequest = try buildCertificateUpdatingRequest(from: $0)
-                    certificateUpdatingRequests.append(certificateUpdatingRequest)
-                } catch {
-                    completion(.failure(error))
-                }
-            }
-        }
-        
-        guard !certificateUpdatingRequests.isEmpty else {
-            completion(.success(()))
-            return
-        }
-        
-        tdsWrapper.update(with: certificateUpdatingRequests, receiveOn: .main) { result in
-            if result.isEmpty {
-                completion(.success(()))
-            } else {
-                completion(.failure(AppBasedFlowError.updatingCertsError(result)))
-            }
-        }
-    }
+private extension TDSController {
     
     func startAppBasedFlow(directoryServerID: String,
                            messageVersion: String) throws -> AuthenticationRequestParameters {
@@ -173,12 +105,6 @@ private extension AppBasedThreeDSController {
                                                ephemeralPublic: sdkEphemPubKeyBase64)
     }
     
-    func getWrapperMatchingCert(for directoryServerID: String, type: String) -> CertificateState? {
-        tdsWrapper.checkCertificates().first {
-            $0.directoryServerID == directoryServerID && $0.certificateType == CertificateType(rawValue: type)
-        }
-    }
-    
     func buildCresValue(with transStatus: String) -> String {
         guard let acsTransID = try? challengeParams?.getAcsTransactionId(),
               let threeDSTransID = try? challengeParams?.get3DSServerTransactionId() else {
@@ -191,31 +117,6 @@ private extension AppBasedThreeDSController {
         let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
         
         return noPaddingEncodedString
-    }
-    
-    func buildCertificateUpdatingRequest(from configCert: CertificateData) throws -> CertificateUpdatingRequest {
-        guard let type = CertificateType(rawValue: configCert.type),
-              let url = URL(string: configCert.url),
-              let notAfterDate = ISO8601DateFormatter.input.date(from: configCert.notAfterDate) else {
-            throw AppBasedFlowError.invalidConfigCertParams
-        }
-        
-        let algorithm: CertificateAlgorithm
-        switch configCert.algorithm {
-        case "RSA":
-            algorithm = .rsa
-        case "EC":
-            algorithm = .ec
-        default:
-            algorithm = .rsa
-        }
-        
-        return CertificateUpdatingRequest(certificateType: type,
-                                          directoryServerID: configCert.directoryServerID,
-                                          algorithm: algorithm,
-                                          notAfterDate: notAfterDate,
-                                          sha256Fingerprint: configCert.sha256Fingerprint,
-                                          url: url)
     }
     
     func finishTransaction() {
@@ -234,7 +135,7 @@ private extension AppBasedThreeDSController {
 
 // MARK: - ChallengeStatusReceiver Delegate
 
-extension AppBasedThreeDSController: ChallengeStatusReceiver {
+extension TDSController: ChallengeStatusReceiver {
     func completed(_ completionEvent: CompletionEvent) {
         finishTransaction()
         let cresValue = buildCresValue(with: completionEvent.getTransactionStatus())
@@ -252,7 +153,7 @@ extension AppBasedThreeDSController: ChallengeStatusReceiver {
     
     func timedout() {
         finishTransaction()
-        completionHandler?(.failure(AppBasedFlowError.timeout))
+        completionHandler?(.failure(TDSFlowError.timeout))
         clear()
     }
     
@@ -289,11 +190,4 @@ extension ISO8601DateFormatter {
         ]
         return dateFormatter
     }()
-}
-
-// MARK: - Locale identifiers
-
-private extension String {
-    static let russian = "ru_RU"
-    static let english = "en_US"
 }

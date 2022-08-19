@@ -173,9 +173,9 @@ public class AcquiringUISDK: NSObject {
     private let sbpAssembly: SBPAssembly
     private let tinkoffPayAssembly: TinkoffPayAssembly
     
-    // App based
-    private let appBasedTimeoutResolver = AppBasedTimeoutResolver()
-    private let appBasedThreeDSController: AppBasedThreeDSController
+    // App based threeDS
+    private let tdsTimeoutResolver: ITdsMAPITimeoutResolver & ITdsChallengeTimeoutResolver
+    private let tdsController: TDSController
     
     private weak var logger: LoggerDelegate?
     
@@ -188,9 +188,12 @@ public class AcquiringUISDK: NSObject {
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk,
                                                      tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
-        self.appBasedThreeDSController = AppBasedThreeDSController(acquiringSdk: acquiringSdk,
-                                                                   env: configuration.serverEnvironment,
-                                                                   language: configuration.language)
+        let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
+        let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
+        self.tdsController = TDSController(acquiringSdk: acquiringSdk,
+                                                               tdsWrapper: tdsWrapper,
+                                                               tdsCertsManager: tdsCertsManager)
+        self.tdsTimeoutResolver = TDSTimeoutResolver()
         self.logger = configuration.logger
     }
 
@@ -1175,10 +1178,10 @@ public class AcquiringUISDK: NSObject {
                         }
                     }
                 case let .needConfirmation3DS2AppBased(appBasedData):
-                    self.appBasedThreeDSController.completionHandler = { response in
+                    self.tdsController.completionHandler = { response in
                         completionHandler(response)
                     }
-                    self.appBasedThreeDSController.cancelHandler = { [weak self] in
+                    self.tdsController.cancelHandler = { [weak self] in
                         if self?.acquiringView != nil {
                             self?.acquiringView?.closeVC(animated: true, completion: {
                                 self?.cancelPayment()
@@ -1194,9 +1197,9 @@ public class AcquiringUISDK: NSObject {
                     challengeParams.set3DSServerTransactionId(appBasedData.tdsServerTransId)
                     challengeParams.setAcsRefNumber(appBasedData.acsRefNumber)
                     challengeParams.setAcsSignedContent(appBasedData.acsSignedContent)
-                    let timeout = self.appBasedTimeoutResolver.challengeValue
+                    let timeout = self.tdsTimeoutResolver.challengeValue
                     
-                    self.appBasedThreeDSController.doChallenge(with: challengeParams,
+                    self.tdsController.doChallenge(with: challengeParams,
                                                                timeout: timeout)
                 case let .done(response):
                     completionHandler(.success(response))
@@ -1233,7 +1236,7 @@ public class AcquiringUISDK: NSObject {
                 if checkResult.tdsServerTransID != nil {
                     // собираем информацию о девайсе
                     
-                    self.appBasedThreeDSController.obtainAuthParams(with: checkResult.paymentSystem,
+                    self.tdsController.obtainAuthParams(with: checkResult.paymentSystem,
                                                                     messageVersion: checkResult.version) { result in
                         do {
                             self.handleThreeDSV2Flow(messageVersion: checkResult.version,
@@ -1272,7 +1275,7 @@ public class AcquiringUISDK: NSObject {
                                           sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
                                           sdkReferenceNumber: authParams.getSDKReferenceNumber(),
                                           sdkTransID: authParams.getSDKTransactionID(),
-                                          sdkMaxTimeout: appBasedTimeoutResolver.mapiValue,
+                                          sdkMaxTimeout: tdsTimeoutResolver.mapiValue,
                                           sdkEncData: authParams.getDeviceData())
         
         requestData.setDeviceInfo(info: deviceInfo)
