@@ -29,7 +29,7 @@ protocol ITdsChallengeTimeoutResolver {
 }
 
 final class TDSTimeoutResolver: ITdsMAPITimeoutResolver, ITdsChallengeTimeoutResolver {
-    /// Максмальное время для проведение всего флоу 3ds
+    /// Максмальное время для проведение всего флоу 3ds в минутах
     private let timeout = 5
     
     var mapiValue: String {
