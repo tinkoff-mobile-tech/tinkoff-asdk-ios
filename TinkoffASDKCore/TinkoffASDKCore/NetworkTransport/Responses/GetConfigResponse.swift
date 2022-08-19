@@ -29,13 +29,24 @@ public struct GetConfigResponse: Decodable {
 }
 
 public struct CertificateData: Decodable {
+    
+    public enum CertificateType: String, Decodable {
+        case publicKey = "dsPublicKey"
+        case rootCA = "dsRootCA"
+    }
+    
+    public enum CertificateAlgorithm: String, Decodable {
+        case rsa = "RSA"
+        case ec = "EC"
+    }
+    
     public let paymentSystem: String
     public let directoryServerID: String
-    public let type: String
+    public let type: CertificateType
     public let url: String
     public let notAfterDate: String
     public let sha256Fingerprint: String
-    public let algorithm: String
+    public let algorithm: CertificateAlgorithm
     public let forceUpdateFlag: Bool
     
     private enum CodingKeys: String, CodingKey {

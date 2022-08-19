@@ -177,17 +177,3 @@ extension TDSController: ChallengeStatusReceiver {
         clear()
     }
 }
-
-extension ISO8601DateFormatter {
-
-    static let input: ISO8601DateFormatter = {
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [
-            .withFullDate,
-            .withFullTime,
-            .withDashSeparatorInDate,
-            .withColonSeparatorInTime
-        ]
-        return dateFormatter
-    }()
-}

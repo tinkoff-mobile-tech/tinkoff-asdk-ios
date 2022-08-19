@@ -109,33 +109,54 @@ private extension TDSCertsManager {
 
     
     func buildCertificateUpdatingRequest(from configCert: CertificateData) throws -> CertificateUpdatingRequest {
-        guard let type = CertificateType(rawValue: configCert.type),
-              let url = URL(string: configCert.url),
-              let notAfterDate = ISO8601DateFormatter.input.date(from: configCert.notAfterDate) else {
+        guard let url = URL(string: configCert.url),
+              let notAfterDate = ISO8601DateFormatter.certsInput.date(from: configCert.notAfterDate) else {
             throw TDSFlowError.invalidConfigCertParams
         }
         
-        let algorithm: CertificateAlgorithm
-        switch configCert.algorithm {
-        case "RSA":
-            algorithm = .rsa
-        case "EC":
-            algorithm = .ec
-        default:
-            algorithm = .rsa
-        }
-        
-        return CertificateUpdatingRequest(certificateType: type,
+        return CertificateUpdatingRequest(certificateType: mapCertificateType(configCert.type),
                                           directoryServerID: configCert.directoryServerID,
-                                          algorithm: algorithm,
+                                          algorithm: mapCertificateAlgorithm(configCert.algorithm),
                                           notAfterDate: notAfterDate,
                                           sha256Fingerprint: configCert.sha256Fingerprint,
                                           url: url)
     }
     
-    func getWrapperMatchingCert(for directoryServerID: String, type: String) -> CertificateState? {
+    func getWrapperMatchingCert(for directoryServerID: String, type: CertificateData.CertificateType) -> CertificateState? {
         tdsWrapper.checkCertificates().first {
-            $0.directoryServerID == directoryServerID && $0.certificateType == CertificateType(rawValue: type)
+            $0.directoryServerID == directoryServerID && $0.certificateType == mapCertificateType(type)
         }
     }
+    
+    func mapCertificateType(_ type: CertificateData.CertificateType) -> CertificateType {
+        switch type {
+        case .publicKey:
+            return .dsPublicKey
+        case .rootCA:
+            return .dsRootCA
+        }
+    }
+    
+    func mapCertificateAlgorithm(_ algorithm: CertificateData.CertificateAlgorithm) -> CertificateAlgorithm {
+        switch algorithm {
+        case .rsa:
+            return .rsa
+        case .ec:
+            return .ec
+        }
+    }
+}
+
+private extension ISO8601DateFormatter {
+    /// Certs notAfterDate field formatter
+    static let certsInput: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [
+            .withFullDate,
+            .withFullTime,
+            .withDashSeparatorInDate,
+            .withColonSeparatorInTime
+        ]
+        return dateFormatter
+    }()
 }
