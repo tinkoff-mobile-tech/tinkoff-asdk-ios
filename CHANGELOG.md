@@ -1,6 +1,12 @@
 # Changelog
 ## [Unreleased]
 
+## [2.9.1] - 2022-08-19Z
+
+### Fixed
+
+* [MIC-6177] - Card field's input mask for PAN's with dynamic length
+
 ## [2.9.0] - 2022-08-12Z
 
 ### Fixed

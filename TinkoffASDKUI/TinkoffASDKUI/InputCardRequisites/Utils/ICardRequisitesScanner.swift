@@ -1,6 +1,6 @@
 //
 //
-//  Version.swift
+//  ICardRequisitesScanner.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,6 @@
 
 import Foundation
 
-/// Текущая версия компонента
-struct Version {
-    static let versionString = "2.9.1"
+protocol ICardRequisitesScanner: AnyObject {
+    func startScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void)
 }
