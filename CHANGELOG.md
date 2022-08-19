@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
+
 ## [2.9.1] - 2022-08-19Z
 
 ### Fixed
@@ -12,7 +16,6 @@
 ### Fixed
 
 * [MIC-6099] The payment button touch handling in the payment form, with a recurring payment
-* [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
 
 ## [2.8.1] - 2022-08-05Z
 
