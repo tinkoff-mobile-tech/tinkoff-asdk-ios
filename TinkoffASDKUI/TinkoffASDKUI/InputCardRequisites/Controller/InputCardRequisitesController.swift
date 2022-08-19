@@ -27,7 +27,7 @@ protocol InputCardRequisitesDataSource: AnyObject {
     func setup(responderListener: BecomeFirstResponderListener?,
                inputView: InputRequisitesViewInConnection?,
                inputAccessoryView: InputAccessoryViewWithButton?,
-               scaner: CardRequisitesScanerProtocol?)
+               scaner: ICardRequisitesScanner?)
 
     func setupForCVC(responderListener: BecomeFirstResponderListener?, inputView: InputRequisitesViewInConnection?)
 
@@ -37,6 +37,15 @@ protocol InputCardRequisitesDataSource: AnyObject {
 }
 
 class InputCardRequisitesController: NSObject {
+    // MARK: Constants
+
+    private enum Constants {
+        static let cardNumberPlaceholder = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.cardNumber")
+        static let validThruPlaceholder = "01/23"
+        static let cvcPlaceholder = "CVC"
+        static let paymentSystemImageWidth: CGFloat = 20
+    }
+
     // MARK: InputCardRequisitesDataSource
 
     var onButtonInputAccessoryTouch: (() -> Void)?
@@ -63,25 +72,15 @@ class InputCardRequisitesController: NSObject {
         }
     }
 
-    // input mask
-    private lazy var maskFormat16 = "[0000] [0000] [0000] [0000]"
-    private lazy var maskFormat19 = "[00000000] [00000000000]"
-    private lazy var maskFormat22 = "[00000000] [00000000000000]"
-    private lazy var maskFormatDate = "[00]/[00]"
-    private lazy var maskFormatCVC = "[000]"
-    // placeholders
-    private lazy var placeholderCardNumber = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.cardNumber")
-    private var placeholderCardExpDate = "01/23"
-    private var placeholderCardCVC = "CVC"
     // input value
     private var inputCardNumber: String?
     private var inputCardExpDate: String?
     private var inputCardCVC: String?
     // helpers
-    private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
-    private lazy var cardRequisitesValidator: CardRequisitesValidatorProtocol = CardRequisitesValidator()
-    private lazy var cardRequisitesInputMask: CardRequisitesInputMaskProtocol = CardRequisitesInputMask()
-    private weak var cardRequisitesScaner: CardRequisitesScanerProtocol?
+    private let requisitesInputValidator: ICardRequisitesValidator
+    private let inputMaskResolver: ICardRequisitesMasksResolver
+    private let paymentSystemImageResolver: IPaymentSystemImageResolver
+    private weak var cardRequisitesScanner: ICardRequisitesScanner?
 
     private var colorError = UIColor.systemRed
     private var colorNormal: UIColor = {
@@ -94,9 +93,18 @@ class InputCardRequisitesController: NSObject {
 
     private var inputAccessoryViewWithButton: InputAccessoryViewWithButton?
 
+    override init() {
+        let paymentSystemResolver = PaymentSystemResolver()
+        self.inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
+        self.requisitesInputValidator = CardRequisitesValidator(paymentSystemResolver: paymentSystemResolver)
+        self.paymentSystemImageResolver = PaymentSystemImageResolver(paymentSystemResolver: paymentSystemResolver)
+        super.init()
+    }
+
     private func onScanerResult(_ number: String?, _ mm: Int?, _ yy: Int?) {
-        if let valueNumber = number, cardRequisitesValidator.validateCardNumber(number: valueNumber) {
+        if let valueNumber = number, requisitesInputValidator.validate(inputPAN: number) {
             if let textField = inputView?.textFieldCardNumber {
+                maskedTextFieldCardNumberDelegate.maskFormat = inputMaskResolver.panMask(for: nil)
                 maskedTextFieldCardNumberDelegate.put(text: valueNumber, into: textField)
 
                 inputView?.buttonRight.isHidden = true
@@ -105,7 +113,7 @@ class InputCardRequisitesController: NSObject {
                 inputView?.labelShortCardNumber.text = "*" + valueNumber.suffix(4)
             }
 
-            if let valueMM = mm, let valueYY = yy, cardRequisitesValidator.validateCardExpiredDate(year: valueYY, month: valueMM) {
+            if let valueMM = mm, let valueYY = yy, requisitesInputValidator.validate(validThruYear: valueYY, month: valueMM) {
                 if let textField = inputView?.textFieldCardExpDate {
                     maskedTextFieldCardExpDateDelegate.put(text: "\(valueMM)/\(valueYY)", into: textField)
                 }
@@ -119,7 +127,7 @@ class InputCardRequisitesController: NSObject {
     }
 
     private lazy var onScanner: (() -> Void) = { [weak self] in
-        self?.cardRequisitesScaner?.startScanner(completion: { number, mm, yy in
+        self?.cardRequisitesScanner?.startScanner(completion: { number, mm, yy in
             self?.onScanerResult(number, mm, yy)
         })
     }
@@ -128,7 +136,7 @@ class InputCardRequisitesController: NSObject {
         self?.activateStep(.inputCardExpDate)
     }
 
-    func activateStep(_ inputState: InputState) {
+    private func activateStep(_ inputState: InputState) {
         inputView?.labelShortCardNumber.isHidden = true
         inputView?.textFieldCardNumber.isHidden = true
         inputView?.textFieldCardExpDate.isHidden = true
@@ -141,7 +149,7 @@ class InputCardRequisitesController: NSObject {
         case .inputCardNumber:
             inputView?.textFieldCardNumber.isHidden = false
             inputView?.textFieldCardNumber.becomeFirstResponder()
-            if cardRequisitesValidator.validateCardNumber(number: inputView?.textFieldCardNumber.text) {
+            if requisitesInputValidator.validate(inputPAN: inputCardNumber) {
                 activateNextButton()
             } else {
                 activateScanerButton()
@@ -155,7 +163,7 @@ class InputCardRequisitesController: NSObject {
             //
             inputView?.buttonShowCardNumber.isHidden = false
 
-            if cardRequisitesValidator.validateCardExpiredDate(value: inputCardExpDate) {
+            if requisitesInputValidator.validate(inputValidThru: inputCardExpDate) {
                 inputView?.textFieldCardCVC.isHidden = false
             }
 
@@ -173,8 +181,8 @@ class InputCardRequisitesController: NSObject {
             inputView?.buttonShowCardNumber.isHidden = false
 
         case .addRequisites:
-            if cardRequisitesValidator.validateCardNumber(number: inputCardNumber) {
-                if cardRequisitesValidator.validateCardExpiredDate(value: inputCardExpDate) {
+            if requisitesInputValidator.validate(inputPAN: inputCardNumber) {
+                if requisitesInputValidator.validate(inputValidThru: inputCardExpDate) {
                     activateStep(.inputCardCVC)
                 } else {
                     activateStep(.inputCardExpDate)
@@ -195,13 +203,13 @@ class InputCardRequisitesController: NSObject {
     }
 
     private func validateRequisites() -> Bool {
-        return cardRequisitesValidator.validateCardNumber(number: inputCardNumber)
-            && cardRequisitesValidator.validateCardExpiredDate(value: inputCardExpDate)
-            && cardRequisitesValidator.validateCardCVC(cvc: inputCardCVC)
+        return requisitesInputValidator.validate(inputPAN: inputCardNumber)
+        && requisitesInputValidator.validate(inputValidThru: inputCardExpDate)
+        && requisitesInputValidator.validate(inputCVC: inputCardCVC)
     }
 
     private func activateScanerButton() {
-        if cardRequisitesScaner != nil {
+        if cardRequisitesScanner != nil {
             inputView?.buttonRight.isHidden = false
             inputView?.buttonRight.setImage(UIImage(named: "scan", in: .uiResources, compatibleWith: nil), for: .normal)
             inputView?.onButtonRightTouch = onScanner
@@ -266,72 +274,102 @@ extension InputCardRequisitesController: UITextFieldDelegate {
     }
 }
 
-extension InputCardRequisitesController: MaskedTextFieldDelegateListener {
-    // MARK: MaskedTextFieldDelegateListener
+// MARK: - MaskedTextFieldDelegateListener
 
+extension InputCardRequisitesController: MaskedTextFieldDelegateListener {
     func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
         if let cell: InputViewStatus = UIView.searchTableViewCell(by: textField) {
             cell.setStatus(.normal, statusText: nil)
         }
 
-        if inputView?.textFieldCardNumber == textField {
-            inputView?.textFieldCardNumber.textColor = colorNormal
-            inputCardNumber = value
-
-            if let mask = cardRequisitesInputMask.inputMaskForCardNumber(number: value) {
-                maskedTextFieldCardNumberDelegate.maskFormat = mask
-            }
-
-            cardRequisitesBrandInfo.cardBrandInfo(numbers: value, completion: { [weak self] cardNumber, icon, _ in
-                if let number = cardNumber, number.isEmpty == false, self?.inputCardNumber?.hasPrefix(number) ?? false {
-                    self?.inputView?.imageViewPSLogo.image = icon
-                    self?.inputView?.imageViewPSLogoWidth.constant = 20
-                } else {
-                    self?.inputView?.imageViewPSLogo.image = nil
-                    self?.inputView?.imageViewPSLogoWidth.constant = 0
-                }
-            })
-
-            if cardRequisitesValidator.validateCardNumber(number: value) {
-                activateNextButton()
-                inputView?.labelShortCardNumber.text = "*" + value.suffix(4)
-                if complete {
-                    activateStep(.inputCardExpDate)
-                }
-            } else {
-                activateScanerButton()
-                if complete {
-                    inputView?.textFieldCardNumber.textColor = colorError
-                }
-            }
-        } else if inputView?.textFieldCardExpDate == textField {
-            inputView?.textFieldCardExpDate.textColor = colorNormal
-            inputCardExpDate = value
-
-            if complete {
-                if cardRequisitesValidator.validateCardExpiredDate(value: value) {
-                    activateStep(.inputCardCVC)
-                } else {
-                    inputView?.textFieldCardExpDate.textColor = colorError
-                }
-            }
-        } else if inputView?.textFieldCardCVC == textField {
-            inputView?.textFieldCardExpDate.textColor = colorNormal
-            inputCardCVC = value
+        switch textField {
+        case inputView?.textFieldCardNumber:
+            cardNumberTextField(textField, didFillMask: complete, extractValue: value)
+        case inputView?.textFieldCardExpDate:
+            expirationDateTextField(textField, didFillMask: complete, extractValue: value)
+        case inputView?.textFieldCardCVC:
+            cvcTextField(textField, didFillMask: complete, extractValue: value)
+        default:
+            break
         }
 
         inputAccessoryViewWithButton?.buttonAction.isEnabled = validateRequisites()
+    }
+
+    private func cardNumberTextField(
+        _ textField: UITextField,
+        didFillMask complete: Bool,
+        extractValue value: String
+    ) {
+        let maskUpdated = maskedTextFieldCardNumberDelegate.update(
+            maskFormat: inputMaskResolver.panMask(for: value),
+            using: textField
+        )
+
+        if maskUpdated {
+            return
+        }
+
+        inputView?.textFieldCardNumber.textColor = colorNormal
+        inputCardNumber = value
+
+        let paymentSystemImage = paymentSystemImageResolver.resolve(by: value)
+        inputView?.imageViewPSLogo?.image = paymentSystemImage
+
+        inputView?.imageViewPSLogoWidth.constant = paymentSystemImage == nil
+        ? .zero
+        : Constants.paymentSystemImageWidth
+
+        if requisitesInputValidator.validate(inputPAN: value) {
+            activateNextButton()
+            inputView?.labelShortCardNumber.text = "*" + value.suffix(4)
+            if complete {
+                activateStep(.inputCardExpDate)
+            }
+        } else {
+            activateScanerButton()
+            if complete {
+                inputView?.textFieldCardNumber.textColor = colorError
+            }
+        }
+    }
+
+    private func expirationDateTextField(
+        _ textField: UITextField,
+        didFillMask complete: Bool,
+        extractValue value: String
+    ) {
+        inputView?.textFieldCardExpDate.textColor = colorNormal
+        inputCardExpDate = value
+
+        if complete {
+            if requisitesInputValidator.validate(inputValidThru: value) {
+                activateStep(.inputCardCVC)
+            } else {
+                inputView?.textFieldCardExpDate.textColor = colorError
+            }
+        }
+    }
+
+    private func cvcTextField(
+        _ textField: UITextField,
+        didFillMask complete: Bool,
+        extractValue value: String
+    ) {
+        inputView?.textFieldCardExpDate.textColor = colorNormal
+        inputCardCVC = value
     }
 }
 
 extension InputCardRequisitesController: InputCardRequisitesDataSource {
     // MARK: InputCardRequisitesDataSource
 
-    func setup(responderListener: BecomeFirstResponderListener?,
-               inputView: InputRequisitesViewInConnection?,
-               inputAccessoryView: InputAccessoryViewWithButton? = nil,
-               scaner: CardRequisitesScanerProtocol? = nil)
-    {
+    func setup(
+        responderListener: BecomeFirstResponderListener?,
+        inputView: InputRequisitesViewInConnection?,
+        inputAccessoryView: InputAccessoryViewWithButton? = nil,
+        scaner: ICardRequisitesScanner? = nil
+    ) {
         becomeFirstResponderListener = responderListener
         self.inputView = inputView
         inputAccessoryViewWithButton = inputAccessoryView
@@ -339,32 +377,32 @@ extension InputCardRequisitesController: InputCardRequisitesDataSource {
             self?.onButtonDoneTouchUpInside()
         }
 
-        cardRequisitesScaner = scaner
+        cardRequisitesScanner = scaner
 
         maskedTextFieldCardNumberDelegate = MaskedTextFieldDelegate()
-        maskedTextFieldCardNumberDelegate.maskFormat = maskFormat16
+        maskedTextFieldCardNumberDelegate.maskFormat = inputMaskResolver.panMask(for: nil)
         maskedTextFieldCardNumberDelegate.listener = self
         self.inputView?.textFieldCardNumber.delegate = maskedTextFieldCardNumberDelegate
-        self.inputView?.textFieldCardNumber.placeholder = placeholderCardNumber
+        self.inputView?.textFieldCardNumber.placeholder = Constants.cardNumberPlaceholder
 
         maskedTextFieldCardExpDateDelegate = MaskedTextFieldDelegate()
-        maskedTextFieldCardExpDateDelegate.maskFormat = maskFormatDate
+        maskedTextFieldCardExpDateDelegate.maskFormat = inputMaskResolver.validThruMask
         maskedTextFieldCardExpDateDelegate.listener = self
         self.inputView?.textFieldCardExpDate.delegate = maskedTextFieldCardExpDateDelegate
-        self.inputView?.textFieldCardExpDate.placeholder = placeholderCardExpDate
+        self.inputView?.textFieldCardExpDate.placeholder = Constants.validThruPlaceholder
 
         maskedTextFieldCardCVCDelegate = MaskedTextFieldDelegate()
-        maskedTextFieldCardCVCDelegate.maskFormat = maskFormatCVC
+        maskedTextFieldCardCVCDelegate.maskFormat = inputMaskResolver.cvcMask
         maskedTextFieldCardCVCDelegate.listener = self
         self.inputView?.textFieldCardCVC.delegate = maskedTextFieldCardCVCDelegate
-        self.inputView?.textFieldCardCVC.placeholder = placeholderCardCVC
+        self.inputView?.textFieldCardCVC.placeholder = Constants.cvcPlaceholder
 
         activateStep(.addRequisites)
     }
 
     func setupForCVC(responderListener: BecomeFirstResponderListener?, inputView: InputRequisitesViewInConnection?) {
         self.inputView = inputView
-        cardRequisitesScaner = nil
+        cardRequisitesScanner = nil
 
         inputView?.textFieldCardCVC.delegate = maskedTextFieldCardCVCDelegate
         becomeFirstResponderListener = responderListener
@@ -374,5 +412,38 @@ extension InputCardRequisitesController: InputCardRequisitesDataSource {
 
     func requisies() -> (number: String?, expDate: String?, cvc: String?) {
         return (inputCardNumber, inputCardExpDate, inputCardCVC)
+    }
+}
+
+// MARK: - MaskedTextFieldDelegate + Mask Updating
+
+private extension MaskedTextFieldDelegate {
+    /// Вспомогательный метод для обновления маски
+    ///
+    /// По-умолчанию `MaskedTextFieldDelegate` не пересчитывает расположение символов
+    /// после обновления маски. Чтобы принудить пересчет, дополнительно вызывается метод
+    /// `textField(_:shouldChangeCharactersIn:replacementString:)
+    func update(maskFormat: String, using textField: UITextField) -> Bool {
+        guard self.maskFormat != maskFormat,
+              let textRange = textField.emptyRangeAtEnd
+        else { return false }
+
+        self.maskFormat = maskFormat
+        _ = self.textField(textField, shouldChangeCharactersIn: textRange, replacementString: "")
+        return true
+    }
+}
+
+// MARK: - UITextField + Helpers
+
+private extension UITextField {
+    var emptyRangeAtEnd: NSRange? {
+        textRange(from: endOfDocument, to: endOfDocument)
+            .map { uiTextRange in
+                NSRange(
+                    location: offset(from: beginningOfDocument, to: uiTextRange.start),
+                    length: offset(from: uiTextRange.start, to: uiTextRange.end)
+                )
+            }
     }
 }
