@@ -35,14 +35,9 @@ extension TDSFlowError: LocalizedError {
         case .invalidConfigCertParams:
             return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.invalidConfigCertParams")
         case .updatingCertsError(let dictionary):
-            
-            return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.updatingCertsError") + dictionary.map({ key, value in
-                key + ":" + value
-            })
+            return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.updatingCertsError") + String(describing: dictionary)
         case .timeout:
             return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.timeout")
-
         }
-        return Localization.appointmentCommonAlertErrorTitle
     }
 }
