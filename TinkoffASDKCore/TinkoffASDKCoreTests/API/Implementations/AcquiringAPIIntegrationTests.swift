@@ -139,14 +139,24 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
         let errorCode = 20
         let errorMessage = "error message"
         let errorDetails = "error details"
-        
+        let terminalKey = "TestSDK"
+        let status = "REJECTED"
+        let orderId = "order id"
+        let paymentId = "payment id"
+        let amount = 10
+
         let responseString =
         """
         {
             "\(APIConstants.Keys.success)": false,
             "\(APIConstants.Keys.errorCode)": "\(errorCode)",
             "\(APIConstants.Keys.errorMessage)": "\(errorMessage)",
-            "\(APIConstants.Keys.errorDetails)": "\(errorDetails)"
+            "\(APIConstants.Keys.errorDetails)": "\(errorDetails)",
+            "\(APIConstants.Keys.terminalKey)": "\(terminalKey)",
+            "\(APIConstants.Keys.status)": "\(status)",
+            "\(APIConstants.Keys.orderId)": "\(orderId)",
+            "\(APIConstants.Keys.paymentId)": "\(paymentId)",
+            "\(APIConstants.Keys.amount)": \(amount)
         }
         """
         
@@ -166,6 +176,11 @@ final class AcquiringAPIIntegrationTests: XCTestCase {
                 XCTAssertEqual(apiFailureError.errorMessage, errorMessage)
                 XCTAssertEqual(apiFailureError.errorDetails, errorDetails)
                 XCTAssertEqual(apiFailureError.errorCode, errorCode)
+                XCTAssertEqual(apiFailureError.terminalKey, terminalKey)
+                XCTAssertEqual(apiFailureError.status, status)
+                XCTAssertEqual(apiFailureError.orderId, orderId)
+                XCTAssertEqual(apiFailureError.paymentId, paymentId)
+                XCTAssertEqual(apiFailureError.amount, amount)
             } catch {
                 XCTFail()
             }
