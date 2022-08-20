@@ -68,42 +68,37 @@ final class TDSCertsManager: ITDSCertsManager {
 // MARK: - Private
 
 private extension TDSCertsManager {
-    
+
     func compareAndUpdateWrapperCertsIfNeeded(with configCerts: [CertificateData],
                                               completion: @escaping (Result<Void, Error>) -> Void) {
-        var certificateUpdatingRequests = [CertificateUpdatingRequest]()
-        
-        configCerts.forEach {
-            guard let wrapperMatchingCert = getWrapperMatchingCert(for: $0.directoryServerID, type: $0.type) else {
-                return
-            }
-            
-            if wrapperMatchingCert.sha256Fingerprint != $0.sha256Fingerprint || $0.forceUpdateFlag {
-                do {
-                    let certificateUpdatingRequest = try buildCertificateUpdatingRequest(from: $0)
-                    certificateUpdatingRequests.append(certificateUpdatingRequest)
-                } catch {
-                    completion(.failure(error))
-                }
-            }
+        let wrapperCertificates = tdsWrapper.checkCertificates()
+
+        let updatingRequests = configCerts
+            .filter { $0.forceUpdateFlag || shouldUpdate($0, wrapperCertificates) }
+            .map(buildCertificateUpdatingRequest(from:))
+
+        guard !updatingRequests.isEmpty else {
+            return completion(.success(()))
         }
-        
-        guard !certificateUpdatingRequests.isEmpty else {
-            completion(.success(()))
-            return
-        }
-        
-        tdsWrapper.update(with: certificateUpdatingRequests, receiveOn: .main) { result in
-            if result.isEmpty {
+
+        tdsWrapper.update(with: updatingRequests, receiveOn: .main) { failures in
+            if failures.isEmpty {
                 completion(.success(()))
             } else {
-                completion(.failure(TDSFlowError.updatingCertsError(result)))
+                completion(.failure(TDSFlowError.updatingCertsError(failures)))
             }
         }
     }
 
-    
-    func buildCertificateUpdatingRequest(from configCert: CertificateData) throws -> CertificateUpdatingRequest {
+    func shouldUpdate(_ configCert: CertificateData, _ wrapperCerts: [CertificateState]) -> Bool {
+        !wrapperCerts.contains {
+            $0.directoryServerID == configCert.directoryServerID
+            && $0.certificateType == mapCertificateType(configCert.type)
+            && $0.sha256Fingerprint == configCert.sha256Fingerprint
+        }
+    }
+
+    func buildCertificateUpdatingRequest(from configCert: CertificateData) -> CertificateUpdatingRequest {
         CertificateUpdatingRequest(certificateType: mapCertificateType(configCert.type),
                                    directoryServerID: configCert.directoryServerID,
                                    algorithm: mapCertificateAlgorithm(configCert.algorithm),
@@ -111,13 +106,7 @@ private extension TDSCertsManager {
                                    sha256Fingerprint: configCert.sha256Fingerprint,
                                    url: configCert.url)
     }
-    
-    func getWrapperMatchingCert(for directoryServerID: String, type: CertificateData.CertificateType) -> CertificateState? {
-        tdsWrapper.checkCertificates().first {
-            $0.directoryServerID == directoryServerID && $0.certificateType == mapCertificateType(type)
-        }
-    }
-    
+
     func mapCertificateType(_ type: CertificateData.CertificateType) -> CertificateType {
         switch type {
         case .publicKey:
@@ -135,18 +124,4 @@ private extension TDSCertsManager {
             return .ec
         }
     }
-}
-
-private extension ISO8601DateFormatter {
-    /// Certs notAfterDate field formatter
-    static let certsInput: ISO8601DateFormatter = {
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [
-            .withFullDate,
-            .withFullTime,
-            .withDashSeparatorInDate,
-            .withColonSeparatorInTime
-        ]
-        return dateFormatter
-    }()
 }
