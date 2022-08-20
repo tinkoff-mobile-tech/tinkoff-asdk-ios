@@ -174,7 +174,6 @@ public class AcquiringUISDK: NSObject {
     private let tinkoffPayAssembly: TinkoffPayAssembly
     
     // App based threeDS
-    private let tdsTimeoutResolver: ITimeoutResolver
     private let tdsController: TDSController
     
     private weak var logger: LoggerDelegate?
@@ -190,10 +189,11 @@ public class AcquiringUISDK: NSObject {
                                                      tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
         let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
         let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
+        let tdsTimeoutResolver = TDSTimeoutResolver()
         self.tdsController = TDSController(acquiringSdk: acquiringSdk,
-                                                               tdsWrapper: tdsWrapper,
-                                                               tdsCertsManager: tdsCertsManager)
-        self.tdsTimeoutResolver = TDSTimeoutResolver()
+                                           tdsWrapper: tdsWrapper,
+                                           tdsCertsManager: tdsCertsManager,
+                                           tdsTimeoutResolver: tdsTimeoutResolver)
         self.logger = configuration.logger
     }
 
@@ -1197,10 +1197,8 @@ public class AcquiringUISDK: NSObject {
                     challengeParams.set3DSServerTransactionId(appBasedData.tdsServerTransId)
                     challengeParams.setAcsRefNumber(appBasedData.acsRefNumber)
                     challengeParams.setAcsSignedContent(appBasedData.acsSignedContent)
-                    let timeout = self.tdsTimeoutResolver.challengeValue
                     
-                    self.tdsController.doChallenge(with: challengeParams,
-                                                               timeout: timeout)
+                    self.tdsController.doChallenge(with: challengeParams)
                 case let .done(response):
                     completionHandler(.success(response))
 
@@ -1236,13 +1234,14 @@ public class AcquiringUISDK: NSObject {
                 if checkResult.tdsServerTransID != nil {
                     // собираем информацию о девайсе
                     
-                    self.tdsController.obtainAuthParams(with: checkResult.paymentSystem,
-                                                                    messageVersion: checkResult.version) { result in
+                    
+                    self.tdsController.enrichRequestDataWithAuthParams(with: checkResult.paymentSystem,
+                                                                       messageVersion: checkResult.version,
+                                                                       finishRequestData: requestData) { result in
                         do {
-                            self.handleThreeDSV2Flow(messageVersion: checkResult.version,
-                                                     finishRequestData: requestData,
-                                                     authParams: try result.get(),
-                                                     completionHandler: completionHandler)
+                            self.finishAuthorize(requestData: try result.get(),
+                                                 treeDSmessageVersion: checkResult.version,
+                                                 completionHandler: completionHandler)
                         } catch {
                             completionHandler(.failure(error))
                         }
@@ -1258,34 +1257,6 @@ public class AcquiringUISDK: NSObject {
                 completionHandler(.failure(error))
             }
         })
-    }
-    
-    private func handleThreeDSV2Flow(messageVersion: String,
-                                     finishRequestData: PaymentFinishRequestData,
-                                     authParams: AuthenticationRequestParameters,
-                                     completionHandler: @escaping PaymentCompletionHandler) {
-        var requestData = finishRequestData
-        let screenSize = UIScreen.main.bounds.size
-
-        let deviceInfo = DeviceInfoParams(cresCallbackUrl: acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
-                                          languageId: acquiringSdk.languageKey?.rawValue ?? "ru",
-                                          screenWidth: Int(screenSize.width),
-                                          screenHeight: Int(screenSize.height),
-                                          sdkAppID: authParams.getSDKAppID(),
-                                          sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
-                                          sdkReferenceNumber: authParams.getSDKReferenceNumber(),
-                                          sdkTransID: authParams.getSDKTransactionID(),
-                                          sdkMaxTimeout: tdsTimeoutResolver.mapiValue,
-                                          sdkEncData: authParams.getDeviceData())
-        
-        requestData.setDeviceInfo(info: deviceInfo)
-        requestData.setThreeDSVersion(messageVersion)
-        requestData.setIpAddress(acquiringSdk.networkIpAddress())
-        
-        finishAuthorize(requestData: requestData,
-                        treeDSmessageVersion: messageVersion) { finishResponse in
-            completionHandler(finishResponse)
-        }
     }
 
     private func cancelPayment() {

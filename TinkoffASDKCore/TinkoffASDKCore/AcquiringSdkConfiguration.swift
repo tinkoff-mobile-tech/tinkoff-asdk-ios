@@ -36,7 +36,7 @@ public struct ConfigSdkEnvironment: RawRepresentable {
     public let rawValue: String
 
     public init(rawValue: String) {
-        self = ConfigSdkEnvironment(rawValue: rawValue)
+        self.rawValue = rawValue
     }
     
     public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "ca-3ds2-test.cdn-tinkoff.ru") }
