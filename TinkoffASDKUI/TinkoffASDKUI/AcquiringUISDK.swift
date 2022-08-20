@@ -174,7 +174,7 @@ public class AcquiringUISDK: NSObject {
     private let tinkoffPayAssembly: TinkoffPayAssembly
     
     // App based threeDS
-    private let tdsTimeoutResolver: ITdsMAPITimeoutResolver & ITdsChallengeTimeoutResolver
+    private let tdsTimeoutResolver: ITimeoutResolver
     private let tdsController: TDSController
     
     private weak var logger: LoggerDelegate?

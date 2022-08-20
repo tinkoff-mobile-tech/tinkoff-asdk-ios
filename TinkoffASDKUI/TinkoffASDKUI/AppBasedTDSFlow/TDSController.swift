@@ -105,11 +105,12 @@ private extension TDSController {
                                                ephemeralPublic: sdkEphemPubKeyBase64)
     }
     
-    func buildCresValue(with transStatus: String) -> String {
-        guard let acsTransID = try? challengeParams?.getAcsTransactionId(),
-              let threeDSTransID = try? challengeParams?.get3DSServerTransactionId() else {
+    func buildCresValue(with transStatus: String) throws -> String {
+        guard let challengeParams = challengeParams else {
             return String()
         }
+        let acsTransID = try challengeParams.getAcsTransactionId()
+        let threeDSTransID = try challengeParams.get3DSServerTransactionId()
         
         let cresValue = "{\"threeDSServerTransID\":\"\(threeDSTransID)\",\"acsTransID\":\"\(acsTransID)\",\"transStatus\":\"\(transStatus)\"}"
         let encodedString = Data(cresValue.utf8).base64EncodedString()
@@ -138,10 +139,15 @@ private extension TDSController {
 extension TDSController: ChallengeStatusReceiver {
     func completed(_ completionEvent: CompletionEvent) {
         finishTransaction()
-        let cresValue = buildCresValue(with: completionEvent.getTransactionStatus())
-        acquiringSdk.submit3DSAuthorizationV2(cres: cresValue) { [weak self] result in
-            self?.completionHandler?(result)
-            self?.clear()
+        do {
+            let cresValue = try buildCresValue(with: completionEvent.getTransactionStatus())
+            
+            acquiringSdk.submit3DSAuthorizationV2(cres: cresValue) { [weak self] result in
+                self?.completionHandler?(result)
+                self?.clear()
+            }
+        } catch {
+            completionHandler?(.failure(error))
         }
     }
     

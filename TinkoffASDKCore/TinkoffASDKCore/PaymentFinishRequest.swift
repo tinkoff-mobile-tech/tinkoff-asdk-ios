@@ -133,26 +133,6 @@ public struct DeviceInfoParams: Codable {
         case sdkUiType
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        threeDSCompInd = try container.decode(String.self, forKey: .threeDSCompInd)
-        javaEnabled = try container.decode(String.self, forKey: .javaEnabled)
-        colorDepth = try container.decode(Int.self, forKey: .colorDepth)
-        language = try container.decode(String.self, forKey: .language)
-        timezone = try container.decode(Int.self, forKey: .timezone)
-        screenHeight = try container.decode(Int.self, forKey: .screenHeight)
-        screenWidth = try container.decode(Int.self, forKey: .screenWidth)
-        cresCallbackUrl = try container.decode(String.self, forKey: .cresCallbackUrl)
-        sdkAppID = try container.decode(String.self, forKey: .sdkAppID)
-        sdkEphemPubKey = try container.decode(String.self, forKey: .sdkEphemPubKey)
-        sdkReferenceNumber = try container.decode(String.self, forKey: .sdkReferenceNumber)
-        sdkTransID = try container.decode(String.self, forKey: .sdkTransID)
-        sdkMaxTimeout = try container.decode(String.self, forKey: .sdkMaxTimeout)
-        sdkEncData = try container.decode(String.self, forKey: .sdkEncData)
-        sdkInterface = try container.decode(String.self, forKey: .sdkInterface)
-        sdkUiType = try container.decode(String.self, forKey: .sdkUiType)
-    }
-
     public init(cresCallbackUrl: String,
                 languageId: String = "ru",
                 screenWidth: Int,
@@ -164,11 +144,11 @@ public struct DeviceInfoParams: Codable {
                 sdkTransID: String?,
                 sdkMaxTimeout: String?,
                 sdkEncData: String?) {
-        threeDSCompInd = "Y"
-        javaEnabled = "true"
+        self.threeDSCompInd = "Y"
+        self.javaEnabled = "true"
         self.colorDepth = colorDepth
-        language = languageId
-        timezone = TimeZone.current.secondsFromGMT() / 60
+        self.language = languageId
+        self.timezone = TimeZone.current.secondsFromGMT() / 60
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
@@ -180,26 +160,6 @@ public struct DeviceInfoParams: Codable {
         self.sdkEncData = sdkEncData
         self.sdkInterface = "03"
         self.sdkUiType = "01,02,03,04,05"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(threeDSCompInd, forKey: .threeDSCompInd)
-        try container.encode(javaEnabled, forKey: .javaEnabled)
-        try container.encode(colorDepth, forKey: .colorDepth)
-        try container.encode(language, forKey: .language)
-        try container.encode(timezone, forKey: .timezone)
-        try container.encode(screenHeight, forKey: .screenHeight)
-        try container.encode(screenWidth, forKey: .screenWidth)
-        try container.encode(cresCallbackUrl, forKey: .cresCallbackUrl)
-        try container.encode(sdkAppID, forKey: .sdkAppID)
-        try container.encode(sdkEphemPubKey, forKey: .sdkEphemPubKey)
-        try container.encode(sdkReferenceNumber, forKey: .sdkReferenceNumber)
-        try container.encode(sdkTransID, forKey: .sdkTransID)
-        try container.encode(sdkMaxTimeout, forKey: .sdkMaxTimeout)
-        try container.encode(sdkEncData, forKey: .sdkEncData)
-        try container.encode(sdkInterface, forKey: .sdkInterface)
-        try container.encode(sdkUiType, forKey: .sdkUiType)
     }
 }
 
@@ -411,10 +371,10 @@ public struct Confirmation3DSDataACS: Codable {
 }
 
 public struct Confirmation3DS2AppBasedData: Codable {
-    public var acsSignedContent: String
-    public var acsTransId: String
-    public var tdsServerTransId: String
-    public var acsRefNumber: String
+    public let acsSignedContent: String
+    public let acsTransId: String
+    public let tdsServerTransId: String
+    public let acsRefNumber: String
 
     enum CodingKeys: String, CodingKey {
         case acsSignedContent = "AcsSignedContent"
@@ -422,22 +382,6 @@ public struct Confirmation3DS2AppBasedData: Codable {
         case tdsServerTransId = "TdsServerTransId"
         case acsRefNumber = "AcsReferenceNumber"
 
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        acsSignedContent = try container.decode(String.self, forKey: .acsSignedContent)
-        acsTransId = try container.decode(String.self, forKey: .acsTransId)
-        tdsServerTransId = try container.decode(String.self, forKey: .tdsServerTransId)
-        acsRefNumber = try container.decode(String.self, forKey: .acsRefNumber)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(acsSignedContent, forKey: .acsSignedContent)
-        try container.encode(acsTransId, forKey: .acsTransId)
-        try container.encode(tdsServerTransId, forKey: .tdsServerTransId)
-        try container.encode(acsRefNumber, forKey: .acsRefNumber)
     }
 }
 

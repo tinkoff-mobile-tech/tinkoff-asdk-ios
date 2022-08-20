@@ -92,6 +92,5 @@
 "TinkoffAcquiring.threeds.acceptAuth" = "Подтверждение";
 
 "TinkoffAcquiring.threeds.error.invalidPaymentSystem" = "Платежная система не поддерживается";
-"TinkoffAcquiring.threeds.error.invalidConfigCertParams" = "Не удалось распарсить данные из конфига";
 "TinkoffAcquiring.threeds.error.updatingCertsError" = "Не удалось обновить сертификаты";
-"TinkoffAcquiring.threeds.error.timeout" = "Превышено маскимальное время прохождения 3дс";
+"TinkoffAcquiring.threeds.error.timeout" = "Превышено маскимальное время прохождения 3DS";

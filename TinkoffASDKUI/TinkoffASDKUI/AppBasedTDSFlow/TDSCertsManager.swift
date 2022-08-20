@@ -43,7 +43,7 @@ final class TDSCertsManager: ITDSCertsManager {
     
     func checkAndUpdateCertsIfNeeded(for paymentSystem: String,
                                      completion: @escaping (_ matchingDirectoryServerID: Result<String, Error>) -> Void) {
-        acquiringSdk.getConfig { [weak self] result in
+        acquiringSdk.getCertsConfig { [weak self] result in
             do {
                 let certs = try result.get().certificates
                 
@@ -55,12 +55,7 @@ final class TDSCertsManager: ITDSCertsManager {
                 }
                 
                 self?.compareAndUpdateWrapperCertsIfNeeded(with: matchingCerts, completion: { result in
-                    do {
-                        _ = try result.get()
-                        completion(.success(matchingDirectoryServerID))
-                    } catch {
-                        completion(.failure(error))
-                    }
+                    completion(result.map { _ in matchingDirectoryServerID } )
                 })
                 
             } catch {
@@ -109,17 +104,12 @@ private extension TDSCertsManager {
 
     
     func buildCertificateUpdatingRequest(from configCert: CertificateData) throws -> CertificateUpdatingRequest {
-        guard let url = URL(string: configCert.url),
-              let notAfterDate = ISO8601DateFormatter.certsInput.date(from: configCert.notAfterDate) else {
-            throw TDSFlowError.invalidConfigCertParams
-        }
-        
-        return CertificateUpdatingRequest(certificateType: mapCertificateType(configCert.type),
-                                          directoryServerID: configCert.directoryServerID,
-                                          algorithm: mapCertificateAlgorithm(configCert.algorithm),
-                                          notAfterDate: notAfterDate,
-                                          sha256Fingerprint: configCert.sha256Fingerprint,
-                                          url: url)
+        CertificateUpdatingRequest(certificateType: mapCertificateType(configCert.type),
+                                   directoryServerID: configCert.directoryServerID,
+                                   algorithm: mapCertificateAlgorithm(configCert.algorithm),
+                                   notAfterDate: configCert.notAfterDate,
+                                   sha256Fingerprint: configCert.sha256Fingerprint,
+                                   url: configCert.url)
     }
     
     func getWrapperMatchingCert(for directoryServerID: String, type: CertificateData.CertificateType) -> CertificateState? {

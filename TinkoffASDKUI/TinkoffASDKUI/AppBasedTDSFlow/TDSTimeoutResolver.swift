@@ -20,15 +20,12 @@
 
 import Foundation
 
-protocol ITdsMAPITimeoutResolver {
+protocol ITimeoutResolver {
     var mapiValue: String { get }
-}
-
-protocol ITdsChallengeTimeoutResolver {
     var challengeValue: Int { get }
 }
 
-final class TDSTimeoutResolver: ITdsMAPITimeoutResolver, ITdsChallengeTimeoutResolver {
+final class TDSTimeoutResolver: ITimeoutResolver {
     /// Максмальное время для проведение всего флоу 3ds в минутах
     private let timeout = 5
     

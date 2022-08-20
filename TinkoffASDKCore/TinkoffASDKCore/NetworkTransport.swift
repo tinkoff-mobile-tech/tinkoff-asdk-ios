@@ -35,8 +35,8 @@ protocol NetworkTransport: AnyObject {
               Response: ResponseOperation>(operation: Operation,
                                            responseDelegate: NetworkTransportResponseDelegate?,
                                            completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable
-    func sendConfigRequest<Operation: RequestOperation>(operation: Operation,
-                                                        completionHandler: @escaping (_ results: Result<GetConfigResponse, Error>) -> Void) -> Cancellable
+    func sendCertsConfigRequest<Operation: RequestOperation>(operation: Operation,
+                                                             completionHandler: @escaping (_ results: Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable
 }
 
 extension NetworkTransport {
@@ -61,7 +61,7 @@ public protocol NetworkTransportResponseDelegate {
 
 final class AcquaringNetworkTransport: NetworkTransport {
     private let urlDomain: URL
-    private let certsDomain: URL
+    private let certsConfigDomain: URL
     private let apiPathV2: String = "v2"
     private let apiPathV1: String = "rest"
     private let session: URLSession
@@ -75,10 +75,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
     ///
     /// - Parameters:
     ///   - url: путь к серверу **Tinkoff Acquaring API**
+    ///   - certsConfig - путь к конфигу с сертификатами
     ///   - session: конфигурация URLSession по умолчанию используеться `URLSession.shared`,
-    init(urlDomain: URL, certsDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo) {
+    init(urlDomain: URL, certsConfigDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo) {
         self.urlDomain = urlDomain
-        self.certsDomain = certsDomain
+        self.certsConfigDomain = certsConfigDomain
         self.session = session
         self.deviceInfo = deviceInfo
     }
@@ -162,13 +163,13 @@ final class AcquaringNetworkTransport: NetworkTransport {
     }
     
     private func generateBodyParamsString(using parameters: JSONObject) -> String {
-        let qq = parameters.compactMap { (item) -> String? in
-            let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
+        let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
+        let bodyParamsString = parameters.compactMap { (item) -> String? in
             let paramValue = "\(item.value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? item.value
             return "\(item.key)=\(paramValue)"
         }.joined(separator: "&")
         
-        return qq
+        return bodyParamsString
     }
 
     /// Для прохождения 3ds v2 (ACS) нужно подготовить URLRequest для загрузки формы подтверждения в webview
@@ -325,14 +326,14 @@ final class AcquaringNetworkTransport: NetworkTransport {
     
     // TODO: - привести отправку запросов к единому виду при рефакторинге компонента
     @discardableResult
-    func sendConfigRequest<Operation: RequestOperation>(
+    func sendCertsConfigRequest<Operation: RequestOperation>(
         operation: Operation,
-        completionHandler: @escaping (Result<GetConfigResponse, Error>) -> Void
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
     ) -> Cancellable  {
 
         let request: URLRequest
         do {
-            request = try createRequest(domain: certsDomain, for: operation)
+            request = try createRequest(domain: certsConfigDomain, for: operation)
         } catch {
             completionHandler(.failure(error))
             return EmptyCancellable()
@@ -370,7 +371,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
             }
 
             // decode to `Response`
-            if let responseObject = try? JSONDecoder().decode(GetConfigResponse.self, from: data) {
+            if let responseObject = try? JSONDecoder.customISO8601Decoding.decode(GetCertsConfigResponse.self, from: data) {
                 completionHandler(.success(responseObject))
             } else {
                 completionHandler(.failure(HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)))

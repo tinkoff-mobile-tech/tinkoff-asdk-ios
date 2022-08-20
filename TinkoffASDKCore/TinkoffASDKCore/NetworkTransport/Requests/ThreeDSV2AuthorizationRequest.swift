@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct CresData: Encodable {
+struct CresData: Encodable {
     let cres: String
 }
 
@@ -28,15 +28,13 @@ public struct ThreeDSV2AuthorizationRequest: RequestOperation {
     
     // MARK: - RequestOperation
     
-    public var name: String {
-        "Submit3DSAuthorizationV2"
-    }
+    public let name: String = "Submit3DSAuthorizationV2"
     
-    public var requestMethod: RequestMethod = .post
+    public let requestMethod: RequestMethod = .post
     
     public var parameters: JSONObject? = nil
     
-    public var requestContentType: RequestContentType = .urlEncoded
+    public let requestContentType: RequestContentType = .urlEncoded
     
     // MARK: - Init
     

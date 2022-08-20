@@ -1,6 +1,6 @@
 //
 //
-//  GetConfigRequest.swift
+//  GetCertsConfigRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,15 +20,11 @@
 
 import Foundation
 
-public struct GetConfigRequest: RequestOperation {
+public struct GetCertsConfigRequest: RequestOperation {
+        
+    public let name: String = "configs/asdk-cert-config.json"
     
-    // MARK: - RequestOperation
-    
-    public var name: String {
-        "configs/asdk-cert-config.json"
-    }
-    
-    public var requestMethod: RequestMethod = .get
+    public let requestMethod: RequestMethod = .get
     
     public var parameters: JSONObject? = nil
 }

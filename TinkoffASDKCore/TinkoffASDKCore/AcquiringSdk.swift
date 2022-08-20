@@ -50,7 +50,7 @@ public final class AcquiringSdk: NSObject {
         }
 
         if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
-           let certsUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
+           let certsConfigUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
             let deviceInfo = DeviceInfo(model: UIDevice.current.localizedModel,
                                         systemName: UIDevice.current.systemName,
                                         systemVersion: UIDevice.current.systemVersion)
@@ -60,7 +60,7 @@ public final class AcquiringSdk: NSObject {
             sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
             
             networkTransport = AcquaringNetworkTransport(urlDomain: url,
-                                                         certsDomain: certsUrl,
+                                                         certsConfigDomain: certsConfigUrl,
                                                          session: URLSession(configuration: sessionConfiguration),
                                                          deviceInfo: deviceInfo)
         } else {
@@ -369,9 +369,9 @@ public final class AcquiringSdk: NSObject {
     }
     
     @discardableResult
-    public func getConfig(completion: @escaping (Result<GetConfigResponse, Error>) -> Void) -> Cancellable {
-        let request = GetConfigRequest()
-        return networkTransport.sendConfigRequest(operation: request, completionHandler: completion)
+    public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
+        let request = GetCertsConfigRequest()
+        return networkTransport.sendCertsConfigRequest(operation: request, completionHandler: completion)
     }
     
     @discardableResult
@@ -379,8 +379,6 @@ public final class AcquiringSdk: NSObject {
                                          completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let cresData = CresData(cres: cres)
         let request = ThreeDSV2AuthorizationRequest(data: cresData)
-        return networkTransport.send(operation: request) { result in
-            completion(result)
-        }
+        return networkTransport.send(operation: request, completionHandler: completion)
     }
 } // AcquiringSdk

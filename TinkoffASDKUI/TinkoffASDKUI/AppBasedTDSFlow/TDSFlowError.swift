@@ -22,7 +22,6 @@ import ThreeDSWrapper
 
 enum TDSFlowError: Swift.Error {
     case invalidPaymentSystem
-    case invalidConfigCertParams
     case updatingCertsError([CertificateUpdatingRequest : TDSWrapperError])
     case timeout
 }
@@ -32,8 +31,6 @@ extension TDSFlowError: LocalizedError {
         switch self {
         case .invalidPaymentSystem:
             return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.invalidPaymentSystem")
-        case .invalidConfigCertParams:
-            return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.invalidConfigCertParams")
         case .updatingCertsError(let dictionary):
             return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.updatingCertsError") + String(describing: dictionary)
         case .timeout:

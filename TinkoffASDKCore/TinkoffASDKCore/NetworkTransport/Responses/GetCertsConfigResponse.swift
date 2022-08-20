@@ -1,6 +1,6 @@
 //
 //
-//  GetConfigResponse.swift
+//  GetCertsConfigResponse.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,12 +20,12 @@
 
 import Foundation
 
-public struct GetConfigResponse: Decodable {
-    public let certificates: [CertificateData]
-    
+public struct GetCertsConfigResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
         case certificates = "certificatesInfo"
     }
+    
+    public let certificates: [CertificateData]
 }
 
 public struct CertificateData: Decodable {
@@ -40,15 +40,6 @@ public struct CertificateData: Decodable {
         case ec = "EC"
     }
     
-    public let paymentSystem: String
-    public let directoryServerID: String
-    public let type: CertificateType
-    public let url: String
-    public let notAfterDate: String
-    public let sha256Fingerprint: String
-    public let algorithm: CertificateAlgorithm
-    public let forceUpdateFlag: Bool
-    
     private enum CodingKeys: String, CodingKey {
         case paymentSystem
         case directoryServerID
@@ -59,4 +50,13 @@ public struct CertificateData: Decodable {
         case algorithm
         case forceUpdateFlag
     }
+    
+    public let paymentSystem: String
+    public let directoryServerID: String
+    public let type: CertificateType
+    public let url: URL
+    public let notAfterDate: Date
+    public let sha256Fingerprint: String
+    public let algorithm: CertificateAlgorithm
+    public let forceUpdateFlag: Bool
 }

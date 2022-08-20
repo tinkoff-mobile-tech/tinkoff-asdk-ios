@@ -50,7 +50,7 @@ public struct Check3dsVersionResponse: ResponseOperation {
     public var tdsServerTransID: String?
     public var threeDSMethodURL: String?
     public var version: String
-    public var paymentSystem: String
+    public let paymentSystem: String
 
     private enum CodingKeys: String, CodingKey {
         case success = "Success"

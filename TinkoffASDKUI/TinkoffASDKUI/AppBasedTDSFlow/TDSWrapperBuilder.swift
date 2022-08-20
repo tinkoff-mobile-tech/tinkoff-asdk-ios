@@ -55,7 +55,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
                           wrapperConfiguration: .init(environment: env == .test ? .test : .production))
     }
     
-    func buildUICustomization() -> ThreeDSWrapper.UiCustomization {
+    private func buildUICustomization() -> ThreeDSWrapper.UiCustomization {
         let customization = ThreeDSWrapper.UiCustomization()
         
         let regularFont = UIFont.systemFont(ofSize: .regularFontSize)

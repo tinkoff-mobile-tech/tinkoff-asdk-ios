@@ -92,6 +92,5 @@
 "TinkoffAcquiring.threeds.acceptAuth" = "Confirmation";
 
 "TinkoffAcquiring.threeds.error.invalidPaymentSystem" = "Payment system is not supported";
-"TinkoffAcquiring.threeds.error.invalidConfigCertParams" = "Unable to parse config data";
 "TinkoffAcquiring.threeds.error.updatingCertsError" = "Unable to update certificates";
-"TinkoffAcquiring.threeds.error.timeout" = "ThreeDS operation timed out";
+"TinkoffAcquiring.threeds.error.timeout" = "3DS operation timed out";
