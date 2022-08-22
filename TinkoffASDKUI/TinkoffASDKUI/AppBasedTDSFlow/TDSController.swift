@@ -76,7 +76,14 @@ final class TDSController {
     }
     
     /// Начинает испытание на стороне 3дс-сдк
-    func doChallenge(with challengeParams: ChallengeParameters) {
+    func doChallenge(with appBasedData: Confirmation3DS2AppBasedData) {
+        let challengeParams = ChallengeParameters()
+        
+        challengeParams.setAcsTransactionId(appBasedData.acsTransId)
+        challengeParams.set3DSServerTransactionId(appBasedData.tdsServerTransId)
+        challengeParams.setAcsRefNumber(appBasedData.acsRefNumber)
+        challengeParams.setAcsSignedContent(appBasedData.acsSignedContent)
+        
         self.challengeParams = challengeParams
         transaction?.doChallenge(challengeParameters: challengeParams,
                                  challengeStatusReceiver: self,

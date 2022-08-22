@@ -1191,14 +1191,7 @@ public class AcquiringUISDK: NSObject {
                         }
                     }
                     
-                    let challengeParams = ChallengeParameters()
-                    
-                    challengeParams.setAcsTransactionId(appBasedData.acsTransId)
-                    challengeParams.set3DSServerTransactionId(appBasedData.tdsServerTransId)
-                    challengeParams.setAcsRefNumber(appBasedData.acsRefNumber)
-                    challengeParams.setAcsSignedContent(appBasedData.acsSignedContent)
-                    
-                    self.tdsController.doChallenge(with: challengeParams)
+                    self.tdsController.doChallenge(with: appBasedData)
                 case let .done(response):
                     completionHandler(.success(response))
 
