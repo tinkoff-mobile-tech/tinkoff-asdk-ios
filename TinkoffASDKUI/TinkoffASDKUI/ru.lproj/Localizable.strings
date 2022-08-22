@@ -87,5 +87,10 @@
 "TP.NoTinkoffBankApp.Button.Install" = "Установить";
 "TP.NoTinkoffBankApp.Button.Сancel" = "Отменить";
 
+// 3ds app-based
+"TinkoffAcquiring.threeds.cancelAuth" = "Отменить";
+"TinkoffAcquiring.threeds.acceptAuth" = "Подтверждение";
 
-
+"TinkoffAcquiring.threeds.error.invalidPaymentSystem" = "Платежная система не поддерживается";
+"TinkoffAcquiring.threeds.error.updatingCertsError" = "Не удалось обновить сертификаты";
+"TinkoffAcquiring.threeds.error.timeout" = "Превышено маскимальное время прохождения 3DS";
