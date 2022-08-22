@@ -95,13 +95,12 @@ public class AcquiringSdkConfiguration: NSObject {
     /// - Returns: AcquiringSdkConfiguration
     public init(credential: AcquiringSdkCredential,
                 server: AcquiringSdkEnvironment = .test,
-                config: ConfigSdkEnvironment = .test,
                 requestsTimeoutInterval: TimeInterval = 40,
                 tinkoffPayStatusCacheLifeTime: TimeInterval = 300) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
         self.serverEnvironment = server
-        self.configEnvironment = config
+        self.configEnvironment = server == .test ? .test : .prod
     }
 }
