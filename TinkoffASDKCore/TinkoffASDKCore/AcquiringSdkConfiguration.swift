@@ -72,6 +72,9 @@ public class AcquiringSdkConfiguration: NSObject {
     
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     public var tinkoffPayStatusCacheLifeTime: TimeInterval = .defaultTinkoffPayStatusCacheLifeTime
+
+    /// Объект, используя который SDK будет генерировать токен для передачи в запросах
+    public var tokenGenerator: TokenGenerator
     
     ///
     /// - Parameters:
@@ -79,22 +82,27 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
     ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
+    ///   - tokenGenerator: `TokenGenerator` объект, используя который SDK будет генерировать токен для передачи в запросах
     /// - Returns: AcquiringSdkConfiguration
     public init(credential: AcquiringSdkCredential,
                 server: AcquiringSdkEnvironment = .test,
                 requestsTimeoutInterval: TimeInterval,
-                tinkoffPayStatusCacheLifeTime: TimeInterval) {
+                tinkoffPayStatusCacheLifeTime: TimeInterval,
+                tokenGenerator: TokenGenerator) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.serverEnvironment = server
+        self.tokenGenerator = tokenGenerator
     }
     
     public convenience init(credential: AcquiringSdkCredential,
-                            server: AcquiringSdkEnvironment = .test) {
+                            server: AcquiringSdkEnvironment = .test,
+                            tokenGenerator: TokenGenerator) {
         self.init(credential: credential,
                   server: server,
                   requestsTimeoutInterval: .defaultRequestsTimeoutInterval,
-                  tinkoffPayStatusCacheLifeTime: .defaultTinkoffPayStatusCacheLifeTime)
+                  tinkoffPayStatusCacheLifeTime: .defaultTinkoffPayStatusCacheLifeTime,
+                  tokenGenerator: tokenGenerator)
     }
 }
 

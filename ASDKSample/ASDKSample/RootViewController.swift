@@ -138,7 +138,8 @@ class RootViewController: UITableViewController {
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
                                                       publicKey: StageTestData.testPublicKey)
 
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional,
+                                                                      tokenGenerator: SampleTokenGenerator.shared)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
             if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
@@ -163,7 +164,8 @@ class RootViewController: UITableViewController {
             let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
                                                       publicKey: StageTestData.testPublicKey)
 
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional,
+                                                                      tokenGenerator: SampleTokenGenerator.shared)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
 
@@ -209,7 +211,8 @@ class RootViewController: UITableViewController {
         let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
                                                   publicKey: StageTestData.testPublicKey)
 
-        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional,
+                                                                  tokenGenerator: SampleTokenGenerator.shared)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
         let customerKey = StageTestData.customerKey
