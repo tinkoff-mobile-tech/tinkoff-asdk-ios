@@ -39,8 +39,8 @@ public struct ConfigSdkEnvironment: RawRepresentable {
         self.rawValue = rawValue
     }
     
-    public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "ca-3ds2-test.cdn-tinkoff.ru") }
-    public static var prod: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "ca-3ds2-prod.cdn-tinkoff.ru") }
+    public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-test.cdn-tinkoff.ru") }
+    public static var prod: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-prod.cdn-tinkoff.ru") }
 }
 
 public struct AcquiringSdkCredential {
