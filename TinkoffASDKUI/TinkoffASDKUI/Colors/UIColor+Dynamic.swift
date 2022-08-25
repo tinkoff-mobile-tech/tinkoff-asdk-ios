@@ -92,6 +92,11 @@ extension ASDKColors {
                 return UIColor.dynamicColor(light: UIColor.asdk.n14,
                                             dark: UIColor.asdk.n18)
             }
+            
+            public var separator: UIColor {
+                return UIColor.dynamicColor(light: UIColor.asdk.darkGray,
+                                            dark: UIColor.asdk.black)
+            }
         }
         
         public struct Text {

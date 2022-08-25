@@ -86,3 +86,11 @@
 "TP.NoTinkoffBankApp.Description" = "Download the app or choose another payment method";
 "TP.NoTinkoffBankApp.Button.Install" = "Install";
 "TP.NoTinkoffBankApp.Button.Сancel" = "Cancel";
+
+// 3ds app-based
+"TinkoffAcquiring.threeds.cancelAuth" = "Cancel";
+"TinkoffAcquiring.threeds.acceptAuth" = "Confirmation";
+
+"TinkoffAcquiring.threeds.error.invalidPaymentSystem" = "Payment system is not supported";
+"TinkoffAcquiring.threeds.error.updatingCertsError" = "Unable to update certificates";
+"TinkoffAcquiring.threeds.error.timeout" = "3DS operation timed out";

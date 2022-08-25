@@ -1,6 +1,17 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
+* [MIC-5741] Integrate 3ds-app-based flow
+
+## [2.9.1] - 2022-08-19Z
+
+### Fixed
+
+* [MIC-6177] - Card field's input mask for PAN's with dynamic length
+
 ## [2.9.0] - 2022-08-12Z
 
 ### Fixed

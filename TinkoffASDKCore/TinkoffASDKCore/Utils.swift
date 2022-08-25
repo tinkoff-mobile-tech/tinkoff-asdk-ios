@@ -184,3 +184,13 @@ public enum IPAddressProvider {
         return addresses.compactMap { ipAddressFactory.ipAddress(with: $0) }.first?.fullStringValue
     }
 }
+
+extension Optional {
+    func orThrow<E: Error>(_ error: @autoclosure () -> E) throws -> Wrapped {
+        guard let self = self else {
+            throw error()
+        }
+
+        return self
+    }
+}

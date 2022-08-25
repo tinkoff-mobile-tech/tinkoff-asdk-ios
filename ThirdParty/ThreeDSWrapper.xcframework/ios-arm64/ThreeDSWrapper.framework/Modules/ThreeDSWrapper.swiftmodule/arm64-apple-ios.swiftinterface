@@ -1,0 +1,140 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
+// swift-module-flags: -target arm64-apple-ios13.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ThreeDSWrapper
+import Foundation
+import Swift
+import TdsSdkIos
+@_exported import ThreeDSWrapper
+import _Concurrency
+@frozen public enum CertificateAlgorithm {
+  case rsa
+  case ec
+  public static func == (a: ThreeDSWrapper.CertificateAlgorithm, b: ThreeDSWrapper.CertificateAlgorithm) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@frozen public enum CertificateSource : Hashable {
+  case bundle
+  case remote(url: URL)
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: ThreeDSWrapper.CertificateSource, b: ThreeDSWrapper.CertificateSource) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct CertificateState {
+  public let certificateType: CertificateType
+  public let directoryServerID: String
+  public let algorithm: CertificateAlgorithm
+  public let source: CertificateSource
+  public let notAfterDate: Date
+  public let sha256Fingerprint: String
+}
+@frozen public enum CertificateType : String, Hashable {
+  case dsRootCA
+  case dsPublicKey
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct CertificateUpdatingRequest : Hashable {
+  public let certificateType: CertificateType
+  public let directoryServerID: String
+  public let algorithm: CertificateAlgorithm
+  public let notAfterDate: Date
+  public let sha256Fingerprint: String
+  public let url: URL
+  public init(certificateType: CertificateType, directoryServerID: String, algorithm: CertificateAlgorithm, notAfterDate: Date, sha256Fingerprint: String, url: URL)
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: ThreeDSWrapper.CertificateUpdatingRequest, b: ThreeDSWrapper.CertificateUpdatingRequest) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public typealias Warning = TdsSdkIos.Warning
+public typealias Severity = TdsSdkIos.Severity
+public typealias Transaction = TdsSdkIos.Transaction
+public typealias ChallengeParameters = TdsSdkIos.ChallengeParameters
+public typealias AuthenticationRequestParameters = TdsSdkIos.AuthenticationRequestParameters
+public typealias ChallengeStatusReceiver = TdsSdkIos.ChallengeStatusReceiver
+public typealias CompletionEvent = TdsSdkIos.CompletionEvent
+public typealias SdkError = TdsSdkIos.SdkError
+public typealias ProtocolErrorEvent = TdsSdkIos.ProtocolErrorEvent
+public typealias ErrorMessage = TdsSdkIos.ErrorMessage
+public typealias RuntimeErrorEvent = TdsSdkIos.RuntimeErrorEvent
+public typealias UiCustomization = TdsSdkIos.UiCustomization
+public typealias ButtonCustomization = TdsSdkIos.ButtonCustomization
+public typealias ButtonType = TdsSdkIos.ButtonType
+public typealias ToolbarCustomization = TdsSdkIos.ToolbarCustomization
+public typealias LabelCustomization = TdsSdkIos.LabelCustomization
+public typealias TextBoxCustomization = TdsSdkIos.TextBoxCustomization
+public typealias ProgressDialog = TdsSdkIos.ProgressDialog
+@_hasMissingDesignatedInitializers final public class TDSWrapper {
+  @objc deinit
+}
+extension TDSWrapper {
+  final public var sdkVersion: String {
+    get
+  }
+  final public var warnings: [Warning] {
+    get
+  }
+  final public func createTransaction(directoryServerID: String, messageVersion: String) throws -> Transaction
+}
+extension TDSWrapper {
+  final public func checkCertificates() -> [CertificateState]
+  final public func update(with requests: [CertificateUpdatingRequest], receiveOn queue: DispatchQueue, _ completion: @escaping ([CertificateUpdatingRequest : TDSWrapperError]) -> Void)
+}
+extension TDSWrapper {
+  public struct SDKConfiguration {
+    public let uiCustomization: UiCustomization?
+    public let locale: Locale
+    public init(uiCustomization: UiCustomization?, locale: Locale)
+  }
+  public struct Environment {
+    public static var production: Environment {
+      get
+    }
+    public static var test: Environment {
+      get
+    }
+  }
+  public struct WrapperConfiguration {
+    public let environment: Environment
+    public let session: URLSession
+    public let requestsTimeout: TimeInterval
+    public let userDefaults: UserDefaults
+    public init(environment: Environment, session: URLSession = URLSession(configuration: .ephemeral), requestsTimeout: TimeInterval = 15, userDefaults: UserDefaults = .standard)
+  }
+  convenience public init(sdkConfiguration: SDKConfiguration, wrapperConfiguration: WrapperConfiguration)
+}
+public struct TDSWrapperError : Error {
+  @frozen public enum Code : Int {
+    case internalError
+    case networkError
+    case couldNotFindCertificate
+    case certificateDataIsCorrupted
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  public let code: Code
+  public let message: String
+  public let underlyingErrors: [Error]
+  public init(code: Code, message: String, underlyingErrors: [Error] = [])
+}
+extension ThreeDSWrapper.CertificateAlgorithm : Swift.Equatable {}
+extension ThreeDSWrapper.CertificateAlgorithm : Swift.Hashable {}
+extension ThreeDSWrapper.CertificateAlgorithm : Swift.Sendable {}
+extension ThreeDSWrapper.CertificateType : Swift.RawRepresentable {}
+extension ThreeDSWrapper.CertificateType : Swift.Sendable {}
+extension ThreeDSWrapper.TDSWrapperError.Code : Swift.Equatable {}
+extension ThreeDSWrapper.TDSWrapperError.Code : Swift.Hashable {}
+extension ThreeDSWrapper.TDSWrapperError.Code : Swift.RawRepresentable {}
+extension ThreeDSWrapper.TDSWrapperError.Code : Swift.Sendable {}
