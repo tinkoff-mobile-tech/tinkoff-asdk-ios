@@ -84,7 +84,7 @@ public class AcquiringSdkConfiguration: NSObject {
     public var showErrorAlert: Bool = true
     
     /// Объект, используя который SDK будет генерировать токен для передачи в запросах
-    public var tokenGenerator: TokenGenerator
+    public var tokenGenerator: TokenGenerator?
 
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     public var tinkoffPayStatusCacheLifeTime: TimeInterval
@@ -102,7 +102,7 @@ public class AcquiringSdkConfiguration: NSObject {
                 server: AcquiringSdkEnvironment = .test,
                 requestsTimeoutInterval: TimeInterval = 40,
                 tinkoffPayStatusCacheLifeTime: TimeInterval = 300,
-                tokenGenerator: TokenGenerator) {
+                tokenGenerator: TokenGenerator?) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime

@@ -36,7 +36,7 @@ public final class AcquiringSdk: NSObject {
     private var publicKey: SecKey
     public private(set) var languageKey: AcquiringSdkLanguage?
     private var logger: LoggerDelegate?
-    private let tokenGenerator: TokenGenerator
+    private let tokenGenerator: TokenGenerator?
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
@@ -75,13 +75,16 @@ public final class AcquiringSdk: NSObject {
     }
 
     private func createParameters(with request: AcquiringRequestTokenParams, completion: @escaping (JSONObject) -> Void) {
-        tokenGenerator.generateToken(parameters: request.tokenParams()) { [weak self] token in
-            guard let self = self else { return }
+        var parameters: JSONObject = [:]
+        parameters.updateValue(terminalKey, forKey: "TerminalKey")
+        if let value = languageKey { parameters.updateValue(value, forKey: "Language") }
 
-            var parameters: JSONObject = [:]
-            parameters.updateValue(self.terminalKey, forKey: "TerminalKey")
-            if let value = self.languageKey { parameters.updateValue(value, forKey: "Language") }
+        guard let tokenGenerator = tokenGenerator else {
+            completion(parameters)
+            return
+        }
 
+        tokenGenerator.generateToken(parameters: request.tokenParams()) { token in
             parameters.updateValue(token, forKey: "Token")
             completion(parameters)
         }
