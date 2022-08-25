@@ -22,7 +22,7 @@ import Foundation
 
 public struct GetCertsConfigRequest: RequestOperation {
         
-    public let name: String = "certs-configs/asdk-certs-config.json"
+    public let name: String = "configs/asdk-cert-config.json"
     
     public let requestMethod: RequestMethod = .get
     
