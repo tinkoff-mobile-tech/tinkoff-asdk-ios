@@ -8,7 +8,7 @@
 
 ### Added
 
-* [MIC-6063] Add TokenGenerator
+* [MIC-6063] Add TokenGenerator protocol
 
 ## [2.9.1] - 2022-08-19Z
 
@@ -21,10 +21,6 @@
 ### Fixed
 
 * [MIC-6099] The payment button touch handling in the payment form, with a recurring payment
-
-### Added
-
-* [MIC-6063] Add TokenGenerator object
 
 ## [2.8.1] - 2022-08-05Z
 
