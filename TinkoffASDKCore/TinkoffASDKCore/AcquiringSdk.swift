@@ -90,7 +90,7 @@ public final class AcquiringSdk: NSObject {
         }
     }
 
-    private func sendRequestWithToken<
+    private func sendRequestWithParameters<
         Operation: RequestOperation & AcquiringRequestTokenParams,
         Response: ResponseOperation
     >(_ request: Operation,
@@ -142,7 +142,7 @@ public final class AcquiringSdk: NSObject {
         let enrichedData = paramsEnricher.enrich(data)
         
         let request = PaymentInitRequest(data: enrichedData)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     // MARK: - подтверждение платежа
@@ -203,7 +203,7 @@ public final class AcquiringSdk: NSObject {
         let request = Check3dsVersionRequest(data: requestData)
         updateCardDataRequestParams(&request.parameters)
 
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     /// Подтверждает инициированный платеж передачей карточных данных
@@ -215,14 +215,14 @@ public final class AcquiringSdk: NSObject {
         let request = PaymentFinishRequest(data: data)
         updateCardDataRequestParams(&request.parameters)
 
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     ///
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
     public func chargePayment(data: PaymentChargeRequestData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentChargeRequest(data: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     // MARK: - Статус операции
@@ -231,7 +231,7 @@ public final class AcquiringSdk: NSObject {
     /// Получить статус платежа
     public func paymentOperationStatus(data: PaymentInfoData, completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentStatusRequest(data: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     // MARK: - Cписок карт
@@ -243,7 +243,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func сardList(data: InitGetCardListData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void) -> Cancellable {
         let request = CardListRequest(data: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     ///
@@ -253,7 +253,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func сardListAddCardInit(data: InitAddCardData, completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void) -> Cancellable {
         let request = InitAddCardRequest(requestData: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     ///
@@ -264,7 +264,7 @@ public final class AcquiringSdk: NSObject {
     public func сardListAddCardFinish(data: FinishAddCardData, responseDelegate: NetworkTransportResponseDelegate?, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
         let request = FinishAddCardRequest(requestData: data)
         updateCardDataRequestParams(&request.parameters)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     ///
@@ -277,7 +277,7 @@ public final class AcquiringSdk: NSObject {
         let request = CheckRandomAmountRequest(requestData: CheckingRandomAmountData(amount: amount, requestKey: requestKey))
         updateCardDataRequestParams(&request.parameters)
 
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     ///
@@ -286,7 +286,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func сardListDeactivateCard(data: InitDeactivateCardData, completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void) -> Cancellable {
         let request = InitDeactivateCardRequest(requestData: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     // MARK: - Система быстрых платежей, оплата по QR-коду
@@ -299,7 +299,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func paymentInvoiceQRCode(data: PaymentInvoiceQRCodeData, completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentInvoiceQRCodeRequest(data: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
 
     /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
@@ -310,7 +310,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType, completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void) -> Cancellable {
         let request = PaymentInvoiceQRCodeCollectorRequest(data: data)
-        return sendRequestWithToken(request, completionHandler: completionHandler)
+        return sendRequestWithParameters(request, completionHandler: completionHandler)
     }
     
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
