@@ -5,6 +5,7 @@
 
 * [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
 * [MIC-5741] Integrate 3ds-app-based flow
+* [MIC-6123] Add software_version and device_model parameters to Init request
 
 ## [2.9.1] - 2022-08-19Z
 

@@ -30,7 +30,9 @@ final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
 
         let additionalParams: [String: String] = [
             .connectionType: String.mobileSDK,
-            .version: Version.versionString
+            .version: Version.versionString,
+            .softwareVersion: UIDevice.current.systemVersion,
+            .deviceModel: UIDevice.current.deviceModel
         ]
         
         paymentData.addPaymentData(additionalParams)
@@ -44,4 +46,6 @@ private extension String {
     static let mobileSDK = "mobile_sdk"
     static let connectionType = "connection_type"
     static let version = "sdk_version"
+    static let softwareVersion = "software_version"
+    static let deviceModel = "device_model"
 }
