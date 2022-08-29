@@ -1596,8 +1596,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 expDate: expDate,
                 cvc: cvc,
                 checkType: checkType.rawValue,
-                confirmationHandler: { confirmationResponse, confirmationComplete in
-                    DispatchQueue.main.async { [weak self] in
+                confirmationHandler: { [weak self] confirmationResponse, confirmationComplete in
+                    DispatchQueue.main.async {
                         self?.checkConfirmAddCard(
                            confirmationResponse,
                            presenter: addCardViewPresenter,
