@@ -22,7 +22,11 @@ import UIKit
 
 extension UIView {
     func pinEdgesToSuperview(insets: UIEdgeInsets = .zero) {
-        guard let superview = superview else { return }
+        guard let superview = superview else {
+            assertionFailure("\(self) does not have a superview")
+            return
+        }
+
         translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
