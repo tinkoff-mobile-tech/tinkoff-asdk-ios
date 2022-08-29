@@ -84,7 +84,6 @@ final class ASDKButton: UIButton {
         let border: Border
         let size: IntrinsicSize?
         let backgroundColor: UIColor
-//        let tintColor: UIColor?
         let transform: CGAffineTransform
 
         init(
