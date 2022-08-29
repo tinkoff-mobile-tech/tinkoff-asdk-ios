@@ -75,9 +75,11 @@ final class MessageView: UIView {
         stack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            stack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -.contentSpacing),
+            stack.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .contentHorizontalInsets),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentHorizontalInsets)
+            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentHorizontalInsets),
+            stack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            stack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -.contentSpacing)
         ])
     }
 }
