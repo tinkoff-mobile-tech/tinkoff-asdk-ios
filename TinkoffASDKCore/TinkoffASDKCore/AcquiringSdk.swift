@@ -168,7 +168,7 @@ public final class AcquiringSdk: NSObject {
     ///
     /// - Parameters:
     ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случе ошибки.
+    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
     public func check3dsVersion(
         data: PaymentFinishRequestData,
@@ -254,7 +254,7 @@ public final class AcquiringSdk: NSObject {
         )
     }
 
-    @available(*, deprecated, message: "Use cardList(data:responseDelegate:completion:) instead")
+    @available(*, deprecated, renamed: "cardList(data:responseDelegate:completion:)")
     public func сardList(
         data: InitGetCardListData,
         responseDelegate: NetworkTransportResponseDelegate?,
@@ -279,7 +279,7 @@ public final class AcquiringSdk: NSObject {
         return networkTransport.send(operation: request, completionHandler: completion)
     }
 
-    @available(*, deprecated, message: "Use cardListAddCardInit(data:completion:) instead")
+    @available(*, deprecated, renamed: "cardListAddCardInit(data:completion:)")
     public func сardListAddCardInit(
         data: InitAddCardData,
         completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
@@ -310,7 +310,7 @@ public final class AcquiringSdk: NSObject {
         )
     }
 
-    @available(*, deprecated, message: "Use cardListAddCardFinish(data:responseDelegate:completion:) instead")
+    @available(*, deprecated, renamed: "cardListAddCardFinish(data:responseDelegate:completion:)")
     public func сardListAddCardFinish(
         data: FinishAddCardData,
         responseDelegate: NetworkTransportResponseDelegate?,
@@ -349,7 +349,7 @@ public final class AcquiringSdk: NSObject {
         )
     }
 
-    @available(*, deprecated, message: "Use checkRandomAmount(amount:requestKey:responseDelegate:completion:) instead")
+    @available(*, deprecated, renamed: "checkRandomAmount(_:requestKey:responseDelegate:completion:)")
     public func chechRandomAmount(
         _ amount: Double,
         requestKey: String,
@@ -379,7 +379,7 @@ public final class AcquiringSdk: NSObject {
         return networkTransport.send(operation: request, completionHandler: completion)
     }
 
-    @available(*, deprecated, message: "Use cardListDeactivateCard(data:completion:) instead")
+    @available(*, deprecated, renamed: "cardListDeactivateCard(data:completion:)")
     public func сardListDeactivateCard(
         data: InitDeactivateCardData,
         completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
