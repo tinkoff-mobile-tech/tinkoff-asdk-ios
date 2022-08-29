@@ -28,8 +28,8 @@ extension UIView {
         NSLayoutConstraint.activate([
             topAnchor.constraint(equalTo: superview.topAnchor, constant: insets.top),
             leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: insets.left),
-            trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: insets.right),
-            bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: insets.bottom)
+            trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -insets.right),
+            bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -insets.bottom)
         ])
     }
 }
