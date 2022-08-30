@@ -138,12 +138,12 @@ public struct DeviceInfoParams: Codable {
                 screenWidth: Int,
                 screenHeight: Int,
                 colorDepth: Int = 32,
-                sdkAppID: String?,
-                sdkEphemPubKey: String?,
-                sdkReferenceNumber: String?,
-                sdkTransID: String?,
-                sdkMaxTimeout: String?,
-                sdkEncData: String?) {
+                sdkAppID: String? = nil,
+                sdkEphemPubKey: String? = nil,
+                sdkReferenceNumber: String? = nil,
+                sdkTransID: String? = nil,
+                sdkMaxTimeout: String? = nil,
+                sdkEncData: String? = nil) {
         self.threeDSCompInd = "Y"
         self.javaEnabled = "true"
         self.colorDepth = colorDepth
