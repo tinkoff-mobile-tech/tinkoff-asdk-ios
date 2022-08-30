@@ -23,6 +23,8 @@ import XCTest
 
 class DefaultNetworkClientIntegrationTests: XCTestCase {
     
+    let networkRequestExpectationTimeout: TimeInterval = 5
+    
     let url = URL(string: "https://tinkoff.ru")!
     let urlRequestPerformer = MockRequestPerformer()
     lazy var networkClient = DefaultNetworkClient(urlRequestPerfomer: urlRequestPerformer,
@@ -41,19 +43,29 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
     func testIfNetworkClientCallsUrlRequestPerformerDataTaskMethod() {
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { [urlRequestPerformer] _ in
             XCTAssertTrue(urlRequestPerformer.dataTaskMethodCalled, "urlRequestPerformer's dataTask method must be called when networkClient perform request")
+            
+            requestExpectation.fulfill()
         }
+        
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testIfErrorResponseAndDataAreNilInNetworkClientResultIfBothWereNotPassedFromRequestPerformer() {
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             XCTAssertNil(response.data)
             XCTAssertNil(response.response)
             XCTAssertNil(response.error)
+            
+            requestExpectation.fulfill()
         }
+        
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testIfErrorResponseAndDataAreNotNilInNetworkClientResultIfBothWerePassedFromRequestPerformer() {
@@ -72,11 +84,15 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
         
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNotNil(response.response)
             XCTAssertNotNil(response.error)
+            
+            requestExpectation.fulfill()
         }
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testTransportErrorIfErrorNotNil() {
@@ -85,6 +101,7 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
         
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             switch response.result {
             case .failure(let resultError):
@@ -98,7 +115,11 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
             case .success:
                 XCTFail()
             }
+            
+            requestExpectation.fulfill()
         }
+        
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testServerErrorWith401StatusCodeAndWithoutData() {
@@ -108,6 +129,7 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
         
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             switch response.result {
             case .failure(let resultError):
@@ -122,7 +144,11 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
             case .success:
                 XCTFail()
             }
+            
+            requestExpectation.fulfill()
         }
+        
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testServerErrorWith401StatusCodeAndWithData() {
@@ -135,6 +161,7 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
         
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             switch response.result {
             case .failure(let resultError):
@@ -149,7 +176,11 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
             case .success:
                 XCTFail()
             }
+            
+            requestExpectation.fulfill()
         }
+        
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testNoDataErrorWith200StatusCodeAndNoDataFromPerformer() {
@@ -160,6 +191,7 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
         
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             switch response.result {
             case .failure(let resultError):
@@ -171,7 +203,11 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
             case .success:
                 XCTFail()
             }
+            
+            requestExpectation.fulfill()
         }
+        
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
     
     func testDataReturnedInResponse() {
@@ -184,6 +220,7 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
         
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
         
+        let requestExpectation = XCTestExpectation()
         networkClient.performRequest(request) { response in
             switch response.result {
             case .failure:
@@ -192,6 +229,9 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
                 XCTAssertNotNil(data)
                 XCTAssertEqual(data, performerData)
             }
+            
+            requestExpectation.fulfill()
         }
+        wait(for: [requestExpectation], timeout: networkRequestExpectationTimeout)
     }
 }
