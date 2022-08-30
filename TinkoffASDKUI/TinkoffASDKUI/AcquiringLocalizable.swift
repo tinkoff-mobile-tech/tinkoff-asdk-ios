@@ -42,3 +42,11 @@ class AcqLoc: AcquiringLocalize {
         return NSLocalizedString(string, tableName: tableName, bundle: bundle, comment: string)
     }
 }
+
+// MARK: - String + Localization
+
+extension String {
+    var localized: String {
+        AcqLoc.instance.localize(self)
+    }
+}

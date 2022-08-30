@@ -1,10 +1,23 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+* [MIC-6228] Add 3ds-app-based feature flag
+
+### Changed
+
+* [MIC-5966] CardList screen redesign
+* [MIC-6089] Card selection logic on Payment Form
+
 ### Fixed
 
 * [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
 * [MIC-5741] Integrate 3ds-app-based flow
+* [MIC-6123] Add software_version and device_model parameters to Init request
+
+### Added
+
+* [MIC-6176] Add status, paymentId, orderId, amount properties to AcquiringResponse
 
 ### Added
 

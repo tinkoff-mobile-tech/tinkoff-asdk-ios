@@ -1,8 +1,8 @@
 //
+//  ScrollableTableViewCell.swift
+//  TinkoffASDKUI
 //
-//  GetCertsConfigRequest.swift
-//
-//  Copyright (c) 2021 Tinkoff Bank
+//  Copyright (c) 2020 Tinkoff Bank
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,15 +17,8 @@
 //  limitations under the License.
 //
 
+import UIKit
 
-import Foundation
-
-public struct GetCertsConfigRequest: RequestOperation {
-        
-    public let name: String = "certs-configs/asdk-certs-config.json"
-    
-    public let requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
+class ScrollableTableViewCell: UITableViewCell, CardListViewInConnection {
+    @IBOutlet var contentCollectionView: UICollectionView!
 }
-

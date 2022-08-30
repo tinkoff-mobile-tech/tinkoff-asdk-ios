@@ -1,6 +1,6 @@
 //
 //
-//  GetCertsConfigRequest.swift
+//  Reusable.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,12 +20,6 @@
 
 import Foundation
 
-public struct GetCertsConfigRequest: RequestOperation {
-        
-    public let name: String = "certs-configs/asdk-certs-config.json"
-    
-    public let requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
+protocol Reusable {
+    func prepareForReuse()
 }
-

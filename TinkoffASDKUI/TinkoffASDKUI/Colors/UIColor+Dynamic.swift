@@ -75,6 +75,10 @@ extension ASDKColors {
     var darkGray: UIColor {
         return UIColor(hex: "#C7C9CC") ?? .clear
     }
+
+    var accent: UIColor {
+        UIColor(hex: "#428BF9") ?? .clear
+    }
     
     struct Dynamic {
         public struct Background {
@@ -97,12 +101,26 @@ extension ASDKColors {
                 return UIColor.dynamicColor(light: UIColor.asdk.darkGray,
                                             dark: UIColor.asdk.black)
             }
+
+            var highlight: UIColor {
+                .dynamicColor(
+                    light: UIColor(hex: "#00000014") ?? .clear,
+                    dark: UIColor(hex: "#FFFFFF1A") ?? .clear
+                )
+            }
         }
-        
+
         public struct Text {
             public var primary: UIColor {
                 return UIColor.dynamicColor(light: UIColor.asdk.textPrimary,
                                             dark: UIColor.asdk.n7)
+            }
+
+            var tertiary: UIColor {
+                .dynamicColor(
+                    light: UIColor(hex: "#00102438") ?? .clear,
+                    dark: UIColor(hex: "#FFFFFF4D") ?? .clear
+                )
             }
         }
         
@@ -127,7 +145,7 @@ extension ASDKColors {
         public var background: Background {
             return Background()
         }
-        
+
         public var text: Text {
             return Text()
         }

@@ -1,6 +1,6 @@
 //
 //
-//  GetCertsConfigRequest.swift
+//  UICollectionView+CellRegistration.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,12 +20,17 @@
 
 import Foundation
 
-public struct GetCertsConfigRequest: RequestOperation {
-        
-    public let name: String = "certs-configs/asdk-certs-config.json"
-    
-    public let requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
-}
+extension UICollectionView {
+    func register(cellClasses: UICollectionViewCell.Type...) {
+        cellClasses.forEach { type in
+            register(type, forCellWithReuseIdentifier: String(describing: type))
+        }
+    }
 
+    func dequeue<T: UICollectionViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
+        dequeueReusableCell(
+            withReuseIdentifier: String(describing: type),
+            for: indexPath
+        ) as! T
+    }
+}

@@ -1,6 +1,6 @@
 //
 //
-//  GetCertsConfigRequest.swift
+//  Optional+Utils.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,12 +20,12 @@
 
 import Foundation
 
-public struct GetCertsConfigRequest: RequestOperation {
-        
-    public let name: String = "certs-configs/asdk-certs-config.json"
-    
-    public let requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
-}
+extension Optional {
+    func orThrow<E: Error>(_ error: @autoclosure () -> E) throws -> Wrapped {
+        guard let self = self else {
+            throw error()
+        }
 
+        return self
+    }
+}
