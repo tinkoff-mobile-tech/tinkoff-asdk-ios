@@ -177,7 +177,7 @@ public class AcquiringUISDK: NSObject {
     // App based threeDS
     private let tdsController: TDSController
     // ThreeDS feature flag
-    private let shouldUseAppBasedThreeDSFlow = true
+    private let shouldUseAppBasedThreeDSFlow = false
 
     private weak var logger: LoggerDelegate?
     
