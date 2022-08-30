@@ -297,7 +297,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
                 if let message = acquiringResponse.errorMessage {
                     errorMessage = message
                 }
-
+                
                 if let details = acquiringResponse.errorDetails, details.isEmpty == false {
                     errorMessage.append(contentsOf: " ")
                     errorMessage.append(contentsOf: details)
