@@ -25,10 +25,6 @@ final class OverlayLoadingView: UIView {
 
     struct Style {
         let overlayColor: UIColor
-
-        init(overlayColor: UIColor = .asdk.dynamic.background.elevation1) {
-            self.overlayColor = overlayColor
-        }
     }
 
     // MARK: State
@@ -39,7 +35,7 @@ final class OverlayLoadingView: UIView {
     }
 
     var state: State = .hidden {
-        didSet { transition(from: oldValue, to: state) }
+        didSet { apply(state: state) }
     }
 
     // MARK: Dependencies
@@ -58,6 +54,7 @@ final class OverlayLoadingView: UIView {
         }
         let loader = UIActivityIndicatorView(style: style)
         loader.hidesWhenStopped = true
+        loader.alpha = .zero
         return loader
     }()
 
@@ -65,6 +62,7 @@ final class OverlayLoadingView: UIView {
         let view = UIView()
         view.backgroundColor = style.overlayColor
         view.isHidden = true
+        view.alpha = .zero
         return view
     }()
 
@@ -104,53 +102,27 @@ final class OverlayLoadingView: UIView {
 
     // MARK: State Applying
 
-    private func transition(from oldState: State, to newState: State) {
-        let preparation = { [self] in
-            switch (oldState, newState) {
-            case (.hidden, .hidden), (.shown, .shown):
-                break
-            case (.hidden, .shown):
-                overlayView.alpha = .zero
-                overlayView.isHidden = false
-                loader.alpha = .zero
-                loader.startAnimating()
-            case (.shown, .hidden):
-                overlayView.alpha = .overlayAlpha
-                overlayView.isHidden = false
-                loader.alpha = .loaderAlpha
-            }
+    private func apply(state: State) {
+        overlayView.isHidden = false
+        loader.startAnimating()
+
+        let animations = { [self] in
+            overlayView.alpha = state.isHidden ? .zero : .overlayMaxAlpha
+            loader.alpha = state.isHidden ? .zero : .loaderMaxAlpha
         }
 
-        let animation = { [self] in
-            switch (oldState, newState) {
-            case (.hidden, .hidden), (.shown, .shown):
-                break
-            case (.hidden, .shown):
-                overlayView.alpha = .overlayAlpha
-                loader.alpha = .loaderAlpha
-            case (.shown, .hidden):
-                overlayView.alpha = .zero
-                loader.alpha = .zero
-            }
+        let completion = { [self] (completed: Bool) in
+            guard completed else { return }
+            overlayView.isHidden = state.isHidden
+            state.isHidden ? loader.stopAnimating() : loader.startAnimating()
         }
 
-        let completion = { [self] in
-            switch (oldState, newState) {
-            case (.hidden, .hidden), (.shown, .shown), (.hidden, .shown):
-                break
-            case (.shown, .hidden):
-                overlayView.isHidden = true
-                loader.stopAnimating()
-            }
-        }
-
-        preparation()
         UIView.animate(
             withDuration: .animationDuration,
-            delay: newState == .shown ? .animationDelay : .zero,
+            delay: state.isHidden ? .zero : .animationDelay,
             options: [.curveEaseInOut, .beginFromCurrentState],
-            animations: animation,
-            completion: { _ in completion() }
+            animations: animations,
+            completion: completion
         )
     }
 }
@@ -163,6 +135,14 @@ private extension TimeInterval {
 }
 
 private extension CGFloat {
-    static let overlayAlpha: CGFloat = 0.5
-    static let loaderAlpha: CGFloat = 1
+    static let overlayMaxAlpha: CGFloat = 0.5
+    static let loaderMaxAlpha: CGFloat = 1
+}
+
+// MARK: - State + Utils
+
+private extension OverlayLoadingView.State {
+    var isHidden: Bool {
+        self == .hidden
+    }
 }
