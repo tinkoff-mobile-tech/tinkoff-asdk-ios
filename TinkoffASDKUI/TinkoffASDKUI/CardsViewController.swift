@@ -35,7 +35,7 @@ class CardsViewController: UIViewController {
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
 
-    private var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
+    private let paymentSystemImageResolver: IPaymentSystemImageResolver = PaymentSystemImageResolver()
 
     private lazy var buttonClose: UIBarButtonItem = {
         if #available(iOS 13.0, *) {
@@ -118,15 +118,10 @@ class CardsViewController: UIViewController {
 
                 cell.labelCardName.text = card.pan
                 cell.labelCardExpData.text = card.expDateFormat()
-                cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
-                    if let numbers = requisites, card.pan.hasPrefix(numbers) {
-                        cell?.imageViewLogo.image = icon
-                        cell?.imageViewLogo.isHidden = false
-                    } else {
-                        cell?.imageViewLogo.image = nil
-                        cell?.imageViewLogo.isHidden = true
-                    }
-                })
+
+                let paymentSystemImage = paymentSystemImageResolver.resolve(by: card.pan)
+                cell.imageViewLogo?.image = paymentSystemImage
+                cell.imageViewLogo?.isHidden = paymentSystemImage == nil
 
                 return cell
             }

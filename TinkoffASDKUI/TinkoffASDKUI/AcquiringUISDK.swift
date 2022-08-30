@@ -21,6 +21,7 @@ import PassKit
 import TinkoffASDKCore
 import UIKit
 import WebKit
+import ThreeDSWrapper
 
 public protocol TinkoffPayDelegate: AnyObject {
     func tinkoffPayIsNotAllowed()
@@ -172,6 +173,9 @@ public class AcquiringUISDK: NSObject {
     private let sbpAssembly: SBPAssembly
     private let tinkoffPayAssembly: TinkoffPayAssembly
     
+    // App based threeDS
+    private let tdsController: TDSController
+    
     private weak var logger: LoggerDelegate?
     
     
@@ -183,6 +187,13 @@ public class AcquiringUISDK: NSObject {
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk,
                                                      tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
+        let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
+        let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
+        let tdsTimeoutResolver = TDSTimeoutResolver()
+        self.tdsController = TDSController(acquiringSdk: acquiringSdk,
+                                           tdsWrapper: tdsWrapper,
+                                           tdsCertsManager: tdsCertsManager,
+                                           tdsTimeoutResolver: tdsTimeoutResolver)
         self.logger = configuration.logger
     }
 
@@ -1166,7 +1177,21 @@ public class AcquiringUISDK: NSObject {
                             self?.cancelPayment()
                         }
                     }
-
+                case let .needConfirmation3DS2AppBased(appBasedData):
+                    self.tdsController.completionHandler = { response in
+                        completionHandler(response)
+                    }
+                    self.tdsController.cancelHandler = { [weak self] in
+                        if self?.acquiringView != nil {
+                            self?.acquiringView?.closeVC(animated: true, completion: {
+                                self?.cancelPayment()
+                            })
+                        } else {
+                            self?.cancelPayment()
+                        }
+                    }
+                    
+                    self.tdsController.doChallenge(with: appBasedData)
                 case let .done(response):
                     completionHandler(.success(response))
 
@@ -1198,46 +1223,33 @@ public class AcquiringUISDK: NSObject {
         _ = acquiringSdk.check3dsVersion(data: requestData, completionHandler: { checkResponse in
             switch checkResponse {
             case let .success(checkResult):
-                var finistRequestData = requestData
-                // сбор информации для прохождения 3DS v2
-                if let tdsServerTransID = checkResult.tdsServerTransID, let threeDSMethodURL = checkResult.threeDSMethodURL {
-                    // вызываем web view для проверки девайса
-                    self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
+                // Прохождение 3DS v2
+                if checkResult.tdsServerTransID != nil {
                     // собираем информацию о девайсе
-                    let screenSize = UIScreen.main.bounds.size
-                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
-                                                      languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
-                                                      screenWidth: Int(screenSize.width),
-                                                      screenHeight: Int(screenSize.height))
-                    finistRequestData.setDeviceInfo(info: deviceInfo)
-                    finistRequestData.setThreeDSVersion(checkResult.version)
-                    finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress())
-                }
-                // завершаем оплату
-                self.finishAuthorize(requestData: finistRequestData, treeDSmessageVersion: checkResult.version) { finishResponse in
-                    completionHandler(finishResponse)
+                    
+                    
+                    self.tdsController.enrichRequestDataWithAuthParams(with: checkResult.paymentSystem,
+                                                                       messageVersion: checkResult.version,
+                                                                       finishRequestData: requestData) { result in
+                        do {
+                            self.finishAuthorize(requestData: try result.get(),
+                                                 treeDSmessageVersion: checkResult.version,
+                                                 completionHandler: completionHandler)
+                        } catch {
+                            completionHandler(.failure(error))
+                        }
+                    }
+                } else {
+                    // завершаем оплату
+                    self.finishAuthorize(requestData: requestData, treeDSmessageVersion: checkResult.version) { finishResponse in
+                        completionHandler(finishResponse)
+                    }
                 }
 
             case let .failure(error):
                 completionHandler(.failure(error))
             }
         })
-    }
-
-    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
-        let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
-        guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            if presenter != nil {
-                presenter?.checkDeviceFor3DSData(with: request)
-            } else {
-                self.webViewFor3DSChecking = WKWebView()
-                self.webViewFor3DSChecking?.load(request)
-            }
-        }
     }
 
     private func cancelPayment() {
