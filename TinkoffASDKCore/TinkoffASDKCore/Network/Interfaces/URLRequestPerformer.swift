@@ -21,6 +21,6 @@
 import Foundation
 
 protocol URLRequestPerformer {
-    func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask
+    func createDataTask(with request: URLRequest,
+                        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask
 }
