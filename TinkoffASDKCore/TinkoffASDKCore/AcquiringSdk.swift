@@ -28,7 +28,6 @@ public enum AcquiringSdkError: Error {
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     public var fpsEnabled: Bool = false
-    public var fpsEnabled: Bool = false
     public let languageKey: AcquiringSdkLanguage?
     private let networkTransport: NetworkTransport
     private let terminalKey: String
@@ -92,6 +91,7 @@ public final class AcquiringSdk: NSObject {
         Operation: RequestOperation & AcquiringRequestTokenParams,
         Response: ResponseOperation
     >(_ request: Operation,
+      responseDelegate: NetworkTransportResponseDelegate? = nil,
       completionHandler: @escaping (_ result: Result<Response, Error>) -> Void
     ) -> Cancellable {
         var request = request
@@ -101,7 +101,7 @@ public final class AcquiringSdk: NSObject {
 
             self.createParameters(with: request) { parameters in
                 request.parameters?.merge(parameters) { (_, new) -> JSONValue in new }
-                let cancallable = self.networkTransport.send(operation: request) { result in
+                let cancallable = self.networkTransport.send(operation: request, responseDelegate: responseDelegate) { result in
                     completionHandler(result)
                 }
                 handler(cancallable)
@@ -143,14 +143,7 @@ public final class AcquiringSdk: NSObject {
         let enrichedData = paramsEnricher.enrich(data)
         
         let request = PaymentInitRequest(data: enrichedData)
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
 
     // MARK: - подтверждение платежа
@@ -217,15 +210,7 @@ public final class AcquiringSdk: NSObject {
         let requestData = PaymentFinishRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
         let request = Check3dsVersionRequest(data: requestData)
         updateCardDataRequestParams(&request.parameters)
-
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
 
     /// Подтверждает инициированный платеж передачей карточных данных
@@ -240,15 +225,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = PaymentFinishRequest(data: data)
         updateCardDataRequestParams(&request.parameters)
-
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
 
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
@@ -258,14 +235,7 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
         let request = PaymentChargeRequest(data: data)
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
 
     // MARK: - Статус операции
@@ -277,14 +247,7 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
         let request = PaymentStatusRequest(data: data)
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
 
     // MARK: - Card List
@@ -300,17 +263,7 @@ public final class AcquiringSdk: NSObject {
         completion: @escaping (_ result: Result<CardListResponse, Error>) -> Void
     ) -> Cancellable {
         let request = CardListRequest(data: data)
-<<<<<<< HEAD
-        return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(
-            operation: request,
-            responseDelegate: responseDelegate,
-            completionHandler: completion
-        )
+        return sendRequestWithParameters(request, responseDelegate: responseDelegate, completionHandler: completion)
     }
 
     @available(*, deprecated, renamed: "cardList(data:responseDelegate:completion:)")
@@ -320,7 +273,6 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void
     ) -> Cancellable {
         cardList(data: data, responseDelegate: responseDelegate, completion: completionHandler)
->>>>>>> dev
     }
 
     /// - Parameters:
@@ -333,13 +285,7 @@ public final class AcquiringSdk: NSObject {
         completion: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         let request = InitAddCardRequest(requestData: data)
-<<<<<<< HEAD
-        return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completion)
+        return sendRequestWithParameters(request, completionHandler: completion)
     }
 
     @available(*, deprecated, renamed: "cardListAddCardInit(data:completion:)")
@@ -348,7 +294,6 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         cardListAddCardInit(data: data, completion: completionHandler)
->>>>>>> dev
     }
 
     /// - Parameters:
@@ -363,18 +308,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = FinishAddCardRequest(requestData: data)
         updateCardDataRequestParams(&request.parameters)
-<<<<<<< HEAD
-        return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(
-            operation: request,
-            responseDelegate: responseDelegate,
-            completionHandler: completion
-        )
+        return sendRequestWithParameters(request, responseDelegate: responseDelegate, completionHandler: completion)
     }
 
     @available(*, deprecated, renamed: "cardListAddCardFinish(data:responseDelegate:completion:)")
@@ -388,7 +322,6 @@ public final class AcquiringSdk: NSObject {
             responseDelegate: responseDelegate,
             completion: completionHandler
         )
->>>>>>> dev
     }
 
     /// - Parameters:
@@ -406,18 +339,7 @@ public final class AcquiringSdk: NSObject {
         let requestData = CheckingRandomAmountData(amount: amount, requestKey: requestKey)
         let request = CheckRandomAmountRequest(requestData: requestData)
         updateCardDataRequestParams(&request.parameters)
-
-<<<<<<< HEAD
-        return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(
-            operation: request,
-            responseDelegate: responseDelegate,
-            completionHandler: completion
-        )
+        return sendRequestWithParameters(request, responseDelegate: responseDelegate, completionHandler: completion)
     }
 
     @available(*, deprecated, renamed: "checkRandomAmount(_:requestKey:responseDelegate:completion:)")
@@ -433,7 +355,6 @@ public final class AcquiringSdk: NSObject {
             responseDelegate: responseDelegate,
             completion: completionHandler
         )
->>>>>>> dev
     }
 
     /// - Parameters:
@@ -445,13 +366,7 @@ public final class AcquiringSdk: NSObject {
         completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         let request = InitDeactivateCardRequest(requestData: data)
-<<<<<<< HEAD
-        return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completion)
+        return sendRequestWithParameters(request, completionHandler: completion)
     }
 
     @available(*, deprecated, renamed: "cardListDeactivateCard(data:completion:)")
@@ -460,7 +375,6 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         cardListDeactivateCard(data: data, completion: completionHandler)
->>>>>>> dev
     }
 
     // MARK: - Система быстрых платежей, оплата по QR-коду
@@ -477,14 +391,7 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void
     ) -> Cancellable {
         let request = PaymentInvoiceQRCodeRequest(data: data)
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
 
     /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
@@ -499,14 +406,7 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void
     ) -> Cancellable {
         let request = PaymentInvoiceQRCodeCollectorRequest(data: data)
-<<<<<<< HEAD
         return sendRequestWithParameters(request, completionHandler: completionHandler)
-=======
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
->>>>>>> dev
     }
     
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
