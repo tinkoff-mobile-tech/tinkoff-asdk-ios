@@ -24,15 +24,18 @@ final class DefaultNetworkClient: NetworkClient {
     private let urlRequestPerfomer: URLRequestPerformer
     private let baseUrl: URL
     private let requestBuilder: NetworkClientRequestBuilder
+    private let responseValidator: HTTPURLResponseValidator
     
     weak var requestAdapter: NetworkRequestAdapter?
     
     init(urlRequestPerfomer: URLRequestPerformer,
          baseUrl: URL,
-         requestBuilder: NetworkClientRequestBuilder) {
+         requestBuilder: NetworkClientRequestBuilder,
+         responseValidator: HTTPURLResponseValidator) {
         self.urlRequestPerfomer = urlRequestPerfomer
         self.baseUrl = baseUrl
         self.requestBuilder = requestBuilder
+        self.responseValidator = responseValidator
     }
     
     // MARK: NetworkClient
@@ -42,13 +45,30 @@ final class DefaultNetworkClient: NetworkClient {
             let urlRequest = try requestBuilder.buildURLRequest(baseURL: baseUrl,
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
-            urlRequestPerfomer.dataTask(with: urlRequest) { data, response, error in
+            urlRequestPerfomer.dataTask(with: urlRequest) { [responseValidator] data, response, error in
                 if let error = error {
-                    completion(.failure(error))
+                    completion(.failure(NetworkError.transportError(error)))
                     return
                 }
                 
-                completion(.success(data ?? Data()))
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    // TODO: Handle this case
+                    return
+                }
+                
+                do {
+                    try responseValidator.validate(response: httpResponse).get()
+                } catch {
+                    completion(.failure(NetworkError.serverError(statusCode: httpResponse.statusCode,
+                                                                 data: data)))
+                }
+                
+                guard let data = data else {
+                    completion(.failure(NetworkError.noData))
+                    return
+                }
+
+                completion(.success(data))
             }.resume()
         } catch {
             completion(.failure(error))
