@@ -75,7 +75,7 @@ struct DeviceInfo {
 
 // MARK: URL Session Conformance
 
-public protocol Cancellable: AnyObject {
+public protocol Cancellable {
     func cancel()
 }
 

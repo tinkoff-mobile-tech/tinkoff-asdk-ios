@@ -20,7 +20,7 @@
 
 import Foundation
 
-protocol NetworkDataTask {
+protocol NetworkDataTask: Cancellable {
     func resume()
     func cancel()
 }

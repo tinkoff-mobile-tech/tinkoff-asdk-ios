@@ -21,5 +21,5 @@
 import Foundation
 
 protocol NetworkClient {
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void)
+    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
 }
