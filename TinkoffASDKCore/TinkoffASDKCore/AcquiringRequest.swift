@@ -77,11 +77,11 @@ public protocol ResponseOperation: Codable {
 }
 
 public class AcquiringResponse: ResponseOperation {
-    public let success: Bool
-    public let errorCode: Int
-    public let errorMessage: String?
-    public let errorDetails: String?
-    public let terminalKey: String?
+    public var success: Bool
+    public var errorCode: Int
+    public var errorMessage: String?
+    public var errorDetails: String?
+    public var terminalKey: String?
     public let status: String?
     public let paymentId: String?
     public let orderId: String?
