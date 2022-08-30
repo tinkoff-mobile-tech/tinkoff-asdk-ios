@@ -45,7 +45,7 @@ final class DefaultNetworkClient: NetworkClient {
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         do {
-            let urlRequest = try requestBuilder.buildURLRequest(baseURL: hostProvider.host,
+            let urlRequest = try requestBuilder.buildURLRequest(baseURL: try hostProvider.host(),
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
             

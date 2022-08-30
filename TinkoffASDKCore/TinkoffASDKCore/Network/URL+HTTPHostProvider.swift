@@ -21,5 +21,7 @@
 import Foundation
 
 extension URL: HTTPHostProvider {
-    var host: URL { self }
+    func host() throws -> URL {
+        return self
+    }
 }
