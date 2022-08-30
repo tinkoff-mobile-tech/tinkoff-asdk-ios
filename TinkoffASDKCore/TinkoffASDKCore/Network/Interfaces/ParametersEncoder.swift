@@ -1,6 +1,6 @@
 //
 //
-//  TestsNetworkRequest.swift
+//  ParametersEncoder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,21 +17,9 @@
 //  limitations under the License.
 //
 
-@testable import TinkoffASDKCore
 
-struct TestsNetworkRequest: NetworkRequest {
-    let path: [String]
-    let httpMethod: HTTPMethod
-    let parameters: HTTPParameters
-    let headers: HTTPHeaders
-    
-    init(path: [String],
-         httpMethod: HTTPMethod,
-         parameters: HTTPParameters = [:],
-         headers: HTTPHeaders = [:]) {
-        self.path = path
-        self.httpMethod = httpMethod
-        self.parameters = parameters
-        self.headers = headers
-    }
+import Foundation
+
+protocol ParametersEncoder {
+    func encode(_ urlRequest: URLRequest, parameters: HTTPParameters) throws -> URLRequest
 }

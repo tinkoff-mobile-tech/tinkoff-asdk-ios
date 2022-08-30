@@ -25,19 +25,24 @@ enum HTTPMethod: String {
     case post = "POST"
 }
 
+enum HTTPParametersEncoding {
+    case json
+    case url
+}
+
 typealias HTTPParameters = [String: Any]
 typealias HTTPHeaders = [String: String]
 
 protocol NetworkRequest {
     var path: [String] { get }
     var httpMethod: HTTPMethod { get }
-    var urlParameters: HTTPParameters { get }
-    var bodyParameters: HTTPParameters { get }
+    var parameters: HTTPParameters { get }
+    var parametersEncoding: HTTPParametersEncoding { get }
     var headers: HTTPHeaders { get }
 }
 
 extension NetworkRequest {
-    var urlParameters: HTTPParameters { return [:] }
-    var bodyParameters: HTTPParameters { return [:] }
-    var headers: HTTPHeaders { return [:] }
+    var parameters: HTTPParameters { [:] }
+    var parametersEncoding: HTTPParametersEncoding { .json }
+    var headers: HTTPHeaders { [:] }
 }

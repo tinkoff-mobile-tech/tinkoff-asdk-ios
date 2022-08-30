@@ -37,30 +37,36 @@ final class DefaultNetworkClientRequestBuilder: NetworkClientRequestBuilder {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.httpMethod.rawValue
         
-        var bodyParameters = request.bodyParameters
-        var urlParameters = request.urlParameters
+        var parameters = request.parameters
         var headers = request.headers
         
         if let requestAdapter = requestAdapter {
-            bodyParameters.merge(requestAdapter.additionalBodyParameters(for: request)) { _, new in new }
-            urlParameters.merge(requestAdapter.additionalURLParameters(for: request)) { _, new in new }
+            parameters.merge(requestAdapter.additionalParameters(for: request)) { _, new in new }
             headers.merge(requestAdapter.additionalHeaders(for: request)) { _, new in new }
         }
         
         headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
+        
+        urlRequest = try encodeJSONParameters(parameters,
+                                              parametersEncoding: request.parametersEncoding,
+                                              urlRequest: urlRequest)
         
         return urlRequest
     }
     
     // MARK: - Parameters Encoding
     
-    private func encodeURLParameters(_ parameters: HTTPParameters, urlRequest: URLRequest) throws -> URLRequest {
-        guard !parameters.keys.isEmpty else { return urlRequest }
-        return urlRequest
-    }
-    
-    private func encodeJSONParameters(_ parameters: HTTPParameters, urlRequest: URLRequest) throws -> URLRequest {
-        guard !parameters.keys.isEmpty else { return urlRequest }
-        return urlRequest
+    private func encodeJSONParameters(_ parameters: HTTPParameters,
+                                      parametersEncoding: HTTPParametersEncoding,
+                                      urlRequest: URLRequest) throws -> URLRequest {
+        guard !parameters.isEmpty else { return urlRequest }
+        
+        let encoder: ParametersEncoder
+        switch parametersEncoding {
+        case .json: encoder = JSONEncoding(options: .sortedKeys)
+        case .url: fatalError("TODO: URLEncoding")
+        }
+            
+        return try encoder.encode(urlRequest, parameters: parameters)
     }
 }
