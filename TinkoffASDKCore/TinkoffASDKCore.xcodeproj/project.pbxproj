@@ -86,6 +86,7 @@
 		5CB2E3AA28BDE62E00B07670 /* SBPBankResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38B28BDE62E00B07670 /* SBPBankResponse.swift */; };
 		5CB2E3AB28BDE62E00B07670 /* SBPBankLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38C28BDE62E00B07670 /* SBPBankLoader.swift */; };
 		5CB2E3AC28BDE62E00B07670 /* SBPBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38D28BDE62E00B07670 /* SBPBank.swift */; };
+		5CB8B0BF28BDF188009CBB1B /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB8B0BE28BDF188009CBB1B /* Localization.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -181,6 +182,7 @@
 		5CB2E38B28BDE62E00B07670 /* SBPBankResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBPBankResponse.swift; sourceTree = "<group>"; };
 		5CB2E38C28BDE62E00B07670 /* SBPBankLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBPBankLoader.swift; sourceTree = "<group>"; };
 		5CB2E38D28BDE62E00B07670 /* SBPBank.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBPBank.swift; sourceTree = "<group>"; };
+		5CB8B0BE28BDF188009CBB1B /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +242,7 @@
 		2CB5F85123603D9F00208488 /* TinkoffASDKCore */ = {
 			isa = PBXGroup;
 			children = (
+				5CB8B0BD28BDF170009CBB1B /* Localization */,
 				5CB2E38728BDE62D00B07670 /* API */,
 				5CB2E37228BDE62D00B07670 /* Network */,
 				5CB2E36628BDE62D00B07670 /* NetworkTransport */,
@@ -433,6 +436,14 @@
 			path = SBP;
 			sourceTree = "<group>";
 		};
+		5CB8B0BD28BDF170009CBB1B /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				5CB8B0BE28BDF188009CBB1B /* Localization.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -572,6 +583,7 @@
 				5CB2E3A928BDE62E00B07670 /* PaymentInitDataParamsEnricher.swift in Sources */,
 				2C9FE702248F9022009E9649 /* AcquiringLogger.swift in Sources */,
 				2CB5F8702360A9FC00208488 /* PaymentInitRequest.swift in Sources */,
+				5CB8B0BF28BDF188009CBB1B /* Localization.swift in Sources */,
 				5CB2E36228BDE5CB00B07670 /* IPv6Address.swift in Sources */,
 				5CB2E3A228BDE62E00B07670 /* NetworkDataTask.swift in Sources */,
 				5CB2E39528BDE62E00B07670 /* RequestMethod.swift in Sources */,
