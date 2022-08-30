@@ -67,7 +67,6 @@ final class DefaultNetworkClient: NetworkClient {
                 }
                 
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    // TODO: Handle this case
                     result = .failure(NetworkError.noData)
                     return
                 }
