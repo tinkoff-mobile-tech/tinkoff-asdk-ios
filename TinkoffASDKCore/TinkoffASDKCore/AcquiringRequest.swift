@@ -77,15 +77,15 @@ public protocol ResponseOperation: Codable {
 }
 
 public class AcquiringResponse: ResponseOperation {
-    public var success: Bool
-    public var errorCode: Int
-    public var errorMessage: String?
-    public var errorDetails: String?
-    public var terminalKey: String?
-    public var status: String?
-    public var paymentId: String?
-    public var orderId: String?
-    public var amount: Int?
+    public let success: Bool
+    public let errorCode: Int
+    public let errorMessage: String?
+    public let errorDetails: String?
+    public let terminalKey: String?
+    public let status: String?
+    public let paymentId: String?
+    public let orderId: String?
+    public let amount: Int?
 
     enum CodingKeys: String, CodingKey {
         case success = "Success"
