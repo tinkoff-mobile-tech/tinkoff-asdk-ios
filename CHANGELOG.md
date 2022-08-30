@@ -1,9 +1,6 @@
 # Changelog
 ## [Unreleased]
 
-### Added
-* [MIC-6228] Add 3ds-app-based feature flag
-
 ### Changed
 
 * [MIC-5966] CardList screen redesign
