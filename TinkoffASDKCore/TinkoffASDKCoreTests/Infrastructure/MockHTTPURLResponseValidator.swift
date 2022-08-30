@@ -1,6 +1,6 @@
 //
 //
-//  NetworkClient.swift
+//  MockHTTPURLResponseValidator.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,9 +18,15 @@
 //
 
 
-import Foundation
+@testable import TinkoffASDKCore
 
-protocol NetworkClient {
-    @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
+final class MockHTTPURLResponseValidator: HTTPURLResponseValidator {
+    
+    var validateMethodCalled = true
+    var result: Result<Void, Error> = .success(())
+    
+    func validate(response: HTTPURLResponse) -> Result<Void, Error> {
+        validateMethodCalled = true
+        return result
+    }
 }
