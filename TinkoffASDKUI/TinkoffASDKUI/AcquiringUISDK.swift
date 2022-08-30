@@ -1237,11 +1237,11 @@ public class AcquiringUISDK: NSObject {
             switch checkResponse {
             case let .success(checkResult):
                 // Прохождение 3DS v2
-                if checkResult.tdsServerTransID != nil {
+                if checkResult.tdsServerTransID != nil, let paymentSystem = checkResult.paymentSystem {
                     // собираем информацию о девайсе
                     
                     
-                    self.tdsController.enrichRequestDataWithAuthParams(with: checkResult.paymentSystem,
+                    self.tdsController.enrichRequestDataWithAuthParams(with: paymentSystem,
                                                                        messageVersion: checkResult.version,
                                                                        finishRequestData: requestData) { result in
                         do {
