@@ -90,7 +90,18 @@
 // 3ds app-based
 "TinkoffAcquiring.threeds.cancelAuth" = "Отменить";
 "TinkoffAcquiring.threeds.acceptAuth" = "Подтверждение";
-
 "TinkoffAcquiring.threeds.error.invalidPaymentSystem" = "Платежная система не поддерживается";
 "TinkoffAcquiring.threeds.error.updatingCertsError" = "Не удалось обновить сертификаты";
 "TinkoffAcquiring.threeds.error.timeout" = "Превышено маскимальное время прохождения 3DS";
+
+// CardList
+"CardList.title" = "Карты для оплаты";
+"CardList.alert.title.deleteCard" = "Удаление карты";
+"CardList.alert.message.deleteCard" = "Вы уверены, что хотите удалить карту %@?";
+"CardList.alert.action.cancel" = "Отмена";
+"CardList.alert.action.delete" = "Удалить";
+"CardList.status.noCards" = "У вас нет сохраненных карт";
+"CardList.button.addNewCard" = "Добавить новую карту";
+
+// AcquiringPayment
+"AcquiringPayment.button.chooseCard" = "Выбрать другую карту";

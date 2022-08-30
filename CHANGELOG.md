@@ -1,6 +1,11 @@
 # Changelog
 ## [Unreleased]
 
+### Changed
+
+* [MIC-5966] CardList screen redesign
+* [MIC-6089] Card selection logic on Payment Form
+
 ### Fixed
 
 * [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
