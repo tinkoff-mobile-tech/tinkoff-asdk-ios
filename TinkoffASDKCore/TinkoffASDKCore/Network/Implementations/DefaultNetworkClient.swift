@@ -28,6 +28,8 @@ final class DefaultNetworkClient: NetworkClient {
     
     weak var requestAdapter: NetworkRequestAdapter?
     
+    // MARK: - Init
+    
     init(urlRequestPerfomer: URLRequestPerformer,
          baseUrl: URL,
          requestBuilder: NetworkClientRequestBuilder,
@@ -38,14 +40,15 @@ final class DefaultNetworkClient: NetworkClient {
         self.responseValidator = responseValidator
     }
     
-    // MARK: NetworkClient
+    // MARK: - NetworkClient
     
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) {
+    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(baseURL: baseUrl,
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
-            urlRequestPerfomer.dataTask(with: urlRequest) { [responseValidator] data, response, error in
+            
+            let dataTask = urlRequestPerfomer.dataTask(with: urlRequest) { [responseValidator] data, response, error in
                 let result: Result<Data, Error>
                 
                 defer {
@@ -82,13 +85,20 @@ final class DefaultNetworkClient: NetworkClient {
                 }
                 
                 result = .success(data)
-            }.resume()
+            }
+            
+            dataTask.resume()
+            
+            return dataTask
         } catch {
             handleFailedToBuildeUrlRequest(error: error, completion: completion)
+            return EmptyCancellable()
         }
     }
-    
-    private func handleFailedToBuildeUrlRequest(error: Error, completion: @escaping (NetworkResponse) -> Void) {
+}
+
+private extension DefaultNetworkClient {
+    func handleFailedToBuildeUrlRequest(error: Error, completion: @escaping (NetworkResponse) -> Void) {
         let response = NetworkResponse(request: nil,
                                        response: nil,
                                        error: nil,
