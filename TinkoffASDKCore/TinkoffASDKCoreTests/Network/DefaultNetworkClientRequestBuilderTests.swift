@@ -59,4 +59,28 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
             XCTFail("URLRequest build failed with: \(error)")
         }
     }
+    
+    func testJSONParametersEncoding() {
+        let parameters: [String: Any] = ["param1": true, "param2": "value2", "param3": 10]
+        
+        let request = TestsNetworkRequest(path: ["test"],
+                                          httpMethod: .post,
+                                          parameters: parameters)
+        
+        do {
+            let urlRequest = try builder.buildURLRequest(baseURL: baseURL,
+                                                         request: request,
+                                                         requestAdapter: nil)
+            XCTAssertNotNil(urlRequest.httpBody, "urlRequest's httpBody can't be nil")
+            
+            let urlRequestBodyJSON = try? JSONSerialization.jsonObject(with: urlRequest.httpBody!,
+                                                                       options: []) as? [String: Any]
+            XCTAssertNotNil(urlRequestBodyJSON, "JSON from urlRequest's httpBody can't be nil")
+            
+            XCTAssertEqual(NSDictionary(dictionary: urlRequestBodyJSON!),
+                           NSDictionary(dictionary: parameters))
+        } catch {
+            XCTFail("URLRequest build failed with: \(error)")
+        }
+    }
 }
