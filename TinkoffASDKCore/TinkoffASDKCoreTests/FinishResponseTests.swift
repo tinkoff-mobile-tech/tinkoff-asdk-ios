@@ -25,7 +25,6 @@ class FinishResponseTests: XCTestCase {
 
     override func setUp() {
         let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                password: StageTestData.terminalPassword,
                                                 publicKey: StageTestData.testPublicKey)
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
@@ -72,7 +71,7 @@ class FinishResponseTests: XCTestCase {
      */
     func test_FinishResponseSuccess() {
         let errorCode: Int = 0
-        let terminalKey: String = ASDKStageTestData.terminalKey
+        let terminalKey: String = StageTestData.terminalKey
         let amount: Int64 = 20000
         let orderId: Int64 = 8_221_860
         let paymentId: Int64 = 142_639_745
@@ -102,7 +101,7 @@ class FinishResponseTests: XCTestCase {
             switch response.responseStatus {
             case let .done(status):
                 XCTAssertTrue(status.amount.int64Value == Int64(amount / 100))
-                XCTAssertTrue(status.orderId == orderId)
+                XCTAssertTrue(status.orderId == "\(orderId)")
                 XCTAssertTrue(status.paymentId == paymentId)
             default:
                 XCTAssert(false)
@@ -117,7 +116,7 @@ class FinishResponseTests: XCTestCase {
      */
     func test_FinishResponseNeed3DSConfirmation() {
         let errorCode: Int = 0
-        let terminalKey: String = ASDKStageTestData.terminalKey
+        let terminalKey: String = StageTestData.terminalKey
         let amount: Int64 = 2332
         let orderId: Int64 = 87_654_321
         let paymentId: Int64 = 12_345_678

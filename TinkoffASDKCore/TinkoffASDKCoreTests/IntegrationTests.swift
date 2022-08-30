@@ -27,7 +27,6 @@ class IntegrationTests: XCTestCase {
 
     override func setUp() {
         let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                password: StageTestData.terminalPassword,
                                                 publicKey: StageTestData.testPublicKey)
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
@@ -52,7 +51,7 @@ class IntegrationTests: XCTestCase {
             {
             "Amount": 20000,
             "OrderId": \(arc4random()),
-            "CustomerKey": \"\(ASDKStageTestData.customerKey)\",
+            "CustomerKey": \"\(StageTestData.customerKey)\",
             "Receipt": {
             	"Email": "a@test.ru",
             	"Items": [
@@ -112,22 +111,22 @@ class IntegrationTests: XCTestCase {
         let jsonPaymentData =
             """
             {
-            	"Amount": \(paymenyAmount),
-            	"OrderId": \(arc4random()),
-            	"CustomerKey": \"\(ASDKStageTestData.customerKey)\",
-            	"Receipt": {
-            		"Email": "a@test.ru",
-            		"Items":[
-            			{
-            				"Amount": \(receiptItemAmount),
-            				"Name": "123",
-            				"Price": 20000,
-            				"Quantity": 1,
-            				"Tax": "vat10"
-            			}
-            		],
-            		"Taxation": "osn"
-            	}
+                "Amount": \(paymenyAmount),
+                "OrderId": \(arc4random()),
+                "CustomerKey": \"\(StageTestData.customerKey)\",
+                "Receipt": {
+                    "Email": "a@test.ru",
+                    "Items":[
+                        {
+                            "Amount": \(receiptItemAmount),
+                            "Name": "123",
+                            "Price": 20000,
+                            "Quantity": 1,
+                            "Tax": "vat10"
+                        }
+                    ],
+                    "Taxation": "osn"
+                }
             }
             """
 
@@ -197,7 +196,7 @@ class IntegrationTests: XCTestCase {
             {
             	"Amount": 20000,
             	"OrderId": \(arc4random()),
-            	"CustomerKey": \"\(ASDKStageTestData.customerKey)\",
+            	"CustomerKey": \"\(StageTestData.customerKey)\",
             	"Receipt": {
             	"Email": "test@gmail.com",
             	"Items": [ {
