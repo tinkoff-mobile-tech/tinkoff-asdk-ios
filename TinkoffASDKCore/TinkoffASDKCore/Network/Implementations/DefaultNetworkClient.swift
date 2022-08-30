@@ -22,7 +22,7 @@ import Foundation
 
 final class DefaultNetworkClient: NetworkClient {
     private let urlRequestPerfomer: URLRequestPerformer
-    private let baseUrl: URL
+    private let hostProvider: HTTPHostProvider
     private let requestBuilder: NetworkClientRequestBuilder
     private let responseValidator: HTTPURLResponseValidator
     
@@ -31,11 +31,11 @@ final class DefaultNetworkClient: NetworkClient {
     // MARK: - Init
     
     init(urlRequestPerfomer: URLRequestPerformer,
-         baseUrl: URL,
+         hostProvider: HTTPHostProvider,
          requestBuilder: NetworkClientRequestBuilder,
          responseValidator: HTTPURLResponseValidator) {
         self.urlRequestPerfomer = urlRequestPerfomer
-        self.baseUrl = baseUrl
+        self.hostProvider = hostProvider
         self.requestBuilder = requestBuilder
         self.responseValidator = responseValidator
     }
@@ -45,7 +45,7 @@ final class DefaultNetworkClient: NetworkClient {
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         do {
-            let urlRequest = try requestBuilder.buildURLRequest(baseURL: baseUrl,
+            let urlRequest = try requestBuilder.buildURLRequest(baseURL: hostProvider.host,
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
             
