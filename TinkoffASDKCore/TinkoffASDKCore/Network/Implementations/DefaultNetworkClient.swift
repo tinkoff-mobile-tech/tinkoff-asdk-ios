@@ -1,6 +1,6 @@
 //
 //
-//  URLSessionNetworkClient.swift
+//  DefaultNetworkClient.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,17 +20,17 @@
 
 import Foundation
 
-final class URLSessionNetworkClient: NetworkClient {
-    private let urlSession: URLSession
+final class DefaultNetworkClient: NetworkClient {
+    private let urlRequestPerfomer: URLRequestPerformer
     private let baseUrl: URL
     private let requestBuilder: NetworkClientRequestBuilder
     
     weak var requestAdapter: NetworkRequestAdapter?
     
-    init(urlSession: URLSession,
+    init(urlRequestPerfomer: URLRequestPerformer,
          baseUrl: URL,
          requestBuilder: NetworkClientRequestBuilder) {
-        self.urlSession = urlSession
+        self.urlRequestPerfomer = urlRequestPerfomer
         self.baseUrl = baseUrl
         self.requestBuilder = requestBuilder
     }
@@ -40,9 +40,9 @@ final class URLSessionNetworkClient: NetworkClient {
     func performRequest(_ request: NetworkRequest, completion: @escaping (Result<Data, Error>) -> Void) {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(baseURL: baseUrl,
-                                                            request: request,
-                                                            requestAdapter: requestAdapter)
-            urlSession.dataTask(with: urlRequest) { data, response, error in
+                                                                request: request,
+                                                                requestAdapter: requestAdapter)
+            urlRequestPerfomer.dataTask(with: urlRequest) { data, response, error in
                 if let error = error {
                     completion(.failure(error))
                     return
