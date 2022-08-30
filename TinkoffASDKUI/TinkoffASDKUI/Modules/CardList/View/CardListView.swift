@@ -33,6 +33,7 @@ final class CardListView: UIView {
     struct Style {
         let listItemsAreSelectable: Bool
         let primaryButtonStyle: TinkoffASDKUI.ButtonStyle?
+        let backgroundColor: UIColor
     }
 
     // MARK: Private Types
@@ -47,12 +48,12 @@ final class CardListView: UIView {
     // MARK: UI
 
     private lazy var overlayLoadingView = OverlayLoadingView(
-        style: OverlayLoadingView.Style(overlayColor: .asdk.dynamic.background.elevation1)
+        style: OverlayLoadingView.Style(overlayColor: style.backgroundColor)
     )
 
     private lazy var noCardsView: MessageView = {
         let view = MessageView(style: .noCards)
-        view.backgroundColor = .asdk.dynamic.background.elevation1
+        view.backgroundColor = style.backgroundColor
         view.isHidden = true
         view.alpha = .zero
         return view
@@ -66,7 +67,7 @@ final class CardListView: UIView {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(cellClasses: CardCell.self)
-        collectionView.backgroundColor = .asdk.dynamic.background.elevation1
+        collectionView.backgroundColor = style.backgroundColor
         collectionView.allowsSelection = style.listItemsAreSelectable
         return collectionView
     }()
@@ -136,7 +137,7 @@ final class CardListView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
-        backgroundColor = .asdk.dynamic.background.elevation1
+        backgroundColor = style.backgroundColor
 
         addSubview(collectionView)
         collectionView.pinEdgesToSuperview()

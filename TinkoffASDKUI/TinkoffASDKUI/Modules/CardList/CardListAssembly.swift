@@ -100,14 +100,16 @@ private extension CardListView.Style {
     static func presenting(primaryButtonStyle: ButtonStyle?) -> CardListView.Style {
         CardListView.Style(
             listItemsAreSelectable: false,
-            primaryButtonStyle: primaryButtonStyle
+            primaryButtonStyle: primaryButtonStyle,
+            backgroundColor: .asdk.dynamic.background.elevation1
         )
     }
 
     static func selection(primaryButtonStyle: ButtonStyle?) -> CardListView.Style {
         CardListView.Style(
             listItemsAreSelectable: true,
-            primaryButtonStyle: primaryButtonStyle
+            primaryButtonStyle: primaryButtonStyle,
+            backgroundColor: .asdk.dynamic.background.elevation1
         )
     }
 }
