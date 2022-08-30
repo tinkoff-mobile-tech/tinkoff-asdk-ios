@@ -12,6 +12,10 @@
 * [MIC-5741] Integrate 3ds-app-based flow
 * [MIC-6123] Add software_version and device_model parameters to Init request
 
+### Added
+
+* [MIC-6176] Add status, paymentId, orderId, amount properties to AcquiringResponse
+
 ## [2.9.1] - 2022-08-19Z
 
 ### Fixed
