@@ -40,38 +40,60 @@ final class DefaultNetworkClient: NetworkClient {
     
     // MARK: NetworkClient
     
-    func performRequest(_ request: NetworkRequest, completion: @escaping (Result<Data, Error>) -> Void) {
+    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(baseURL: baseUrl,
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
             urlRequestPerfomer.dataTask(with: urlRequest) { [responseValidator] data, response, error in
+                let result: Result<Data, Error>
+                
+                defer {
+                    let response = NetworkResponse(request: urlRequest,
+                                                   response: response as? HTTPURLResponse,
+                                                   error: error,
+                                                   data: data,
+                                                   result: result)
+                    completion(response)
+                }
+                
                 if let error = error {
-                    completion(.failure(NetworkError.transportError(error)))
+                    result = .failure(NetworkError.transportError(error))
                     return
                 }
                 
                 guard let httpResponse = response as? HTTPURLResponse else {
                     // TODO: Handle this case
+                    result = .failure(NetworkError.noData)
                     return
                 }
                 
                 do {
                     try responseValidator.validate(response: httpResponse).get()
                 } catch {
-                    completion(.failure(NetworkError.serverError(statusCode: httpResponse.statusCode,
-                                                                 data: data)))
+                    result = .failure(NetworkError.serverError(statusCode: httpResponse.statusCode,
+                                                               data: data))
+                    return
                 }
                 
                 guard let data = data else {
-                    completion(.failure(NetworkError.noData))
+                    result = .failure(NetworkError.noData)
                     return
                 }
-
-                completion(.success(data))
+                
+                result = .success(data)
             }.resume()
         } catch {
-            completion(.failure(error))
+            handleFailedToBuildeUrlRequest(error: error, completion: completion)
         }
+    }
+    
+    private func handleFailedToBuildeUrlRequest(error: Error, completion: @escaping (NetworkResponse) -> Void) {
+        let response = NetworkResponse(request: nil,
+                                       response: nil,
+                                       error: nil,
+                                       data: nil,
+                                       result: .failure(error))
+        completion(response)
     }
 }

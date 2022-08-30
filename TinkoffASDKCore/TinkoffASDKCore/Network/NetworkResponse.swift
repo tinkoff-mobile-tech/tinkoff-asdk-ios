@@ -1,6 +1,6 @@
 //
 //
-//  NetworkClient.swift
+//  NetworkResponse.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,6 +20,10 @@
 
 import Foundation
 
-protocol NetworkClient {
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void)
+struct NetworkResponse {
+    let request: URLRequest?
+    let response: HTTPURLResponse?
+    let error: Error?
+    let data: Data?
+    let result: Result<Data, Error>
 }
