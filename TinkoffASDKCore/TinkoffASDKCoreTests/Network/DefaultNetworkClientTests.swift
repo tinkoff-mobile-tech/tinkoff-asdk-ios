@@ -29,7 +29,7 @@ class DefaultNetworkClientTests: XCTestCase {
     let responseValidator = MockHTTPURLResponseValidator()
     
     lazy var networkClient = DefaultNetworkClient(urlRequestPerfomer: urlRequestPerformer,
-                                                  baseUrl: url,
+                                                  hostProvider: url,
                                                   requestBuilder: requestBuilder,
                                                   responseValidator: responseValidator)
     
