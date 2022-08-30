@@ -55,5 +55,5 @@ struct JSONEncoding: ParametersEncoder {
 
 private extension String {
     static let contentType = "Content-Type"
-    static let applicationJson = "appplication/json"
+    static let applicationJson = "application/json"
 }

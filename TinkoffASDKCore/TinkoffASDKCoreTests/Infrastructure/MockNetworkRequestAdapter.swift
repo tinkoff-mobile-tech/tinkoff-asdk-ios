@@ -1,6 +1,6 @@
 //
 //
-//  TestsNetworkRequest.swift
+//  MockNetworkRequestAdapter.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,24 +17,25 @@
 //  limitations under the License.
 //
 
+
 @testable import TinkoffASDKCore
 
-struct TestsNetworkRequest: NetworkRequest {
-    let path: [String]
-    let httpMethod: HTTPMethod
-    let parameters: HTTPParameters
-    let parametersEncoding: HTTPParametersEncoding
-    let headers: HTTPHeaders
+final class MockNetworkRequestAdapter: NetworkRequestAdapter {
+
+    var isAdditionalHeadersMethodCalled = false
+    var isAdditionalParametersMethodCalled = false
     
-    init(path: [String],
-         httpMethod: HTTPMethod,
-         parameters: HTTPParameters = [:],
-         parametersEncoding: HTTPParametersEncoding = .json,
-         headers: HTTPHeaders = [:]) {
-        self.path = path
-        self.httpMethod = httpMethod
-        self.parameters = parameters
-        self.parametersEncoding = parametersEncoding
-        self.headers = headers
+    var additionalHeaders: HTTPHeaders = [:]
+    var additionalParameters: HTTPParameters = [:]
+    
+    func additionalHeaders(for request: NetworkRequest) -> HTTPHeaders {
+        isAdditionalHeadersMethodCalled = true
+        return additionalHeaders
+    }
+    
+    func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
+        isAdditionalParametersMethodCalled = true
+        return additionalParameters
     }
 }
+

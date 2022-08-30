@@ -29,7 +29,7 @@ extension NetworkRequestAdapter {
     func additionalHeaders(for request: NetworkRequest) -> HTTPHeaders {
         [:]
     }
-    func additionalParameters(for request: NetworkRequest) -> HTTPHeaders {
+    func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
         [:]
     }
 }
