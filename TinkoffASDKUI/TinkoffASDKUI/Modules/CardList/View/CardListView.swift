@@ -52,8 +52,9 @@ final class CardListView: UIView {
 
     private lazy var noCardsView: MessageView = {
         let view = MessageView(style: .noCards)
-        view.isHidden = true
         view.backgroundColor = .asdk.dynamic.background.elevation1
+        view.isHidden = true
+        view.alpha = .zero
         return view
     }()
 
@@ -160,46 +161,24 @@ final class CardListView: UIView {
     // MARK: State Updating
 
     private func updateNoCardsViewVisibility() {
-        let isShown = !noCardsView.isHidden
         let shouldShow = cards.isEmpty
 
-        let prepare = { [self] in
-            switch (isShown, shouldShow) {
-            case (false, false), (true, true), (true, false):
-                break
-            case (false, true):
-                noCardsView.alpha = .zero
-                noCardsView.isHidden = false
-            }
-        }
-
         let animations = { [self] in
-            switch(isShown, shouldShow) {
-            case (false, false), (true, true):
-                break
-            case (false, true):
-                noCardsView.alpha = 1
-            case (true, false):
-                noCardsView.alpha = .zero
-            }
+            noCardsView.alpha = shouldShow ? 1 : .zero
         }
 
-        let completion = { [self] in
-            switch (isShown, shouldShow) {
-            case (false, false), (true, true), (false, true):
-                break
-            case (true, false):
-                noCardsView.isHidden = true
-            }
+        let completion = { [self] (completed: Bool) in
+            guard completed else { return }
+            noCardsView.isHidden = !shouldShow
         }
 
-        prepare()
+        noCardsView.isHidden = false
         UIView.animate(
             withDuration: .noCardsViewAnimationDuration,
             delay: .zero,
             options: .curveEaseInOut,
             animations: animations,
-            completion: { _ in completion() }
+            completion: completion
         )
     }
 
