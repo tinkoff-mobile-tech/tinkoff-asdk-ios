@@ -1,6 +1,6 @@
 //
 //
-//  URLRequestPerformer.swift
+//  EmptyNetworkDataTask.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,10 +17,10 @@
 //  limitations under the License.
 //
 
-
+@testable import TinkoffASDKCore
 import Foundation
 
-protocol URLRequestPerformer {
-    func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask
+struct EmptyNetworkDataTask: NetworkDataTask {
+    func resume() {}
+    func cancel() {}
 }

@@ -247,7 +247,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
         let responseLoger = logger
 
-        let task = session.dataTask(with: request) { data, response, networkError in
+        let task: URLSessionDataTask = session.dataTask(with: request) { data, response, networkError in
             if let error = networkError {
                 responseLoger?.log("🛬 End request: \(request.description), with: \(error.localizedDescription)")
                 return completionHandler(.failure(error))

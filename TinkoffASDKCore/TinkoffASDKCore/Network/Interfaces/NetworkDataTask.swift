@@ -1,6 +1,6 @@
 //
 //
-//  URLRequestPerformer.swift
+//  NetworkDataTask.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,7 +20,7 @@
 
 import Foundation
 
-protocol URLRequestPerformer {
-    func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask
+protocol NetworkDataTask {
+    func resume()
+    func cancel()
 }
