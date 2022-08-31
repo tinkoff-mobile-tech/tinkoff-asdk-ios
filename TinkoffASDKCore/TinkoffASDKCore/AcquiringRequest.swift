@@ -30,20 +30,11 @@ public protocol RequestOperation {
     
     /// Типа запроса
     var requestMethod: RequestMethod { get }
-    
-    /// Формат запроса
-    var requestContentType: RequestContentType { get }
 }
 
 public extension RequestOperation {
     var requestMethod: RequestMethod {
         .post
-    }
-}
-
-public extension RequestOperation {
-    var requestContentType: RequestContentType {
-        .applicationJson
     }
 }
 

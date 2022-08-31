@@ -32,17 +32,6 @@ public enum AcquiringSdkEnvironment: String {
     case prod = "securepay.tinkoff.ru"
 }
 
-public struct ConfigSdkEnvironment: RawRepresentable {
-    public let rawValue: String
-
-    public init(rawValue: String) {
-        self.rawValue = rawValue
-    }
-    
-    public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "ca-3ds2-test.cdn-tinkoff.ru") }
-    public static var prod: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "ca-3ds2-prod.cdn-tinkoff.ru") }
-}
-
 public struct AcquiringSdkCredential {
     public var terminalKey: String
     public var publicKey: String
@@ -65,8 +54,6 @@ public class AcquiringSdkConfiguration: NSObject {
 
     public private(set) var serverEnvironment: AcquiringSdkEnvironment
     
-    public private(set) var configEnvironment: ConfigSdkEnvironment
-    
     public private(set) var requestsTimeoutInterval: TimeInterval
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
@@ -84,7 +71,7 @@ public class AcquiringSdkConfiguration: NSObject {
     public var showErrorAlert: Bool = true
     
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
-    public var tinkoffPayStatusCacheLifeTime: TimeInterval
+    public var tinkoffPayStatusCacheLifeTime: TimeInterval = .defaultTinkoffPayStatusCacheLifeTime
     
     ///
     /// - Parameters:
@@ -95,12 +82,23 @@ public class AcquiringSdkConfiguration: NSObject {
     /// - Returns: AcquiringSdkConfiguration
     public init(credential: AcquiringSdkCredential,
                 server: AcquiringSdkEnvironment = .test,
-                requestsTimeoutInterval: TimeInterval = 40,
-                tinkoffPayStatusCacheLifeTime: TimeInterval = 300) {
+                requestsTimeoutInterval: TimeInterval,
+                tinkoffPayStatusCacheLifeTime: TimeInterval) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
-        self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
         self.serverEnvironment = server
-        self.configEnvironment = server == .test ? .test : .prod
     }
+    
+    public convenience init(credential: AcquiringSdkCredential,
+                            server: AcquiringSdkEnvironment = .test) {
+        self.init(credential: credential,
+                  server: server,
+                  requestsTimeoutInterval: .defaultRequestsTimeoutInterval,
+                  tinkoffPayStatusCacheLifeTime: .defaultTinkoffPayStatusCacheLifeTime)
+    }
+}
+
+private extension TimeInterval {
+    static let defaultRequestsTimeoutInterval: TimeInterval = 40
+    static let defaultTinkoffPayStatusCacheLifeTime: TimeInterval = 300
 }
