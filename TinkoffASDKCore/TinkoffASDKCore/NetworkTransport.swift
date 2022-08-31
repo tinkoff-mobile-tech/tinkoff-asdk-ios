@@ -22,7 +22,6 @@ import Foundation
 // MARK: NetworkTransport
 
 protocol NetworkTransport: AnyObject {
-    var logger: LoggerDelegate? { get set }
     var confirmation3DSTerminationURL: URL { get }
     var confirmation3DSTerminationV2URL: URL { get }
     var complete3DSMethodV2URL: URL { get }
@@ -39,20 +38,26 @@ protocol NetworkTransport: AnyObject {
 
 extension NetworkTransport {
     /// используется для большинства запросов, обработка ответа происходит по стандартному сценарию, responseDelegate = nil
-    func send<Operation: RequestOperation, Response: ResponseOperation>(operation: Operation, completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable {
-        return send(operation: operation, responseDelegate: nil) { response in
-            completionHandler(response)
-        }
+    func send<Operation: RequestOperation, Response: ResponseOperation>(
+        operation: Operation,
+        completionHandler: @escaping (_ results: Result<Response, Error>) -> Void
+    ) -> Cancellable {
+        send(operation: operation, responseDelegate: nil, completionHandler: completionHandler)
     }
 }
 
 // MARK: NetworkTransportResponseDelegate
 
 public protocol NetworkTransportResponseDelegate {
-    /// Делегирвоание обработки ответа сервера
+    /// Делегирование обработки ответа сервера
     /// NetworkTransport проверяет ошибки сети, HTTP Status Code `200..<300` и наличие данных
     /// далее передает обработку данных делегату
-    func networkTransport(didCompleteRawTaskForRequest request: URLRequest, withData data: Data, response: URLResponse, error: Error?) throws -> ResponseOperation
+    func networkTransport(
+        didCompleteRawTaskForRequest request: URLRequest,
+        withData data: Data,
+        response: URLResponse,
+        error: Error?
+    ) throws -> ResponseOperation
 }
 
 // MARK: AcquaringNetworkTransport
@@ -64,19 +69,18 @@ final class AcquaringNetworkTransport: NetworkTransport {
     private let session: URLSession
     private let serializationFormat = JSONSerializationFormat.self
     private let deviceInfo: DeviceInfo
+    private let logger: LoggerDelegate?
 
-    /// Логирование работы, реализаия `ASDKApiLoggerDelegate`
-    weak var logger: LoggerDelegate?
-
-    /// Экземпляр класа для работы с сетью, создает сетевые запросы, разбирает полученные данные от сервера.
+    /// Экземпляр класса для работы с сетью, создает сетевые запросы, разбирает полученные данные от сервера.
     ///
     /// - Parameters:
     ///   - url: путь к серверу **Tinkoff Acquaring API**
     ///   - session: конфигурация URLSession по умолчанию используеться `URLSession.shared`,
-    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo) {
+    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo, logger: LoggerDelegate?) {
         self.urlDomain = urlDomain
         self.session = session
         self.deviceInfo = deviceInfo
+        self.logger = logger
     }
 
     private func createRequest<Operation: RequestOperation>(for operation: Operation) throws -> URLRequest {
@@ -94,8 +98,8 @@ final class AcquaringNetworkTransport: NetworkTransport {
         return request
     }
 
-    /// Во время прохождения 3ds v1 WKNavigationDelegate отслеживает редиректы формы 3ds,
-    /// этот url считается конечным в сценарии прохождения 3ds
+    /// Во время прохождения 3DS v1 WKNavigationDelegate отслеживает редиректы формы 3DS,
+    /// этот url считается конечным в сценарии прохождения 3DS
     ///
     /// - Returns: URL
     private(set) lazy var confirmation3DSTerminationURL: URL = {
@@ -103,16 +107,16 @@ final class AcquaringNetworkTransport: NetworkTransport {
     }()
 
     /// Во время проверки `threeDSMethodCheckURL` девайса и параметров оплаты, какой версией
-    /// метода 3ds нужно воспользоваться, этот url используется как параметр `cresCallbackUrl` url завершения
-    /// сценария прохождения 3ds
+    /// метода 3DS нужно воспользоваться, этот url используется как параметр `cresCallbackUrl` url завершения
+    /// сценария прохождения 3DS
     ///
     /// - Returns: URL
     private(set) lazy var confirmation3DSTerminationV2URL: URL = {
         self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Submit3DSAuthorizationV2")
     }()
 
-    /// Во премя прохождения 3ds v2 (ACS) WKNavigationDelegate отслеживает редиректы формы 3ds,
-    /// этот url считается конечным в сценарии прохождения 3ds
+    /// Во время прохождения 3DS v2 (ACS) WKNavigationDelegate отслеживает редиректы формы 3DS,
+    /// этот url считается конечным в сценарии прохождения 3DS
     ///
     /// - Returns: URL
     private(set) lazy var complete3DSMethodV2URL: URL = {
@@ -156,11 +160,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
         return request
     }
 
-    /// Для прохождения 3ds v2 (ACS) нужно подготовить URLRequest для загрузки формы подтверждения в webview
+    /// Для прохождения 3DS v2 (ACS) нужно подготовить URLRequest для загрузки формы подтверждения в webView
     ///
     /// - Parameters:
     ///   - requestData: параметры `Confirmation3DSDataACS`
-    ///   - messageVersion: точная версия 3ds в виде строки.
+    ///   - messageVersion: точная версия 3DS в виде строки.
     /// - Returns:  throws `URLRequest`
     func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.acsUrl) else {
@@ -184,7 +188,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
         return request
     }
 
-    /// Для прохождения 3ds v1 нужно подготовить URLRequest для загрузки формы подтверждения в webview
+    /// Для прохождения 3DS v1 нужно подготовить URLRequest для загрузки формы подтверждения в webView
     ///
     /// - Parameters:
     ///   - requestData: параметры `Checking3DSURLData`

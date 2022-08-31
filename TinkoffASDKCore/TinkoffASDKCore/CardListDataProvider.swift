@@ -82,10 +82,10 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
     var queryStatus: Cancellable?
 
+    private let coreSDK: AcquiringSdk?
+    public let customerKey: String
     private var activeCards: [PaymentCard] = []
     private var dataSource: [PaymentCard] = []
-    private weak var sdk: AcquiringSdk?
-    public private(set) var customerKey: String!
     public weak var dataSourceStatusListener: CardListDataSourceStatusListener?
 
     public func update() {
@@ -97,8 +97,14 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         }
     }
 
+    public init(coreSDK: AcquiringSdk, customerKey: String) {
+        self.coreSDK = coreSDK
+        self.customerKey = customerKey
+    }
+
+    @available(*, deprecated, message: "Use init(coreSDK:customerKey:) instead")
     public init(sdk: AcquiringSdk?, customerKey: String) {
-        self.sdk = sdk
+        self.coreSDK = sdk
         self.customerKey = customerKey
     }
 
@@ -110,14 +116,14 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     {
         // Step 1 init
         let initAddCardData = InitAddCardData(with: checkType, customerKey: customerKey)
-        queryStatus = sdk?.сardListAddCardInit(data: initAddCardData, completionHandler: { [weak self] responseInit in
+        queryStatus = coreSDK?.cardListAddCardInit(data: initAddCardData, completion: { [weak self] responseInit in
             switch responseInit {
             case let .failure(error):
                 DispatchQueue.main.async { completeHandler(.failure(error)) }
             case let .success(initAddCardResponse):
                 // Step 2 finish
                 let finishData = FinishAddCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
-                self?.queryStatus = self?.sdk?.сardListAddCardFinish(data: finishData, responseDelegate: nil, completionHandler: { responseFinish in
+                self?.queryStatus = self?.coreSDK?.cardListAddCardFinish(data: finishData, responseDelegate: nil, completion: { responseFinish in
                     switch responseFinish {
                     case let .failure(error):
                         DispatchQueue.main.async { completeHandler(.failure(error)) }
@@ -152,7 +158,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
         startHandler?()
 
-        queryStatus = sdk?.сardListDeactivateCard(data: initData, completionHandler: { [weak self] response in
+        queryStatus = coreSDK?.cardListDeactivateCard(data: initData, completion: { [weak self] response in
             var status: FetchStatus<[PaymentCard]> = .loading
             var deactivatedCard: PaymentCard?
             switch response {
@@ -197,7 +203,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         DispatchQueue.main.async { startHandler?() }
 
         let initGetCardListData = InitGetCardListData(customerKey: customerKey)
-        queryStatus = sdk?.сardList(data: initGetCardListData, responseDelegate: self, completionHandler: { [weak self] response in
+        queryStatus = coreSDK?.cardList(data: initGetCardListData, responseDelegate: self, completion: { [weak self] response in
             var status: FetchStatus<[PaymentCard]> = .loading
             var responseError: Error?
             switch response {

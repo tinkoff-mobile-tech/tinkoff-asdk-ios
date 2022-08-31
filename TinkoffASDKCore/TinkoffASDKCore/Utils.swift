@@ -184,3 +184,26 @@ public enum IPAddressProvider {
         return addresses.compactMap { ipAddressFactory.ipAddress(with: $0) }.first?.fullStringValue
     }
 }
+
+extension Optional {
+    func orThrow<E: Error>(_ error: @autoclosure () -> E) throws -> Wrapped {
+        guard let self = self else {
+            throw error()
+        }
+
+        return self
+    }
+}
+
+extension UIDevice {
+     var deviceModel: String {
+         var systemInfo = utsname()
+         uname(&systemInfo)
+         let machineMirror = Mirror(reflecting: systemInfo.machine)
+         let identifier = machineMirror.children.reduce("") { identifier, element in
+             guard let value = element.value as? Int8, value != 0 else { return identifier }
+             return identifier + String(UnicodeScalar(UInt8(value)))
+         }
+         return identifier
+     }
+ }

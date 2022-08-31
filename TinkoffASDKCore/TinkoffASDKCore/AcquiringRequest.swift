@@ -82,6 +82,10 @@ public class AcquiringResponse: ResponseOperation {
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
+    public let status: String?
+    public let paymentId: String?
+    public let orderId: String?
+    public let amount: Int?
 
     enum CodingKeys: String, CodingKey {
         case success = "Success"
@@ -89,6 +93,10 @@ public class AcquiringResponse: ResponseOperation {
         case errorMessage = "Message"
         case errorDetails = "Details"
         case terminalKey = "TerminalKey"
+        case status = "Status"
+        case paymentId = "PaymentId"
+        case orderId = "OrderId"
+        case amount = "Amount"
     }
 
     public required init(from decoder: Decoder) throws {
@@ -98,6 +106,10 @@ public class AcquiringResponse: ResponseOperation {
         errorMessage = try? container.decode(String.self, forKey: .errorMessage)
         errorDetails = try? container.decode(String.self, forKey: .errorDetails)
         terminalKey = try? container.decode(String.self, forKey: .terminalKey)
+        status = try? container.decode(String.self, forKey: .status)
+        paymentId = try? container.decode(String.self, forKey: .paymentId)
+        orderId = try? container.decode(String.self, forKey: .orderId)
+        amount = try? container.decode(Int.self, forKey: .amount)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -107,5 +119,9 @@ public class AcquiringResponse: ResponseOperation {
         try? container.encode(errorMessage, forKey: .errorMessage)
         try? container.encode(errorDetails, forKey: .errorDetails)
         try? container.encode(terminalKey, forKey: .terminalKey)
+        try? container.encode(status, forKey: .status)
+        try? container.encode(paymentId, forKey: .paymentId)
+        try? container.encode(orderId, forKey: .orderId)
+        try? container.encode(amount, forKey: .amount)
     }
 }
