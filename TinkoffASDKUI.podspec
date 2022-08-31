@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
 	spec.name = "TinkoffASDKUI"
-	spec.version = '2.10.0'
+	spec.version = '2.10.1'
 	spec.summary = 'Мобильный SDK'
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
