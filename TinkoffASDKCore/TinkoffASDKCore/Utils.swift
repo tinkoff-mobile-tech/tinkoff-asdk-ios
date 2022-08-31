@@ -21,6 +21,24 @@ import CommonCrypto
 import Foundation
 import Security
 
+protocol DeviceInfoProvider {
+    var model: String { get }
+    var systemName: String { get }
+    var systemVersion: String { get }
+}
+
+struct DefaultDeviceInfoProvider: DeviceInfoProvider {
+    var model: String {
+        UIDevice.current.localizedModel
+    }
+    var systemName: String {
+        UIDevice.current.systemName
+    }
+    var systemVersion: String {
+        UIDevice.current.systemVersion
+    }
+}
+
 struct RSAEncryption {
     static func secKey(string: String?) -> SecKey? {
         guard let publicKey = string else { return nil }

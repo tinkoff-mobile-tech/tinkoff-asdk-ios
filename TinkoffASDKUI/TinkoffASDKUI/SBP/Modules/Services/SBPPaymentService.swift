@@ -41,7 +41,7 @@ public final class DefaultSBPPaymentService: SBPPaymentService {
 private extension DefaultSBPPaymentService {
     func requestSBPUrl(paymentId: Int64,
                        completion: ((Result<URL, Error>) -> Void)?) {
-        let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: paymentId, paymentInvoiceType: .url)
+        let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: String(paymentId), paymentInvoiceType: .url)
         _ = coreSDK.paymentInvoiceQRCode(data: paymentInvoice) { result in
             switch result {
             case let .failure(error):

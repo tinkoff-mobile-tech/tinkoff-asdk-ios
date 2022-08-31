@@ -39,7 +39,7 @@ final class DefaultPaymentService: PaymentService {
     }
     
     func getPaymentStatus(paymentId: Int64, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) {
-        _ = coreSDK.paymentOperationStatus(data: .init(paymentId: paymentId), completionHandler: { result in
+        _ = coreSDK.paymentOperationStatus(data: .init(paymentId: String(paymentId)), completionHandler: { result in
             completion(result)
         })
     }
