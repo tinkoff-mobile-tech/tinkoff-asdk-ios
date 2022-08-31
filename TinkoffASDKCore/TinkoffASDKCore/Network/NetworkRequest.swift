@@ -39,6 +39,7 @@ protocol NetworkRequest {
     var parameters: HTTPParameters { get }
     var parametersEncoding: HTTPParametersEncoding { get }
     var headers: HTTPHeaders { get }
+    var baseURL: URL { get }
 }
 
 extension NetworkRequest {

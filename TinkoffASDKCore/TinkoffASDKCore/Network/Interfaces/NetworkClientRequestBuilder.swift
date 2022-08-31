@@ -21,5 +21,5 @@
 import Foundation
 
 protocol NetworkClientRequestBuilder {
-    func buildURLRequest(baseURL: URL, request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest
+    func buildURLRequest(request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest
 }
