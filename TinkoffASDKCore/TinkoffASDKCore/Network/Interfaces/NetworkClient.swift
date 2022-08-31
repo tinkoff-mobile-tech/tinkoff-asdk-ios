@@ -21,7 +21,7 @@
 import Foundation
 
 protocol NetworkClient: AnyObject {
-
+    
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
 }

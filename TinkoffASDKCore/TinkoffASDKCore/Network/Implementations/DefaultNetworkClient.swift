@@ -26,7 +26,7 @@ final class DefaultNetworkClient: NetworkClient {
     private let requestBuilder: NetworkClientRequestBuilder
     private let responseValidator: HTTPURLResponseValidator
     
-    weak var requestAdapter: NetworkRequestAdapter?
+    var requestAdapter: NetworkRequestAdapter?
     
     // MARK: - Init
     
