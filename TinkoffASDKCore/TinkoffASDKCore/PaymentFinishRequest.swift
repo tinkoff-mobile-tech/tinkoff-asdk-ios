@@ -40,7 +40,7 @@ public enum PaymentSourceData: Codable {
     ///
     /// - Parameters:
     ///   - rebuidId: идентификатор родительского платежа
-    case parentPayment(rebuidId: Int64)
+    case parentPayment(rebuidId: String)
 
     /// при оплате с помощью **ApplePay**
     ///
@@ -318,58 +318,6 @@ public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams
     }
 } // PaymentFinishRequest
 
-public struct Confirmation3DSData: Codable {
-    var acsUrl: String
-    var pareq: String
-    var md: String
-
-    enum CodingKeys: String, CodingKey {
-        case acsUrl = "ACSUrl"
-        case pareq = "PaReq"
-        case md = "MD"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        acsUrl = try container.decode(String.self, forKey: .acsUrl)
-        pareq = try container.decode(String.self, forKey: .pareq)
-        md = try container.decode(String.self, forKey: .md)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(acsUrl, forKey: .acsUrl)
-        try container.encode(pareq, forKey: .pareq)
-        try container.encode(md, forKey: .md)
-    }
-}
-
-public struct Confirmation3DSDataACS: Codable {
-    var acsUrl: String
-    var acsTransId: String
-    var tdsServerTransId: String
-
-    enum CodingKeys: String, CodingKey {
-        case acsUrl = "ACSUrl"
-        case acsTransId = "AcsTransId"
-        case tdsServerTransId = "TdsServerTransId"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        acsUrl = try container.decode(String.self, forKey: .acsUrl)
-        acsTransId = try container.decode(String.self, forKey: .acsTransId)
-        tdsServerTransId = try container.decode(String.self, forKey: .tdsServerTransId)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(acsUrl, forKey: .acsUrl)
-        try container.encode(acsTransId, forKey: .acsTransId)
-        try container.encode(tdsServerTransId, forKey: .tdsServerTransId)
-    }
-}
-
 public struct Confirmation3DS2AppBasedData: Codable {
     public let acsSignedContent: String
     public let acsTransId: String
@@ -383,23 +331,6 @@ public struct Confirmation3DS2AppBasedData: Codable {
         case acsRefNumber = "AcsReferenceNumber"
 
     }
-}
-
-public enum PaymentFinishResponseStatus {
-    /// Требуется подтверждение 3DS v1.0
-    case needConfirmation3DS(Confirmation3DSData)
-
-    /// Требуется подтверждение 3DS v2.0 browser-based
-    case needConfirmation3DSACS(Confirmation3DSDataACS)
-    
-    /// Требуется подтверждение 3DS v2.0 app-based
-    case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
-
-    /// Успешная оплата
-    case done(PaymentStatusResponse)
-
-    /// что-то пошло не так
-    case unknown
 }
 
 public struct PaymentFinishResponse: ResponseOperation {

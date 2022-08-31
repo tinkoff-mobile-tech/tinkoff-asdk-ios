@@ -805,7 +805,7 @@ public class AcquiringUISDK: NSObject {
     }
 
     private func presentSbpActivity(paymentId: Int64, paymentInvoiceSource: PaymentInvoiceSBPSourceType, configuration: AcquiringViewConfiguration) {
-        let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: paymentId, paymentInvoiceType: paymentInvoiceSource)
+        let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: String(paymentId), paymentInvoiceType: paymentInvoiceSource)
         _ = acquiringSdk.paymentInvoiceQRCode(data: paymentInvoice) { [weak self] response in
             switch response {
             case let .success(qrCodeResponse):
@@ -1100,7 +1100,7 @@ public class AcquiringUISDK: NSObject {
 
         let repeatFinish: (Int64) -> Void = { [weak self] paymentId in
             if let cardRequisites = self?.acquiringView?.cardRequisites() {
-                var requestData = PaymentFinishRequestData(paymentId: paymentId, paymentSource: cardRequisites)
+                var requestData = PaymentFinishRequestData(paymentId: String(paymentId), paymentSource: cardRequisites)
                 requestData.setInfoEmail(self?.acquiringView?.infoEmail())
 
                 self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { finishResponse in
@@ -1194,7 +1194,10 @@ public class AcquiringUISDK: NSObject {
             case let .success(successInitResponse):
                 self.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: successInitResponse)
                 DispatchQueue.main.async {
-                    let chargeData = PaymentChargeRequestData(paymentId: successInitResponse.paymentId, parentPaymentId: parentPaymentId)
+                    let chargeData = PaymentChargeRequestData(
+                        paymentId: String(successInitResponse.paymentId),
+                        parentPaymentId: String(parentPaymentId)
+                    )
                     _ = self.acquiringSdk.chargePayment(data: chargeData, completionHandler: { chargeResponse in
                         switch chargeResponse {
                         case let .success(successChargeResponse):
@@ -1283,7 +1286,7 @@ public class AcquiringUISDK: NSObject {
     // MARK: FinishPay & Finish Authorize
 
     private func finishPay(cardRequisites: PaymentSourceData, paymentId: Int64, infoEmail: String?) {
-        var requestData = PaymentFinishRequestData(paymentId: paymentId, paymentSource: cardRequisites)
+        var requestData = PaymentFinishRequestData(paymentId: String(paymentId), paymentSource: cardRequisites)
         requestData.setInfoEmail(infoEmail)
         acquiringView?.changedStatus(.paymentWaiting(status: nil))
 

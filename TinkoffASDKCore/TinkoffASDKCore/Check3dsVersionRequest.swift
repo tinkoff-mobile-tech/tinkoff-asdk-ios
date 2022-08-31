@@ -25,20 +25,6 @@ public final class Check3dsVersionRequest: PaymentFinishRequest {
     }
 }
 
-public struct Checking3DSURLData {
-    public var tdsServerTransID: String
-
-    public var threeDSMethodURL: String
-
-    public var notificationURL: String
-
-    public init(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String) {
-        self.tdsServerTransID = tdsServerTransID
-        self.threeDSMethodURL = threeDSMethodURL
-        self.notificationURL = notificationURL
-    }
-}
-
 /// Проверка версии для прохождения 3DS
 public struct Check3dsVersionResponse: ResponseOperation {
     public var success: Bool
