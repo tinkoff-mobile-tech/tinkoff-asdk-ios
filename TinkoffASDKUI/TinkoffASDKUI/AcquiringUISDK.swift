@@ -172,10 +172,13 @@ public class AcquiringUISDK: NSObject {
     
     private let sbpAssembly: SBPAssembly
     private let tinkoffPayAssembly: TinkoffPayAssembly
+    private let cardListAssembly: ICardListAssembly
     
     // App based threeDS
     private let tdsController: TDSController
-    
+    // ThreeDS feature flag
+    private let shouldUseAppBasedThreeDSFlow = false
+
     private weak var logger: LoggerDelegate?
     
     
@@ -195,22 +198,31 @@ public class AcquiringUISDK: NSObject {
                                            tdsCertsManager: tdsCertsManager,
                                            tdsTimeoutResolver: tdsTimeoutResolver)
         self.logger = configuration.logger
+        self.cardListAssembly = CardListAssembly(primaryButtonStyle: style.bigButtonStyle)
     }
 
-    /// Вызывается кода пользователь привязывается карту.
+    /// Вызывается кода пользователь привязывает карту.
     /// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
     
     public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
+        resolveCardListDataProvider(customerKey: customer, statusListener: statusListener)
+    }
+
+    @discardableResult
+    private func resolveCardListDataProvider(
+        customerKey: String,
+        statusListener: CardListDataSourceStatusListener? = nil
+    ) -> CardListDataProvider {
         let provider: CardListDataProvider
         if let cardListDataProvider = self.cardListDataProvider {
-            provider = cardListDataProvider.customerKey == customer
+            provider = cardListDataProvider.customerKey == customerKey
                 ? cardListDataProvider
-                : CardListDataProvider(sdk: acquiringSdk, customerKey: customer)
+                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
         } else {
-            provider = CardListDataProvider(sdk: acquiringSdk, customerKey: customer)
+            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
         }
-        
+
         self.cardListDataProvider = provider
 
         if statusListener == nil {
@@ -218,6 +230,8 @@ public class AcquiringUISDK: NSObject {
         } else {
             cardListDataProvider?.dataSourceStatusListener = statusListener
         }
+
+        return provider
     }
 
     public func presentAddCardView(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
@@ -261,7 +275,6 @@ public class AcquiringUISDK: NSObject {
     }
 
     @available(*, deprecated, message: "Use presentPaymentView(on presentingViewController: UIViewController, acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration, configuration: AcquiringViewConfiguration,tinkoffPayDelegate: TinkoffPayDelegate? = nil,completionHandler: @escaping PaymentCompletionHandler instead")
-    ///
     /// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
     public func presentPaymentView(on presentingViewController: UIViewController,
                                    paymentData: PaymentInitData,
@@ -285,8 +298,7 @@ public class AcquiringUISDK: NSObject {
                                 tinkoffPayDelegate: tinkoffPayDelegate,
                                 completionHandler: completionHandler)
     }
-    
-    ///
+
     /// С помощью экрана оплаты используя реквизиты карты или ранее сохраненную карту
     public func presentPaymentView(on presentingViewController: UIViewController,
                                    customerKey: String? = nil,
@@ -362,7 +374,6 @@ public class AcquiringUISDK: NSObject {
         }
     }
 
-    ///
     /// Оплатить на основе родительского платежа, регулярный платеж
     public func presentPaymentView(on presentingViewController: UIViewController,
                                    paymentData: PaymentInitData,
@@ -377,8 +388,6 @@ public class AcquiringUISDK: NSObject {
         startChargeWith(paymentData, parentPaymentId: parentPatmentId, presentingViewController: presentingViewController, configuration: configuration)
     }
 
-    ///
-    ///
     public func presentAlertView(on presentingViewController: UIViewController, title: String, icon: AcquiringAlertIconType = .success, autoCloseTime: TimeInterval = 3) {
         let alert = AcquiringAlertViewController.create()
         alert.present(on: presentingViewController, title: title, icon: icon, autoCloseTime: autoCloseTime)
@@ -785,14 +794,15 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: Create and Setup AcquiringViewController
 
-    private func presentAcquiringPaymentView(presentingViewController: UIViewController,
-                                             customerKey: String?,
-                                             configuration: AcquiringViewConfiguration,
-                                             loadCardsOutside: Bool = true,
-                                             acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration? = nil,
-                                             tinkoffPayDelegate: TinkoffPayDelegate? = nil,
-                                             onPresenting: (((AcquiringView) -> Void))? = nil)
-    {
+    private func presentAcquiringPaymentView(
+        presentingViewController: UIViewController,
+        customerKey: String?,
+        configuration: AcquiringViewConfiguration,
+        loadCardsOutside: Bool = true,
+        acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration? = nil,
+        tinkoffPayDelegate: TinkoffPayDelegate? = nil,
+        onPresenting: (((AcquiringView) -> Void))? = nil
+    ) {
         self.presentingViewController = presentingViewController
         AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
@@ -845,6 +855,7 @@ public class AcquiringUISDK: NSObject {
         acquiringView = modalViewController
         
         var injectableCardListProvider: CardListDataProvider?
+
         if let key = customerKey {
             if loadCardsOutside {
                 setupCardListDataProvider(for: key)
@@ -873,28 +884,32 @@ public class AcquiringUISDK: NSObject {
             modalViewController.acquiringPaymentController = acquiringPaymentController
         }
 
-        modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
-            guard let self = self else { return }
+        modalViewController.onTouchButtonShowCardList = { [injectableCardListProvider, weak self, weak modalViewController] in
+            guard let self = self,
+                  let cardListProvider = injectableCardListProvider
+            else { return }
 
-            let viewController = CardsViewController(nibName: "CardsViewController", bundle: .uiResources)
-            viewController.scanerDataSource = modalViewController?.scanerDataSource
-            viewController.alertViewHelper = modalViewController?.alertViewHelper
-            viewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: self.style.bigButtonStyle))
-            self.cardsListView = viewController
+            let (cardsView, module) = self.cardListAssembly.cardSelectionModule(
+                cardListProvider: cardListProvider,
+                configuration: configuration
+            )
 
-            // проверяем, что cardListDataProvider не nil, поэтому мы можем
-            // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-            // будет краш из-за того, что там необходим force unwrap
-            // TODO: Отрефачить эту историю!
-            if self.cardListDataProvider != nil {
-                viewController.cardListDataSourceDelegate = self
+            module.onSelectCard = { [weak cardsView, weak modalViewController] selectedCard in
+                modalViewController?.selectCard(withId: selectedCard.cardId)
+                cardsView?.dismiss(animated: true)
             }
 
-            let cardListNController = UINavigationController(rootViewController: viewController)
-            if self.acquiringView != nil {
-                self.acquiringView?.presentVC(cardListNController, animated: true, completion: nil)
+            module.onAddNewCardTap = { [weak cardsView, weak modalViewController] in
+                modalViewController?.selectRequisitesInput()
+                cardsView?.dismiss(animated: true)
+            }
+
+            let cardsNavigationController = UINavigationController(rootViewController: cardsView)
+
+            if let modalViewController = modalViewController {
+                modalViewController.presentVC(cardsNavigationController, animated: true)
             } else {
-                self.presentingViewController?.present(cardListNController, animated: true, completion: nil)
+                self.presentingViewController?.present(cardsNavigationController, animated: true)
             }
         }
 
@@ -939,7 +954,7 @@ public class AcquiringUISDK: NSObject {
 
     private func initPay(paymentData: PaymentInitData, completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void) {
         acquiringView?.changedStatus(.initWaiting)
-        acquiringView?.setPaymentType(paymentData.savingAsParentPayment == true ? .recurrent : .standart)
+        acquiringView?.setPaymentType(paymentData.savingAsParentPayment == true ? .recurrent : .standard)
         _ = acquiringSdk.paymentInit(data: paymentData) { response in
             completionHandler(response)
         }
@@ -1226,34 +1241,78 @@ public class AcquiringUISDK: NSObject {
         _ = acquiringSdk.check3dsVersion(data: requestData, completionHandler: { checkResponse in
             switch checkResponse {
             case let .success(checkResult):
-                // Прохождение 3DS v2
-                if checkResult.tdsServerTransID != nil {
-                    // собираем информацию о девайсе
+                var finistRequestData = requestData
+                // сбор информации для прохождения 3DS v2
+                if let tdsServerTransID = checkResult.tdsServerTransID, let threeDSMethodURL = checkResult.threeDSMethodURL {
                     
-                    
-                    self.tdsController.enrichRequestDataWithAuthParams(with: checkResult.paymentSystem,
-                                                                       messageVersion: checkResult.version,
-                                                                       finishRequestData: requestData) { result in
-                        do {
-                            self.finishAuthorize(requestData: try result.get(),
-                                                 treeDSmessageVersion: checkResult.version,
-                                                 completionHandler: completionHandler)
-                        } catch {
-                            completionHandler(.failure(error))
-                        }
-                    }
-                } else {
-                    // завершаем оплату
-                    self.finishAuthorize(requestData: requestData, treeDSmessageVersion: checkResult.version) { finishResponse in
-                        completionHandler(finishResponse)
+                    if self.shouldUseAppBasedThreeDSFlow {
+                        self.startAppBasedFlow(checkResult: checkResult,
+                                               finishRequestData: finistRequestData,
+                                               completionHandler: completionHandler)
+                        return
+                    } else {
+                        // вызываем web view для проверки девайса
+                        self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
+                        // собираем информацию о девайсе
+                        let screenSize = UIScreen.main.bounds.size
+                        let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
+                                                          languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
+                                                          screenWidth: Int(screenSize.width),
+                                                          screenHeight: Int(screenSize.height))
+                        finistRequestData.setDeviceInfo(info: deviceInfo)
+                        finistRequestData.setThreeDSVersion(checkResult.version)
+                        finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress())
                     }
                 }
-
+                
+                // завершаем оплату
+                self.finishAuthorize(requestData: finistRequestData, treeDSmessageVersion: checkResult.version) { finishResponse in
+                    completionHandler(finishResponse)
+                }
             case let .failure(error):
                 completionHandler(.failure(error))
             }
         })
     }
+    
+    private func startAppBasedFlow(checkResult: Check3dsVersionResponse,
+                                   finishRequestData: PaymentFinishRequestData,
+                                   completionHandler: @escaping PaymentCompletionHandler) {
+        guard let paymentSystem = checkResult.paymentSystem else {
+            finishAuthorize(requestData: finishRequestData, treeDSmessageVersion: checkResult.version) { finishResponse in
+                completionHandler(finishResponse)
+            }
+            return
+        }
+        
+        tdsController.enrichRequestDataWithAuthParams(with: paymentSystem,
+                                                      messageVersion: checkResult.version,
+                                                      finishRequestData: finishRequestData) { [weak self] result in
+            do {
+                self?.finishAuthorize(requestData: try result.get(),
+                                     treeDSmessageVersion: checkResult.version,
+                                     completionHandler: completionHandler)
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
+            let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
+            guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                if presenter != nil {
+                    presenter?.checkDeviceFor3DSData(with: request)
+                } else {
+                    self.webViewFor3DSChecking = WKWebView()
+                    self.webViewFor3DSChecking?.load(request)
+                }
+            }
+        }
 
     private func cancelPayment() {
         if let paymentInitResponseData = paymentInitResponseData {
@@ -1323,7 +1382,7 @@ public class AcquiringUISDK: NSObject {
         presentWebView(on: presenter, load: request, onCancel: onCancel)
     }
 
-    private func presentRandomAmounChecking(with requestKey: String, presenter _: AcquiringView?, alertViewHelper: AcquiringAlertViewProtocol?, onCancel: @escaping (() -> Void)) {
+    private func presentRandomAmountChecking(with requestKey: String, presenter _: AcquiringView?, alertViewHelper: AcquiringAlertViewProtocol?, onCancel: @escaping (() -> Void)) {
         let viewController = RandomAmounCheckingViewController(nibName: "RandomAmounCheckingViewController", bundle: .uiResources)
 
         viewController.onCancel = {
@@ -1332,7 +1391,7 @@ public class AcquiringUISDK: NSObject {
 
         viewController.completeHandler = { [weak self, weak viewController] value in
             viewController?.viewWaiting.isHidden = false
-            self?.checkStateSubmitRandomAmount(amount: value, requestKey: requestKey) { response in
+            self?.acquiringSdk.checkRandomAmount(value, requestKey: requestKey) { response in
                 DispatchQueue.main.async {
                     viewController?.viewWaiting.isHidden = true
                     switch response {
@@ -1560,7 +1619,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 confirmationComplete(response)
             }
 
-            presentRandomAmounChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
+            presentRandomAmountChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
                 self?.cancelAddCard()
             }
 
@@ -1575,44 +1634,47 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    private func checkStateSubmitRandomAmount(amount: Double, requestKey: String, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
-        _ = acquiringSdk.chechRandomAmount(amount, requestKey: requestKey, responseDelegate: nil) { response in
-            confirmationComplete(response)
-        }
-    }
-
     func cardListAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
         
         do {
             let cardListDataProvider = try getCardListDataProvider()
-            let checkType: String
-            if let value = addCardNeedSetCheckTypeHandler?() {
-                checkType = value.rawValue
-            } else {
-                checkType = PaymentCardCheckType.no.rawValue
-            }
+            let checkType: PaymentCardCheckType = addCardNeedSetCheckTypeHandler?() ?? .no
 
-            cardListDataProvider.addCard(number: number,
-                                         expDate: expDate,
-                                         cvc: cvc,
-                                         checkType: checkType,
-                                         confirmationHandler: { confirmationResponse, confirmationComplete in
-                                             DispatchQueue.main.async { [weak self] in
-                                                 self?.checkConfirmAddCard(confirmationResponse, presenter: addCardViewPresenter, alertViewHelper: alertViewHelper, confirmationComplete)
-                                             }
-                                         },
-                                         completeHandler: { response in
-                                             DispatchQueue.main.async {
-                                                 completeHandler(response)
-                                             }
-                                         })
+            cardListDataProvider.addCard(
+                number: number,
+                expDate: expDate,
+                cvc: cvc,
+                checkType: checkType.rawValue,
+                confirmationHandler: { [weak self] confirmationResponse, confirmationComplete in
+                    DispatchQueue.main.async {
+                        self?.checkConfirmAddCard(
+                           confirmationResponse,
+                           presenter: addCardViewPresenter,
+                           alertViewHelper: alertViewHelper,
+                           confirmationComplete
+                        )
+                    }
+                 },
+                completeHandler: { response in
+                     DispatchQueue.main.async {
+                         completeHandler(response)
+                     }
+                 })
         } catch {
             completeHandler(.failure(error))
         }
     }
 
-    public func presentCardList(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration) {
-        AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
+    public func presentCardList(
+        on presentingViewController: UIViewController,
+        customerKey: String,
+        configuration: AcquiringViewConfiguration
+    ) {
+        AcqLoc.instance.setup(
+            lang: configuration.localizableInfo?.lang,
+            table: configuration.localizableInfo?.table,
+            bundle: configuration.localizableInfo?.bundle
+        )
 
         if acquiringViewConfiguration == nil {
             acquiringViewConfiguration = configuration
@@ -1621,31 +1683,27 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         if self.presentingViewController == nil {
             self.presentingViewController = presentingViewController
         }
-        
-        setupCardListDataProvider(for: customerKey)
 
-        // create
-        let modalViewController = CardsViewController(nibName: "CardsViewController", bundle: .uiResources)
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        // TODO: Отрефачить эту историю!
-        modalViewController.cardListDataSourceDelegate = self
-        modalViewController.title = configuration.viewTitle
-        modalViewController.style = .init(addNewCardStyle: .init(addCardButtonStyle: style.bigButtonStyle))
+        let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
 
-        modalViewController.scanerDataSource = configuration.scaner
-        modalViewController.alertViewHelper = configuration.alertViewHelper
+        let (view, module) = cardListAssembly.cardsPresentingModule(
+            cardListProvider: cardListProvider,
+            configuration: configuration
+        )
 
-        
-        cardsListView = modalViewController
-        // present
-        let presentationController = UINavigationController(rootViewController: modalViewController)
-        presentingViewController.present(presentationController, animated: true) {
-            _ = presentationController
-            // вызов setupCardListDataProvider выше гарантирует, что cardListDataProvider будет не nil
-            self.cardListDataProvider?.update()
+        module.onAddNewCardTap = { [weak view, weak module] in
+            guard let view = view else { return }
+
+            self.presentAddCardView(
+                on: view,
+                customerKey: customerKey,
+                configuration: configuration,
+                completeHandler: { module?.addingNewCard(completedWith: $0) }
+            )
         }
+
+        let navigationController = UINavigationController(rootViewController: view)
+        presentingViewController.present(navigationController, animated: true)
     }
 }
 
