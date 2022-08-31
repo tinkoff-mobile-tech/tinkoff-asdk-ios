@@ -76,7 +76,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// - Parameters:
     ///   - url: путь к серверу **Tinkoff Acquaring API**
     ///   - session: конфигурация URLSession по умолчанию используеться `URLSession.shared`,
-    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo) {
+    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo, logger: LoggerDelegate?) {
         self.urlDomain = urlDomain
         self.session = session
         self.deviceInfo = deviceInfo

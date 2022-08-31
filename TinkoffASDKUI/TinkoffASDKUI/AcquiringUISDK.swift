@@ -173,9 +173,6 @@ public class AcquiringUISDK: NSObject {
     private let tinkoffPayAssembly: TinkoffPayAssembly
     private let cardListAssembly: ICardListAssembly
     
-    // App based threeDS
-    private let tdsController: TDSController
-    
     private weak var logger: LoggerDelegate?
     
     
