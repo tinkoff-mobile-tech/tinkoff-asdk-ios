@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.10.0] - 2022-08-31Z
+
 ### Changed
 
 * [MIC-5966] CardList screen redesign
