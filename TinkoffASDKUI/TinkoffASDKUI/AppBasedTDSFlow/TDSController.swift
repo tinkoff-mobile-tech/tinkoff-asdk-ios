@@ -128,7 +128,7 @@ private extension TDSController {
         var requestData = finishRequestData
         let screenSize = UIScreen.main.bounds.size
 
-        let deviceInfo = DeviceInfoParams(cresCallbackUrl: acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
+        let deviceInfo = DeviceInfoParams(cresCallbackUrl: (try? acquiringSdk.confirmation3DSTerminationV2URL().absoluteString) ?? "",
                                           languageId: acquiringSdk.languageKey?.rawValue ?? "ru",
                                           screenWidth: Int(screenSize.width),
                                           screenHeight: Int(screenSize.height),
