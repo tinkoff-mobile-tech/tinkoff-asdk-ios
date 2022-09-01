@@ -1,8 +1,12 @@
 # Changelog
 ## [Unreleased]
 
-### Added
+### Added 
+
+* [MIC-5741] Integrate 3ds-app-based flow
 * [MIC-6228] Add 3ds-app-based feature flag
+
+## [2.10.0] - 2022-08-31Z
 
 ### Changed
 
@@ -12,7 +16,6 @@
 ### Fixed
 
 * [MIC-5967] Add successURL and failURL parameters to PaymentInitData model
-* [MIC-5741] Integrate 3ds-app-based flow
 * [MIC-6123] Add software_version and device_model parameters to Init request
 
 ### Added
