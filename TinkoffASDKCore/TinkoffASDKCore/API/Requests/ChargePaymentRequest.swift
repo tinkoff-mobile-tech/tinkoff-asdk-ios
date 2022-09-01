@@ -25,7 +25,8 @@ struct ChargePaymentRequest: APIRequest {
     
     var requestPath: [String] { ["Charge"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         return (try? paymentChargeRequestData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
@@ -33,7 +34,8 @@ struct ChargePaymentRequest: APIRequest {
     
     private let paymentChargeRequestData: PaymentChargeRequestData
 
-    init(paymentChargeRequestData: PaymentChargeRequestData) {
+    init(paymentChargeRequestData: PaymentChargeRequestData, baseURL: URL) {
         self.paymentChargeRequestData = paymentChargeRequestData
+        self.baseURL = baseURL
     }
 }

@@ -22,7 +22,6 @@ import Foundation
 
 final class DefaultNetworkClient: NetworkClient {
     private let urlRequestPerfomer: URLRequestPerformer
-    private let hostProvider: HTTPHostProvider
     private let requestBuilder: NetworkClientRequestBuilder
     private let responseValidator: HTTPURLResponseValidator
     
@@ -31,11 +30,9 @@ final class DefaultNetworkClient: NetworkClient {
     // MARK: - Init
     
     init(urlRequestPerfomer: URLRequestPerformer,
-         hostProvider: HTTPHostProvider,
          requestBuilder: NetworkClientRequestBuilder,
          responseValidator: HTTPURLResponseValidator) {
         self.urlRequestPerfomer = urlRequestPerfomer
-        self.hostProvider = hostProvider
         self.requestBuilder = requestBuilder
         self.responseValidator = responseValidator
     }
@@ -45,10 +42,10 @@ final class DefaultNetworkClient: NetworkClient {
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         do {
-            let urlRequest = try requestBuilder.buildURLRequest(baseURL: try hostProvider.host(),
-                                                                request: request,
+            let urlRequest = try requestBuilder.buildURLRequest(request: request,
                                                                 requestAdapter: requestAdapter)
-            
+            print(urlRequest.url?.absoluteString)
+
             let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
                 let result: Result<Data, Error>
                 

@@ -25,14 +25,16 @@ struct AddCardRequest: APIRequest {
     
     var requestPath: [String] { ["AddCard"] }
     var httpMethod: HTTPMethod { .post }
-  
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         return (try? initAddCardData.encode2JSONObject()) ?? [:]
     }
 
     private let initAddCardData: InitAddCardData
 
-    init(initAddCardData: InitAddCardData) {
+    init(initAddCardData: InitAddCardData, baseURL: URL) {
         self.initAddCardData = initAddCardData
+        self.baseURL = baseURL
     }
 }

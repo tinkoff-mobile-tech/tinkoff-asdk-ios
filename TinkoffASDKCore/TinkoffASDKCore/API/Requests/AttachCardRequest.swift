@@ -25,7 +25,8 @@ struct AttachCardRequest: APIRequest {
     
     var requestPath: [String] { ["AttachCard"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     private(set) var parameters: HTTPParameters = [:]
     
     private let finishAddCardData: FinishAddCardData
@@ -36,11 +37,13 @@ struct AttachCardRequest: APIRequest {
     init(finishAddCardData: FinishAddCardData,
          encryptor: RSAEncryptor,
          cardDataFormatter: CardDataFormatter,
-         publicKey: SecKey) {
+         publicKey: SecKey,
+         baseURL: URL) {
         self.finishAddCardData = finishAddCardData
         self.encryptor = encryptor
         self.cardDataFormatter = cardDataFormatter
         self.publicKey = publicKey
+        self.baseURL = baseURL
         self.parameters = createParameters(with: finishAddCardData)
     }
 }

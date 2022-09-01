@@ -25,7 +25,8 @@ struct GetQrRequest: APIRequest {
     
     var requestPath: [String] { ["GetQr"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         return (try? data.encode2JSONObject()) ?? [:]
@@ -33,7 +34,8 @@ struct GetQrRequest: APIRequest {
     
     private let data: PaymentInvoiceQRCodeData
     
-    init(data: PaymentInvoiceQRCodeData) {
+    init(data: PaymentInvoiceQRCodeData, baseURL: URL) {
         self.data = data
+        self.baseURL = baseURL
     }
 }

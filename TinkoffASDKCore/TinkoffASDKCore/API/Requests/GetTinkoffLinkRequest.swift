@@ -12,6 +12,7 @@ struct GetTinkoffLinkRequest: APIRequest {
     
     var requestPath: [String] { [self.createRequestName()] }
     var httpMethod: HTTPMethod { .get }
+    var baseURL: URL
 
     // MARK: - Parameters
     
@@ -21,9 +22,11 @@ struct GetTinkoffLinkRequest: APIRequest {
     // MARK: - Init
     
     public init(paymentId: PaymentId,
-                version: GetTinkoffPayStatusResponse.Status.Version) {
+                version: GetTinkoffPayStatusResponse.Status.Version,
+                baseURL: URL) {
         self.paymentId = paymentId
         self.version = version
+        self.baseURL = baseURL
     }
 }
 

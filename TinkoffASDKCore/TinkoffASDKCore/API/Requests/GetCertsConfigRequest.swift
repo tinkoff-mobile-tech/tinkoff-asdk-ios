@@ -25,6 +25,9 @@ struct GetCertsConfigRequest: APIRequest {
     
     var requestPath: [String] { ["certs-configs/asdk-certs-config.json"] }
     var httpMethod: HTTPMethod { .get }
-    
-    init() { }
+    var baseURL: URL
+
+    init(baseURL: URL) {
+        self.baseURL = baseURL
+    }
 }

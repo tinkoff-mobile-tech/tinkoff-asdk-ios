@@ -29,7 +29,8 @@ public struct ThreeDSV2AuthorizationRequest: APIRequest {
     
     var requestPath: [String] { ["Submit3DSAuthorizationV2"] }
     var httpMethod: HTTPMethod { .post }
-  
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         
@@ -39,7 +40,8 @@ public struct ThreeDSV2AuthorizationRequest: APIRequest {
 
     private let data: CresData
 
-    init(data: CresData) {
+    init(data: CresData, baseURL: URL) {
         self.data = data
+        self.baseURL = baseURL
     }
 }

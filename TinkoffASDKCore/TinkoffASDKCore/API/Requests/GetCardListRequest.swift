@@ -26,7 +26,8 @@ struct GetCardListRequest: APIRequest {
     var requestPath: [String] { ["GetCardList"] }
     var httpMethod: HTTPMethod { .post }
     var decodeStrategy: APIRequestDecodeStrategy { .clipped }
-    
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         return (try? getCardListData.encode2JSONObject()) ?? [:]
@@ -34,7 +35,8 @@ struct GetCardListRequest: APIRequest {
     
     private let getCardListData: GetCardListData
     
-    init(getCardListData: GetCardListData) {
+    init(getCardListData: GetCardListData, baseURL: URL) {
         self.getCardListData = getCardListData
+        self.baseURL = baseURL
     }
 }
