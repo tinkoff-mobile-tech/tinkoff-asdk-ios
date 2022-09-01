@@ -25,7 +25,8 @@ public struct GetPaymentStateRequest: APIRequest {
     
     var requestPath: [String] { ["GetState"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         return (try? paymentInfoData.encode2JSONObject()) ?? [:]
@@ -33,7 +34,8 @@ public struct GetPaymentStateRequest: APIRequest {
     
     private let paymentInfoData: PaymentInfoData
     
-    init(paymentInfoData: PaymentInfoData) {
+    init(paymentInfoData: PaymentInfoData, baseURL: URL) {
         self.paymentInfoData = paymentInfoData
+        self.baseURL = baseURL
     }
 }

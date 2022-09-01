@@ -25,7 +25,8 @@ struct RemoveCardRequest: APIRequest {
     
     var requestPath: [String] { ["RemoveCard"] }
     var httpMethod: HTTPMethod { .post }
-  
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         return (try? deactivateCardData.encode2JSONObject()) ?? [:]
@@ -33,7 +34,8 @@ struct RemoveCardRequest: APIRequest {
     
     private let deactivateCardData: InitDeactivateCardData
     
-    public init(deactivateCardData: InitDeactivateCardData) {
+    public init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
         self.deactivateCardData = deactivateCardData
+        self.baseURL = baseURL
     }
 }

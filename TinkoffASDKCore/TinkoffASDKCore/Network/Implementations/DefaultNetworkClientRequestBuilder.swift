@@ -28,9 +28,9 @@ final class DefaultNetworkClientRequestBuilder: NetworkClientRequestBuilder {
     
     // MARK: - NetworkClientRequestBuilder
     
-    func buildURLRequest(baseURL: URL, request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
+    func buildURLRequest(request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
         let endpoint = request.path.joined(separator: "/")
-        guard let url = URL(string: endpoint, relativeTo: baseURL) else {
+        guard let url = URL(string: endpoint, relativeTo: request.baseURL) else {
             throw Error.failedToBuildPath
         }
         

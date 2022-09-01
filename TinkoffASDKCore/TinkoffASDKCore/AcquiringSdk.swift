@@ -39,6 +39,7 @@ public final class AcquiringSdk: NSObject {
     private let networkTransport: NetworkTransport
     private let terminalKey: String
     private let publicKey: SecKey
+    private let baseURL: URL
 
     private let coreAssembly: CoreAssembly
     private let api: API
@@ -77,6 +78,7 @@ public final class AcquiringSdk: NSObject {
                 deviceInfo: deviceInfo,
                 logger: configuration.logger
             )
+            self.baseURL = url
         } else {
             throw AcquiringSdkError.url
         }
@@ -118,12 +120,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
         let enrichedData = paramsEnricher.enrich(data)
-        
-//        let request = PaymentInitRequest(data: enrichedData)
-//        let commonParameters: JSONObject = createCommonParameters()
-//        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        let request = InitRequest(paymentInitData: enrichedData)
+        let request = InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
@@ -201,7 +198,8 @@ public final class AcquiringSdk: NSObject {
         let request = Check3DSVersionRequest(check3DSRequestData: data,
                                              encryptor: RSAEncryptor(),
                                              cardDataFormatter: coreAssembly.cardDataFormatter(),
-                                             publicKey: publicKey)
+                                             publicKey: publicKey,
+                                             baseURL: baseURL)
         
         return api.performRequest(request, completion: completion)
     }
@@ -232,7 +230,8 @@ public final class AcquiringSdk: NSObject {
         let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
                                              encryptor: RSAEncryptor(),
                                              cardDataFormatter: coreAssembly.cardDataFormatter(),
-                                             publicKey: publicKey)
+                                             publicKey: publicKey,
+                                             baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
@@ -242,7 +241,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentChargeRequestData,
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = ChargePaymentRequest(paymentChargeRequestData: data)
+        let request = ChargePaymentRequest(paymentChargeRequestData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
@@ -254,7 +253,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentInfoData,
         completionHandler: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = GetPaymentStateRequest(paymentInfoData: data)
+        let request = GetPaymentStateRequest(paymentInfoData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
@@ -269,7 +268,7 @@ public final class AcquiringSdk: NSObject {
     @discardableResult
     public func сardList(data: GetCardListData,
                           completionHandler: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
-        let request = GetCardListRequest(getCardListData: data)
+        let request = GetCardListRequest(getCardListData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
@@ -307,7 +306,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     public func addCardInit(data: InitAddCardData,
                             completionHandler: @escaping (_ result: Result<AddCardPayload, Error>) -> Void) -> Cancellable {
-        let request = AddCardRequest(initAddCardData: data)
+        let request = AddCardRequest(initAddCardData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
@@ -486,7 +485,7 @@ public final class AcquiringSdk: NSObject {
     public func getTinkoffPayStatus(
         completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey)
+        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
         return api.performRequest(request, completion: completion)
     }
 
@@ -496,13 +495,13 @@ public final class AcquiringSdk: NSObject {
         version: GetTinkoffPayStatusResponse.Status.Version,
         completion: @escaping (Result<GetTinkoffLinkResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version)
+        let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
         return api.performRequest(request, completion: completion)
     }
     
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
-        let request = GetCertsConfigRequest()
+        let request = GetCertsConfigRequest(baseURL: baseURL)
         return api.performRequest(request, completion: completion)
     }
     
@@ -510,7 +509,7 @@ public final class AcquiringSdk: NSObject {
     public func submit3DSAuthorizationV2(cres: String,
                                          completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let cresData = CresData(cres: cres)
-        let request = ThreeDSV2AuthorizationRequest(data: cresData)
+        let request = ThreeDSV2AuthorizationRequest(data: cresData, baseURL: baseURL)
         return api.performRequest(request, completion: completion)
     }
 } // AcquiringSdk

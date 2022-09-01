@@ -25,6 +25,7 @@ public struct GetTinkoffPayStatusRequest: APIRequest {
     
     var requestPath: [String] { [self.createRequestName()] }
     var httpMethod: HTTPMethod { .get }
+    var baseURL: URL
 
     // MARK: - Parameters
     
@@ -32,8 +33,9 @@ public struct GetTinkoffPayStatusRequest: APIRequest {
     
     // MARK: - Init
     
-    init(terminalKey: String) {
+    init(terminalKey: String, baseURL: URL) {
         self.terminalKey = terminalKey
+        self.baseURL = baseURL
     }
 }
 

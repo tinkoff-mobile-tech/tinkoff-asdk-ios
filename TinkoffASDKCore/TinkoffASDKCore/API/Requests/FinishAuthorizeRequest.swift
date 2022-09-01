@@ -25,7 +25,8 @@ struct FinishAuthorizeRequest: APIRequest {
     
     var requestPath: [String] { ["FinishAuthorize"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     private(set) var parameters: HTTPParameters = [:]
     
     private let paymentFinishRequestData: PaymentFinishRequestData
@@ -36,11 +37,13 @@ struct FinishAuthorizeRequest: APIRequest {
     init(paymentFinishRequestData: PaymentFinishRequestData,
          encryptor: RSAEncryptor,
          cardDataFormatter: CardDataFormatter,
-         publicKey: SecKey) {
+         publicKey: SecKey,
+         baseURL: URL) {
         self.paymentFinishRequestData = paymentFinishRequestData
         self.encryptor = encryptor
         self.cardDataFormatter = cardDataFormatter
         self.publicKey = publicKey
+        self.baseURL = baseURL
         self.parameters = createParameters(with: paymentFinishRequestData)
     }
 }

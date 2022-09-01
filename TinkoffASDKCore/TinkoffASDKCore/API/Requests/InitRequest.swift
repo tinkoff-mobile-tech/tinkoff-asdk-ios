@@ -25,7 +25,8 @@ struct InitRequest: APIRequest {
     
     var requestPath: [String] { ["Init"] }
     var httpMethod: HTTPMethod { .post }
-  
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         
@@ -35,7 +36,8 @@ struct InitRequest: APIRequest {
 
     private let paymentInitData: PaymentInitData
 
-    init(paymentInitData: PaymentInitData) {
+    init(paymentInitData: PaymentInitData, baseURL: URL) {
         self.paymentInitData = paymentInitData
+        self.baseURL = baseURL
     }
 }

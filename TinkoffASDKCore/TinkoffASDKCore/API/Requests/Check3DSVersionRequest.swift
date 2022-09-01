@@ -25,7 +25,8 @@ struct Check3DSVersionRequest: APIRequest {
     
     var requestPath: [String] { ["Check3dsVersion"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     private(set) var parameters: HTTPParameters = [:]
     
     private let check3DSRequestData: Check3DSRequestData
@@ -36,11 +37,13 @@ struct Check3DSVersionRequest: APIRequest {
     init(check3DSRequestData: Check3DSRequestData,
          encryptor: RSAEncryptor,
          cardDataFormatter: CardDataFormatter,
-         publicKey: SecKey) {
+         publicKey: SecKey,
+         baseURL: URL) {
         self.check3DSRequestData = check3DSRequestData
         self.encryptor = encryptor
         self.cardDataFormatter = cardDataFormatter
         self.publicKey = publicKey
+        self.baseURL = baseURL
         self.parameters = createParameters(with: check3DSRequestData)
     }
 }

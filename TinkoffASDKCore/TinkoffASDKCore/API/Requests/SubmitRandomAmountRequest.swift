@@ -25,7 +25,8 @@ struct SubmitRandomAmountRequest: APIRequest {
     
     var requestPath: [String] { ["SubmitRandomAmount"] }
     var httpMethod: HTTPMethod { .post }
-    
+    var baseURL: URL
+
     var parameters: HTTPParameters {
         // TODO: Log error
         return (try? submitRandomAmountData.encode2JSONObject()) ?? [:]
@@ -33,7 +34,8 @@ struct SubmitRandomAmountRequest: APIRequest {
     
     private let submitRandomAmountData: SubmitRandomAmountData
     
-    init(submitRandomAmountData: SubmitRandomAmountData) {
+    init(submitRandomAmountData: SubmitRandomAmountData, baseURL: URL) {
         self.submitRandomAmountData = submitRandomAmountData
+        self.baseURL = baseURL
     }
 }

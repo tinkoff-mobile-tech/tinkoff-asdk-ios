@@ -72,7 +72,6 @@ struct CoreAssembly {
 private extension CoreAssembly {
     func buildNetworkClient(requestAdapter: NetworkRequestAdapter) -> NetworkClient {
         let networkClient = DefaultNetworkClient(urlRequestPerfomer: buildURLSession(),
-                                                 hostProvider: buildAPIHostProvider(),
                                                  requestBuilder: buildRequestBuilder(),
                                                  responseValidator: buildResponseValidator())
         networkClient.requestAdapter = requestAdapter
