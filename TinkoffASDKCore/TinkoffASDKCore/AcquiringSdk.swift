@@ -33,6 +33,9 @@ public final class AcquiringSdk: NSObject {
     private let terminalKey: String
     private let publicKey: SecKey
 
+    private let coreAssembly: CoreAssembly
+    private let api: API
+
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
         self.fpsEnabled = configuration.fpsEnabled
@@ -44,6 +47,9 @@ public final class AcquiringSdk: NSObject {
         } else {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
         }
+
+        coreAssembly = CoreAssembly(configuration: configuration)
+        api = coreAssembly.buildAPI()
 
         if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
            let certsConfigUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
@@ -87,8 +93,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// Получить IP адрес
-    public func networkIpAddress() -> String? {
-        return networkTransport.myIpAddress()
+    public func networkIpAddress() -> IPAddress? {
+        return coreAssembly.ipAddressProvider().ipAddress
     }
 
     // MARK: - начало платежа

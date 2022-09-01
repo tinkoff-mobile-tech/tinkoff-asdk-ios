@@ -1429,7 +1429,7 @@ public class AcquiringUISDK: NSObject {
                         )
                         finistRequestData.setDeviceInfo(info: deviceInfo)
                         finistRequestData.setThreeDSVersion(checkResult.version)
-                        finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress())
+                        finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress()?.fullStringValue)
                     }
                 }
 
