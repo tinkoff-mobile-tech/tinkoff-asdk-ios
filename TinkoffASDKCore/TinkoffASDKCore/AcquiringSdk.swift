@@ -133,7 +133,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        try networkTransport.createConfirmation3DSRequest(requestData: data)
+        try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтверждения платежа 3DS формы
@@ -146,7 +146,7 @@ public final class AcquiringSdk: NSObject {
         data: Confirmation3DSDataACS,
         messageVersion: String
     ) throws -> URLRequest {
-        try networkTransport.createConfirmation3DSRequestACS(requestData: data, messageVersion: messageVersion)
+        try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
     }
 
     /// Проверяет параметры для 3DS формы
@@ -156,23 +156,35 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        return try networkTransport.createChecking3DSURL(requestData: data)
+        try coreAssembly.threeDSURLRequestBuilder().build3DSCheckURLRequest(requestData: data)
     }
 
     /// callback URL для завершения 3DS подтверждения
     ///
     /// - Returns:
     ///   - URL
-    public func confirmation3DSTerminationURL() -> URL {
-        networkTransport.confirmation3DSTerminationURL
+    public func confirmation3DSTerminationURL() throws -> URL {
+        try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationURL)
     }
 
-    public func confirmation3DSTerminationV2URL() -> URL {
-        networkTransport.confirmation3DSTerminationV2URL
+    public func confirmation3DSTerminationV2URL() throws -> URL {
+        try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
     }
 
-    public func confirmation3DSCompleteV2URL() -> URL {
-        networkTransport.complete3DSMethodV2URL
+    public func confirmation3DSCompleteV2URL() throws -> URL {
+        try coreAssembly.threeDSURLBuilder().buildURL(type: .threeDSCheckNotificationURL)
+    }
+
+    public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
+        return coreAssembly.threeDSWebViewHandler()
+    }
+    
+    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
+        return coreAssembly.threeDSWebViewHandler()
+    }
+    
+    public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
+        return coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize, language: languageKey ?? .ru)
     }
 
     /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
@@ -245,11 +257,20 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: - Card List
 
+    /// Получение всех сохраненных карт клиента
+    ///
     /// - Parameters:
-    ///   - data: `InitGetCardListData` информация о клиенте для получения списка сохраненных карт
-    ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
+    ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
+    public func сardList(data: GetCardListData,
+                          completionHandler: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
+        let request = GetCardListRequest(getCardListData: data)
+        return api.performRequest(request, completion: completionHandler)
+    }
+
+    @available(*, deprecated, renamed: "cardList(data:responseDelegate:completion:)")
     public func cardList(
         data: InitGetCardListData,
         responseDelegate: NetworkTransportResponseDelegate? = nil,
@@ -273,6 +294,18 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void
     ) -> Cancellable {
         cardList(data: data, responseDelegate: responseDelegate, completion: completionHandler)
+    }
+
+    /// Инициирует привязку карты к клиенту
+    ///
+    /// - Parameters:
+    ///   - data: `InitAddCardData` информация о клиенте и типе привязки карты
+    ///   - completionHandler: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func addCardInit(data: InitAddCardData,
+                            completionHandler: @escaping (_ result: Result<AddCardPayload, Error>) -> Void) -> Cancellable {
+        let request = AddCardRequest(initAddCardData: data)
+        return api.performRequest(request, completion: completionHandler)
     }
 
     /// - Parameters:
