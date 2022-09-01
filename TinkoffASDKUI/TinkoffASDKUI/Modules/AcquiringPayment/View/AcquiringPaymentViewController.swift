@@ -102,7 +102,7 @@ protocol AcquiringView: AnyObject {
     var onTouchButtonSBP: ((UIViewController) -> Void)? { get set }
     var onTinkoffPayButton: ((GetTinkoffPayStatusResponse.Status.Version, UIViewController) -> Void)? { get set }
     var onCancelPayment: (() -> Void)? { get set }
-    var onInitFinished: ((Result<Int64, Error>) -> Void)? { get set }
+    var onInitFinished: ((Result<PaymentId, Error>) -> Void)? { get set }
     ///
     func cardRequisites() -> PaymentSourceData?
     func infoEmail() -> String?
@@ -112,7 +112,7 @@ protocol AcquiringView: AnyObject {
 
 extension AcquiringView {
     func setPaymentType(_ paymentType: PaymentType) {}
-    var onInitFinished: ((Result<Int64, Error>) -> Void)? {
+    var onInitFinished: ((Result<PaymentId, Error>) -> Void)? {
         get { nil }
         set {}
     }
@@ -695,7 +695,7 @@ extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
     }
     
     func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didPaymentInitWith result: Result<Int64, Error>) {
+                                    didPaymentInitWith result: Result<PaymentId, Error>) {
         onInitFinished?(result)
     }
 }

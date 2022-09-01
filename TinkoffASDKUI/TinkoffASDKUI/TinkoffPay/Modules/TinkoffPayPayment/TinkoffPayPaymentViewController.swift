@@ -66,7 +66,13 @@ private extension TinkoffPayPaymentViewController {
                 case let .failure(error):
                     self.handleError(error)
                 case let .success(response):
-                    self.didUpdatePaymentStatusResponse?(response)
+                    self.didUpdatePaymentStatusResponse?(PaymentStatusResponse(
+                        status: response.status,
+                        paymentState: .init(paymentId: response.paymentId,
+                                            amount: response.amount,
+                                            orderId: response.orderId,
+                                            status: response.status))
+                    )
                     self.performTinkoffPayWith(paymentId: response.paymentId,
                                                version: self.tinkoffPayVersion)
                 }
@@ -80,13 +86,11 @@ private extension TinkoffPayPaymentViewController {
                 case let .failure(error):
                     self.handleError(error)
                 case let .success(response):
-                    let statusResponse: PaymentStatusResponse = .init(success: true,
-                                                                      errorCode: 0,
-                                                                      errorMessage: nil,
-                                                                      orderId: response.orderId,
-                                                                      paymentId: response.paymentId,
-                                                                      amount: response.amount,
-                                                                      status: .new)
+                    let statusResponse = PaymentStatusResponse(status: .new,
+                                                               paymentState: .init(paymentId: response.paymentId,
+                                                                                   amount: response.amount,
+                                                                                   orderId: response.orderId,
+                                                                                   status: .new))
                     self.didUpdatePaymentStatusResponse?(statusResponse)
                     self.performTinkoffPayWith(paymentId: response.paymentId,
                                                version: self.tinkoffPayVersion)

@@ -25,19 +25,27 @@ public struct FinishAuthorizePayload: Decodable {
     public let paymentState: GetPaymentStatePayload
     public var responseStatus: PaymentFinishResponseStatus
     public let rebillId: PaymentId?
-    
+    public let errorCode: Int
+    public let errorMessage: String?
+
     enum CodingKeys: String, CodingKey {
         case rebillId = "RebillId"
+        case errorCode = "ErrorCode"
+        case errorMessage = "Message"
     }
     
     public init(status: PaymentStatus,
                 paymentState: GetPaymentStatePayload,
                 responseStatus: PaymentFinishResponseStatus,
-                rebillId: PaymentId? = nil) {
+                rebillId: PaymentId? = nil,
+                errorMessage: String? = nil,
+                errorCode: Int = 0) {
         self.status = status
         self.paymentState = paymentState
         self.responseStatus = responseStatus
         self.rebillId = rebillId
+        self.errorMessage = errorMessage
+        self.errorCode = errorCode
     }
     
     public init(from decoder: Decoder) throws {
@@ -70,5 +78,7 @@ public struct FinishAuthorizePayload: Decodable {
         
         let container = try decoder.container(keyedBy: CodingKeys.self)
         rebillId = try container.decodeIfPresent(String.self, forKey: .rebillId)
+        errorCode = try container.decode(Int.self, forKey: .errorCode)
+        errorMessage = try container.decodeIfPresent(String.self, forKey: .errorMessage)
     }
 }

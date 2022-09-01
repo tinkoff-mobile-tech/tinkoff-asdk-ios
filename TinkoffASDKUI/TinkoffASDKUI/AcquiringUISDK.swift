@@ -774,7 +774,8 @@ public class AcquiringUISDK: NSObject {
             case let .object(response):
                 if completionStatus.contains(response.status) {
                     self?.acquiringView?.closeVC(animated: true, completion: {
-                        completionHandler?(.success(response))
+                        let data = PaymentStatusResponse(status: response.status, paymentState: response)
+                        completionHandler?(.success(data))
                     })
                 }
 
@@ -1316,22 +1317,18 @@ public class AcquiringUISDK: NSObject {
 
     private func cancelPayment() {
         if let paymentInitResponseData = paymentInitResponseData {
-            let paymentResponse = PaymentStatusResponse(success: false,
-                                                        errorCode: 0,
-                                                        errorMessage: nil,
-                                                        orderId: paymentInitResponseData.orderId,
-                                                        paymentId: paymentInitResponseData.paymentId,
-                                                        amount: paymentInitResponseData.amount,
-                                                        status: .cancelled)
+            let paymentResponse = PaymentStatusResponse(status: .cancelled,
+                                                        paymentState: .init(paymentId: paymentInitResponseData.paymentId,
+                                                                            amount: paymentInitResponseData.amount,
+                                                                            orderId: paymentInitResponseData.orderId,
+                                                                            status: .cancelled))
             onPaymentCompletionHandler?(.success(paymentResponse))
         } else {
-            let paymentCanceledResponse = PaymentStatusResponse(success: false,
-                                                                errorCode: 0,
-                                                                errorMessage: AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel"),
-                                                                orderId: "",
-                                                                paymentId: 0,
-                                                                amount: 0,
-                                                                status: .cancelled)
+            let paymentCanceledResponse = PaymentStatusResponse(status: .cancelled,
+                                                                paymentState: .init(paymentId: "0",
+                                                                                    amount: 0,
+                                                                                    orderId: "0",
+                                                                                    status: .cancelled))
             onPaymentCompletionHandler?(.success(paymentCanceledResponse))
         }
     }
