@@ -24,27 +24,32 @@ public struct Check3DSVersionPayload: Decodable, Equatable {
     public let version: String
     public let tdsServerTransID: String?
     public let threeDSMethodURL: String?
-    
+    public let paymentSystem: String?
+
     private enum CodingKeys: CodingKey {
         case version
         case tdsServerTransID
         case threeDSMethodURL
-        
+        case paymentSystem
+
         var stringValue: String {
             switch self {
             case .version: return APIConstants.Keys.version
             case .tdsServerTransID: return APIConstants.Keys.tdsServerTransID
             case .threeDSMethodURL: return APIConstants.Keys.threeDSMethodURL
+            case .paymentSystem: return APIConstants.Keys.paymentSystem
             }
         }
     }
     
     public init(version: String,
                 tdsServerTransID: String?,
-                threeDSMethodURL: String?) {
+                threeDSMethodURL: String?,
+                paymentSystem: String?) {
         self.version = version
         self.tdsServerTransID = tdsServerTransID
         self.threeDSMethodURL = threeDSMethodURL
+        self.paymentSystem = paymentSystem
     }
     
     public init(from decoder: Decoder) throws {
@@ -52,5 +57,6 @@ public struct Check3DSVersionPayload: Decodable, Equatable {
         version = try container.decode(String.self, forKey: .version)
         tdsServerTransID = try container.decodeIfPresent(String.self, forKey: .tdsServerTransID)
         threeDSMethodURL = try container.decodeIfPresent(String.self, forKey: .threeDSMethodURL)
+        paymentSystem = try container.decodeIfPresent(String.self, forKey: .paymentSystem)
     }
 }

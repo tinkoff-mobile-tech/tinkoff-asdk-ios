@@ -22,6 +22,7 @@ import UIKit
 
 public typealias PaymentInitResponse = InitPayload
 public typealias PaymentStatusResponse = ChargePaymentPayload
+public typealias Check3dsVersionResponse = Check3DSVersionPayload
 
 public enum AcquiringSdkError: Error {
     case publicKey(String)
@@ -177,21 +178,30 @@ public final class AcquiringSdk: NSObject {
     /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
     ///
     /// - Parameters:
+    ///   - data: `Check3DSRequestData`
+    ///   - completionHandler: результат операции `Check3DSVersionPayload` в случае удачного ответа и `Error` - в случе ошибки.
+    @discardableResult
+    public func check3dsVersion(data: Check3DSRequestData,
+                                completion: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
+        let request = Check3DSVersionRequest(check3DSRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                             publicKey: publicKey)
+        
+        return api.performRequest(request, completion: completion)
+    }
+
+    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
+    ///
+    /// - Parameters:
     ///   - data: `PaymentFinishRequestData`
     ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
-    @discardableResult
+    @available(*, deprecated, renamed: "check3dsVersion(data:completion:)")
     public func check3dsVersion(
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
     ) -> Cancellable {
-        let requestData = PaymentFinishRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
-        let request = Check3dsVersionRequest(data: requestData)
-        updateCardDataRequestParams(&request.parameters)
-
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        return check3dsVersion(data: .init(paymentId: data.paymentId, paymentSource: data.paymentSource), completion: completionHandler)
     }
 
     /// Подтверждает инициированный платеж передачей карточных данных
