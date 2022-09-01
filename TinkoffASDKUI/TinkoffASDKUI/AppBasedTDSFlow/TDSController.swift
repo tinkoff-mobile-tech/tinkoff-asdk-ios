@@ -141,7 +141,7 @@ private extension TDSController {
         
         requestData.setDeviceInfo(info: deviceInfo)
         requestData.setThreeDSVersion(messageVersion)
-        requestData.setIpAddress(acquiringSdk.networkIpAddress())
+        requestData.setIpAddress(acquiringSdk.networkIpAddress()?.fullStringValue)
         
         return requestData
     }

@@ -29,7 +29,6 @@ protocol NetworkTransport: AnyObject {
     func createConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest
     func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest
     func createChecking3DSURL(requestData: Checking3DSURLData) throws -> URLRequest
-    func myIpAddress() -> String?
     func send<Operation: RequestOperation, Response: ResponseOperation>(
         operation: Operation,
         responseDelegate: NetworkTransportResponseDelegate?,
@@ -230,10 +229,6 @@ final class AcquaringNetworkTransport: NetworkTransport {
         request.httpBody = try JSONSerialization.data(withJSONObject: ["threeDSMethodData": Data(base64Encoded: noPaddingEncodedString)], options: [.sortedKeys])
 
         return request
-    }
-
-    func myIpAddress() -> String? {
-        return IPAddressProvider.my()
     }
 
     func send<Operation: RequestOperation, Response: ResponseOperation>(operation: Operation, responseDelegate: NetworkTransportResponseDelegate? = nil, completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable {
