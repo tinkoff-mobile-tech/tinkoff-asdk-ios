@@ -95,7 +95,7 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
     }
 
     @objc private func handleActiveState() {
-        if !isPollingPaymentStatus, didStartPayment, let paymentId = paymentStatusResponse?.paymentId {
+        if !isPollingPaymentStatus, didStartPayment, let paymentId = paymentStatusResponse?.paymentState.paymentId {
             startPaymentStatusPolling(paymentId: paymentId)
         }
     }
@@ -207,7 +207,14 @@ private extension PaymentPollingViewController {
                         }
                     default:
                         self.isPollingPaymentStatus = false
-                        self.completion?(.success(response))
+                        self.completion?(.success(
+                            PaymentStatusResponse(
+                                status: response.status,
+                                paymentState: .init(paymentId: response.paymentId,
+                                                    amount: response.amount,
+                                                    orderId: response.orderId,
+                                                    status: response.status)))
+                        )
                     }
                 }
             }

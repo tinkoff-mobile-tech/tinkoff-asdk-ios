@@ -155,7 +155,12 @@ private extension SBPBankListViewController {
                 case let .failure(error):
                     self?.handleError(error)
                 case let .success(response):
-                    self?.didUpdatePaymentStatusResponse?(response)
+                    let statusResponse: PaymentStatusResponse = .init(status: .new,
+                                                                      paymentState: .init(paymentId: response.paymentId,
+                                                                                          amount: response.amount,
+                                                                                          orderId: response.orderId,
+                                                                                          status: .new))
+                    self?.didUpdatePaymentStatusResponse?(statusResponse)
                     self?.createSPBUrl(paymentId: paymentId)
                 }
             }

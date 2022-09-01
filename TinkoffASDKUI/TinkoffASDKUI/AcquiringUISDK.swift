@@ -901,7 +901,8 @@ public class AcquiringUISDK: NSObject {
             case let .object(response):
                 if completionStatus.contains(response.status) {
                     self?.acquiringView?.closeVC(animated: true, completion: {
-                        completionHandler?(.success(response))
+                        let data = PaymentStatusResponse(status: response.status, paymentState: response)
+                        completionHandler?(.success(data))
                     })
                 }
 
