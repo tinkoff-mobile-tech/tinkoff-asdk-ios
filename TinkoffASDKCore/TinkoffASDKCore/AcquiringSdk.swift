@@ -23,6 +23,9 @@ import UIKit
 public typealias PaymentInitResponse = InitPayload
 public typealias PaymentStatusResponse = ChargePaymentPayload
 public typealias Check3dsVersionResponse = Check3DSVersionPayload
+public typealias GetCertsConfigResponse = GetCertsConfigPayload
+public typealias GetTinkoffLinkResponse = GetTinkoffLinkPayload
+public typealias GetTinkoffPayStatusResponse = GetTinkoffPayStatusPayload
 
 public enum AcquiringSdkError: Error {
     case publicKey(String)
@@ -483,10 +486,8 @@ public final class AcquiringSdk: NSObject {
     public func getTinkoffPayStatus(
         completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        networkTransport.send(
-            operation: GetTinkoffPayStatusRequest(terminalKey: terminalKey),
-            completionHandler: completion
-        )
+        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey)
+        return api.performRequest(request, completion: completion)
     }
 
     @discardableResult
@@ -495,16 +496,14 @@ public final class AcquiringSdk: NSObject {
         version: GetTinkoffPayStatusResponse.Status.Version,
         completion: @escaping (Result<GetTinkoffLinkResponse, Error>) -> Void
     ) -> Cancellable {
-        networkTransport.send(
-            operation: GetTinkoffLinkRequest(paymentId: paymentId, version: version),
-            completionHandler: completion
-        )
+        let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version)
+        return api.performRequest(request, completion: completion)
     }
     
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
         let request = GetCertsConfigRequest()
-        return networkTransport.sendCertsConfigRequest(operation: request, completionHandler: completion)
+        return api.performRequest(request, completion: completion)
     }
     
     @discardableResult
