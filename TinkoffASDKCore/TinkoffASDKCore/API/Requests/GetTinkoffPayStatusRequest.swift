@@ -20,18 +20,12 @@
 
 import Foundation
 
-public struct GetTinkoffPayStatusRequest: RequestOperation {
+public struct GetTinkoffPayStatusRequest: APIRequest {
+    typealias Payload = GetTinkoffPayStatusPayload
     
-    // MARK: - RequestOperation
-    
-    public var name: String {
-        createRequestName()
-    }
-    
-    public var requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
-    
+    var requestPath: [String] { [self.createRequestName()] }
+    var httpMethod: HTTPMethod { .get }
+
     // MARK: - Parameters
     
     private let terminalKey: String

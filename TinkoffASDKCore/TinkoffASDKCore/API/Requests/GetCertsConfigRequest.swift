@@ -20,12 +20,11 @@
 
 import Foundation
 
-public struct GetCertsConfigRequest: RequestOperation {
-        
-    public let name: String = "certs-configs/asdk-certs-config.json"
+struct GetCertsConfigRequest: APIRequest {
+    typealias Payload = GetCertsConfigPayload
     
-    public let requestMethod: RequestMethod = .get
+    var requestPath: [String] { ["certs-configs/asdk-certs-config.json"] }
+    var httpMethod: HTTPMethod { .get }
     
-    public var parameters: JSONObject? = nil
+    init() { }
 }
-
