@@ -20,15 +20,15 @@
 import Foundation
 
 public final class PaymentStatusServiceProvider: FetchServiceProtocol {
-    public typealias ObjectType = PaymentStatusResponse
+    public typealias ObjectType = GetPaymentStatePayload
 
     /// Текущее состояние сервиса проверки
-    public var fetchStatus: FetchStatus<PaymentStatusResponse> = .unknown
+    public var fetchStatus: FetchStatus<GetPaymentStatePayload> = .unknown
     var queryStatus: Cancellable?
     /// Слушатель состояния сервиса проверки
-    public var onStatusUpdated: ((FetchStatus<PaymentStatusResponse>) -> Void)?
+    public var onStatusUpdated: ((FetchStatus<GetPaymentStatePayload>) -> Void)?
     /// Платеж состояние которого проверяем
-    private(set) var paymentId: Int64 = 0
+    private(set) var paymentId: PaymentId = ""
     /// Частота обновления, не менее 10 сек
     public var updateTimeInterval: TimeInterval = 5 {
         didSet {
@@ -40,7 +40,7 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 
     private weak var sdk: AcquiringSdk?
 
-    public init(sdk: AcquiringSdk?, paymentId: Int64, updateTimeInterval: TimeInterval = 5) {
+    public init(sdk: AcquiringSdk?, paymentId: PaymentId, updateTimeInterval: TimeInterval = 5) {
         self.sdk = sdk
         self.paymentId = paymentId
         self.updateTimeInterval = updateTimeInterval
@@ -65,12 +65,12 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
 
     // MARK: FetchDataSourceProtocol
 
-    public func fetch(startHandler: (() -> Void)?, completeHandler: @escaping (PaymentStatusResponse?, Error?) -> Void) {
+    public func fetch(startHandler: (() -> Void)?, completeHandler: @escaping (GetPaymentStatePayload?, Error?) -> Void) {
         fetchStatus = .loading
         startHandler?()
 
-        queryStatus = sdk?.paymentOperationStatus(data: PaymentInfoData(paymentId: String(paymentId)), completionHandler: { [weak self] response in
-            var status: FetchStatus<PaymentStatusResponse> = .loading
+        queryStatus = sdk?.paymentOperationStatus(data: PaymentInfoData(paymentId: paymentId), completionHandler: { [weak self] response in
+            var status: FetchStatus<GetPaymentStatePayload> = .loading
             switch response {
             case let .failure(error):
                 status = FetchStatus.error(error)

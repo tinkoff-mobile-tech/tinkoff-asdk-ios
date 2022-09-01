@@ -95,7 +95,7 @@ private extension TinkoffPayPaymentViewController {
         }
     }
     
-    func performTinkoffPayWith(paymentId: Int64,
+    func performTinkoffPayWith(paymentId: PaymentId,
                                version: GetTinkoffPayStatusResponse.Status.Version) {
         _ = tinkoffPayController.getTinkoffPayLink(paymentId: paymentId,
                                                    version: version,

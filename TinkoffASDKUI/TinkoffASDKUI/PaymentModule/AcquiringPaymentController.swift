@@ -14,7 +14,7 @@ protocol AcquiringPaymentControllerDelegate: AnyObject {
                                     didUpdateTinkoffPayAvailability status: GetTinkoffPayStatusResponse.Status)
     func acquiringPaymentControllerDidFinishPreparation(_ acquiringPaymentController: AcquiringPaymentController)
     func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didPaymentInitWith result: Result<Int64, Error>)
+                                    didPaymentInitWith result: Result<PaymentId, Error>)
 }
 
 final class AcquiringPaymentController {

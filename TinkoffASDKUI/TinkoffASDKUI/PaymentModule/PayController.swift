@@ -18,7 +18,7 @@ final class PayController {
     }
     
     func initPayment(with initData: PaymentInitData,
-                     completion: @escaping (Result<Int64, Error>) -> Void) {
+                     completion: @escaping (Result<PaymentId, Error>) -> Void) {
         _ = sdk.paymentInit(data: initData, completionHandler: { result in
             DispatchQueue.main.async {
                 switch result {

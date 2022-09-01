@@ -21,12 +21,12 @@ public struct GetTinkoffLinkRequest: RequestOperation {
     
     // MARK: - Parameters
     
-    private let paymentId: Int64
+    private let paymentId: PaymentId
     private let version: GetTinkoffPayStatusResponse.Status.Version
     
     // MARK: - Init
     
-    init(paymentId: Int64,
+    init(paymentId: PaymentId,
          version: GetTinkoffPayStatusResponse.Status.Version) {
         self.paymentId = paymentId
         self.version = version
@@ -36,7 +36,7 @@ public struct GetTinkoffLinkRequest: RequestOperation {
 private extension GetTinkoffLinkRequest {
     func createRequestName() -> String {
         var endpointURL = URL(string: "TinkoffPay/transactions")!
-        endpointURL.appendPathComponent("\(paymentId)")
+        endpointURL.appendPathComponent(paymentId)
         endpointURL.appendPathComponent("versions")
         endpointURL.appendPathComponent(version.rawValue)
         endpointURL.appendPathComponent("link")

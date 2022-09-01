@@ -20,6 +20,9 @@
 import Foundation
 import UIKit
 
+public typealias PaymentInitResponse = InitPayload
+public typealias PaymentStatusResponse = ChargePaymentPayload
+
 public enum AcquiringSdkError: Error {
     case publicKey(String)
     case url
@@ -112,11 +115,12 @@ public final class AcquiringSdk: NSObject {
         let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
         let enrichedData = paramsEnricher.enrich(data)
         
-        let request = PaymentInitRequest(data: enrichedData)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+//        let request = PaymentInitRequest(data: enrichedData)
+//        let commonParameters: JSONObject = createCommonParameters()
+//        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
 
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        let request = InitRequest(paymentInitData: enrichedData)
+        return api.performRequest(request, completion: completionHandler)
     }
 
     // MARK: - подтверждение платежа
@@ -198,15 +202,13 @@ public final class AcquiringSdk: NSObject {
     @discardableResult
     public func paymentFinish(
         data: PaymentFinishRequestData,
-        completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void
+        completionHandler: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = PaymentFinishRequest(data: data)
-        updateCardDataRequestParams(&request.parameters)
-
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                             publicKey: publicKey)
+        return api.performRequest(request, completion: completionHandler)
     }
 
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
@@ -215,11 +217,8 @@ public final class AcquiringSdk: NSObject {
         data: PaymentChargeRequestData,
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = PaymentChargeRequest(data: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        let request = ChargePaymentRequest(paymentChargeRequestData: data)
+        return api.performRequest(request, completion: completionHandler)
     }
 
     // MARK: - Статус операции
@@ -228,13 +227,10 @@ public final class AcquiringSdk: NSObject {
     @discardableResult
     public func paymentOperationStatus(
         data: PaymentInfoData,
-        completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
+        completionHandler: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = PaymentStatusRequest(data: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        let request = GetPaymentStateRequest(paymentInfoData: data)
+        return api.performRequest(request, completion: completionHandler)
     }
 
     // MARK: - Card List
@@ -452,7 +448,7 @@ public final class AcquiringSdk: NSObject {
 
     @discardableResult
     public func getTinkoffPayLink(
-        paymentId: Int64,
+        paymentId: PaymentId,
         version: GetTinkoffPayStatusResponse.Status.Version,
         completion: @escaping (Result<GetTinkoffLinkResponse, Error>) -> Void
     ) -> Cancellable {
@@ -473,6 +469,6 @@ public final class AcquiringSdk: NSObject {
                                          completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let cresData = CresData(cres: cres)
         let request = ThreeDSV2AuthorizationRequest(data: cresData)
-        return networkTransport.send(operation: request, completionHandler: completion)
+        return api.performRequest(request, completion: completion)
     }
 } // AcquiringSdk

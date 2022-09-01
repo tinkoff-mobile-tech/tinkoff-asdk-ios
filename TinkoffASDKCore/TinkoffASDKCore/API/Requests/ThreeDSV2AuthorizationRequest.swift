@@ -24,23 +24,22 @@ struct CresData: Encodable {
     let cres: String
 }
 
-public struct ThreeDSV2AuthorizationRequest: RequestOperation {
+public struct ThreeDSV2AuthorizationRequest: APIRequest {
+    typealias Payload = PaymentStatusResponse
     
-    // MARK: - RequestOperation
-    
-    public let name: String = "Submit3DSAuthorizationV2"
-    
-    public let requestMethod: RequestMethod = .post
-    
-    public var parameters: JSONObject? = nil
-    
-    public let requestContentType: RequestContentType = .urlEncoded
-    
-    // MARK: - Init
-    
+    var requestPath: [String] { ["Submit3DSAuthorizationV2"] }
+    var httpMethod: HTTPMethod { .post }
+  
+    var parameters: HTTPParameters {
+        // TODO: Log error
+        
+        return (try? data
+                    .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+    }
+
+    private let data: CresData
+
     init(data: CresData) {
-        if let json = try? data.encode2JSONObject() {
-            parameters = json
-        }
+        self.data = data
     }
 }

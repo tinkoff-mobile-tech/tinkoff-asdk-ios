@@ -182,7 +182,7 @@ private extension SBPBankListViewController {
         }
     }
     
-    func createSPBUrl(paymentId: Int64) {
+    func createSPBUrl(paymentId: PaymentId) {
         sbpPaymentService.createSBPUrl(paymentId: paymentId) { [weak self] result in
             self?.handleSPBUrlCreation(result: result)
         }

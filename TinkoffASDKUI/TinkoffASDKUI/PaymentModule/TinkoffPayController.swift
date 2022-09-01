@@ -41,7 +41,7 @@ final class TinkoffPayController {
         }
     }
     
-    func getTinkoffPayLink(paymentId: Int64,
+    func getTinkoffPayLink(paymentId: PaymentId,
                            version: GetTinkoffPayStatusResponse.Status.Version,
                            completion: @escaping (Result<URL, Error>) -> Void) -> Cancellable {
         return sdk.getTinkoffPayLink(paymentId: paymentId,

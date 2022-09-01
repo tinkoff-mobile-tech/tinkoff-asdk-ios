@@ -22,7 +22,7 @@ import TinkoffASDKCore
 
 public protocol PaymentService {
     func initPaymentWith(paymentData: PaymentInitData, completion: @escaping (Result<PaymentInitResponse, Error>) -> Void)
-    func getPaymentStatus(paymentId: Int64, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void)
+    func getPaymentStatus(paymentId: PaymentId, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void)
 }
  
 final class DefaultPaymentService: PaymentService {
@@ -38,8 +38,8 @@ final class DefaultPaymentService: PaymentService {
         }
     }
     
-    func getPaymentStatus(paymentId: Int64, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) {
-        _ = coreSDK.paymentOperationStatus(data: .init(paymentId: String(paymentId)), completionHandler: { result in
+    func getPaymentStatus(paymentId: PaymentId, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) {
+        _ = coreSDK.paymentOperationStatus(data: .init(paymentId: paymentId), completionHandler: { result in
             completion(result)
         })
     }

@@ -168,7 +168,7 @@ private extension PaymentPollingViewController {
         }
     }
     
-    func startPaymentStatusPolling(paymentId: Int64) {
+    func startPaymentStatusPolling(paymentId: PaymentId) {
         isPollingPaymentStatus = true
         paymentService.getPaymentStatus(paymentId: paymentId) { [weak self] result in
             DispatchQueue.main.async {

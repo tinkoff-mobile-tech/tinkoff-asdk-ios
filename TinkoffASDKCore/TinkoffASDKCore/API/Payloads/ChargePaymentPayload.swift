@@ -21,17 +21,41 @@
 import Foundation
 
 public struct ChargePaymentPayload: Decodable {
+    public var orderId: String
+    public var paymentId: PaymentId
+    public var amount: NSDecimalNumber
     public let status: PaymentStatus
     public let paymentState: GetPaymentStatePayload
     
-    public init(status: PaymentStatus,
-                paymentState: GetPaymentStatePayload) {
+    private enum CodingKeys: String, CodingKey {
+        case orderId = "OrderId"
+        case paymentId = "PaymentId"
+        case amount = "Amount"
+        case status = "Status"
+    }
+    
+    public init(orderId: String,
+                paymentId: PaymentId,
+                amount: Int64,
+                status: PaymentStatus,
+                paymentState: GetPaymentStatePayload)
+    {
+        self.orderId = orderId
+        self.paymentId = paymentId
+        self.amount = NSDecimalNumber(value: Double(amount) / 100)
         self.status = status
         self.paymentState = paymentState
     }
     
     public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         paymentState = try GetPaymentStatePayload(from: decoder)
         status = paymentState.status
+        orderId = try container.decode(String.self, forKey: .orderId)
+        paymentId = try container.decode(String.self, forKey: .paymentId)
+
+        let value = try container.decode(Int64.self, forKey: .amount)
+        amount = NSDecimalNumber(value: Double(value) / 100)
+
     }
 }
