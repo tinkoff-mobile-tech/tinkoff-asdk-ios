@@ -1,6 +1,6 @@
 //
 //
-//  PaymentStatusResponse.swift
+//  PaymentInvoiceQRCodeResponse.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,18 +20,20 @@
 
 import Foundation
 
-public struct PaymentStatusResponse: ResponseOperation {
+public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
+    // MARK: AcquiringResponseProtocol
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
-    //
-    public var orderId: String
-    public var paymentId: String
-    public var amount: NSDecimalNumber
-    public var status: PaymentStatus
 
+    // MARK: PaymentInvoice
+    public var orderId: String
+    public var paymentId: Int64
+    public var qrCodeData: String
+
+    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case success = "Success"
         case errorCode = "ErrorCode"
@@ -41,8 +43,7 @@ public struct PaymentStatusResponse: ResponseOperation {
         //
         case orderId = "OrderId"
         case paymentId = "PaymentId"
-        case amount = "Amount"
-        case status = "Status"
+        case qrCodeData = "Data"
     }
 
     public init(from decoder: Decoder) throws {
@@ -57,35 +58,13 @@ public struct PaymentStatusResponse: ResponseOperation {
         orderId = try container.decode(String.self, forKey: .orderId)
 
         // paymentId
-        paymentId = try container.decode(String.self, forKey: .paymentId)
-
-        // amount
-        let value = try container.decode(Int64.self, forKey: .amount)
-        amount = NSDecimalNumber(value: Double(value) / 100)
-
-        // status
-        if let statusValue = try? container.decode(String.self, forKey: .status) {
-            status = PaymentStatus(rawValue: statusValue)
+        if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
+            paymentId = value
         } else {
-            status = .unknown
+            paymentId = try container.decode(Int64.self, forKey: .paymentId)
         }
-    }
 
-    public init(success: Bool,
-                errorCode: Int,
-                errorMessage: String?,
-                orderId: String,
-                paymentId: String,
-                amount: Int64,
-                status: PaymentStatus)
-    {
-        self.success = success
-        self.errorCode = errorCode
-        self.errorMessage = errorMessage
-        self.orderId = orderId
-        self.paymentId = paymentId
-        self.amount = NSDecimalNumber(value: Double(amount) / 100)
-        self.status = status
+        qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -94,11 +73,10 @@ public struct PaymentStatusResponse: ResponseOperation {
         try container.encode(errorCode, forKey: .errorCode)
         try? container.encode(errorMessage, forKey: .errorMessage)
         try? container.encode(errorDetails, forKey: .errorDetails)
-        try? container.encode(terminalKey, forKey: .terminalKey)
+        try container.encode(terminalKey, forKey: .terminalKey)
         //
         try container.encode(orderId, forKey: .orderId)
         try container.encode(paymentId, forKey: .paymentId)
-        try container.encode(Int64(amount.doubleValue * 100), forKey: .amount)
-        try container.encode(status.rawValue, forKey: .status)
+        try container.encode(qrCodeData, forKey: .qrCodeData)
     }
-} 
+}

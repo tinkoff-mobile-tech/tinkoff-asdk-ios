@@ -218,9 +218,9 @@ public class AcquiringUISDK: NSObject {
         if let cardListDataProvider = self.cardListDataProvider {
             provider = cardListDataProvider.customerKey == customerKey
                 ? cardListDataProvider
-                : CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
+                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
         } else {
-            provider = CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
+            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
         }
 
         self.cardListDataProvider = provider
@@ -774,8 +774,7 @@ public class AcquiringUISDK: NSObject {
             case let .object(response):
                 if completionStatus.contains(response.status) {
                     self?.acquiringView?.closeVC(animated: true, completion: {
-                        let data = PaymentStatusResponse(status: response.status, paymentState: response)
-                        completionHandler?(.success(data))
+                        completionHandler?(.success(response))
                     })
                 }
 
@@ -968,7 +967,7 @@ public class AcquiringUISDK: NSObject {
 
         let repeatFinish: (PaymentId) -> Void = { [weak self] paymentId in
             if let cardRequisites = self?.acquiringView?.cardRequisites() {
-                var requestData = PaymentFinishRequestData(paymentId: String(paymentId), paymentSource: cardRequisites)
+                var requestData = PaymentFinishRequestData(paymentId: paymentId, paymentSource: cardRequisites)
                 requestData.setInfoEmail(self?.acquiringView?.infoEmail())
 
                 self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { finishResponse in
@@ -1054,10 +1053,7 @@ public class AcquiringUISDK: NSObject {
             case let .success(successInitResponse):
                 self.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: successInitResponse)
                 DispatchQueue.main.async {
-                    let chargeData = PaymentChargeRequestData(
-                        paymentId: String(successInitResponse.paymentId),
-                        parentPaymentId: String(parentPaymentId)
-                    )
+                    let chargeData = PaymentChargeRequestData(paymentId: successInitResponse.paymentId, parentPaymentId: parentPaymentId)
                     _ = self.acquiringSdk.chargePayment(data: chargeData, completionHandler: { chargeResponse in
                         switch chargeResponse {
                         case let .success(successChargeResponse):
@@ -1215,12 +1211,11 @@ public class AcquiringUISDK: NSObject {
                     completionHandler(.success(response))
 
                 case .unknown:
-                    break
-//                    let error = NSError(domain: finishResult.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
-//                                        code: finishResult.errorCode,
-//                                        userInfo: nil)
-//
-//                    completionHandler(.failure(error))
+                    let error = NSError(domain: finishResult.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+                                        code: finishResult.errorCode,
+                                        userInfo: nil)
+
+                    completionHandler(.failure(error))
                 } // case .success
 
             case let .failure(error):
@@ -1323,18 +1318,22 @@ public class AcquiringUISDK: NSObject {
 
     private func cancelPayment() {
         if let paymentInitResponseData = paymentInitResponseData {
-            let paymentResponse = PaymentStatusResponse(status: .cancelled,
-                                                        paymentState: .init(paymentId: paymentInitResponseData.paymentId,
-                                                                            amount: paymentInitResponseData.amount,
-                                                                            orderId: paymentInitResponseData.orderId,
-                                                                            status: .cancelled))
+            let paymentResponse = PaymentStatusResponse(success: false,
+                                                        errorCode: 0,
+                                                        errorMessage: nil,
+                                                        orderId: paymentInitResponseData.orderId,
+                                                        paymentId: paymentInitResponseData.paymentId,
+                                                        amount: paymentInitResponseData.amount,
+                                                        status: .cancelled)
             onPaymentCompletionHandler?(.success(paymentResponse))
         } else {
-            let paymentCanceledResponse = PaymentStatusResponse(status: .cancelled,
-                                                                paymentState: .init(paymentId: "0",
-                                                                                    amount: 0,
-                                                                                    orderId: "0",
-                                                                                    status: .cancelled))
+            let paymentCanceledResponse = PaymentStatusResponse(success: false,
+                                                                errorCode: 0,
+                                                                errorMessage: AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel"),
+                                                                orderId: "",
+                                                                paymentId: 0,
+                                                                amount: 0,
+                                                                status: .cancelled)
             onPaymentCompletionHandler?(.success(paymentCanceledResponse))
         }
     }
@@ -1447,12 +1446,12 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         return cardListDataProvider!.item(at: index)
     }
     
-    func getCardListCard(cardId: String) -> PaymentCard? {
+    func getCardListCard(with cardId: String) -> PaymentCard? {
         return cardListDataProvider!.item(with: cardId)
     }
     
-    func getCardListCard(parentPaymentId: PaymentId) -> PaymentCard? {
-        return cardListDataProvider!.item(with: parentPaymentId)
+    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard? {
+        return cardListDataProvider!.item(with: String(parentPaymentId))
     }
     
     func getAllCards() -> [PaymentCard] {
@@ -1574,7 +1573,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
         return try getCardListDataProvider().item(with: String(parentPaymentId))
     }
-
+    
     public func allCards() throws -> [PaymentCard] {
         return try getCardListDataProvider().allItems()
     }
@@ -1597,26 +1596,26 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    private func checkConfirmAddCard(_ confirmationResponse: AttachCardPayload, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
-        switch confirmationResponse.attachCardStatus {
+    private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+        switch confirmationResponse.responseStatus {
         case let .needConfirmation3DS(confirmation3DSData):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-            
+
             present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-            
+
         case let .needConfirmation3DSACS(confirmation3DSDataACS):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-            
+
             present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-            
+
         case let .needConfirmationRandomAmount(requestKey):
             onRandomAmountCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
@@ -1625,9 +1624,15 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             presentRandomAmountChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
                 self?.cancelAddCard()
             }
-            
-        case .done:
-            confirmationComplete(.success(AddCardStatusResponse(success: true, errorCode: 0)))
+
+        case let .done(response):
+            confirmationComplete(.success(response))
+
+        case .unknown:
+            let error = NSError(domain: confirmationResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+                                code: confirmationResponse.errorCode, userInfo: nil)
+
+            confirmationComplete(.failure(error))
         }
     }
 
@@ -1727,7 +1732,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     {
         if let paymentId = paymentInitResponseData?.paymentId {
             let paymentDataSource = PaymentSourceData.paymentData(payment.token.paymentData.base64EncodedString())
-            let data = PaymentFinishRequestData(paymentId: String(paymentId),
+            let data = PaymentFinishRequestData(paymentId: paymentId,
                                                 paymentSource: paymentDataSource,
                                                 source: "ApplePay",
                                                 route: "ACQ")
