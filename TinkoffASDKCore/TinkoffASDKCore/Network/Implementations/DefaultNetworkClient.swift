@@ -91,6 +91,147 @@ final class DefaultNetworkClient: NetworkClient {
             return EmptyCancellable()
         }
     }
+
+    @discardableResult
+    func performDeprecatedRequest<Response: ResponseOperation>(_ request: NetworkRequest, delegate: NetworkTransportResponseDelegate?, completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable {
+        do {
+            let urlRequest = try requestBuilder.buildURLRequest(request: request,
+                                                                requestAdapter: requestAdapter)
+            let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
+                if let error = error {
+                    return completion(.failure(error))
+                }
+
+                // HTTPURLResponse
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    return completion(.failure(NSError(domain: "Response should be an HTTPURLResponse", code: 1, userInfo: nil)))
+                }
+
+                // httpResponse check  HTTP Status Code `200..<300`
+                guard httpResponse.isSuccessful else {
+                    let error = HTTPResponseError(body: data, response: httpResponse, kind: .errorResponse)
+                    completion(.failure(error))
+                    return
+                }
+
+                // data is empty
+                guard let data = data else {
+                    let error = HTTPResponseError(body: nil, response: httpResponse, kind: .invalidResponse)
+                    completion(.failure(error))
+                    return
+                }
+
+                // delegating decode response data
+                if let delegate = delegate {
+                    guard let delegatedResponse = try? delegate.networkTransport(
+                        didCompleteRawTaskForRequest: urlRequest,
+                        withData: data,
+                        response: httpResponse,
+                        error: error
+                    ) else {
+                        let error = HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)
+                        completion(.failure(error))
+                        return
+                    }
+
+                    completion(.success(delegatedResponse as! Response))
+                    return
+                }
+
+                // decode as a default `AcquiringResponse`
+                guard let acquiringResponse = try? JSONDecoder().decode(AcquiringResponse.self, from: data) else {
+                    let error = HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)
+                    completion(.failure(error))
+                    return
+                }
+
+                // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
+                guard acquiringResponse.success else {
+                    var errorMessage: String = NSLocalizedString("TinkoffAcquiring.response.error.statusFalse", tableName: nil, bundle: .coreResources,
+                                                                 comment: "Acquiring Error Response 'Success: false'")
+                    if let message = acquiringResponse.errorMessage {
+                        errorMessage = message
+                    }
+
+                    if let details = acquiringResponse.errorDetails, details.isEmpty == false {
+                        errorMessage.append(contentsOf: " ")
+                        errorMessage.append(contentsOf: details)
+                    }
+
+                    let error = NSError(domain: errorMessage,
+                                        code: acquiringResponse.errorCode,
+                                        userInfo: try? acquiringResponse.encode2JSONObject())
+
+                    completion(.failure(error))
+                    return
+                }
+
+                // decode to `Response`
+                if let responseObject: Response = try? JSONDecoder().decode(Response.self, from: data) {
+                    completion(.success(responseObject))
+                } else {
+                    completion(.failure(HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)))
+                }
+            }
+
+            dataTask.resume()
+
+            return dataTask
+        } catch {
+            completion(.failure(error))
+            return EmptyCancellable()
+        }
+    }
+
+    @discardableResult
+    func sendCertsConfigRequest(
+        _ request: NetworkRequest,
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable  {
+        do {
+            let urlRequest = try requestBuilder.buildURLRequest(request: request,
+                                                                requestAdapter: requestAdapter)
+            
+            let task = urlRequestPerfomer.createDataTask(with: urlRequest) { data, response, networkError in
+                if let error = networkError {
+                    return completionHandler(.failure(error))
+                }
+                
+                // HTTPURLResponse
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    return completionHandler(.failure(NSError(domain: "Response should be an HTTPURLResponse", code: 1, userInfo: nil)))
+                }
+                
+                // httpResponse check  HTTP Status Code `200..<300`
+                guard httpResponse.isSuccessful else {
+                    let error = HTTPResponseError(body: data, response: httpResponse, kind: .errorResponse)
+                    completionHandler(.failure(error))
+                    return
+                }
+                
+                // data is empty
+                guard let data = data else {
+                    let error = HTTPResponseError(body: nil, response: httpResponse, kind: .invalidResponse)
+                    completionHandler(.failure(error))
+                    return
+                }
+                
+                // decode to `Response`
+                if let responseObject = try? JSONDecoder.customISO8601Decoding.decode(GetCertsConfigResponse.self, from: data) {
+                    completionHandler(.success(responseObject))
+                } else {
+                    completionHandler(.failure(HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)))
+                }
+            } // session.dataTask
+            
+            task.resume()
+            
+            return task
+        } catch {
+            completionHandler(.failure(error))
+            return EmptyCancellable()
+        }
+    }
 }
 
 private extension DefaultNetworkClient {

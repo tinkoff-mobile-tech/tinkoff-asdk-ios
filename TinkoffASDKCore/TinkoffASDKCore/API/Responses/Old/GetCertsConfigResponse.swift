@@ -1,8 +1,8 @@
 //
-//  Check3dsVersionRequest.swift
-//  TinkoffASDKCore
 //
-//  Copyright (c) 2020 Tinkoff Bank
+//  GetCertsConfigResponse.swift
+//
+//  Copyright (c) 2021 Tinkoff Bank
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
-public final class Check3dsVersionRequest: PaymentFinishRequest {
-    override public var name: String {
-        return "Check3dsVersion"
+public struct GetCertsConfigResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case certificates = "certificatesInfo"
     }
+    
+    public let certificates: [CertificateData]
 }

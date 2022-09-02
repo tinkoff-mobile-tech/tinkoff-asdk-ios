@@ -20,13 +20,6 @@
 import Foundation
 import UIKit
 
-public typealias PaymentInitResponse = InitPayload
-public typealias PaymentStatusResponse = ChargePaymentPayload
-public typealias Check3dsVersionResponse = Check3DSVersionPayload
-public typealias GetCertsConfigResponse = GetCertsConfigPayload
-public typealias GetTinkoffLinkResponse = GetTinkoffLinkPayload
-public typealias GetTinkoffPayStatusResponse = GetTinkoffPayStatusPayload
-
 public enum AcquiringSdkError: Error {
     case publicKey(String)
     case url
@@ -106,24 +99,6 @@ public final class AcquiringSdk: NSObject {
         return coreAssembly.ipAddressProvider().ipAddress
     }
 
-    // MARK: - начало платежа
-
-    /// Инициирует платежную сессию для платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    public func paymentInit(
-        data: PaymentInitData,
-        completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void
-    ) -> Cancellable {
-        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
-        let enrichedData = paramsEnricher.enrich(data)
-        let request = InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
-        return api.performRequest(request, completion: completionHandler)
-    }
-
     // MARK: - подтверждение платежа
 
     /// Создать запрос для подтверждения платежа 3DS формы
@@ -187,117 +162,89 @@ public final class AcquiringSdk: NSObject {
         return coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize, language: languageKey ?? .ru)
     }
 
+    /// Инициирует платежную сессию для платежа
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
+    ///   - completionHandler: результат операции `InitPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func paymentInit(data: PaymentInitData,
+                            completionHandler: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
+        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
+        let enrichedData = paramsEnricher.enrich(data)
+        let request = InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Подтверждает инициированный платеж передачей карточных данных
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentFinishRequestData`
+    ///   - completionHandler: результат операции `FinishAuthorizePayload` в случае удачного проведеня платежа и `Error` - в случе ошибки.
+    public func paymentFinish(data: PaymentFinishRequestData,
+                              completionHandler: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
+
+        let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                             publicKey: publicKey,
+                                             baseURL: baseURL)
+
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
     /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
     ///
     /// - Parameters:
     ///   - data: `Check3DSRequestData`
     ///   - completionHandler: результат операции `Check3DSVersionPayload` в случае удачного ответа и `Error` - в случе ошибки.
-    @discardableResult
     public func check3dsVersion(data: Check3DSRequestData,
-                                completion: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
+                                completionHandler: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
         let request = Check3DSVersionRequest(check3DSRequestData: data,
                                              encryptor: RSAEncryptor(),
                                              cardDataFormatter: coreAssembly.cardDataFormatter(),
                                              publicKey: publicKey,
                                              baseURL: baseURL)
         
-        return api.performRequest(request, completion: completion)
-    }
-
-    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
-    @available(*, deprecated, renamed: "check3dsVersion(data:completion:)")
-    public func check3dsVersion(
-        data: PaymentFinishRequestData,
-        completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
-    ) -> Cancellable {
-        return check3dsVersion(data: .init(paymentId: data.paymentId, paymentSource: data.paymentSource), completion: completionHandler)
-    }
-
-    /// Подтверждает инициированный платеж передачей карточных данных
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведения платежа и `Error` - в случае ошибки.
-    @discardableResult
-    public func paymentFinish(
-        data: PaymentFinishRequestData,
-        completionHandler: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void
-    ) -> Cancellable {
-        let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
-                                             encryptor: RSAEncryptor(),
-                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
-                                             publicKey: publicKey,
-                                             baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
+    /// Получить статус платежа
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInfoData`
+    ///   - completionHandler: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func paymentOperationStatus(data: PaymentInfoData,
+                                       completionHandler: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void) -> Cancellable {
+        let request = GetPaymentStateRequest(paymentInfoData: data, baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
-    @discardableResult
-    public func chargePayment(
-        data: PaymentChargeRequestData,
-        completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
-    ) -> Cancellable {
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentChargeRequestData`
+    ///   - completionHandler: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случе ошибки.
+    public func chargePayment(data: PaymentChargeRequestData,
+                              completionHandler: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void) -> Cancellable {
         let request = ChargePaymentRequest(paymentChargeRequestData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
 
-    // MARK: - Статус операции
-
-    /// Получить статус платежа
-    @discardableResult
-    public func paymentOperationStatus(
-        data: PaymentInfoData,
-        completionHandler: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
-    ) -> Cancellable {
-        let request = GetPaymentStateRequest(paymentInfoData: data, baseURL: baseURL)
-        return api.performRequest(request, completion: completionHandler)
-    }
-
-    // MARK: - Card List
-
+    // MARK: - Работа с картами
+    
     /// Получение всех сохраненных карт клиента
     ///
     /// - Parameters:
     ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
     /// - Returns: `Cancellable`
-    @discardableResult
     public func сardList(data: GetCardListData,
                           completionHandler: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
         let request = GetCardListRequest(getCardListData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
-
-    @available(*, deprecated, renamed: "cardList(data:responseDelegate:completion:)")
-    public func cardList(
-        data: InitGetCardListData,
-        responseDelegate: NetworkTransportResponseDelegate? = nil,
-        completion: @escaping (_ result: Result<CardListResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = CardListRequest(data: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(
-            operation: request,
-            responseDelegate: responseDelegate,
-            completionHandler: completion
-        )
-    }
-
-    @available(*, deprecated, renamed: "cardList(data:responseDelegate:completion:)")
-    public func сardList(
-        data: InitGetCardListData,
-        responseDelegate: NetworkTransportResponseDelegate?,
-        completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void
-    ) -> Cancellable {
-        cardList(data: data, responseDelegate: responseDelegate, completion: completionHandler)
-    }
-
+        
     /// Инициирует привязку карты к клиенту
     ///
     /// - Parameters:
@@ -309,6 +256,208 @@ public final class AcquiringSdk: NSObject {
         let request = AddCardRequest(initAddCardData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
     }
+    
+    /// Завершает привязку карты к клиенту
+    ///
+    /// - Parameters:
+    ///   - data: `FinishAddCardData` информация о карте
+    ///   - completionHandler: результат операции `AttachCardPayload` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func addCardFinish(data: FinishAddCardData,
+                              completionHandler: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
+        let request = AttachCardRequest(finishAddCardData: data,
+                                        encryptor: RSAEncryptor(),
+                                        cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                        publicKey: publicKey,
+                                        baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Подтверждения карты путем блокировки случайной суммы
+    ///
+    /// - Parameters:
+    ///   - data: `SubmitRandomAmountData`
+    ///   - completionHandler: результат операции `SubmitRandomAmountPayload` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func checkRandomAmount(data: SubmitRandomAmountData,
+                                  completionHandler: @escaping (_ result: Result<SubmitRandomAmountPayload, Error>) -> Void) -> Cancellable {
+        let request = SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Удаление привязанной карты покупателя
+    ///
+    /// - Parameters:
+    ///   - completionHandler: результат операции `RemoveCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func deactivateCard(data: InitDeactivateCardData,
+                               completionHandler: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void) -> Cancellable {
+        let request = RemoveCardRequest(deactivateCardData: data, baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    // MARK: - СБП
+    
+    /// Сгенерировать QR-код для оплаты
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInvoiceQRCodeData` информация о заказе на оплату
+    ///   - completionHandler: результат операции `GetQrPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func paymentInvoiceQRCode(data: PaymentInvoiceQRCodeData,
+                                     completionHandler: @escaping (_ result: Result<GetQrPayload, Error>) -> Void) -> Cancellable {
+        let request = GetQrRequest(data: data, baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+    
+    /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInvoiceSBPSourceType` тип возвращаемых данных для генерации QR-кода
+    ///   - completionHandler: результат операции `GetStaticQrPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType, completionHandler: @escaping (_ result: Result<GetStaticQrPayload, Error>) -> Void) -> Cancellable {
+        let request = GetStaticQrRequest(sourceType: data, baseURL: baseURL)
+        return api.performRequest(request, completion: completionHandler)
+    }
+
+    /// Загрузить список банков, через приложения которых можно совершить оплату СБП
+    ///
+    /// - Parameters:
+    ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
+    public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
+        let loader = DefaultSBPBankLoader()
+        loader.loadBanks(completion: completion)
+    }
+
+    @discardableResult
+    public func getTinkoffPayStatus(
+        completion: @escaping (Result<GetTinkoffPayStatusPayload, Error>) -> Void
+    ) -> Cancellable {
+        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
+        return api.performRequest(request, completion: completion)
+    }
+
+    @discardableResult
+    public func getTinkoffPayLink(
+        paymentId: PaymentId,
+        version: GetTinkoffPayStatusPayload.Status.Version,
+        completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
+    ) -> Cancellable {
+        let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
+        return api.performRequest(request, completion: completion)
+    }
+    
+    @discardableResult
+    public func getCertsConfig(completion: @escaping (Result<GetCertsConfigPayload, Error>) -> Void) -> Cancellable {
+        let request = GetCertsConfigRequest(baseURL: baseURL)
+        return api.performRequest(request, completion: completion)
+    }
+} // AcquiringSdk
+
+// MARK: Deprecated methods
+
+extension AcquiringSdk {
+    /// Инициирует платежную сессию для платежа
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
+    ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    public func paymentInit(
+        data: PaymentInitData,
+        completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void
+    ) -> Cancellable {
+        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
+        let enrichedData = paramsEnricher.enrich(data)
+
+        let request = InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
+    }
+
+    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentFinishRequestData`
+    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
+    @discardableResult
+    public func check3dsVersion(
+        data: PaymentFinishRequestData,
+        completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
+    ) -> Cancellable {
+        let requestData = Check3DSRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
+        let request = Check3DSVersionRequest(check3DSRequestData: requestData,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                             publicKey: publicKey,
+                                             baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
+    }
+
+    /// Подтверждает инициированный платеж передачей карточных данных
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentFinishRequestData`
+    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведения платежа и `Error` - в случае ошибки.
+    @discardableResult
+    public func paymentFinish(
+        data: PaymentFinishRequestData,
+        completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void
+    ) -> Cancellable {
+        let request = FinishAuthorizeRequest(paymentFinishRequestData: data,
+                                             encryptor: RSAEncryptor(),
+                                             cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                             publicKey: publicKey,
+                                             baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
+    }
+
+    /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    @discardableResult
+    public func chargePayment(
+        data: PaymentChargeRequestData,
+        completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
+    ) -> Cancellable {
+        let request = ChargePaymentRequest(paymentChargeRequestData: data, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
+    }
+
+    // MARK: - Статус операции
+
+    /// Получить статус платежа
+    @discardableResult
+    public func paymentOperationStatus(
+        data: PaymentInfoData,
+        completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
+    ) -> Cancellable {
+        let request = GetPaymentStateRequest(paymentInfoData: data, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
+    }
+
+    // MARK: - Card List
+
+    /// - Parameters:
+    ///   - data: `InitGetCardListData` информация о клиенте для получения списка сохраненных карт
+    ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    @discardableResult
+    public func cardList(
+        data: InitGetCardListData,
+        responseDelegate: NetworkTransportResponseDelegate? = nil,
+        completion: @escaping (_ result: Result<CardListResponse, Error>) -> Void
+    ) -> Cancellable {
+        let request = GetCardListRequest(getCardListData: GetCardListData(customerKey: data.customerKey), baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completion)
+    }
+
+    @available(*, deprecated, renamed: "cardList(data:responseDelegate:completion:)")
+    public func сardList(
+        data: InitGetCardListData,
+        responseDelegate: NetworkTransportResponseDelegate?,
+        completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void
+    ) -> Cancellable {
+        cardList(data: data, responseDelegate: responseDelegate, completion: completionHandler)
+    }
 
     /// - Parameters:
     ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
@@ -319,11 +468,8 @@ public final class AcquiringSdk: NSObject {
         data: InitAddCardData,
         completion: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = InitAddCardRequest(requestData: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completion)
+        let request = AddCardRequest(initAddCardData: data, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completion)
     }
 
     @available(*, deprecated, renamed: "cardListAddCardInit(data:completion:)")
@@ -344,17 +490,12 @@ public final class AcquiringSdk: NSObject {
         responseDelegate: NetworkTransportResponseDelegate? = nil,
         completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = FinishAddCardRequest(requestData: data)
-        updateCardDataRequestParams(&request.parameters)
-
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(
-            operation: request,
-            responseDelegate: responseDelegate,
-            completionHandler: completion
-        )
+        let request = AttachCardRequest(finishAddCardData: data,
+                                        encryptor: RSAEncryptor(),
+                                        cardDataFormatter: coreAssembly.cardDataFormatter(),
+                                        publicKey: publicKey,
+                                        baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completion)
     }
 
     @available(*, deprecated, renamed: "cardListAddCardFinish(data:responseDelegate:completion:)")
@@ -382,18 +523,8 @@ public final class AcquiringSdk: NSObject {
         responseDelegate: NetworkTransportResponseDelegate? = nil,
         completion: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let requestData = CheckingRandomAmountData(amount: amount, requestKey: requestKey)
-        let request = CheckRandomAmountRequest(requestData: requestData)
-        updateCardDataRequestParams(&request.parameters)
-
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(
-            operation: request,
-            responseDelegate: responseDelegate,
-            completionHandler: completion
-        )
+        let request = SubmitRandomAmountRequest(submitRandomAmountData: .init(amount: Int64(amount), requestKey: requestKey), baseURL: baseURL)
+        return api.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
     @available(*, deprecated, renamed: "checkRandomAmount(_:requestKey:responseDelegate:completion:)")
@@ -419,11 +550,8 @@ public final class AcquiringSdk: NSObject {
         data: InitDeactivateCardData,
         completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = InitDeactivateCardRequest(requestData: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completion)
+        let request = RemoveCardRequest(deactivateCardData: data, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completion)
     }
 
     @available(*, deprecated, renamed: "cardListDeactivateCard(data:completion:)")
@@ -447,11 +575,8 @@ public final class AcquiringSdk: NSObject {
         data: PaymentInvoiceQRCodeData,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = PaymentInvoiceQRCodeRequest(data: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        let request = GetQrRequest(data: data, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
     }
 
     /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
@@ -465,51 +590,29 @@ public final class AcquiringSdk: NSObject {
         data: PaymentInvoiceSBPSourceType,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = PaymentInvoiceQRCodeCollectorRequest(data: data)
-        let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
-
-        return networkTransport.send(operation: request, completionHandler: completionHandler)
+        let request = GetStaticQrRequest(sourceType: data, baseURL: baseURL)
+        return api.performDeprecatedRequest(request, completion: completionHandler)
     }
     
-    /// Загрузить список банков, через приложения которых можно совершить оплату СБП
-    ///
-    /// - Parameters:
-    ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
-    public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
-        let loader = DefaultSBPBankLoader()
-        loader.loadBanks(completion: completion)
-    }
-
     @discardableResult
     public func getTinkoffPayStatus(
         completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
     ) -> Cancellable {
         let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, completion: completion)
     }
 
     @discardableResult
-    public func getTinkoffPayLink(
-        paymentId: PaymentId,
-        version: GetTinkoffPayStatusResponse.Status.Version,
-        completion: @escaping (Result<GetTinkoffLinkResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
-    }
-    
-    @discardableResult
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
         let request = GetCertsConfigRequest(baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
+        return api.sendCertsConfigRequest(request, completionHandler: completion)
     }
-    
+
     @discardableResult
     public func submit3DSAuthorizationV2(cres: String,
                                          completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
         let cresData = CresData(cres: cres)
         let request = ThreeDSV2AuthorizationRequest(data: cresData, baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, completion: completion)
     }
-} // AcquiringSdk
+}

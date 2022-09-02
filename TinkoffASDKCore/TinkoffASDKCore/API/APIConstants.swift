@@ -70,6 +70,8 @@ struct APIConstants {
         static let termUrl = "TermUrl"
         static let creq = "creq"
         static let paymentSystem = "PaymentSystem"
+        static let rebillId = "RebillId"
+        static let cards = "Cards"
     }
     
     struct Values {

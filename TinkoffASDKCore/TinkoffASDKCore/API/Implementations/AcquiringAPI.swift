@@ -45,6 +45,19 @@ final class AcquiringAPI: API {
             }
         }
     }
+
+    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(_ request: Request,
+                                                                                    delegate: NetworkTransportResponseDelegate?,
+                                                                                    completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable {
+        return networkClient.performDeprecatedRequest(request, delegate: delegate, completion: completion)
+    }
+
+    func sendCertsConfigRequest(
+        _ request: NetworkRequest,
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable  {
+        return networkClient.sendCertsConfigRequest(request, completionHandler: completionHandler)
+    }
 }
 
 private extension AcquiringAPI {

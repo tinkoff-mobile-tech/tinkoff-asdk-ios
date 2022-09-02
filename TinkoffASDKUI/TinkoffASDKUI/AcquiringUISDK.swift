@@ -218,9 +218,9 @@ public class AcquiringUISDK: NSObject {
         if let cardListDataProvider = self.cardListDataProvider {
             provider = cardListDataProvider.customerKey == customerKey
                 ? cardListDataProvider
-                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
+                : CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
         } else {
-            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
+            provider = CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
         }
 
         self.cardListDataProvider = provider
@@ -1215,11 +1215,12 @@ public class AcquiringUISDK: NSObject {
                     completionHandler(.success(response))
 
                 case .unknown:
-                    let error = NSError(domain: finishResult.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
-                                        code: finishResult.errorCode,
-                                        userInfo: nil)
-
-                    completionHandler(.failure(error))
+                    break
+//                    let error = NSError(domain: finishResult.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+//                                        code: finishResult.errorCode,
+//                                        userInfo: nil)
+//
+//                    completionHandler(.failure(error))
                 } // case .success
 
             case let .failure(error):
@@ -1446,11 +1447,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         return cardListDataProvider!.item(at: index)
     }
     
-    func getCardListCard(with cardId: String) -> PaymentCard? {
+    func getCardListCard(cardId: String) -> PaymentCard? {
         return cardListDataProvider!.item(with: cardId)
     }
     
-    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard? {
+    func getCardListCard(parentPaymentId: PaymentId) -> PaymentCard? {
         return cardListDataProvider!.item(with: parentPaymentId)
     }
     
@@ -1571,9 +1572,9 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 
     public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
-        return try getCardListDataProvider().item(with: parentPaymentId)
+        return try getCardListDataProvider().item(with: String(parentPaymentId))
     }
-    
+
     public func allCards() throws -> [PaymentCard] {
         return try getCardListDataProvider().allItems()
     }
@@ -1596,26 +1597,26 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    private func checkConfirmAddCard(_ confirmationResponse: FinishAddCardResponse, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
-        switch confirmationResponse.responseStatus {
+    private func checkConfirmAddCard(_ confirmationResponse: AttachCardPayload, presenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void) {
+        switch confirmationResponse.attachCardStatus {
         case let .needConfirmation3DS(confirmation3DSData):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-
+            
             present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-
+            
         case let .needConfirmation3DSACS(confirmation3DSDataACS):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-
+            
             present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-
+            
         case let .needConfirmationRandomAmount(requestKey):
             onRandomAmountCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
@@ -1624,15 +1625,9 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             presentRandomAmountChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
                 self?.cancelAddCard()
             }
-
-        case let .done(response):
-            confirmationComplete(.success(response))
-
-        case .unknown:
-            let error = NSError(domain: confirmationResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
-                                code: confirmationResponse.errorCode, userInfo: nil)
-
-            confirmationComplete(.failure(error))
+            
+        case .done:
+            confirmationComplete(.success(AddCardStatusResponse(success: true, errorCode: 0)))
         }
     }
 

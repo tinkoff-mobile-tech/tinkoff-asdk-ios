@@ -199,14 +199,7 @@ private extension PaymentPollingViewController {
                         }
                     default:
                         self.isPollingPaymentStatus = false
-                        self.completion?(.success(
-                            PaymentStatusResponse(
-                                status: response.status,
-                                paymentState: .init(paymentId: response.paymentId,
-                                                    amount: response.amount,
-                                                    orderId: response.orderId,
-                                                    status: response.status)))
-                        )
+                        self.completion?(.success(response))
                     }
                 }
             }
@@ -214,11 +207,13 @@ private extension PaymentPollingViewController {
     }
     
     var cancelledResponse: PaymentStatusResponse {
-        PaymentStatusResponse(status: .cancelled,
-                              paymentState: .init(paymentId: paymentStatusResponse?.paymentState.paymentId ?? "",
-                                                  amount: paymentStatusResponse?.paymentState.amount ?? 0,
-                                                  orderId: paymentStatusResponse?.paymentState.orderId ?? "",
-                                                  status: .cancelled))
+        PaymentStatusResponse(success: false,
+                              errorCode: 0,
+                              errorMessage: nil,
+                              orderId: paymentStatusResponse?()?.orderId ?? "",
+                              paymentId: paymentStatusResponse?()?.paymentId ?? 0,
+                              amount: paymentStatusResponse?()?.amount.int64Value ?? 0,
+                              status: .cancelled)
     }
 }
 
