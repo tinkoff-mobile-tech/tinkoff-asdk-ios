@@ -30,9 +30,9 @@ protocol AcquiringCardListDataSourceDelegate: AnyObject {
     /// Получить карту
     func getCardListCard(at index: Int) -> PaymentCard
     /// Получить карту по cardId
-    func getCardListCard(cardId: String) -> PaymentCard?
+    func getCardListCard(with cardId: String) -> PaymentCard?
     /// Получить карту по parentPaymentId
-    func getCardListCard(parentPaymentId: PaymentId) -> PaymentCard?
+    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard?
     /// Получить все карты
     func getAllCards() -> [PaymentCard]
     /// Перезагрузить, обновить список карт

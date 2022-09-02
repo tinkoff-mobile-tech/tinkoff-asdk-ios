@@ -224,9 +224,9 @@ public class AcquiringUISDK: NSObject {
         if let cardListDataProvider = cardListDataProvider {
             provider = cardListDataProvider.customerKey == customerKey
                 ? cardListDataProvider
-                : CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
+                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
         } else {
-            provider = CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
+            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
         }
 
         cardListDataProvider = provider
@@ -901,8 +901,7 @@ public class AcquiringUISDK: NSObject {
             case let .object(response):
                 if completionStatus.contains(response.status) {
                     self?.acquiringView?.closeVC(animated: true, completion: {
-                        let data = PaymentStatusResponse(status: response.status, paymentState: response)
-                        completionHandler?(.success(data))
+                        completionHandler?(.success(response))
                     })
                 }
 
@@ -1101,7 +1100,7 @@ public class AcquiringUISDK: NSObject {
 
         let repeatFinish: (PaymentId) -> Void = { [weak self] paymentId in
             if let cardRequisites = self?.acquiringView?.cardRequisites() {
-                var requestData = PaymentFinishRequestData(paymentId: String(paymentId), paymentSource: cardRequisites)
+                var requestData = PaymentFinishRequestData(paymentId: paymentId, paymentSource: cardRequisites)
                 requestData.setInfoEmail(self?.acquiringView?.infoEmail())
 
                 self?.finishAuthorize(requestData: requestData, treeDSmessageVersion: "1.0", completionHandler: { finishResponse in
@@ -1195,10 +1194,7 @@ public class AcquiringUISDK: NSObject {
             case let .success(successInitResponse):
                 self.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: successInitResponse)
                 DispatchQueue.main.async {
-                    let chargeData = PaymentChargeRequestData(
-                        paymentId: String(successInitResponse.paymentId),
-                        parentPaymentId: String(parentPaymentId)
-                    )
+                    let chargeData = PaymentChargeRequestData(paymentId: successInitResponse.paymentId, parentPaymentId: parentPaymentId)
                     _ = self.acquiringSdk.chargePayment(data: chargeData, completionHandler: { chargeResponse in
                         switch chargeResponse {
                         case let .success(successChargeResponse):
@@ -1785,7 +1781,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
         return try getCardListDataProvider().item(with: String(parentPaymentId))
     }
-
+    
     public func allCards() throws -> [PaymentCard] {
         return try getCardListDataProvider().allItems()
     }
@@ -1823,20 +1819,20 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-            
+
             present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-            
+
         case let .needConfirmation3DSACS(confirmation3DSDataACS):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-            
+
             present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-            
+
         case let .needConfirmationRandomAmount(requestKey):
             onRandomAmountCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)

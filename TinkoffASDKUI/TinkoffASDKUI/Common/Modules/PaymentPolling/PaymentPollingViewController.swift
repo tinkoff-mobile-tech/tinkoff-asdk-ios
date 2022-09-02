@@ -95,7 +95,7 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
     }
 
     @objc private func handleActiveState() {
-        if !isPollingPaymentStatus, didStartPayment, let paymentId = paymentStatusResponse?.paymentState.paymentId {
+        if !isPollingPaymentStatus, didStartPayment, let paymentId = paymentStatusResponse?.paymentId {
             startPaymentStatusPolling(paymentId: paymentId)
         }
     }
