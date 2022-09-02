@@ -224,9 +224,9 @@ public class AcquiringUISDK: NSObject {
         if let cardListDataProvider = cardListDataProvider {
             provider = cardListDataProvider.customerKey == customerKey
                 ? cardListDataProvider
-                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
+                : CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
         } else {
-            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
+            provider = CardListDataProvider(sdk: acquiringSdk, customerKey: customerKey)
         }
 
         cardListDataProvider = provider
@@ -1783,7 +1783,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 
     public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
-        return try getCardListDataProvider().item(with: parentPaymentId)
+        return try getCardListDataProvider().item(with: String(parentPaymentId))
     }
 
     public func allCards() throws -> [PaymentCard] {
@@ -1823,20 +1823,20 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-
+            
             present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-
+            
         case let .needConfirmation3DSACS(confirmation3DSDataACS):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
             }
-
+            
             present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
-
+            
         case let .needConfirmationRandomAmount(requestKey):
             onRandomAmountCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)

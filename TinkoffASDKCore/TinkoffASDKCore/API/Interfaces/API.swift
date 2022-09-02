@@ -23,4 +23,18 @@ import Foundation
 protocol API {
     func performRequest<Request: APIRequest>(_ request: Request,
                                              completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) -> Cancellable
+    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(_ request: Request,
+                                                                                    delegate: NetworkTransportResponseDelegate?,
+                                                                                    completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable
+    func sendCertsConfigRequest(
+        _ request: NetworkRequest,
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable
+}
+
+extension API {
+    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(_ request: Request,
+                                                                                    completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable {
+        performDeprecatedRequest(request, delegate: nil, completion: completion)
+    }
 }

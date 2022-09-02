@@ -17,12 +17,12 @@ struct GetTinkoffLinkRequest: APIRequest {
     // MARK: - Parameters
     
     private let paymentId: PaymentId
-    private let version: GetTinkoffPayStatusResponse.Status.Version
+    private let version: GetTinkoffPayStatusPayload.Status.Version
     
     // MARK: - Init
     
     public init(paymentId: PaymentId,
-                version: GetTinkoffPayStatusResponse.Status.Version,
+                version: GetTinkoffPayStatusPayload.Status.Version,
                 baseURL: URL) {
         self.paymentId = paymentId
         self.version = version

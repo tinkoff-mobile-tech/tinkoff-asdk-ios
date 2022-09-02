@@ -1,6 +1,6 @@
 //
 //
-//  NetworkClient.swift
+//  InitGetCardListData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,17 +20,19 @@
 
 import Foundation
 
-protocol NetworkClient: AnyObject {
-    
-    @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
+public struct InitGetCardListData: Codable {
+    public var customerKey: String
 
-    @discardableResult
-    func performDeprecatedRequest<Response: ResponseOperation>(_ request: NetworkRequest, delegate: NetworkTransportResponseDelegate?, completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable
+    public enum CodingKeys: String, CodingKey {
+        case customerKey = "CustomerKey"
+    }
 
-    @discardableResult
-    func sendCertsConfigRequest(
-        _ request: NetworkRequest,
-        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        customerKey = try container.decode(String.self, forKey: .customerKey)
+    }
+
+    public init(customerKey: String) {
+        self.customerKey = customerKey
+    }
 }

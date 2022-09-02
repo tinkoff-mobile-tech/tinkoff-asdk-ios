@@ -207,14 +207,7 @@ private extension PaymentPollingViewController {
                         }
                     default:
                         self.isPollingPaymentStatus = false
-                        self.completion?(.success(
-                            PaymentStatusResponse(
-                                status: response.status,
-                                paymentState: .init(paymentId: response.paymentId,
-                                                    amount: response.amount,
-                                                    orderId: response.orderId,
-                                                    status: response.status)))
-                        )
+                        self.completion?(.success(response))
                     }
                 }
             }
