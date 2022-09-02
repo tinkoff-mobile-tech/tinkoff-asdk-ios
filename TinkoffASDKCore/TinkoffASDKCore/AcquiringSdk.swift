@@ -29,10 +29,10 @@ public enum AcquiringSdkError: Error {
 public final class AcquiringSdk: NSObject {
     public var fpsEnabled: Bool = false
     public let languageKey: AcquiringSdkLanguage?
-    private let networkTransport: NetworkTransport
     private let terminalKey: String
     private let publicKey: SecKey
     private let baseURL: URL
+    private let certsConfigUrl: URL
 
     private let coreAssembly: CoreAssembly
     private let api: API
@@ -54,24 +54,8 @@ public final class AcquiringSdk: NSObject {
 
         if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
            let certsConfigUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
-            let deviceInfo = DeviceInfo(
-                model: UIDevice.current.localizedModel,
-                systemName: UIDevice.current.systemName,
-                systemVersion: UIDevice.current.systemVersion
-            )
-
-            let sessionConfiguration = URLSessionConfiguration.default
-            sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
-            sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-            
-            networkTransport = AcquaringNetworkTransport(
-                urlDomain: url,
-                certsConfigDomain: certsConfigUrl,
-                session: URLSession(configuration: sessionConfiguration),
-                deviceInfo: deviceInfo,
-                logger: configuration.logger
-            )
             self.baseURL = url
+            self.certsConfigUrl = certsConfigUrl
         } else {
             throw AcquiringSdkError.url
         }
@@ -239,7 +223,7 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `GetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completionHandler: результат операции `[PaymentCard]` в случае успешного запроса и  `Error` - ошибка.
     /// - Returns: `Cancellable`
-    public func сardList(data: GetCardListData,
+    public func cardList(data: GetCardListData,
                           completionHandler: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
         let request = GetCardListRequest(getCardListData: data, baseURL: baseURL)
         return api.performRequest(request, completion: completionHandler)
@@ -350,7 +334,7 @@ public final class AcquiringSdk: NSObject {
     
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigPayload, Error>) -> Void) -> Cancellable {
-        let request = GetCertsConfigRequest(baseURL: baseURL)
+        let request = GetCertsConfigRequest(baseURL: certsConfigUrl)
         return api.performRequest(request, completion: completion)
     }
 } // AcquiringSdk
@@ -363,7 +347,8 @@ extension AcquiringSdk {
     /// - Parameters:
     ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
+    /// - Returns: `Cancellable
+    @available(*, deprecated, message: "Use paymentInit(data:completionHandler:) instead")
     public func paymentInit(
         data: PaymentInitData,
         completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void
@@ -380,6 +365,7 @@ extension AcquiringSdk {
     /// - Parameters:
     ///   - data: `PaymentFinishRequestData`
     ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
+    @available(*, deprecated, message: "Use check3dsVersion(data:completionHandler:) instead")
     @discardableResult
     public func check3dsVersion(
         data: PaymentFinishRequestData,
@@ -399,6 +385,7 @@ extension AcquiringSdk {
     /// - Parameters:
     ///   - data: `PaymentFinishRequestData`
     ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведения платежа и `Error` - в случае ошибки.
+    @available(*, deprecated, message: "Use paymentFinish(data:completionHandler:) instead")
     @discardableResult
     public func paymentFinish(
         data: PaymentFinishRequestData,
@@ -413,6 +400,7 @@ extension AcquiringSdk {
     }
 
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    @available(*, deprecated, message: "Use chargePayment(data:completionHandler:) instead")
     @discardableResult
     public func chargePayment(
         data: PaymentChargeRequestData,
@@ -425,6 +413,7 @@ extension AcquiringSdk {
     // MARK: - Статус операции
 
     /// Получить статус платежа
+    @available(*, deprecated, message: "Use paymentOperationStatus(data:completionHandler:) instead")
     @discardableResult
     public func paymentOperationStatus(
         data: PaymentInfoData,
@@ -440,6 +429,7 @@ extension AcquiringSdk {
     ///   - data: `InitGetCardListData` информация о клиенте для получения списка сохраненных карт
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use cardList(data:completionHandler:) instead")
     @discardableResult
     public func cardList(
         data: InitGetCardListData,
@@ -463,6 +453,7 @@ extension AcquiringSdk {
     ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use addCardInit(data:completionHandler:) instead")
     @discardableResult
     public func cardListAddCardInit(
         data: InitAddCardData,
@@ -484,6 +475,7 @@ extension AcquiringSdk {
     ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use addCardFinish(data:completionHandler:) instead")
     @discardableResult
     public func cardListAddCardFinish(
         data: FinishAddCardData,
@@ -516,6 +508,7 @@ extension AcquiringSdk {
     ///   - requestKey: `String` ключ для привязки карты
     ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use checkRandomAmount(data:completionHandler:) instead")
     @discardableResult
     public func checkRandomAmount(
         _ amount: Double,
@@ -545,6 +538,7 @@ extension AcquiringSdk {
     /// - Parameters:
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use deactivateCard(data:completionHandler:) instead")
     @discardableResult
     public func cardListDeactivateCard(
         data: InitDeactivateCardData,
@@ -570,6 +564,7 @@ extension AcquiringSdk {
     ///   - data: `PaymentInvoiceQRCodeData` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use paymentInvoiceQRCode(data:completionHandler:) instead")
     @discardableResult
     public func paymentInvoiceQRCode(
         data: PaymentInvoiceQRCodeData,
@@ -585,6 +580,7 @@ extension AcquiringSdk {
     ///   - data: `PaymentInvoiceQRCodeResponseType` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
+    @available(*, deprecated, message: "Use paymentInvoiceQRCodeCollector(data:completionHandler:) instead")
     @discardableResult
     public func paymentInvoiceQRCodeCollector(
         data: PaymentInvoiceSBPSourceType,
@@ -593,7 +589,8 @@ extension AcquiringSdk {
         let request = GetStaticQrRequest(sourceType: data, baseURL: baseURL)
         return api.performDeprecatedRequest(request, completion: completionHandler)
     }
-    
+
+    @available(*, deprecated, message: "Use getTinkoffPayStatus(completionHandler:) instead")
     @discardableResult
     public func getTinkoffPayStatus(
         completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
@@ -602,9 +599,10 @@ extension AcquiringSdk {
         return api.performDeprecatedRequest(request, completion: completion)
     }
 
+    @available(*, deprecated, message: "Use getCertsConfig(completionHandler:) instead")
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
-        let request = GetCertsConfigRequest(baseURL: baseURL)
+        let request = GetCertsConfigRequest(baseURL: certsConfigUrl)
         return api.sendCertsConfigRequest(request, completionHandler: completion)
     }
 
