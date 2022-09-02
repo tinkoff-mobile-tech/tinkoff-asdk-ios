@@ -44,7 +44,6 @@ final class DefaultNetworkClient: NetworkClient {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(request: request,
                                                                 requestAdapter: requestAdapter)
-            print(urlRequest.url?.absoluteString)
 
             let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
                 let result: Result<Data, Error>
