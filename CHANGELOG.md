@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Changed
+
+* [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
+
 ### Added 
 
 * [MIC-5741] Integrate 3ds-app-based flow

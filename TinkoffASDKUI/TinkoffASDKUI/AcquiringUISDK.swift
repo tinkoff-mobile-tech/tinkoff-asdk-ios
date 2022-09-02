@@ -51,7 +51,7 @@ public class AcquiringViewConfiguration {
     }
 
     public struct FeaturesOptions {
-        public var fpsEnabled: Bool = true
+        public var fpsEnabled: Bool = false
         public var tinkoffPayEnabled: Bool = true
 
         init() {}
