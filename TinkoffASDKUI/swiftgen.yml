@@ -3,11 +3,14 @@ strings:
   outputs:
     - templateName: structured-swift5
       output: TinkoffASDKUI/Resources/Generated/Strings+Generated.swift
+      bundle: Bundle.uiResources
 
 xcassets:
   inputs: TinkoffASDKUI/Resources/Assets.xcassets
   outputs:
     - templateName: swift5
+      output: TinkoffASDKUI/Resources/Generated/Assets+Generated.swift
       params:
         forceProvidesNamespaces: true
-      output: TinkoffASDKUI/Resources/Generated/Assets+Generated.swift
+        bundle: Bundle.uiResources
+      
