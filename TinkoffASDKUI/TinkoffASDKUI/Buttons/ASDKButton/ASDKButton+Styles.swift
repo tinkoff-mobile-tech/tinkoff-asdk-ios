@@ -29,7 +29,7 @@ extension ASDKButton.Style {
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             icon: Icon(
-                image: UIImage(named: "buttonIconSBP", in: .uiResources, compatibleWith: nil),
+                image: Asset.buttonIconSBP.image,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             border: Border(cornerRadius: 4, width: 1, color: .sbpBorder),

@@ -130,9 +130,9 @@ class AcquiringAlertViewController: UIViewController {
         case let .icon(img):
             imageViewAletIcon.image = img
         case .error:
-            imageViewAletIcon.image = UIImage(named: "cancel", in: .uiResources, compatibleWith: nil)
+            imageViewAletIcon.image = Asset.cancel.image
         default:
-            imageViewAletIcon.image = UIImage(named: "done", in: .uiResources, compatibleWith: nil)
+            imageViewAletIcon.image = Asset.done.image
         }
 
         labelAlertTitle.text = title

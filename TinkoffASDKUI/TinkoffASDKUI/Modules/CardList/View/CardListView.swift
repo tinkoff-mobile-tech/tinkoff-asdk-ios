@@ -271,11 +271,7 @@ private extension TimeInterval {
 private extension MessageView.Style {
     static var noCards: MessageView.Style {
         MessageView.Style(
-            largeImage: UIImage(
-                named: "illustrations-common-light-card",
-                in: .uiResources,
-                compatibleWith: nil
-            ),
+            largeImage: Asset.Illustrations.illustrationsCommonLightCard.image,
             message: L10n.CardList.Status.noCards
         )
     }
