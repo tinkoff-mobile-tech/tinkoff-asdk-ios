@@ -40,6 +40,7 @@
 "TinkoffAcquiring.text.status.waitingPayment" = "Waiting for payment receipt";
 "TinkoffAcquiring.text.status.cardListEmpty" = "Card List Empty";
 "TinkoffAcquiring.text.status.loading" = "Loading";
+"TinkoffAcquiring.text.status.selectingPaymentSource" = "Selecting a payment source";
 "TinkoffAcquiring.text.status.error.email" = "Incorrect email";
 "TinkoffAcquiring.text.status.error.emailEmpty" = "Please enter email";
 "TinkoffAcquiring.text.addcard" = "Add card";

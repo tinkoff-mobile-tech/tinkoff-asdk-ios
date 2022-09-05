@@ -53,6 +53,6 @@ class StatusTableViewCell: UITableViewCell {
         labelStatus.attributedText = nil
 
         buttonUpdate.isHidden = true
-        buttonUpdate.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.update"), for: .normal)
+        buttonUpdate.setTitle(L10n.TinkoffAcquiring.Button.update, for: .normal)
     }
 }

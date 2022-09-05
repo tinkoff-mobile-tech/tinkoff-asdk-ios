@@ -44,7 +44,7 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
         if let value = hint {
             self.hint = value
         } else {
-            self.hint = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.sendReceiptToEmail")
+            self.hint = L10n.TinkoffAcquiring.Placeholder.sendReceiptToEmail
         }
 
         self.textFieldCell = textFieldCell
@@ -69,14 +69,14 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
             let result = predicate.evaluate(with: email)
             if result == false {
                 tableView.beginUpdates()
-                textFieldCell.setStatus(.error, statusText: AcqLoc.instance.localize("TinkoffAcquiring.text.status.error.email"))
+                textFieldCell.setStatus(.error, statusText: L10n.TinkoffAcquiring.Text.Status.Error.email)
                 tableView.endUpdates()
             }
 
             return result
         } else {
             tableView.beginUpdates()
-            textFieldCell.setStatus(.error, statusText: AcqLoc.instance.localize("TinkoffAcquiring.text.status.error.emailEmpty"))
+            textFieldCell.setStatus(.error, statusText: L10n.TinkoffAcquiring.Text.Status.Error.emailEmpty)
             tableView.endUpdates()
         }
 

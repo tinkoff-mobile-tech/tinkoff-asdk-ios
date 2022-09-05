@@ -24,7 +24,7 @@ extension ASDKButton.Style {
     static var sbpPayment: ASDKButton.Style {
         ASDKButton.Style(
             title: Title(
-                text: AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"),
+                text: L10n.TinkoffAcquiring.Button.payBy,
                 color: .asdk.dynamic.background.elevation1,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),

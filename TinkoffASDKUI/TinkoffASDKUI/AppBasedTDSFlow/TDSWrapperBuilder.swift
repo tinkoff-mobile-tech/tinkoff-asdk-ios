@@ -132,8 +132,8 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         toolbarCustomization.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         toolbarCustomization.setTextFontSize(Int(semiboldFont.pointSize))
         toolbarCustomization.setTextFontName(semiboldFont.fontName)
-        toolbarCustomization.setHeaderText(AcqLoc.instance.localize("TinkoffAcquiring.threeds.acceptAuth"))
-        toolbarCustomization.setButtonText(AcqLoc.instance.localize("TinkoffAcquiring.threeds.cancelAuth"))
+        toolbarCustomization.setHeaderText(L10n.TinkoffAcquiring.Threeds.acceptAuth)
+        toolbarCustomization.setButtonText(L10n.TinkoffAcquiring.Threeds.cancelAuth)
 
         customization.setToolbarCusomization(toolbarCustomization)
         

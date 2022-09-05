@@ -81,7 +81,7 @@ final class CardListView: UIView {
     private lazy var primaryButton: ASDKButton = {
         let button = ASDKButton(
             style: .primary(
-                title: "CardList.button.addNewCard".localized,
+                title: L10n.CardList.Button.addNewCard,
                 buttonStyle: style.primaryButtonStyle
             )
         )
@@ -276,7 +276,7 @@ private extension MessageView.Style {
                 in: .uiResources,
                 compatibleWith: nil
             ),
-            message: "CardList.status.noCards".localized
+            message: L10n.CardList.Status.noCards
         )
     }
 }
