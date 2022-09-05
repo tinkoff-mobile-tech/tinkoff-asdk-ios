@@ -93,6 +93,7 @@ final class DefaultNetworkClient: NetworkClient {
     }
 
     @discardableResult
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func performDeprecatedRequest<Response: ResponseOperation>(_ request: NetworkRequest, delegate: NetworkTransportResponseDelegate?, completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(request: request,
@@ -184,6 +185,7 @@ final class DefaultNetworkClient: NetworkClient {
     }
 
     @discardableResult
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func sendCertsConfigRequest(
         _ request: NetworkRequest,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void

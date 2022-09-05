@@ -57,17 +57,14 @@ public struct AcquiringSdkCredential {
     }
 }
 
-/// Кофигурация для экземпляра SDK
+/// Конфигурация для экземпляра SDK
 public class AcquiringSdkConfiguration: NSObject {
+    public let credential: AcquiringSdkCredential
+    public let serverEnvironment: AcquiringSdkEnvironment
+    public let configEnvironment: ConfigSdkEnvironment
+    public let requestsTimeoutInterval: TimeInterval
+    @available(*, deprecated, message: "Property does not affect anything")
     public var fpsEnabled: Bool = false
-
-    public private(set) var credential: AcquiringSdkCredential
-
-    public private(set) var serverEnvironment: AcquiringSdkEnvironment
-    
-    public private(set) var configEnvironment: ConfigSdkEnvironment
-    
-    public private(set) var requestsTimeoutInterval: TimeInterval
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
     ///

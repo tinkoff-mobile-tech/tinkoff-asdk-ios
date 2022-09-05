@@ -32,26 +32,34 @@ final class AcquiringAPI: API {
     
     // MARK: - API
 
-    func performRequest<Request: APIRequest>(_ request: Request,
-                                             completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) -> Cancellable {
+    func performRequest<Request: APIRequest>(
+        _ request: Request,
+        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
+    ) -> Cancellable {
         return networkClient.performRequest(request) { response in
             do {
                 let data = try response.result.get()
-                self.handleResponseData(data,
-                                         for: request,
-                                         completion: completion)
+                self.handleResponseData(
+                    data,
+                    for: request,
+                    completion: completion
+                )
             } catch {
                 completion(.failure(error))
             }
         }
     }
 
-    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(_ request: Request,
-                                                                                    delegate: NetworkTransportResponseDelegate?,
-                                                                                    completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable {
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
+    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
+        _ request: Request,
+        delegate: NetworkTransportResponseDelegate?,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) -> Cancellable {
         return networkClient.performDeprecatedRequest(request, delegate: delegate, completion: completion)
     }
 
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func sendCertsConfigRequest(
         _ request: NetworkRequest,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
@@ -61,9 +69,11 @@ final class AcquiringAPI: API {
 }
 
 private extension AcquiringAPI {
-    func handleResponseData<Request: APIRequest>(_ data: Data,
-                                                 for request: Request,
-                                                 completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void) {
+    func handleResponseData<Request: APIRequest>(
+        _ data: Data,
+        for request: Request,
+        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
+    ) {
         do {
             let apiResponse = try apiResponseDecoder.decode(data: data, for: request)
             let payload = try apiResponse.result.get()

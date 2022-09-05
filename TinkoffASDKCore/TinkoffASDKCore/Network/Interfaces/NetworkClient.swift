@@ -26,9 +26,11 @@ protocol NetworkClient: AnyObject {
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
 
     @discardableResult
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func performDeprecatedRequest<Response: ResponseOperation>(_ request: NetworkRequest, delegate: NetworkTransportResponseDelegate?, completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable
 
     @discardableResult
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func sendCertsConfigRequest(
         _ request: NetworkRequest,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
