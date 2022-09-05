@@ -22,5 +22,4 @@ Pod::Spec.new do |spec|
     spec.preserve_paths = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
 
 	spec.dependency 'TinkoffASDKCore'
-
 end
