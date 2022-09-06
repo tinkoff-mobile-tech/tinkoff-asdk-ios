@@ -14,16 +14,16 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(name: "TinkoffASDKCore", path: "../TinkoffASDKCore")
+        .package(name: "TinkoffASDKCore", path: "TinkoffASDKCore")
     ],
     targets: [
         .binaryTarget(
             name: "TdsSdkIos",
-            path: "../ThirdParty/TdsSdkIos.xcframework"
+            path: "ThirdParty/TdsSdkIos.xcframework"
         ),
         .binaryTarget(
             name: "ThreeDSWrapper",
-            path: "../ThirdParty/ThreeDSWrapper.xcframework"
+            path: "ThirdParty/ThreeDSWrapper.xcframework"
         ),
         .target(
             name: "TinkoffASDKUI",
@@ -32,7 +32,8 @@ let package = Package(
                 .target(name: "TdsSdkIos"),
                 .target(name: "ThreeDSWrapper")
             ],
-            path: "TinkoffASDKUI",
+            path: "TinkoffASDKUI/TinkoffASDKUI",
+            exclude: ["Resources/Info.plist"],
             resources: [
                 .copy("Images/Images/tinkoff_40/tinkoff_40@2x.png"),
                 .copy("Images/Images/tinkoff_40/tinkoff_40@3x.png")
@@ -41,7 +42,7 @@ let package = Package(
         .testTarget(
             name: "TinkoffASDKUITests",
             dependencies: ["TinkoffASDKUI"],
-            path: "TinkoffASDKUITests",
+            path: "TinkoffASDKUI/TinkoffASDKUITests",
             exclude: ["Info.plist"]
         ),
     ]
