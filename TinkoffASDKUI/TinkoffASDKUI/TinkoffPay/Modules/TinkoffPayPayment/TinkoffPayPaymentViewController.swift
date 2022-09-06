@@ -123,7 +123,7 @@ private extension TinkoffPayPaymentViewController {
     func handleTinkoffApplicationOpen(result: Bool) {
         if result {
             didStartPayment?()
-            didStartLoading?(AcqLoc.instance.localize("TP.LoadingStatus.Title"))
+            didStartLoading?(L10n.Tp.LoadingStatus.title)
         } else {
             dismiss(animated: true, completion: nil)
         }
@@ -131,8 +131,8 @@ private extension TinkoffPayPaymentViewController {
     
     func handleError(_ error: Error) {
         DispatchQueue.main.async {
-            let alertTitle = AcqLoc.instance.localize("TP.Error.Title")
-            let alertDescription = AcqLoc.instance.localize("TP.Error.Description")
+            let alertTitle = L10n.Tp.Error.title
+            let alertDescription = L10n.Tp.Error.description
             
             self.showAlert?(alertTitle, alertDescription, error)
         }
@@ -140,16 +140,16 @@ private extension TinkoffPayPaymentViewController {
     
     func handleTinkoffAppNotInstalled() {
         didStopLoading?()
-        let alertController = UIAlertController(title: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Title"),
-                                                message: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Description"),
+        let alertController = UIAlertController(title: L10n.Tp.NoTinkoffBankApp.title,
+                                                message: L10n.Tp.NoTinkoffBankApp.description,
                                                 preferredStyle: .alert)
-        let installAction = UIAlertAction(title: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Button.Install"),
+        let installAction = UIAlertAction(title: L10n.Tp.NoTinkoffBankApp.Button.install,
                                           style: .default) { [weak self] _ in
             self?.application.open(.tinkoffBankStoreURL)
             self?.dismiss(animated: true)
         }
         
-        let cancelAction = UIAlertAction(title: AcqLoc.instance.localize("TP.NoTinkoffBankApp.Button.Сancel"),
+        let cancelAction = UIAlertAction(title: L10n.Tp.NoTinkoffBankApp.Button.сancel,
                                          style: .cancel) { [weak self] _ in
             self?.dismiss(animated: true)
         }

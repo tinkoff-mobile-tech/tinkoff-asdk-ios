@@ -142,9 +142,8 @@ private extension PaymentPollingViewController {
     
     func handleError(_ error: Error) {
         DispatchQueue.main.async {
-            let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
-            let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
-            
+            let alertTitle = L10n.Sbp.Error.title
+            let alertDescription = L10n.Sbp.Error.description
             self.showAlert(title: alertTitle,
                            description: alertDescription,
                            error: error)

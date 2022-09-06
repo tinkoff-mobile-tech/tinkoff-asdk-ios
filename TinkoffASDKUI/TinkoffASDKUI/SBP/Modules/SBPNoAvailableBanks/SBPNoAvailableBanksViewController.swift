@@ -56,25 +56,17 @@ final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoada
 
 private extension SBPNoAvailableBanksViewController {
     func setup() {
-        customView.imageView.image = UIImage(named: "empty_banks", in: .uiResources, compatibleWith: nil)
+        customView.imageView.image = Asset.Sbp.emptyBanks.image
         setupLocalization()
         setupButtons()
         setupNavigationButton()
     }
     
     func setupLocalization() {
-        customView.titleLabel.text = AcqLoc.instance.localize(
-            "SBP.EmptyBanks.Title"
-        )
-        customView.descriptionLabel.text = AcqLoc.instance.localize(
-            "SBP.EmptyBanks.Description"
-        )
-        customView.confirmButton.setTitle(AcqLoc.instance.localize(
-            "SBP.EmptyBanks.ConfirmationButton.Title"
-        ), for: .normal)
-        customView.informationButton.setTitle(AcqLoc.instance.localize(
-            "SBP.EmptyBanks.InformationButton.Title"
-        ), for: .normal)
+        customView.titleLabel.text = L10n.Sbp.EmptyBanks.title
+        customView.descriptionLabel.text = L10n.Sbp.EmptyBanks.description
+        customView.confirmButton.setTitle(L10n.Sbp.EmptyBanks.ConfirmationButton.title, for: .normal)
+        customView.informationButton.setTitle(L10n.Sbp.EmptyBanks.InformationButton.title, for: .normal)
     }
     
     func setupButtons() {
@@ -94,7 +86,7 @@ private extension SBPNoAvailableBanksViewController {
                                           target: self,
                                           action: #selector(close))
         } else {
-            closeButton = UIBarButtonItem(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"),
+            closeButton = UIBarButtonItem(title: L10n.TinkoffAcquiring.Button.close,
                                           style: .done,
                                           target: self,
                                           action: #selector(close))

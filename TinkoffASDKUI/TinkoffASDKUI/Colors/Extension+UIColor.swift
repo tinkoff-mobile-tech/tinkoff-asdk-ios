@@ -49,4 +49,17 @@ extension UIColor {
 
         return nil
     }
+    
+    var hex: String {
+        var r = CGFloat.zero
+        var g = CGFloat.zero
+        var b = CGFloat.zero
+        var a = CGFloat.zero
+
+        getRed(&r, green: &g, blue: &b, alpha: &a)
+
+        let rgb: Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)<<0
+        
+        return String(format:"#%06x", rgb)
+    }
 }

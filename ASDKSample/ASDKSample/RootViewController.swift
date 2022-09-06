@@ -93,6 +93,8 @@ class RootViewController: UITableViewController {
         } else {
             buttonCart.title = "🛒"
         }
+        
+        tableView.reloadData()
     }
 
     // MARK: UITableViewDataSource
@@ -102,11 +104,14 @@ class RootViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        switch section {
+        case .zero:
             return dataSource.count
+        case 1:
+            return AppSetting.shared.paySBP ? 1 : 0
+        default:
+            return 0
         }
-
-        return 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

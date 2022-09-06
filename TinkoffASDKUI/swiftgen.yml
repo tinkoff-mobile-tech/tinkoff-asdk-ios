@@ -1,0 +1,16 @@
+strings:
+  inputs: TinkoffASDKUI/Resources/Strings/ru.lproj
+  outputs:
+    - templateName: structured-swift5
+      output: TinkoffASDKUI/Resources/Generated/Strings+Generated.swift
+      bundle: Bundle.uiResources
+
+xcassets:
+  inputs: TinkoffASDKUI/Resources/Assets.xcassets
+  outputs:
+    - templateName: swift5
+      output: TinkoffASDKUI/Resources/Generated/Assets+Generated.swift
+      params:
+        forceProvidesNamespaces: true
+        bundle: Bundle.uiResources
+      

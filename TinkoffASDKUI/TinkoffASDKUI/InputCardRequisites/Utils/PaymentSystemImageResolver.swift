@@ -51,19 +51,8 @@ final class PaymentSystemImageResolver: IPaymentSystemImageResolver {
 // MARK: - UIImage + Payment Systems
 
 private extension UIImage {
-    static var visa: UIImage? {
-        UIImage(named: "visa_logo", in: .uiResources, compatibleWith: nil)
-    }
-
-    static var masterCard: UIImage? {
-        UIImage(named: "mc_logo", in: .uiResources, compatibleWith: nil)
-    }
-
-    static var maestro: UIImage? {
-        UIImage(named: "maestro_logo", in: .uiResources, compatibleWith: nil)
-    }
-
-    static var mir: UIImage? {
-        UIImage(named: "mir_logo", in: .uiResources, compatibleWith: nil)
-    }
+    static let visa: UIImage = Asset.CardRequisites.visaLogo.image
+    static let masterCard: UIImage = Asset.CardRequisites.mcLogo.image
+    static let maestro: UIImage = Asset.CardRequisites.maestroLogo.image
+    static let mir: UIImage = Asset.CardRequisites.mirLogo.image
 }

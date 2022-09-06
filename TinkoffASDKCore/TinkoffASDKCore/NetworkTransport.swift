@@ -30,10 +30,13 @@ protocol NetworkTransport: AnyObject {
     func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest
     func createChecking3DSURL(requestData: Checking3DSURLData) throws -> URLRequest
     func myIpAddress() -> String?
-    func send<Operation: RequestOperation,
-              Response: ResponseOperation>(operation: Operation,
-                                           responseDelegate: NetworkTransportResponseDelegate?,
-                                           completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable
+    func send<Operation: RequestOperation, Response: ResponseOperation>(
+        operation: Operation,
+        responseDelegate: NetworkTransportResponseDelegate?,
+        completionHandler: @escaping (_ results: Result<Response, Error>) -> Void
+    ) -> Cancellable
+    func sendCertsConfigRequest<Operation: RequestOperation>(operation: Operation,
+                                                             completionHandler: @escaping (_ results: Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable
 }
 
 extension NetworkTransport {
@@ -64,6 +67,7 @@ public protocol NetworkTransportResponseDelegate {
 
 final class AcquaringNetworkTransport: NetworkTransport {
     private let urlDomain: URL
+    private let certsConfigDomain: URL
     private let apiPathV2: String = "v2"
     private let apiPathV1: String = "rest"
     private let session: URLSession
@@ -75,22 +79,29 @@ final class AcquaringNetworkTransport: NetworkTransport {
     ///
     /// - Parameters:
     ///   - url: путь к серверу **Tinkoff Acquaring API**
+    ///   - certsConfig - путь к конфигу с сертификатами
     ///   - session: конфигурация URLSession по умолчанию используеться `URLSession.shared`,
-    init(urlDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo, logger: LoggerDelegate?) {
+    init(urlDomain: URL, certsConfigDomain: URL, session: URLSession = .shared, deviceInfo: DeviceInfo, logger: LoggerDelegate? = nil) {
         self.urlDomain = urlDomain
+        self.certsConfigDomain = certsConfigDomain
         self.session = session
         self.deviceInfo = deviceInfo
         self.logger = logger
     }
 
-    private func createRequest<Operation: RequestOperation>(for operation: Operation) throws -> URLRequest {
-        var request = URLRequest(url: urlDomain.appendingPathComponent(apiPathV2).appendingPathComponent(operation.name))
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    private func createRequest<Operation: RequestOperation>(domain: URL, for operation: Operation) throws -> URLRequest {
+        var request = URLRequest(url: domain.appendingPathComponent(operation.name))
+        request.setValue(operation.requestContentType.rawValue, forHTTPHeaderField: "Content-Type")
         request.httpMethod = operation.requestMethod.rawValue
 
         if let body = operation.parameters {
             logger?.log("🛫 Start \(operation.requestMethod.rawValue) request: \(request.description), with paramaters: \(body)")
-            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
+            switch operation.requestContentType {
+            case .applicationJson:
+                request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
+            case .urlEncoded:
+                request.httpBody = generateBodyParamsString(using: body).data(using: .utf8)
+            }
         } else {
             logger?.log("🛫 Start \(operation.requestMethod.rawValue) request: \(request.description)")
         }
@@ -149,15 +160,21 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
         logger?.log("Start 3DS Confirmation WebView POST request: \(request.description), with paramaters: \(parameters)")
 
-        let paramsString = parameters.compactMap { (item) -> String? in
-            let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
-            let paramValue = "\(item.value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? item.value
-            return "\(item.key)=\(paramValue)"
-        }.joined(separator: "&")
+        let paramsString = generateBodyParamsString(using: parameters)
 
         request.httpBody = paramsString.data(using: .utf8)
 
         return request
+    }
+    
+    private func generateBodyParamsString(using parameters: JSONObject) -> String {
+        let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
+        let bodyParamsString = parameters.compactMap { (item) -> String? in
+            let paramValue = "\(item.value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? item.value
+            return "\(item.key)=\(paramValue)"
+        }.joined(separator: "&")
+        
+        return bodyParamsString
     }
 
     /// Для прохождения 3DS v2 (ACS) нужно подготовить URLRequest для загрузки формы подтверждения в webView
@@ -222,7 +239,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     func send<Operation: RequestOperation, Response: ResponseOperation>(operation: Operation, responseDelegate: NetworkTransportResponseDelegate? = nil, completionHandler: @escaping (_ results: Result<Response, Error>) -> Void) -> Cancellable {
         let request: URLRequest
         do {
-            request = try createRequest(for: operation)
+            request = try createRequest(domain: urlDomain.appendingPathComponent(apiPathV2), for: operation)
         } catch {
             completionHandler(.failure(error))
             return EmptyCancellable()
@@ -311,4 +328,63 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
         return task
     } // send
+    
+    // TODO: - привести отправку запросов к единому виду при рефакторинге компонента
+    @discardableResult
+    func sendCertsConfigRequest<Operation: RequestOperation>(
+        operation: Operation,
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable  {
+
+        let request: URLRequest
+        do {
+            request = try createRequest(domain: certsConfigDomain, for: operation)
+        } catch {
+            completionHandler(.failure(error))
+            return EmptyCancellable()
+        }
+
+        let responseLoger = logger
+
+        let task = session.dataTask(with: request) { data, response, networkError in
+            if let error = networkError {
+                responseLoger?.log("🛬 End request: \(request.description), with: \(error.localizedDescription)")
+                return completionHandler(.failure(error))
+            }
+
+            if let responseData = data, let string = String(data: responseData, encoding: .utf8) {
+                responseLoger?.log("🛬 End request: \(request.description), with response data:\n\(string)")
+            }
+
+            // HTTPURLResponse
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return completionHandler(.failure(NSError(domain: "Response should be an HTTPURLResponse", code: 1, userInfo: nil)))
+            }
+
+            // httpResponse check  HTTP Status Code `200..<300`
+            guard httpResponse.isSuccessful else {
+                let error = HTTPResponseError(body: data, response: httpResponse, kind: .errorResponse)
+                completionHandler(.failure(error))
+                return
+            }
+
+            // data is empty
+            guard let data = data else {
+                let error = HTTPResponseError(body: nil, response: httpResponse, kind: .invalidResponse)
+                completionHandler(.failure(error))
+                return
+            }
+
+            // decode to `Response`
+            if let responseObject = try? JSONDecoder.customISO8601Decoding.decode(GetCertsConfigResponse.self, from: data) {
+                completionHandler(.success(responseObject))
+            } else {
+                completionHandler(.failure(HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)))
+            }
+        } // session.dataTask
+
+        task.resume()
+
+        return task
+    }
 }

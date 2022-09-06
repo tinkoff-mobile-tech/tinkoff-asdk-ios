@@ -102,7 +102,7 @@ extension AddNewCardViewController: UITableViewDataSource {
         switch tableViewCells[indexPath.row] {
         case .title:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "AmountTableViewCell") as? AmountTableViewCell {
-                cell.labelTitle.text = AcqLoc.instance.localize("TinkoffAcquiring.text.addNewCard")
+                cell.labelTitle.text = L10n.TinkoffAcquiring.Text.addNewCard
                 cell.labelTitle.font = UIFont.boldSystemFont(ofSize: 22.0)
 
                 return cell

@@ -1,0 +1,11 @@
+framework module ThreeDSWrapper {
+  umbrella header "ThreeDSWrapper-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module ThreeDSWrapper.Swift {
+    header "ThreeDSWrapper-Swift.h"
+    requires objc
+}

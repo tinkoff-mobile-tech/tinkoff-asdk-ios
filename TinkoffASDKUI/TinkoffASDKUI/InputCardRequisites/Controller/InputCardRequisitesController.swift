@@ -40,7 +40,7 @@ class InputCardRequisitesController: NSObject {
     // MARK: Constants
 
     private enum Constants {
-        static let cardNumberPlaceholder = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.cardNumber")
+        static let cardNumberPlaceholder = L10n.TinkoffAcquiring.Placeholder.cardNumber
         static let validThruPlaceholder = "01/23"
         static let cvcPlaceholder = "CVC"
         static let paymentSystemImageWidth: CGFloat = 20
@@ -211,7 +211,7 @@ class InputCardRequisitesController: NSObject {
     private func activateScanerButton() {
         if cardRequisitesScanner != nil {
             inputView?.buttonRight.isHidden = false
-            inputView?.buttonRight.setImage(UIImage(named: "scan", in: .uiResources, compatibleWith: nil), for: .normal)
+            inputView?.buttonRight.setImage(Asset.scan.image, for: .normal)
             inputView?.onButtonRightTouch = onScanner
         } else {
             inputView?.buttonRight.isHidden = true
@@ -222,7 +222,7 @@ class InputCardRequisitesController: NSObject {
 
     private func activateNextButton() {
         inputView?.buttonRight.isHidden = false
-        inputView?.buttonRight.setImage(UIImage(named: "next", in: .uiResources, compatibleWith: nil), for: .normal)
+        inputView?.buttonRight.setImage(Asset.next.image, for: .normal)
         inputView?.onButtonRightTouch = onNext
     }
 }
@@ -236,7 +236,7 @@ extension InputCardRequisitesController: UITextFieldDelegate {
         }
 
         inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
-        inputAccessoryViewWithButton?.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.addCard"), for: .normal)
+        inputAccessoryViewWithButton?.buttonAction.setTitle(L10n.TinkoffAcquiring.Button.addCard, for: .normal)
         textField.inputAccessoryView = inputAccessoryViewWithButton
 
         return becomeFirstResponderListener?.textFieldShouldBecomeFirstResponder(textField) ?? true

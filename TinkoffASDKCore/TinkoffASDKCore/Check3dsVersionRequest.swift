@@ -50,6 +50,7 @@ public struct Check3dsVersionResponse: ResponseOperation {
     public var tdsServerTransID: String?
     public var threeDSMethodURL: String?
     public var version: String
+    public let paymentSystem: String?
 
     private enum CodingKeys: String, CodingKey {
         case success = "Success"
@@ -61,6 +62,7 @@ public struct Check3dsVersionResponse: ResponseOperation {
         case tdsServerTransID = "TdsServerTransID"
         case threeDSMethodURL = "ThreeDSMethodURL"
         case version = "Version"
+        case paymentSystem = "PaymentSystem"
     }
 
     public init(from decoder: Decoder) throws {
@@ -74,6 +76,7 @@ public struct Check3dsVersionResponse: ResponseOperation {
         tdsServerTransID = try? container.decode(String.self, forKey: .tdsServerTransID)
         threeDSMethodURL = try? container.decode(String.self, forKey: .threeDSMethodURL)
         version = try container.decode(String.self, forKey: .version)
+        paymentSystem = try? container.decode(String.self, forKey: .paymentSystem)
     } // init
 
     public func encode(to encoder: Encoder) throws {
@@ -87,5 +90,6 @@ public struct Check3dsVersionResponse: ResponseOperation {
         try? container.encode(tdsServerTransID, forKey: .tdsServerTransID)
         try? container.encode(threeDSMethodURL, forKey: .threeDSMethodURL)
         try container.encode(version, forKey: .version)
+        try container.encode(paymentSystem, forKey: .paymentSystem)
     } // encode
 } // FinishResponse

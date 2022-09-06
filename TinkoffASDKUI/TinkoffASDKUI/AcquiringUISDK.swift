@@ -21,6 +21,7 @@ import PassKit
 import TinkoffASDKCore
 import UIKit
 import WebKit
+import ThreeDSWrapper
 
 public protocol TinkoffPayDelegate: AnyObject {
     func tinkoffPayIsNotAllowed()
@@ -50,7 +51,7 @@ public class AcquiringViewConfiguration {
     }
 
     public struct FeaturesOptions {
-        public var fpsEnabled: Bool = true
+        public var fpsEnabled: Bool = false
         public var tinkoffPayEnabled: Bool = true
 
         init() {}
@@ -173,6 +174,11 @@ public class AcquiringUISDK: NSObject {
     private let tinkoffPayAssembly: TinkoffPayAssembly
     private let cardListAssembly: ICardListAssembly
     
+    // App based threeDS
+    private let tdsController: TDSController
+    // ThreeDS feature flag
+    private let shouldUseAppBasedThreeDSFlow = false
+
     private weak var logger: LoggerDelegate?
     
     
@@ -180,10 +186,16 @@ public class AcquiringUISDK: NSObject {
                 style: Style = DefaultStyle()) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
         self.style = style
-        AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
         self.sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         self.tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: acquiringSdk,
                                                      tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime)
+        let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
+        let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
+        let tdsTimeoutResolver = TDSTimeoutResolver()
+        self.tdsController = TDSController(acquiringSdk: acquiringSdk,
+                                           tdsWrapper: tdsWrapper,
+                                           tdsCertsManager: tdsCertsManager,
+                                           tdsTimeoutResolver: tdsTimeoutResolver)
         self.logger = configuration.logger
         self.cardListAssembly = CardListAssembly(primaryButtonStyle: style.bigButtonStyle)
     }
@@ -222,8 +234,6 @@ public class AcquiringUISDK: NSObject {
     }
 
     public func presentAddCardView(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void) {
-        AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
-
         self.presentingViewController = presentingViewController
         acquiringViewConfiguration = configuration
 
@@ -464,7 +474,7 @@ public class AcquiringUISDK: NSObject {
         }
 
         presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: configuration) { view in
-            let viewTitle = AcqLoc.instance.localize("TinkoffAcquiring.view.title.payQRCode")
+            let viewTitle = L10n.TinkoffAcquiring.View.Title.payQRCode
             view.changedStatus(.initWaiting)
             self.getStaticQRCode { [weak view] response in
                 switch response {
@@ -475,7 +485,7 @@ public class AcquiringUISDK: NSObject {
 
                 case let .failure(error):
                     DispatchQueue.main.async {
-                        let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+                        let alertTitle = L10n.TinkoffAcquiring.Alert.Title.error
 
                         if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                             view?.closeVC(animated: true) {
@@ -679,7 +689,7 @@ public class AcquiringUISDK: NSObject {
     private func presentApplePayActivity(_ request: PKPaymentRequest) {
         guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
             acquiringView?.closeVC(animated: true) {
-                let error = NSError(domain: AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+                let error = NSError(domain: L10n.TinkoffAcquiring.Unknown.Response.status,
                                     code: 0,
                                     userInfo: nil)
 
@@ -712,7 +722,7 @@ public class AcquiringUISDK: NSObject {
                         if UIApplication.shared.canOpenURL(url) {
                             UIApplication.shared.open(url, options: [:]) { _ in
                                 self?.sbpWaitingIncominPayment(paymentId: paymentId, source: qrCodeResponse.qrCodeData, sourceType: paymentInvoiceSource)
-                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: "Выбор источника оплаты"))
+                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: L10n.TinkoffAcquiring.Text.Status.selectingPaymentSource))
                             }
                         } else {
                             let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: [])
@@ -723,7 +733,7 @@ public class AcquiringUISDK: NSObject {
                             }
 
                             self?.acquiringView?.presentVC(activityViewController, animated: true, completion: {
-                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: "Выбор источника оплаты"))
+                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: L10n.TinkoffAcquiring.Text.Status.selectingPaymentSource))
                             })
                         }
                     } else {
@@ -736,7 +746,7 @@ public class AcquiringUISDK: NSObject {
                 DispatchQueue.main.async {
                     self?.acquiringView?.changedStatus(.error(error))
 
-                    let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+                    let alertTitle = L10n.TinkoffAcquiring.Alert.Title.error
                     if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                         self?.presentingViewController?.present(alert, animated: true, completion: {
                             //
@@ -771,9 +781,9 @@ public class AcquiringUISDK: NSObject {
         }
 
         if sourceType == .url {
-            acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: source, status: "Ожидание оплаты"))
+            acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: source, status: L10n.TinkoffAcquiring.Text.Status.waitingPayment))
         } else {
-            acquiringView?.changedStatus(.paymentWaitingSBPQrCode(qrCode: source, status: "Ожидание оплаты"))
+            acquiringView?.changedStatus(.paymentWaitingSBPQrCode(qrCode: source, status: L10n.TinkoffAcquiring.Text.Status.waitingPayment))
         }
 
         checkPaymentStatus?.fetchStatus(completionStatus: completionStatus)
@@ -791,7 +801,6 @@ public class AcquiringUISDK: NSObject {
         onPresenting: (((AcquiringView) -> Void))? = nil
     ) {
         self.presentingViewController = presentingViewController
-        AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
         // create
         let modalViewController = AcquiringPaymentViewController(nibName: "AcquiringPaymentViewController",
@@ -1179,12 +1188,26 @@ public class AcquiringUISDK: NSObject {
                             self?.cancelPayment()
                         }
                     }
-
+                case let .needConfirmation3DS2AppBased(appBasedData):
+                    self.tdsController.completionHandler = { response in
+                        completionHandler(response)
+                    }
+                    self.tdsController.cancelHandler = { [weak self] in
+                        if self?.acquiringView != nil {
+                            self?.acquiringView?.closeVC(animated: true, completion: {
+                                self?.cancelPayment()
+                            })
+                        } else {
+                            self?.cancelPayment()
+                        }
+                    }
+                    
+                    self.tdsController.doChallenge(with: appBasedData)
                 case let .done(response):
                     completionHandler(.success(response))
 
                 case .unknown:
-                    let error = NSError(domain: finishResult.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+                    let error = NSError(domain: finishResult.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Response.status,
                                         code: finishResult.errorCode,
                                         userInfo: nil)
 
@@ -1214,44 +1237,75 @@ public class AcquiringUISDK: NSObject {
                 var finistRequestData = requestData
                 // сбор информации для прохождения 3DS v2
                 if let tdsServerTransID = checkResult.tdsServerTransID, let threeDSMethodURL = checkResult.threeDSMethodURL {
-                    // вызываем web view для проверки девайса
-                    self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
-                    // собираем информацию о девайсе
-                    let screenSize = UIScreen.main.bounds.size
-                    let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
-                                                      languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
-                                                      screenWidth: Int(screenSize.width),
-                                                      screenHeight: Int(screenSize.height))
-                    finistRequestData.setDeviceInfo(info: deviceInfo)
-                    finistRequestData.setThreeDSVersion(checkResult.version)
-                    finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress())
+                    
+                    if self.shouldUseAppBasedThreeDSFlow {
+                        self.startAppBasedFlow(checkResult: checkResult,
+                                               finishRequestData: finistRequestData,
+                                               completionHandler: completionHandler)
+                        return
+                    } else {
+                        // вызываем web view для проверки девайса
+                        self.threeDSMethodCheckURL(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString, presenter: self.acquiringView)
+                        // собираем информацию о девайсе
+                        let screenSize = UIScreen.main.bounds.size
+                        let deviceInfo = DeviceInfoParams(cresCallbackUrl: self.acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
+                                                          languageId: self.acquiringSdk.languageKey?.rawValue ?? "ru",
+                                                          screenWidth: Int(screenSize.width),
+                                                          screenHeight: Int(screenSize.height))
+                        finistRequestData.setDeviceInfo(info: deviceInfo)
+                        finistRequestData.setThreeDSVersion(checkResult.version)
+                        finistRequestData.setIpAddress(self.acquiringSdk.networkIpAddress())
+                    }
                 }
+                
                 // завершаем оплату
                 self.finishAuthorize(requestData: finistRequestData, treeDSmessageVersion: checkResult.version) { finishResponse in
                     completionHandler(finishResponse)
                 }
-
             case let .failure(error):
                 completionHandler(.failure(error))
             }
         })
     }
-
-    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
-        let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
-        guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
+    
+    private func startAppBasedFlow(checkResult: Check3dsVersionResponse,
+                                   finishRequestData: PaymentFinishRequestData,
+                                   completionHandler: @escaping PaymentCompletionHandler) {
+        guard let paymentSystem = checkResult.paymentSystem else {
+            finishAuthorize(requestData: finishRequestData, treeDSmessageVersion: checkResult.version) { finishResponse in
+                completionHandler(finishResponse)
+            }
             return
         }
-
-        DispatchQueue.main.async {
-            if presenter != nil {
-                presenter?.checkDeviceFor3DSData(with: request)
-            } else {
-                self.webViewFor3DSChecking = WKWebView()
-                self.webViewFor3DSChecking?.load(request)
+        
+        tdsController.enrichRequestDataWithAuthParams(with: paymentSystem,
+                                                      messageVersion: checkResult.version,
+                                                      finishRequestData: finishRequestData) { [weak self] result in
+            do {
+                self?.finishAuthorize(requestData: try result.get(),
+                                     treeDSmessageVersion: checkResult.version,
+                                     completionHandler: completionHandler)
+            } catch {
+                completionHandler(.failure(error))
             }
         }
     }
+    
+    private func threeDSMethodCheckURL(tdsServerTransID: String, threeDSMethodURL: String, notificationURL: String, presenter: AcquiringView?) {
+            let urlData = Checking3DSURLData(tdsServerTransID: tdsServerTransID, threeDSMethodURL: threeDSMethodURL, notificationURL: notificationURL)
+            guard let request = try? acquiringSdk.createChecking3DSURL(data: urlData) else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                if presenter != nil {
+                    presenter?.checkDeviceFor3DSData(with: request)
+                } else {
+                    self.webViewFor3DSChecking = WKWebView()
+                    self.webViewFor3DSChecking?.load(request)
+                }
+            }
+        }
 
     private func cancelPayment() {
         if let paymentInitResponseData = paymentInitResponseData {
@@ -1266,7 +1320,7 @@ public class AcquiringUISDK: NSObject {
         } else {
             let paymentCanceledResponse = PaymentStatusResponse(success: false,
                                                                 errorCode: 0,
-                                                                errorMessage: AcqLoc.instance.localize("TinkoffAcquiring.alert.message.addingCardCancel"),
+                                                                errorMessage: L10n.TinkoffAcquiring.Alert.Message.addingCardCancel,
                                                                 orderId: "",
                                                                 paymentId: 0,
                                                                 amount: 0,
@@ -1341,7 +1395,7 @@ public class AcquiringUISDK: NSObject {
                         })
                     case let .failure(error):
                         viewController?.dismiss(animated: true, completion: {
-                            let alertTitle = AcqLoc.instance.localize("TinkoffAcquiring.alert.title.error")
+                            let alertTitle = L10n.TinkoffAcquiring.Alert.Title.error
                             if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                                 self?.presentingViewController?.presentOnTop(viewController: alert, animated: true)
                             } else {
@@ -1443,7 +1497,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                         customerKey: String,
                         configuration: AcquiringViewConfiguration,
                         completeHandler: @escaping (Result<PaymentCard?, Error>) -> Void) {
-        AcqLoc.instance.setup(lang: configuration.localizableInfo?.lang, table: configuration.localizableInfo?.table, bundle: configuration.localizableInfo?.bundle)
 
         self.presentingViewController = presentingViewController
         acquiringViewConfiguration = configuration
@@ -1566,7 +1619,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             confirmationComplete(.success(response))
 
         case .unknown:
-            let error = NSError(domain: confirmationResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"),
+            let error = NSError(domain: confirmationResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Response.status,
                                 code: confirmationResponse.errorCode, userInfo: nil)
 
             confirmationComplete(.failure(error))
@@ -1609,11 +1662,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         customerKey: String,
         configuration: AcquiringViewConfiguration
     ) {
-        AcqLoc.instance.setup(
-            lang: configuration.localizableInfo?.lang,
-            table: configuration.localizableInfo?.table,
-            bundle: configuration.localizableInfo?.bundle
-        )
 
         if acquiringViewConfiguration == nil {
             acquiringViewConfiguration = configuration
@@ -1721,7 +1769,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
                     // decode as a default `AcquiringResponse`
                     guard let acquiringResponse = try? JSONDecoder().decode(AcquiringResponse.self, from: data) else {
                         self?.webViewController?.dismiss(animated: true, completion: { [weak self] in
-                            let error = NSError(domain: AcqLoc.instance.localize("TinkoffAcquiring.unknown.response.status"), code: 0, userInfo: nil)
+                            let error = NSError(domain: L10n.TinkoffAcquiring.Unknown.Response.status, code: 0, userInfo: nil)
                             self?.on3DSCheckingCompletionHandler?(.failure(error))
                             self?.on3DSCheckingAddCardCompletionHandler?(.failure(error))
                         })
@@ -1731,7 +1779,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
 
                     // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
                     guard acquiringResponse.success else {
-                        let error = NSError(domain: acquiringResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.response.success.false"),
+                        let error = NSError(domain: acquiringResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Error.status,
                                             code: acquiringResponse.errorCode,
                                             userInfo: try? acquiringResponse.encode2JSONObject())
 
@@ -1746,7 +1794,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
                     // data in `PaymentStatusResponse` format
                     if self?.on3DSCheckingCompletionHandler != nil {
                         guard let responseObject: PaymentStatusResponse = try? JSONDecoder().decode(PaymentStatusResponse.self, from: data) else {
-                            let error = NSError(domain: acquiringResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.response.success.false"),
+                            let error = NSError(domain: acquiringResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Error.status,
                                                 code: acquiringResponse.errorCode,
                                                 userInfo: try? acquiringResponse.encode2JSONObject())
 
@@ -1766,7 +1814,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
                     // data in `AddCardStatusResponse` format
                     if self?.on3DSCheckingAddCardCompletionHandler != nil {
                         guard let responseObject: AddCardStatusResponse = try? JSONDecoder().decode(AddCardStatusResponse.self, from: data) else {
-                            let error = NSError(domain: acquiringResponse.errorMessage ?? AcqLoc.instance.localize("TinkoffAcquiring.response.success.false"),
+                            let error = NSError(domain: acquiringResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Error.status,
                                                 code: acquiringResponse.errorCode,
                                                 userInfo: try? acquiringResponse.encode2JSONObject())
 

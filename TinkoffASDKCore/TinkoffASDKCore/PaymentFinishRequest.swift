@@ -105,6 +105,14 @@ public struct DeviceInfoParams: Codable {
     var screenHeight: Int
     var screenWidth: Int
     var cresCallbackUrl: String
+    var sdkAppID: String?
+    var sdkEphemPubKey: String?
+    var sdkReferenceNumber: String?
+    var sdkTransID: String?
+    var sdkMaxTimeout: String?
+    var sdkEncData: String?
+    var sdkInterface: String
+    var sdkUiType: String
 
     enum CodingKeys: String, CodingKey {
         case threeDSCompInd
@@ -115,41 +123,43 @@ public struct DeviceInfoParams: Codable {
         case screenHeight = "screen_height"
         case screenWidth = "screen_width"
         case cresCallbackUrl
+        case sdkAppID
+        case sdkEphemPubKey
+        case sdkReferenceNumber
+        case sdkTransID
+        case sdkMaxTimeout
+        case sdkEncData
+        case sdkInterface
+        case sdkUiType
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        threeDSCompInd = try container.decode(String.self, forKey: .threeDSCompInd)
-        javaEnabled = try container.decode(String.self, forKey: .javaEnabled)
-        colorDepth = try container.decode(Int.self, forKey: .colorDepth)
-        language = try container.decode(String.self, forKey: .language)
-        timezone = try container.decode(Int.self, forKey: .timezone)
-        screenHeight = try container.decode(Int.self, forKey: .screenHeight)
-        screenWidth = try container.decode(Int.self, forKey: .screenWidth)
-        cresCallbackUrl = try container.decode(String.self, forKey: .cresCallbackUrl)
-    }
-
-    public init(cresCallbackUrl: String, languageId: String = "ru", screenWidth: Int, screenHeight: Int, colorDepth: Int = 32) {
-        threeDSCompInd = "Y"
-        javaEnabled = "true"
+    public init(cresCallbackUrl: String,
+                languageId: String = "ru",
+                screenWidth: Int,
+                screenHeight: Int,
+                colorDepth: Int = 32,
+                sdkAppID: String? = nil,
+                sdkEphemPubKey: String? = nil,
+                sdkReferenceNumber: String? = nil,
+                sdkTransID: String? = nil,
+                sdkMaxTimeout: String? = nil,
+                sdkEncData: String? = nil) {
+        self.threeDSCompInd = "Y"
+        self.javaEnabled = "true"
         self.colorDepth = colorDepth
-        language = languageId
-        timezone = TimeZone.current.secondsFromGMT() / 60
+        self.language = languageId
+        self.timezone = TimeZone.current.secondsFromGMT() / 60
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(threeDSCompInd, forKey: .threeDSCompInd)
-        try container.encode(javaEnabled, forKey: .javaEnabled)
-        try container.encode(colorDepth, forKey: .colorDepth)
-        try container.encode(language, forKey: .language)
-        try container.encode(timezone, forKey: .timezone)
-        try container.encode(screenHeight, forKey: .screenHeight)
-        try container.encode(screenWidth, forKey: .screenWidth)
-        try container.encode(cresCallbackUrl, forKey: .cresCallbackUrl)
+        self.sdkAppID = sdkAppID
+        self.sdkEphemPubKey = sdkEphemPubKey
+        self.sdkReferenceNumber = sdkReferenceNumber
+        self.sdkTransID = sdkTransID
+        self.sdkMaxTimeout = sdkMaxTimeout
+        self.sdkEncData = sdkEncData
+        self.sdkInterface = "03"
+        self.sdkUiType = "01,02,03,04,05"
     }
 }
 
@@ -360,12 +370,30 @@ public struct Confirmation3DSDataACS: Codable {
     }
 }
 
+public struct Confirmation3DS2AppBasedData: Codable {
+    public let acsSignedContent: String
+    public let acsTransId: String
+    public let tdsServerTransId: String
+    public let acsRefNumber: String
+
+    enum CodingKeys: String, CodingKey {
+        case acsSignedContent = "AcsSignedContent"
+        case acsTransId = "AcsTransId"
+        case tdsServerTransId = "TdsServerTransId"
+        case acsRefNumber = "AcsReferenceNumber"
+
+    }
+}
+
 public enum PaymentFinishResponseStatus {
     /// Требуется подтверждение 3DS v1.0
     case needConfirmation3DS(Confirmation3DSData)
 
-    /// Требуется подтверждение 3DS v2.0
+    /// Требуется подтверждение 3DS v2.0 browser-based
     case needConfirmation3DSACS(Confirmation3DSDataACS)
+    
+    /// Требуется подтверждение 3DS v2.0 app-based
+    case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
 
     /// Успешная оплата
     case done(PaymentStatusResponse)
@@ -415,6 +443,8 @@ public struct PaymentFinishResponse: ResponseOperation {
                 responseStatus = .needConfirmation3DS(confirmation3DS)
             } else if let confirmation3DSACS = try? Confirmation3DSDataACS(from: decoder) {
                 responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
+            } else if let confirmationAppBased = try? Confirmation3DS2AppBasedData(from: decoder) {
+                responseStatus = .needConfirmation3DS2AppBased(confirmationAppBased)
             }
 
         case .authorized, .confirmed, .checked3ds:
