@@ -664,19 +664,9 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get TinkoffPay Status
-
-    // TODO: Change response
-    // TODO: Add description
-    @discardableResult
-    public func getTinkoffPayStatus(
-        completion: @escaping (Result<GetTinkoffPayStatusPayload, Error>) -> Void
-    ) -> Cancellable {
-        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
-    }
+    // TODO: (MIC-6303) Переписать метод под новый формат ответа
 
     @discardableResult
-    @available(*, deprecated, message: "Use getTinkoffPayStatus(completion:) instead")
     public func getTinkoffPayStatus(
         completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
     ) -> Cancellable {
@@ -686,12 +676,19 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get TinkoffPay Link
+    // TODO: (MIC-6303) Переписать метод под новый формат ответа
 
-    // TODO: Change response
+    /// Получить ссылку для оплаты с помощью `TinkoffPay`
+    ///
+    /// - Parameters:
+    ///   - paymentId: `PaymentId` - идентификтор платежа
+    ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
+    ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
     @discardableResult
     public func getTinkoffPayLink(
         paymentId: PaymentId,
-        version: GetTinkoffPayStatusPayload.Status.Version,
+        version: GetTinkoffPayStatusResponse.Status.Version,
         completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
     ) -> Cancellable {
         let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
@@ -700,16 +697,13 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get Certs Config
+    // TODO: (MIC-6303) Переписать метод под новый формат ответа
 
+    /// Получить конфигурацию для работы с сертификатами 3DS AppBased
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `GetCertsConfigResponse` - при успехе, `Error` - при ошибке
+    /// - Returns: Cancellable
     @discardableResult
-    // TODO: Change response
-    public func getCertsConfig(completion: @escaping (Result<GetCertsConfigPayload, Error>) -> Void) -> Cancellable {
-        let request = GetCertsConfigRequest(baseURL: certsConfigUrl)
-        return api.performRequest(request, completion: completion)
-    }
-
-    @discardableResult
-    @available(*, deprecated, message: "Use getCertsConfig(completion:) instead")
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
         let request = GetCertsConfigRequest(baseURL: certsConfigUrl)
         return api.sendCertsConfigRequest(request, completionHandler: completion)

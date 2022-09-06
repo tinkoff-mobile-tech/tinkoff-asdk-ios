@@ -33,6 +33,7 @@ protocol API {
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable
 
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func sendCertsConfigRequest(
         _ request: NetworkRequest,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void

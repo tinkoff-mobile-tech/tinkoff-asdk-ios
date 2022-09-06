@@ -65,6 +65,7 @@ public struct GetTinkoffPayStatusPayload {
     public let status: Status
     public let terminalKey: String? = nil
 }
+
 extension GetTinkoffPayStatusPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case success = "Success"
