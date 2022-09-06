@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 extension UICollectionView {
     func register(cellClasses: UICollectionViewCell.Type...) {

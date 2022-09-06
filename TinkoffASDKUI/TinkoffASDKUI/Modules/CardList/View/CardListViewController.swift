@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 protocol ICardListViewInput: AnyObject {
     func reload(cards: [CardList.Card])

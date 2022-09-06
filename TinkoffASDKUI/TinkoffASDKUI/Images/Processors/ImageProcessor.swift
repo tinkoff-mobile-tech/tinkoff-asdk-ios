@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 protocol ImageProcessor {
     func processImage(_ image: UIImage) -> UIImage

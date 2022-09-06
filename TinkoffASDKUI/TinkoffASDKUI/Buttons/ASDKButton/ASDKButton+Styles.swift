@@ -17,8 +17,7 @@
 //  limitations under the License.
 //
 
-
-import Foundation
+import UIKit
 
 extension ASDKButton.Style {
     static var sbpPayment: ASDKButton.Style {

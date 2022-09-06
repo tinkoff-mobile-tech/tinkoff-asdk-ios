@@ -19,6 +19,7 @@
 
 
 import TinkoffASDKCore
+import UIKit
 
 final class SBPBankListTableManager: NSObject {
     

@@ -6,6 +6,7 @@
 //
 
 import TinkoffASDKCore
+import Foundation
 
 protocol AcquiringPaymentControllerDelegate: AnyObject {
     func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,

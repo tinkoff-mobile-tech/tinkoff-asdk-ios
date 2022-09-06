@@ -19,6 +19,7 @@
 
 
 import TinkoffASDKCore
+import Foundation
 
 public protocol SBPPaymentService {
     func createSBPUrl(paymentId: Int64,

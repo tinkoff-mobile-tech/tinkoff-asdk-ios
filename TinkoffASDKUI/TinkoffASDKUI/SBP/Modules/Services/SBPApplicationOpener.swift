@@ -19,6 +19,7 @@
 
 
 import TinkoffASDKCore
+import UIKit
 
 public protocol SBPApplicationOpener {
     func openSBPUrl(_ url: URL, in bankApplication: SBPBank, completion: ((Bool) -> Void)?) throws

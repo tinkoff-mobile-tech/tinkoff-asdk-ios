@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 final class ImageLoader {
     
