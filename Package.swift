@@ -4,17 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "TinkoffASDKUI",
+    name: "TinkoffASDK",
     defaultLocalization: "ru",
     platforms: [.iOS(.v11)],
     products: [
-        .library(
-            name: "TinkoffASDKUI",
-            targets: ["TinkoffASDKUI"]
-        )
-    ],
-    dependencies: [
-        .package(name: "TinkoffASDKCore", path: "TinkoffASDKCore")
+        .library(name: "TinkoffASDKCore", targets: ["TinkoffASDKCore"]),
+        .library(name: "TinkoffASDKUI", targets: ["TinkoffASDKUI"])
     ],
     targets: [
         .binaryTarget(
@@ -25,10 +20,27 @@ let package = Package(
             name: "ThreeDSWrapper",
             path: "ThirdParty/ThreeDSWrapper.xcframework"
         ),
+        
+        // TinkoffASDKCore
+        
+        .target(
+            name: "TinkoffASDKCore",
+            path: "TinkoffASDKCore/TinkoffASDKCore",
+            exclude: ["Info.plist"]
+        ),
+        .testTarget(
+            name: "TinkoffASDKCoreTests",
+            dependencies: ["TinkoffASDKCore"],
+            path: "TinkoffASDKCore/TinkoffASDKCoreTests",
+            exclude: ["Info.plist"]
+        ),
+        
+        // TinkoffASDKUI
+        
         .target(
             name: "TinkoffASDKUI",
             dependencies: [
-                .product(name: "TinkoffASDKCore", package: "TinkoffASDKCore"),
+                .target(name: "TinkoffASDKCore"),
                 .target(name: "TdsSdkIos"),
                 .target(name: "ThreeDSWrapper")
             ],
