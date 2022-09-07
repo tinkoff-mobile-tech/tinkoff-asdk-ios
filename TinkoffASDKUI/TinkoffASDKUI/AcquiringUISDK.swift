@@ -74,6 +74,7 @@ public class AcquiringViewConfiguration {
         }
     }
 
+    @available(*, deprecated, message: "Will be removed soon")
     public var localizableInfo: LocalizableInfo?
 
     ///  Сканер
