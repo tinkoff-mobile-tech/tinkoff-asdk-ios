@@ -38,6 +38,11 @@ public final class AcquiringSdk: NSObject {
     private let coreAssembly: CoreAssembly
     private let api: API
 
+    /// Текущий IP адрес
+    public var ipAddress: IPAddress? {
+        coreAssembly.ipAddressProvider().ipAddress
+    }
+
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
         self.terminalKey = configuration.credential.terminalKey
@@ -61,6 +66,12 @@ public final class AcquiringSdk: NSObject {
         }
     }
 
+    /// Получить IP адрес
+    @available(*, deprecated, message: "Use AcquiringSdk.ipAddress instead")
+    public func networkIpAddress() -> String? {
+        return coreAssembly.ipAddressProvider().ipAddress?.stringValue
+    }
+
     private func createCommonParameters() -> JSONObject {
         var parameters: JSONObject = [:]
         parameters.updateValue(terminalKey, forKey: "TerminalKey")
@@ -76,11 +87,6 @@ public final class AcquiringSdk: NSObject {
                 parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
             }
         }
-    }
-
-    /// Получить IP адрес
-    public func networkIpAddress() -> IPAddress? {
-        return coreAssembly.ipAddressProvider().ipAddress
     }
 
     // MARK: - подтверждение платежа
