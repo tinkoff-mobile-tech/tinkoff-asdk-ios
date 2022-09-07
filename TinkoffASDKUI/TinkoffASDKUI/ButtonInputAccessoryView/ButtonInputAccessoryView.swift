@@ -41,7 +41,7 @@ class ButtonInputAccessoryView: UIView, InputAccessoryViewWithButton {
         super.awakeFromNib()
         backgroundColor = .clear
         
-        buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.payByCard"), for: .normal)
+        buttonAction.setTitle(Loc.TinkoffAcquiring.Button.payByCard, for: .normal)
         buttonAction.layer.cornerRadius = 16.0
         buttonAction.tintColor = UIColor(hex: "#333333")
         buttonAction.backgroundColor = UIColor(hex: "#FFDD2D")

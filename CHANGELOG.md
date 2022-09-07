@@ -4,6 +4,7 @@
 ### Changed
 
 * [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
+* [MIC-6292] Swift Gen integration for TinkoffASDKUI module
 
 ### Added 
 

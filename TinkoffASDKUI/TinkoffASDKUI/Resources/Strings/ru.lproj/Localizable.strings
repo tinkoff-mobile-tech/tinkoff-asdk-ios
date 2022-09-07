@@ -40,6 +40,7 @@
 "TinkoffAcquiring.text.status.waitingPayment" = "Ожидание оплаты";
 "TinkoffAcquiring.text.status.cardListEmpty" = "Сохраненных карт нет";
 "TinkoffAcquiring.text.status.loading" = "Загрузка ...";
+"TinkoffAcquiring.text.status.selectingPaymentSource" = "Выбор источника оплаты";
 "TinkoffAcquiring.text.status.error.email" = "Неверный формат электронной почты";
 "TinkoffAcquiring.text.status.error.emailEmpty" = "Введите email";
 "TinkoffAcquiring.text.addcard" = "Добавить карту";

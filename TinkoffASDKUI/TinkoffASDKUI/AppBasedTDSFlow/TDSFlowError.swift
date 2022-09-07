@@ -30,11 +30,11 @@ extension TDSFlowError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidPaymentSystem:
-            return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.invalidPaymentSystem")
+            return Loc.TinkoffAcquiring.Threeds.Error.invalidPaymentSystem
         case .updatingCertsError(let dictionary):
-            return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.updatingCertsError") + String(describing: dictionary)
+            return Loc.TinkoffAcquiring.Threeds.Error.updatingCertsError + String(describing: dictionary)
         case .timeout:
-            return AcqLoc.instance.localize("TinkoffAcquiring.threeds.error.timeout")
+            return Loc.TinkoffAcquiring.Threeds.Error.timeout
         }
     }
 }

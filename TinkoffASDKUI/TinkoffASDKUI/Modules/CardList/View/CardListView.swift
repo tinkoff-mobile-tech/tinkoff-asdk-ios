@@ -81,7 +81,7 @@ final class CardListView: UIView {
     private lazy var primaryButton: ASDKButton = {
         let button = ASDKButton(
             style: .primary(
-                title: "CardList.button.addNewCard".localized,
+                title: Loc.CardList.Button.addNewCard,
                 buttonStyle: style.primaryButtonStyle
             )
         )
@@ -271,12 +271,8 @@ private extension TimeInterval {
 private extension MessageView.Style {
     static var noCards: MessageView.Style {
         MessageView.Style(
-            largeImage: UIImage(
-                named: "illustrations-common-light-card",
-                in: .uiResources,
-                compatibleWith: nil
-            ),
-            message: "CardList.status.noCards".localized
+            largeImage: Asset.Illustrations.illustrationsCommonLightCard.image,
+            message: Loc.CardList.Status.noCards
         )
     }
 }

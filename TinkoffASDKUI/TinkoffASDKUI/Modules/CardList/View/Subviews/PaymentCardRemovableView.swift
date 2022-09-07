@@ -32,7 +32,7 @@ final class PaymentCardRemovableView: UIView {
     private lazy var removeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(
-            .cross?.withRenderingMode(.alwaysTemplate),
+            Asset.tuiIcServiceCross24.image.withRenderingMode(.alwaysTemplate),
             for: .normal
         )
         button.tintColor = .asdk.dynamic.text.tertiary
@@ -106,12 +106,6 @@ extension PaymentCardRemovableView: Reusable {
 private extension CGFloat {
     static let leadingInset: CGFloat = 16
     static let removeButtonWidth: CGFloat = 48
-}
-
-private extension UIImage {
-    static var cross: UIImage? {
-        UIImage(named: "tui_ic_service_cross_24", in: .uiResources, compatibleWith: nil)
-    }
 }
 
 // MARK: - Configuration Mapping

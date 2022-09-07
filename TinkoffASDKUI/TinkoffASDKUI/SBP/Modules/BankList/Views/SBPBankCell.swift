@@ -61,7 +61,7 @@ private extension SBPBankCell {
         
         selectionStyle = .none
         
-        tickImageView.image = UIImage(named: "tick_24", in: .uiResources, compatibleWith: nil)
+        tickImageView.image = Asset.tick24.image
         tickImageView.isHidden = true
         
         bankTitleLabel.numberOfLines = 1
