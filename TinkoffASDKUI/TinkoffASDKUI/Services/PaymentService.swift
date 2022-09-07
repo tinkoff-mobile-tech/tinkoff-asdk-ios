@@ -21,7 +21,7 @@ import TinkoffASDKCore
 
 public protocol PaymentService {
     func initPaymentWith(paymentData: PaymentInitData, completion: @escaping (Result<PaymentInitResponse, Error>) -> Void)
-    func getPaymentStatus(paymentId: PaymentId, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void)
+    func getPaymentStatus(paymentId: Int64, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void)
 }
 
 final class DefaultPaymentService: PaymentService {
