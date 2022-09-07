@@ -22,8 +22,8 @@ import Foundation
 
 public struct PaymentFinishRequestData: Codable {
     /// Номер платежа, полученного после инициализации платежа
-    public var paymentId: PaymentId
-    public var paymentSource: PaymentSourceData
+    var paymentId: Int64
+    var paymentSource: PaymentSourceData
 
     var sendEmail: Bool?
     var infoEmail: String?
@@ -53,12 +53,12 @@ public struct PaymentFinishRequestData: Codable {
         }
     }
 
-    public init(paymentId: PaymentId, paymentSource: PaymentSourceData) {
+    public init(paymentId: Int64, paymentSource: PaymentSourceData) {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
     }
 
-    public init(paymentId: PaymentId, paymentSource: PaymentSourceData, source: String, route: String) {
+    public init(paymentId: Int64, paymentSource: PaymentSourceData, source: String, route: String) {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
         self.source = source
@@ -80,7 +80,7 @@ public struct PaymentFinishRequestData: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = String(try container.decode(Int64.self, forKey: .paymentId))
+        paymentId = try container.decode(Int64.self, forKey: .paymentId)
         paymentSource = try container.decode(PaymentSourceData.self, forKey: .paymentSource)
         sendEmail = try? container.decode(Bool.self, forKey: .sendEmail)
         infoEmail = try? container.decode(String.self, forKey: .infoEmail)
