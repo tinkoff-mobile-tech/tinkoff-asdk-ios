@@ -32,26 +32,19 @@ final class PaymentSystemImageResolver: IPaymentSystemImageResolver {
     }
 
     func resolve(by inputPAN: String?) -> UIImage? {
+        typealias Card = Asset.CardRequisites
+        
         switch paymentSystemResolver.resolve(by: inputPAN) {
         case .resolved(.visa):
-            return .visa
+            return Card.visaLogo.image
         case .resolved(.masterCard):
-            return .masterCard
+            return Card.mcLogo.image
         case .resolved(.maestro):
-            return .maestro
+            return Card.maestroLogo.image
         case .resolved(.mir):
-            return .mir
+            return Card.mirLogo.image
         case .ambiguous, .unrecognized:
             return nil
         }
     }
-}
-
-// MARK: - UIImage + Payment Systems
-
-private extension UIImage {
-    static let visa: UIImage = Asset.CardRequisites.visaLogo.image
-    static let masterCard: UIImage = Asset.CardRequisites.mcLogo.image
-    static let maestro: UIImage = Asset.CardRequisites.maestroLogo.image
-    static let mir: UIImage = Asset.CardRequisites.mirLogo.image
 }
