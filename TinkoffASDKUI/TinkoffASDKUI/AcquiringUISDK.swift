@@ -59,6 +59,7 @@ public class AcquiringViewConfiguration {
 
     ///
     /// Локализация формы оплаты
+    @available(*, deprecated, message: "Will be removed soon")
     public struct LocalizableInfo {
         var table: String?
         var bundle: Bundle?
@@ -475,7 +476,7 @@ public class AcquiringUISDK: NSObject {
         }
 
         presentAcquiringPaymentView(presentingViewController: presentingViewController, customerKey: nil, configuration: configuration) { view in
-            let viewTitle = L10n.TinkoffAcquiring.View.Title.payQRCode
+            let viewTitle = Loc.TinkoffAcquiring.View.Title.payQRCode
             view.changedStatus(.initWaiting)
             self.getStaticQRCode { [weak view] response in
                 switch response {
@@ -486,7 +487,7 @@ public class AcquiringUISDK: NSObject {
 
                 case let .failure(error):
                     DispatchQueue.main.async {
-                        let alertTitle = L10n.TinkoffAcquiring.Alert.Title.error
+                        let alertTitle = Loc.TinkoffAcquiring.Alert.Title.error
 
                         if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                             view?.closeVC(animated: true) {
@@ -690,7 +691,7 @@ public class AcquiringUISDK: NSObject {
     private func presentApplePayActivity(_ request: PKPaymentRequest) {
         guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
             acquiringView?.closeVC(animated: true) {
-                let error = NSError(domain: L10n.TinkoffAcquiring.Unknown.Response.status,
+                let error = NSError(domain: Loc.TinkoffAcquiring.Unknown.Response.status,
                                     code: 0,
                                     userInfo: nil)
 
@@ -723,7 +724,7 @@ public class AcquiringUISDK: NSObject {
                         if UIApplication.shared.canOpenURL(url) {
                             UIApplication.shared.open(url, options: [:]) { _ in
                                 self?.sbpWaitingIncominPayment(paymentId: paymentId, source: qrCodeResponse.qrCodeData, sourceType: paymentInvoiceSource)
-                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: L10n.TinkoffAcquiring.Text.Status.selectingPaymentSource))
+                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: Loc.TinkoffAcquiring.Text.Status.selectingPaymentSource))
                             }
                         } else {
                             let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: [])
@@ -734,7 +735,7 @@ public class AcquiringUISDK: NSObject {
                             }
 
                             self?.acquiringView?.presentVC(activityViewController, animated: true, completion: {
-                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: L10n.TinkoffAcquiring.Text.Status.selectingPaymentSource))
+                                self?.acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: qrCodeResponse.qrCodeData, status: Loc.TinkoffAcquiring.Text.Status.selectingPaymentSource))
                             })
                         }
                     } else {
@@ -747,7 +748,7 @@ public class AcquiringUISDK: NSObject {
                 DispatchQueue.main.async {
                     self?.acquiringView?.changedStatus(.error(error))
 
-                    let alertTitle = L10n.TinkoffAcquiring.Alert.Title.error
+                    let alertTitle = Loc.TinkoffAcquiring.Alert.Title.error
                     if let alert = configuration.alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                         self?.presentingViewController?.present(alert, animated: true, completion: {
                             //
@@ -782,9 +783,9 @@ public class AcquiringUISDK: NSObject {
         }
 
         if sourceType == .url {
-            acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: source, status: L10n.TinkoffAcquiring.Text.Status.waitingPayment))
+            acquiringView?.changedStatus(.paymentWaitingSBPUrl(url: source, status: Loc.TinkoffAcquiring.Text.Status.waitingPayment))
         } else {
-            acquiringView?.changedStatus(.paymentWaitingSBPQrCode(qrCode: source, status: L10n.TinkoffAcquiring.Text.Status.waitingPayment))
+            acquiringView?.changedStatus(.paymentWaitingSBPQrCode(qrCode: source, status: Loc.TinkoffAcquiring.Text.Status.waitingPayment))
         }
 
         checkPaymentStatus?.fetchStatus(completionStatus: completionStatus)
@@ -1208,7 +1209,7 @@ public class AcquiringUISDK: NSObject {
                     completionHandler(.success(response))
 
                 case .unknown:
-                    let error = NSError(domain: finishResult.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Response.status,
+                    let error = NSError(domain: finishResult.errorMessage ?? Loc.TinkoffAcquiring.Unknown.Response.status,
                                         code: finishResult.errorCode,
                                         userInfo: nil)
 
@@ -1321,7 +1322,7 @@ public class AcquiringUISDK: NSObject {
         } else {
             let paymentCanceledResponse = PaymentStatusResponse(success: false,
                                                                 errorCode: 0,
-                                                                errorMessage: L10n.TinkoffAcquiring.Alert.Message.addingCardCancel,
+                                                                errorMessage: Loc.TinkoffAcquiring.Alert.Message.addingCardCancel,
                                                                 orderId: "",
                                                                 paymentId: 0,
                                                                 amount: 0,
@@ -1396,7 +1397,7 @@ public class AcquiringUISDK: NSObject {
                         })
                     case let .failure(error):
                         viewController?.dismiss(animated: true, completion: {
-                            let alertTitle = L10n.TinkoffAcquiring.Alert.Title.error
+                            let alertTitle = Loc.TinkoffAcquiring.Alert.Title.error
                             if let alert = alertViewHelper?.presentAlertView(alertTitle, message: error.localizedDescription, dismissCompletion: nil) {
                                 self?.presentingViewController?.presentOnTop(viewController: alert, animated: true)
                             } else {
@@ -1620,7 +1621,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             confirmationComplete(.success(response))
 
         case .unknown:
-            let error = NSError(domain: confirmationResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Response.status,
+            let error = NSError(domain: confirmationResponse.errorMessage ?? Loc.TinkoffAcquiring.Unknown.Response.status,
                                 code: confirmationResponse.errorCode, userInfo: nil)
 
             confirmationComplete(.failure(error))
@@ -1770,7 +1771,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
                     // decode as a default `AcquiringResponse`
                     guard let acquiringResponse = try? JSONDecoder().decode(AcquiringResponse.self, from: data) else {
                         self?.webViewController?.dismiss(animated: true, completion: { [weak self] in
-                            let error = NSError(domain: L10n.TinkoffAcquiring.Unknown.Response.status, code: 0, userInfo: nil)
+                            let error = NSError(domain: Loc.TinkoffAcquiring.Unknown.Response.status, code: 0, userInfo: nil)
                             self?.on3DSCheckingCompletionHandler?(.failure(error))
                             self?.on3DSCheckingAddCardCompletionHandler?(.failure(error))
                         })
@@ -1780,7 +1781,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
 
                     // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
                     guard acquiringResponse.success else {
-                        let error = NSError(domain: acquiringResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Error.status,
+                        let error = NSError(domain: acquiringResponse.errorMessage ?? Loc.TinkoffAcquiring.Unknown.Error.status,
                                             code: acquiringResponse.errorCode,
                                             userInfo: try? acquiringResponse.encode2JSONObject())
 
@@ -1795,7 +1796,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
                     // data in `PaymentStatusResponse` format
                     if self?.on3DSCheckingCompletionHandler != nil {
                         guard let responseObject: PaymentStatusResponse = try? JSONDecoder().decode(PaymentStatusResponse.self, from: data) else {
-                            let error = NSError(domain: acquiringResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Error.status,
+                            let error = NSError(domain: acquiringResponse.errorMessage ?? Loc.TinkoffAcquiring.Unknown.Error.status,
                                                 code: acquiringResponse.errorCode,
                                                 userInfo: try? acquiringResponse.encode2JSONObject())
 
@@ -1815,7 +1816,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
                     // data in `AddCardStatusResponse` format
                     if self?.on3DSCheckingAddCardCompletionHandler != nil {
                         guard let responseObject: AddCardStatusResponse = try? JSONDecoder().decode(AddCardStatusResponse.self, from: data) else {
-                            let error = NSError(domain: acquiringResponse.errorMessage ?? L10n.TinkoffAcquiring.Unknown.Error.status,
+                            let error = NSError(domain: acquiringResponse.errorMessage ?? Loc.TinkoffAcquiring.Unknown.Error.status,
                                                 code: acquiringResponse.errorCode,
                                                 userInfo: try? acquiringResponse.encode2JSONObject())
 

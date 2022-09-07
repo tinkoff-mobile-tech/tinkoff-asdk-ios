@@ -44,7 +44,7 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
         if let value = hint {
             self.hint = value
         } else {
-            self.hint = L10n.TinkoffAcquiring.Placeholder.sendReceiptToEmail
+            self.hint = Loc.TinkoffAcquiring.Placeholder.sendReceiptToEmail
         }
 
         self.textFieldCell = textFieldCell
@@ -69,14 +69,14 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
             let result = predicate.evaluate(with: email)
             if result == false {
                 tableView.beginUpdates()
-                textFieldCell.setStatus(.error, statusText: L10n.TinkoffAcquiring.Text.Status.Error.email)
+                textFieldCell.setStatus(.error, statusText: Loc.TinkoffAcquiring.Text.Status.Error.email)
                 tableView.endUpdates()
             }
 
             return result
         } else {
             tableView.beginUpdates()
-            textFieldCell.setStatus(.error, statusText: L10n.TinkoffAcquiring.Text.Status.Error.emailEmpty)
+            textFieldCell.setStatus(.error, statusText: Loc.TinkoffAcquiring.Text.Status.Error.emailEmpty)
             tableView.endUpdates()
         }
 

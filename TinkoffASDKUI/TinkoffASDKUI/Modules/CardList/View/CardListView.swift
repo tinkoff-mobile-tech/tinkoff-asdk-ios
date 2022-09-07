@@ -81,7 +81,7 @@ final class CardListView: UIView {
     private lazy var primaryButton: ASDKButton = {
         let button = ASDKButton(
             style: .primary(
-                title: L10n.CardList.Button.addNewCard,
+                title: Loc.CardList.Button.addNewCard,
                 buttonStyle: style.primaryButtonStyle
             )
         )
@@ -272,7 +272,7 @@ private extension MessageView.Style {
     static var noCards: MessageView.Style {
         MessageView.Style(
             largeImage: Asset.Illustrations.illustrationsCommonLightCard.image,
-            message: L10n.CardList.Status.noCards
+            message: Loc.CardList.Status.noCards
         )
     }
 }

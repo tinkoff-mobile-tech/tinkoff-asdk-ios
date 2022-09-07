@@ -39,7 +39,7 @@ class RandomAmounCheckingViewController: ConfirmViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.TinkoffAcquiring.View.Title.confimration
+        title = Loc.TinkoffAcquiring.View.Title.confimration
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowOnTableView(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideOnTableView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -81,7 +81,7 @@ class RandomAmounCheckingViewController: ConfirmViewController {
             }
         } else {
             if let inputField = inputField() {
-                inputField.setStatus(.error, statusText: L10n.TinkoffAcquiring.Error.loopAmount)
+                inputField.setStatus(.error, statusText: Loc.TinkoffAcquiring.Error.loopAmount)
             }
         }
     } // onButtonAddTouch
@@ -141,7 +141,7 @@ extension RandomAmounCheckingViewController: UITableViewDataSource {
         switch tableViewCells[indexPath.row] {
         case .title:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "AmountTableViewCell") as? AmountTableViewCell {
-                cell.labelTitle.text = L10n.TinkoffAcquiring.Text.loopConfirmation
+                cell.labelTitle.text = Loc.TinkoffAcquiring.Text.loopConfirmation
                 return cell
             }
 
@@ -149,8 +149,8 @@ extension RandomAmounCheckingViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldTableViewCell") as? TextFieldTableViewCell {
                 cell.textField.delegate = self
                 cell.textField.keyboardType = .decimalPad
-                cell.labelHint.text = L10n.TinkoffAcquiring.Hint.loopAmount
-                cell.textField.placeholder = L10n.TinkoffAcquiring.Placeholder.loopAmount
+                cell.labelHint.text = Loc.TinkoffAcquiring.Hint.loopAmount
+                cell.textField.placeholder = Loc.TinkoffAcquiring.Placeholder.loopAmount
                 return cell
             }
 
@@ -175,7 +175,7 @@ extension RandomAmounCheckingViewController: UITextFieldDelegate {
 
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if let accessoryView = Bundle.uiResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView {
-            accessoryView.buttonAction.setTitle(L10n.TinkoffAcquiring.Button.confirm, for: .normal)
+            accessoryView.buttonAction.setTitle(Loc.TinkoffAcquiring.Button.confirm, for: .normal)
             accessoryView.onButtonTouchUpInside = { [weak self] in
                 self?.onButtonAddTouch()
             }
@@ -185,7 +185,7 @@ extension RandomAmounCheckingViewController: UITextFieldDelegate {
         }
 
         inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
-        inputAccessoryViewWithButton?.buttonAction.setTitle(L10n.TinkoffAcquiring.Button.addCard, for: .normal)
+        inputAccessoryViewWithButton?.buttonAction.setTitle(Loc.TinkoffAcquiring.Button.addCard, for: .normal)
 
         return true
     }

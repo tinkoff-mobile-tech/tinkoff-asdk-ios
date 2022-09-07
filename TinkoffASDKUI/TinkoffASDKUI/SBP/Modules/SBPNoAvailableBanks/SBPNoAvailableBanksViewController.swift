@@ -63,10 +63,10 @@ private extension SBPNoAvailableBanksViewController {
     }
     
     func setupLocalization() {
-        customView.titleLabel.text = L10n.Sbp.EmptyBanks.title
-        customView.descriptionLabel.text = L10n.Sbp.EmptyBanks.description
-        customView.confirmButton.setTitle(L10n.Sbp.EmptyBanks.ConfirmationButton.title, for: .normal)
-        customView.informationButton.setTitle(L10n.Sbp.EmptyBanks.InformationButton.title, for: .normal)
+        customView.titleLabel.text = Loc.Sbp.EmptyBanks.title
+        customView.descriptionLabel.text = Loc.Sbp.EmptyBanks.description
+        customView.confirmButton.setTitle(Loc.Sbp.EmptyBanks.ConfirmationButton.title, for: .normal)
+        customView.informationButton.setTitle(Loc.Sbp.EmptyBanks.InformationButton.title, for: .normal)
     }
     
     func setupButtons() {
@@ -86,7 +86,7 @@ private extension SBPNoAvailableBanksViewController {
                                           target: self,
                                           action: #selector(close))
         } else {
-            closeButton = UIBarButtonItem(title: L10n.TinkoffAcquiring.Button.close,
+            closeButton = UIBarButtonItem(title: Loc.TinkoffAcquiring.Button.close,
                                           style: .done,
                                           target: self,
                                           action: #selector(close))
