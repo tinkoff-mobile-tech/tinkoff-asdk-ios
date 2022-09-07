@@ -11,3 +11,18 @@ override_lane :extend_bump_version do |options|
   File.write(relative_file_path, data)
   [version_swift]
 end
+
+lane :build_spm do
+  scheme = "TinkoffASDK-Package"
+  Dir.chdir('..') do
+    # xcodebuild automatically detects spm package, so you just need to pass valid scheme name
+    # cocoapods project is ignored here because it is in Example folder
+    spm_cache = "DerivedData/spm"
+    cmd = []
+    cmd << "set -o pipefail"
+    cmd << "mkdir -p #{spm_cache}"
+    cmd << "swift package resolve"
+    cmd << "xcodebuild build -scheme #{scheme} -destination generic/platform=iOS -clonedSourcePackagesDirPath #{spm_cache} | xcpretty"
+    sh(cmd.join(' && '), log: true)
+  end
+end
