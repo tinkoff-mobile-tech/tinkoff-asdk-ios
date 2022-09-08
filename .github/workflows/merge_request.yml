@@ -4,5 +4,24 @@ on:
   pull_request:
 
 jobs:
-  check:
-    uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1
+  build_spm:
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: rm -rf *.xcworkspace
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+
+      - name: Bundle install
+        run: bundle install
+
+      - run: pwd
+
+      - name: build Package.swift
+        run: bundle exec fastlane build_spm
+  # check:
+  #   uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1
