@@ -430,13 +430,13 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
             ) as? ContainerTableViewCell  else {
                 break
             }
-            let linkView = LinkTappingView(title: L10n.AcquiringPayment.Button.chooseCard)
+            let linkView = LinkTappingView(title: Loc.AcquiringPayment.Button.chooseCard)
             linkView.onButtonTap = { [weak self] in self?.onTouchButtonShowCardList?() }
             cell.setContent(linkView, insets: .cardsLinkView)
             return cell
         case .error:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
-                cell.labelStatus.text = L10n.TinkoffAcquiring.Unknown.Error.status
+                cell.labelStatus.text = Loc.TinkoffAcquiring.Unknown.Error.status
                 cell.labelStatus.isHidden = false
                 cell.buttonUpdate.isHidden = true
                 cell.activityIndicator.stopAnimating()
@@ -474,7 +474,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
         case .waitingPayment:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
-                cell.labelStatus.text = L10n.TinkoffAcquiring.Text.Status.waitingPayment
+                cell.labelStatus.text = Loc.TinkoffAcquiring.Text.Status.waitingPayment
                 cell.buttonUpdate.isHidden = true
 
                 return cell
@@ -482,7 +482,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
         case .waitingInitPayment:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "StatusTableViewCell") as? StatusTableViewCell {
-                cell.labelStatus.text = L10n.TinkoffAcquiring.Text.Status.waitingInitPayment
+                cell.labelStatus.text = Loc.TinkoffAcquiring.Text.Status.waitingInitPayment
                 cell.buttonUpdate.isHidden = true
 
                 return cell
@@ -498,13 +498,13 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
         case .separatorLabel:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "LabelTableViewCell") as? LabelTableViewCell {
                 cell.labelTitle.textAlignment = .center
-                cell.labelTitle.text = L10n.TinkoffAcquiring.Text.or
+                cell.labelTitle.text = Loc.TinkoffAcquiring.Text.or
                 return cell
             }
 
         case .buttonPay:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonTableViewCell") as? ButtonTableViewCell {
-                cell.buttonAction.setTitle(L10n.TinkoffAcquiring.Button.payByCard, for: .normal)
+                cell.buttonAction.setTitle(Loc.TinkoffAcquiring.Button.payByCard, for: .normal)
                 if let style = style {
                     cell.buttonAction.tintColor = style.payButtonStyle.titleColor
                     cell.buttonAction.backgroundColor = style.payButtonStyle.backgroundColor

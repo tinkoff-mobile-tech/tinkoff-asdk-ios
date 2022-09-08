@@ -119,9 +119,9 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
 
 private extension SBPBankListViewController {
     func setup() {
-        customView.headerView.titleLabel.text = L10n.Sbp.BanksList.Header.title
-        customView.headerView.subtitleLabel.text = L10n.Sbp.BanksList.Header.subtitle
-        customView.continueButton.setTitle(L10n.Sbp.BanksList.Button.title, for: .normal)
+        customView.headerView.titleLabel.text = Loc.Sbp.BanksList.Header.title
+        customView.headerView.subtitleLabel.text = Loc.Sbp.BanksList.Header.subtitle
+        customView.continueButton.setTitle(Loc.Sbp.BanksList.Button.title, for: .normal)
         
         customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
         customView.continueButton.addTarget(self,
@@ -241,7 +241,7 @@ private extension SBPBankListViewController {
                 self?.handleBankApplicationOpen(result: result)
             })
         } catch {
-            showAlert?(L10n.Sbp.OpenApplication.error,
+            showAlert?(Loc.Sbp.OpenApplication.error,
                        nil,
                        SBPPaymentError.failedToOpenBankApp(bank))
         }
@@ -249,13 +249,13 @@ private extension SBPBankListViewController {
     
     func handleBankApplicationOpen(result: Bool) {
         guard result else { return }
-        didStartLoading?(L10n.Sbp.LoadingStatus.title)
+        didStartLoading?(Loc.Sbp.LoadingStatus.title)
     }
     
     func handleError(_ error: Error) {
         DispatchQueue.main.async {
-            let alertTitle = L10n.Sbp.Error.title
-            let alertDescription = L10n.Sbp.Error.description
+            let alertTitle = Loc.Sbp.Error.title
+            let alertDescription = Loc.Sbp.Error.description
             
             self.showAlert?(alertTitle,
                             alertDescription,

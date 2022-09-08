@@ -18,7 +18,7 @@
 //
 
 
-import UIKit
+import Foundation
 import TinkoffASDKCore
 
 struct CardList {
@@ -41,7 +41,7 @@ struct CardList {
 extension CardList.Alert {
     static func cardAdded(card: PaymentCard) -> CardList.Alert {
         CardList.Alert(
-            title: L10n.TinkoffAcquiring.Alert.Title.cardSuccessAdded,
+            title: Loc.TinkoffAcquiring.Alert.Title.cardSuccessAdded,
             message: "card id = \(card.cardId),\n\(card.pan) \(card.expDateFormat() ?? "")",
             icon: .success
         )
@@ -49,7 +49,7 @@ extension CardList.Alert {
 
     static func cardAddingFailed(with error: Error) -> CardList.Alert {
         CardList.Alert(
-            title: L10n.TinkoffAcquiring.Alert.Title.error,
+            title: Loc.TinkoffAcquiring.Alert.Title.error,
             message: error.localizedDescription,
             icon: .error
         )

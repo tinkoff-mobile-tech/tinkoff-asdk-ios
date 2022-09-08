@@ -17,13 +17,14 @@
 //  limitations under the License.
 //
 
-import UIKit
+
+import Foundation
 
 extension ASDKButton.Style {
     static var sbpPayment: ASDKButton.Style {
         ASDKButton.Style(
             title: Title(
-                text: L10n.TinkoffAcquiring.Button.payBy,
+                text: Loc.TinkoffAcquiring.Button.payBy,
                 color: .asdk.dynamic.background.elevation1,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),

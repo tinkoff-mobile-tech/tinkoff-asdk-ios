@@ -53,6 +53,6 @@ class StatusTableViewCell: UITableViewCell {
         labelStatus.attributedText = nil
 
         buttonUpdate.isHidden = true
-        buttonUpdate.setTitle(L10n.TinkoffAcquiring.Button.update, for: .normal)
+        buttonUpdate.setTitle(Loc.TinkoffAcquiring.Button.update, for: .normal)
     }
 }

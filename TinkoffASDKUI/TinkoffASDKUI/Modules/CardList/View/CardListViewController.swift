@@ -18,7 +18,7 @@
 //
 
 
-import UIKit
+import Foundation
 
 protocol ICardListViewInput: AnyObject {
     func reload(cards: [CardList.Card])
@@ -72,11 +72,11 @@ final class CardListViewController: UIViewController {
     // MARK: Initial Configuration
 
     private func setupNavigationItem() {
-        title = L10n.CardList.title
+        title = Loc.CardList.title
         navigationItem.largeTitleDisplayMode = .never
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: L10n.TinkoffAcquiring.Button.close,
+            title: Loc.TinkoffAcquiring.Button.close,
             style: .plain,
             target: self,
             action: #selector(closeButtonTapped)
@@ -154,18 +154,18 @@ private extension UIAlertController {
         onConfirm: @escaping () -> Void
     ) -> UIAlertController {
         let alert = UIAlertController(
-            title: L10n.CardList.Alert.Title.deleteCard,
-            message: L10n.CardList.Alert.Message.deleteCard(pan),
+            title: Loc.CardList.Alert.Title.deleteCard,
+            message: Loc.CardList.Alert.Message.deleteCard(pan),
             preferredStyle: .alert
         )
 
         let cancel = UIAlertAction(
-            title: L10n.CardList.Alert.Action.cancel,
+            title: Loc.CardList.Alert.Action.cancel,
             style: .cancel
         )
 
         let delete = UIAlertAction(
-            title: L10n.CardList.Alert.Action.delete,
+            title: Loc.CardList.Alert.Action.delete,
             style: .destructive,
             handler: { _ in onConfirm() }
         )

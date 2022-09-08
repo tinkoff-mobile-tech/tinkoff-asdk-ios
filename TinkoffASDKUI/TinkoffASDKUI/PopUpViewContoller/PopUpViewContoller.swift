@@ -59,7 +59,7 @@ class PopUpViewContoller: UIViewController {
         if #available(iOS 13.0, *) {
             return UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeView(_:)))
         } else {
-            return UIBarButtonItem(title: L10n.TinkoffAcquiring.Button.close, style: .done, target: self, action: #selector(closeView(_:)))
+            return UIBarButtonItem(title: Loc.TinkoffAcquiring.Button.close, style: .done, target: self, action: #selector(closeView(_:)))
         }
     }()
 
