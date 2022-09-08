@@ -17,14 +17,8 @@ lane :build_spm do
   Dir.chdir('..') do
     # xcodebuild automatically detects spm package, so you just need to pass valid scheme name
     # cocoapods project is ignored here because it is in Example folder
-    spm_cache = "DerivedData/spm"
     sh("rm -rf *.xcworkspace")
-    sh("mkdir -p #{spm_cache}")
     sh("swift package resolve")
-    sh("echo 🐥")
-    sh("xcodebuild -list")
-    sh("set -o pipefail && xcodebuild -scheme #{scheme} -destination generic/platform=iOS -clonedSourcePackagesDirPath #{spm_cache} | xcpretty", log: true)
-    sh("echo 🥰")
-    sh("xcodebuild -list")
+    sh("set -o pipefail && xcodebuild -scheme #{scheme} -destination generic/platform=iOS | xcpretty", log: true)
   end
 end

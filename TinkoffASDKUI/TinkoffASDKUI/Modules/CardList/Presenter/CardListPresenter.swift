@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 import TinkoffASDKCore
 
 protocol ICardListViewOutput: AnyObject {

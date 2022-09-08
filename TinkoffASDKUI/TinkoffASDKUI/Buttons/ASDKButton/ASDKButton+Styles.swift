@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 extension ASDKButton.Style {
     static var sbpPayment: ASDKButton.Style {
