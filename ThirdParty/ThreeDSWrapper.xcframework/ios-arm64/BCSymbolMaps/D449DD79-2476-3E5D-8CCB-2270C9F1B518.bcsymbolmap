@@ -2,17 +2,19 @@ BCSymbolMap Version: 2.0
 Apple clang version 13.0.0 (clang-1300.0.29.30)
 /Applications/Xcode_13.2.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk
 iPhoneOS15.2.sdk
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/output/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/ThreeDSWrapper/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/ThreeDSWrapper.build/DerivedSources/ThreeDSWrapper_vers.c
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Example/Pods
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/output/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/ThreeDSWrapper/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/ThreeDSWrapper.build/DerivedSources/ThreeDSWrapper_vers.c
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Example/Pods
 __OBJC_METACLASS_RO_$_PodsDummy_ThreeDSWrapper
 __OBJC_CLASS_RO_$_PodsDummy_ThreeDSWrapper
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Example/Pods/Target Support Files/ThreeDSWrapper/ThreeDSWrapper-dummy.m
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Example/Pods/Target Support Files/ThreeDSWrapper/ThreeDSWrapper-dummy.m
 _$s14ThreeDSWrapper6AtomicCMi
 _$s14ThreeDSWrapper6AtomicCMr
 _$s14ThreeDSWrapper6AtomicCfd
 _$s14ThreeDSWrapper6AtomicCfD
 _$s14ThreeDSWrapper6AtomicCMa
+__swift_FORCE_LOAD_$_swiftCompatibility50
 __swift_FORCE_LOAD_$_swiftCompatibility51
+__swift_FORCE_LOAD_$_swiftCompatibilityDynamicReplacements
 __swift_FORCE_LOAD_$_swiftCompatibilityConcurrency
 _$sSo26NSISO8601DateFormatOptionsVs10SetAlgebraSCsACP6insertySb8inserted_7ElementQz17memberAfterInserttAHnFTW
 _$sSo26NSISO8601DateFormatOptionsVs10SetAlgebraSCsACP9formUnionyyxnFTW
@@ -55,7 +57,9 @@ __swift_FORCE_LOAD_$_swiftDataDetection_$_ThreeDSWrapper
 __swift_FORCE_LOAD_$_swiftWebKit_$_ThreeDSWrapper
 __swift_FORCE_LOAD_$_swiftCoreLocation_$_ThreeDSWrapper
 __swift_FORCE_LOAD_$_swiftCompression_$_ThreeDSWrapper
+__swift_FORCE_LOAD_$_swiftCompatibility50_$_ThreeDSWrapper
 __swift_FORCE_LOAD_$_swiftCompatibility51_$_ThreeDSWrapper
+__swift_FORCE_LOAD_$_swiftCompatibilityDynamicReplacements_$_ThreeDSWrapper
 __swift_FORCE_LOAD_$_swiftCompatibilityConcurrency_$_ThreeDSWrapper
 ___swift_reflection_version
 __PROTOCOL_INSTANCE_METHODS_NSLocking
@@ -64,7 +68,7 @@ _$s14ThreeDSWrapper6AtomicC_4lockACyxGx_So9NSLocking_ptcfCTq
 -private-discriminator _EBE3FF6564EBAD77CFCB31FC2EB03365
 <swift-imported-modules>
 Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Atomic.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Atomic.swift
 __swift_instantiateGenericMetadata
 <compiler-generated>
 formUnion
@@ -102,7 +106,7 @@ _$s10Foundation3URLVSgMD
 _objc_classes
 _$sSo8NSBundleC14ThreeDSWrapperE5Token33_102F791A0EF10BA83C24B104D8702690LLCN
 -private-discriminator _102F791A0EF10BA83C24B104D8702690
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Bundle+Resources.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Bundle+Resources.swift
 $s10Foundation3URLVSgWOh
 $s10Foundation3URLVSgWOc
 __swift_instantiateConcreteTypeFromMangledName
@@ -133,7 +137,7 @@ _$s14ThreeDSWrapper19IBundleDataProviderP08loadFileD05named13fileExtension10Foun
 _$s14ThreeDSWrapper18BundleDataProviderC6bundleACSo8NSBundleC_tcfCTq
 _$s14ThreeDSWrapper18BundleDataProviderCN
 -private-discriminator _5B69478BFCB76A9F4099743056041557
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/BundleDataProvider.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/BundleDataProvider.swift
 $s14ThreeDSWrapper18BundleDataProviderCMa
 _$s14ThreeDSWrapper29BundledCertificatesRepositoryC8fetchAllSayAA11CertificateVGyF
 _$s14ThreeDSWrapper29BundledCertificatesRepositoryC8fetchAllSayAA11CertificateVGyFAFSgAA0H6TargetV_AA0H11FilePayloadVtcAA19IBundleDataProvider_pcfu_AhJ_ALtcfu0_
@@ -290,7 +294,7 @@ _$s14ThreeDSWrapper30IBundledCertificatesRepositoryPAA22ICertificatesFetchableTb
 _$s14ThreeDSWrapper29BundledCertificatesRepositoryC12dataProvider08filesMapG0AcA011IBundleDataG0_p_AA017ICertificateFilesiG0_ptcfCTq
 _$s14ThreeDSWrapper29BundledCertificatesRepositoryCN
 -private-discriminator _7387CD230DB213AFF7A4860793AFE04A
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/BundledCertificatesRepository.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/BundledCertificatesRepository.swift
 $s14ThreeDSWrapper22CertificateFilePayloadVSgWOb
 $s14ThreeDSWrapper19IBundleDataProvider_pWOc
 $s14ThreeDSWrapper26CertificateUpdatingRequestVWOh
@@ -345,7 +349,7 @@ $ss17_NativeDictionaryV7_valuesSpyq_Gvg14ThreeDSWrapper17CertificateTargetV_AE0F
 $sSp14moveInitialize4from5countySpyxG_SitF14ThreeDSWrapper17CertificateTargetV_Tg5
 $ss17_NativeDictionaryV5_keysSpyxGvg14ThreeDSWrapper17CertificateTargetV_AE0F11FilePayloadVTg5
 Development/ThreeDSWrapper/Sources/Domain/Models/CertificateTarget.swift
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core
 +
 $ss17_NativeDictionaryV16_unsafeInsertNew3key5valueyxn_q_ntF14ThreeDSWrapper17CertificateTargetV_SSTg5
 $sSp10initialize2toyx_tFSS_Tg5
@@ -510,9 +514,9 @@ Development/ThreeDSWrapper/Sources/Domain/Models/Certificate.swift
 loadFileData
 Development/ThreeDSWrapper/Sources/Core/Services/BundleDataProvider.swift
 $s10Foundation3URLVAA4DataVSgs5Error_pIgnozo_AcFsAG_pIegnrzo_TR
-$s14ThreeDSWrapper18BundleDataProviderC08loadFileD05named13fileExtension10Foundation0D0VSgSS_SStFAjG3URLVXEfU_
+$s14ThreeDSWrapper18BundleDataProviderC08loadFileD05named13fileExtension10Foundation0D0VSgSS_SStFAjG3URLVXEfU0_
 $sSS10Foundation3URLVs5Error_pIggrzo_SSACsAD_pIegnrzo_TR
-$s14ThreeDSWrapper18BundleDataProviderC08loadFileD05named13fileExtension10Foundation0D0VSgSS_SStFAG3URLVSShcfu_
+$s14ThreeDSWrapper18BundleDataProviderC08loadFileD05named13fileExtension10Foundation0D0VSgSS_SStFAG3URLVSSXEfU_
 $s14ThreeDSWrapper29BundledCertificatesRepositoryC8fetchAllSayAA11CertificateVGyFAFSgAA0H6TargetV_AA0H11FilePayloadVtcAA19IBundleDataProvider_pcfu_AhJ_ALtcfu0_
 $s14ThreeDSWrapper29BundledCertificatesRepositoryC8fetchAllSayAA11CertificateVGyFAFSgAA0H6TargetV_AA0H11FilePayloadVtcAA19IBundleDataProvider_pcfu_
 $s14ThreeDSWrapper29BundledCertificatesRepositoryC8fetchAllSayAA11CertificateVGyFAFSgAA0H6TargetV_AA0H11FilePayloadVtcAA19IBundleDataProvider_pcfu_Tf4e_nAA06BundlemN0C_Tg5
@@ -536,7 +540,7 @@ _$s14ThreeDSWrapper34CachingCertificateFilesMapProviderCAA012ICertificateefG0AAW
 _$s14ThreeDSWrapper34CachingCertificateFilesMapProviderC8providerAcA012ICertificateefG0_p_tcfCTq
 _$s14ThreeDSWrapper34CachingCertificateFilesMapProviderCN
 -private-discriminator _7E448037E841E7C1E729E40B99748566
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CachingCertificateFilesMapProvider.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CachingCertificateFilesMapProvider.swift
 loadCertificateFilesMap
 $s14ThreeDSWrapper34CachingCertificateFilesMapProviderCMa
 sync
@@ -567,7 +571,7 @@ _symbolic _____ 10Foundation4DateV
 _symbolic _____ 10Foundation4DataV
 _$s14ThreeDSWrapper11CertificateVMF
 _$s14ThreeDSWrapper11CertificateVN
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/Certificate.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/Certificate.swift
 $s14ThreeDSWrapper11CertificateVMr
 $s14ThreeDSWrapper11CertificateVMa
 $s14ThreeDSWrapper11CertificateVwst
@@ -599,7 +603,7 @@ _$s14ThreeDSWrapper20CertificateAlgorithmOSHAAMcMK
 _$s14ThreeDSWrapper20CertificateAlgorithmOWV
 _$s14ThreeDSWrapper20CertificateAlgorithmOMf
 _$s14ThreeDSWrapper20CertificateAlgorithmOMF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateAlgorithm.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateAlgorithm.swift
 $s14ThreeDSWrapper20CertificateAlgorithmOMa
 $s14ThreeDSWrapper20CertificateAlgorithmOwui
 $s14ThreeDSWrapper20CertificateAlgorithmOwup
@@ -627,7 +631,7 @@ _$s14ThreeDSWrapper22CertificateFilePayloadVMf
 _symbolic _____ 14ThreeDSWrapper22CertificateFilePayloadV
 _$s14ThreeDSWrapper22CertificateFilePayloadVMF
 _$s14ThreeDSWrapper22CertificateFilePayloadVN
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateFilePayload.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateFilePayload.swift
 $s14ThreeDSWrapper22CertificateFilePayloadVMr
 $s14ThreeDSWrapper22CertificateFilePayloadVMa
 $s14ThreeDSWrapper22CertificateFilePayloadVwst
@@ -928,7 +932,7 @@ _$s14ThreeDSWrapper28ICertificateFilesMapProviderP015loadCertificatedE0SDyAA0H6T
 _$s14ThreeDSWrapper27CertificateFilesMapProviderC010bundleDataF08filenameAcA07IBundlehF0_p_SStcfCTq
 _$s14ThreeDSWrapper27CertificateFilesMapProviderCN
 -private-discriminator _E3E66B219D93ABA36A4949A097F40631
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CertificateFilesMapProvider.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CertificateFilesMapProvider.swift
 $s14ThreeDSWrapper20DecodingCertificates33_E3E66B219D93ABA36A4949A097F40631LLV20CertificateAlgorithmOAFSYAAWl
 $s14ThreeDSWrapper20DecodingCertificates33_E3E66B219D93ABA36A4949A097F40631LLV15CertificateTypeOAFSYAAWl
 $s14ThreeDSWrapper20DecodingCertificates33_E3E66B219D93ABA36A4949A097F40631LLV10CodingKeysOAFs23CustomStringConvertibleAAWl
@@ -1150,7 +1154,7 @@ _$s14ThreeDSWrapper19ICertificatesLoaderP16loadCertificates4with9receiveOn_ySayA
 _$s14ThreeDSWrapper18CertificatesLoaderC9transport19statusCodeValidatorAcA14IHTTPTransport_p_AA07IStatusgH0_ptcfCTq
 _$s14ThreeDSWrapper18CertificatesLoaderCN
 -private-discriminator _D3DADC193A080A7B549141FBCEC383FB
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CertificatesLoader.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CertificatesLoader.swift
 $s14ThreeDSWrapper19StatusCodeValidatorC7Failure33_4F1AB17D25EA682A5DDEDEB7EF4B9969LLVAFs5ErrorAAWl
 $s14ThreeDSWrapper18CertificatesLoaderC04loadC04with9receiveOn_ySayAA26CertificateUpdatingRequestVG_So17OS_dispatch_queueCySDyAHs6ResultOy10Foundation4DataVs5Error_pGGctFyAHXEfU_yAMyAA12HTTPResponseVsAQ_pGcfU_yycfU_TA
 objectdestroy.14
@@ -1311,7 +1315,7 @@ _$s14ThreeDSWrapper25ICertificatesPairProviderP012certificatesD04withAA022DEREnc
 _$s14ThreeDSWrapper19CertificatesManagerC10repository6loader7decoder13updatingQueueAcA23ICertificatesRepository_p_AA0J6Loader_pAA11IPEMDecoder_pSo17OS_dispatch_queueCtcfCTq
 _$s14ThreeDSWrapper19CertificatesManagerCN
 -private-discriminator _EA948476E1BC91027615F135F079C098
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CertificatesManager.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Services/CertificatesManager.swift
 $s14ThreeDSWrapper11CertificateVWOb
 $s14ThreeDSWrapper11CertificateVWOc
 $s14ThreeDSWrapper11CertificateVSgWOh
@@ -1503,7 +1507,7 @@ _$s14ThreeDSWrapper17CertificateSourceOMf
 _$s14ThreeDSWrapper17CertificateSourceOMF
 _symbolic ______AAt 14ThreeDSWrapper17CertificateSourceO
 _$s14ThreeDSWrapper17CertificateSourceO_ACtMD
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateSource.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateSource.swift
 $s14ThreeDSWrapper17CertificateSourceOWOh
 $s14ThreeDSWrapper17CertificateSourceOMr
 $s14ThreeDSWrapper17CertificateSourceOwui
@@ -1591,7 +1595,7 @@ _$s14ThreeDSWrapper23ICertificatesRepositoryPAA0C7SavableTb
 _$s14ThreeDSWrapper22CertificatesRepositoryC07bundledD006remoteD0012replacementsD0AcA08IBundledcD0_p_AA07IRemotecD0_pAA024IFingerprintReplacementsD0_ptcfCTq
 _$s14ThreeDSWrapper22CertificatesRepositoryCN
 -private-discriminator _218B08432CC1A1AC4DBCAFA725287430
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/CertificatesRepository.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/CertificatesRepository.swift
 $ss17_NativeDictionaryV7_insert2at3key5valueys10_HashTableV6BucketV_xnq_ntF14ThreeDSWrapper17CertificateTargetV_SayAK0L0VGTg5
 $ss17_NativeDictionaryV12mutatingFind_8isUniques10_HashTableV6BucketV6bucket_Sb5foundtx_SbtF14ThreeDSWrapper17CertificateTargetV_SayAK0N0VGTg5
 $sSa13_adoptStorage_5countSayxG_SpyxGts016_ContiguousArrayB0CyxGn_SitFZ14ThreeDSWrapper11CertificateV_Tg5
@@ -1734,7 +1738,7 @@ _$s14ThreeDSWrapper20ICertificatesSavableTL
 _$s14ThreeDSWrapper20ICertificatesSavableP4save12certificatesySayAA11CertificateVG_tFTq
 _$s14ThreeDSWrapper22ICertificatesRemovableTL
 _$s14ThreeDSWrapper22ICertificatesRemovableP6remove2byySayAA17CertificateTargetVG_tFTq
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/CertificatesRepositoryInterfaces.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/CertificatesRepositoryInterfaces.swift
 _$s14ThreeDSWrapper16CertificateStateVwCP
 _$s14ThreeDSWrapper16CertificateStateVwxx
 _$s14ThreeDSWrapper16CertificateStateVwcp
@@ -1750,7 +1754,7 @@ _$s14ThreeDSWrapper16CertificateStateVMf
 _symbolic _____ 14ThreeDSWrapper16CertificateStateV
 _symbolic _____ 14ThreeDSWrapper15CertificateTypeO
 _$s14ThreeDSWrapper16CertificateStateVMF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateState.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateState.swift
 $s14ThreeDSWrapper16CertificateStateVMr
 $s14ThreeDSWrapper16CertificateStateVwst
 $s14ThreeDSWrapper16CertificateStateVwet
@@ -1800,7 +1804,7 @@ _$s14ThreeDSWrapper17CertificateTargetVSYAAMA
 _$s14ThreeDSWrapper17CertificateTargetVSYAAMcMK
 _$s14ThreeDSWrapper17CertificateTargetVSYAAMc
 -private-discriminator _91D32DC049C3D4949F44490C5142E4AA
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateTarget.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateTarget.swift
 last.get
 $sSa15_checkSubscript_20wasNativeTypeCheckeds16_DependenceTokenVSi_SbtFSS_Tg5
 $ss12_ArrayBufferV37_checkInoutAndNativeTypeCheckedBounds_03wasfgH0ySi_SbtFSS_Tg5
@@ -1846,7 +1850,7 @@ _$s14ThreeDSWrapper15CertificateTypeOSHAAMcMK
 _$s14ThreeDSWrapper15CertificateTypeOWV
 _$s14ThreeDSWrapper15CertificateTypeOMf
 _$s14ThreeDSWrapper15CertificateTypeOMF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateType.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateType.swift
 $s14ThreeDSWrapper15CertificateTypeOMa
 $s14ThreeDSWrapper15CertificateTypeOwui
 $s14ThreeDSWrapper15CertificateTypeOwup
@@ -1880,7 +1884,7 @@ _$s14ThreeDSWrapper26CertificateUpdatingRequestVMl
 _$s14ThreeDSWrapper26CertificateUpdatingRequestVMf
 _symbolic _____ 10Foundation3URLV
 _$s14ThreeDSWrapper26CertificateUpdatingRequestVMF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateUpdatingRequest.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/CertificateUpdatingRequest.swift
 $s14ThreeDSWrapper26CertificateUpdatingRequestVMr
 $s14ThreeDSWrapper26CertificateUpdatingRequestVwst
 $s14ThreeDSWrapper26CertificateUpdatingRequestVwet
@@ -1894,8 +1898,8 @@ $s14ThreeDSWrapper26CertificateUpdatingRequestVACSQAAWl
 $s14ThreeDSWrapper26CertificateUpdatingRequestVSHAASQWb
 url.get
 $s14ThreeDSWrapper26CertificateUpdatingRequestVMa
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/DEREncodedCertificatesPair.swift
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Dictionary+Utils.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/DEREncodedCertificatesPair.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Dictionary+Utils.swift
 _$s14ThreeDSWrapper22FingerprintReplacementVwCP
 _$s14ThreeDSWrapper22FingerprintReplacementVwxx
 _$s14ThreeDSWrapper22FingerprintReplacementVwcp
@@ -1909,7 +1913,7 @@ _$s14ThreeDSWrapper22FingerprintReplacementVWV
 _$s14ThreeDSWrapper22FingerprintReplacementVMf
 _symbolic _____ 14ThreeDSWrapper22FingerprintReplacementV
 _$s14ThreeDSWrapper22FingerprintReplacementVMF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/FingerprintReplacement.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/FingerprintReplacement.swift
 $s14ThreeDSWrapper22FingerprintReplacementVMa
 $s14ThreeDSWrapper22FingerprintReplacementVwst
 $s14ThreeDSWrapper22FingerprintReplacementVwet
@@ -1958,7 +1962,7 @@ _$s14ThreeDSWrapper34IFingerprintReplacementsRepositoryP6remove2byySayAA17Certif
 _$s14ThreeDSWrapper33FingerprintReplacementsRepositoryC8providerAcA25IStringDictionaryProvider_p_tcfCTq
 _$s14ThreeDSWrapper33FingerprintReplacementsRepositoryCN
 -private-discriminator _60831A12E3C987DDE0B2B4F4165D811B
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/FingerprintReplacementsRepository.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/FingerprintReplacementsRepository.swift
 $sSD8IteratorVyxq__GStsSt4next7ElementQzSgyFTWSS_Say14ThreeDSWrapper22FingerprintReplacementVGTg5
 $sSD8IteratorV4nextx3key_q_5valuetSgyFSS_Say14ThreeDSWrapper22FingerprintReplacementVGTg5
 $ss17_NativeDictionaryVyxqd__Gxq_s5Error_pIglnnzo_ACx3key_q_5valuetsAD_pIeglnzo_SHRzr0__lTRSS_Say14ThreeDSWrapper22FingerprintReplacementVGSSTG5
@@ -2075,7 +2079,7 @@ _$s14ThreeDSWrapper14IHTTPTransportP11requestData4with_y10Foundation3URLV_ys6Res
 _$s14ThreeDSWrapper13HTTPTransportC7session15timeoutIntervalACSo12NSURLSessionC_SdtcfCTq
 _$s14ThreeDSWrapper13HTTPTransportCN
 -private-discriminator _00B49AAAE98BCD5F1602BADCB4A2F842
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/HTTPTransport.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/HTTPTransport.swift
 $s14ThreeDSWrapper13HTTPTransportC7Failure33_00B49AAAE98BCD5F1602BADCB4A2F842LLOAFSQAAWl
 $s14ThreeDSWrapper13HTTPTransportC7Failure33_00B49AAAE98BCD5F1602BADCB4A2F842LLOSHAASQWb
 $s14ThreeDSWrapper13HTTPTransportC7Failure33_00B49AAAE98BCD5F1602BADCB4A2F842LLOMa
@@ -2091,7 +2095,7 @@ $s14ThreeDSWrapper13HTTPTransportC7Failure33_00B49AAAE98BCD5F1602BADCB4A2F842LLO
 $s14ThreeDSWrapper13HTTPTransportC11requestData4with_y10Foundation3URLV_ys6ResultOyAA12HTTPResponseVs5Error_pGctFyAF0E0VSg_So13NSURLResponseCSgsAM_pSgtcfU_
 _$sSq14ThreeDSWrapperE7orThrowyxqd__yXKKs5ErrorRd__lFAA11CertificateV_AA010TDSWrapperE0VTg504$s14a83DSWrapper19CertificatesManagerC16certificatesPair4withAA010DEREncodedcF0VSS_tKFAA15gE7VyXEfu_SSTf1ncn_nTm
 _$s14ThreeDSWrapper11CertificateVSgWOc
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Optional+Utils.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Optional+Utils.swift
 $s14ThreeDSWrapper11CertificateVSgWOc
 $s14ThreeDSWrapper19CertificatesManagerC16certificatesPair4withAA010DEREncodedcF0VSS_tKFAA15TDSWrapperErrorVyXEfu_
 _$s14ThreeDSWrapper11IPEMDecoderP6decode7pemData10Foundation0F0VAH_tKFTj
@@ -2142,7 +2146,7 @@ _$s14ThreeDSWrapper11IPEMDecoderP6decode7pemData10Foundation0F0VAH_tKFTq
 _$s14ThreeDSWrapper10PEMDecoderCACycfCTq
 _$s14ThreeDSWrapper10PEMDecoderCN
 -private-discriminator _17542108DF522186A7765E827E616BB9
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/PEMDecoder.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/PEMDecoder.swift
 $s14ThreeDSWrapper10PEMDecoderC7Failure33_17542108DF522186A7765E827E616BB9LLOAFSQAAWl
 $s14ThreeDSWrapper10PEMDecoderC7Failure33_17542108DF522186A7765E827E616BB9LLOSHAASQWb
 $s14ThreeDSWrapper10PEMDecoderC7Failure33_17542108DF522186A7765E827E616BB9LLOMa
@@ -2447,7 +2451,7 @@ _$s14ThreeDSWrapper29IRemoteCertificatesRepositoryPAA20ICertificatesSavableTb
 _$s14ThreeDSWrapper28RemoteCertificatesRepositoryC8providerAcA23IDataDictionaryProvider_p_tcfCTq
 _$s14ThreeDSWrapper28RemoteCertificatesRepositoryCN
 -private-discriminator _82033E2AE865F423CFEAFEA8036662AF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/RemoteCertificatesRepository.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Repositories/RemoteCertificatesRepository.swift
 $s14ThreeDSWrapper15PersistingModel33_82033E2AE865F423CFEAFEA8036662AFLLV20CertificateAlgorithmO10CodingKeysOAHs23CustomStringConvertibleAAWl
 $s14ThreeDSWrapper15PersistingModel33_82033E2AE865F423CFEAFEA8036662AFLLV20CertificateAlgorithmO10CodingKeysOs0L3KeyAAs23CustomStringConvertiblePWb
 $s14ThreeDSWrapper15PersistingModel33_82033E2AE865F423CFEAFEA8036662AFLLV20CertificateAlgorithmO10CodingKeysOAHs28CustomDebugStringConvertibleAAWl
@@ -2559,7 +2563,7 @@ $ss15ContiguousArrayV20_reserveCapacityImpl07minimumD013growForAppendySi_SbtFSS_
 $sSa22_allocateUninitializedySayxG_SpyxGtSiFZSS_Tg5
 $sSa19_uninitializedCountSayxGSi_tcfCSS_Tg5
 $sSayxGSlsSl5countSivgTW14ThreeDSWrapper17CertificateTargetV_Tg5
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Result+Utils.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Utils/Result+Utils.swift
 _$s14ThreeDSWrapper20IStatusCodeValidatorP8validate4codeySi_tKFTj
 _$s14ThreeDSWrapper19StatusCodeValidatorC7Failure33_4F1AB17D25EA682A5DDEDEB7EF4B9969LLVs5ErrorAAsAGP7_domainSSvgTW
 _$s14ThreeDSWrapper19StatusCodeValidatorC7Failure33_4F1AB17D25EA682A5DDEDEB7EF4B9969LLVs5ErrorAAsAGP5_codeSivgTW
@@ -2596,12 +2600,12 @@ _$s14ThreeDSWrapper20IStatusCodeValidatorP8validate4codeySi_tKFTq
 _$s14ThreeDSWrapper19StatusCodeValidatorCACycfCTq
 _$s14ThreeDSWrapper19StatusCodeValidatorCN
 -private-discriminator _4F1AB17D25EA682A5DDEDEB7EF4B9969
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/StatusCodeValidator.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/StatusCodeValidator.swift
 $s14ThreeDSWrapper19StatusCodeValidatorC7Failure33_4F1AB17D25EA682A5DDEDEB7EF4B9969LLVMa
 $s14ThreeDSWrapper19StatusCodeValidatorC7Failure33_4F1AB17D25EA682A5DDEDEB7EF4B9969LLVwst
 $s14ThreeDSWrapper19StatusCodeValidatorC7Failure33_4F1AB17D25EA682A5DDEDEB7EF4B9969LLVwet
 $s14ThreeDSWrapper19StatusCodeValidatorCMa
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSModule/TDSNamespaceMap.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSModule/TDSNamespaceMap.swift
 _$s14ThreeDSWrapper19ICertificatesLoader_pWOc
 _$s14ThreeDSWrapper19CertificatesManagerC6update4with9receiveOn10completionySayAA26CertificateUpdatingRequestVG_So17OS_dispatch_queueCySDyAiA15TDSWrapperErrorVGctFySDyAIs6ResultOy10Foundation4DataVs0Q0_pGGcfU_TA
 _$s14ThreeDSWrapper19ICertificatesLoader_pMD
@@ -2618,7 +2622,7 @@ _symbolic ______p 14ThreeDSWrapper22ICertificatesUpdatableP
 _$s14ThreeDSWrapper10TDSWrapperCMF
 _$s14ThreeDSWrapper10TDSWrapperC10tdsService19certificatesUpdaterAcA11ITDSService_p_AA22ICertificatesUpdatable_ptcfCTq
 -private-discriminator _A2333DCB5A69EE5A03B9A9FEDCA3D763
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSWrapper.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSWrapper.swift
 $s14ThreeDSWrapper10TDSWrapperCMa
 $s14ThreeDSWrapper19CertificatesManagerC6update4with9receiveOn10completionySayAA26CertificateUpdatingRequestVG_So17OS_dispatch_queueCySDyAiA15TDSWrapperErrorVGctFySDyAIs6ResultOy10Foundation4DataVs0Q0_pGGcfU_TA
 $s14ThreeDSWrapper19ICertificatesLoader_pWOc
@@ -2708,7 +2712,7 @@ _$s14ThreeDSWrapper28ICertificateFilesMapProvider_pMD
 _$s14ThreeDSWrapper20UserDefaultsProviderCAA017IStringDictionaryE0AAWP
 _$s14ThreeDSWrapper20UserDefaultsProviderCAA015IDataDictionaryE0AAWP
 -private-discriminator _134FBD32B06048099376A5834A11AAE4
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSWrapper+Assemble.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSWrapper+Assemble.swift
 $s10Foundation11JSONDecoderC14ThreeDSWrapperE21customISO8601Decoding33_E3E66B219D93ABA36A4949A097F40631LLACvgZAA4DateVs7Decoder_pKcfU_TA
 $sSaySo17OS_dispatch_queueC8DispatchE10AttributesVGMa
 $s14ThreeDSWrapper31TransactionCertsProducerAdapterCAC9TdsSdkIos0cdE8ProtocolAAWl
@@ -2799,7 +2803,7 @@ _$s14ThreeDSWrapper15TDSWrapperErrorVMF
 _$s14ThreeDSWrapper15TDSWrapperErrorV4CodeOWV
 _$s14ThreeDSWrapper15TDSWrapperErrorV4CodeOMf
 _$s14ThreeDSWrapper15TDSWrapperErrorV4CodeOMF
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/TDSWrapperError.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Domain/Models/TDSWrapperError.swift
 $s14ThreeDSWrapper15TDSWrapperErrorV4CodeOMa
 $s14ThreeDSWrapper15TDSWrapperErrorV4CodeOwui
 $s14ThreeDSWrapper15TDSWrapperErrorV4CodeOwup
@@ -2830,7 +2834,7 @@ _$s14ThreeDSWrapper11ITDSServiceTL
 _$s14ThreeDSWrapper11ITDSServiceP13getSDKVersionSSyFTq
 _$s14ThreeDSWrapper11ITDSServiceP11getWarningsSay9TdsSdkIos7WarningCGyFTq
 _$s14ThreeDSWrapper11ITDSServiceP17createTransaction17directoryServerID14messageVersion9TdsSdkIos0E0CSS_SStKFTq
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSModule/ThreeDS2Service.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSModule/ThreeDS2Service.swift
 _$s14ThreeDSWrapper31TransactionCertsProducerAdapterCfD
 _$s14ThreeDSWrapper31TransactionCertsProducerAdapterC9TdsSdkIos0cdE8ProtocolAadEP03getD0yAD0cD0VSSKFTW
 _$s14ThreeDSWrapper26DEREncodedCertificatesPairVWOs
@@ -2848,7 +2852,7 @@ _$s14ThreeDSWrapper31TransactionCertsProducerAdapterC9TdsSdkIos0cdE8ProtocolAAMc
 _$s14ThreeDSWrapper31TransactionCertsProducerAdapterC8providerAcA25ICertificatesPairProvider_p_tcfCTq
 _$s14ThreeDSWrapper31TransactionCertsProducerAdapterCN
 -private-discriminator _4E1674C4E3BF2D285913951905F80169
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSModule/TransactionCertsProducerAdapter.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/SDK/TDSModule/TransactionCertsProducerAdapter.swift
 $s14ThreeDSWrapper26DEREncodedCertificatesPairVWOs
 getCerts
 transactionCerts
@@ -2904,7 +2908,7 @@ _$s14ThreeDSWrapper25IStringDictionaryProviderP012updateStringD06forKey_ySS_ySDy
 _$s14ThreeDSWrapper20UserDefaultsProviderC04userD010keysPrefixACSo06NSUserD0C_SStcfCTq
 _$s14ThreeDSWrapper20UserDefaultsProviderCN
 -private-discriminator _CEB4F0C1C036EE71D6B6AE832294A996
-/Users/ios_builder_66/gitlab-runner/builds/zuh4ucHM/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/UserDefaultsProvider.swift
+/Users/ios_builder_82/gitlab-runner/builds/PVxMhtiq/0/coretech-mobile-ios/core/Development/ThreeDSWrapper/Sources/Core/Services/UserDefaultsProvider.swift
 $sSDsSQR_rlE2eeoiySbSDyxq_G_ABtFZSS_SSTg5
 $sSDsSQR_rlE2eeoiySbSDyxq_G_ABtFZSS_10Foundation4DataVTg5
 $s14ThreeDSWrapper28RemoteCertificatesRepositoryC4save12certificatesySayAA11CertificateVG_tFySDySS10Foundation4DataVGzXEfU0_
@@ -2973,3 +2977,19 @@ Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/CompatibilityConc
 swift_getFunctionTypeMetadataGlobalActorBackDeploy
 Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/usr/include/dispatch/once.h
 /AppleInternal/BuildRoot
+_swift_getFunctionReplacement50
+_swift_getOrigOfReplaceable50
+/AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --driver-mode=g++ -D CMARK_STATIC_DEFINE -D GTEST_HAS_RTTI=0 -D SWIFT_INLINE_NAMESPACE=__runtime -D __STDC_CONSTANT_MACROS -D __STDC_FORMAT_MACROS -D __STDC_LIMIT_MACROS -I stdlib/toolchain/CompatibilityDynamicReplacements -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/CompatibilityDynamicReplacements -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/include -I include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/llvm-project/llvm/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Binaries/swiftlang/install/TempContent/Objects/BNI_Xcode/llvm-macosx-x86_64/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/llvm-project/clang/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Binaries/swiftlang/install/TempContent/Objects/BNI_Xcode/llvm-macosx-x86_64/tools/clang/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/cmark/src -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Binaries/swiftlang/install/TempContent/Objects/BNI_Xcode/cmark-macosx-x86_64/src -Wno-unknown-warning-option -Werror=unguarded-availability-new -fno-stack-protector -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-class-memaccess -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -fdiagnostics-color -Werror=switch -Wdocumentation -Wimplicit-fallthrough -Wunreachable-code -Woverloaded-virtual -D OBJC_OLD_DISPATCH_PROTOTYPES=0 -O2 -D NDEBUG -arch arm64 -isysroot /AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -fno-exceptions -funwind-tables -fno-rtti -Werror=gnu -Wall -Wglobal-constructors -Wexit-time-destructors -D SWIFT_COMPATIBILITY_LIBRARY=1 -D SWIFT_TARGET_LIBRARY_NAME=swiftCompatibilityDynamicReplacements -fembed-bitcode=all --target=arm64-apple-ios7.0 -isysroot /AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk -arch arm64 -F/AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/../../../Developer/Library/Frameworks -F/AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/../../../Developer/AppleInternal/Library/Frameworks -O2 -g -D NDEBUG -D SWIFT_LIBRARY_EVOLUTION=0 -D SWIFT_RUNTIME_OS_VERSIONING -std=c++14 -MD -MT stdlib/toolchain/CompatibilityDynamicReplacements/CMakeFiles/swiftCompatibilityDynamicReplacements-iphoneos-arm64.dir/DynamicReplaceable.cpp.o -MF stdlib/toolchain/CompatibilityDynamicReplacements/CMakeFiles/swiftCompatibilityDynamicReplacements-iphoneos-arm64.dir/DynamicReplaceable.cpp.o.d -o stdlib/toolchain/CompatibilityDynamicReplacements/CMakeFiles/swiftCompatibilityDynamicReplacements-iphoneos-arm64.dir/DynamicReplaceable.cpp.o -c /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/CompatibilityDynamicReplacements/DynamicReplaceable.cpp -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -Xclang -clang-vendor-feature=+nullptrToBoolConversion -Xclang -clang-vendor-feature=+messageToSelfInClassMethodIdReturnType -Xclang -clang-vendor-feature=+disableInferNewAvailabilityFromInit -Xclang -clang-vendor-feature=+disableNeonImmediateRangeCheck -Xclang -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -Xclang -fno-odr-hash-protocols -Xclang -clang-vendor-feature=+revert09abecef7bbf -mlinker-version=711 -stdlib=libc++
+/AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/CompatibilityDynamicReplacements/DynamicReplaceable.cpp
+swift_getOrigOfReplaceable50
+Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/CompatibilityDynamicReplacements/DynamicReplaceable.cpp
+swift_getFunctionReplacement50
+__ZL29installGetClassHook_untrustedv
+__ZL35getObjCClassByMangledName_untrustedPKcPP10objc_class
+__ZL15OldGetClassHook
+/AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --driver-mode=g++ -D CMARK_STATIC_DEFINE -D GTEST_HAS_RTTI=0 -D SWIFT_INLINE_NAMESPACE=__runtime -D __STDC_CONSTANT_MACROS -D __STDC_FORMAT_MACROS -D __STDC_LIMIT_MACROS -I stdlib/toolchain/Compatibility50 -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/Compatibility50 -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/include -I include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/llvm-project/llvm/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Binaries/swiftlang/install/TempContent/Objects/BNI_Xcode/llvm-macosx-x86_64/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/llvm-project/clang/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Binaries/swiftlang/install/TempContent/Objects/BNI_Xcode/llvm-macosx-x86_64/tools/clang/include -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/cmark/src -I /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Binaries/swiftlang/install/TempContent/Objects/BNI_Xcode/cmark-macosx-x86_64/src -Wno-unknown-warning-option -Werror=unguarded-availability-new -fno-stack-protector -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-class-memaccess -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -fdiagnostics-color -Werror=switch -Wdocumentation -Wimplicit-fallthrough -Wunreachable-code -Woverloaded-virtual -D OBJC_OLD_DISPATCH_PROTOTYPES=0 -O2 -D NDEBUG -arch arm64 -isysroot /AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -fno-exceptions -funwind-tables -fno-rtti -Werror=gnu -Wall -Wglobal-constructors -Wexit-time-destructors -D SWIFT_COMPATIBILITY_LIBRARY=1 -D SWIFT_TARGET_LIBRARY_NAME=swiftCompatibility50 -fembed-bitcode=all --target=arm64-apple-ios7.0 -isysroot /AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk -arch arm64 -F/AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/../../../Developer/Library/Frameworks -F/AppleInternal/BuildRoot/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/../../../Developer/AppleInternal/Library/Frameworks -O2 -g -D NDEBUG -D SWIFT_LIBRARY_EVOLUTION=0 -D SWIFT_RUNTIME_OS_VERSIONING -std=c++14 -MD -MT stdlib/toolchain/Compatibility50/CMakeFiles/swiftCompatibility50-iphoneos-arm64.dir/Overrides.cpp.o -MF stdlib/toolchain/Compatibility50/CMakeFiles/swiftCompatibility50-iphoneos-arm64.dir/Overrides.cpp.o.d -o stdlib/toolchain/Compatibility50/CMakeFiles/swiftCompatibility50-iphoneos-arm64.dir/Overrides.cpp.o -c /AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/Compatibility50/Overrides.cpp -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -Xclang -clang-vendor-feature=+nullptrToBoolConversion -Xclang -clang-vendor-feature=+messageToSelfInClassMethodIdReturnType -Xclang -clang-vendor-feature=+disableInferNewAvailabilityFromInit -Xclang -clang-vendor-feature=+disableNeonImmediateRangeCheck -Xclang -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -Xclang -fno-odr-hash-protocols -Xclang -clang-vendor-feature=+revert09abecef7bbf -mlinker-version=711 -stdlib=libc++
+/AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/Compatibility50/Overrides.cpp
+getObjCClassByMangledName_untrusted
+Sources/swiftlang/swiftlang-1300.0.47.5/swift/stdlib/toolchain/Compatibility50/Overrides.cpp
+llvm.loop.mustprogress
+installGetClassHook_untrusted
