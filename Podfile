@@ -13,3 +13,11 @@ target 'ASDKSample' do
   pod 'SwiftLint', '~> 0.40.0'
   pod 'SwiftGen', '~> 6.0'
 end
+
+def install_githooks
+  system("git config --local core.hooksPath \"$(git rev-parse --show-toplevel)/githooks\"")
+end
+
+post_install do |installer|
+  install_githooks
+end
