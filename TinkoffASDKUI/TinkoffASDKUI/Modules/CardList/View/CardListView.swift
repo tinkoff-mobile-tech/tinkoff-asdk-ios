@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 protocol CardListViewDelegate: AnyObject {
@@ -155,7 +154,7 @@ final class CardListView: UIView {
             primaryButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             primaryButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.buttonBottomInset),
             primaryButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .buttonHorizontalInsets),
-            primaryButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.buttonHorizontalInsets)
+            primaryButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.buttonHorizontalInsets),
         ])
     }
 

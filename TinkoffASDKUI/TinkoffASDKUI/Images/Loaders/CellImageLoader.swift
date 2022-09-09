@@ -17,21 +17,20 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class CellImageLoader {
     private let imageLoader: ImageLoader
     private var imageProcessors = [ImageProcessor]()
-    
+
     init(imageLoader: ImageLoader) {
         self.imageLoader = imageLoader
     }
-    
+
     func setImageProcessors(_ imageProcessors: [ImageProcessor]) {
         self.imageProcessors = imageProcessors
     }
-    
+
     func loadImage(url: URL, cell: ReusableCell) {
         if url.isFileURL {
             loadLocalImage(url: url, cell: cell)
@@ -49,7 +48,7 @@ private extension CellImageLoader {
         }
         cell.imageView?.image = image
     }
-    
+
     func loadRemoteImage(url: URL, cell: ReusableCell) {
         let uuid = imageLoader.loadImage(url: url) { [weak self] image in
             guard let self = self else { return image }
@@ -66,7 +65,7 @@ private extension CellImageLoader {
                 }
             }
         }
-        
+
         guard let cellUuid = uuid else { return }
         cell.onReuse = { [weak self] in
             self?.imageLoader.cancelImageLoad(uuid: cellUuid)

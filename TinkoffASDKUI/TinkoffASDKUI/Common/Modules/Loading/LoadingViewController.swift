@@ -17,42 +17,41 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class LoadingViewController: UIViewController, PullableContainerContent {
     var contentHeight: CGFloat {
         return 100
     }
-    
+
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
-    
+
     private let activityIndicator = UIActivityIndicatorView()
     private let statusLabel = UILabel()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         startActivity()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         contentHeightDidChange?(self)
     }
-    
+
     func startActivity() {
         activityIndicator.startAnimating()
     }
-    
+
     func stopActivity() {
         activityIndicator.stopAnimating()
     }
-    
+
     func configure(with text: String) {
         statusLabel.text = text
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateActivityIndicatorStyle()
@@ -64,14 +63,14 @@ private extension LoadingViewController {
         view.backgroundColor = UIColor.asdk.dynamic.background.elevation1
         view.addSubview(activityIndicator)
         view.addSubview(statusLabel)
-        
+
         statusLabel.textColor = UIColor.asdk.n3
         statusLabel.font = .boldSystemFont(ofSize: .statusLabelFontSize)
-        
+
         activityIndicator.style = .gray
         setupContraints()
     }
-    
+
     func setupContraints() {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -80,13 +79,13 @@ private extension LoadingViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.topAnchor.constraint(equalTo: view.topAnchor),
         ])
-        
+
         NSLayoutConstraint.activate([
             statusLabel.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: .statusLabelOffset),
-            statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
-    
+
     func updateActivityIndicatorStyle() {
         if #available(iOS 13.0, *) {
             switch UITraitCollection.current.userInterfaceStyle {

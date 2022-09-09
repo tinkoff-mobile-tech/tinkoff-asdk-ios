@@ -23,7 +23,7 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
     private let topCornerRadius: CGFloat = 12.0
     private var dimmingView: UIView?
     private var presentationWrappingView: UIView?
-    
+
     var cancelCompletion: (() -> Void)?
 
     override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {

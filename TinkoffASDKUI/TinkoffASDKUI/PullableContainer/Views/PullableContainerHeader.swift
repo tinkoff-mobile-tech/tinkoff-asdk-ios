@@ -20,19 +20,19 @@
 import UIKit
 
 final class PullableContainerHeader: UIView {
-    
+
     private let notchView = NotchView()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         notchView.bounds.size = CGSize(width: 32, height: 5)

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class OverlayLoadingView: UIView {
@@ -96,7 +95,7 @@ final class OverlayLoadingView: UIView {
         loader.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             loader.centerYAnchor.constraint(equalTo: centerYAnchor),
-            loader.centerXAnchor.constraint(equalTo: centerXAnchor)
+            loader.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
     }
 

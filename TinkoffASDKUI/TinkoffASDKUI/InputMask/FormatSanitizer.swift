@@ -13,7 +13,7 @@ class FormatSanitizer {
 
 private extension FormatSanitizer {
     func checkOpenBraces(_ string: String) throws {
-        var squareBraceOpen: Bool = false
+        var squareBraceOpen = false
         for char in string {
             if char == "[" {
                 if squareBraceOpen {
@@ -30,7 +30,7 @@ private extension FormatSanitizer {
 
     func getFormatBlocks(_ string: String) -> [String] {
         var blocks: [String] = []
-        var currentBlock: String = ""
+        var currentBlock = ""
 
         for char in string {
             if char == "[" {

@@ -17,24 +17,25 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class SizeImageProcessor: ImageProcessor {
     private let size: CGSize
     private let scale: CGFloat
-    
+
     private lazy var imageRenderer = UIGraphicsImageRenderer(size: imageSize)
     private var imageSize: CGSize {
         return CGSize(width: size.width * scale, height: size.height * scale)
     }
-    
-    init(size: CGSize,
-         scale: CGFloat) {
+
+    init(
+        size: CGSize,
+        scale: CGFloat
+    ) {
         self.size = size
         self.scale = scale
     }
-    
+
     func processImage(_ image: UIImage) -> UIImage {
         return imageRenderer.image { context in
             let path = UIBezierPath(ovalIn: CGRect(origin: .zero, size: imageSize))

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 protocol PullableContainerDragControllerDelegate: AnyObject {
@@ -27,13 +26,13 @@ protocol PullableContainerDragControllerDelegate: AnyObject {
 }
 
 final class PullableContainerDragController {
-    
+
     weak var delegate: PullableContainerDragControllerDelegate?
-        
+
     private let dragViewHeightConstraint: NSLayoutConstraint
-    
+
     private var dragViewHeight: CGFloat = 0
-    
+
     var insets: UIEdgeInsets = .zero
 
     init(dragViewHeightConstraint: NSLayoutConstraint) {
@@ -44,13 +43,15 @@ final class PullableContainerDragController {
         dragViewHeight = contentHeight + insets.bottom + insets.top
         dragViewHeightConstraint.constant = dragViewHeight
     }
-    
+
     func didDragWith(offset: CGFloat) {
         dragViewHeightConstraint.constant = calculateDragViewHeight(offset: offset)
     }
-    
-    func didEndDragging(offset: CGFloat,
-                        velocity: CGFloat) {
+
+    func didEndDragging(
+        offset: CGFloat,
+        velocity: CGFloat
+    ) {
         let dragProportion = offset / dragViewHeight
         let isDismiss = dragProportion >= .dismissDragProportionTreshold || velocity > .dismissVelocityTreshold
         if isDismiss {
@@ -60,13 +61,13 @@ final class PullableContainerDragController {
             delegate?.pullableContainerDragControllerDidEndDragging(self)
         }
     }
-    
+
     private func calculateDragViewHeight(offset: CGFloat) -> CGFloat {
-        let resultOffset = max(-.maximumDragOffset, (offset < 0 ? offset / 2 : offset))
+        let resultOffset = max(-.maximumDragOffset, offset < 0 ? offset / 2 : offset)
         let resultHeight = min(maximumDragViewHeight(), dragViewHeight - resultOffset)
         return resultHeight
     }
-    
+
     private func maximumDragViewHeight() -> CGFloat {
         guard let delegate = delegate else {
             return dragViewHeight
@@ -80,6 +81,6 @@ final class PullableContainerDragController {
 
 private extension CGFloat {
     static let dismissVelocityTreshold: CGFloat = 1500
-    static let dismissDragProportionTreshold: CGFloat = 1/4
+    static let dismissDragProportionTreshold: CGFloat = 1 / 4
     static let maximumDragOffset: CGFloat = 50
 }

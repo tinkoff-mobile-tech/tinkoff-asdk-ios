@@ -35,9 +35,9 @@ public final class AcquiringSdk: NSObject {
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
-        self.fpsEnabled = configuration.fpsEnabled
-        self.terminalKey = configuration.credential.terminalKey
-        self.languageKey = configuration.language
+        fpsEnabled = configuration.fpsEnabled
+        terminalKey = configuration.credential.terminalKey
+        languageKey = configuration.language
 
         if let publicKey: SecKey = RSAEncryption.secKey(string: configuration.credential.publicKey) {
             self.publicKey = publicKey
@@ -56,7 +56,7 @@ public final class AcquiringSdk: NSObject {
             let sessionConfiguration = URLSessionConfiguration.default
             sessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
             sessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
-            
+
             networkTransport = AcquaringNetworkTransport(
                 urlDomain: url,
                 certsConfigDomain: certsConfigUrl,
@@ -105,10 +105,10 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
         let enrichedData = paramsEnricher.enrich(data)
-        
+
         let request = PaymentInitRequest(data: enrichedData)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
@@ -179,7 +179,7 @@ public final class AcquiringSdk: NSObject {
         updateCardDataRequestParams(&request.parameters)
 
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
@@ -198,7 +198,7 @@ public final class AcquiringSdk: NSObject {
         updateCardDataRequestParams(&request.parameters)
 
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
@@ -211,7 +211,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = PaymentChargeRequest(data: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
@@ -226,7 +226,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = PaymentStatusRequest(data: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
@@ -245,7 +245,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = CardListRequest(data: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(
             operation: request,
@@ -274,7 +274,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = InitAddCardRequest(requestData: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completion)
     }
@@ -301,7 +301,7 @@ public final class AcquiringSdk: NSObject {
         updateCardDataRequestParams(&request.parameters)
 
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(
             operation: request,
@@ -340,7 +340,7 @@ public final class AcquiringSdk: NSObject {
         updateCardDataRequestParams(&request.parameters)
 
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(
             operation: request,
@@ -374,7 +374,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = InitDeactivateCardRequest(requestData: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completion)
     }
@@ -402,7 +402,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = PaymentInvoiceQRCodeRequest(data: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
@@ -420,11 +420,11 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = PaymentInvoiceQRCodeCollectorRequest(data: data)
         let commonParameters: JSONObject = createCommonParameters()
-        request.parameters?.merge(commonParameters) { (_, new) -> JSONValue in new }
+        request.parameters?.merge(commonParameters) { _, new -> JSONValue in new }
 
         return networkTransport.send(operation: request, completionHandler: completionHandler)
     }
-    
+
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
     ///
     /// - Parameters:
@@ -455,16 +455,18 @@ public final class AcquiringSdk: NSObject {
             completionHandler: completion
         )
     }
-    
+
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
         let request = GetCertsConfigRequest()
         return networkTransport.sendCertsConfigRequest(operation: request, completionHandler: completion)
     }
-    
+
     @discardableResult
-    public func submit3DSAuthorizationV2(cres: String,
-                                         completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) -> Cancellable {
+    public func submit3DSAuthorizationV2(
+        cres: String,
+        completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void
+    ) -> Cancellable {
         let cresData = CresData(cres: cres)
         let request = ThreeDSV2AuthorizationRequest(data: cresData)
         return networkTransport.send(operation: request, completionHandler: completion)

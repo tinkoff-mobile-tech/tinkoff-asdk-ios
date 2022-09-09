@@ -114,14 +114,15 @@ public struct PaymentStatusResponse: ResponseOperation {
         }
     }
 
-    public init(success: Bool,
-                errorCode: Int,
-                errorMessage: String?,
-                orderId: String,
-                paymentId: Int64,
-                amount: Int64,
-                status: PaymentStatus)
-    {
+    public init(
+        success: Bool,
+        errorCode: Int,
+        errorMessage: String?,
+        orderId: String,
+        paymentId: Int64,
+        amount: Int64,
+        status: PaymentStatus
+    ) {
         self.success = success
         self.errorCode = errorCode
         self.errorMessage = errorMessage

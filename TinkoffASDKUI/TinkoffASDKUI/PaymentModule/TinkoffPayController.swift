@@ -11,22 +11,23 @@ import TinkoffASDKCore
 final class TinkoffPayController {
     private let sdk: AcquiringSdk
     private let tinkoffPayStatusCacheLifeTime: TimeInterval
-    
+
     private var tinkoffPayAvailableCachedResult: GetTinkoffPayStatusResponse.Status?
-    
-    
-    init(sdk: AcquiringSdk,
-         tinkoffPayStatusCacheLifeTime: TimeInterval = 300) {
+
+    init(
+        sdk: AcquiringSdk,
+        tinkoffPayStatusCacheLifeTime: TimeInterval = 300
+    ) {
         self.sdk = sdk
         self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
     }
-    
+
     func checkIfTinkoffPayAvailable(completion: @escaping (Result<GetTinkoffPayStatusResponse.Status, Error>) -> Void) -> Cancellable {
         if let tinkoffPayAvailableCachedResult = tinkoffPayAvailableCachedResult {
             completion(.success(tinkoffPayAvailableCachedResult))
             return EmptyCancellable()
         }
-        
+
         return sdk.getTinkoffPayStatus { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -40,12 +41,16 @@ final class TinkoffPayController {
             }
         }
     }
-    
-    func getTinkoffPayLink(paymentId: Int64,
-                           version: GetTinkoffPayStatusResponse.Status.Version,
-                           completion: @escaping (Result<URL, Error>) -> Void) -> Cancellable {
-        return sdk.getTinkoffPayLink(paymentId: paymentId,
-                                     version: version) { result in
+
+    func getTinkoffPayLink(
+        paymentId: Int64,
+        version: GetTinkoffPayStatusResponse.Status.Version,
+        completion: @escaping (Result<URL, Error>) -> Void
+    ) -> Cancellable {
+        return sdk.getTinkoffPayLink(
+            paymentId: paymentId,
+            version: version
+        ) { result in
             DispatchQueue.main.async {
                 switch result {
                 case let .failure(error):

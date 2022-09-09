@@ -17,39 +17,40 @@
 //  limitations under the License.
 //
 
-
 import TinkoffASDKCore
 import UIKit
 
 final class SBPBankListTableManager: NSObject {
-    
+
     var rowSelection: ((Int) -> Void)?
-    
+
     private var tableView: UITableView?
-    
+
     private let cellImageLoader: CellImageLoader
-    
+
     var banks = [SBPBank]() {
         didSet {
             tableView?.reloadData()
         }
     }
-    
+
     var selectedIndex: Int? {
         didSet {
             guard let selectedIndex = selectedIndex else { return }
-            tableView?.selectRow(at: IndexPath(row: selectedIndex, section: 0),
-                                 animated: false,
-                                 scrollPosition: .none)
+            tableView?.selectRow(
+                at: IndexPath(row: selectedIndex, section: 0),
+                animated: false,
+                scrollPosition: .none
+            )
         }
     }
-    
+
     init(cellImageLoader: CellImageLoader) {
         self.cellImageLoader = cellImageLoader
         super.init()
         setup()
     }
-    
+
     func setTableView(_ tableView: UITableView) {
         self.tableView = tableView
         setupTableView()
@@ -58,11 +59,15 @@ final class SBPBankListTableManager: NSObject {
 
 private extension SBPBankListTableManager {
     func setup() {
-        cellImageLoader.setImageProcessors([SizeImageProcessor(size: CGSize(width: .cellImageSide, height: .cellImageSide),
-                                                               scale: UIScreen.main.scale),
-                                            RoundImageProcessor()])
+        cellImageLoader.setImageProcessors([
+            SizeImageProcessor(
+                size: CGSize(width: .cellImageSide, height: .cellImageSide),
+                scale: UIScreen.main.scale
+            ),
+            RoundImageProcessor(),
+        ])
     }
-    
+
     func setupTableView() {
         tableView?.register(SBPBankCell.self, forCellReuseIdentifier: SBPBankCell.reuseIdentifier)
         tableView?.dataSource = self
@@ -74,32 +79,40 @@ private extension SBPBankListTableManager {
 }
 
 extension SBPBankListTableManager: UITableViewDataSource {
-    func tableView(_ tableView: UITableView,
-                   numberOfRowsInSection section: Int) -> Int {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         banks.count
     }
-    
-    func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let bankCell = tableView.dequeueReusableCell(withIdentifier: SBPBankCell.reuseIdentifier,
-                                                     for: indexPath) as? SBPBankCell else {
+
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        guard let bankCell = tableView.dequeueReusableCell(
+            withIdentifier: SBPBankCell.reuseIdentifier,
+            for: indexPath
+        ) as? SBPBankCell else {
             return UITableViewCell()
         }
-        
+
         let bank = banks[indexPath.row]
-        
+
         if let logoUrl = bank.logoURL {
             cellImageLoader.loadImage(url: logoUrl, cell: bankCell)
         }
         bankCell.bankTitleLabel.text = bank.name
-        
+
         return bankCell
     }
 }
 
 extension SBPBankListTableManager: UITableViewDelegate {
-    func tableView(_ tableView: UITableView,
-                   didSelectRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
         rowSelection?(indexPath.row)
     }
 }

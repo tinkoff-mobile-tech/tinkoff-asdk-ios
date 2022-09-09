@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 protocol DimmingPresentationControllerDelegate: AnyObject {
@@ -25,29 +24,35 @@ protocol DimmingPresentationControllerDelegate: AnyObject {
 }
 
 final class DimmingPresentationController: UIPresentationController {
-     
+
     weak var dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?
-    
+
     private let dimmingView = DimmingView()
-    
-    override init(presentedViewController: UIViewController,
-                  presenting presentingViewController: UIViewController?) {
-        super.init(presentedViewController: presentedViewController,
-                   presenting: presentingViewController)
+
+    override init(
+        presentedViewController: UIViewController,
+        presenting presentingViewController: UIViewController?
+    ) {
+        super.init(
+            presentedViewController: presentedViewController,
+            presenting: presentingViewController
+        )
     }
-    
+
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
         setupDimmingView()
         setupTapDismissGesture()
         containerView?.layoutIfNeeded()
         dimmingView.prepareForPresentationTransition()
-        presentedViewController.transitionCoordinator?.animate(alongsideTransition: { [dimmingView] _ in
-            dimmingView.performPresentationTransition()
-        },
-        completion: nil)
+        presentedViewController.transitionCoordinator?.animate(
+            alongsideTransition: { [dimmingView] _ in
+                dimmingView.performPresentationTransition()
+            },
+            completion: nil
+        )
     }
-    
+
     override func dismissalTransitionWillBegin() {
         super.dismissalTransitionWillBegin()
         dimmingView.prepareForDimissalTransition()
@@ -55,7 +60,7 @@ final class DimmingPresentationController: UIPresentationController {
             dimmingView.performDismissalTransition()
         }, completion: nil)
     }
-    
+
     override func containerViewWillLayoutSubviews() {
         super.containerViewWillLayoutSubviews()
         dimmingView.frame = containerView?.bounds ?? .zero
@@ -65,18 +70,19 @@ final class DimmingPresentationController: UIPresentationController {
 
 private extension DimmingPresentationController {
     func setupTapDismissGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self,
-                                                action: #selector(dismissTapGestureAction(_:)))
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissTapGestureAction(_:))
+        )
         dimmingView.addGestureRecognizer(tapGesture)
     }
-    
+
     func setupDimmingView() {
         containerView?.addSubview(dimmingView)
     }
-    
+
     @objc func dismissTapGestureAction(_ recognizer: UITapGestureRecognizer) {
         presentedViewController.presentingViewController?.dismiss(animated: true, completion: nil)
         dimmingPresentationControllerDelegate?.didDismissByDimmingViewTap(dimmingPresentationController: self)
     }
 }
-

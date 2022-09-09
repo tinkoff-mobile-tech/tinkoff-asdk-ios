@@ -21,7 +21,7 @@ import UIKit
 
 class SegmentedTabeViewCell: UITableViewCell, NibLoadable {
 
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet var segmentedControl: UISegmentedControl!
 
     var onSegmentedChanged: ((Int) -> Void)?
 

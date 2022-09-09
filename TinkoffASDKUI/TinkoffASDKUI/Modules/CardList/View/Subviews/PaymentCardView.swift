@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class PaymentCardView: UIView {
@@ -73,7 +72,7 @@ final class PaymentCardView: UIView {
 
         NSLayoutConstraint.activate([
             iconView.widthAnchor.constraint(equalToConstant: .iconSide),
-            iconView.heightAnchor.constraint(equalToConstant: .iconSide)
+            iconView.heightAnchor.constraint(equalToConstant: .iconSide),
         ])
     }
 }

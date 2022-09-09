@@ -22,8 +22,8 @@ import UIKit
 
 class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
-    @IBOutlet weak var scannerViewPort: UIView!
-    @IBOutlet weak var buttonClose: UIButton!
+    @IBOutlet var scannerViewPort: UIView!
+    @IBOutlet var buttonClose: UIButton!
 
     private var captureSession: AVCaptureSession!
     private var previewLayer: AVCaptureVideoPreviewLayer!
@@ -38,11 +38,15 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
         })
     }
 
-    var showErrorBlock: (_ errorTitle: String, _ errorMessage: String) -> Void = { (errorTitle: String, errorMessage: String) -> Void in
+    var showErrorBlock: (_ errorTitle: String, _ errorMessage: String) -> Void = { (errorTitle: String, errorMessage: String) in
         var alertController = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), 
-                                                style: UIAlertAction.Style.default, 
-                                                handler: { (_) -> Void in }))
+        alertController.addAction(UIAlertAction(
+            title: NSLocalizedString("OK", comment: "OK"),
+
+            style: UIAlertAction.Style.default,
+
+            handler: { _ in }
+        ))
 
         if let topController = UIApplication.shared.keyWindow?.rootViewController {
             topController.present(alertController, animated: true, completion: nil)
@@ -121,9 +125,15 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
         if captureSession.canAddInput(videoInput) {
             captureSession.addInput(videoInput)
         } else {
-            showError(NSLocalizedString("Camera error", comment: ""), 
-                      message: NSLocalizedString("No valid capture session found, I can't take any pictures or videos.", 
-                                                 comment: ""))
+            showError(
+                NSLocalizedString("Camera error", comment: ""),
+
+                message: NSLocalizedString(
+                    "No valid capture session found, I can't take any pictures or videos.",
+
+                    comment: ""
+                )
+            )
             captureSession = nil
             return
         }
@@ -136,9 +146,15 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = scannerMetadataObjectTypes
         } else {
-            showError(NSLocalizedString("Preset not supported", comment: ""), 
-                      message: NSLocalizedString("Camera preset not supported. Please try another one.", 
-                                                 comment: ""))
+            showError(
+                NSLocalizedString("Preset not supported", comment: ""),
+
+                message: NSLocalizedString(
+                    "Camera preset not supported. Please try another one.",
+
+                    comment: ""
+                )
+            )
             return
         }
 
@@ -151,9 +167,9 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
     }
 
     private func showError(_ title: String, message: String) {
-        DispatchQueue.main.async(execute: { () -> Void in
+        DispatchQueue.main.async { () in
             self.showErrorBlock(title, message)
-        })
+        }
     }
 
     // MARK: AVCaptureMetadataOutputObjectsDelegate

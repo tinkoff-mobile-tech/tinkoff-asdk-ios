@@ -17,37 +17,39 @@
 //  limitations under the License.
 //
 
-
-import UIKit
 import TinkoffASDKCore
+import UIKit
 
 final class SBPNoAvailableBanksViewController: UIViewController, CustomViewLoadable {
     typealias CustomView = SBPNoAvailableBanksView
-    
+
     private let style: SBPNoAvailableBanksView.Style
     private let urlOpener: URLOpener
     private let paymentStatusResponse: PaymentStatusResponse
     private let completionHandler: PaymentCompletionHandler?
-    
-    init(style: SBPNoAvailableBanksView.Style,
-         urlOpener: URLOpener,
-         paymentStatusResponse: PaymentStatusResponse,
-         completionHandler: PaymentCompletionHandler? = nil) {
+
+    init(
+        style: SBPNoAvailableBanksView.Style,
+        urlOpener: URLOpener,
+        paymentStatusResponse: PaymentStatusResponse,
+        completionHandler: PaymentCompletionHandler? = nil
+    ) {
         self.style = style
         self.urlOpener = urlOpener
         self.paymentStatusResponse = paymentStatusResponse
         self.completionHandler = completionHandler
         super.init(nibName: nil, bundle: nil)
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func loadView() {
         view = SBPNoAvailableBanksView(style: style)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -61,46 +63,54 @@ private extension SBPNoAvailableBanksViewController {
         setupButtons()
         setupNavigationButton()
     }
-    
+
     func setupLocalization() {
         customView.titleLabel.text = Loc.Sbp.EmptyBanks.title
         customView.descriptionLabel.text = Loc.Sbp.EmptyBanks.description
         customView.confirmButton.setTitle(Loc.Sbp.EmptyBanks.ConfirmationButton.title, for: .normal)
         customView.informationButton.setTitle(Loc.Sbp.EmptyBanks.InformationButton.title, for: .normal)
     }
-    
+
     func setupButtons() {
-        customView.confirmButton.addTarget(self,
-                                           action: #selector(close),
-                                           for: .touchUpInside)
-        
-        customView.informationButton.addTarget(self,
-                                               action: #selector(openInformation),
-                                               for: .touchUpInside)
+        customView.confirmButton.addTarget(
+            self,
+            action: #selector(close),
+            for: .touchUpInside
+        )
+
+        customView.informationButton.addTarget(
+            self,
+            action: #selector(openInformation),
+            for: .touchUpInside
+        )
     }
-    
+
     func setupNavigationButton() {
         let closeButton: UIBarButtonItem
         if #available(iOS 13.0, *) {
-            closeButton = UIBarButtonItem(barButtonSystemItem: .close,
-                                          target: self,
-                                          action: #selector(close))
+            closeButton = UIBarButtonItem(
+                barButtonSystemItem: .close,
+                target: self,
+                action: #selector(close)
+            )
         } else {
-            closeButton = UIBarButtonItem(title: Loc.TinkoffAcquiring.Button.close,
-                                          style: .done,
-                                          target: self,
-                                          action: #selector(close))
+            closeButton = UIBarButtonItem(
+                title: Loc.TinkoffAcquiring.Button.close,
+                style: .done,
+                target: self,
+                action: #selector(close)
+            )
         }
         navigationItem.rightBarButtonItem = closeButton
     }
-    
+
     @objc func close() {
         dismiss(animated: true, completion: { [weak self] in
             guard let self = self else { return }
             self.completionHandler?(.success(self.paymentStatusResponse))
         })
     }
-    
+
     @objc func openInformation() {
         urlOpener.openUrl(.informationURL)
     }

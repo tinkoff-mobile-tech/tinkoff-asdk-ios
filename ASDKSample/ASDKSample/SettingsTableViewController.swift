@@ -36,7 +36,7 @@ class AppSetting {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     /// TinkoffPay
     var tinkoffPay: Bool = false {
         didSet {
@@ -78,15 +78,15 @@ class AppSetting {
     init() {
         let usd = UserDefaults.standard
 
-        self.paySBP = usd.bool(forKey: keySBP)
-        self.tinkoffPay = usd.bool(forKey: keyTinkoffPay)
-        self.showEmailField = usd.bool(forKey: keyShowEmailField)
-        self.acquiring = usd.bool(forKey: keyKindForAlertView)
+        paySBP = usd.bool(forKey: keySBP)
+        tinkoffPay = usd.bool(forKey: keyTinkoffPay)
+        showEmailField = usd.bool(forKey: keyShowEmailField)
+        acquiring = usd.bool(forKey: keyKindForAlertView)
         if let value = usd.value(forKey: keyAddCardCheckType) as? String {
-            self.addCardChekType = PaymentCardCheckType(rawValue: value)
+            addCardChekType = PaymentCardCheckType(rawValue: value)
         }
 
-        self.languageId = usd.string(forKey: keyLanguageId)
+        languageId = usd.string(forKey: keyLanguageId)
     }
 }
 
@@ -153,8 +153,8 @@ class SettingsTableViewController: UITableViewController {
                 let value = AppSetting.shared.paySBP
                 cell.switcher.isOn = value
 
-                let title = value 
-                    ? NSLocalizedString("status.sbp.on", comment: "Включены") 
+                let title = value
+                    ? NSLocalizedString("status.sbp.on", comment: "Включены")
                     : NSLocalizedString("status.sbp.off", comment: "Выключены")
 
                 cell.labelTitle.text = title
@@ -191,8 +191,8 @@ class SettingsTableViewController: UITableViewController {
                 let value = AppSetting.shared.showEmailField
                 cell.switcher.isOn = value
 
-                let title = value 
-                    ? NSLocalizedString("status.showEmailField.on", comment: "Показывать") 
+                let title = value
+                    ? NSLocalizedString("status.showEmailField.on", comment: "Показывать")
                     : NSLocalizedString("status.showEmailField.off", comment: "Скрыто")
                 cell.labelTitle.text = title
 
@@ -211,8 +211,8 @@ class SettingsTableViewController: UITableViewController {
                 let value = AppSetting.shared.acquiring
                 cell.switcher.isOn = value
 
-                let title = value 
-                    ? NSLocalizedString("status.alert.on", comment: "Aquaring") 
+                let title = value
+                    ? NSLocalizedString("status.alert.on", comment: "Aquaring")
                     : NSLocalizedString("status.alert.off", comment: "Системные")
                 cell.labelTitle.text = title
 

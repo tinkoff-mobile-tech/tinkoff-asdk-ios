@@ -9,4 +9,3 @@
 import XCTest
 
 class IPv4AddressTests: XCTestCase {}
-

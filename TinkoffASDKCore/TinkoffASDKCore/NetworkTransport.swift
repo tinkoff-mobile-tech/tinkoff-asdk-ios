@@ -35,8 +35,10 @@ protocol NetworkTransport: AnyObject {
         responseDelegate: NetworkTransportResponseDelegate?,
         completionHandler: @escaping (_ results: Result<Response, Error>) -> Void
     ) -> Cancellable
-    func sendCertsConfigRequest<Operation: RequestOperation>(operation: Operation,
-                                                             completionHandler: @escaping (_ results: Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable
+    func sendCertsConfigRequest<Operation: RequestOperation>(
+        operation: Operation,
+        completionHandler: @escaping (_ results: Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable
 }
 
 extension NetworkTransport {
@@ -113,26 +115,20 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// этот url считается конечным в сценарии прохождения 3DS
     ///
     /// - Returns: URL
-    private(set) lazy var confirmation3DSTerminationURL: URL = {
-        self.urlDomain.appendingPathComponent(self.apiPathV1).appendingPathComponent("Submit3DSAuthorization")
-    }()
+    private(set) lazy var confirmation3DSTerminationURL: URL = self.urlDomain.appendingPathComponent(self.apiPathV1).appendingPathComponent("Submit3DSAuthorization")
 
     /// Во время проверки `threeDSMethodCheckURL` девайса и параметров оплаты, какой версией
     /// метода 3DS нужно воспользоваться, этот url используется как параметр `cresCallbackUrl` url завершения
     /// сценария прохождения 3DS
     ///
     /// - Returns: URL
-    private(set) lazy var confirmation3DSTerminationV2URL: URL = {
-        self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Submit3DSAuthorizationV2")
-    }()
+    private(set) lazy var confirmation3DSTerminationV2URL: URL = self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Submit3DSAuthorizationV2")
 
     /// Во время прохождения 3DS v2 (ACS) WKNavigationDelegate отслеживает редиректы формы 3DS,
     /// этот url считается конечным в сценарии прохождения 3DS
     ///
     /// - Returns: URL
-    private(set) lazy var complete3DSMethodV2URL: URL = {
-        self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Complete3DSMethodv2")
-    }()
+    private(set) lazy var complete3DSMethodV2URL: URL = self.urlDomain.appendingPathComponent(self.apiPathV2).appendingPathComponent("Complete3DSMethodv2")
 
     private func setDefaultHTTPHeaders(for request: inout URLRequest) {
         request.setValue("application/x-www-form-urlencoded; charset=utf-8; gzip,deflate;", forHTTPHeaderField: "Content-Type")
@@ -146,8 +142,12 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
     func createConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.acsUrl) else {
-            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: .coreResources,
-                                                    comment: "Can't create confirmation request"), code: 1, userInfo: try requestData.encode2JSONObject())
+            throw NSError(domain: NSLocalizedString(
+                "TinkoffAcquiring.requestConfirmation.create.false",
+                tableName: nil,
+                bundle: .coreResources,
+                comment: "Can't create confirmation request"
+            ), code: 1, userInfo: try requestData.encode2JSONObject())
         }
 
         var request = URLRequest(url: requestURL)
@@ -166,14 +166,14 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
         return request
     }
-    
+
     private func generateBodyParamsString(using parameters: JSONObject) -> String {
         let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
-        let bodyParamsString = parameters.compactMap { (item) -> String? in
+        let bodyParamsString = parameters.compactMap { item -> String? in
             let paramValue = "\(item.value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? item.value
             return "\(item.key)=\(paramValue)"
         }.joined(separator: "&")
-        
+
         return bodyParamsString
     }
 
@@ -185,8 +185,12 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// - Returns:  throws `URLRequest`
     func createConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.acsUrl) else {
-            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: .coreResources,
-                                                    comment: "Can't create confirmation request"), code: 1, userInfo: try requestData.encode2JSONObject())
+            throw NSError(domain: NSLocalizedString(
+                "TinkoffAcquiring.requestConfirmation.create.false",
+                tableName: nil,
+                bundle: .coreResources,
+                comment: "Can't create confirmation request"
+            ), code: 1, userInfo: try requestData.encode2JSONObject())
         }
 
         var request = URLRequest(url: requestURL)
@@ -195,11 +199,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
         //
         let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransId)\",\"acsTransID\":\"\(requestData.acsTransId)\",\"messageVersion\":\"\(messageVersion)\",\"challengeWindowSize\":\"05\",\"messageType\":\"CReq\"}"
         let encodedString = Data(parameterValue.utf8).base64EncodedString()
-        
+
         /// Remove padding
         /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
         let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
-        
+
         request.httpBody = Data("creq=\(noPaddingEncodedString)".utf8)
 
         return request
@@ -212,8 +216,12 @@ final class AcquaringNetworkTransport: NetworkTransport {
     /// - Returns:  throws `URLRequest`
     func createChecking3DSURL(requestData: Checking3DSURLData) throws -> URLRequest {
         guard let requestURL = URL(string: requestData.threeDSMethodURL) else {
-            throw NSError(domain: NSLocalizedString("TinkoffAcquiring.requestConfirmation.create.false", tableName: nil, bundle: .coreResources,
-                                                    comment: "Can't create request"), code: 1, userInfo: nil)
+            throw NSError(domain: NSLocalizedString(
+                "TinkoffAcquiring.requestConfirmation.create.false",
+                tableName: nil,
+                bundle: .coreResources,
+                comment: "Can't create request"
+            ), code: 1, userInfo: nil)
         }
 
         var request = URLRequest(url: requestURL)
@@ -222,11 +230,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
         //
         let parameterValue = "{\"threeDSServerTransID\":\"\(requestData.tdsServerTransID)\",\"threeDSMethodNotificationURL\":\"\(requestData.notificationURL)\"}"
         let encodedString = Data(parameterValue.utf8).base64EncodedString()
-        
+
         /// Remove padding
         /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
         let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
-        
+
         request.httpBody = try JSONSerialization.data(withJSONObject: ["threeDSMethodData": Data(base64Encoded: noPaddingEncodedString)], options: [.sortedKeys])
 
         return request
@@ -297,8 +305,12 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
             // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
             guard acquiringResponse.success else {
-                var errorMessage: String = NSLocalizedString("TinkoffAcquiring.response.error.statusFalse", tableName: nil, bundle: .coreResources,
-                                                             comment: "Acquiring Error Response 'Success: false'")
+                var errorMessage: String = NSLocalizedString(
+                    "TinkoffAcquiring.response.error.statusFalse",
+                    tableName: nil,
+                    bundle: .coreResources,
+                    comment: "Acquiring Error Response 'Success: false'"
+                )
                 if let message = acquiringResponse.errorMessage {
                     errorMessage = message
                 }
@@ -308,9 +320,11 @@ final class AcquaringNetworkTransport: NetworkTransport {
                     errorMessage.append(contentsOf: details)
                 }
 
-                let error = NSError(domain: errorMessage,
-                                    code: acquiringResponse.errorCode,
-                                    userInfo: try? acquiringResponse.encode2JSONObject())
+                let error = NSError(
+                    domain: errorMessage,
+                    code: acquiringResponse.errorCode,
+                    userInfo: try? acquiringResponse.encode2JSONObject()
+                )
 
                 completionHandler(.failure(error))
                 return
@@ -328,13 +342,13 @@ final class AcquaringNetworkTransport: NetworkTransport {
 
         return task
     } // send
-    
+
     // TODO: - привести отправку запросов к единому виду при рефакторинге компонента
     @discardableResult
     func sendCertsConfigRequest<Operation: RequestOperation>(
         operation: Operation,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable  {
+    ) -> Cancellable {
 
         let request: URLRequest
         do {

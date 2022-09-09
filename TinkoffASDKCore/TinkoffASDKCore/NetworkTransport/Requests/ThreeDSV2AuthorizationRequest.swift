@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct CresData: Encodable {
@@ -25,19 +24,19 @@ struct CresData: Encodable {
 }
 
 public struct ThreeDSV2AuthorizationRequest: RequestOperation {
-    
+
     // MARK: - RequestOperation
-    
+
     public let name: String = "Submit3DSAuthorizationV2"
-    
+
     public let requestMethod: RequestMethod = .post
-    
-    public var parameters: JSONObject? = nil
-    
+
+    public var parameters: JSONObject?
+
     public let requestContentType: RequestContentType = .urlEncoded
-    
+
     // MARK: - Init
-    
+
     init(data: CresData) {
         if let json = try? data.encode2JSONObject() {
             parameters = json

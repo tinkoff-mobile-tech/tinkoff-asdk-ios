@@ -17,47 +17,50 @@
 //  limitations under the License.
 //
 
-
-import TinkoffASDKCore
 import ThreeDSWrapper
+import TinkoffASDKCore
 
 protocol ITDSCertsManager {
     /// Загружает сертификаты из конфига, сравнивает с сертами из ThreeDSWrapper и обновляет если необходимо
-    func checkAndUpdateCertsIfNeeded(for paymentSystem: String,
-                                     completion: @escaping (_ matchingDirectoryServerID: Result<String, Error>) -> Void)
+    func checkAndUpdateCertsIfNeeded(
+        for paymentSystem: String,
+        completion: @escaping (_ matchingDirectoryServerID: Result<String, Error>) -> Void
+    )
 }
 
 final class TDSCertsManager: ITDSCertsManager {
-    
+
     // Dependencies
-    
+
     private let acquiringSdk: AcquiringSdk
     private let tdsWrapper: TDSWrapper
-    
+
     // Init
-    
+
     init(acquiringSdk: AcquiringSdk, tdsWrapper: TDSWrapper) {
         self.acquiringSdk = acquiringSdk
         self.tdsWrapper = tdsWrapper
     }
-    
-    func checkAndUpdateCertsIfNeeded(for paymentSystem: String,
-                                     completion: @escaping (_ matchingDirectoryServerID: Result<String, Error>) -> Void) {
+
+    func checkAndUpdateCertsIfNeeded(
+        for paymentSystem: String,
+        completion: @escaping (_ matchingDirectoryServerID: Result<String, Error>) -> Void
+    ) {
         acquiringSdk.getCertsConfig { [weak self] result in
             do {
                 let certs = try result.get().certificates
-                
+
                 let matchingCerts = certs.filter { $0.paymentSystem == paymentSystem }
-                
+
                 guard let matchingDirectoryServerID = matchingCerts.first?.directoryServerID else {
                     completion(.failure(TDSFlowError.invalidPaymentSystem))
                     return
                 }
-                
+
                 self?.compareAndUpdateWrapperCertsIfNeeded(with: matchingCerts, completion: { result in
-                    completion(result.map { _ in matchingDirectoryServerID } )
+                    completion(result.map { _ in matchingDirectoryServerID })
                 })
-                
+
             } catch {
                 completion(.failure(error))
             }
@@ -69,8 +72,10 @@ final class TDSCertsManager: ITDSCertsManager {
 
 private extension TDSCertsManager {
 
-    func compareAndUpdateWrapperCertsIfNeeded(with configCerts: [CertificateData],
-                                              completion: @escaping (Result<Void, Error>) -> Void) {
+    func compareAndUpdateWrapperCertsIfNeeded(
+        with configCerts: [CertificateData],
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         let wrapperCertificates = tdsWrapper.checkCertificates()
 
         let updatingRequests = configCerts
@@ -93,18 +98,20 @@ private extension TDSCertsManager {
     func shouldUpdate(_ configCert: CertificateData, _ wrapperCerts: [CertificateState]) -> Bool {
         !wrapperCerts.contains {
             $0.directoryServerID == configCert.directoryServerID
-            && $0.certificateType == mapCertificateType(configCert.type)
-            && $0.sha256Fingerprint == configCert.sha256Fingerprint
+                && $0.certificateType == mapCertificateType(configCert.type)
+                && $0.sha256Fingerprint == configCert.sha256Fingerprint
         }
     }
 
     func buildCertificateUpdatingRequest(from configCert: CertificateData) -> CertificateUpdatingRequest {
-        CertificateUpdatingRequest(certificateType: mapCertificateType(configCert.type),
-                                   directoryServerID: configCert.directoryServerID,
-                                   algorithm: mapCertificateAlgorithm(configCert.algorithm),
-                                   notAfterDate: configCert.notAfterDate,
-                                   sha256Fingerprint: configCert.sha256Fingerprint,
-                                   url: configCert.url)
+        CertificateUpdatingRequest(
+            certificateType: mapCertificateType(configCert.type),
+            directoryServerID: configCert.directoryServerID,
+            algorithm: mapCertificateAlgorithm(configCert.algorithm),
+            notAfterDate: configCert.notAfterDate,
+            sha256Fingerprint: configCert.sha256Fingerprint,
+            url: configCert.url
+        )
     }
 
     func mapCertificateType(_ type: CertificateData.CertificateType) -> CertificateType {
@@ -115,7 +122,7 @@ private extension TDSCertsManager {
             return .dsRootCA
         }
     }
-    
+
     func mapCertificateAlgorithm(_ algorithm: CertificateData.CertificateAlgorithm) -> CertificateAlgorithm {
         switch algorithm {
         case .rsa:

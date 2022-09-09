@@ -24,10 +24,12 @@ protocol BecomeFirstResponderListener: AnyObject {
 }
 
 protocol InputCardRequisitesDataSource: AnyObject {
-    func setup(responderListener: BecomeFirstResponderListener?,
-               inputView: InputRequisitesViewInConnection?,
-               inputAccessoryView: InputAccessoryViewWithButton?,
-               scaner: ICardRequisitesScanner?)
+    func setup(
+        responderListener: BecomeFirstResponderListener?,
+        inputView: InputRequisitesViewInConnection?,
+        inputAccessoryView: InputAccessoryViewWithButton?,
+        scaner: ICardRequisitesScanner?
+    )
 
     func setupForCVC(responderListener: BecomeFirstResponderListener?, inputView: InputRequisitesViewInConnection?)
 
@@ -95,9 +97,9 @@ class InputCardRequisitesController: NSObject {
 
     override init() {
         let paymentSystemResolver = PaymentSystemResolver()
-        self.inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
-        self.requisitesInputValidator = CardRequisitesValidator(paymentSystemResolver: paymentSystemResolver)
-        self.paymentSystemImageResolver = PaymentSystemImageResolver(paymentSystemResolver: paymentSystemResolver)
+        inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
+        requisitesInputValidator = CardRequisitesValidator(paymentSystemResolver: paymentSystemResolver)
+        paymentSystemImageResolver = PaymentSystemImageResolver(paymentSystemResolver: paymentSystemResolver)
         super.init()
     }
 
@@ -204,8 +206,8 @@ class InputCardRequisitesController: NSObject {
 
     private func validateRequisites() -> Bool {
         return requisitesInputValidator.validate(inputPAN: inputCardNumber)
-        && requisitesInputValidator.validate(inputValidThru: inputCardExpDate)
-        && requisitesInputValidator.validate(inputCVC: inputCardCVC)
+            && requisitesInputValidator.validate(inputValidThru: inputCardExpDate)
+            && requisitesInputValidator.validate(inputCVC: inputCardCVC)
     }
 
     private func activateScanerButton() {
@@ -317,8 +319,8 @@ extension InputCardRequisitesController: MaskedTextFieldDelegateListener {
         inputView?.imageViewPSLogo?.image = paymentSystemImage
 
         inputView?.imageViewPSLogoWidth.constant = paymentSystemImage == nil
-        ? .zero
-        : Constants.paymentSystemImageWidth
+            ? .zero
+            : Constants.paymentSystemImageWidth
 
         if requisitesInputValidator.validate(inputPAN: value) {
             activateNextButton()

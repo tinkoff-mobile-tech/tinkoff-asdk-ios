@@ -35,12 +35,13 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
     private var hint: String?
     private var text: String?
 
-    func present(hint: String?,
-                 preFilledValue: String?,
-                 textFieldCell: InputFieldTableViewCellStatusProtocol,
-                 tableView: UITableView,
-                 firstResponderListener: BecomeFirstResponderListener?)
-    {
+    func present(
+        hint: String?,
+        preFilledValue: String?,
+        textFieldCell: InputFieldTableViewCellStatusProtocol,
+        tableView: UITableView,
+        firstResponderListener: BecomeFirstResponderListener?
+    ) {
         if let value = hint {
             self.hint = value
         } else {

@@ -26,8 +26,10 @@ class IntegrationTests: XCTestCase {
     private var sdk: AcquiringSdk!
 
     override func setUp() {
-        let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                publicKey: StageTestData.testPublicKey)
+        let credential = AcquiringSdkCredential(
+            terminalKey: StageTestData.terminalKey,
+            publicKey: StageTestData.testPublicKey
+        )
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()

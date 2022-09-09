@@ -9,7 +9,7 @@ target 'ASDKSample' do
 
 	# Linting and Formatting
 
-  pod 'SwiftFormat/CLI', '~> 0.47.2'
+  pod 'SwiftFormat/CLI', '~> 0.49.18'
   pod 'SwiftLint', '~> 0.40.0'
   pod 'SwiftGen', '~> 6.0'
 end

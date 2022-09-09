@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 extension UIView {
@@ -33,8 +32,7 @@ extension UIView {
             topAnchor.constraint(equalTo: superview.topAnchor, constant: insets.top),
             leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: insets.left),
             trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -insets.right),
-            bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -insets.bottom)
+            bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -insets.bottom),
         ])
     }
 }
-

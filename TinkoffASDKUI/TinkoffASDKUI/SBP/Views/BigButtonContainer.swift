@@ -17,42 +17,50 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class BigButtonContainer: UIView {
-    
+
     private var button: UIButton?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func placeButton(_ button: UIButton) {
         self.button?.removeFromSuperview()
         self.button = button
-        
+
         addSubview(button)
-        
+
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-        let buttonBottomConstraint = button.bottomAnchor.constraint(equalTo: bottomAnchor,
-                                                                    constant: -UIEdgeInsets.buttonInsets.bottom)
+
+        let buttonBottomConstraint = button.bottomAnchor.constraint(
+            equalTo: bottomAnchor,
+            constant: -UIEdgeInsets.buttonInsets.bottom
+        )
         buttonBottomConstraint.priority = .defaultHigh
-        
+
         NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: topAnchor,
-                                                constant: UIEdgeInsets.buttonInsets.top),
-            button.leftAnchor.constraint(equalTo: leftAnchor,
-                                                 constant: UIEdgeInsets.buttonInsets.left),
-            button.rightAnchor.constraint(equalTo: rightAnchor,
-                                          constant: -UIEdgeInsets.buttonInsets.right),
-            buttonBottomConstraint
+            button.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: UIEdgeInsets.buttonInsets.top
+            ),
+            button.leftAnchor.constraint(
+                equalTo: leftAnchor,
+                constant: UIEdgeInsets.buttonInsets.left
+            ),
+            button.rightAnchor.constraint(
+                equalTo: rightAnchor,
+                constant: -UIEdgeInsets.buttonInsets.right
+            ),
+            buttonBottomConstraint,
         ])
     }
 }
@@ -66,4 +74,3 @@ private extension BigButtonContainer {
 private extension UIEdgeInsets {
     static let buttonInsets: UIEdgeInsets = .init(top: 16, left: 16, bottom: 24, right: 16)
 }
-

@@ -106,7 +106,7 @@ protocol AcquiringView: AnyObject {
     ///
     func cardRequisites() -> PaymentSourceData?
     func infoEmail() -> String?
-    
+
     func setPaymentType(_ paymentType: PaymentType)
 }
 
@@ -125,14 +125,14 @@ extension AcquiringView {
 
 class AcquiringPaymentViewController: PopUpViewContoller {
     // MARK: Style
-    
+
     struct Style {
         let payButtonStyle: ButtonStyle
         let tinkoffPayButtonStyle: TinkoffPayButton.DynamicStyle
     }
-    
+
     var style: Style?
-    
+
     // MARK: AcquiringView
 
     var onTouchButtonShowCardList: (() -> Void)?
@@ -146,13 +146,12 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
     @IBOutlet private var webView: WKWebView!
 
-
     private var paymentStatus: AcquiringViewStatus = .initWaiting {
         didSet {
             updateTableViewCells()
         }
     }
-    
+
     private var paymentType: PaymentType = .standard {
         didSet {
             cardListController.setPaymentType(paymentType)
@@ -168,7 +167,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
-    
+
     var acquiringPaymentController: AcquiringPaymentController?
     var tinkoffPayStatus: GetTinkoffPayStatusResponse.Status?
 
@@ -177,21 +176,25 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        registerCells(["ScrollableTableViewCell",
-                       "ButtonTableViewCell",
-                       "StatusTableViewCell",
-                       "ResistanceSpaceTableViewCell",
-                       "QRCodeWebTableViewCell",
-                       "QRCodeImageTableViewCell",
-                       "AmountTableViewCell",
-                       "LabelTableViewCell",
-                       "TextFieldTableViewCell"], for: tableView)
-        tableView.register(ContainerTableViewCell.self,
-                           forCellReuseIdentifier: ContainerTableViewCell.reuseIdentifier)
+        registerCells([
+            "ScrollableTableViewCell",
+            "ButtonTableViewCell",
+            "StatusTableViewCell",
+            "ResistanceSpaceTableViewCell",
+            "QRCodeWebTableViewCell",
+            "QRCodeImageTableViewCell",
+            "AmountTableViewCell",
+            "LabelTableViewCell",
+            "TextFieldTableViewCell",
+        ], for: tableView)
+        tableView.register(
+            ContainerTableViewCell.self,
+            forCellReuseIdentifier: ContainerTableViewCell.reuseIdentifier
+        )
 
         tableViewCells = [.waitingInitPayment]
         tableView.dataSource = self
-        
+
         acquiringPaymentController?.loadCardsAndCheckTinkoffPayAvailability()
     }
 
@@ -243,29 +246,30 @@ class AcquiringPaymentViewController: PopUpViewContoller {
         }
 
         tableViewCells.append(.buttonPay)
-        
-        if userTableViewCells.first(where: { (item) -> Bool in
+
+        if userTableViewCells.first(where: { item -> Bool in
             if case AcquiringViewTableViewCells.buttonPaySBP = item { return true }
             return false
         }) != nil {
             tableViewCells.append(.buttonPaySBP)
         }
-        
+
         var isTinkoffPayEnabled = userTableViewCells.first(where: { item -> Bool in
-            if case AcquiringViewTableViewCells.tinkoffPay = item { return true } else { return false } })
-        != nil
+            if case AcquiringViewTableViewCells.tinkoffPay = item { return true } else { return false }
+        })
+            != nil
 
         switch tinkoffPayStatus {
-        case .allowed(_):
+        case .allowed:
             isTinkoffPayEnabled = isTinkoffPayEnabled && true
         default:
             isTinkoffPayEnabled = false
         }
-        
+
         if isTinkoffPayEnabled {
             tableViewCells.append(.tinkoffPay)
         }
-        
+
         tableViewCells.append(.empty(height: 44))
     }
 
@@ -313,7 +317,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     }
 
     func validatePaymentForm(showErrorStatus: Bool = true) -> Bool {
-        if userTableViewCells.first(where: { (item) -> Bool in
+        if userTableViewCells.first(where: { item -> Bool in
             if case AcquiringViewTableViewCells.email = item { return true }
             return false
         }) != nil {
@@ -329,9 +333,9 @@ class AcquiringPaymentViewController: PopUpViewContoller {
         switch cardListController.requisites() {
         case let .savedCard(_, cvc):
             let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
-            
+
             var validationResult = true
-            
+
             if case .paymentWainingCVC = paymentStatus {
                 validationResult = cardRequisitesValidator.validate(inputCVC: cvc)
             } else {
@@ -342,7 +346,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
                     validationResult = true
                 }
             }
-            
+
             if !validationResult {
                 cardListController.setStatus(.error, statusText: nil)
             }
@@ -365,7 +369,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
             }
         }
     }
-    
+
     @objc private func handleTinkoffPayButtonTouch(sender: TinkoffPayButton) {
         guard case let .allowed(version: version) = tinkoffPayStatus else { return }
         onTinkoffPayButton?(version, self)
@@ -402,10 +406,12 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
 
         case .cardList:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "ScrollableTableViewCell") as? ScrollableTableViewCell {
-                cardListController.presentCardList(dataSource: cardListDataSourceDelegate,
-                                                  in: cell,
-                                                  becomeFirstResponderListener: self,
-                                                  scanner: scanerDataSource != nil ? self : nil)
+                cardListController.presentCardList(
+                    dataSource: cardListDataSourceDelegate,
+                    in: cell,
+                    becomeFirstResponderListener: self,
+                    scanner: scanerDataSource != nil ? self : nil
+                )
 
                 if case let .paymentWainingCVC(parentPaymentId) = paymentStatus {
                     self.viewWaiting.isHidden = false
@@ -427,7 +433,7 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
         case .chooseAnotherCard:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ContainerTableViewCell.reuseIdentifier
-            ) as? ContainerTableViewCell  else {
+            ) as? ContainerTableViewCell else {
                 break
             }
             let linkView = LinkTappingView(title: Loc.AcquiringPayment.Button.chooseCard)
@@ -533,11 +539,13 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
             return cell
         case let .email(value, placeholder):
             if let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldTableViewCell") as? TextFieldTableViewCell {
-                inputEmailPresenter.present(hint: placeholder,
-                                            preFilledValue: value,
-                                            textFieldCell: cell,
-                                            tableView: tableView,
-                                            firstResponderListener: self)
+                inputEmailPresenter.present(
+                    hint: placeholder,
+                    preFilledValue: value,
+                    textFieldCell: cell,
+                    tableView: tableView,
+                    firstResponderListener: self
+                )
 
                 return cell
             }
@@ -545,17 +553,19 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(
                 withIdentifier: ContainerTableViewCell.reuseIdentifier
             ) as? ContainerTableViewCell {
-                
+
                 let btn: TinkoffPayButton
                 if let style = style {
                     btn = TinkoffPayButton(dynamicStyle: style.tinkoffPayButtonStyle)
                 } else {
                     btn = TinkoffPayButton()
                 }
-                
-                btn.addTarget(self,
-                              action: #selector(handleTinkoffPayButtonTouch),
-                              for: .touchUpInside)
+
+                btn.addTarget(
+                    self,
+                    action: #selector(handleTinkoffPayButtonTouch),
+                    for: .touchUpInside
+                )
                 cell.setContent(btn, insets: .buttonInContainerInsets)
                 return cell
             }
@@ -655,7 +665,7 @@ extension AcquiringPaymentViewController: AcquiringView {
     }
 
     func infoEmail() -> String? {
-        if userTableViewCells.first(where: { (item) -> Bool in
+        if userTableViewCells.first(where: { item -> Bool in
             if case AcquiringViewTableViewCells.email = item { return true }
             return false
         }) != nil {
@@ -664,7 +674,7 @@ extension AcquiringPaymentViewController: AcquiringView {
 
         return nil
     }
-    
+
     func setPaymentType(_ paymentType: PaymentType) {
         self.paymentType = paymentType
     }
@@ -679,22 +689,28 @@ extension AcquiringPaymentViewController: AcquiringView {
 }
 
 extension AcquiringPaymentViewController: AcquiringPaymentControllerDelegate {
-    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didUpdateCards status: FetchStatus<[PaymentCard]>) {
+    func acquiringPaymentController(
+        _ acquiringPaymentController: AcquiringPaymentController,
+        didUpdateCards status: FetchStatus<[PaymentCard]>
+    ) {
         cardsListUpdated(status)
     }
-    
-    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didUpdateTinkoffPayAvailability status: GetTinkoffPayStatusResponse.Status) {
+
+    func acquiringPaymentController(
+        _ acquiringPaymentController: AcquiringPaymentController,
+        didUpdateTinkoffPayAvailability status: GetTinkoffPayStatusResponse.Status
+    ) {
         tinkoffPayStatus = status
     }
-    
+
     func acquiringPaymentControllerDidFinishPreparation(_ acquiringPaymentController: AcquiringPaymentController) {
         paymentStatus = .ready
     }
-    
-    func acquiringPaymentController(_ acquiringPaymentController: AcquiringPaymentController,
-                                    didPaymentInitWith result: Result<Int64, Error>) {
+
+    func acquiringPaymentController(
+        _ acquiringPaymentController: AcquiringPaymentController,
+        didPaymentInitWith result: Result<Int64, Error>
+    ) {
         onInitFinished?(result)
     }
 }

@@ -27,17 +27,23 @@ class SelectRebuildCardViewController: UITableViewController {
     var cards: [PaymentCard] = []
 
     private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
-    private lazy var buttonClose = UIBarButtonItem(barButtonSystemItem: .cancel,
-                                                   target: self,
-                                                   action: #selector(closeView(_:)))
+    private lazy var buttonClose = UIBarButtonItem(
+        barButtonSystemItem: .cancel,
+        target: self,
+        action: #selector(closeView(_:))
+    )
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = NSLocalizedString("title.paymentCardList", comment: "Сохраненные карты")
-        tableView.register(UINib(nibName: "RebuildCardTableViewCell",
-                                 bundle: Bundle(for: type(of: self))),
-                           forCellReuseIdentifier: "RebuildCardTableViewCell")
+        tableView.register(
+            UINib(
+                nibName: "RebuildCardTableViewCell",
+                bundle: Bundle(for: type(of: self))
+            ),
+            forCellReuseIdentifier: "RebuildCardTableViewCell"
+        )
 
         navigationItem.setLeftBarButton(buttonClose, animated: true)
     }
@@ -59,7 +65,7 @@ class SelectRebuildCardViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if
             let cell = tableView.dequeueReusableCell(withIdentifier: "RebuildCardTableViewCell")
-                as? RebuildCardTableViewCell {
+            as? RebuildCardTableViewCell {
             let card = cards[indexPath.row]
 
             cell.labelCardName.text = card.pan

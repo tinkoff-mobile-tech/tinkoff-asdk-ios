@@ -65,9 +65,9 @@ public class InputMask: CustomDebugStringConvertible, CustomStringConvertible {
     public func apply(toText text: CaretString, autocomplete: Bool = false) -> Result {
         let iterator = CaretStringIterator(caretString: text)
 
-        var affinity: Int = 0
-        var extractedValue: String = ""
-        var modifiedString: String = ""
+        var affinity = 0
+        var extractedValue = ""
+        var modifiedString = ""
         var modifiedCaretPosition: Int =
             text.string.distance(from: text.string.startIndex, to: text.caretPosition)
 
@@ -146,7 +146,7 @@ public class InputMask: CustomDebugStringConvertible, CustomStringConvertible {
     /// - returns: Minimal satisfying count of characters in extracted value.
     public func acceptableValueLength() -> Int {
         var state: InputState? = initialState
-        var length: Int = 0
+        var length = 0
         while let nextState: InputState = state, !(state is EOLState) {
             if nextState is ValueState {
                 length += 1
@@ -162,7 +162,7 @@ public class InputMask: CustomDebugStringConvertible, CustomStringConvertible {
     /// - returns: Total available count of mandatory and optional characters for extracted value.
     public func totalValueLength() -> Int {
         var state: InputState? = initialState
-        var length: Int = 0
+        var length = 0
         while let nextState: InputState = state, !(state is EOLState) {
             if nextState is ValueState {
                 length += 1
@@ -216,7 +216,7 @@ private extension InputMask {
 private extension InputMask {
     func countStates(ofTypes stateTypes: [InputState.Type]) -> Int {
         var state: InputState? = initialState
-        var length: Int = 0
+        var length = 0
         while let newState: InputState = state, !(state is EOLState) {
             for stateType in stateTypes {
                 if type(of: newState) == stateType {

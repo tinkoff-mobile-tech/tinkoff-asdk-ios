@@ -65,10 +65,10 @@ class ProductTableViewCell: UITableViewCell {
 
 class RootViewController: UITableViewController {
 
-    @IBOutlet weak var buttonCart: UIBarButtonItem!
-    @IBOutlet weak var buttonSavedCards: UIBarButtonItem!
-    @IBOutlet weak var buttonSettings: UIBarButtonItem!
-    @IBOutlet weak var buttonAbount: UIBarButtonItem!
+    @IBOutlet var buttonCart: UIBarButtonItem!
+    @IBOutlet var buttonSavedCards: UIBarButtonItem!
+    @IBOutlet var buttonSettings: UIBarButtonItem!
+    @IBOutlet var buttonAbount: UIBarButtonItem!
 
     private var dataSource: [Product] = []
     private var onScannerResult: ((_ number: String?, _ date: String?) -> Void)?
@@ -93,7 +93,7 @@ class RootViewController: UITableViewController {
         } else {
             buttonCart.title = "🛒"
         }
-        
+
         tableView.reloadData()
     }
 
@@ -140,8 +140,10 @@ class RootViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
-            let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      publicKey: StageTestData.testPublicKey)
+            let credentional = AcquiringSdkCredential(
+                terminalKey: StageTestData.terminalKey,
+                publicKey: StageTestData.testPublicKey
+            )
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -165,15 +167,19 @@ class RootViewController: UITableViewController {
            let indexPath = tableView.indexPath(for: cell) {
             let product = dataSource[indexPath.row]
 
-            let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      publicKey: StageTestData.testPublicKey)
+            let credentional = AcquiringSdkCredential(
+                terminalKey: StageTestData.terminalKey,
+                publicKey: StageTestData.testPublicKey
+            )
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
 
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
-                                             style: TinkoffASDKUI.DefaultStyle()) {
+            if let sdk = try? AcquiringUISDK(
+                configuration: acquiringSDKConfiguration,
+                style: TinkoffASDKUI.DefaultStyle()
+            ) {
                 viewController.scaner = self
                 viewController.sdk = sdk
                 viewController.customerKey = StageTestData.customerKey
@@ -211,8 +217,10 @@ class RootViewController: UITableViewController {
     }
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
-        let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                  publicKey: StageTestData.testPublicKey)
+        let credentional = AcquiringSdkCredential(
+            terminalKey: StageTestData.terminalKey,
+            publicKey: StageTestData.testPublicKey
+        )
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -228,8 +236,10 @@ class RootViewController: UITableViewController {
 
         cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
-        if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
-                                         style: TinkoffASDKUI.DefaultStyle()) {
+        if let sdk = try? AcquiringUISDK(
+            configuration: acquiringSDKConfiguration,
+            style: TinkoffASDKUI.DefaultStyle()
+        ) {
             // открыть экран сиска карт
             addCardListView(sdk, customerKey, cardListViewConfigration)
             // или открыть экран добавлени карты

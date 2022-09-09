@@ -17,9 +17,8 @@
 //  limitations under the License.
 //
 
-
-import UIKit
 import TinkoffASDKCore
+import UIKit
 
 struct CardList {
     struct Card {

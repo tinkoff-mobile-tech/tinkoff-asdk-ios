@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 import TinkoffASDKCore
 
@@ -72,8 +71,8 @@ final class PaymentCardsProvider: IPaymentCardsProvider {
             // Из-за некорректной реализации `CardListDataProvider` приходится исходить
             // из того, что отсутствие `PaymentCard` в `completion` - признак возникшей ошибки
             let result: Result<Void, Error> = paymentCard == nil
-            ? .failure(Failure.inconsistentState)
-            : .success(())
+                ? .failure(Failure.inconsistentState)
+                : .success(())
 
             completion(result)
         }
