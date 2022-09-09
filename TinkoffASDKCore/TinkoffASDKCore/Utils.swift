@@ -20,6 +20,7 @@
 import CommonCrypto
 import Foundation
 import Security
+import class UIKit.UIDevice
 
 struct RSAEncryption {
     static func secKey(string: String?) -> SecKey? {

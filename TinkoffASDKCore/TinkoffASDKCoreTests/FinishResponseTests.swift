@@ -25,9 +25,8 @@ class FinishResponseTests: XCTestCase {
 
     override func setUp() {
         let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                password: StageTestData.terminalPassword,
                                                 publicKey: StageTestData.testPublicKey)
-
+        
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
@@ -102,7 +101,7 @@ class FinishResponseTests: XCTestCase {
             switch response.responseStatus {
             case let .done(status):
                 XCTAssertTrue(status.amount.int64Value == Int64(amount / 100))
-                XCTAssertTrue(status.orderId == orderId)
+                XCTAssertTrue(status.orderId == String(orderId))
                 XCTAssertTrue(status.paymentId == paymentId)
             default:
                 XCTAssert(false)
@@ -162,4 +161,9 @@ class FinishResponseTests: XCTestCase {
             XCTAssert(false, "error response data")
         }
     }
+}
+
+struct ASDKStageTestData {
+    static let terminalKey = "324324"
+    static let customerKey = "234234"
 }

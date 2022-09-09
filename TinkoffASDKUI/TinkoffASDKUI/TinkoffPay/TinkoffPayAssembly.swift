@@ -6,6 +6,7 @@
 //
 
 import TinkoffASDKCore
+import UIKit
 
 final class TinkoffPayAssembly {
     
