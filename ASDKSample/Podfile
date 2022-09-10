@@ -1,11 +1,10 @@
 platform :ios, '12.3'
 
 use_frameworks!
-project './ASDKSample/ASDKSample.xcodeproj'
-target 'ASDKSample' do
 
-	pod 'TinkoffASDKCore', :path => ".", :testspecs => ['Tests']
-	pod 'TinkoffASDKUI', :path => "."
+target 'ASDKSample' do
+	pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
+	pod 'TinkoffASDKUI', :path => "../"
 
 	# Linting and Formatting
 

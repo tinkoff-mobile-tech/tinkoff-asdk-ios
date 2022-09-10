@@ -11,9 +11,9 @@ DEPENDENCIES:
   - SwiftFormat/CLI (~> 0.47.2)
   - SwiftGen (~> 6.0)
   - SwiftLint (~> 0.40.0)
-  - TinkoffASDKCore (from `.`)
-  - TinkoffASDKCore/Tests (from `.`)
-  - TinkoffASDKUI (from `.`)
+  - TinkoffASDKCore (from `../`)
+  - TinkoffASDKCore/Tests (from `../`)
+  - TinkoffASDKUI (from `../`)
 
 SPEC REPOS:
   trunk:
@@ -23,9 +23,9 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   TinkoffASDKCore:
-    :path: "."
+    :path: "../"
   TinkoffASDKUI:
-    :path: "."
+    :path: "../"
 
 SPEC CHECKSUMS:
   SwiftFormat: 0315a7115b15fd4ea2d043d5f5c22e3c98f84078
@@ -34,6 +34,6 @@ SPEC CHECKSUMS:
   TinkoffASDKCore: 2e1f66039354aedb5fe2d6034ee867ea3190b3af
   TinkoffASDKUI: 45fcc9fd1f479c7d4625599353be9259156a9d10
 
-PODFILE CHECKSUM: 43e9bdcabfd843fbce21953a17668800d2cbcd7d
+PODFILE CHECKSUM: 77f705f3f3f84ba6b28b2048d754eb2d30c9839b
 
 COCOAPODS: 1.11.3
