@@ -25,9 +25,13 @@ extension Bundle {
     private class UIResourcesToken {}
     
     static var uiResources: Bundle {
+#if SWIFT_PACKAGE
+        .module
+#else
         Bundle(for: UIResourcesToken.self)
             .url(forResource: .resourceName, withExtension: .bundleExtension)
             .flatMap(Bundle.init(url:)) ?? Bundle(for: UIResourcesToken.self)
+#endif
     }
 }
 
