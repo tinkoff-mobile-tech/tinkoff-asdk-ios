@@ -20,6 +20,41 @@
 
 import Foundation
 
+public struct FinishPaymentRequestData {
+    /// Номер платежа, полученного после инициализации платежа
+    let paymentId: PaymentId
+    let paymentSource: PaymentSourceData
+    let infoEmail: String?
+    let sendEmail: Bool?
+    let deviceInfo: DeviceInfoParams?
+    let ipAddress: String?
+    let threeDSVersion: String?
+    let source: String?
+    let route: String?
+
+    public init(
+        paymentId: PaymentId,
+        paymentSource: PaymentSourceData,
+        infoEmail: String? = nil,
+        deviceInfo: DeviceInfoParams? = nil,
+        ipAddress: String? = nil,
+        threeDSVersion: String? = nil,
+        source: String? = nil,
+        route: String? = nil
+    ) {
+        self.paymentId = paymentId
+        self.paymentSource = paymentSource
+        self.infoEmail = infoEmail
+        self.sendEmail = infoEmail != nil
+        self.deviceInfo = deviceInfo
+        self.ipAddress = ipAddress
+        self.threeDSVersion = threeDSVersion
+        self.source = source
+        self.route = route
+    }
+}
+
+@available(*, deprecated, message: "Use `FinishPaymentRequestData` instead")
 public struct PaymentFinishRequestData: Codable {
     /// Номер платежа, полученного после инициализации платежа
     var paymentId: Int64

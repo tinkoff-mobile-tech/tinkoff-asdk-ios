@@ -29,7 +29,7 @@ public struct PaymentInitResponse: ResponseOperation {
     //
     public var amount: Int64
     public var orderId: String
-    public var paymentId: PaymentId
+    public var paymentId: Int64
     public var status: PaymentStatus
 
     private enum CodingKeys: String, CodingKey {
@@ -57,7 +57,11 @@ public struct PaymentInitResponse: ResponseOperation {
         /// orderId
         orderId = try container.decode(String.self, forKey: .orderId)
         /// paymentId
-        paymentId = try container.decode(String.self, forKey: .paymentId)
+        if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
+            paymentId = value
+        } else {
+            paymentId = try container.decode(Int64.self, forKey: .paymentId)
+        }
 
         if let statusValue = try? container.decode(String.self, forKey: .status) {
             status = PaymentStatus(rawValue: statusValue)

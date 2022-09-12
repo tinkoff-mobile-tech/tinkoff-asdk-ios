@@ -200,11 +200,11 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `FinishAuthorizePayload` в случае удачного проведения платежа и `Error` - в случае ошибки.
     @discardableResult
     public func finishPayment(
-        data: PaymentFinishRequestData,
+        data: FinishPaymentRequestData,
         completion: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void
     ) -> Cancellable {
         let request = FinishAuthorizeRequest(
-            paymentFinishRequestData: data,
+            requestData: data,
             encryptor: RSAEncryptor(),
             cardDataFormatter: coreAssembly.cardDataFormatter(),
             publicKey: publicKey,

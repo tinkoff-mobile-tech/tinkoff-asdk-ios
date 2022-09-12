@@ -26,47 +26,90 @@ struct FinishAuthorizeRequest: APIRequest {
     var requestPath: [String] { ["FinishAuthorize"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
+    let parameters: HTTPParameters
 
-    private(set) var parameters: HTTPParameters = [:]
-    
-    private let paymentFinishRequestData: PaymentFinishRequestData
-    private let encryptor: RSAEncryptor
-    private let cardDataFormatter: CardDataFormatter
-    private let publicKey: SecKey
-    
-    init(paymentFinishRequestData: PaymentFinishRequestData,
-         encryptor: RSAEncryptor,
-         cardDataFormatter: CardDataFormatter,
-         publicKey: SecKey,
-         baseURL: URL) {
-        self.paymentFinishRequestData = paymentFinishRequestData
-        self.encryptor = encryptor
-        self.cardDataFormatter = cardDataFormatter
-        self.publicKey = publicKey
+    init(
+        requestData: FinishPaymentRequestData,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey,
+        baseURL: URL
+    ) {
         self.baseURL = baseURL
-        self.parameters = createParameters(with: paymentFinishRequestData)
+        self.parameters = Self.createParameters(
+            paymentId: requestData.paymentId,
+            paymentSource: requestData.paymentSource,
+            infoEmail: requestData.infoEmail,
+            sendEmail: requestData.sendEmail,
+            deviceInfo: requestData.deviceInfo,
+            ipAddress: requestData.ipAddress,
+            threeDSVersion: requestData.threeDSVersion,
+            source: requestData.source,
+            route: requestData.route,
+            encryptor: encryptor,
+            cardDataFormatter: cardDataFormatter,
+            publicKey: publicKey
+        )
+    }
+
+    @available(*, deprecated, message: "Use init(requestData:encryptor:cardDataFormatter:publicKey:baseURL) instead")
+    init(
+        paymentFinishRequestData: PaymentFinishRequestData,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey,
+        baseURL: URL
+    ) {
+        self.baseURL = baseURL
+        self.parameters = Self.createParameters(
+            paymentId: paymentFinishRequestData.paymentId.description,
+            paymentSource: paymentFinishRequestData.paymentSource,
+            infoEmail: paymentFinishRequestData.infoEmail,
+            sendEmail: paymentFinishRequestData.sendEmail,
+            deviceInfo: paymentFinishRequestData.deviceInfo,
+            ipAddress: paymentFinishRequestData.ipAddress,
+            threeDSVersion: paymentFinishRequestData.threeDSVersion,
+            source: paymentFinishRequestData.threeDSVersion,
+            route: paymentFinishRequestData.route,
+            encryptor: encryptor,
+            cardDataFormatter: cardDataFormatter,
+            publicKey: publicKey
+        )
     }
 }
 
 private extension FinishAuthorizeRequest {
-    func createParameters(with requestData: PaymentFinishRequestData) -> HTTPParameters {
-        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: requestData.paymentId]
-        if let sendEmail = requestData.sendEmail {
+    static func createParameters(
+        paymentId: PaymentId,
+        paymentSource: PaymentSourceData,
+        infoEmail: String?,
+        sendEmail: Bool?,
+        deviceInfo: DeviceInfoParams?,
+        ipAddress: String?,
+        threeDSVersion: String?,
+        source: String?,
+        route: String?,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey
+    ) -> HTTPParameters {
+        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: paymentId]
+        if let sendEmail = sendEmail {
             parameters[APIConstants.Keys.sendEmail] = sendEmail
         }
-        if let infoEmail = requestData.infoEmail {
+        if let infoEmail = infoEmail {
             parameters[APIConstants.Keys.infoEmail] = infoEmail
         }
-        if let ipAddress = requestData.ipAddress {
+        if let ipAddress = ipAddress {
             parameters[APIConstants.Keys.ipAddress] = ipAddress
         }
-        if let deviceInfo = requestData.deviceInfo,
+        if let deviceInfo = deviceInfo,
            // TODO: Log error
            let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
             parameters[APIConstants.Keys.data] = deviceInfoJSON
         }
-        
-        switch requestData.paymentSource {
+
+        switch paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
             // TODO: Log error
@@ -85,7 +128,7 @@ private extension FinishAuthorizeRequest {
             parameters[APIConstants.Keys.source] = APIConstants.Values.applePaySource
         default: break
         }
-        
+
         return parameters
     }
 }
