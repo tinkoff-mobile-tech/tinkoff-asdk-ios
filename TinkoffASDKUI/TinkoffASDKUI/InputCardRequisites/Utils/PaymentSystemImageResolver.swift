@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 protocol IPaymentSystemImageResolver {
     func resolve(by inputPAN: String?) -> UIImage?

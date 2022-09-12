@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 import TinkoffASDKCore
 
 /// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев

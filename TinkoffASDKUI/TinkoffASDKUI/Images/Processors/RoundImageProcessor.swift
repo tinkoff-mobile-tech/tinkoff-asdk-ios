@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+import UIKit
 
 final class RoundImageProcessor: ImageProcessor {
     func processImage(_ image: UIImage) -> UIImage {

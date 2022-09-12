@@ -19,6 +19,7 @@
 
 
 import Foundation
+import UIKit
 
 final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollectionViewCell {
     // MARK: Parent Property Observers

@@ -19,6 +19,7 @@
 
 
 import TinkoffASDKCore
+import Foundation
 
 protocol SBPBanksService {
     func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void)

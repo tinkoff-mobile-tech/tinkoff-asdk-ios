@@ -19,6 +19,7 @@
 
 
 import Foundation
+import class UIKit.UIDevice
 
 protocol IPaymentInitDataParamsEnricher {
     func enrich(_ paymentInitData: PaymentInitData) -> PaymentInitData

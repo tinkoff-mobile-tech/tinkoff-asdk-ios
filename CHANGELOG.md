@@ -5,8 +5,10 @@
 
 * [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
 * [MIC-6292] Swift Gen integration for TinkoffASDKUI module
+* [MIC-6292] Swift Package Support & buid Package.swift step for CI/CD
+* [MIC-6293] Update ThreeDSWrapper to 1.0.7
 
-### Added 
+### Added
 
 * [MIC-5741] Integrate 3ds-app-based flow
 * [MIC-6228] Add 3ds-app-based feature flag

@@ -18,7 +18,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 protocol CardListViewDelegate: AnyObject {
     func cardListView(_ view: CardListView, didSelectCard card: CardList.Card)

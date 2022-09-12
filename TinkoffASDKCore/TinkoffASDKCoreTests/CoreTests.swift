@@ -25,7 +25,6 @@ class CoreTests: XCTestCase {
 
     override func setUp() {
         let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                password: StageTestData.terminalPassword,
                                                 publicKey: StageTestData.testPublicKey)
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
