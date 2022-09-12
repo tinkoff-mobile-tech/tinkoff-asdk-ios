@@ -169,7 +169,7 @@ class BuyProductsViewController: UIViewController {
     private func acquiringViewConfiguration() -> AcquiringViewConfiguration {
         let viewConfigration = AcquiringViewConfiguration()
         viewConfigration.scaner = scaner
-        viewConfigration.tinkoffPayButtonStyle = .init(lightStyle: .whiteBordered, darkStyle: .blackBordered)
+        viewConfigration.tinkoffPayButtonStyle = TinkoffPayButton.DynamicStyle(lightStyle: .whiteBordered, darkStyle: .blackBordered)
 
         viewConfigration.fields = []
         // InfoFields.amount
@@ -259,7 +259,7 @@ class BuyProductsViewController: UIViewController {
     private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfiguration) {
         sdk.presentPaymentView(
             on: self,
-            acquiringPaymentStageConfiguration: .init(
+            acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration(
                 paymentStage: .`init`(paymentData: paymentData)
             ),
             configuration: viewConfigration,
@@ -661,13 +661,13 @@ extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegat
         sdk.performPaymentWithApplePay(
             paymentData: initData,
             paymentToken: payment.token,
-            acquiringConfiguration: .init(paymentStage: .none)
+            acquiringConfiguration: AcquiringConfiguration(paymentStage: .none)
         ) { result in
             switch result {
             case let .failure(error):
-                completion(.init(status: .failure, errors: [error]))
+                completion(PKPaymentAuthorizationResult(status: .failure, errors: [error]))
             case .success:
-                completion(.init(status: .success, errors: nil))
+                completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
             }
         }
     }

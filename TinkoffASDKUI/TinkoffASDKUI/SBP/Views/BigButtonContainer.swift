@@ -72,5 +72,5 @@ private extension BigButtonContainer {
 }
 
 private extension UIEdgeInsets {
-    static let buttonInsets: UIEdgeInsets = .init(top: 16, left: 16, bottom: 24, right: 16)
+    static let buttonInsets = UIEdgeInsets(top: 16, left: 16, bottom: 24, right: 16)
 }

@@ -55,7 +55,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         )
         return TDSWrapper(
             sdkConfiguration: sdkConfiguration,
-            wrapperConfiguration: .init(environment: env == .test ? .test : .production)
+            wrapperConfiguration: TDSWrapper.WrapperConfiguration(environment: env == .test ? .test : .production)
         )
     }
 

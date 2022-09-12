@@ -165,7 +165,7 @@ private extension SBPBankListViewController {
                 case let .failure(error):
                     self?.handleError(error)
                 case let .success(response):
-                    let statusResponse: PaymentStatusResponse = .init(
+                    let statusResponse = PaymentStatusResponse(
                         success: true,
                         errorCode: 0,
                         errorMessage: nil,

@@ -57,7 +57,7 @@ final class SBPAssembly {
             sbpBanksService: banksService,
             sbpApplicationService: applicationService,
             sbpPaymentService: sbpPaymentService,
-            style: .init(continueButtonStyle: style.bigButtonStyle),
+            style: SBPBankListView.Style(continueButtonStyle: style.bigButtonStyle),
             tableManager: banksListTableManager
         )
     }
@@ -67,7 +67,7 @@ final class SBPAssembly {
         paymentCompletionHandler: PaymentCompletionHandler?
     ) -> SBPNoAvailableBanksViewController {
         SBPNoAvailableBanksViewController(
-            style: .init(confirmButtonStyle: style.bigButtonStyle),
+            style: SBPNoAvailableBanksView.Style(confirmButtonStyle: style.bigButtonStyle),
             urlOpener: applicationURLOpener,
             paymentStatusResponse: paymentStatusResponse,
             completionHandler: paymentCompletionHandler

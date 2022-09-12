@@ -88,7 +88,7 @@ public class AcquiringViewConfiguration {
     public var viewTitle: String?
     public var startViewHeight: CGFloat?
     public var popupStyle: PopupStyle = .dynamic
-    public var tinkoffPayButtonStyle: TinkoffPayButton.DynamicStyle = .init(lightStyle: .black, darkStyle: .white)
+    public var tinkoffPayButtonStyle = TinkoffPayButton.DynamicStyle(lightStyle: .black, darkStyle: .white)
 
     public init() {}
 }
@@ -256,7 +256,7 @@ public class AcquiringUISDK: NSObject {
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
         modalViewController.popupStyle = configuration.popupStyle
-        modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
+        modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)
@@ -291,9 +291,9 @@ public class AcquiringUISDK: NSObject {
         let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
         switch acquiringConfiguration.paymentStage {
         case .none:
-            acquiringPaymentStageConfiguration = .init(paymentStage: .`init`(paymentData: paymentData))
+            acquiringPaymentStageConfiguration = AcquiringPaymentStageConfiguration(paymentStage: .`init`(paymentData: paymentData))
         case let .paymentId(paymentId):
-            acquiringPaymentStageConfiguration = .init(paymentStage: .finish(paymentId: paymentId))
+            acquiringPaymentStageConfiguration = AcquiringPaymentStageConfiguration(paymentStage: .finish(paymentId: paymentId))
         }
 
         presentPaymentView(
@@ -323,9 +323,9 @@ public class AcquiringUISDK: NSObject {
         switch acquiringPaymentStageConfiguration.paymentStage {
         case let .`init`(paymentData):
             customerKey = paymentData.customerKey
-            acquiringConfiguration = .init(paymentStage: .none)
+            acquiringConfiguration = AcquiringConfiguration(paymentStage: .none)
         case let .finish(paymentId):
-            acquiringConfiguration = .init(paymentStage: .paymentId(paymentId))
+            acquiringConfiguration = AcquiringConfiguration(paymentStage: .paymentId(paymentId))
         }
         self.acquiringConfiguration = acquiringConfiguration
 
@@ -861,7 +861,7 @@ public class AcquiringUISDK: NSObject {
             bundle: .uiResources
         )
 
-        modalViewController.style = .init(
+        modalViewController.style = AcquiringPaymentViewController.Style(
             payButtonStyle: style.bigButtonStyle,
             tinkoffPayButtonStyle: configuration.tinkoffPayButtonStyle
         )
@@ -1605,7 +1605,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
-        modalViewController.style = .init(addCardButtonStyle: style.bigButtonStyle)
+        modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
 
         modalViewController.completeHandler = { result in
             completeHandler(result)

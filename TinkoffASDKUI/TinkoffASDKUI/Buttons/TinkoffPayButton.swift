@@ -41,19 +41,19 @@ public final class TinkoffPayButton: UIButton {
         }
 
         public static var black: Style {
-            .init(color: .black, isBordered: false)
+            Style(color: .black, isBordered: false)
         }
 
         public static var blackBordered: Style {
-            .init(color: .black, isBordered: true)
+            Style(color: .black, isBordered: true)
         }
 
         public static var white: Style {
-            .init(color: .white, isBordered: false)
+            Style(color: .white, isBordered: false)
         }
 
         public static var whiteBordered: Style {
-            .init(color: .white, isBordered: true)
+            Style(color: .white, isBordered: true)
         }
 
         let color: Color
@@ -132,7 +132,7 @@ public final class TinkoffPayButton: UIButton {
     }
 
     override public var intrinsicContentSize: CGSize {
-        .init(width: .minimumWidth, height: .minimumHeight)
+        CGSize(width: .minimumWidth, height: .minimumHeight)
     }
 
     override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
