@@ -146,7 +146,6 @@ private extension TinkoffPayPaymentViewController {
         DispatchQueue.main.async {
             let alertTitle = Loc.Tp.Error.title
             let alertDescription = Loc.Tp.Error.description
-
             self.showAlert?(alertTitle, alertDescription, error)
         }
     }

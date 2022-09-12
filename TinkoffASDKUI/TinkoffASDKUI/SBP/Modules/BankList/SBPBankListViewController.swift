@@ -124,7 +124,6 @@ private extension SBPBankListViewController {
         customView.headerView.titleLabel.text = Loc.Sbp.BanksList.Header.title
         customView.headerView.subtitleLabel.text = Loc.Sbp.BanksList.Header.subtitle
         customView.continueButton.setTitle(Loc.Sbp.BanksList.Button.title, for: .normal)
-
         customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
         customView.continueButton.addTarget(
             self,

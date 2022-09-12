@@ -7,6 +7,7 @@
 
 import Foundation
 import TinkoffASDKCore
+import Foundation
 
 protocol AcquiringPaymentControllerDelegate: AnyObject {
     func acquiringPaymentController(
