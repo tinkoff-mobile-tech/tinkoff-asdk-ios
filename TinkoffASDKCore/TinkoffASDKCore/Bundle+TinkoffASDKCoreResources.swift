@@ -29,7 +29,7 @@ extension Bundle {
         #else
             Bundle(for: CoreResourcesToken.self)
                 .url(forResource: .resourceName, withExtension: .bundleExtension)
-                .flatMap(Bundle(url:)) ?? Bundle(for: CoreResourcesToken.self)
+                .flatMap { Bundle(url: $0) } ?? Bundle(for: CoreResourcesToken.self)
         #endif
     }
 }
