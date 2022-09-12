@@ -175,7 +175,7 @@ public final class AcquiringSdk: NSObject {
     /// Инициирует платежную сессию для платежа
     ///
     /// - Parameters:
-    ///   - data: `PaymentInitPaymentData` информация о заказе на оплату
+    ///   - data: `PaymentInitData` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable
     @discardableResult
