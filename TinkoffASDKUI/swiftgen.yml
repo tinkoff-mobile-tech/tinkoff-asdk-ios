@@ -3,9 +3,9 @@ strings:
   outputs:
     - templateName: structured-swift5
       output: TinkoffASDKUI/Resources/Generated/Strings+Generated.swift
-      bundle: Bundle.uiResources
       params:
         enumName: Loc
+        bundle: Bundle.uiResources
 
 xcassets:
   inputs: TinkoffASDKUI/Resources/Assets.xcassets
