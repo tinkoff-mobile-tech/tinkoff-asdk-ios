@@ -269,7 +269,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
     ) -> Cancellable {
-        let requestData = Check3DSRequestData(paymentId: data.paymentId, paymentSource: data.paymentSource)
+        let requestData = Check3DSRequestData(paymentId: data.paymentId.description, paymentSource: data.paymentSource)
         let request = Check3DSVersionRequest(
             check3DSRequestData: requestData,
             encryptor: RSAEncryptor(),
