@@ -114,7 +114,7 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
 
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
         if container === presentedViewController {
-            return (container as! UIViewController).preferredContentSize
+            return (container as? UIViewController)?.preferredContentSize ?? .zero
         } else {
             return super.size(forChildContentContainer: container, withParentContainerSize: parentSize)
         }

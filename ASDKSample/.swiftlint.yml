@@ -18,6 +18,8 @@ disabled_rules:
   - generic_type_name
   # Порядок set и get в свойствах.
   - computed_accessors_order
+  # ⛔ FIXME: - Enable after refactoring 
+  - file_length
 
 opt_in_rules:
   # Некоторые переопределяемые методы всегда должны вызывать super

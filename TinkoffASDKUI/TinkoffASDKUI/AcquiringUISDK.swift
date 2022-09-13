@@ -142,7 +142,7 @@ public protocol AcquiringAlertViewProtocol: AnyObject {
     func presentAlertView(_ title: String?, message: String?, dismissCompletion: (() -> Void)?) -> UIViewController?
 }
 
-///
+// swiftlint:disable type_body_length
 public class AcquiringUISDK: NSObject {
     private weak var presentingViewController: UIViewController?
     //
@@ -1498,6 +1498,8 @@ public class AcquiringUISDK: NSObject {
         )
     }
 }
+
+// swiftlint:enable type_body_length
 
 extension AcquiringUISDK: CardListDataSourceStatusListener {
     // MARK: CardListDataSourceStatusListener

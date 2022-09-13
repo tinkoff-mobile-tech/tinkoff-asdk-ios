@@ -22,7 +22,7 @@ import UIKit
 public final class PullableContainerViewController: UIViewController {
 
     private var customView: PullableContainerView {
-        return view as! PullableContainerView
+        return (view as? PullableContainerView) ?? PullableContainerView()
     }
 
     private let content: PullableContainerContent & UIViewController

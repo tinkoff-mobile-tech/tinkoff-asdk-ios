@@ -19,6 +19,8 @@
 
 import UIKit
 
+// swiftlint:disable force_cast
+
 class CenterFlowLayout: UICollectionViewFlowLayout {
     var insertingTopCells = false
     var sizeForTopInsertions = CGSize.zero
@@ -160,3 +162,5 @@ extension UICollectionViewFlowLayout {
         return (collectionView?.delegate as? UICollectionViewDelegateFlowLayout)?.collectionView?(collectionView!, layout: self, minimumInteritemSpacingForSectionAt: section) ?? minimumInteritemSpacing
     }
 }
+
+// swiftlint:enable force_cast
