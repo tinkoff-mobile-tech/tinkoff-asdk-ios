@@ -10,7 +10,7 @@ target 'ASDKSample' do
 	# Linting and Formatting
 
   pod 'SwiftFormat/CLI', '~> 0.49.18'
-  pod 'SwiftLint', '-> 0.47.0' # Версия должна совпадать с версией на CI
+  pod 'SwiftLint', '0.47.0' # Версия должна совпадать с версией на CI
   pod 'SwiftGen', '~> 6.0'
 end
 

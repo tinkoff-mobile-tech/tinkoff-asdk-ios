@@ -1,7 +1,7 @@
 warning_threshold: 1
 
 included:
-  - ASDKSample
+  - .
   - ../TinkoffASDKUI
   - ../TinkoffASDKCore
 
@@ -100,7 +100,7 @@ type_body_length:
 nesting:
   type_level:
     warning: 3
-  statement_level:
+  function_level:
     warning: 5
 
 identifier_name:

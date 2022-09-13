@@ -44,7 +44,7 @@ jobs:
 
       - name: Swiftlint Run
         working-directory: ASDKSample
-        run: swiftlint --version && swiftlint --quiet
+        run: swiftlint --quiet
     
   # check:
   #   uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1
