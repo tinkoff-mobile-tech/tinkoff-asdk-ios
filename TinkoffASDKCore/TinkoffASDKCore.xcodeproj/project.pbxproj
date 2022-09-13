@@ -10,6 +10,7 @@
 		2C16EAF823B0DB2E00A5C771 /* CardListDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C16EAF723B0DB2E00A5C771 /* CardListDataProvider.swift */; };
 		2C193C4C243CB35000058DDC /* PaymentQRCodeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C193C4B243CB35000058DDC /* PaymentQRCodeRequest.swift */; };
 		2C25379C2385682B000B9724 /* PaymentStatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C25379B2385682B000B9724 /* PaymentStatusRequest.swift */; };
+		2C25379E23856FAE000B9724 /* PaymentCancelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C25379D23856FAE000B9724 /* PaymentCancelRequest.swift */; };
 		2C2A05AA24EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A05A924EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift */; };
 		2C2A05AC24EBED6800E5242E /* HTTPResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A05AB24EBED6800E5242E /* HTTPResponseError.swift */; };
 		2C2A05AE24EBFAF800E5242E /* AcquiringSdkConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2A05AD24EBFAF800E5242E /* AcquiringSdkConfiguration.swift */; };
@@ -34,59 +35,6 @@
 		2CC2A099238D6565008F8045 /* FinishResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2A098238D6565008F8045 /* FinishResponseTests.swift */; };
 		2CC2A09D238D662E008F8045 /* PaymentCardRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC2A09C238D662E008F8045 /* PaymentCardRequests.swift */; };
 		2CF1EDB1240F9CCB00155665 /* Check3dsVersionRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF1EDB0240F9CCB00155665 /* Check3dsVersionRequest.swift */; };
-		5CB2E34928BDE56C00B07670 /* IPAddressValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E33A28BDE56C00B07670 /* IPAddressValidatorTests.swift */; };
-		5CB2E34A28BDE56C00B07670 /* IPv4AddressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E33B28BDE56C00B07670 /* IPv4AddressTests.swift */; };
-		5CB2E34B28BDE56C00B07670 /* IPv6AddressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E33C28BDE56C00B07670 /* IPv6AddressTests.swift */; };
-		5CB2E34C28BDE56C00B07670 /* MockHTTPURLResponseValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E33E28BDE56C00B07670 /* MockHTTPURLResponseValidator.swift */; };
-		5CB2E34D28BDE56C00B07670 /* MockRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E33F28BDE56C00B07670 /* MockRequestBuilder.swift */; };
-		5CB2E34E28BDE56C00B07670 /* MockRequestPerformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34028BDE56C00B07670 /* MockRequestPerformer.swift */; };
-		5CB2E34F28BDE56C00B07670 /* TestsNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34128BDE56C00B07670 /* TestsNetworkRequest.swift */; };
-		5CB2E35028BDE56C00B07670 /* EmptyNetworkDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34228BDE56C00B07670 /* EmptyNetworkDataTask.swift */; };
-		5CB2E35128BDE56C00B07670 /* MockNetworkRequestAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34328BDE56C00B07670 /* MockNetworkRequestAdapter.swift */; };
-		5CB2E35228BDE56C00B07670 /* DefaultNetworkClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34528BDE56C00B07670 /* DefaultNetworkClientTests.swift */; };
-		5CB2E35328BDE56C00B07670 /* DefaultNetworkClientRequestBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34628BDE56C00B07670 /* DefaultNetworkClientRequestBuilderTests.swift */; };
-		5CB2E35428BDE56C00B07670 /* DefaultNetworkClientIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34728BDE56C00B07670 /* DefaultNetworkClientIntegrationTests.swift */; };
-		5CB2E35528BDE56C00B07670 /* DefaultHTTPURLResponseValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E34828BDE56C00B07670 /* DefaultHTTPURLResponseValidatorTests.swift */; };
-		5CB2E35E28BDE5CB00B07670 /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35628BDE5CB00B07670 /* IPAddress.swift */; };
-		5CB2E35F28BDE5CB00B07670 /* IPAddressFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35728BDE5CB00B07670 /* IPAddressFactory.swift */; };
-		5CB2E36028BDE5CB00B07670 /* IPAddressValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35828BDE5CB00B07670 /* IPAddressValidator.swift */; };
-		5CB2E36128BDE5CB00B07670 /* JSONDecoder+ISO8601Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35928BDE5CB00B07670 /* JSONDecoder+ISO8601Decoding.swift */; };
-		5CB2E36228BDE5CB00B07670 /* IPv6Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35A28BDE5CB00B07670 /* IPv6Address.swift */; };
-		5CB2E36328BDE5CB00B07670 /* Bundle+TinkoffASDKCoreResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35B28BDE5CB00B07670 /* Bundle+TinkoffASDKCoreResources.swift */; };
-		5CB2E36428BDE5CB00B07670 /* IPv4Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35C28BDE5CB00B07670 /* IPv4Address.swift */; };
-		5CB2E36528BDE5CB00B07670 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E35D28BDE5CB00B07670 /* Version.swift */; };
-		5CB2E38E28BDE62E00B07670 /* GetTinkoffLinkResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36828BDE62D00B07670 /* GetTinkoffLinkResponse.swift */; };
-		5CB2E38F28BDE62E00B07670 /* GetCertsConfigResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36928BDE62D00B07670 /* GetCertsConfigResponse.swift */; };
-		5CB2E39028BDE62E00B07670 /* GetTinkoffPayStatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36A28BDE62D00B07670 /* GetTinkoffPayStatusResponse.swift */; };
-		5CB2E39128BDE62E00B07670 /* GetTinkoffLinkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36C28BDE62D00B07670 /* GetTinkoffLinkRequest.swift */; };
-		5CB2E39228BDE62E00B07670 /* GetTinkoffPayStatusRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36D28BDE62D00B07670 /* GetTinkoffPayStatusRequest.swift */; };
-		5CB2E39328BDE62E00B07670 /* ThreeDSV2AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36E28BDE62D00B07670 /* ThreeDSV2AuthorizationRequest.swift */; };
-		5CB2E39428BDE62E00B07670 /* GetCertsConfigRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E36F28BDE62D00B07670 /* GetCertsConfigRequest.swift */; };
-		5CB2E39528BDE62E00B07670 /* RequestMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37028BDE62D00B07670 /* RequestMethod.swift */; };
-		5CB2E39628BDE62E00B07670 /* RequestContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37128BDE62D00B07670 /* RequestContentType.swift */; };
-		5CB2E39728BDE62E00B07670 /* URLSession+URLRequestPerformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37328BDE62D00B07670 /* URLSession+URLRequestPerformer.swift */; };
-		5CB2E39828BDE62E00B07670 /* NetworkResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37428BDE62D00B07670 /* NetworkResponse.swift */; };
-		5CB2E39928BDE62E00B07670 /* URL+HTTPHostProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37528BDE62D00B07670 /* URL+HTTPHostProvider.swift */; };
-		5CB2E39A28BDE62E00B07670 /* URLSessionDataTask+NetworkDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37628BDE62D00B07670 /* URLSessionDataTask+NetworkDataTask.swift */; };
-		5CB2E39B28BDE62E00B07670 /* JSONEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37828BDE62D00B07670 /* JSONEncoding.swift */; };
-		5CB2E39C28BDE62E00B07670 /* DefaultNetworkClientRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37928BDE62D00B07670 /* DefaultNetworkClientRequestBuilder.swift */; };
-		5CB2E39D28BDE62E00B07670 /* DefaultHTTPURLResponseValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37A28BDE62D00B07670 /* DefaultHTTPURLResponseValidator.swift */; };
-		5CB2E39E28BDE62E00B07670 /* DefaultNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37B28BDE62D00B07670 /* DefaultNetworkClient.swift */; };
-		5CB2E39F28BDE62E00B07670 /* NetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37C28BDE62D00B07670 /* NetworkRequest.swift */; };
-		5CB2E3A028BDE62E00B07670 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37D28BDE62D00B07670 /* NetworkError.swift */; };
-		5CB2E3A128BDE62E00B07670 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E37F28BDE62D00B07670 /* NetworkClient.swift */; };
-		5CB2E3A228BDE62E00B07670 /* NetworkDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38028BDE62D00B07670 /* NetworkDataTask.swift */; };
-		5CB2E3A328BDE62E00B07670 /* HTTPHostProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38128BDE62D00B07670 /* HTTPHostProvider.swift */; };
-		5CB2E3A428BDE62E00B07670 /* URLRequestPerformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38228BDE62D00B07670 /* URLRequestPerformer.swift */; };
-		5CB2E3A528BDE62E00B07670 /* ParametersEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38328BDE62D00B07670 /* ParametersEncoder.swift */; };
-		5CB2E3A628BDE62E00B07670 /* NetworkClientRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38428BDE62D00B07670 /* NetworkClientRequestBuilder.swift */; };
-		5CB2E3A728BDE62E00B07670 /* NetworkRequestAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38528BDE62D00B07670 /* NetworkRequestAdapter.swift */; };
-		5CB2E3A828BDE62E00B07670 /* HTTPURLResponseValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38628BDE62D00B07670 /* HTTPURLResponseValidator.swift */; };
-		5CB2E3A928BDE62E00B07670 /* PaymentInitDataParamsEnricher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38928BDE62D00B07670 /* PaymentInitDataParamsEnricher.swift */; };
-		5CB2E3AA28BDE62E00B07670 /* SBPBankResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38B28BDE62E00B07670 /* SBPBankResponse.swift */; };
-		5CB2E3AB28BDE62E00B07670 /* SBPBankLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38C28BDE62E00B07670 /* SBPBankLoader.swift */; };
-		5CB2E3AC28BDE62E00B07670 /* SBPBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2E38D28BDE62E00B07670 /* SBPBank.swift */; };
-		5CB8B0BF28BDF188009CBB1B /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB8B0BE28BDF188009CBB1B /* Localization.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +51,7 @@
 		2C16EAF723B0DB2E00A5C771 /* CardListDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListDataProvider.swift; sourceTree = "<group>"; };
 		2C193C4B243CB35000058DDC /* PaymentQRCodeRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentQRCodeRequest.swift; sourceTree = "<group>"; };
 		2C25379B2385682B000B9724 /* PaymentStatusRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentStatusRequest.swift; sourceTree = "<group>"; };
+		2C25379D23856FAE000B9724 /* PaymentCancelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentCancelRequest.swift; sourceTree = "<group>"; };
 		2C2A05A924EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+TinkoffASDKCore.swift"; sourceTree = "<group>"; };
 		2C2A05AB24EBED6800E5242E /* HTTPResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseError.swift; sourceTree = "<group>"; };
 		2C2A05AD24EBFAF800E5242E /* AcquiringSdkConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcquiringSdkConfiguration.swift; sourceTree = "<group>"; };
@@ -130,59 +79,6 @@
 		2CC2A098238D6565008F8045 /* FinishResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishResponseTests.swift; sourceTree = "<group>"; };
 		2CC2A09C238D662E008F8045 /* PaymentCardRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentCardRequests.swift; sourceTree = "<group>"; };
 		2CF1EDB0240F9CCB00155665 /* Check3dsVersionRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Check3dsVersionRequest.swift; sourceTree = "<group>"; };
-		5CB2E33A28BDE56C00B07670 /* IPAddressValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPAddressValidatorTests.swift; sourceTree = "<group>"; };
-		5CB2E33B28BDE56C00B07670 /* IPv4AddressTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPv4AddressTests.swift; sourceTree = "<group>"; };
-		5CB2E33C28BDE56C00B07670 /* IPv6AddressTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPv6AddressTests.swift; sourceTree = "<group>"; };
-		5CB2E33E28BDE56C00B07670 /* MockHTTPURLResponseValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockHTTPURLResponseValidator.swift; sourceTree = "<group>"; };
-		5CB2E33F28BDE56C00B07670 /* MockRequestBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRequestBuilder.swift; sourceTree = "<group>"; };
-		5CB2E34028BDE56C00B07670 /* MockRequestPerformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRequestPerformer.swift; sourceTree = "<group>"; };
-		5CB2E34128BDE56C00B07670 /* TestsNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestsNetworkRequest.swift; sourceTree = "<group>"; };
-		5CB2E34228BDE56C00B07670 /* EmptyNetworkDataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyNetworkDataTask.swift; sourceTree = "<group>"; };
-		5CB2E34328BDE56C00B07670 /* MockNetworkRequestAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworkRequestAdapter.swift; sourceTree = "<group>"; };
-		5CB2E34528BDE56C00B07670 /* DefaultNetworkClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNetworkClientTests.swift; sourceTree = "<group>"; };
-		5CB2E34628BDE56C00B07670 /* DefaultNetworkClientRequestBuilderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNetworkClientRequestBuilderTests.swift; sourceTree = "<group>"; };
-		5CB2E34728BDE56C00B07670 /* DefaultNetworkClientIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNetworkClientIntegrationTests.swift; sourceTree = "<group>"; };
-		5CB2E34828BDE56C00B07670 /* DefaultHTTPURLResponseValidatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultHTTPURLResponseValidatorTests.swift; sourceTree = "<group>"; };
-		5CB2E35628BDE5CB00B07670 /* IPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPAddress.swift; sourceTree = "<group>"; };
-		5CB2E35728BDE5CB00B07670 /* IPAddressFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPAddressFactory.swift; sourceTree = "<group>"; };
-		5CB2E35828BDE5CB00B07670 /* IPAddressValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPAddressValidator.swift; sourceTree = "<group>"; };
-		5CB2E35928BDE5CB00B07670 /* JSONDecoder+ISO8601Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+ISO8601Decoding.swift"; sourceTree = "<group>"; };
-		5CB2E35A28BDE5CB00B07670 /* IPv6Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPv6Address.swift; sourceTree = "<group>"; };
-		5CB2E35B28BDE5CB00B07670 /* Bundle+TinkoffASDKCoreResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+TinkoffASDKCoreResources.swift"; sourceTree = "<group>"; };
-		5CB2E35C28BDE5CB00B07670 /* IPv4Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPv4Address.swift; sourceTree = "<group>"; };
-		5CB2E35D28BDE5CB00B07670 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
-		5CB2E36828BDE62D00B07670 /* GetTinkoffLinkResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTinkoffLinkResponse.swift; sourceTree = "<group>"; };
-		5CB2E36928BDE62D00B07670 /* GetCertsConfigResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetCertsConfigResponse.swift; sourceTree = "<group>"; };
-		5CB2E36A28BDE62D00B07670 /* GetTinkoffPayStatusResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTinkoffPayStatusResponse.swift; sourceTree = "<group>"; };
-		5CB2E36C28BDE62D00B07670 /* GetTinkoffLinkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTinkoffLinkRequest.swift; sourceTree = "<group>"; };
-		5CB2E36D28BDE62D00B07670 /* GetTinkoffPayStatusRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTinkoffPayStatusRequest.swift; sourceTree = "<group>"; };
-		5CB2E36E28BDE62D00B07670 /* ThreeDSV2AuthorizationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreeDSV2AuthorizationRequest.swift; sourceTree = "<group>"; };
-		5CB2E36F28BDE62D00B07670 /* GetCertsConfigRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetCertsConfigRequest.swift; sourceTree = "<group>"; };
-		5CB2E37028BDE62D00B07670 /* RequestMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestMethod.swift; sourceTree = "<group>"; };
-		5CB2E37128BDE62D00B07670 /* RequestContentType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestContentType.swift; sourceTree = "<group>"; };
-		5CB2E37328BDE62D00B07670 /* URLSession+URLRequestPerformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+URLRequestPerformer.swift"; sourceTree = "<group>"; };
-		5CB2E37428BDE62D00B07670 /* NetworkResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkResponse.swift; sourceTree = "<group>"; };
-		5CB2E37528BDE62D00B07670 /* URL+HTTPHostProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+HTTPHostProvider.swift"; sourceTree = "<group>"; };
-		5CB2E37628BDE62D00B07670 /* URLSessionDataTask+NetworkDataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSessionDataTask+NetworkDataTask.swift"; sourceTree = "<group>"; };
-		5CB2E37828BDE62D00B07670 /* JSONEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEncoding.swift; sourceTree = "<group>"; };
-		5CB2E37928BDE62D00B07670 /* DefaultNetworkClientRequestBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNetworkClientRequestBuilder.swift; sourceTree = "<group>"; };
-		5CB2E37A28BDE62D00B07670 /* DefaultHTTPURLResponseValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultHTTPURLResponseValidator.swift; sourceTree = "<group>"; };
-		5CB2E37B28BDE62D00B07670 /* DefaultNetworkClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNetworkClient.swift; sourceTree = "<group>"; };
-		5CB2E37C28BDE62D00B07670 /* NetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRequest.swift; sourceTree = "<group>"; };
-		5CB2E37D28BDE62D00B07670 /* NetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
-		5CB2E37F28BDE62D00B07670 /* NetworkClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
-		5CB2E38028BDE62D00B07670 /* NetworkDataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkDataTask.swift; sourceTree = "<group>"; };
-		5CB2E38128BDE62D00B07670 /* HTTPHostProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPHostProvider.swift; sourceTree = "<group>"; };
-		5CB2E38228BDE62D00B07670 /* URLRequestPerformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLRequestPerformer.swift; sourceTree = "<group>"; };
-		5CB2E38328BDE62D00B07670 /* ParametersEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametersEncoder.swift; sourceTree = "<group>"; };
-		5CB2E38428BDE62D00B07670 /* NetworkClientRequestBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkClientRequestBuilder.swift; sourceTree = "<group>"; };
-		5CB2E38528BDE62D00B07670 /* NetworkRequestAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRequestAdapter.swift; sourceTree = "<group>"; };
-		5CB2E38628BDE62D00B07670 /* HTTPURLResponseValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPURLResponseValidator.swift; sourceTree = "<group>"; };
-		5CB2E38928BDE62D00B07670 /* PaymentInitDataParamsEnricher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentInitDataParamsEnricher.swift; sourceTree = "<group>"; };
-		5CB2E38B28BDE62E00B07670 /* SBPBankResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBPBankResponse.swift; sourceTree = "<group>"; };
-		5CB2E38C28BDE62E00B07670 /* SBPBankLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBPBankLoader.swift; sourceTree = "<group>"; };
-		5CB2E38D28BDE62E00B07670 /* SBPBank.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBPBank.swift; sourceTree = "<group>"; };
-		5CB8B0BE28BDF188009CBB1B /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,19 +138,6 @@
 		2CB5F85123603D9F00208488 /* TinkoffASDKCore */ = {
 			isa = PBXGroup;
 			children = (
-				5CB8B0BD28BDF170009CBB1B /* Localization */,
-				5CB2E38728BDE62D00B07670 /* API */,
-				5CB2E37228BDE62D00B07670 /* Network */,
-				5CB2E36628BDE62D00B07670 /* NetworkTransport */,
-				5CB2E38A28BDE62E00B07670 /* SBP */,
-				5CB2E35B28BDE5CB00B07670 /* Bundle+TinkoffASDKCoreResources.swift */,
-				5CB2E35628BDE5CB00B07670 /* IPAddress.swift */,
-				5CB2E35728BDE5CB00B07670 /* IPAddressFactory.swift */,
-				5CB2E35828BDE5CB00B07670 /* IPAddressValidator.swift */,
-				5CB2E35C28BDE5CB00B07670 /* IPv4Address.swift */,
-				5CB2E35A28BDE5CB00B07670 /* IPv6Address.swift */,
-				5CB2E35928BDE5CB00B07670 /* JSONDecoder+ISO8601Decoding.swift */,
-				5CB2E35D28BDE5CB00B07670 /* Version.swift */,
 				2C16EAF623B0DB0700A5C771 /* DataProvider */,
 				2C70ADE32367325D00E74FEB /* Models */,
 				2CB5F86E2360A9A100208488 /* Request */,
@@ -275,9 +158,6 @@
 		2CB5F85C23603D9F00208488 /* TinkoffASDKCoreTests */ = {
 			isa = PBXGroup;
 			children = (
-				5CB2E33D28BDE56C00B07670 /* Infrastructure */,
-				5CB2E33928BDE56C00B07670 /* IPAddressTests */,
-				5CB2E34428BDE56C00B07670 /* Network */,
 				2CC2A096238D5AD5008F8045 /* StageTestData.swift */,
 				2CB5F85D23603D9F00208488 /* CoreTests.swift */,
 				2CC2A098238D6565008F8045 /* FinishResponseTests.swift */,
@@ -294,6 +174,7 @@
 				2C9AECD723840B0D00ACEAA0 /* PaymentFinishRequest.swift */,
 				2C9AECD923840D8300ACEAA0 /* PaymentChargeRequest.swift */,
 				2C25379B2385682B000B9724 /* PaymentStatusRequest.swift */,
+				2C25379D23856FAE000B9724 /* PaymentCancelRequest.swift */,
 				2C193C4B243CB35000058DDC /* PaymentQRCodeRequest.swift */,
 				2CF1EDB0240F9CCB00155665 /* Check3dsVersionRequest.swift */,
 				2CC2A09C238D662E008F8045 /* PaymentCardRequests.swift */,
@@ -301,147 +182,6 @@
 				2C9FE703248F90D3009E9649 /* AcquiringRequest.swift */,
 			);
 			name = Request;
-			sourceTree = "<group>";
-		};
-		5CB2E33928BDE56C00B07670 /* IPAddressTests */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E33A28BDE56C00B07670 /* IPAddressValidatorTests.swift */,
-				5CB2E33B28BDE56C00B07670 /* IPv4AddressTests.swift */,
-				5CB2E33C28BDE56C00B07670 /* IPv6AddressTests.swift */,
-			);
-			path = IPAddressTests;
-			sourceTree = "<group>";
-		};
-		5CB2E33D28BDE56C00B07670 /* Infrastructure */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E33E28BDE56C00B07670 /* MockHTTPURLResponseValidator.swift */,
-				5CB2E33F28BDE56C00B07670 /* MockRequestBuilder.swift */,
-				5CB2E34028BDE56C00B07670 /* MockRequestPerformer.swift */,
-				5CB2E34128BDE56C00B07670 /* TestsNetworkRequest.swift */,
-				5CB2E34228BDE56C00B07670 /* EmptyNetworkDataTask.swift */,
-				5CB2E34328BDE56C00B07670 /* MockNetworkRequestAdapter.swift */,
-			);
-			path = Infrastructure;
-			sourceTree = "<group>";
-		};
-		5CB2E34428BDE56C00B07670 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E34528BDE56C00B07670 /* DefaultNetworkClientTests.swift */,
-				5CB2E34628BDE56C00B07670 /* DefaultNetworkClientRequestBuilderTests.swift */,
-				5CB2E34728BDE56C00B07670 /* DefaultNetworkClientIntegrationTests.swift */,
-				5CB2E34828BDE56C00B07670 /* DefaultHTTPURLResponseValidatorTests.swift */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
-		5CB2E36628BDE62D00B07670 /* NetworkTransport */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E36728BDE62D00B07670 /* Responses */,
-				5CB2E36B28BDE62D00B07670 /* Requests */,
-				5CB2E37028BDE62D00B07670 /* RequestMethod.swift */,
-				5CB2E37128BDE62D00B07670 /* RequestContentType.swift */,
-			);
-			path = NetworkTransport;
-			sourceTree = "<group>";
-		};
-		5CB2E36728BDE62D00B07670 /* Responses */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E36828BDE62D00B07670 /* GetTinkoffLinkResponse.swift */,
-				5CB2E36928BDE62D00B07670 /* GetCertsConfigResponse.swift */,
-				5CB2E36A28BDE62D00B07670 /* GetTinkoffPayStatusResponse.swift */,
-			);
-			path = Responses;
-			sourceTree = "<group>";
-		};
-		5CB2E36B28BDE62D00B07670 /* Requests */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E36C28BDE62D00B07670 /* GetTinkoffLinkRequest.swift */,
-				5CB2E36D28BDE62D00B07670 /* GetTinkoffPayStatusRequest.swift */,
-				5CB2E36E28BDE62D00B07670 /* ThreeDSV2AuthorizationRequest.swift */,
-				5CB2E36F28BDE62D00B07670 /* GetCertsConfigRequest.swift */,
-			);
-			path = Requests;
-			sourceTree = "<group>";
-		};
-		5CB2E37228BDE62D00B07670 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E37328BDE62D00B07670 /* URLSession+URLRequestPerformer.swift */,
-				5CB2E37428BDE62D00B07670 /* NetworkResponse.swift */,
-				5CB2E37528BDE62D00B07670 /* URL+HTTPHostProvider.swift */,
-				5CB2E37628BDE62D00B07670 /* URLSessionDataTask+NetworkDataTask.swift */,
-				5CB2E37728BDE62D00B07670 /* Implementations */,
-				5CB2E37C28BDE62D00B07670 /* NetworkRequest.swift */,
-				5CB2E37D28BDE62D00B07670 /* NetworkError.swift */,
-				5CB2E37E28BDE62D00B07670 /* Interfaces */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
-		5CB2E37728BDE62D00B07670 /* Implementations */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E37828BDE62D00B07670 /* JSONEncoding.swift */,
-				5CB2E37928BDE62D00B07670 /* DefaultNetworkClientRequestBuilder.swift */,
-				5CB2E37A28BDE62D00B07670 /* DefaultHTTPURLResponseValidator.swift */,
-				5CB2E37B28BDE62D00B07670 /* DefaultNetworkClient.swift */,
-			);
-			path = Implementations;
-			sourceTree = "<group>";
-		};
-		5CB2E37E28BDE62D00B07670 /* Interfaces */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E37F28BDE62D00B07670 /* NetworkClient.swift */,
-				5CB2E38028BDE62D00B07670 /* NetworkDataTask.swift */,
-				5CB2E38128BDE62D00B07670 /* HTTPHostProvider.swift */,
-				5CB2E38228BDE62D00B07670 /* URLRequestPerformer.swift */,
-				5CB2E38328BDE62D00B07670 /* ParametersEncoder.swift */,
-				5CB2E38428BDE62D00B07670 /* NetworkClientRequestBuilder.swift */,
-				5CB2E38528BDE62D00B07670 /* NetworkRequestAdapter.swift */,
-				5CB2E38628BDE62D00B07670 /* HTTPURLResponseValidator.swift */,
-			);
-			path = Interfaces;
-			sourceTree = "<group>";
-		};
-		5CB2E38728BDE62D00B07670 /* API */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E38828BDE62D00B07670 /* PaymentInitDataParamsEnricher */,
-			);
-			path = API;
-			sourceTree = "<group>";
-		};
-		5CB2E38828BDE62D00B07670 /* PaymentInitDataParamsEnricher */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E38928BDE62D00B07670 /* PaymentInitDataParamsEnricher.swift */,
-			);
-			path = PaymentInitDataParamsEnricher;
-			sourceTree = "<group>";
-		};
-		5CB2E38A28BDE62E00B07670 /* SBP */ = {
-			isa = PBXGroup;
-			children = (
-				5CB2E38B28BDE62E00B07670 /* SBPBankResponse.swift */,
-				5CB2E38C28BDE62E00B07670 /* SBPBankLoader.swift */,
-				5CB2E38D28BDE62E00B07670 /* SBPBank.swift */,
-			);
-			path = SBP;
-			sourceTree = "<group>";
-		};
-		5CB8B0BD28BDF170009CBB1B /* Localization */ = {
-			isa = PBXGroup;
-			children = (
-				5CB8B0BE28BDF188009CBB1B /* Localization.swift */,
-			);
-			path = Localization;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -558,65 +298,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C936CD724406A1300533AE8 /* PaymentStatusServiceProvider.swift in Sources */,
-				5CB2E39728BDE62E00B07670 /* URLSession+URLRequestPerformer.swift in Sources */,
 				2C65607B2476932B00DEA4A9 /* CheckRandomAmountRequest.swift in Sources */,
-				5CB2E35E28BDE5CB00B07670 /* IPAddress.swift in Sources */,
-				5CB2E38F28BDE62E00B07670 /* GetCertsConfigResponse.swift in Sources */,
+				2C25379E23856FAE000B9724 /* PaymentCancelRequest.swift in Sources */,
 				2C9AECDA23840D8300ACEAA0 /* PaymentChargeRequest.swift in Sources */,
 				2C2A05AC24EBED6800E5242E /* HTTPResponseError.swift in Sources */,
 				2C9FE704248F90D3009E9649 /* AcquiringRequest.swift in Sources */,
-				5CB2E39E28BDE62E00B07670 /* DefaultNetworkClient.swift in Sources */,
 				2C71D8F8236AEFB00014EAFF /* NetworkTransport.swift in Sources */,
-				5CB2E3A528BDE62E00B07670 /* ParametersEncoder.swift in Sources */,
-				5CB2E39A28BDE62E00B07670 /* URLSessionDataTask+NetworkDataTask.swift in Sources */,
 				2C3B062A23717F9F003F100D /* Utils.swift in Sources */,
-				5CB2E35F28BDE5CB00B07670 /* IPAddressFactory.swift in Sources */,
-				5CB2E3AB28BDE62E00B07670 /* SBPBankLoader.swift in Sources */,
-				5CB2E3A428BDE62E00B07670 /* URLRequestPerformer.swift in Sources */,
-				5CB2E39628BDE62E00B07670 /* RequestContentType.swift in Sources */,
-				5CB2E36028BDE5CB00B07670 /* IPAddressValidator.swift in Sources */,
-				5CB2E39B28BDE62E00B07670 /* JSONEncoding.swift in Sources */,
-				5CB2E39C28BDE62E00B07670 /* DefaultNetworkClientRequestBuilder.swift in Sources */,
 				2C2A05AA24EBED2000E5242E /* HTTPURLResponse+TinkoffASDKCore.swift in Sources */,
 				2C25379C2385682B000B9724 /* PaymentStatusRequest.swift in Sources */,
-				5CB2E3A628BDE62E00B07670 /* NetworkClientRequestBuilder.swift in Sources */,
-				5CB2E3A928BDE62E00B07670 /* PaymentInitDataParamsEnricher.swift in Sources */,
 				2C9FE702248F9022009E9649 /* AcquiringLogger.swift in Sources */,
 				2CB5F8702360A9FC00208488 /* PaymentInitRequest.swift in Sources */,
-				5CB8B0BF28BDF188009CBB1B /* Localization.swift in Sources */,
-				5CB2E36228BDE5CB00B07670 /* IPv6Address.swift in Sources */,
-				5CB2E3A228BDE62E00B07670 /* NetworkDataTask.swift in Sources */,
-				5CB2E39528BDE62E00B07670 /* RequestMethod.swift in Sources */,
-				5CB2E3A128BDE62E00B07670 /* NetworkClient.swift in Sources */,
-				5CB2E39228BDE62E00B07670 /* GetTinkoffPayStatusRequest.swift in Sources */,
-				5CB2E38E28BDE62E00B07670 /* GetTinkoffLinkResponse.swift in Sources */,
 				2C70ADE52367328400E74FEB /* AcquiringModels.swift in Sources */,
-				5CB2E39D28BDE62E00B07670 /* DefaultHTTPURLResponseValidator.swift in Sources */,
 				2C9AECD823840B0D00ACEAA0 /* PaymentFinishRequest.swift in Sources */,
-				5CB2E3A328BDE62E00B07670 /* HTTPHostProvider.swift in Sources */,
 				2CB5F86C23603DD000208488 /* AcquiringSdk.swift in Sources */,
-				5CB2E36528BDE5CB00B07670 /* Version.swift in Sources */,
 				2CC2A09D238D662E008F8045 /* PaymentCardRequests.swift in Sources */,
-				5CB2E36328BDE5CB00B07670 /* Bundle+TinkoffASDKCoreResources.swift in Sources */,
-				5CB2E3AC28BDE62E00B07670 /* SBPBank.swift in Sources */,
-				5CB2E3A728BDE62E00B07670 /* NetworkRequestAdapter.swift in Sources */,
-				5CB2E36128BDE5CB00B07670 /* JSONDecoder+ISO8601Decoding.swift in Sources */,
 				2C16EAF823B0DB2E00A5C771 /* CardListDataProvider.swift in Sources */,
 				2CF1EDB1240F9CCB00155665 /* Check3dsVersionRequest.swift in Sources */,
 				2C193C4C243CB35000058DDC /* PaymentQRCodeRequest.swift in Sources */,
 				2C2A05AE24EBFAF800E5242E /* AcquiringSdkConfiguration.swift in Sources */,
-				5CB2E39328BDE62E00B07670 /* ThreeDSV2AuthorizationRequest.swift in Sources */,
-				5CB2E3AA28BDE62E00B07670 /* SBPBankResponse.swift in Sources */,
-				5CB2E39F28BDE62E00B07670 /* NetworkRequest.swift in Sources */,
-				5CB2E36428BDE5CB00B07670 /* IPv4Address.swift in Sources */,
-				5CB2E39428BDE62E00B07670 /* GetCertsConfigRequest.swift in Sources */,
-				5CB2E39028BDE62E00B07670 /* GetTinkoffPayStatusResponse.swift in Sources */,
-				5CB2E39928BDE62E00B07670 /* URL+HTTPHostProvider.swift in Sources */,
-				5CB2E3A028BDE62E00B07670 /* NetworkError.swift in Sources */,
-				5CB2E39128BDE62E00B07670 /* GetTinkoffLinkRequest.swift in Sources */,
-				5CB2E3A828BDE62E00B07670 /* HTTPURLResponseValidator.swift in Sources */,
 				2C2E311423B4D59000AF9256 /* StageTestData.swift in Sources */,
-				5CB2E39828BDE62E00B07670 /* NetworkResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,23 +325,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CB2E34E28BDE56C00B07670 /* MockRequestPerformer.swift in Sources */,
-				5CB2E34D28BDE56C00B07670 /* MockRequestBuilder.swift in Sources */,
-				5CB2E35128BDE56C00B07670 /* MockNetworkRequestAdapter.swift in Sources */,
 				2CB5F85E23603D9F00208488 /* CoreTests.swift in Sources */,
-				5CB2E35328BDE56C00B07670 /* DefaultNetworkClientRequestBuilderTests.swift in Sources */,
 				2CC2A097238D5AD5008F8045 /* StageTestData.swift in Sources */,
 				2CC2A099238D6565008F8045 /* FinishResponseTests.swift in Sources */,
-				5CB2E34C28BDE56C00B07670 /* MockHTTPURLResponseValidator.swift in Sources */,
-				5CB2E35528BDE56C00B07670 /* DefaultHTTPURLResponseValidatorTests.swift in Sources */,
-				5CB2E34B28BDE56C00B07670 /* IPv6AddressTests.swift in Sources */,
-				5CB2E35028BDE56C00B07670 /* EmptyNetworkDataTask.swift in Sources */,
-				5CB2E35428BDE56C00B07670 /* DefaultNetworkClientIntegrationTests.swift in Sources */,
-				5CB2E35228BDE56C00B07670 /* DefaultNetworkClientTests.swift in Sources */,
-				5CB2E34A28BDE56C00B07670 /* IPv4AddressTests.swift in Sources */,
 				2CC2A095238D5A51008F8045 /* IntegrationTests.swift in Sources */,
-				5CB2E34928BDE56C00B07670 /* IPAddressValidatorTests.swift in Sources */,
-				5CB2E34F28BDE56C00B07670 /* TestsNetworkRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -854,7 +542,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = TinkoffASDKCoreTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -875,7 +563,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = TinkoffASDKCoreTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
