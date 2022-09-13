@@ -28,6 +28,12 @@ public enum AcquiringSdkError: Error {
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     public let languageKey: AcquiringSdkLanguage?
+
+    /// Текущий IP адрес
+    public var ipAddress: IPAddress? {
+        coreAssembly.ipAddressProvider().ipAddress
+    }
+
     private let terminalKey: String
     private let publicKey: SecKey
     private let baseURL: URL
@@ -37,11 +43,6 @@ public final class AcquiringSdk: NSObject {
 
     private let coreAssembly: CoreAssembly
     private let api: API
-
-    /// Текущий IP адрес
-    public var ipAddress: IPAddress? {
-        coreAssembly.ipAddressProvider().ipAddress
-    }
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
@@ -67,26 +68,12 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// Получить IP адрес
-    @available(*, deprecated, message: "Use AcquiringSdk.ipAddress instead")
+    @available(*, deprecated, message: "Use `ipAddress` instead")
     public func networkIpAddress() -> String? {
-        return coreAssembly.ipAddressProvider().ipAddress?.stringValue
-    }
-
-    private func createCommonParameters() -> JSONObject {
-        var parameters: JSONObject = [:]
-        parameters.updateValue(terminalKey, forKey: "TerminalKey")
-        if let value = languageKey { parameters.updateValue(value, forKey: "Language") }
-
-        return parameters
-    }
-
-    /// Обновляем информацию о реквизитах карты, добавляем шифрование
-    private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
-        if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
-                parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-            }
-        }
+        coreAssembly
+            .ipAddressProvider()
+            .ipAddress?
+            .stringValue
     }
 
     // MARK: - подтверждение платежа
@@ -98,7 +85,9 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequest(requestData: data)
+        try coreAssembly
+            .threeDSURLRequestBuilder()
+            .buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтверждения платежа 3DS формы
@@ -111,7 +100,9 @@ public final class AcquiringSdk: NSObject {
         data: Confirmation3DSDataACS,
         messageVersion: String
     ) throws -> URLRequest {
-        try coreAssembly.threeDSURLRequestBuilder().buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
+        try coreAssembly
+            .threeDSURLRequestBuilder()
+            .buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
     }
 
     /// Проверяет параметры для 3DS формы
@@ -121,7 +112,9 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        try coreAssembly.threeDSURLRequestBuilder().build3DSCheckURLRequest(requestData: data)
+        try coreAssembly
+            .threeDSURLRequestBuilder()
+            .build3DSCheckURLRequest(requestData: data)
     }
 
     /// callback URL для завершения 3DS подтверждения
@@ -129,27 +122,33 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URL
     public func confirmation3DSTerminationURL() throws -> URL {
-        try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationURL)
+        try coreAssembly
+            .threeDSURLBuilder()
+            .buildURL(type: .confirmation3DSTerminationURL)
     }
 
     public func confirmation3DSTerminationV2URL() throws -> URL {
-        try coreAssembly.threeDSURLBuilder().buildURL(type: .confirmation3DSTerminationV2URL)
+        try coreAssembly
+            .threeDSURLBuilder()
+            .buildURL(type: .confirmation3DSTerminationV2URL)
     }
 
     public func confirmation3DSCompleteV2URL() throws -> URL {
-        try coreAssembly.threeDSURLBuilder().buildURL(type: .threeDSCheckNotificationURL)
+        try coreAssembly
+            .threeDSURLBuilder()
+            .buildURL(type: .threeDSCheckNotificationURL)
     }
 
     public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
-        return coreAssembly.threeDSWebViewHandler()
+        coreAssembly.threeDSWebViewHandler()
     }
     
     public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
-        return coreAssembly.threeDSWebViewHandler()
+        coreAssembly.threeDSWebViewHandler()
     }
     
     public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        return coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize, language: languageKey ?? .ru)
+        coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize, language: languageKey ?? .ru)
     }
 
     // MARK: Init Payment
@@ -179,7 +178,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable
     @discardableResult
-    @available(*, deprecated, message: "Use initPayment(data:completion:) instead")
+    @available(*, deprecated, message: "Use `initPayment(data:completion:)` instead")
     public func paymentInit(
         data: PaymentInitData,
         completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void
@@ -220,7 +219,7 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `PaymentFinishRequestData`
     ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведения платежа и `Error` - в случае ошибки.
     @discardableResult
-    @available(*, deprecated, message: "Use finishPayment(data:completion:) instead")
+    @available(*, deprecated, message: "Use `finishPayment(data:completion:)` instead")
     public func paymentFinish(
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void
@@ -264,7 +263,7 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `PaymentFinishRequestData`
     ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
-    @available(*, deprecated, message: "Use check3DSVersion(data:completion:) instead")
+    @available(*, deprecated, message: "Use `check3DSVersion(data:completion:)` instead")
     public func check3dsVersion(
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
@@ -314,8 +313,13 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// Получить статус платежа
+    ///
+    /// - Parameters:
+    ///   - data: `PaymentInfoData`
+    ///   - completion: результат операции `PaymentStatusResponse` в случае удачного ответа и `Error` - в случае ошибки.
+    /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use getPaymentState(data:completion:) instead")
+    @available(*, deprecated, message: "Use `getPaymentState(data:completion:)` instead")
     public func paymentOperationStatus(
         data: GetPaymentStateData,
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
@@ -332,6 +336,7 @@ public final class AcquiringSdk: NSObject {
     /// - Parameters:
     ///   - data: `ChargeRequestData`
     ///   - completion: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случае ошибки.
+    /// - Returns: `Cancellable`
     @discardableResult
     public func charge(
         data: ChargeRequestData,
@@ -342,8 +347,13 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
+    ///
+    /// - Parameters:
+    ///   - data: `ChargeRequestData`
+    ///   - completion: результат операции `PaymentStatusResponse` в случае удачного ответа и `Error` - в случае ошибки.
+    /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use charge(data:completion:) instead")
+    @available(*, deprecated, message: "Use `charge(data:completion:)` instead")
     public func chargePayment(
         data: PaymentChargeRequestData,
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
@@ -376,7 +386,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use getCardList(data:completion:) instead")
+    @available(*, deprecated, message: "Use `getCardList(data:completion:)` instead")
     public func cardList(
         data: InitGetCardListData,
         responseDelegate: NetworkTransportResponseDelegate? = nil,
@@ -388,7 +398,7 @@ public final class AcquiringSdk: NSObject {
     }
 
     @discardableResult
-    @available(*, deprecated, message: "Use getCardList(data:completion:) instead")
+    @available(*, deprecated, message: "Use `getCardList(data:completion:)` instead")
     public func сardList(
         data: InitGetCardListData,
         responseDelegate: NetworkTransportResponseDelegate?,
@@ -420,7 +430,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use initAddCard(data:completion:) instead")
+    @available(*, deprecated, message: "Use `initAddCard(data:completion:)` instead")
     public func cardListAddCardInit(
         data: InitAddCardData,
         completion: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
@@ -431,7 +441,7 @@ public final class AcquiringSdk: NSObject {
     }
 
     @discardableResult
-    @available(*, deprecated, message: "Use initAddCard(data:completion:) instead")
+    @available(*, deprecated, message: "Use `initAddCard(data:completion:)` instead")
     public func сardListAddCardInit(
         data: InitAddCardData,
         completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
@@ -470,7 +480,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use finishAddCard(data:completion:) instead")
+    @available(*, deprecated, message: "Use `finishAddCard(data:completion:)` instead")
     public func cardListAddCardFinish(
         data: FinishAddCardData,
         responseDelegate: NetworkTransportResponseDelegate? = nil,
@@ -494,7 +504,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use finishAddCard(data:completion:) instead")
+    @available(*, deprecated, message: "Use `finishAddCard(data:completion:)` instead")
     public func сardListAddCardFinish(
         data: FinishAddCardData,
         responseDelegate: NetworkTransportResponseDelegate?,
@@ -533,7 +543,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use submitRandomAmount(data:completion:) instead")
+    @available(*, deprecated, message: "Use `submitRandomAmount(data:completion:)` instead")
     public func checkRandomAmount(
         _ amount: Double,
         requestKey: String,
@@ -552,7 +562,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use submitRandomAmount(data:completion:) instead")
+    @available(*, deprecated, message: "Use `submitRandomAmount(data:completion:)` instead")
     public func chechRandomAmount(
         _ amount: Double,
         requestKey: String,
@@ -591,7 +601,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use deactivateCard(data:completion:) instead")
+    @available(*, deprecated, message: "Use `deactivateCard(data:completion:)` instead")
     public func cardListDeactivateCard(
         data: InitDeactivateCardData,
         completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
@@ -606,7 +616,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use deactivateCard(data:completion:) instead")
+    @available(*, deprecated, message: "Use `deactivateCard(data:completion:)` instead")
     public func сardListDeactivateCard(
         data: InitDeactivateCardData,
         completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
@@ -639,7 +649,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use getQRCode(data:completion:) instead")
+    @available(*, deprecated, message: "Use `getQRCode(data:completion:)` instead")
     public func paymentInvoiceQRCode(
         data: PaymentInvoiceQRCodeData,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void
@@ -672,7 +682,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use getStaticQRCode(data:completion:) instead")
+    @available(*, deprecated, message: "Use `getStaticQRCode(data:completion:)` instead")
     public func paymentInvoiceQRCodeCollector(
         data: PaymentInvoiceSBPSourceType,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void
@@ -682,12 +692,12 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Load SBP Banks
+    // TODO: (MIC-6303) Переписать метод под новый формат ответа
 
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
     ///
     /// - Parameters:
     ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
-    // TODO: Change requesting
     public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
         let loader = DefaultSBPBankLoader()
         loader.loadBanks(completion: completion)
@@ -734,7 +744,7 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use `getTinkoffPayLink(paymentId:version:completion` with String `paymentId` instead")
+    @available(*, deprecated, message: "Use `getTinkoffPayLink(paymentId:version:completion:)` with String `paymentId` instead")
     public func getTinkoffPayLink(
         paymentId: Int64,
         version: GetTinkoffPayStatusResponse.Status.Version,
@@ -756,5 +766,26 @@ public final class AcquiringSdk: NSObject {
     public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
         let request = GetCertsConfigRequest(baseURL: certsConfigUrl)
         return api.sendCertsConfigRequest(request, completionHandler: completion)
+    }
+}
+
+// MARK: - Helpers
+
+extension AcquiringSdk {
+    private func createCommonParameters() -> JSONObject {
+        var parameters: JSONObject = [:]
+        parameters.updateValue(terminalKey, forKey: "TerminalKey")
+        if let value = languageKey { parameters.updateValue(value, forKey: "Language") }
+
+        return parameters
+    }
+
+    /// Обновляем информацию о реквизитах карты, добавляем шифрование
+    private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
+        if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
+            if let encodedCardData = RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
+                parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
+            }
+        }
     }
 }

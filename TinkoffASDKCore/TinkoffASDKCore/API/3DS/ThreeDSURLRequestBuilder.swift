@@ -21,7 +21,6 @@
 import Foundation
 
 final class ThreeDSURLRequestBuilder {
-    
     enum Error: Swift.Error {
         case incorrectUrl(String)
     }
