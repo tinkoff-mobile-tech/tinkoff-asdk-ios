@@ -22,7 +22,7 @@ import UIKit
 class ConfirmViewController: UIViewController {
     var onCancel: (() -> Void)?
 
-    private var needOnCancelNotification = true
+    private var needOnCancelNotification: Bool = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
