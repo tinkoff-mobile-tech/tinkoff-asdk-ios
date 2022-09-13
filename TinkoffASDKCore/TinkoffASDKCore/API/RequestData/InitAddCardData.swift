@@ -21,19 +21,13 @@
 import Foundation
 
 public struct InitAddCardData: Codable {
-    public var checkType: String
-    public var customerKey: String
-
     public enum CodingKeys: String, CodingKey {
         case checkType = "CheckType"
         case customerKey = "CustomerKey"
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        checkType = try container.decode(String.self, forKey: .checkType)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
-    }
+    public var checkType: String
+    public var customerKey: String
 
     public init(with checkType: String, customerKey: String) {
         self.checkType = checkType
