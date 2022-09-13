@@ -21,16 +21,11 @@
 import Foundation
 
 public struct GetCardListData: Codable {
-    public var customerKey: String
-
     public enum CodingKeys: String, CodingKey {
         case customerKey = "CustomerKey"
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
-    }
+    public var customerKey: String
 
     public init(customerKey: String) {
         self.customerKey = customerKey
