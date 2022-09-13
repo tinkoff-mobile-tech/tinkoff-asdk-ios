@@ -1,13 +1,18 @@
 warning_threshold: 1
 
 included:
-  - ../
-  - ./
+  - ASDKSample
+  - ../TinkoffASDKUI
+  - ../TinkoffASDKCore
 
 excluded:
-  - Pods
-  - TinkoffASDKUI/TinkoffASDKUI/Resources/Generated/**
-  # - TinkoffASDKCore/TinkoffASDKCore/Resources/Generated/**
+  - ../Pods
+  - ../TinkoffASDKUI/TinkoffASDKUITests
+  - ../TinkoffASDKCore/TinkoffASDKCoreTests
+  - ../TinkoffASDKUI/TinkoffASDKUI/Resources/Generated
+  - ../TinkoffASDKUI/TinkoffASDKUI/InputMask
+  # Uncomment when the path will be present
+  # - ../TinkoffASDKCore/TinkoffASDKCore/Resources/Generated
 
 disabled_rules:
   # Допускаем TODO и FIXME в коде. Формат TODO и FIXME задан в custom_rules
@@ -20,6 +25,8 @@ disabled_rules:
   - computed_accessors_order
   # ⛔ FIXME: - Enable after refactoring 
   - file_length
+  # ⛔ FIXME: - Enable after refactoring 
+  - implicitly_unwrapped_optional
 
 opt_in_rules:
   # Некоторые переопределяемые методы всегда должны вызывать super
@@ -61,7 +68,11 @@ opt_in_rules:
 
 large_tuple: 4
 
-line_length: 150
+line_length:
+  warning: 150
+  error: 151
+  ignores_comments: true
+  ignores_interpolated_strings: true
 
 function_parameter_count:
   warning: 10
@@ -73,9 +84,10 @@ function_body_length:
   error: 100
 
 # Сложность тела функции должна быть ограничена
+# ⛔ FIXME: - Enable after refactoring commeted values 
 cyclomatic_complexity:
-  warning: 12
-  error: 18
+  warning: 25 # 12
+  error: 30 # 18
   ignores_case_statements: true
 
 file_length:
@@ -98,6 +110,9 @@ identifier_name:
 type_name:
   min_length: 3
   max_length: 65
+
+trailing_whitespace:
+  ignores_empty_lines: true
 
 custom_rules:
   wrong_todo_syntax:

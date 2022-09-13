@@ -42,6 +42,7 @@ final class ContainerTableViewCell: UITableViewCell, ReusableCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         cellContentView?.removeFromSuperview()
         cellContentView = nil
         onReuse?()

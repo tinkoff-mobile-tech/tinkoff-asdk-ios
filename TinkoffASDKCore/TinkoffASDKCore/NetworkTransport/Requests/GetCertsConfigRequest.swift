@@ -25,5 +25,5 @@ public struct GetCertsConfigRequest: RequestOperation {
 
     public let requestMethod: RequestMethod = .get
 
-    public var parameters: JSONObject? = nil
+    public var parameters: JSONObject?
 }

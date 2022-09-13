@@ -19,7 +19,6 @@
 
 import Foundation
 import TinkoffASDKCore
-import Foundation
 
 public protocol SBPPaymentService {
     func createSBPUrl(

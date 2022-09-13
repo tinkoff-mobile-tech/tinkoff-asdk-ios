@@ -22,7 +22,9 @@ protocol PaymentPollingContent: UIViewController & PullableContainerScrollableCo
     var didStartPayment: (() -> Void)? { get set }
 }
 
-final class PaymentPollingViewController<ContentViewController: PaymentPollingContent>: UIViewController, PullableContainerScrollableContent, CustomViewLoadable {
+final class PaymentPollingViewController<ContentViewController: PaymentPollingContent>: UIViewController,
+    PullableContainerScrollableContent,
+    CustomViewLoadable {
 
     var scrollView: UIScrollView { contentViewController.scrollView }
 
@@ -76,14 +78,6 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
     }
 
     override func loadView() {

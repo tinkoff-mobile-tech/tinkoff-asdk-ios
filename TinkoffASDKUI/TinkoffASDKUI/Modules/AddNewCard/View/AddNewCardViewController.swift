@@ -38,7 +38,7 @@ class AddNewCardViewController: PopUpViewContoller {
     //
     private var tableViewCells: [AddCardTableViewCells]!
     private var inputCardRequisitesController: InputCardRequisitesDataSource!
-    var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
+    weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
@@ -60,7 +60,10 @@ class AddNewCardViewController: PopUpViewContoller {
 
         inputCardRequisitesController = InputCardRequisitesController()
 
-        tableView.register(UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InputCardRequisitesTableViewCell")
+        tableView.register(
+            UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources),
+            forCellReuseIdentifier: "InputCardRequisitesTableViewCell"
+        )
         tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AmountTableViewCell")
         tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PSLogoTableViewCell")
 
@@ -110,8 +113,14 @@ extension AddNewCardViewController: UITableViewDataSource {
             }
 
         case .requisites:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "InputCardRequisitesTableViewCell") as? InputCardRequisitesTableViewCell {
-                let accessoryView = Bundle.uiResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
+            if let cell = tableView.dequeueReusableCell(
+                withIdentifier: "InputCardRequisitesTableViewCell"
+            ) as? InputCardRequisitesTableViewCell {
+                let accessoryView = Bundle.uiResources.loadNibNamed(
+                    "ButtonInputAccessoryView",
+                    owner: nil,
+                    options: nil
+                )?.first as? ButtonInputAccessoryView
                 if let style = style {
                     accessoryView?.buttonAction.backgroundColor = style.addCardButtonStyle.backgroundColor
                     accessoryView?.buttonAction.tintColor = style.addCardButtonStyle.titleColor

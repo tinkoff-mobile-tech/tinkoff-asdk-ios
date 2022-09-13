@@ -26,7 +26,7 @@ protocol InputCardCVCRequisitesViewOutConnection {
 }
 
 class InputCardCVCRequisitesPresenter: NSObject {
-    private var maskedTextFieldDelegate: MaskedTextFieldDelegate!
+    private weak var maskedTextFieldDelegate: MaskedTextFieldDelegate!
     private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
     private weak var inputView: InputCardCVCRequisitesPresenterProtocol?
     private var maskFormatCVC = "[000]"

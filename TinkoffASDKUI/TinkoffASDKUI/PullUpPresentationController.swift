@@ -47,12 +47,20 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
             presentationWrapperView.layer.shadowOffset = CGSize(width: 0, height: -6.0)
             presentationWrappingView = presentationWrapperView
             // 2
-            let presentationRoundedCornerView = UIView(frame: presentationWrapperView.bounds.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: -topCornerRadius, right: 0)))
+            let presentationRoundedCornerView = UIView(
+                frame: presentationWrapperView.bounds.inset(
+                    by: UIEdgeInsets(top: 0, left: 0, bottom: -topCornerRadius, right: 0)
+                )
+            )
             presentationRoundedCornerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             presentationRoundedCornerView.layer.cornerRadius = topCornerRadius
             presentationRoundedCornerView.layer.masksToBounds = true
             // 3
-            let presentedViewControllerWrapperView = UIView(frame: presentationRoundedCornerView.bounds.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: topCornerRadius, right: 0)))
+            let presentedViewControllerWrapperView = UIView(
+                frame: presentationRoundedCornerView.bounds.inset(
+                    by: UIEdgeInsets(top: 0, left: 0, bottom: topCornerRadius, right: 0)
+                )
+            )
             presentedViewControllerWrapperView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             presentedViewControllerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             presentedViewControllerView.frame = presentedViewControllerWrapperView.bounds
@@ -122,7 +130,10 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
 
     override var frameOfPresentedViewInContainerView: CGRect {
         let containerViewBounds = self.containerView?.bounds ?? CGRect()
-        let presentedViewContentSize = self.size(forChildContentContainer: self.presentedViewController, withParentContainerSize: containerViewBounds.size)
+        let presentedViewContentSize = self.size(
+            forChildContentContainer: self.presentedViewController,
+            withParentContainerSize: containerViewBounds.size
+        )
 
         var presentedViewControllerFrame = containerViewBounds
         presentedViewControllerFrame.size.height = presentedViewContentSize.height
@@ -192,13 +203,22 @@ class PullUpPresentationController: UIPresentationController, UIViewControllerTr
 
     // MARK: UIViewControllerTransitioningDelegate
 
-    @objc func presentationController(forPresented presented: UIViewController, presenting _: UIViewController?, source _: UIViewController) -> UIPresentationController? {
-        assert(presentedViewController === presented, "You didn't initialize \(self) with the correct presentedViewController. Expected \(presented), got \(presentedViewController).")
-
+    @objc func presentationController(
+        forPresented presented: UIViewController,
+        presenting _: UIViewController?,
+        source _: UIViewController
+    ) -> UIPresentationController? {
+        let firstMessage = "You didn't initialize \(self) with the correct presentedViewController. "
+        let secondMessage = "Expected \(presented), got \(presentedViewController)."
+        assert(presentedViewController === presented, firstMessage + secondMessage)
         return self
     }
 
-    @objc func animationController(forPresented _: UIViewController, presenting _: UIViewController, source _: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    @objc func animationController(
+        forPresented _: UIViewController,
+        presenting _: UIViewController,
+        source _: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
         return self
     }
 

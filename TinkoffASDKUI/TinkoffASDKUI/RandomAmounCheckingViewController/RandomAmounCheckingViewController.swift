@@ -41,8 +41,19 @@ class RandomAmounCheckingViewController: ConfirmViewController {
 
         title = Loc.TinkoffAcquiring.View.Title.confimration
 
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowOnTableView(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideOnTableView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShowOnTableView(notification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHideOnTableView(notification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
 
         tableViewCells = [.title, .textField, .secureLogos]
 
@@ -60,7 +71,8 @@ class RandomAmounCheckingViewController: ConfirmViewController {
     }
 
     private func inputField() -> InputFieldTableViewCellStatusProtocol? {
-        if let index = tableViewCells.firstIndex(of: .textField), let inputField = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? InputFieldTableViewCellStatusProtocol {
+        if let index = tableViewCells.firstIndex(of: .textField),
+           let inputField = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? InputFieldTableViewCellStatusProtocol {
             return inputField
         }
 
@@ -108,7 +120,8 @@ class RandomAmounCheckingViewController: ConfirmViewController {
     }
 
     func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo as NSDictionary?, let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
+        if let userInfo = notification.userInfo as NSDictionary?,
+           let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
             let inputAccessoryViewHeight: CGFloat = (view.firstResponder?.inputAccessoryView?.frame.size.height) ?? 0
@@ -174,19 +187,21 @@ extension RandomAmounCheckingViewController: UITextFieldDelegate {
     // MARK: UITextFieldDelegate
 
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        if let accessoryView = Bundle.uiResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView {
+        let accessoryView = Bundle.uiResources.loadNibNamed(
+            "ButtonInputAccessoryView",
+            owner: nil,
+            options: nil
+        )
+        if let accessoryView = accessoryView?.first as? ButtonInputAccessoryView {
             accessoryView.buttonAction.setTitle(Loc.TinkoffAcquiring.Button.confirm, for: .normal)
             accessoryView.onButtonTouchUpInside = { [weak self] in
                 self?.onButtonAddTouch()
             }
-
             textField.inputAccessoryView = accessoryView
             inputAccessoryViewWithButton = accessoryView
         }
-
         inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
         inputAccessoryViewWithButton?.buttonAction.setTitle(Loc.TinkoffAcquiring.Button.addCard, for: .normal)
-
         return true
     }
 

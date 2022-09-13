@@ -19,7 +19,7 @@
 
 import UIKit
 
-// swiftlint:disable force_cast
+// swiftlint:disable all
 
 class CenterFlowLayout: UICollectionViewFlowLayout {
     var insertingTopCells = false
@@ -163,4 +163,4 @@ extension UICollectionViewFlowLayout {
     }
 }
 
-// swiftlint:enable force_cast
+// swiftlint:enable all

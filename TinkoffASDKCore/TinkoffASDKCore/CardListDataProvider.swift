@@ -52,7 +52,10 @@ public protocol FetchServiceProtocol {
 /// Получение объектов загруженных с исползованием `FetchServiceProtocol`
 public protocol FetchDataSourceProtocol: FetchServiceProtocol where ObjectType == [U] {
     ///
+    // swiftlint:disable type_name
     associatedtype U
+    // swiftlint:enable type_name
+
     /// Общее колчесво объектов
     func count() -> Int
     /// Объект по индексу
@@ -115,7 +118,12 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         expDate: String,
         cvc: String,
         checkType: String,
-        confirmationHandler: @escaping ((_ result: FinishAddCardResponse, _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Void),
+        confirmationHandler: @escaping (
+            (
+                _ result: FinishAddCardResponse,
+                _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
+            ) -> Void
+        ),
         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
     ) {
         // Step 1 init
@@ -126,33 +134,42 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                 DispatchQueue.main.async { completeHandler(.failure(error)) }
             case let .success(initAddCardResponse):
                 // Step 2 finish
-                let finishData = FinishAddCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
-                self?.queryStatus = self?.coreSDK?.cardListAddCardFinish(data: finishData, responseDelegate: nil, completion: { responseFinish in
-                    switch responseFinish {
-                    case let .failure(error):
-                        DispatchQueue.main.async { completeHandler(.failure(error)) }
-                    case let .success(finishAddCardResponse):
-                        // Step 3 complete
-                        confirmationHandler(finishAddCardResponse) { completionResponse in
-                            switch completionResponse {
-                            case let .failure(error):
-                                completeHandler(.failure(error))
-                            case let .success(confirmResponse):
-                                if let cardId = confirmResponse.cardId {
-                                    self?.fetch(startHandler: nil, completeHandler: { _, _ in
-                                        if let card = self?.item(with: cardId) {
-                                            completeHandler(.success(card))
-                                        } else if let card = self?.activeCards.last {
-                                            completeHandler(.success(card))
-                                        }
-                                    }) // fetch catrs list
-                                } else {
-                                    completeHandler(.success(nil))
+                let finishData = FinishAddCardData(
+                    cardNumber: number,
+                    expDate: expDate,
+                    cvv: cvc,
+                    requestKey: initAddCardResponse.requestKey
+                )
+                self?.queryStatus = self?.coreSDK?.cardListAddCardFinish(
+                    data: finishData,
+                    responseDelegate: nil,
+                    completion: { responseFinish in
+                        switch responseFinish {
+                        case let .failure(error):
+                            DispatchQueue.main.async { completeHandler(.failure(error)) }
+                        case let .success(finishAddCardResponse):
+                            // Step 3 complete
+                            confirmationHandler(finishAddCardResponse) { completionResponse in
+                                switch completionResponse {
+                                case let .failure(error):
+                                    completeHandler(.failure(error))
+                                case let .success(confirmResponse):
+                                    if let cardId = confirmResponse.cardId {
+                                        self?.fetch(startHandler: nil, completeHandler: { _, _ in
+                                            if let card = self?.item(with: cardId) {
+                                                completeHandler(.success(card))
+                                            } else if let card = self?.activeCards.last {
+                                                completeHandler(.success(card))
+                                            }
+                                        }) // fetch catrs list
+                                    } else {
+                                        completeHandler(.success(nil))
+                                    }
                                 }
-                            }
-                        } // confirmationHandler
+                            } // confirmationHandler
+                        }
                     }
-                }) // сardListAddCardFinish
+                ) // сardListAddCardFinish
             }
         }) // сardListAddCardInit
     }
@@ -265,14 +282,20 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 }
 
 extension CardListDataProvider: NetworkTransportResponseDelegate {
-    public func networkTransport(didCompleteRawTaskForRequest request: URLRequest, withData data: Data, response _: URLResponse, error _: Error?) throws -> ResponseOperation {
+    public func networkTransport(
+        didCompleteRawTaskForRequest request: URLRequest,
+        withData data: Data,
+        response _: URLResponse,
+        error _: Error?
+    ) throws -> ResponseOperation {
         let cardLidt = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
 
         var parameters: [String: Any] = [:]
         parameters.updateValue(true, forKey: "Success")
         parameters.updateValue(0, forKey: "ErrorCode")
 
-        if let requestParamsData = request.httpBody, let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
+        if let requestParamsData = request.httpBody,
+           let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
             if let terminalKey = requestParams["TerminalKey"] {
                 parameters.updateValue(terminalKey, forKey: "TerminalKey")
             }

@@ -32,7 +32,12 @@ class ConfirmViewController: UIViewController {
         if #available(iOS 13.0, *) {
             cancelButton = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeViewColtroller))
         } else {
-            cancelButton = UIBarButtonItem(title: Loc.TinkoffAcquiring.Button.close, style: .done, target: self, action: #selector(closeViewColtroller))
+            cancelButton = UIBarButtonItem(
+                title: Loc.TinkoffAcquiring.Button.close,
+                style: .done,
+                target: self,
+                action: #selector(closeViewColtroller)
+            )
         }
 
         navigationItem.setRightBarButton(cancelButton, animated: true)

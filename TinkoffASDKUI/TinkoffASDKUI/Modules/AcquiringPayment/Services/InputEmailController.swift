@@ -20,10 +20,13 @@
 import UIKit
 
 protocol InputEmailControllerOutConnection: InputViewStatus {
-    func present(hint: String?, preFilledValue: String?, textFieldCell: InputFieldTableViewCellStatusProtocol, tableView: UITableView, firstResponderListener: BecomeFirstResponderListener?)
-
+    func present(
+        hint: String?, preFilledValue: String?,
+        textFieldCell: InputFieldTableViewCellStatusProtocol,
+        tableView: UITableView,
+        firstResponderListener: BecomeFirstResponderListener?
+    )
     func validateEmail(_ value: String?) -> Bool
-
     func inputValue() -> String?
 }
 

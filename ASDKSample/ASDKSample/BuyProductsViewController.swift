@@ -22,7 +22,6 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 import UIKit
 
-// TODO: Separate BuyProductsViewController in several files/classes
 // swiftlint:disable file_length
 class BuyProductsViewController: UIViewController {
 
@@ -274,9 +273,6 @@ class BuyProductsViewController: UIViewController {
     }
 
     func pay(_ complete: @escaping (() -> Void)) {
-        // TODO: remove indent disabling after https://github.com/nicklockwood/SwiftFormat/commit/762135f092721dbf3ce5d9cedd7273c9d1407b44
-        // will be released
-        // swiftformat:disable indent
         sdk.pay(
             on: self,
             initPaymentData: createPaymentData(),
@@ -287,7 +283,6 @@ class BuyProductsViewController: UIViewController {
             complete()
             self?.responseReviewing(response)
         }
-        // swiftformat:enable indent
     }
 
     func payByApplePay() {
@@ -327,9 +322,6 @@ class BuyProductsViewController: UIViewController {
     }
 
     func charge(_ complete: @escaping (() -> Void)) {
-        // TODO: remove indent disabling after https://github.com/nicklockwood/SwiftFormat/commit/762135f092721dbf3ce5d9cedd7273c9d1407b44
-        // will be released
-        // swiftformat:disable indent
         if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
             sdk.presentPaymentView(
                 on: self,
@@ -341,13 +333,9 @@ class BuyProductsViewController: UIViewController {
                 self?.responseReviewing(response)
             }
         }
-        // swiftformat:enable indent
     }
 
     func generateSbpQrImage() {
-        // TODO: remove indent disabling after https://github.com/nicklockwood/SwiftFormat/commit/762135f092721dbf3ce5d9cedd7273c9d1407b44
-        // will be released
-        // swiftformat:disable indent
         sdk.presentPaymentSbpQrImage(
             on: self,
             paymentData: createPaymentData(),
@@ -355,7 +343,6 @@ class BuyProductsViewController: UIViewController {
         ) { [weak self] response in
             self?.responseReviewing(response)
         }
-        // swiftformat:enable indent
     }
 
     func generateSbpUrl() {
@@ -581,22 +568,18 @@ extension BuyProductsViewController: UITableViewDataSource {
 
         case .pay:
             let cardsCount = (try? sdk.cardListNumberOfCards()) ?? 0
-            // TODO: use isEmpty instead
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара, доступно \(cardsCount) сохраненных карт"
             }
 
             return "открыть платежную форму и перейти к оплате товара"
-        // swiftlint:disable line_length
         case .payAndSaveAsParent:
             let cardsCount = (try? sdk.cardListNumberOfCards()) ?? 0
-            // TODO: use isEmpty instead
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cardsCount) сохраненных карт"
             }
 
             return "оплатить и сделать этот платеж родительским"
-        // swiftlint:enable line_length
         case .payRequrent:
             if let card = paymentCardParentPaymentId, let parentPaymentId = card.parentPaymentId {
                 return "оплатить с карты \(card.pan) \(card.expDateFormat() ?? ""), используя родительский платеж \(parentPaymentId)"

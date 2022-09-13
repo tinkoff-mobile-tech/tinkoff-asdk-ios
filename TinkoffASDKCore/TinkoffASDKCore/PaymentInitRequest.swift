@@ -159,7 +159,15 @@ public struct PaymentInitData: Codable {
         failURL: String? = nil
     ) {
         let int64Amount = Int64(amount.doubleValue * 100)
-        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate, payType: payType, successURL: successURL, failURL: failURL)
+        self.init(
+            amount: int64Amount,
+            orderId: orderId,
+            customerKey: customerKey,
+            redirectDueDate: redirectDueDate,
+            payType: payType,
+            successURL: successURL,
+            failURL: failURL
+        )
     }
 }
 

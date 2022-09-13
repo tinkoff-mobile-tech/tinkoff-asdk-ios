@@ -101,7 +101,9 @@ extension CardListPresenter: ICardListViewOutput {
                 activeCardsCache = paymentCards
                 view?.reload(cards: transform(paymentCards))
             case .failure:
+                // swiftlint:disable wrong_todo_syntax
                 // TODO: Add failure handling
+                // swiftlint:enable wrong_todo_syntax
                 break
             }
 
@@ -125,7 +127,9 @@ extension CardListPresenter: ICardListViewOutput {
                 activeCardsCache.removeAll { $0.cardId == card.id }
                 view?.remove(card: card)
             case .failure:
+                // swiftlint:disable wrong_todo_syntax
                 // TODO: Add failure handling
+                // swiftlint:enable wrong_todo_syntax
                 break
             }
             view?.hideLoader()

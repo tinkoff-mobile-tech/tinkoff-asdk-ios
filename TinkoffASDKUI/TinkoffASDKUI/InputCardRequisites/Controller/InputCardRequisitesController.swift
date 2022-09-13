@@ -59,9 +59,9 @@ class InputCardRequisitesController: NSObject {
         case inputCardCVC
     }
 
-    private var maskedTextFieldCardNumberDelegate: MaskedTextFieldDelegate!
-    private var maskedTextFieldCardExpDateDelegate: MaskedTextFieldDelegate!
-    private var maskedTextFieldCardCVCDelegate: MaskedTextFieldDelegate!
+    private weak var maskedTextFieldCardNumberDelegate: MaskedTextFieldDelegate!
+    private weak var maskedTextFieldCardExpDateDelegate: MaskedTextFieldDelegate!
+    private weak var maskedTextFieldCardCVCDelegate: MaskedTextFieldDelegate!
 
     private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
     private weak var inputView: InputRequisitesViewInConnection? {

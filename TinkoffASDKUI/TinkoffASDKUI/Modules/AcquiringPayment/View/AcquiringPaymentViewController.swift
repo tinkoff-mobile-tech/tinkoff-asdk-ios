@@ -40,9 +40,21 @@ protocol AcquiringCardListDataSourceDelegate: AnyObject {
     /// Деактивировать карту
     func cardListToDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((PaymentCard?) -> Void)?)
     /// Добавить карту
-    func cardListToAddCard(number: String, expDate: String, cvc: String, addCardViewPresenter: AcquiringView, alertViewHelper: AcquiringAlertViewProtocol?, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+    func cardListToAddCard(
+        number: String,
+        expDate: String,
+        cvc: String,
+        addCardViewPresenter: AcquiringView,
+        alertViewHelper: AcquiringAlertViewProtocol?,
+        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
+    )
     /// Показать экран добавления карты
-    func presentAddCard(on presentingViewController: UIViewController, customerKey: String, configuration: AcquiringViewConfiguration, completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
+    func presentAddCard(
+        on presentingViewController: UIViewController,
+        customerKey: String,
+        configuration: AcquiringViewConfiguration,
+        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
+    )
 }
 
 enum AcquiringViewStatus {
@@ -110,6 +122,7 @@ protocol AcquiringView: AnyObject {
     func setPaymentType(_ paymentType: PaymentType)
 }
 
+// swiftlint:disable unused_setter_value
 extension AcquiringView {
     func setPaymentType(_ paymentType: PaymentType) {}
     var onInitFinished: ((Result<Int64, Error>) -> Void)? {
@@ -122,6 +135,8 @@ extension AcquiringView {
         set {}
     }
 }
+
+// swiftlint:enable unused_setter_value
 
 class AcquiringPaymentViewController: PopUpViewContoller {
     // MARK: Style
@@ -199,7 +214,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+        super.viewWillDisappear(animated)
 
         cardListDataSourceDelegate = nil
         onCancelPayment?()
@@ -232,9 +247,11 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
     func setupTableViewCellForPayment() {
         userTableViewCells.forEach { item in
-            if case AcquiringViewTableViewCells.buttonPaySBP = item {}
-            else if case AcquiringViewTableViewCells.tinkoffPay = item {}
-            else {
+            if case AcquiringViewTableViewCells.buttonPaySBP = item {
+
+            } else if case AcquiringViewTableViewCells.tinkoffPay = item {
+
+            } else {
                 tableViewCells.append(item)
             }
         }
