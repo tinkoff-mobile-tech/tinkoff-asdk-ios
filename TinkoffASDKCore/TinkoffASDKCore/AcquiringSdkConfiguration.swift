@@ -65,6 +65,9 @@ public class AcquiringSdkConfiguration: NSObject {
     public let requestsTimeoutInterval: TimeInterval
     @available(*, deprecated, message: "Property does not affect anything")
     public var fpsEnabled: Bool = false
+    /// Показывать ошибки после выполнения запроса
+    @available(*, deprecated, message: "Property does not affect anything")
+    public var showErrorAlert: Bool = true
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
     ///
@@ -74,11 +77,8 @@ public class AcquiringSdkConfiguration: NSObject {
     /// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
     public private(set) var language: AcquiringSdkLanguage?
 
-    /// Логирование работы, реализаия `ASDKApiLoggerDelegate`
+    /// Логгер сетевых запросов. Реализация - `ASDKApiLoggerDelegate`
     public var logger: LoggerDelegate?
-
-    /// Показывать ошибки после выполнения запроса
-    public var showErrorAlert: Bool = true
     
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     public var tinkoffPayStatusCacheLifeTime: TimeInterval

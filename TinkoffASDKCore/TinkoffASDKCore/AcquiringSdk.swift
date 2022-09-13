@@ -463,9 +463,11 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completion)
     }
 
+    /// Завершает привязку карты к клиенту
+    ///
     /// - Parameters:
     ///   - data: `FinishAddCardData` информация о клиенте и типе новой карты
-    ///   - completion: результат операции `CardListResponse` в случае удачной регистрации карты и  `Error` - ошибка.
+    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
     @available(*, deprecated, message: "Use finishAddCard(data:completion:) instead")
@@ -485,6 +487,12 @@ public final class AcquiringSdk: NSObject {
         return api.performDeprecatedRequest(request, completion: completion)
     }
 
+    /// Завершает привязку карты к клиенту
+    ///
+    /// - Parameters:
+    ///   - data: `FinishAddCardData` информация о клиенте и типе новой карты
+    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
     @discardableResult
     @available(*, deprecated, message: "Use finishAddCard(data:completion:) instead")
     public func сardListAddCardFinish(

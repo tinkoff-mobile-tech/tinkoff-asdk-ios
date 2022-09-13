@@ -21,7 +21,6 @@
 import Foundation
 
 struct CoreAssembly {
-    
     private let configuration: AcquiringSdkConfiguration
     
     init(configuration: AcquiringSdkConfiguration) {
@@ -29,57 +28,67 @@ struct CoreAssembly {
     }
     
     func buildAPI() -> API {
-        return AcquiringAPI(
+        AcquiringAPI(
             networkClient: buildNetworkClient(
-                requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey)),
+            requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey)),
             apiResponseDecoder: buildAPIResponseDecoder()
         )
     }
     
     func cardDataFormatter() -> CardDataFormatter {
-        return CardDataFormatter()
+        CardDataFormatter()
     }
     
     func ipAddressProvider() -> IPAddressProvider {
-        return IPAddressProvider(factory: IPAddressFactory())
+        IPAddressProvider(factory: IPAddressFactory())
     }
     
     func threeDSURLBuilder() -> ThreeDSURLBuilder {
-        return ThreeDSURLBuilder(apiHostProvider: buildAPIHostProvider())
+        ThreeDSURLBuilder(apiHostProvider: buildAPIHostProvider())
     }
     
     func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {
-        return ThreeDSURLRequestBuilder(threeDSURLBuilder: threeDSURLBuilder(),
-                                        deviceInfoProvider: deviceInfoProvider())
+        ThreeDSURLRequestBuilder(
+            threeDSURLBuilder: threeDSURLBuilder(),
+            deviceInfoProvider: deviceInfoProvider()
+        )
     }
     
     func deviceInfoProvider() -> DeviceInfoProvider {
-        return DefaultDeviceInfoProvider()
+        DefaultDeviceInfoProvider()
     }
     
     func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
-        return ThreeDSWebViewHandler(threeDSURLBuilder: threeDSURLBuilder(),
-                                     jsonDecoder: buildJSONDecoder())
+        ThreeDSWebViewHandler(
+            threeDSURLBuilder: threeDSURLBuilder(),
+            jsonDecoder: buildJSONDecoder()
+        )
     }
     
     func threeDSDeviceParamsProvider(screenSize: CGSize, language: AcquiringSdkLanguage) -> ThreeDSDeviceParamsProvider {
-        return DefaultThreeDSDeviceParamsProvider(screenSize: screenSize,
-                                                  language: language,
-                                                  threeDSURLBuilder: threeDSURLBuilder())
+        DefaultThreeDSDeviceParamsProvider(
+            screenSize: screenSize,
+            language: language,
+            threeDSURLBuilder: threeDSURLBuilder()
+        )
     }
 }
 
 private extension CoreAssembly {
     func buildNetworkClient(requestAdapter: NetworkRequestAdapter) -> NetworkClient {
-        let networkClient = DefaultNetworkClient(urlRequestPerfomer: buildURLSession(),
-                                                 requestBuilder: buildRequestBuilder(),
-                                                 responseValidator: buildResponseValidator())
+        let networkClient = DefaultNetworkClient(
+            urlRequestPerfomer: buildURLSession(),
+            requestBuilder: buildRequestBuilder(),
+            responseValidator: buildResponseValidator()
+        )
         networkClient.requestAdapter = requestAdapter
         return networkClient
     }
     
     func buildURLSession() -> URLSession {
-        return URLSession(configuration: buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval))
+        URLSession(
+            configuration: buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval)
+        )
     }
     
     func buildURLSessionConfiguration(requestsTimeoutInterval: TimeInterval) -> URLSessionConfiguration {
@@ -90,32 +99,33 @@ private extension CoreAssembly {
     }
     
     func buildRequestBuilder() -> NetworkClientRequestBuilder {
-        return DefaultNetworkClientRequestBuilder()
+        DefaultNetworkClientRequestBuilder()
     }
     
     func buildResponseValidator() -> HTTPURLResponseValidator {
-        return DefaultHTTPURLResponseValidator()
+        DefaultHTTPURLResponseValidator()
     }
     
     func buildAPIURLBuilder() -> APIURLBuilder {
-        return APIURLBuilder()
+        APIURLBuilder()
     }
     
     func buildAPIHostProvider() -> APIHostProvider {
-        return APIHostProvider(sdkEnvironmentProvider: configuration.serverEnvironment,
-                               apiURLBuilder: buildAPIURLBuilder())
+        APIHostProvider(
+            sdkEnvironmentProvider: configuration.serverEnvironment,
+            apiURLBuilder: buildAPIURLBuilder()
+        )
     }
     
     func buildAPIParametersProvider(terminalKey: String) -> APIParametersProvider {
-        return APIParametersProvider(terminalKey: terminalKey)
+        APIParametersProvider(terminalKey: terminalKey)
     }
     
     func buildAPIResponseDecoder() -> APIResponseDecoder {
-        return AcquiringAPIResponseDecoder(decoder: buildJSONDecoder())
+        AcquiringAPIResponseDecoder(decoder: buildJSONDecoder())
     }
     
     func buildJSONDecoder() -> JSONDecoder {
-        return JSONDecoder()
+        JSONDecoder()
     }
-
 }
