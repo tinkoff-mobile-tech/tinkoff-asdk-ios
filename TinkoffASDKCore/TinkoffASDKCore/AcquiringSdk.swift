@@ -305,10 +305,10 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
     public func getPaymentState(
-        data: PaymentInfoData,
+        data: GetPaymentStateData,
         completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = GetPaymentStateRequest(paymentInfoData: data, baseURL: baseURL)
+        let request = GetPaymentStateRequest(data: data, baseURL: baseURL)
 
         return api.performRequest(request, completion: completion)
     }
@@ -317,10 +317,10 @@ public final class AcquiringSdk: NSObject {
     @discardableResult
     @available(*, deprecated, message: "Use getPaymentState(data:completion:) instead")
     public func paymentOperationStatus(
-        data: PaymentInfoData,
+        data: GetPaymentStateData,
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = GetPaymentStateRequest(paymentInfoData: data, baseURL: baseURL)
+        let request = GetPaymentStateRequest(data: data, baseURL: baseURL)
 
         return api.performDeprecatedRequest(request, completion: completionHandler)
     }

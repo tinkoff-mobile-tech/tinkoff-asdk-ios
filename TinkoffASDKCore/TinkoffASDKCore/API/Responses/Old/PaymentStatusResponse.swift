@@ -21,6 +21,33 @@
 import Foundation
 
 public struct PaymentStatusResponse: ResponseOperation {
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
+        //
+        case orderId
+        case paymentId
+        case amount
+        case status
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .orderId: return APIConstants.Keys.orderId
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .amount: return APIConstants.Keys.amount
+            case .status: return APIConstants.Keys.status
+            }
+        }
+    }
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -28,22 +55,9 @@ public struct PaymentStatusResponse: ResponseOperation {
     public var terminalKey: String?
     //
     public var orderId: String
-    public var paymentId: String
+    public var paymentId: Int64
     public var amount: NSDecimalNumber
     public var status: PaymentStatus
-
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
-        //
-        case orderId = "OrderId"
-        case paymentId = "PaymentId"
-        case amount = "Amount"
-        case status = "Status"
-    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -57,7 +71,11 @@ public struct PaymentStatusResponse: ResponseOperation {
         orderId = try container.decode(String.self, forKey: .orderId)
 
         // paymentId
-        paymentId = try container.decode(String.self, forKey: .paymentId)
+        if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
+            paymentId = value
+        } else {
+            paymentId = try container.decode(Int64.self, forKey: .paymentId)
+        }
 
         // amount
         let value = try container.decode(Int64.self, forKey: .amount)
@@ -75,7 +93,7 @@ public struct PaymentStatusResponse: ResponseOperation {
                 errorCode: Int,
                 errorMessage: String?,
                 orderId: String,
-                paymentId: String,
+                paymentId: Int64,
                 amount: Int64,
                 status: PaymentStatus)
     {
@@ -101,4 +119,4 @@ public struct PaymentStatusResponse: ResponseOperation {
         try container.encode(Int64(amount.doubleValue * 100), forKey: .amount)
         try container.encode(status.rawValue, forKey: .status)
     }
-} 
+}

@@ -30,11 +30,11 @@ class PaymentStatusRequest: RequestOperation, AcquiringRequestTokenParams {
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [PaymentInfoData.CodingKeys.paymentId.rawValue]
+    var tokenParamsKey: Set<String> = [GetPaymentStateData.CodingKeys.paymentId.stringValue]
 
     ///
-    /// - Parameter data: `PaymentFinishRequestData`
-    init(data: PaymentInfoData) {
+    /// - Parameter data: `GetPaymentStateData`
+    init(data: GetPaymentStateData) {
         if let json = try? data.encode2JSONObject() {
             parameters = json
         }

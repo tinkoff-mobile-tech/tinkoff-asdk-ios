@@ -23,19 +23,13 @@ import Foundation
 public struct GetPaymentStateRequest: APIRequest {
     typealias Payload = GetPaymentStatePayload
     
-    var requestPath: [String] { ["GetState"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
+    let requestPath: [String] =  ["GetState"]
+    let httpMethod: HTTPMethod = .post
+    let baseURL: URL
+    let parameters: HTTPParameters
 
-    var parameters: HTTPParameters {
-        // TODO: Log error
-        return (try? paymentInfoData.encode2JSONObject()) ?? [:]
-    }
-    
-    private let paymentInfoData: PaymentInfoData
-    
-    init(paymentInfoData: PaymentInfoData, baseURL: URL) {
-        self.paymentInfoData = paymentInfoData
+    init(data: GetPaymentStateData, baseURL: URL) {
         self.baseURL = baseURL
+        self.parameters = (try? data.encode2JSONObject()) ?? [:]
     }
 }

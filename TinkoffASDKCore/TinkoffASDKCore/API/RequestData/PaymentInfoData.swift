@@ -20,20 +20,30 @@
 
 import Foundation
 
-public struct PaymentInfoData: Codable {
+@available(*, deprecated, renamed: "GetPaymentStateData")
+public typealias PaymentInfoData = GetPaymentStateData
+
+public struct GetPaymentStateData: Codable {
+    enum CodingKeys: CodingKey {
+        case paymentId
+
+        var stringValue: String {
+            switch self {
+            case .paymentId:
+                return APIConstants.Keys.paymentId
+            }
+        }
+    }
+
     /// Номер заказа в системе Продавца
-    var paymentId: PaymentId
+    let paymentId: PaymentId
 
     public init(paymentId: PaymentId) {
         self.paymentId = paymentId
     }
 
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(PaymentId.self, forKey: .paymentId)
+    @available(*, deprecated, message: "Use init(paymentId: String) instead")
+    public init(paymentId: Int64) {
+        self.paymentId = paymentId.description
     }
 }
