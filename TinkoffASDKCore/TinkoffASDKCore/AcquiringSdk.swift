@@ -517,6 +517,8 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completion)
     }
 
+    /// Подтверждение карты путем блокировки случайной суммы
+    ///
     /// - Parameters:
     ///   - amount: `Double` сумма с копейками
     ///   - requestKey: `String` ключ для привязки карты
@@ -534,6 +536,13 @@ public final class AcquiringSdk: NSObject {
         return api.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
+    /// Подтверждение карты путем блокировки случайной суммы
+    ///
+    /// - Parameters:
+    ///   - amount: `Double` сумма с копейками
+    ///   - requestKey: `String` ключ для привязки карты
+    ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
     @discardableResult
     @available(*, deprecated, message: "Use submitRandomAmount(data:completion:) instead")
     public func chechRandomAmount(
@@ -568,8 +577,10 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completion)
     }
 
+    /// Удаление привязанной карты покупателя
+    ///
     /// - Parameters:
-    ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
     @available(*, deprecated, message: "Use deactivateCard(data:completion:) instead")
@@ -581,6 +592,11 @@ public final class AcquiringSdk: NSObject {
         return api.performDeprecatedRequest(request, completion: completion)
     }
 
+    /// Удаление привязанной карты покупателя
+    ///
+    /// - Parameters:
+    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
     @discardableResult
     @available(*, deprecated, message: "Use deactivateCard(data:completion:) instead")
     public func сardListDeactivateCard(
