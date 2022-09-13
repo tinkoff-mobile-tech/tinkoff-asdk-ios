@@ -23,19 +23,19 @@ import Foundation
 struct ChargePaymentRequest: APIRequest {
     typealias Payload = ChargePaymentPayload
     
-    var requestPath: [String] { ["Charge"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
+    let requestPath: [String] = ["Charge"]
+    let httpMethod: HTTPMethod = .post
+    let baseURL: URL
+    let parameters: HTTPParameters
 
-    var parameters: HTTPParameters {
-        // TODO: Log error
-        return (try? paymentChargeRequestData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
-    
-    private let paymentChargeRequestData: PaymentChargeRequestData
-
-    init(paymentChargeRequestData: PaymentChargeRequestData, baseURL: URL) {
-        self.paymentChargeRequestData = paymentChargeRequestData
+    init(data: ChargeRequestData, baseURL: URL) {
         self.baseURL = baseURL
+        self.parameters = (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+    }
+
+    @available(*, deprecated, message: "Use `init(data:baseURL:)` instead")
+    init(paymentChargeRequestData: PaymentChargeRequestData, baseURL: URL) {
+        self.baseURL = baseURL
+        self.parameters = (try? paymentChargeRequestData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }

@@ -19,14 +19,38 @@
 
 import Foundation
 
-///
+public struct ChargeRequestData: Codable {
+    private enum CodingKeys: CodingKey {
+        case paymentId
+        case rebillId
+
+        var stringValue: String {
+            switch self {
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .rebillId: return APIConstants.Keys.rebillId
+            }
+        }
+    }
+
+    /// Номер заказа в системе Продавца
+    public let paymentId: PaymentId
+    /// Родительский платеж
+    public let rebillId: PaymentId
+
+    public init(paymentId: PaymentId, rebillId: PaymentId) {
+        self.paymentId = paymentId
+        self.rebillId = rebillId
+    }
+}
+
+@available(*, deprecated, message: "Use `ChargeRequestData` instead")
 public struct PaymentChargeRequestData: Codable {
     /// Номер заказа в системе Продавца
-    public var paymentId: PaymentId
+    public var paymentId: Int64
     /// Родительский платеж
-    public var parentPaymentId: PaymentId
+    public var parentPaymentId: Int64
 
-    public init(paymentId: PaymentId, parentPaymentId: PaymentId) {
+    public init(paymentId: Int64, parentPaymentId: Int64) {
         self.paymentId = paymentId
         self.parentPaymentId = parentPaymentId
     }
@@ -38,7 +62,7 @@ public struct PaymentChargeRequestData: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(PaymentId.self, forKey: .paymentId)
-        parentPaymentId = try container.decode(PaymentId.self, forKey: .parentPaymentId)
+        paymentId = try container.decode(Int64.self, forKey: .paymentId)
+        parentPaymentId = try container.decode(Int64.self, forKey: .parentPaymentId)
     }
 }

@@ -330,14 +330,14 @@ public final class AcquiringSdk: NSObject {
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
     ///
     /// - Parameters:
-    ///   - data: `PaymentChargeRequestData`
+    ///   - data: `ChargeRequestData`
     ///   - completion: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
     public func charge(
-        data: PaymentChargeRequestData,
+        data: ChargeRequestData,
         completion: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = ChargePaymentRequest(paymentChargeRequestData: data, baseURL: baseURL)
+        let request = ChargePaymentRequest(data: data, baseURL: baseURL)
         return api.performRequest(request, completion: completion)
     }
 
