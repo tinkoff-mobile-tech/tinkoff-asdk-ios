@@ -20,6 +20,9 @@
 
 import Foundation
 
+@available(*, deprecated, renamed: "GetCardListData")
+public typealias InitGetCardListData = GetCardListData
+
 public struct GetCardListData: Codable {
     public enum CodingKeys: String, CodingKey {
         case customerKey = "CustomerKey"
