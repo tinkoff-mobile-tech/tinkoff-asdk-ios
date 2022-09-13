@@ -27,7 +27,7 @@ public enum AcquiringSdkError: Error {
 
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
-    public var fpsEnabled: Bool = false
+    public var fpsEnabled = false
     public let languageKey: AcquiringSdkLanguage?
     private let networkTransport: NetworkTransport
     private let terminalKey: String

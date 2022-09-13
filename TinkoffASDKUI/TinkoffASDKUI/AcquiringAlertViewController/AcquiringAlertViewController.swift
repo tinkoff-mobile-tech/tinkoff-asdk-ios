@@ -42,8 +42,8 @@ class AcquiringAlertViewController: UIViewController {
     @IBOutlet private var labelAlertTitle: UILabel!
 
     private var autoCloseTime: TimeInterval = 0
-    private var closedFromTimer: Bool = false
-    private var alertTouch: Bool = false {
+    private var closedFromTimer = false
+    private var alertTouch = false {
         didSet {
             if alertTouch == false {
                 if closedFromTimer == true {

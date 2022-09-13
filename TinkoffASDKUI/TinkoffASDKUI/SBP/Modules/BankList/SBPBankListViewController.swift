@@ -132,7 +132,7 @@ private extension SBPBankListViewController {
         )
 
         tableManager.setTableView(customView.tableView)
-        tableManager.rowSelection = { [weak self] index in
+        tableManager.rowSelection = { [weak self] _ in
             self?.customView.continueButton.isEnabled = true
         }
     }

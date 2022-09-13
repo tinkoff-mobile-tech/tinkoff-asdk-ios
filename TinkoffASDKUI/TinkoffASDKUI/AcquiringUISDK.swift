@@ -51,8 +51,8 @@ public class AcquiringViewConfiguration {
     }
 
     public struct FeaturesOptions {
-        public var fpsEnabled: Bool = false
-        public var tinkoffPayEnabled: Bool = true
+        public var fpsEnabled = false
+        public var tinkoffPayEnabled = true
 
         init() {}
     }
@@ -82,7 +82,7 @@ public class AcquiringViewConfiguration {
     public weak var scaner: AcquiringScanerProtocol?
     ///
     public weak var alertViewHelper: AcquiringAlertViewProtocol?
-    public var alertViewEnable: Bool = true
+    public var alertViewEnable = true
     public var featuresOptions = FeaturesOptions()
     public var fields: [InfoFields] = []
     public var viewTitle: String?

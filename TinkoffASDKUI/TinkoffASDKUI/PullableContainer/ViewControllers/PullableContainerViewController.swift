@@ -32,7 +32,6 @@ public final class PullableContainerViewController: UIViewController {
 
     private var cachedViewHeight: CGFloat = 0
 
-    // swiftlint:disable unused_setter_value
     override public var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         get { dimmingTransitioningDelegate }
         set {}
@@ -42,8 +41,6 @@ public final class PullableContainerViewController: UIViewController {
         get { .custom }
         set {}
     }
-
-    // swiftlint:enable unused_setter_value
 
     // swiftlint:disable weak_delegate
     private lazy var dimmingTransitioningDelegate = DimmingTransitioningDelegate(dimmingPresentationControllerDelegate: self)

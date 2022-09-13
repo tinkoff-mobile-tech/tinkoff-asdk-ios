@@ -30,7 +30,7 @@ class AppSetting {
     private let keyLanguageId = "LanguageId"
 
     /// Система быстрых платежей
-    var paySBP: Bool = false {
+    var paySBP = false {
         didSet {
             UserDefaults.standard.set(paySBP, forKey: keySBP)
             UserDefaults.standard.synchronize()
@@ -38,21 +38,21 @@ class AppSetting {
     }
 
     /// TinkoffPay
-    var tinkoffPay: Bool = false {
+    var tinkoffPay = false {
         didSet {
             UserDefaults.standard.set(tinkoffPay, forKey: keyTinkoffPay)
         }
     }
 
     /// Показыть на форме оплаты поле для ввода email для отправки чека
-    var showEmailField: Bool = false {
+    var showEmailField = false {
         didSet {
             UserDefaults.standard.set(showEmailField, forKey: keyShowEmailField)
             UserDefaults.standard.synchronize()
         }
     }
 
-    var acquiring: Bool = false {
+    var acquiring = false {
         didSet {
             UserDefaults.standard.set(acquiring, forKey: keyKindForAlertView)
             UserDefaults.standard.synchronize()

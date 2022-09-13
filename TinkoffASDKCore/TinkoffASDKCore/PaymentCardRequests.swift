@@ -61,7 +61,7 @@ public final class CardListRequest: RequestOperation, AcquiringRequestTokenParam
 }
 
 public struct CardListResponse: ResponseOperation {
-    public var success: Bool = true
+    public var success = true
     public var errorCode: Int = 0
     public var errorMessage: String?
     public var errorDetails: String?

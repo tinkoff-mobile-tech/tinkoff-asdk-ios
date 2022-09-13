@@ -59,7 +59,7 @@ public struct AcquiringSdkCredential {
 
 /// Кофигурация для экземпляра SDK
 public class AcquiringSdkConfiguration: NSObject {
-    public var fpsEnabled: Bool = false
+    public var fpsEnabled = false
 
     public private(set) var credential: AcquiringSdkCredential
 
@@ -81,7 +81,7 @@ public class AcquiringSdkConfiguration: NSObject {
     public var logger: LoggerDelegate?
 
     /// Показывать ошибки после выполнения запроса
-    public var showErrorAlert: Bool = true
+    public var showErrorAlert = true
 
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     public var tinkoffPayStatusCacheLifeTime: TimeInterval

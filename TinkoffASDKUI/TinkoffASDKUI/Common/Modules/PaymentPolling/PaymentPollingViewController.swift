@@ -13,7 +13,7 @@ public enum PaymentPollingError: Swift.Error {
     case requestLimitExceeded
 }
 
-protocol PaymentPollingContent: UIViewController & PullableContainerScrollableContent {
+protocol PaymentPollingContent: UIViewController, PullableContainerScrollableContent {
     var didStartLoading: ((String) -> Void)? { get set }
     var didStopLoading: (() -> Void)? { get set }
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)? { get set }

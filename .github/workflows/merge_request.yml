@@ -38,11 +38,13 @@ jobs:
     container: ghcr.io/realm/swiftlint:0.47.0
     steps:
       - uses: actions/checkout@v3
-      - run: pwd
+
+      - name: Print out Swiftlint Version on CI
+        run: swiftlint --version
+
       - name: Swiftlint Run
         working-directory: ASDKSample
-        run: pwd && swiftlint --version && swiftlint --quiet
-      - run: pwd
-
+        run: swiftlint --version && swiftlint --quiet
+    
   # check:
   #   uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1
