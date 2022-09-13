@@ -21,25 +21,26 @@
 import Foundation
 
 public struct FinishAddCardData: Codable {
-    var cardNumber: String
-    var expDate: String
-    var cvv: String
-    var requestKey: String
+    enum CodingKeys: CodingKey {
+        case cardNumber
+        case expDate
+        case cvv
+        case requestKey
 
-    enum CodingKeys: String, CodingKey {
-        case cardNumber = "PAN"
-        case expDate = "ExpDate"
-        case cvv = "CVV"
-        case requestKey = "RequestKey"
+        var stringValue: String {
+            switch self {
+            case .cardNumber: return APIConstants.Keys.cardNumber
+            case .expDate: return APIConstants.Keys.cardExpDate
+            case .cvv: return APIConstants.Keys.cardCVV
+            case .requestKey: return APIConstants.Keys.requestKey
+            }
+        }
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        cardNumber = try container.decode(String.self, forKey: .cardNumber)
-        expDate = try container.decode(String.self, forKey: .expDate)
-        cvv = try container.decode(String.self, forKey: .cvv)
-        requestKey = try container.decode(String.self, forKey: .requestKey)
-    }
+    let cardNumber: String
+    let expDate: String
+    let cvv: String
+    let requestKey: String
 
     public init(cardNumber: String, expDate: String, cvv: String, requestKey: String) {
         self.cardNumber = cardNumber
@@ -49,6 +50,6 @@ public struct FinishAddCardData: Codable {
     }
 
     func cardData() -> String {
-        return "\(CodingKeys.cardNumber.rawValue)=\(cardNumber);\(CodingKeys.expDate.rawValue)=\(expDate);\(CodingKeys.cvv.rawValue)=\(cvv)"
+        return "\(CodingKeys.cardNumber.stringValue)=\(cardNumber);\(CodingKeys.expDate.stringValue)=\(expDate);\(CodingKeys.cvv.stringValue)=\(cvv)"
     }
 }

@@ -167,15 +167,15 @@ class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [FinishAddCardData.CodingKeys.requestKey.rawValue,
-                                       PaymentFinishRequestData.CodingKeys.cardData.rawValue]
+    var tokenParamsKey: Set<String> = [FinishAddCardData.CodingKeys.requestKey.stringValue,
+                                       PaymentFinishRequestData.CodingKeys.cardData.stringValue]
 
     ///
     /// - Parameter requestData: `FinishAddCardData`
     init(requestData: FinishAddCardData) {
         parameters = [:]
         parameters?.updateValue(requestData.cardData(), forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-        parameters?.updateValue(requestData.requestKey, forKey: FinishAddCardData.CodingKeys.requestKey.rawValue)
+        parameters?.updateValue(requestData.requestKey, forKey: FinishAddCardData.CodingKeys.requestKey.stringValue)
     }
 }
 
