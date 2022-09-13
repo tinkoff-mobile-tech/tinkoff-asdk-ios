@@ -72,6 +72,7 @@ struct APIConstants {
         static let paymentSystem = "PaymentSystem"
         static let rebillId = "RebillId"
         static let cards = "Cards"
+        static let checkType = "CheckType"
     }
     
     struct Values {
