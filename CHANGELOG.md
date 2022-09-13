@@ -1,6 +1,11 @@
 # Changelog
 ## [Unreleased]
 
+## [2.10.2] - 2022-09-13Z
+
+### Added
+* Xcode 14 support
+
 ## [2.10.0] - 2022-08-31Z
 
 ### Changed
