@@ -55,7 +55,7 @@ public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
     public var terminalKey: String?
 
     // MARK: PaymentInvoice
-    
+
     public var orderId: String
     public var paymentId: Int64
     public var qrCodeData: String

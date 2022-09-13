@@ -54,7 +54,6 @@ public struct FinishPaymentRequestData {
     }
 }
 
-@available(*, deprecated, message: "Use `FinishPaymentRequestData` instead")
 public struct PaymentFinishRequestData: Codable {
     /// Номер платежа, полученного после инициализации платежа
     var paymentId: Int64

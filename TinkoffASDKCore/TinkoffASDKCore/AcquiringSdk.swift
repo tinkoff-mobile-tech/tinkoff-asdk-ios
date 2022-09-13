@@ -718,6 +718,25 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completion)
     }
 
+    /// Получить ссылку для оплаты с помощью `TinkoffPay`
+    ///
+    /// - Parameters:
+    ///   - paymentId: `Int64` - идентификтор платежа
+    ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
+    ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
+    @discardableResult
+    @available(*, deprecated, message: "Use `getTinkoffPayLink(paymentId:version:completion` with String `paymentId` instead")
+    public func getTinkoffPayLink(
+        paymentId: Int64,
+        version: GetTinkoffPayStatusResponse.Status.Version,
+        completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
+    ) -> Cancellable {
+        let request = GetTinkoffLinkRequest(paymentId: String(paymentId), version: version, baseURL: baseURL)
+
+        return api.performRequest(request, completion: completion)
+    }
+
     // MARK: Get Certs Config
     // TODO: (MIC-6303) Переписать метод под новый формат ответа
 
