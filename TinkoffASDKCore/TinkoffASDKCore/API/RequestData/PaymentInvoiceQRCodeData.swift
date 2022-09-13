@@ -37,21 +37,31 @@ public enum PaymentInvoiceSBPSourceType: String, Codable {
 }
 
 public struct PaymentInvoiceQRCodeData: Codable {
-    ///
-    /// Уникальный идентификатор транзакции в системе Банка
-    var paymentId: PaymentId
+    enum CodingKeys: CodingKey {
+        case paymentId
+        case paymentInvoiceType
 
-    ///
-    /// Тип возвращаемых данных
-    var paymentInvoiceType: PaymentInvoiceSBPSourceType
-
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-        case paymentInvoiceType = "DataType"
+        var stringValue: String {
+            switch self {
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .paymentInvoiceType: return APIConstants.Keys.dataType
+            }
+        }
     }
+
+    /// Уникальный идентификатор транзакции в системе Банка
+    let paymentId: PaymentId
+    /// Тип возвращаемых данных
+    let paymentInvoiceType: PaymentInvoiceSBPSourceType
 
     public init(paymentId: PaymentId, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
         self.paymentId = paymentId
+        self.paymentInvoiceType = paymentInvoiceType
+    }
+
+    @available(*, deprecated, message: "Use `init(paymentId, paymentInvoiceType)` with string `paymentId` instead")
+    public init(paymentId: Int64, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
+        self.paymentId = String(paymentId)
         self.paymentInvoiceType = paymentInvoiceType
     }
 

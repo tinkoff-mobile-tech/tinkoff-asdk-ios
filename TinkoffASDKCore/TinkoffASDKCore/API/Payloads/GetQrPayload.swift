@@ -21,15 +21,11 @@
 import Foundation
 
 public struct GetQrPayload: Decodable {
-    public let qrCodeData: String
-    public let orderId: String
-    public let paymentId: PaymentId
-    
     private enum CodingKeys: CodingKey {
         case qrCodeData
         case orderId
         case paymentId
-        
+
         var stringValue: String {
             switch self {
             case .qrCodeData: return APIConstants.Keys.qrCodeData
@@ -39,9 +35,15 @@ public struct GetQrPayload: Decodable {
         }
     }
     
-    public init(qrCodeData: String,
-                orderId: String,
-                paymentId: PaymentId) {
+    public let qrCodeData: String
+    public let orderId: String
+    public let paymentId: PaymentId
+    
+    public init(
+        qrCodeData: String,
+        orderId: String,
+        paymentId: PaymentId
+    ) {
         self.qrCodeData = qrCodeData
         self.orderId = orderId
         self.paymentId = paymentId
@@ -55,8 +57,7 @@ public struct GetQrPayload: Decodable {
         if let paymentId = try? container.decode(PaymentId.self, forKey: .paymentId) {
             self.paymentId = paymentId
         } else {
-            let paymentIdNumber = try container.decode(Int64.self, forKey: .paymentId)
-            self.paymentId = String(paymentIdNumber)
+            self.paymentId = String(try container.decode(Int64.self, forKey: .paymentId))
         }
     }
 }

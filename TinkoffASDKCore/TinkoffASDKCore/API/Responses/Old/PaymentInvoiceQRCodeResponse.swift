@@ -21,19 +21,6 @@
 import Foundation
 
 public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
-    // MARK: AcquiringResponseProtocol
-    public var success: Bool
-    public var errorCode: Int
-    public var errorMessage: String?
-    public var errorDetails: String?
-    public var terminalKey: String?
-
-    // MARK: PaymentInvoice
-    public var orderId: String
-    public var paymentId: Int64
-    public var qrCodeData: String
-
-    // MARK: Codable
     private enum CodingKeys: String, CodingKey {
         case success = "Success"
         case errorCode = "ErrorCode"
@@ -44,7 +31,34 @@ public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
         case orderId = "OrderId"
         case paymentId = "PaymentId"
         case qrCodeData = "Data"
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .orderId: return APIConstants.Keys.orderId
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .qrCodeData: return APIConstants.Keys.qrCodeData
+            }
+        }
     }
+
+    // MARK: AcquiringResponseProtocol
+
+    public var success: Bool
+    public var errorCode: Int
+    public var errorMessage: String?
+    public var errorDetails: String?
+    public var terminalKey: String?
+
+    // MARK: PaymentInvoice
+    
+    public var orderId: String
+    public var paymentId: Int64
+    public var qrCodeData: String
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
