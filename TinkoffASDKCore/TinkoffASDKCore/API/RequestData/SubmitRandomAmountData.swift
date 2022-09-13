@@ -21,15 +21,10 @@
 import Foundation
 
 public struct SubmitRandomAmountData: Codable {
-    // Сумма в копейках
-    let amount: Int64
-    // Идентификатор запроса на привязку карты
-    let requestKey: String
-    
     enum CodingKeys: CodingKey {
         case amount
         case requestKey
-        
+
         var stringValue: String {
             switch self {
             case .amount: return APIConstants.Keys.amount
@@ -37,7 +32,12 @@ public struct SubmitRandomAmountData: Codable {
             }
         }
     }
-    
+
+    // Сумма в копейках
+    let amount: Int64
+    // Идентификатор запроса на привязку карты
+    let requestKey: String
+
     public init(amount: Int64, requestKey: String) {
         self.amount = amount
         self.requestKey = requestKey

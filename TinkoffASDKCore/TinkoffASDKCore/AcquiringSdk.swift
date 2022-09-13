@@ -464,7 +464,7 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
+    ///   - data: `FinishAddCardData` информация о клиенте и типе новой карты
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
@@ -501,7 +501,7 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Submit Random Amount
 
-    /// Подтверждения карты путем блокировки случайной суммы
+    /// Подтверждение карты путем блокировки случайной суммы
     ///
     /// - Parameters:
     ///   - data: `SubmitRandomAmountData`
