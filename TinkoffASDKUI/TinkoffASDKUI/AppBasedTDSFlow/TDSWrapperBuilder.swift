@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import ThreeDSWrapper
 import TinkoffASDKCore
 
@@ -26,17 +25,18 @@ protocol ITDSWrapperBuilder {
 }
 
 final class TDSWrapperBuilder: ITDSWrapperBuilder {
-    
+
     private let env: AcquiringSdkEnvironment
     private let language: AcquiringSdkLanguage?
-    
-    init(env: AcquiringSdkEnvironment,
-         language: AcquiringSdkLanguage?) {
+
+    init(
+        env: AcquiringSdkEnvironment,
+        language: AcquiringSdkLanguage?
+    ) {
         self.env = env
         self.language = language
     }
-    
-    
+
     func build() -> TDSWrapper {
         let locale: Locale
 
@@ -48,19 +48,23 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         default:
             locale = Locale(identifier: .russian)
         }
-        
-        let sdkConfiguration = TDSWrapper.SDKConfiguration(uiCustomization: buildUICustomization(),
-                                                           locale: locale)
-        return TDSWrapper(sdkConfiguration: sdkConfiguration,
-                          wrapperConfiguration: .init(environment: env == .test ? .test : .production))
+
+        let sdkConfiguration = TDSWrapper.SDKConfiguration(
+            uiCustomization: buildUICustomization(),
+            locale: locale
+        )
+        return TDSWrapper(
+            sdkConfiguration: sdkConfiguration,
+            wrapperConfiguration: TDSWrapper.WrapperConfiguration(environment: env == .test ? .test : .production)
+        )
     }
-    
+
     private func buildUICustomization() -> ThreeDSWrapper.UiCustomization {
         let customization = ThreeDSWrapper.UiCustomization()
-        
+
         let regularFont = UIFont.systemFont(ofSize: .regularFontSize)
         let semiboldFont = UIFont.systemFont(ofSize: .regularFontSize, weight: .semibold)
-        
+
         let labelCustomization = ThreeDSWrapper.LabelCustomization()
         labelCustomization.setHeadingTextColor(UIColor.asdk.dynamic.text.primary.hex)
         labelCustomization.setHeadingTextFontName(semiboldFont.fontName)
@@ -69,55 +73,55 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         labelCustomization.setTextFontName(regularFont.fontName)
         labelCustomization.setTextFontSize(Int(regularFont.pointSize))
         customization.setLabelCustomization(labelCustomization)
-        
-        let buttonCustomization: ThreeDSWrapper.ButtonCustomization = ThreeDSWrapper.ButtonCustomization()
+
+        let buttonCustomization = ThreeDSWrapper.ButtonCustomization()
         buttonCustomization.setBackgroundColor(UIColor.asdk.yellow.hex)
         buttonCustomization.setCornerRadius(.buttonCornerRadius)
         buttonCustomization.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         buttonCustomization.setTextFontSize(Int(regularFont.pointSize))
         buttonCustomization.setTextFontName(regularFont.fontName)
         customization.setButtonCustomization(buttonCustomization: buttonCustomization, buttonType: .SUBMIT)
-        
-        let buttonCustomizationResend: ThreeDSWrapper.ButtonCustomization = ThreeDSWrapper.ButtonCustomization()
+
+        let buttonCustomizationResend = ThreeDSWrapper.ButtonCustomization()
         buttonCustomizationResend.setBackgroundColor(UIColor.asdk.yellow.hex)
         buttonCustomizationResend.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationResend.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         buttonCustomizationResend.setTextFontSize(Int(regularFont.pointSize))
         buttonCustomizationResend.setTextFontName(regularFont.fontName)
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationResend, buttonType: .RESEND)
-        
-        let buttonCustomizationVerify: ThreeDSWrapper.ButtonCustomization = ThreeDSWrapper.ButtonCustomization()
+
+        let buttonCustomizationVerify = ThreeDSWrapper.ButtonCustomization()
         buttonCustomizationVerify.setBackgroundColor(UIColor.asdk.yellow.hex)
         buttonCustomizationVerify.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationVerify.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         buttonCustomizationVerify.setTextFontSize(Int(regularFont.pointSize))
         buttonCustomizationVerify.setTextFontName(regularFont.fontName)
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationVerify, buttonType: .VERIFY)
-        
-        let buttonCustomizationContinue: ThreeDSWrapper.ButtonCustomization = ThreeDSWrapper.ButtonCustomization()
+
+        let buttonCustomizationContinue = ThreeDSWrapper.ButtonCustomization()
         buttonCustomizationContinue.setBackgroundColor(UIColor.asdk.yellow.hex)
         buttonCustomizationContinue.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationContinue.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         buttonCustomizationContinue.setTextFontSize(Int(regularFont.pointSize))
         buttonCustomizationContinue.setTextFontName(regularFont.fontName)
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationContinue, buttonType: .CONTINUE)
-        
-        let buttonCustomizationNext: ThreeDSWrapper.ButtonCustomization = ThreeDSWrapper.ButtonCustomization()
+
+        let buttonCustomizationNext = ThreeDSWrapper.ButtonCustomization()
         buttonCustomizationNext.setBackgroundColor(UIColor.asdk.yellow.hex)
         buttonCustomizationNext.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationNext.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         buttonCustomizationNext.setTextFontSize(Int(regularFont.pointSize))
         buttonCustomizationNext.setTextFontName(regularFont.fontName)
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationNext, buttonType: .NEXT)
-        
-        let buttonCustomizationCancel: ThreeDSWrapper.ButtonCustomization = ThreeDSWrapper.ButtonCustomization()
+
+        let buttonCustomizationCancel = ThreeDSWrapper.ButtonCustomization()
         buttonCustomizationCancel.setBackgroundColor(UIColor.asdk.yellow.hex)
         buttonCustomizationCancel.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationCancel.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
         buttonCustomizationCancel.setTextFontSize(Int(regularFont.pointSize))
         buttonCustomizationCancel.setTextFontName(regularFont.fontName)
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationCancel, buttonType: .CANCEL)
-        
+
         let textBoxCustomization = ThreeDSWrapper.TextBoxCustomization()
         textBoxCustomization.setBorderWidth(1)
         textBoxCustomization.setBorderColor(UIColor.asdk.dynamic.background.separator.hex)
@@ -126,7 +130,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         textBoxCustomization.setTextFontSize(Int(regularFont.pointSize))
         textBoxCustomization.setTextFontName(regularFont.fontName)
         customization.setTextBoxCustomization(textBoxCustomization)
-        
+
         let toolbarCustomization = ThreeDSWrapper.ToolbarCustomization()
         toolbarCustomization.setBackgroundColor(UIColor.asdk.dynamic.background.base.hex)
         toolbarCustomization.setTextColor(UIColor.asdk.dynamic.text.primary.hex)
@@ -136,7 +140,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         toolbarCustomization.setButtonText(Loc.TinkoffAcquiring.Threeds.cancelAuth)
 
         customization.setToolbarCusomization(toolbarCustomization)
-        
+
         return customization
     }
 }

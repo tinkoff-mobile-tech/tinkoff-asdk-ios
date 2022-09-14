@@ -17,22 +17,25 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 public final class DimmingTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
-    
+
     private weak var dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?
-    
+
     init(dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?) {
         self.dimmingPresentationControllerDelegate = dimmingPresentationControllerDelegate
     }
-    
-    public func presentationController(forPresented presented: UIViewController,
-                                presenting: UIViewController?,
-                                source: UIViewController) -> UIPresentationController? {
-        let controller = DimmingPresentationController(presentedViewController: presented,
-                                                       presenting: presenting)
+
+    public func presentationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController?,
+        source: UIViewController
+    ) -> UIPresentationController? {
+        let controller = DimmingPresentationController(
+            presentedViewController: presented,
+            presenting: presenting
+        )
         controller.dimmingPresentationControllerDelegate = dimmingPresentationControllerDelegate
         return controller
     }

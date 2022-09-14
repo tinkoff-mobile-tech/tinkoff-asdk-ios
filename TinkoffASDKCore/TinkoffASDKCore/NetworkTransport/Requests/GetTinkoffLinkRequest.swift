@@ -8,26 +8,28 @@
 import Foundation
 
 public struct GetTinkoffLinkRequest: RequestOperation {
-    
+
     // MARK: - RequestOperation
-    
+
     public var name: String {
         createRequestName()
     }
-    
+
     public var requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
-    
+
+    public var parameters: JSONObject?
+
     // MARK: - Parameters
-    
+
     private let paymentId: Int64
     private let version: GetTinkoffPayStatusResponse.Status.Version
-    
+
     // MARK: - Init
-    
-    init(paymentId: Int64,
-         version: GetTinkoffPayStatusResponse.Status.Version) {
+
+    init(
+        paymentId: Int64,
+        version: GetTinkoffPayStatusResponse.Status.Version
+    ) {
         self.paymentId = paymentId
         self.version = version
     }
@@ -43,4 +45,3 @@ private extension GetTinkoffLinkRequest {
         return endpointURL.absoluteString
     }
 }
-

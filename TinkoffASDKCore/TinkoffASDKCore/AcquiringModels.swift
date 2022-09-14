@@ -360,7 +360,7 @@ public enum Taxation: String {
     case esn
 
     /// Патентная
-    case patent = "patent"
+    case patent
 
     public init(rawValue: String) {
         switch rawValue {
@@ -600,7 +600,7 @@ public struct SupplierInfo: Codable {
 ///
 /// Информация о товаре
 public struct Item: Codable {
-    
+
     /// Сумма в копейках. Целочисленное значение не более 10 знаков.
     var price: Int64 = 0
 
@@ -674,19 +674,21 @@ public struct Item: Codable {
         agentData = try? container.decode(AgentData.self, forKey: .agentData)
         supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
     }
-    
-    public init(amount: Int64,
-                price: Int64,
-                name: String,
-                tax: Tax,
-                quantity: Double = 1,
-                paymentObject: PaymentObject? = nil,
-                paymentMethod: PaymentMethod? = nil,
-                ean13: String? = nil,
-                shopCode: String? = nil,
-                measurementUnit: String? = nil,
-                supplierInfo: SupplierInfo? = nil,
-                agentData: AgentData? = nil) {
+
+    public init(
+        amount: Int64,
+        price: Int64,
+        name: String,
+        tax: Tax,
+        quantity: Double = 1,
+        paymentObject: PaymentObject? = nil,
+        paymentMethod: PaymentMethod? = nil,
+        ean13: String? = nil,
+        shopCode: String? = nil,
+        measurementUnit: String? = nil,
+        supplierInfo: SupplierInfo? = nil,
+        agentData: AgentData? = nil
+    ) {
         self.amount = amount
         self.price = price
         self.name = name
@@ -702,18 +704,20 @@ public struct Item: Codable {
     }
 
     @available(*, deprecated, message: "Рекомендуется использовать метод, который принимает параметры amount и price в копейках (Int64).")
-    public init(amount: NSDecimalNumber,
-                price: NSDecimalNumber,
-                name: String,
-                tax: Tax,
-                quantity: Double = 1,
-                paymentObject: PaymentObject? = nil,
-                paymentMethod: PaymentMethod? = nil,
-                ean13: String? = nil,
-                shopCode: String? = nil,
-                measurementUnit: String? = nil,
-                supplierInfo: SupplierInfo? = nil,
-                agentData: AgentData? = nil) {
+    public init(
+        amount: NSDecimalNumber,
+        price: NSDecimalNumber,
+        name: String,
+        tax: Tax,
+        quantity: Double = 1,
+        paymentObject: PaymentObject? = nil,
+        paymentMethod: PaymentMethod? = nil,
+        ean13: String? = nil,
+        shopCode: String? = nil,
+        measurementUnit: String? = nil,
+        supplierInfo: SupplierInfo? = nil,
+        agentData: AgentData? = nil
+    ) {
         self.amount = Int64(amount.doubleValue * 100)
         self.price = Int64(price.doubleValue * 100)
         self.name = name
@@ -858,16 +862,17 @@ public class Receipt: Codable {
         customerInn = try? container.decode(String.self, forKey: .customerInn)
     }
 
-    public init(shopCode: String?,
-                email: String?,
-                taxation: Taxation?,
-                phone: String?,
-                items: [Item]?,
-                agentData: AgentData?,
-                supplierInfo: SupplierInfo?,
-                customer: String?,
-                customerInn: String?)
-    {
+    public init(
+        shopCode: String?,
+        email: String?,
+        taxation: Taxation?,
+        phone: String?,
+        items: [Item]?,
+        agentData: AgentData?,
+        supplierInfo: SupplierInfo?,
+        customer: String?,
+        customerInn: String?
+    ) {
         self.shopCode = shopCode
         self.email = email
         self.taxation = taxation

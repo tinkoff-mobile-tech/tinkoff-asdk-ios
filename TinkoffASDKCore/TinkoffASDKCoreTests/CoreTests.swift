@@ -24,8 +24,10 @@ class CoreTests: XCTestCase {
     private var sdk: AcquiringSdk!
 
     override func setUp() {
-        let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                publicKey: StageTestData.testPublicKey)
+        let credential = AcquiringSdkCredential(
+            terminalKey: StageTestData.terminalKey,
+            publicKey: StageTestData.testPublicKey
+        )
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -62,11 +64,11 @@ class CoreTests: XCTestCase {
             tokenParams.updateValue(StageTestData.terminalKey, forKey: "TerminalKey")
             tokenParams.updateValue(StageTestData.terminalPassword, forKey: "Password")
 
-            tokenParams.merge(request.tokenParams()) { (_, new) -> JSONValue in new }
+            tokenParams.merge(request.tokenParams()) { _, new -> JSONValue in new }
 
-            let tokenSring: String = tokenParams.sorted(by: { (arg1, arg2) -> Bool in
+            let tokenSring: String = tokenParams.sorted(by: { arg1, arg2 -> Bool in
                 arg1.key < arg2.key
-            }).map { (item) -> String? in
+            }).map { item -> String? in
                 String(describing: item.value)
             }.compactMap { $0 }.joined()
 

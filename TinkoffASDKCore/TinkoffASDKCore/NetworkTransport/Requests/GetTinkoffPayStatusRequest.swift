@@ -17,27 +17,26 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetTinkoffPayStatusRequest: RequestOperation {
-    
+
     // MARK: - RequestOperation
-    
+
     public var name: String {
         createRequestName()
     }
-    
+
     public var requestMethod: RequestMethod = .get
-    
-    public var parameters: JSONObject? = nil
-    
+
+    public var parameters: JSONObject?
+
     // MARK: - Parameters
-    
+
     private let terminalKey: String
-    
+
     // MARK: - Init
-    
+
     init(terminalKey: String) {
         self.terminalKey = terminalKey
     }

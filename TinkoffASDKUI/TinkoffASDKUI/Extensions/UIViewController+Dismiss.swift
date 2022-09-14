@@ -9,7 +9,7 @@ import UIKit
 
 extension UIViewController {
     func dismissPresentedIfNeeded(animated: Bool = true, then completion: (() -> Void)? = nil) {
-        if let presentedViewController = self.presentedViewController {
+        if let presentedViewController = presentedViewController {
             if presentedViewController.isBeingPresented {
                 transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
                     self.dismiss(animated: animated, completion: completion)
@@ -19,7 +19,7 @@ extension UIViewController {
                     completion?()
                 })
             } else {
-                self.dismiss(animated: animated) {
+                dismiss(animated: animated) {
                     completion?()
                 }
             }

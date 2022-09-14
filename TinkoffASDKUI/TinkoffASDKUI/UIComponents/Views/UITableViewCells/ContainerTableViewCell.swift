@@ -17,46 +17,53 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class ContainerTableViewCell: UITableViewCell, ReusableCell {
     var onReuse: (() -> Void)?
-    
+
     private let containerView = UIView()
     private var cellContentView: UIView?
-    
-    override init(style: UITableViewCell.CellStyle,
-                  reuseIdentifier: String?) {
-        super.init(style: style,
-                   reuseIdentifier: reuseIdentifier)
+
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?
+    ) {
+        super.init(
+            style: style,
+            reuseIdentifier: reuseIdentifier
+        )
         setup()
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func prepareForReuse() {
+        super.prepareForReuse()
         cellContentView?.removeFromSuperview()
         cellContentView = nil
         onReuse?()
     }
-    
-    func setContent(_ contentView: UIView,
-                    insets: UIEdgeInsets) {
+
+    func setContent(
+        _ contentView: UIView,
+        insets: UIEdgeInsets
+    ) {
         cellContentView?.removeFromSuperview()
         cellContentView = nil
-        
+
         cellContentView = contentView
         containerView.addSubview(contentView)
-        
+
         contentView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: insets.top),
             contentView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -insets.bottom),
             contentView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: insets.left),
-            contentView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -insets.right)
+            contentView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -insets.right),
         ])
     }
 }
@@ -70,7 +77,7 @@ private extension ContainerTableViewCell {
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             containerView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 }

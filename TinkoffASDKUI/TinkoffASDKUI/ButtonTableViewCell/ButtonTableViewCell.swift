@@ -42,7 +42,7 @@ class ButtonTableViewCell: UITableViewCell {
     @IBAction private func buttonActionTouchUpInside(_: UIButton) {
         onButtonTouch?()
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateColors()

@@ -17,12 +17,11 @@
 //  limitations under the License.
 //
 
-
 import ThreeDSWrapper
 
 enum TDSFlowError: Swift.Error {
     case invalidPaymentSystem
-    case updatingCertsError([CertificateUpdatingRequest : TDSWrapperError])
+    case updatingCertsError([CertificateUpdatingRequest: TDSWrapperError])
     case timeout
 }
 
@@ -31,7 +30,7 @@ extension TDSFlowError: LocalizedError {
         switch self {
         case .invalidPaymentSystem:
             return Loc.TinkoffAcquiring.Threeds.Error.invalidPaymentSystem
-        case .updatingCertsError(let dictionary):
+        case let .updatingCertsError(dictionary):
             return Loc.TinkoffAcquiring.Threeds.Error.updatingCertsError + String(describing: dictionary)
         case .timeout:
             return Loc.TinkoffAcquiring.Threeds.Error.timeout

@@ -68,8 +68,18 @@ class PopUpViewContoller: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowOnTableView(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideOnTableView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShowOnTableView(notification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHideOnTableView(notification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
 
         panGesture.delegate = self
         view.addGestureRecognizer(panGesture)
@@ -157,11 +167,12 @@ class PopUpViewContoller: UIViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
-        coordinator.animate(alongsideTransition: { _ in
-            //
-        }) { [weak self] _ in
-            self?.updateView()
-        }
+        coordinator.animate(
+            alongsideTransition: { _ in },
+            completion: { [weak self] _ in
+                self?.updateView()
+            }
+        )
     }
 
     func updatePreferredContentSizeWithTraitCollection(_ traitCollection: UITraitCollection) {
@@ -218,7 +229,7 @@ class PopUpViewContoller: UIViewController {
 
     func pushToNavigationStackAndActivate(firstResponder textField: UIView?, completion: (() -> Void)? = nil) -> Bool {
         guard case .dynamic = popupStyle else { return true }
-        
+
         if panGesture.delegate == nil {
             completion?()
             return true
@@ -230,13 +241,13 @@ class PopUpViewContoller: UIViewController {
         didAppearTextFieldNeedBecomeFirstResponder = textField
 
         if let presentingNavigationController = presentingViewController as? UINavigationController {
-            
+
             /// Sometimes PopUpViewController may be presenting other UIViewController
             /// in that case when we call dismiss this presented UIViewController will be dismissed
             /// and when we call `nav.pushViewController(self, animated: false)` after it
             /// happens issue like that https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS/issues/14
             /// To prevent it we dismiss any possible presented UIViewController and after that perform self dismiss
-            
+
             dismissPresentedIfNeeded(animated: true) { [weak self] in
                 guard let self = self else { return }
                 self.dismiss(animated: false) {
@@ -246,7 +257,7 @@ class PopUpViewContoller: UIViewController {
                     }
                 }
             }
-            
+
             return false
 
         } else if let parentViewController = presentingViewController {
@@ -277,7 +288,8 @@ class PopUpViewContoller: UIViewController {
     }
 
     func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo as NSDictionary?, let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
+        if let userInfo = notification.userInfo as NSDictionary?,
+           let keyboardFrame = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
 
@@ -290,18 +302,24 @@ class PopUpViewContoller: UIViewController {
                 if firstResponderHeight > preferredContentSize.height {
                     delaySetContentInset = 0.3
 
-                    UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
-                        self.preferredContentSize = CGSize(width: self.preferredContentSize.width, height: firstResponderHeight)
-                        self.presentationController?.containerView?.setNeedsLayout()
-                        self.presentationController?.containerView?.layoutIfNeeded()
-                    }) { [weak self] complete in
-                        if complete {
-                            if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
-                                _ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder)
+                    UIView.animate(
+                        withDuration: 0.3,
+                        delay: 0,
+                        options: .curveEaseOut,
+                        animations: {
+                            self.preferredContentSize = CGSize(width: self.preferredContentSize.width, height: firstResponderHeight)
+                            self.presentationController?.containerView?.setNeedsLayout()
+                            self.presentationController?.containerView?.layoutIfNeeded()
+                        },
+                        completion: { [weak self] complete in
+                            if complete {
+                                if let height = self?.currentPopUpViewMaxHeight, firstResponderHeight > height {
+                                    _ = self?.pushToNavigationStackAndActivate(firstResponder: self?.view.firstResponder)
+                                }
                             }
                         }
-                    } // UIView.animate complete
-                } // firstRespondetTop > preferredContentSize.height
+                    )
+                }
 
                 UIView.animate(withDuration: 0.3, delay: delaySetContentInset, options: .curveEaseOut, animations: { [weak self] in
                     self?.tableView.contentInset = keyboardContentInset

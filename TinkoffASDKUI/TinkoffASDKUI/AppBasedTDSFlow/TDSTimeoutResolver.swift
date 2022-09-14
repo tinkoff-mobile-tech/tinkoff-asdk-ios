@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 protocol ITimeoutResolver {
@@ -28,11 +27,11 @@ protocol ITimeoutResolver {
 final class TDSTimeoutResolver: ITimeoutResolver {
     /// Максмальное время для проведение всего флоу 3ds в минутах
     private let timeout = 5
-    
+
     var mapiValue: String {
         "0" + String(timeout)
     }
-    
+
     var challengeValue: Int {
         timeout
     }

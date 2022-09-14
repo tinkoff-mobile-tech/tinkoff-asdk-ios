@@ -21,8 +21,8 @@ import UIKit
 
 class SwitchTableViewCell: UITableViewCell, NibLoadable {
 
-    @IBOutlet weak var labelTitle: UILabel!
-    @IBOutlet weak var switcher: UISwitch!
+    @IBOutlet var labelTitle: UILabel!
+    @IBOutlet var switcher: UISwitch!
 
     var onSwitcherChange: ((_ sender: UISwitch) -> Void)?
 

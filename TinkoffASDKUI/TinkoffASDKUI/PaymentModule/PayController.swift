@@ -6,19 +6,19 @@
 //
 
 import Foundation
-
-import Foundation
 import TinkoffASDKCore
 
 final class PayController {
     private let sdk: AcquiringSdk
-    
+
     init(sdk: AcquiringSdk) {
         self.sdk = sdk
     }
-    
-    func initPayment(with initData: PaymentInitData,
-                     completion: @escaping (Result<Int64, Error>) -> Void) {
+
+    func initPayment(
+        with initData: PaymentInitData,
+        completion: @escaping (Result<Int64, Error>) -> Void
+    ) {
         _ = sdk.paymentInit(data: initData, completionHandler: { result in
             DispatchQueue.main.async {
                 switch result {
@@ -32,6 +32,4 @@ final class PayController {
     }
 }
 
-private extension PayController {
-    
-}
+private extension PayController {}

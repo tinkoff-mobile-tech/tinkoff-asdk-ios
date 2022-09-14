@@ -17,12 +17,13 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 class PassthroughView: UIView {
-    override func hitTest(_ point: CGPoint,
-                          with event: UIEvent?) -> UIView? {
+    override func hitTest(
+        _ point: CGPoint,
+        with event: UIEvent?
+    ) -> UIView? {
         let resultView = super.hitTest(point, with: event)
         guard resultView !== self else { return nil }
         return resultView

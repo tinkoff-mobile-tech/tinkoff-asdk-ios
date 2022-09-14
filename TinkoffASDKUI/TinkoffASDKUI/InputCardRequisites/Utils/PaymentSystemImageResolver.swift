@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 protocol IPaymentSystemImageResolver {
@@ -33,7 +32,7 @@ final class PaymentSystemImageResolver: IPaymentSystemImageResolver {
 
     func resolve(by inputPAN: String?) -> UIImage? {
         typealias Card = Asset.CardRequisites
-        
+
         switch paymentSystemResolver.resolve(by: inputPAN) {
         case .resolved(.visa):
             return Card.visaLogo.image

@@ -17,19 +17,19 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class SBPBankListHeaderView: UIView {
-    
+
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -39,30 +39,30 @@ private extension SBPBankListHeaderView {
     func setup() {
         addSubview(titleLabel)
         addSubview(subtitleLabel)
-        
+
         titleLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         subtitleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         subtitleLabel.textColor = UIColor.asdk.n3
 
         titleLabel.numberOfLines = 1
         subtitleLabel.numberOfLines = 0
-        
+
         setupConstraints()
     }
-    
+
     func setupConstraints() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: .titleTopOffset),
             titleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: .contentSideOffset),
             titleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -.contentSideOffset),
-            
+
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: .subtitleTopOffset),
             subtitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: .contentSideOffset),
             subtitleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -.contentSideOffset),
-            subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.subtitleBottomOffset)
+            subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.subtitleBottomOffset),
         ])
     }
 }

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 extension UICollectionView {
@@ -27,10 +26,12 @@ extension UICollectionView {
         }
     }
 
+    // swiftlint:disable force_cast
     func dequeue<T: UICollectionViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
         dequeueReusableCell(
             withReuseIdentifier: String(describing: type),
             for: indexPath
         ) as! T
     }
+    // swiftlint:enable force_cast
 }

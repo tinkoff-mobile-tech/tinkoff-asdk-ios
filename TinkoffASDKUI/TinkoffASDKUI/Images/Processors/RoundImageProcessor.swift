@@ -22,7 +22,7 @@ import UIKit
 final class RoundImageProcessor: ImageProcessor {
     func processImage(_ image: UIImage) -> UIImage {
         let imageRenderer = UIGraphicsImageRenderer(size: image.size)
-        return imageRenderer.image { context in
+        return imageRenderer.image { _ in
             let path = UIBezierPath(ovalIn: CGRect(origin: .zero, size: image.size))
             path.addClip()
             image.draw(in: CGRect(origin: .zero, size: image.size))

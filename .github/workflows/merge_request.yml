@@ -11,6 +11,16 @@ on:
         type: string
 
 jobs:
+  swiftlint:
+    runs-on: ubuntu-latest
+    container: ghcr.io/realm/swiftlint:0.47.0
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Swiftlint Run
+        working-directory: ASDKSample
+        run: swiftlint --quiet
+
   check:
     runs-on: macos-11
     steps:
@@ -32,13 +42,6 @@ jobs:
           XCODEPROJ_PATH: ${{ inputs.xcodeproj_path }}
           SCHEME_NAME: ${{ inputs.scheme_name }}
         run: bundle exec fastlane check
-
-  swiftlint:
-    runs-on: ubuntu-latest
-    container: ghcr.io/realm/swiftlint:0.47.0
-    steps:
-      - uses: actions/checkout@v3
-      - run: swiftlint --quiet
-
+    
   # check:
   #   uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1

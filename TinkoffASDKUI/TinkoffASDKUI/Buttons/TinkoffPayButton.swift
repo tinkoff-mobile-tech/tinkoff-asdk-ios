@@ -20,64 +20,66 @@
 import UIKit
 
 public final class TinkoffPayButton: UIButton {
-    
+
     public struct DynamicStyle {
         let lightStyle: Style
         let darkStyle: Style
-        
-        public init(lightStyle: Style,
-                    darkStyle: Style) {
+
+        public init(
+            lightStyle: Style,
+            darkStyle: Style
+        ) {
             self.lightStyle = lightStyle
             self.darkStyle = darkStyle
         }
     }
-    
+
     public struct Style {
         public enum Color {
             case black
             case white
         }
-        
+
         public static var black: Style {
-            .init(color: .black, isBordered: false)
+            Style(color: .black, isBordered: false)
         }
-        
+
         public static var blackBordered: Style {
-            .init(color: .black, isBordered: true)
+            Style(color: .black, isBordered: true)
         }
-        
+
         public static var white: Style {
-            .init(color: .white, isBordered: false)
+            Style(color: .white, isBordered: false)
         }
-        
+
         public static var whiteBordered: Style {
-            .init(color: .white, isBordered: true)
+            Style(color: .white, isBordered: true)
         }
-        
+
         let color: Color
         let isBordered: Bool
-        
+
         var backgroundColor: UIColor {
             switch color {
             case .black: return .asdk.n15
             case .white: return .asdk.n14
             }
         }
-        
+
         var highlightBackgroundColor: UIColor {
             switch color {
             case .black: return .asdk.black
             case .white: return .asdk.n7
             }
         }
-        
+
         var borderColor: UIColor {
             switch color {
             case .black: return .asdk.n14
             case .white: return .asdk.n15
             }
         }
-        
+
         var image: UIImage? {
             switch color {
             case .black: return Asset.TinkoffPay.tinkoffPayLogoBlack.image
@@ -85,8 +87,8 @@ public final class TinkoffPayButton: UIButton {
             }
         }
     }
-    
-    public override var isHighlighted: Bool {
+
+    override public var isHighlighted: Bool {
         didSet {
             guard #available(iOS 15.0, *) else {
                 guard isHighlighted != oldValue else { return }
@@ -95,20 +97,21 @@ public final class TinkoffPayButton: UIButton {
             }
         }
     }
-    
+
     private var style: Style {
         didSet {
             updateStyle()
         }
     }
+
     private var dynamicStyle: DynamicStyle?
-    
+
     public init(style: Style = .black) {
         self.style = style
         super.init(frame: .zero)
         setup()
     }
-    
+
     public convenience init(dynamicStyle: DynamicStyle) {
         if #available(iOS 13.0, *) {
             switch UITraitCollection.current.userInterfaceStyle {
@@ -122,16 +125,17 @@ public final class TinkoffPayButton: UIButton {
         }
         self.dynamicStyle = dynamicStyle
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    public override var intrinsicContentSize: CGSize {
-        .init(width: .minimumWidth, height: .minimumHeight)
+
+    override public var intrinsicContentSize: CGSize {
+        CGSize(width: .minimumWidth, height: .minimumHeight)
     }
-    
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard let dynamicStyle = dynamicStyle else {
             return
@@ -151,7 +155,7 @@ private extension TinkoffPayButton {
     func setup() {
         updateStyle()
     }
-    
+
     func updateStyle() {
         if #available(iOS 15.0, *) {
             var configuration = UIButton.Configuration.plain()
@@ -189,4 +193,3 @@ private extension CGFloat {
     static let minimumHeight: CGFloat = 44
     static let minimumWidth: CGFloat = 150
 }
-

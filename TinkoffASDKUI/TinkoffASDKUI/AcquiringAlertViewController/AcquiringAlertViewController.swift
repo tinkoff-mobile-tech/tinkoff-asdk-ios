@@ -42,8 +42,8 @@ class AcquiringAlertViewController: UIViewController {
     @IBOutlet private var labelAlertTitle: UILabel!
 
     private var autoCloseTime: TimeInterval = 0
-    private var closedFromTimer: Bool = false
-    private var alertTouch: Bool = false {
+    private var closedFromTimer = false
+    private var alertTouch = false {
         didSet {
             if alertTouch == false {
                 if closedFromTimer == true {
@@ -52,7 +52,7 @@ class AcquiringAlertViewController: UIViewController {
             }
         }
     }
-    
+
     private var dimissCompletionClosure: (() -> Void)?
 
     override func viewDidLoad() {
@@ -119,11 +119,13 @@ class AcquiringAlertViewController: UIViewController {
         }
     }
 
-    public func present(on presentingViewController: UIViewController,
-                        title: String,
-                        icon: AcquiringAlertIconType = .success,
-                        autoCloseTime: TimeInterval = 3,
-                        dismissClosure: (() -> Void)? = nil) {
+    public func present(
+        on presentingViewController: UIViewController,
+        title: String,
+        icon: AcquiringAlertIconType = .success,
+        autoCloseTime: TimeInterval = 3,
+        dismissClosure: (() -> Void)? = nil
+    ) {
         self.autoCloseTime = autoCloseTime
 
         switch icon {
@@ -136,8 +138,8 @@ class AcquiringAlertViewController: UIViewController {
         }
 
         labelAlertTitle.text = title
-        
-        self.dimissCompletionClosure = dismissClosure
+
+        dimissCompletionClosure = dismissClosure
 
         presentingViewController.present(self, animated: true)
     }

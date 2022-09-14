@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 import UIKit
 
@@ -42,6 +41,7 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
         setupView()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -71,8 +71,8 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
             options: .transitionCrossDissolve
         ) { [self] in
             background.backgroundColor = highlighted
-            ? .asdk.dynamic.background.highlight
-            : .clear
+                ? .asdk.dynamic.background.highlight
+                : .clear
         }
     }
 }

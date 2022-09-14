@@ -1,16 +1,16 @@
 PODS:
-  - SwiftFormat/CLI (0.47.2)
+  - SwiftFormat/CLI (0.49.18)
   - SwiftGen (6.6.1)
-  - SwiftLint (0.40.3)
+  - SwiftLint (0.47.0)
   - TinkoffASDKCore (2.10.1)
   - TinkoffASDKCore/Tests (2.10.1)
   - TinkoffASDKUI (2.10.1):
     - TinkoffASDKCore
 
 DEPENDENCIES:
-  - SwiftFormat/CLI (~> 0.47.2)
+  - SwiftFormat/CLI (~> 0.49.18)
   - SwiftGen (~> 6.0)
-  - SwiftLint (~> 0.40.0)
+  - SwiftLint (= 0.47.0)
   - TinkoffASDKCore (from `.`)
   - TinkoffASDKCore/Tests (from `.`)
   - TinkoffASDKUI (from `.`)
@@ -28,12 +28,12 @@ EXTERNAL SOURCES:
     :path: "."
 
 SPEC CHECKSUMS:
-  SwiftFormat: 0315a7115b15fd4ea2d043d5f5c22e3c98f84078
+  SwiftFormat: 2402d29b26746f169cce5454d5af88314cbb2e35
   SwiftGen: 787181d7895fa2f5e7313d05de92c387010149c2
-  SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
+  SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
   TinkoffASDKCore: 2e1f66039354aedb5fe2d6034ee867ea3190b3af
   TinkoffASDKUI: 45fcc9fd1f479c7d4625599353be9259156a9d10
 
-PODFILE CHECKSUM: 43e9bdcabfd843fbce21953a17668800d2cbcd7d
+PODFILE CHECKSUM: e690c1ce17fe0432307a6ecf75ed8977aa61aab6
 
 COCOAPODS: 1.11.3

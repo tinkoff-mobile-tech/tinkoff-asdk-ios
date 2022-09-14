@@ -21,9 +21,9 @@ import UIKit
 
 class CartEmptyTableViewCell: UITableViewCell, NibLoadable {
 
-    @IBOutlet weak var imageViewIcon: UIImageView!
-    @IBOutlet weak var labelTitle: UILabel!
-    @IBOutlet weak var buttonAction: UIButton!
+    @IBOutlet var imageViewIcon: UIImageView!
+    @IBOutlet var labelTitle: UILabel!
+    @IBOutlet var buttonAction: UIButton!
 
     var onButtonTouch: (() -> Void)?
 
