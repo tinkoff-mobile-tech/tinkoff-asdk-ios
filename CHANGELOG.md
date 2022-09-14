@@ -9,10 +9,10 @@
 * [MIC-6293] Update ThreeDSWrapper to 1.0.7
 * [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
 
-### Added
+## [2.10.2] - 2022-09-13Z
 
-* [MIC-5741] Integrate 3ds-app-based flow
-* [MIC-6228] Add 3ds-app-based feature flag
+### Added
+* Xcode 14 support
 
 ## [2.10.0] - 2022-08-31Z
 
