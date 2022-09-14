@@ -7,6 +7,7 @@
 * [MIC-6292] Swift Gen integration for TinkoffASDKUI module
 * [MIC-6292] Swift Package Support & buid Package.swift step for CI/CD
 * [MIC-6293] Update ThreeDSWrapper to 1.0.7
+* [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
 
 ### Added
 
