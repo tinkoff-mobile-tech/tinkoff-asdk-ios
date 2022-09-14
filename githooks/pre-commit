@@ -1,12 +1,12 @@
 #!/bin/bash
 
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
-SWIFTFORMAT_CMD=${PROJECT_ROOT}/Pods/SwiftFormat/CommandLineTool/swiftformat
+SWIFTFORMAT_CMD=${PROJECT_ROOT}/ASDKSample/Pods/SwiftFormat/CommandLineTool/swiftformat
 
 ##### Run swiftformat and add files to index
 
 git diff --diff-filter=d --staged --name-only | grep -e '\(.*\).swift$' | while read line; do
-  $SWIFTFORMAT_CMD "${line}" --config "${PROJECT_ROOT}/.swiftformat"
+  $SWIFTFORMAT_CMD "${line}" --config "${PROJECT_ROOT}/ASDKSample/.swiftformat"
   git add "$line"
 done
 
