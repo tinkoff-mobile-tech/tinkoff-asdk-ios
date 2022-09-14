@@ -8,6 +8,7 @@
 * [MIC-6292] Swift Package Support & buid Package.swift step for CI/CD
 * [MIC-6293] Update ThreeDSWrapper to 1.0.7
 * [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
+* [MIC-5908] Выпилить лишние workspace и pods
 
 ## [2.10.2] - 2022-09-13Z
 
