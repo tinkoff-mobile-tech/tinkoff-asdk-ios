@@ -24,13 +24,40 @@ struct APIURLBuilder {
     enum Error: Swift.Error {
         case failedToBuildAPIUrl
     }
-    
+
     func buildURL(host: String) throws -> URL {
         guard !host.isEmpty else { throw Error.failedToBuildAPIUrl }
         guard let url = URL(string: "https://\(host)") else {
             throw Error.failedToBuildAPIUrl
         }
-        
+
         return url
     }
 }
+
+protocol BaseURLProvider {
+    var baseURL: URL { get }
+}
+
+struct DefaultBaseURLProvider: BaseURLProvider {
+    // MARK: Error
+
+    private struct Error: LocalizedError {
+        private let host: String
+
+        init(host: String) {
+            self.host = host
+        }
+    }
+
+    // MARK: Dependencies
+
+    let baseURL: URL
+
+    // MARK: Init
+
+    init(host: String) throws {
+        self.baseURL = try URL(string: "https://\(host)").orThrow(Error(host: host))
+    }
+}
+

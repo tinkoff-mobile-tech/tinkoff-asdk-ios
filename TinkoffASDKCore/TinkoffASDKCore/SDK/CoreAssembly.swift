@@ -22,9 +22,11 @@ import Foundation
 
 struct CoreAssembly {
     private let configuration: AcquiringSdkConfiguration
+    private let baseURLProvider: BaseURLProvider
     
-    init(configuration: AcquiringSdkConfiguration) {
+    init(configuration: AcquiringSdkConfiguration) throws {
         self.configuration = configuration
+        self.baseURLProvider = try DefaultBaseURLProvider(host: configuration.serverEnvironment.host)
     }
     
     func buildAPI() -> API {
@@ -44,7 +46,7 @@ struct CoreAssembly {
     }
     
     func threeDSURLBuilder() -> ThreeDSURLBuilder {
-        ThreeDSURLBuilder(apiHostProvider: buildAPIHostProvider())
+        ThreeDSURLBuilder(baseURLProvider: baseURLProvider)
     }
     
     func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {

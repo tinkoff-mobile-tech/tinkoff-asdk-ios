@@ -21,24 +21,34 @@
 import Foundation
 
 struct ThreeDSURLBuilder {
+    // MARK: Three3DSURLType
+
     enum Three3DSURLType: String {
         case threeDSCheckNotificationURL = "Complete3DSMethodv2"
         case confirmation3DSTerminationURL = "Submit3DSAuthorization"
         case confirmation3DSTerminationV2URL = "Submit3DSAuthorizationV2"
     }
-    
-    private let apiHostProvider: APIHostProvider
-    
-    init(apiHostProvider: APIHostProvider) {
-        self.apiHostProvider = apiHostProvider
+
+    // MARK: Dependencies
+
+    private let baseURLProvider: BaseURLProvider
+
+    // MARK: Init
+
+    init(baseURLProvider: BaseURLProvider) {
+        self.baseURLProvider = baseURLProvider
     }
 
-    func buildURL(type: Three3DSURLType) throws -> URL {
-        return try apiHostProvider.host()
+    // MARK: URL Building
+
+    func buildURL(type: Three3DSURLType) -> URL {
+        baseURLProvider.baseURL
             .appendingPathComponent(type.apiVersion.path)
             .appendingPathComponent(type.rawValue)
     }
 }
+
+// MARK: Helpers
 
 private extension ThreeDSURLBuilder.Three3DSURLType {
     var apiVersion: APIVersion {

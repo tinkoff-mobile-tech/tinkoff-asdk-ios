@@ -27,6 +27,8 @@ public enum AcquiringSdkError: Error {
 
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
+    // MARK: Dependencies
+
     public let languageKey: AcquiringSdkLanguage?
 
     /// Текущий IP адрес
@@ -44,6 +46,8 @@ public final class AcquiringSdk: NSObject {
     private let coreAssembly: CoreAssembly
     private let api: API
 
+    // MARK: Init
+
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
         self.terminalKey = configuration.credential.terminalKey
@@ -55,7 +59,7 @@ public final class AcquiringSdk: NSObject {
             throw AcquiringSdkError.publicKey(configuration.credential.publicKey)
         }
 
-        coreAssembly = CoreAssembly(configuration: configuration)
+        coreAssembly = try CoreAssembly(configuration: configuration)
         api = coreAssembly.buildAPI()
 
         if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
@@ -76,7 +80,7 @@ public final class AcquiringSdk: NSObject {
             .stringValue
     }
 
-    // MARK: - подтверждение платежа
+    // MARK: 3DS Request building
 
     /// Создать запрос для подтверждения платежа 3DS формы
     ///
@@ -117,27 +121,31 @@ public final class AcquiringSdk: NSObject {
             .build3DSCheckURLRequest(requestData: data)
     }
 
+    // MARK: 3DS URL Building
+
     /// callback URL для завершения 3DS подтверждения
     ///
     /// - Returns:
     ///   - URL
-    public func confirmation3DSTerminationURL() throws -> URL {
-        try coreAssembly
+    public func confirmation3DSTerminationURL() -> URL {
+        coreAssembly
             .threeDSURLBuilder()
             .buildURL(type: .confirmation3DSTerminationURL)
     }
 
-    public func confirmation3DSTerminationV2URL() throws -> URL {
-        try coreAssembly
+    public func confirmation3DSTerminationV2URL() -> URL {
+        coreAssembly
             .threeDSURLBuilder()
             .buildURL(type: .confirmation3DSTerminationV2URL)
     }
 
-    public func confirmation3DSCompleteV2URL() throws -> URL {
-        try coreAssembly
+    public func confirmation3DSCompleteV2URL() -> URL {
+        coreAssembly
             .threeDSURLBuilder()
             .buildURL(type: .threeDSCheckNotificationURL)
     }
+
+    // MARK: 3DS Handling
 
     public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
         coreAssembly.threeDSWebViewHandler()
