@@ -226,14 +226,14 @@ class BuyProductsViewController: UIViewController {
         switch response {
         case let .success(result):
             var message = NSLocalizedString("text.paymentStatusAmount", comment: "Покупка на сумму")
-            message.append(" \(Utils.formatAmount(NSDecimalNumber(value: result.paymentState.amount))) ")
+            message.append(" \(Utils.formatAmount(result.amount)) ")
 
             if result.status == .cancelled {
                 message.append(NSLocalizedString("text.paymentStatusCancel", comment: "отменена"))
             } else {
                 message.append(" ")
                 message.append(NSLocalizedString("text.paymentStatusSuccess", comment: "paymentStatusSuccess"))
-                message.append("\npaymentId = \(result.paymentState.paymentId)")
+                message.append("\npaymentId = \(result.paymentId)")
             }
 
             if AppSetting.shared.acquiring {
