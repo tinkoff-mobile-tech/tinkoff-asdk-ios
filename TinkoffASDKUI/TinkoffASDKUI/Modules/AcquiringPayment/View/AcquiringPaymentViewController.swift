@@ -179,7 +179,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     private lazy var cardListController: CardListViewOutConnection = CardListController()
     private lazy var inputEmailPresenter: InputEmailControllerOutConnection = InputEmailController()
 
-    weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
+    var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
 

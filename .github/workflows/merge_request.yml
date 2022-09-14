@@ -16,10 +16,7 @@ jobs:
     container: ghcr.io/realm/swiftlint:0.47.0
     steps:
       - uses: actions/checkout@v3
-
-      - name: Print out Swiftlint Version on CI
-        run: swiftlint --version
-
+      
       - name: Swiftlint Run
         working-directory: ASDKSample
         run: swiftlint --quiet
