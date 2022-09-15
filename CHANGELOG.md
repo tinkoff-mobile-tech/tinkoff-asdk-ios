@@ -4,8 +4,8 @@
 ### Changed
 
 * [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
-* [MIC-6292] Swift Gen integration for TinkoffASDKUI module
-* [MIC-6292] Swift Package Support & buid Package.swift step for CI/CD
+* [MIC-6275] Swift Gen integration for TinkoffASDKUI module
+* [MIC-6292] Swift Package Support & build Package.swift step for CI/CD
 * [MIC-6293] Update ThreeDSWrapper to 1.0.7
 * [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
 * [MIC-6210] Integrate new Network Layer & Change Public Methods in ASDKCore & Deprecate old methods
