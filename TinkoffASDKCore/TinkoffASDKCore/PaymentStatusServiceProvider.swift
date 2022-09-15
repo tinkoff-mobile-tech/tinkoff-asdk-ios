@@ -69,7 +69,7 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
         fetchStatus = .loading
         startHandler?()
 
-        queryStatus = sdk?.paymentOperationStatus(data: PaymentInfoData(paymentId: paymentId), completionHandler: { [weak self] response in
+        queryStatus = sdk?.paymentOperationStatus(data: GetPaymentStateData(paymentId: paymentId), completionHandler: { [weak self] response in
             var status: FetchStatus<PaymentStatusResponse> = .loading
             switch response {
             case let .failure(error):
