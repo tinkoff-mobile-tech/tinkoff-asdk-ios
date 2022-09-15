@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+import struct CoreGraphics.CGSize
 import Foundation
 import UIKit
 
