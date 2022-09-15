@@ -24,7 +24,7 @@ public struct FinishAuthorizePayload: Decodable {
     public let status: PaymentStatus
     public let paymentState: GetPaymentStatePayload
     public var responseStatus: PaymentFinishResponseStatus
-    public let rebillId: PaymentId?
+    public let rebillId: String?
 
     enum CodingKeys: String, CodingKey {
         case rebillId = "RebillId"
@@ -35,7 +35,7 @@ public struct FinishAuthorizePayload: Decodable {
     public init(status: PaymentStatus,
                 paymentState: GetPaymentStatePayload,
                 responseStatus: PaymentFinishResponseStatus,
-                rebillId: PaymentId? = nil) {
+                rebillId: String? = nil) {
         self.status = status
         self.paymentState = paymentState
         self.responseStatus = responseStatus

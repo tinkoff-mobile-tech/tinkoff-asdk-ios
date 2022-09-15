@@ -22,7 +22,7 @@ import Foundation
 
 public struct FinishPaymentRequestData {
     /// Номер платежа, полученного после инициализации платежа
-    let paymentId: PaymentId
+    let paymentId: String
     let paymentSource: PaymentSourceData
     let infoEmail: String?
     let sendEmail: Bool?
@@ -33,7 +33,7 @@ public struct FinishPaymentRequestData {
     let route: String?
 
     public init(
-        paymentId: PaymentId,
+        paymentId: String,
         paymentSource: PaymentSourceData,
         infoEmail: String? = nil,
         deviceInfo: DeviceInfoParams? = nil,

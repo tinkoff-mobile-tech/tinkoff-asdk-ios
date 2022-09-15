@@ -734,7 +734,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: `Cancellable`
     @discardableResult
     public func getTinkoffPayLink(
-        paymentId: PaymentId,
+        paymentId: String,
         version: GetTinkoffPayStatusResponse.Status.Version,
         completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
     ) -> Cancellable {

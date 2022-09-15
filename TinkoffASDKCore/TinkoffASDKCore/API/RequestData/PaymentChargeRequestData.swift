@@ -33,11 +33,11 @@ public struct ChargeRequestData: Codable {
     }
 
     /// Номер заказа в системе Продавца
-    public let paymentId: PaymentId
+    public let paymentId: String
     /// Родительский платеж
-    public let rebillId: PaymentId
+    public let rebillId: String
 
-    public init(paymentId: PaymentId, rebillId: PaymentId) {
+    public init(paymentId: String, rebillId: String) {
         self.paymentId = paymentId
         self.rebillId = rebillId
     }

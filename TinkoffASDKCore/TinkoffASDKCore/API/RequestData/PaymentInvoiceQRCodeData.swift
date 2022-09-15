@@ -50,11 +50,11 @@ public struct PaymentInvoiceQRCodeData: Codable {
     }
 
     /// Уникальный идентификатор транзакции в системе Банка
-    let paymentId: PaymentId
+    let paymentId: String
     /// Тип возвращаемых данных
     let paymentInvoiceType: PaymentInvoiceSBPSourceType
 
-    public init(paymentId: PaymentId, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
+    public init(paymentId: String, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
         self.paymentId = paymentId
         self.paymentInvoiceType = paymentInvoiceType
     }
@@ -72,7 +72,7 @@ public struct PaymentInvoiceQRCodeData: Codable {
         } else {
             paymentInvoiceType = .url
         }
-        if let paymentId = try? container.decode(PaymentId.self, forKey: .paymentId) {
+        if let paymentId = try? container.decode(String.self, forKey: .paymentId) {
             self.paymentId = paymentId
         } else {
             let paymentIdNumber = try container.decode(Int64.self, forKey: .paymentId)

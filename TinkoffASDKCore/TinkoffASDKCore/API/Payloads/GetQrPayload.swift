@@ -37,12 +37,12 @@ public struct GetQrPayload: Decodable {
     
     public let qrCodeData: String
     public let orderId: String
-    public let paymentId: PaymentId
+    public let paymentId: String
     
     public init(
         qrCodeData: String,
         orderId: String,
-        paymentId: PaymentId
+        paymentId: String
     ) {
         self.qrCodeData = qrCodeData
         self.orderId = orderId
@@ -54,7 +54,7 @@ public struct GetQrPayload: Decodable {
         qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
         orderId = try container.decode(String.self, forKey: .orderId)
         
-        if let paymentId = try? container.decode(PaymentId.self, forKey: .paymentId) {
+        if let paymentId = try? container.decode(String.self, forKey: .paymentId) {
             self.paymentId = paymentId
         } else {
             self.paymentId = String(try container.decode(Int64.self, forKey: .paymentId))

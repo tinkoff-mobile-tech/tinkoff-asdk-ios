@@ -36,9 +36,9 @@ public struct GetPaymentStateData: Codable {
     }
 
     /// Номер заказа в системе Продавца
-    let paymentId: PaymentId
+    let paymentId: String
 
-    public init(paymentId: PaymentId) {
+    public init(paymentId: String) {
         self.paymentId = paymentId
     }
 

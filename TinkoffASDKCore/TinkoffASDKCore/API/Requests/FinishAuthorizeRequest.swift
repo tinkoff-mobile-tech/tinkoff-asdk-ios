@@ -80,7 +80,7 @@ struct FinishAuthorizeRequest: APIRequest {
 
 private extension FinishAuthorizeRequest {
     static func createParameters(
-        paymentId: PaymentId,
+        paymentId: String,
         paymentSource: PaymentSourceData,
         infoEmail: String?,
         sendEmail: Bool?,

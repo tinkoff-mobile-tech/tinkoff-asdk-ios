@@ -21,7 +21,7 @@
 import Foundation
 
 public struct GetPaymentStatePayload: Decodable {
-    public let paymentId: PaymentId
+    public let paymentId: String
     public let amount: Int64
     public let orderId: String
     public let status: PaymentStatus
@@ -42,7 +42,7 @@ public struct GetPaymentStatePayload: Decodable {
         }
     }
     
-    public init(paymentId: PaymentId,
+    public init(paymentId: String,
                 amount: Int64,
                 orderId: String,
                 status: PaymentStatus) {
@@ -54,7 +54,7 @@ public struct GetPaymentStatePayload: Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(PaymentId.self, forKey: .paymentId)
+        paymentId = try container.decode(String.self, forKey: .paymentId)
         amount = try container.decode(Int64.self, forKey: .amount)
         orderId = try container.decode(String.self, forKey: .orderId)
         status = try container.decodeIfPresent(PaymentStatus.self, forKey: .status) ?? .unknown
