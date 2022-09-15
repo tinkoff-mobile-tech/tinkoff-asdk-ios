@@ -295,6 +295,7 @@
 			buildPhases = (
 				6CFAB7742899CF1424BA2DC0 /* [CP] Check Pods Manifest.lock */,
 				B126457F28C5EE7900DBC580 /* SwiftGen [TinkoffASDKUI] */,
+				B17C228128D36E2E003C6897 /* SwiftFormat */,
 				D7F4A4E825558AE900A8AD95 /* SwiftLint */,
 				2C9C7EB7239FBCB200DE4071 /* Sources */,
 				2C9C7EB8239FBCB200DE4071 /* Frameworks */,
@@ -467,6 +468,25 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\npwd\ncd \"../TinkoffASDKUI\"\npwd\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
 		};
+		B17C228128D36E2E003C6897 /* SwiftFormat */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftFormat;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd .. # Go to root directory\n\"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" .\n";
+		};
 		D7F4A4E825558AE900A8AD95 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -484,7 +504,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n\n";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 		F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
