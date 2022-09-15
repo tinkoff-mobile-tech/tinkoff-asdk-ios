@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
 // MARK: - JSONDecoder + Custom ISO8601 Date Decoding
@@ -32,7 +33,7 @@ extension JSONDecoder {
             .withFullDate,
             .withFullTime,
             .withDashSeparatorInDate,
-            .withColonSeparatorInTime,
+            .withColonSeparatorInTime
         ]
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in

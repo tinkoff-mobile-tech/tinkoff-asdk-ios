@@ -24,11 +24,9 @@ class FinishResponseTests: XCTestCase {
     private var sdk: AcquiringSdk!
 
     override func setUp() {
-        let credential = AcquiringSdkCredential(
-            terminalKey: StageTestData.terminalKey,
-            publicKey: StageTestData.testPublicKey
-        )
-
+        let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
+                                                publicKey: StageTestData.testPublicKey)
+        
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
@@ -43,8 +41,8 @@ class FinishResponseTests: XCTestCase {
      * Проверка статуса `Result.Error`
      */
     func test_FinishResponseError() {
-        let errorCode = 243
-        let message = "Ошибка шифрования карточных данных."
+        let errorCode: Int = 243
+        let message: String = "Ошибка шифрования карточных данных."
         //
         let jsonResponseData =
             """
@@ -72,7 +70,7 @@ class FinishResponseTests: XCTestCase {
      * Проверка стартуса `Result.Success`
      */
     func test_FinishResponseSuccess() {
-        let errorCode = 0
+        let errorCode: Int = 0
         let terminalKey: String = ASDKStageTestData.terminalKey
         let amount: Int64 = 20000
         let orderId: Int64 = 8_221_860
@@ -117,7 +115,7 @@ class FinishResponseTests: XCTestCase {
      * Проверка статуса Result.Success - нужно подтверждение платежа 3DS
      */
     func test_FinishResponseNeed3DSConfirmation() {
-        let errorCode = 0
+        let errorCode: Int = 0
         let terminalKey: String = ASDKStageTestData.terminalKey
         let amount: Int64 = 2332
         let orderId: Int64 = 87_654_321

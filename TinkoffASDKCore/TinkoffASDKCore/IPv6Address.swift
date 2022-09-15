@@ -9,11 +9,11 @@ import Foundation
 
 struct IPv6Address: IPAddress {
     var stringValue: String
-
+    
     var fullStringValue: String {
         return resolveFullStringValue()
     }
-
+    
     init?(_ stringValue: String) {
         let validator = IPAddressValidator()
         guard validator.validateIPAddress(stringValue, type: .v6) else {
@@ -32,7 +32,7 @@ private extension IPv6Address {
                 fullAddressSegments.append(contentsOf: Array(repeating: String.omittedSegment, count: .ipv6FullSegmentsCount - segments.count + 1))
                 return
             }
-
+            
             if segment.count < .ipv6OneSegmentElementsCount {
                 let missedZeroes = String(Array(repeating: "0", count: .ipv6OneSegmentElementsCount - segment.count))
                 let enrichedSegment = missedZeroes + segment
@@ -41,7 +41,7 @@ private extension IPv6Address {
                 fullAddressSegments.append(segment)
             }
         }
-
+        
         return fullAddressSegments.joined(separator: ":")
     }
 }

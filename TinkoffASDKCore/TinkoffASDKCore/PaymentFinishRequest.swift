@@ -64,7 +64,8 @@ public enum PaymentSourceData: Codable {
 
         if let number = try? container.decode(String.self, forKey: .cardNumber),
            let expDate = try? container.decode(String.self, forKey: .cardExpDate),
-           let cvv = try? container.decode(String.self, forKey: .cardCVV) {
+           let cvv = try? container.decode(String.self, forKey: .cardCVV)
+        {
             self = .cardNumber(number: number, expDate: expDate, cvv: cvv)
         } else if let cardId = try? container.decode(String.self, forKey: .savedCardId) {
             let cvv = try? container.decode(String.self, forKey: .cardCVV)
@@ -132,24 +133,22 @@ public struct DeviceInfoParams: Codable {
         case sdkUiType
     }
 
-    public init(
-        cresCallbackUrl: String,
-        languageId: String = "ru",
-        screenWidth: Int,
-        screenHeight: Int,
-        colorDepth: Int = 32,
-        sdkAppID: String? = nil,
-        sdkEphemPubKey: String? = nil,
-        sdkReferenceNumber: String? = nil,
-        sdkTransID: String? = nil,
-        sdkMaxTimeout: String? = nil,
-        sdkEncData: String? = nil
-    ) {
-        threeDSCompInd = "Y"
-        javaEnabled = "true"
+    public init(cresCallbackUrl: String,
+                languageId: String = "ru",
+                screenWidth: Int,
+                screenHeight: Int,
+                colorDepth: Int = 32,
+                sdkAppID: String? = nil,
+                sdkEphemPubKey: String? = nil,
+                sdkReferenceNumber: String? = nil,
+                sdkTransID: String? = nil,
+                sdkMaxTimeout: String? = nil,
+                sdkEncData: String? = nil) {
+        self.threeDSCompInd = "Y"
+        self.javaEnabled = "true"
         self.colorDepth = colorDepth
-        language = languageId
-        timezone = TimeZone.current.secondsFromGMT() / 60
+        self.language = languageId
+        self.timezone = TimeZone.current.secondsFromGMT() / 60
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
@@ -159,8 +158,8 @@ public struct DeviceInfoParams: Codable {
         self.sdkTransID = sdkTransID
         self.sdkMaxTimeout = sdkMaxTimeout
         self.sdkEncData = sdkEncData
-        sdkInterface = "03"
-        sdkUiType = "01,02,03,04,05"
+        self.sdkInterface = "03"
+        self.sdkUiType = "01,02,03,04,05"
     }
 }
 
@@ -260,16 +259,14 @@ public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
-        PaymentFinishRequestData.CodingKeys.cardData.rawValue,
-        PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
-        PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
-        PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
-        PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
-        PaymentFinishRequestData.CodingKeys.source.rawValue,
-        PaymentFinishRequestData.CodingKeys.route.rawValue,
-    ]
+    public var tokenParamsKey: Set<String> = [PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.cardData.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.source.rawValue,
+                                              PaymentFinishRequestData.CodingKeys.route.rawValue]
 
     ///
     /// - Parameter data: `PaymentFinishRequestData`
@@ -384,6 +381,7 @@ public struct Confirmation3DS2AppBasedData: Codable {
         case acsTransId = "AcsTransId"
         case tdsServerTransId = "TdsServerTransId"
         case acsRefNumber = "AcsReferenceNumber"
+
     }
 }
 
@@ -393,7 +391,7 @@ public enum PaymentFinishResponseStatus {
 
     /// Требуется подтверждение 3DS v2.0 browser-based
     case needConfirmation3DSACS(Confirmation3DSDataACS)
-
+    
     /// Требуется подтверждение 3DS v2.0 app-based
     case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
 

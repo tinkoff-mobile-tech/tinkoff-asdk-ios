@@ -17,28 +17,29 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
 public struct GetCertsConfigResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
         case certificates = "certificatesInfo"
     }
-
+    
     public let certificates: [CertificateData]
 }
 
 public struct CertificateData: Decodable {
-
+    
     public enum CertificateType: String, Decodable {
         case publicKey = "dsPublicKey"
         case rootCA = "dsRootCA"
     }
-
+    
     public enum CertificateAlgorithm: String, Decodable {
         case rsa = "RSA"
         case ec = "EC"
     }
-
+    
     private enum CodingKeys: String, CodingKey {
         case paymentSystem
         case directoryServerID
@@ -49,7 +50,7 @@ public struct CertificateData: Decodable {
         case algorithm
         case forceUpdateFlag
     }
-
+    
     public let paymentSystem: String
     public let directoryServerID: String
     public let type: CertificateType

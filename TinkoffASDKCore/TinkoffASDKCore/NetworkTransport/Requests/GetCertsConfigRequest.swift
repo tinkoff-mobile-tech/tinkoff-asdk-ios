@@ -17,13 +17,15 @@
 //  limitations under the License.
 //
 
+
 import Foundation
 
 public struct GetCertsConfigRequest: RequestOperation {
-
+        
     public let name: String = "certs-configs/asdk-certs-config.json"
-
+    
     public let requestMethod: RequestMethod = .get
-
-    public var parameters: JSONObject?
+    
+    public var parameters: JSONObject? = nil
 }
+

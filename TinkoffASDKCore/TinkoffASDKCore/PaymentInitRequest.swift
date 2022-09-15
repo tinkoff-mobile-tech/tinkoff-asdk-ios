@@ -131,15 +131,14 @@ public struct PaymentInitData: Codable {
         if failURL != nil { try? container.encode(failURL, forKey: .failURL) }
     }
 
-    public init(
-        amount: Int64,
-        orderId: String,
-        customerKey: String?,
-        redirectDueDate: Date? = nil,
-        payType: PayType? = nil,
-        successURL: String? = nil,
-        failURL: String? = nil
-    ) {
+    public init(amount: Int64,
+                orderId: String,
+                customerKey: String?,
+                redirectDueDate: Date? = nil,
+                payType: PayType? = nil,
+                successURL: String? = nil,
+                failURL: String? = nil)
+    {
         self.amount = amount
         self.orderId = orderId
         self.customerKey = customerKey
@@ -149,25 +148,16 @@ public struct PaymentInitData: Codable {
         self.failURL = failURL
     }
 
-    public init(
-        amount: NSDecimalNumber,
-        orderId: String,
-        customerKey: String?,
-        redirectDueDate: Date? = nil,
-        payType: PayType? = nil,
-        successURL: String? = nil,
-        failURL: String? = nil
-    ) {
+    public init(amount: NSDecimalNumber,
+                orderId: String,
+                customerKey: String?,
+                redirectDueDate: Date? = nil,
+                payType: PayType? = nil,
+                successURL: String? = nil,
+                failURL: String? = nil)
+    {
         let int64Amount = Int64(amount.doubleValue * 100)
-        self.init(
-            amount: int64Amount,
-            orderId: orderId,
-            customerKey: customerKey,
-            redirectDueDate: redirectDueDate,
-            payType: payType,
-            successURL: successURL,
-            failURL: failURL
-        )
+        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate, payType: payType, successURL: successURL, failURL: failURL)
     }
 }
 
@@ -183,12 +173,10 @@ public final class PaymentInitRequest: RequestOperation, AcquiringRequestTokenPa
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        PaymentInitData.CodingKeys.amount.rawValue,
-        PaymentInitData.CodingKeys.orderId.rawValue,
-        PaymentInitData.CodingKeys.customerKey.rawValue,
-        PaymentInitData.CodingKeys.savingAsParentPayment.rawValue,
-    ]
+    public var tokenParamsKey: Set<String> = [PaymentInitData.CodingKeys.amount.rawValue,
+                                              PaymentInitData.CodingKeys.orderId.rawValue,
+                                              PaymentInitData.CodingKeys.customerKey.rawValue,
+                                              PaymentInitData.CodingKeys.savingAsParentPayment.rawValue]
 
     ///
     /// - Parameter data: `PaymentInitPaymentData`
@@ -270,11 +258,10 @@ public struct PaymentInitResponseData {
     public let orderId: String
     public let paymentId: Int64
 
-    public init(
-        amount: Int64,
-        orderId: String,
-        paymentId: Int64
-    ) {
+    public init(amount: Int64,
+                orderId: String,
+                paymentId: Int64)
+    {
         self.amount = amount
         self.orderId = orderId
         self.paymentId = paymentId
