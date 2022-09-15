@@ -94,6 +94,17 @@ public enum PaymentSourceData: Codable {
             break
         }
     }
+
+    func getCardAndRebillId() -> (cardId: String?, rebillId: String?) {
+        switch self {
+        case .parentPayment(let rebillId):
+            return (nil, rebillId)
+        case .savedCard(let cardId, _):
+            return (cardId, nil)
+        default:
+            return (nil, nil)
+        }
+    }
 }
 
 public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams {

@@ -98,7 +98,7 @@ final class DefaultNetworkClient: NetworkClient {
         do {
             let urlRequest = try requestBuilder.buildURLRequest(request: request,
                                                                 requestAdapter: requestAdapter)
-            let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
+            let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { data, response, error in
                 if let error = error {
                     return completion(.failure(error))
                 }

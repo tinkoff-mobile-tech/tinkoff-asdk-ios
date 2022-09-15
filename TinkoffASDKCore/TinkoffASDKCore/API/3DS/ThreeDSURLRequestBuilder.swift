@@ -60,8 +60,7 @@ final class ThreeDSURLRequestBuilder {
             throw Error.incorrectUrl(requestData.acsUrl)
         }
         
-        // TODO: Log error
-        let termUrl = (try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString) ?? ""
+        let termUrl = threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString
         let parameters = [APIConstants.Keys.paReq: requestData.pareq,
                           APIConstants.Keys.md: requestData.md,
                           APIConstants.Keys.termUrl: termUrl]
@@ -79,8 +78,7 @@ final class ThreeDSURLRequestBuilder {
             throw Error.incorrectUrl(requestData.threeDSMethodURL)
         }
         
-        // TODO: Log error
-        let threeDSMethodNotificationURL = (try? threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL).absoluteString) ?? ""
+        let threeDSMethodNotificationURL = threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL).absoluteString
         let threeDSMethodJson = [APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransID,
                                  APIConstants.Keys.threeDSMethodNotificationURL: threeDSMethodNotificationURL]
         let threeDSMethodData = try JSONSerialization.data(withJSONObject: threeDSMethodJson,

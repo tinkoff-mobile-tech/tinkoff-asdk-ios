@@ -1,6 +1,6 @@
 //
 //
-//  APIURLBuilder.swift
+//  DefaultBaseURLProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,17 +20,25 @@
 
 import Foundation
 
-struct APIURLBuilder {
-    enum Error: Swift.Error {
-        case failedToBuildAPIUrl
+struct DefaultBaseURLProvider: BaseURLProvider {
+    // MARK: Error
+
+    private struct Error: LocalizedError {
+        private let host: String
+
+        init(host: String) {
+            self.host = host
+        }
     }
 
-    func buildURL(host: String) throws -> URL {
-        guard !host.isEmpty else { throw Error.failedToBuildAPIUrl }
-        guard let url = URL(string: "https://\(host)") else {
-            throw Error.failedToBuildAPIUrl
-        }
+    // MARK: Dependencies
 
-        return url
+    let baseURL: URL
+
+    // MARK: Init
+
+    init(host: String) throws {
+        self.baseURL = try URL(string: "https://\(host)").orThrow(Error(host: host))
     }
 }
+

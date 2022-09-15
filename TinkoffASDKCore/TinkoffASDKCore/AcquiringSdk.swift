@@ -289,9 +289,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Submit 3DS Authorization V2
+    // TODO: (MIC-6303) Переписать метод под новый формат ответа
 
-    // TODO: Change response type
-    // TODO: Add description
     @discardableResult
     public func submit3DSAuthorizationV2(
         cres: String,

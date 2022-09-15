@@ -202,7 +202,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         fetchStatus = .loading
         DispatchQueue.main.async { startHandler?() }
 
-        let initGetCardListData = InitGetCardListData(customerKey: customerKey)
+        let initGetCardListData = GetCardListData(customerKey: customerKey)
         queryStatus = coreSDK?.cardList(data: initGetCardListData, responseDelegate: self, completion: { [weak self] response in
             var status: FetchStatus<[PaymentCard]> = .loading
             var responseError: Error?

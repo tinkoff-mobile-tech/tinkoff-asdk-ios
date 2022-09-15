@@ -1,6 +1,6 @@
 //
 //
-//  APIURLBuilder.swift
+//  BaseURLProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,17 +20,6 @@
 
 import Foundation
 
-struct APIURLBuilder {
-    enum Error: Swift.Error {
-        case failedToBuildAPIUrl
-    }
-
-    func buildURL(host: String) throws -> URL {
-        guard !host.isEmpty else { throw Error.failedToBuildAPIUrl }
-        guard let url = URL(string: "https://\(host)") else {
-            throw Error.failedToBuildAPIUrl
-        }
-
-        return url
-    }
+protocol BaseURLProvider {
+    var baseURL: URL { get }
 }

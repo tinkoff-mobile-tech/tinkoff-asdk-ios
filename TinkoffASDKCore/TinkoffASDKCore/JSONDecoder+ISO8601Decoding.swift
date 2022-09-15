@@ -20,8 +20,6 @@
 
 import Foundation
 
-// MARK: - JSONDecoder + Custom ISO8601 Date Decoding
-
 private enum DateDecodingError: Error {
     case invalidDate
 }

@@ -38,8 +38,7 @@ struct DefaultThreeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider {
     }
     
     var deviceInfoParams: DeviceInfoParams {
-        // TODO: Log error
-        let cresCallbackUrl = (try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL).absoluteString) ?? ""
+        let cresCallbackUrl = threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL).absoluteString
         
         return DeviceInfoParams(cresCallbackUrl: cresCallbackUrl,
                                 languageId: language.rawValue,
