@@ -20,15 +20,11 @@
 @testable import TinkoffASDKCore
 
 final class MockRequestBuilder: NetworkClientRequestBuilder {
-
+    var stubbedURLRequest = URLRequest(url: URL(string: "https://www.tinkoff.ru")!)
     var buildURLRequestMethodCalled = false
 
-    func buildURLRequest(
-        baseURL: URL,
-        request: NetworkRequest,
-        requestAdapter: NetworkRequestAdapter?
-    ) throws -> URLRequest {
+    func buildURLRequest(request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
         buildURLRequestMethodCalled = true
-        return URLRequest(url: baseURL)
+        return stubbedURLRequest
     }
 }

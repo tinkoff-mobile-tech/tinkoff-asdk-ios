@@ -29,7 +29,6 @@ class DefaultNetworkClientTests: XCTestCase {
 
     lazy var networkClient = DefaultNetworkClient(
         urlRequestPerfomer: urlRequestPerformer,
-        hostProvider: url,
         requestBuilder: requestBuilder,
         responseValidator: responseValidator
     )

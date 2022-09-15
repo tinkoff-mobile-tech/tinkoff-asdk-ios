@@ -25,18 +25,21 @@ struct TestsNetworkRequest: NetworkRequest {
     let parameters: HTTPParameters
     let parametersEncoding: HTTPParametersEncoding
     let headers: HTTPHeaders
+    let baseURL: URL
 
     init(
         path: [String],
         httpMethod: HTTPMethod,
         parameters: HTTPParameters = [:],
         parametersEncoding: HTTPParametersEncoding = .json,
-        headers: HTTPHeaders = [:]
+        headers: HTTPHeaders = [:],
+        baseURL: URL = URL(string: "https://www.tinkoff.ru")!
     ) {
         self.path = path
         self.httpMethod = httpMethod
         self.parameters = parameters
         self.parametersEncoding = parametersEncoding
         self.headers = headers
+        self.baseURL = baseURL
     }
 }

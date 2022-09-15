@@ -23,30 +23,28 @@ import XCTest
 class DefaultNetworkClientRequestBuilderTests: XCTestCase {
 
     let builder = DefaultNetworkClientRequestBuilder()
-    let baseURL = URL(string: "https://tinkoff.ru")!
 
     func testNoErrorBuildWithCorrectURLAndPath() {
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
-        XCTAssertNoThrow(try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil))
+        XCTAssertNoThrow(try builder.buildURLRequest(request: request, requestAdapter: nil))
     }
 
     func testBuildFailedWithErrorWithEmptyPath() {
         let request = TestsNetworkRequest(path: [], httpMethod: .get)
-        XCTAssertThrowsError(try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil))
+        XCTAssertThrowsError(try builder.buildURLRequest(request: request, requestAdapter: nil))
     }
 
     func testBuildCorrectUrlWithOneItemPath() throws {
         let request = TestsNetworkRequest(path: ["test"], httpMethod: .get)
-        let resultURLString = "https://tinkoff.ru/test"
-        let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
-        XCTAssertEqual(urlRequest.url?.absoluteString, resultURLString)
+        let urlRequest = try builder.buildURLRequest(request: request, requestAdapter: nil)
+
+        XCTAssertEqual(urlRequest.url?.absoluteString, request.baseURL.absoluteString + "/test")
     }
 
     func testBuildCorrectUrlWithThreeItemsPath() throws {
         let request = TestsNetworkRequest(path: ["test", "url", "builder"], httpMethod: .get)
-        let resultURLString = "https://tinkoff.ru/test/url/builder"
-        let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
-        XCTAssertEqual(urlRequest.url?.absoluteString, resultURLString)
+        let urlRequest = try builder.buildURLRequest(request: request, requestAdapter: nil)
+        XCTAssertEqual(urlRequest.url?.absoluteString, request.baseURL.absoluteString + "/test/url/builder")
     }
 
     func testBuilderSetHeadersFromRequest() throws {
@@ -56,7 +54,7 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
             httpMethod: .get,
             headers: headers
         )
-        let urlRequest = try builder.buildURLRequest(baseURL: baseURL, request: request, requestAdapter: nil)
+        let urlRequest = try builder.buildURLRequest(request: request, requestAdapter: nil)
         XCTAssertEqual(headers, urlRequest.allHTTPHeaderFields)
     }
 
@@ -70,7 +68,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         )
 
         let urlRequest = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: nil
         )
@@ -94,7 +91,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         )
 
         let urlRequest = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: nil
         )
@@ -112,7 +108,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         )
 
         let urlRequest = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: nil
         )
@@ -128,7 +123,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         )
 
         _ = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: mockRequestAdapter
         )
@@ -157,7 +151,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         )
 
         let urlRequest = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: mockRequestAdapter
         )
@@ -188,7 +181,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         ]
 
         let urlRequest = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: mockRequestAdapter
         )
@@ -220,7 +212,6 @@ class DefaultNetworkClientRequestBuilderTests: XCTestCase {
         ]
 
         let urlRequest = try builder.buildURLRequest(
-            baseURL: baseURL,
             request: request,
             requestAdapter: mockRequestAdapter
         )
