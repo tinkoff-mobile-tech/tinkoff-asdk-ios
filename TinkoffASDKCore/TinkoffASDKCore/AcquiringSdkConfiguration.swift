@@ -38,7 +38,7 @@ public struct ConfigSdkEnvironment: RawRepresentable {
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
-    
+
     public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-test.cdn-tinkoff.ru") }
     public static var prod: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-prod.cdn-tinkoff.ru") }
 }
@@ -64,10 +64,10 @@ public class AcquiringSdkConfiguration: NSObject {
     public let configEnvironment: ConfigSdkEnvironment
     public let requestsTimeoutInterval: TimeInterval
     @available(*, deprecated, message: "Property does not affect anything")
-    public var fpsEnabled: Bool = false
+    public var fpsEnabled = false
     /// Показывать ошибки после выполнения запроса
     @available(*, deprecated, message: "Property does not affect anything")
-    public var showErrorAlert: Bool = true
+    public var showErrorAlert = true
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
     ///
@@ -79,10 +79,10 @@ public class AcquiringSdkConfiguration: NSObject {
 
     /// Логгер сетевых запросов. Реализация - `ASDKApiLoggerDelegate`
     public var logger: LoggerDelegate?
-    
+
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     public var tinkoffPayStatusCacheLifeTime: TimeInterval
-    
+
     ///
     /// - Parameters:
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
@@ -90,14 +90,16 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
     ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     /// - Returns: AcquiringSdkConfiguration
-    public init(credential: AcquiringSdkCredential,
-                server: AcquiringSdkEnvironment = .test,
-                requestsTimeoutInterval: TimeInterval = 40,
-                tinkoffPayStatusCacheLifeTime: TimeInterval = 300) {
+    public init(
+        credential: AcquiringSdkCredential,
+        server: AcquiringSdkEnvironment = .test,
+        requestsTimeoutInterval: TimeInterval = 40,
+        tinkoffPayStatusCacheLifeTime: TimeInterval = 300
+    ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
-        self.serverEnvironment = server
-        self.configEnvironment = server == .test ? .test : .prod
+        serverEnvironment = server
+        configEnvironment = server == .test ? .test : .prod
     }
 }

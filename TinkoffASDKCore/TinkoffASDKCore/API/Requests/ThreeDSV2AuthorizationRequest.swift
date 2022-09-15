@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct CresData: Encodable {
@@ -26,16 +25,13 @@ struct CresData: Encodable {
 
 public struct ThreeDSV2AuthorizationRequest: APIRequest {
     typealias Payload = PaymentStatusResponse
-    
+
     var requestPath: [String] { ["Submit3DSAuthorizationV2"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
 
     var parameters: HTTPParameters {
-        // TODO: Log error
-        
-        return (try? data
-                    .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 
     private let data: CresData

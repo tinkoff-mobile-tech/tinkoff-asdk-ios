@@ -64,8 +64,7 @@ public enum PaymentSourceData: Codable {
 
         if let number = try? container.decode(String.self, forKey: .cardNumber),
            let expDate = try? container.decode(String.self, forKey: .cardExpDate),
-           let cvv = try? container.decode(String.self, forKey: .cardCVV)
-        {
+           let cvv = try? container.decode(String.self, forKey: .cardCVV) {
             self = .cardNumber(number: number, expDate: expDate, cvv: cvv)
         } else if let cardId = try? container.decode(String.self, forKey: .savedCardId) {
             let cvv = try? container.decode(String.self, forKey: .cardCVV)
@@ -97,9 +96,9 @@ public enum PaymentSourceData: Codable {
 
     func getCardAndRebillId() -> (cardId: String?, rebillId: String?) {
         switch self {
-        case .parentPayment(let rebillId):
+        case let .parentPayment(rebillId):
             return (nil, rebillId)
-        case .savedCard(let cardId, _):
+        case let .savedCard(cardId, _):
             return (cardId, nil)
         default:
             return (nil, nil)
@@ -120,14 +119,16 @@ public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.cardData.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.source.rawValue,
-                                              PaymentFinishRequestData.CodingKeys.route.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
+        PaymentFinishRequestData.CodingKeys.cardData.rawValue,
+        PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
+        PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
+        PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
+        PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
+        PaymentFinishRequestData.CodingKeys.source.rawValue,
+        PaymentFinishRequestData.CodingKeys.route.rawValue,
+    ]
 
     ///
     /// - Parameter data: `PaymentFinishRequestData`
@@ -190,6 +191,5 @@ public struct Confirmation3DS2AppBasedData: Codable {
         case acsTransId = "AcsTransId"
         case tdsServerTransId = "TdsServerTransId"
         case acsRefNumber = "AcsReferenceNumber"
-
     }
 }

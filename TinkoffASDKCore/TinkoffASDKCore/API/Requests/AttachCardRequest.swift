@@ -17,49 +17,52 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct AttachCardRequest: APIRequest {
     typealias Payload = AttachCardPayload
-    
+
     var requestPath: [String] { ["AttachCard"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
 
     private(set) var parameters: HTTPParameters = [:]
-    
+
     private let finishAddCardData: FinishAddCardData
     private let encryptor: RSAEncryptor
     private let cardDataFormatter: CardDataFormatter
     private let publicKey: SecKey
-    
-    init(finishAddCardData: FinishAddCardData,
-         encryptor: RSAEncryptor,
-         cardDataFormatter: CardDataFormatter,
-         publicKey: SecKey,
-         baseURL: URL) {
+
+    init(
+        finishAddCardData: FinishAddCardData,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey,
+        baseURL: URL
+    ) {
         self.finishAddCardData = finishAddCardData
         self.encryptor = encryptor
         self.cardDataFormatter = cardDataFormatter
         self.publicKey = publicKey
         self.baseURL = baseURL
-        self.parameters = createParameters(with: finishAddCardData)
+        parameters = createParameters(with: finishAddCardData)
     }
 }
 
 private extension AttachCardRequest {
     func createParameters(with requestData: FinishAddCardData) -> HTTPParameters {
         var parameters: HTTPParameters = [APIConstants.Keys.requestKey: requestData.requestKey]
-        
-        let formattedCardData = cardDataFormatter.formatCardData(cardNumber: requestData.cardNumber,
-                                                                 expDate: requestData.expDate,
-                                                                 cvv: requestData.cvv)
-        // TODO: Log error
+
+        let formattedCardData = cardDataFormatter.formatCardData(
+            cardNumber: requestData.cardNumber,
+            expDate: requestData.expDate,
+            cvv: requestData.cvv
+        )
+
         if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
             parameters[APIConstants.Keys.cardData] = encryptedCardData
         }
-        
+
         return parameters
     }
 }

@@ -32,9 +32,11 @@ struct DefaultDeviceInfoProvider: DeviceInfoProvider {
     var model: String {
         UIDevice.current.localizedModel
     }
+
     var systemName: String {
         UIDevice.current.systemName
     }
+
     var systemVersion: String {
         UIDevice.current.systemVersion
     }
@@ -44,15 +46,19 @@ struct RSAEncryption {
     static func secKey(string: String?) -> SecKey? {
         guard let publicKey = string else { return nil }
 
-        let keyString = publicKey.replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "").replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
+        let keyString = publicKey
+            .replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "")
+            .replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
 
         guard let data = Data(base64Encoded: keyString) else { return nil }
 
         var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeRSA,
-                    kSecAttrKeyClass: kSecAttrKeyClassPublic,
-                    kSecAttrKeySizeInBits: 2048,
-                    kSecReturnPersistentRef: kCFBooleanTrue!] as CFDictionary
+            return [
+                kSecAttrKeyType: kSecAttrKeyTypeRSA,
+                kSecAttrKeyClass: kSecAttrKeyClassPublic,
+                kSecAttrKeySizeInBits: 2048,
+                kSecReturnPersistentRef: kCFBooleanTrue!,
+            ] as CFDictionary
         }
 
         var error: Unmanaged<CFError>?
@@ -175,14 +181,14 @@ extension Optional {
 }
 
 extension UIDevice {
-     var deviceModel: String {
-         var systemInfo = utsname()
-         uname(&systemInfo)
-         let machineMirror = Mirror(reflecting: systemInfo.machine)
-         let identifier = machineMirror.children.reduce("") { identifier, element in
-             guard let value = element.value as? Int8, value != 0 else { return identifier }
-             return identifier + String(UnicodeScalar(UInt8(value)))
-         }
-         return identifier
-     }
- }
+    var deviceModel: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
+    }
+}

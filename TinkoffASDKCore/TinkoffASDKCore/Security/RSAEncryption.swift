@@ -17,24 +17,25 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct RSAEncryptor {
-    
+
     enum Error: Swift.Error {
         case failedToCreatePublicSecKey
         case failedToEncryptStringWithPublicSecKey
     }
-    
+
     func createPublicSecKey(publicKey: String) throws -> SecKey {
         guard let data = Data(base64Encoded: publicKey) else { throw Error.failedToCreatePublicSecKey }
 
         var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeRSA,
-                    kSecAttrKeyClass: kSecAttrKeyClassPublic,
-                    kSecAttrKeySizeInBits: 2048,
-                    kSecReturnPersistentRef: kCFBooleanTrue!] as CFDictionary
+            return [
+                kSecAttrKeyType: kSecAttrKeyTypeRSA,
+                kSecAttrKeyClass: kSecAttrKeyClassPublic,
+                kSecAttrKeySizeInBits: 2048,
+                kSecReturnPersistentRef: kCFBooleanTrue!,
+            ] as CFDictionary
         }
 
         var error: Unmanaged<CFError>?
@@ -60,6 +61,8 @@ struct RSAEncryptor {
 
 private extension RSAEncryptor {
     func stripBeginEndMarks(string: String) -> String {
-        return string.replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "").replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
+        return string
+            .replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "")
+            .replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
     }
 }

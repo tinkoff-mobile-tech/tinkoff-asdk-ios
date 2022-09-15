@@ -17,23 +17,21 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct RemoveCardRequest: APIRequest {
     typealias Payload = RemoveCardPayload
-    
+
     var requestPath: [String] { ["RemoveCard"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
 
     var parameters: HTTPParameters {
-        // TODO: Log error
-        return (try? deactivateCardData.encode2JSONObject()) ?? [:]
+        (try? deactivateCardData.encode2JSONObject()) ?? [:]
     }
-    
+
     private let deactivateCardData: InitDeactivateCardData
-    
+
     public init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
         self.deactivateCardData = deactivateCardData
         self.baseURL = baseURL

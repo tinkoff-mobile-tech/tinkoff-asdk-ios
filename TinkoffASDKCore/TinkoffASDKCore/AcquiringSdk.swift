@@ -50,8 +50,8 @@ public final class AcquiringSdk: NSObject {
 
     /// Создает новый экземпляр SDK
     public init(configuration: AcquiringSdkConfiguration) throws {
-        self.terminalKey = configuration.credential.terminalKey
-        self.languageKey = configuration.language
+        terminalKey = configuration.credential.terminalKey
+        languageKey = configuration.language
 
         if let publicKey: SecKey = RSAEncryption.secKey(string: configuration.credential.publicKey) {
             self.publicKey = publicKey
@@ -64,7 +64,7 @@ public final class AcquiringSdk: NSObject {
 
         if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
            let certsConfigUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
-            self.baseURL = url
+            baseURL = url
             self.certsConfigUrl = certsConfigUrl
         } else {
             throw AcquiringSdkError.url
@@ -150,11 +150,11 @@ public final class AcquiringSdk: NSObject {
     public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
         coreAssembly.threeDSWebViewHandler()
     }
-    
+
     public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
         coreAssembly.threeDSWebViewHandler()
     }
-    
+
     public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
         coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize, language: languageKey ?? .ru)
     }
@@ -261,7 +261,7 @@ public final class AcquiringSdk: NSObject {
             publicKey: publicKey,
             baseURL: baseURL
         )
-        
+
         return api.performRequest(request, completion: completion)
     }
 
@@ -289,7 +289,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Submit 3DS Authorization V2
-    // TODO: (MIC-6303) Переписать метод под новый формат ответа
+
+    // TODO: MIC-6303 Переписать метод под новый формат ответа
 
     @discardableResult
     public func submit3DSAuthorizationV2(
@@ -371,7 +372,7 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get Card List
-    
+
     /// Получение всех сохраненных карт клиента
     ///
     /// - Parameters:
@@ -557,7 +558,13 @@ public final class AcquiringSdk: NSObject {
         responseDelegate: NetworkTransportResponseDelegate? = nil,
         completion: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = SubmitRandomAmountRequest(submitRandomAmountData: .init(amount: Int64(amount), requestKey: requestKey), baseURL: baseURL)
+        let request = SubmitRandomAmountRequest(
+            submitRandomAmountData: SubmitRandomAmountData(
+                amount: Int64(amount),
+                requestKey: requestKey
+            ),
+            baseURL: baseURL
+        )
         return api.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
@@ -630,9 +637,9 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         cardListDeactivateCard(data: data, completion: completionHandler)
     }
-    
+
     // MARK: Get QR Code
-    
+
     /// Сгенерировать QR-код для оплаты
     ///
     /// - Parameters:
@@ -699,7 +706,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Load SBP Banks
-    // TODO: (MIC-6303) Переписать метод под новый формат ответа
+
+    // TODO: MIC-6303 Переписать метод под новый формат ответа
 
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
     ///
@@ -711,7 +719,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get TinkoffPay Status
-    // TODO: (MIC-6303) Переписать метод под новый формат ответа
+
+    // TODO: MIC-6303 Переписать метод под новый формат ответа
 
     @discardableResult
     public func getTinkoffPayStatus(
@@ -723,7 +732,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get TinkoffPay Link
-    // TODO: (MIC-6303) Переписать метод под новый формат ответа
+
+    // TODO: MIC-6303 Переписать метод под новый формат ответа
 
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
     ///
@@ -763,7 +773,8 @@ public final class AcquiringSdk: NSObject {
     }
 
     // MARK: Get Certs Config
-    // TODO: (MIC-6303) Переписать метод под новый формат ответа
+
+    // TODO: MIC-6303 Переписать метод под новый формат ответа
 
     /// Получить конфигурацию для работы с сертификатами 3DS AppBased
     ///

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
@@ -53,18 +52,18 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
             }
         }
     }
-    
+
     // MARK: - CustomNSError
-    
-    public var errorUserInfo: [String : Any] {
+
+    public var errorUserInfo: [String: Any] {
         guard let errorDescription = errorDescription else {
             return [:]
         }
         return [NSLocalizedDescriptionKey: errorDescription]
     }
-    
+
     // MARK: - LocalizedError
-    
+
     public var errorDescription: String? {
         var errorDescription = Localization.APIError.failureError
         if errorMessage != nil || errorDetails != nil { errorDescription += ": " }
@@ -77,12 +76,12 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
         }
         return errorDescription
     }
-    
+
     // MARK: - Decodable
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         let errorCodeString = try container.decode(String.self, forKey: .errorCode)
         errorCode = Int(errorCodeString) ?? 0
         errorMessage = try container.decodeIfPresent(String.self, forKey: .errorMessage)

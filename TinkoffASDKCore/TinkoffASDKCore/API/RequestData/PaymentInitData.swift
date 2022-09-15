@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 //
@@ -38,7 +37,6 @@ import Foundation
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-
 
 import Foundation
 
@@ -154,14 +152,15 @@ public struct PaymentInitData: Codable {
         if failURL != nil { try? container.encode(failURL, forKey: .failURL) }
     }
 
-    public init(amount: Int64,
-                orderId: String,
-                customerKey: String?,
-                redirectDueDate: Date? = nil,
-                payType: PayType? = nil,
-                successURL: String? = nil,
-                failURL: String? = nil)
-    {
+    public init(
+        amount: Int64,
+        orderId: String,
+        customerKey: String?,
+        redirectDueDate: Date? = nil,
+        payType: PayType? = nil,
+        successURL: String? = nil,
+        failURL: String? = nil
+    ) {
         self.amount = amount
         self.orderId = orderId
         self.customerKey = customerKey
@@ -171,15 +170,24 @@ public struct PaymentInitData: Codable {
         self.failURL = failURL
     }
 
-    public init(amount: NSDecimalNumber,
-                orderId: String,
-                customerKey: String?,
-                redirectDueDate: Date? = nil,
-                payType: PayType? = nil,
-                successURL: String? = nil,
-                failURL: String? = nil)
-    {
+    public init(
+        amount: NSDecimalNumber,
+        orderId: String,
+        customerKey: String?,
+        redirectDueDate: Date? = nil,
+        payType: PayType? = nil,
+        successURL: String? = nil,
+        failURL: String? = nil
+    ) {
         let int64Amount = Int64(amount.doubleValue * 100)
-        self.init(amount: int64Amount, orderId: orderId, customerKey: customerKey, redirectDueDate: redirectDueDate, payType: payType, successURL: successURL, failURL: failURL)
+        self.init(
+            amount: int64Amount,
+            orderId: orderId,
+            customerKey: customerKey,
+            redirectDueDate: redirectDueDate,
+            payType: payType,
+            successURL: successURL,
+            failURL: failURL
+        )
     }
 }

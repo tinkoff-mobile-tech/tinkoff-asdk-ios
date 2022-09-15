@@ -17,74 +17,81 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 final class DefaultNetworkClient: NetworkClient {
     private let urlRequestPerfomer: URLRequestPerformer
     private let requestBuilder: NetworkClientRequestBuilder
     private let responseValidator: HTTPURLResponseValidator
-    
+
     var requestAdapter: NetworkRequestAdapter?
-    
+
     // MARK: - Init
-    
-    init(urlRequestPerfomer: URLRequestPerformer,
-         requestBuilder: NetworkClientRequestBuilder,
-         responseValidator: HTTPURLResponseValidator) {
+
+    init(
+        urlRequestPerfomer: URLRequestPerformer,
+        requestBuilder: NetworkClientRequestBuilder,
+        responseValidator: HTTPURLResponseValidator
+    ) {
         self.urlRequestPerfomer = urlRequestPerfomer
         self.requestBuilder = requestBuilder
         self.responseValidator = responseValidator
     }
-    
+
     // MARK: - NetworkClient
-    
+
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         do {
-            let urlRequest = try requestBuilder.buildURLRequest(request: request,
-                                                                requestAdapter: requestAdapter)
+            let urlRequest = try requestBuilder.buildURLRequest(
+                request: request,
+                requestAdapter: requestAdapter
+            )
 
             let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
                 let result: Result<Data, Error>
-                
+
                 defer {
-                    let response = NetworkResponse(request: urlRequest,
-                                                   response: response as? HTTPURLResponse,
-                                                   error: error,
-                                                   data: data,
-                                                   result: result)
+                    let response = NetworkResponse(
+                        request: urlRequest,
+                        response: response as? HTTPURLResponse,
+                        error: error,
+                        data: data,
+                        result: result
+                    )
                     completion(response)
                 }
-                
+
                 if let error = error {
                     result = .failure(NetworkError.transportError(error))
                     return
                 }
-                
+
                 guard let httpResponse = response as? HTTPURLResponse else {
                     result = .failure(NetworkError.noData)
                     return
                 }
-                
+
                 do {
                     try responseValidator.validate(response: httpResponse).get()
                 } catch {
-                    result = .failure(NetworkError.serverError(statusCode: httpResponse.statusCode,
-                                                               data: data))
+                    result = .failure(NetworkError.serverError(
+                        statusCode: httpResponse.statusCode,
+                        data: data
+                    ))
                     return
                 }
-                
+
                 guard let data = data else {
                     result = .failure(NetworkError.noData)
                     return
                 }
-                
+
                 result = .success(data)
             }
-            
+
             dataTask.resume()
-            
+
             return dataTask
         } catch {
             handleFailedToBuildUrlRequest(error: error, completion: completion)
@@ -94,10 +101,16 @@ final class DefaultNetworkClient: NetworkClient {
 
     @discardableResult
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func performDeprecatedRequest<Response: ResponseOperation>(_ request: NetworkRequest, delegate: NetworkTransportResponseDelegate?, completion: @escaping (Result<Response, Error>) -> Void) -> Cancellable {
+    func performDeprecatedRequest<Response: ResponseOperation>(
+        _ request: NetworkRequest,
+        delegate: NetworkTransportResponseDelegate?,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) -> Cancellable {
         do {
-            let urlRequest = try requestBuilder.buildURLRequest(request: request,
-                                                                requestAdapter: requestAdapter)
+            let urlRequest = try requestBuilder.buildURLRequest(
+                request: request,
+                requestAdapter: requestAdapter
+            )
             let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { data, response, error in
                 if let error = error {
                     return completion(.failure(error))
@@ -148,8 +161,12 @@ final class DefaultNetworkClient: NetworkClient {
 
                 // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
                 guard acquiringResponse.success else {
-                    var errorMessage: String = NSLocalizedString("TinkoffAcquiring.response.error.statusFalse", tableName: nil, bundle: .coreResources,
-                                                                 comment: "Acquiring Error Response 'Success: false'")
+                    var errorMessage: String = NSLocalizedString(
+                        "TinkoffAcquiring.response.error.statusFalse",
+                        tableName: nil, bundle: .coreResources,
+                        comment: "Acquiring Error Response 'Success: false'"
+                    )
+
                     if let message = acquiringResponse.errorMessage {
                         errorMessage = message
                     }
@@ -159,9 +176,11 @@ final class DefaultNetworkClient: NetworkClient {
                         errorMessage.append(contentsOf: details)
                     }
 
-                    let error = NSError(domain: errorMessage,
-                                        code: acquiringResponse.errorCode,
-                                        userInfo: try? acquiringResponse.encode2JSONObject())
+                    let error = NSError(
+                        domain: errorMessage,
+                        code: acquiringResponse.errorCode,
+                        userInfo: try? acquiringResponse.encode2JSONObject()
+                    )
 
                     completion(.failure(error))
                     return
@@ -189,35 +208,37 @@ final class DefaultNetworkClient: NetworkClient {
     func sendCertsConfigRequest(
         _ request: NetworkRequest,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable  {
+    ) -> Cancellable {
         do {
-            let urlRequest = try requestBuilder.buildURLRequest(request: request,
-                                                                requestAdapter: requestAdapter)
-            
+            let urlRequest = try requestBuilder.buildURLRequest(
+                request: request,
+                requestAdapter: requestAdapter
+            )
+
             let task = urlRequestPerfomer.createDataTask(with: urlRequest) { data, response, networkError in
                 if let error = networkError {
                     return completionHandler(.failure(error))
                 }
-                
+
                 // HTTPURLResponse
                 guard let httpResponse = response as? HTTPURLResponse else {
                     return completionHandler(.failure(NSError(domain: "Response should be an HTTPURLResponse", code: 1, userInfo: nil)))
                 }
-                
+
                 // httpResponse check  HTTP Status Code `200..<300`
                 guard httpResponse.isSuccessful else {
                     let error = HTTPResponseError(body: data, response: httpResponse, kind: .errorResponse)
                     completionHandler(.failure(error))
                     return
                 }
-                
+
                 // data is empty
                 guard let data = data else {
                     let error = HTTPResponseError(body: nil, response: httpResponse, kind: .invalidResponse)
                     completionHandler(.failure(error))
                     return
                 }
-                
+
                 // decode to `Response`
                 if let responseObject = try? JSONDecoder.customISO8601Decoding.decode(GetCertsConfigResponse.self, from: data) {
                     completionHandler(.success(responseObject))
@@ -225,9 +246,9 @@ final class DefaultNetworkClient: NetworkClient {
                     completionHandler(.failure(HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)))
                 }
             } // session.dataTask
-            
+
             task.resume()
-            
+
             return task
         } catch {
             completionHandler(.failure(error))
@@ -238,11 +259,13 @@ final class DefaultNetworkClient: NetworkClient {
 
 private extension DefaultNetworkClient {
     func handleFailedToBuildUrlRequest(error: Error, completion: @escaping (NetworkResponse) -> Void) {
-        let response = NetworkResponse(request: nil,
-                                       response: nil,
-                                       error: nil,
-                                       data: nil,
-                                       result: .failure(error))
+        let response = NetworkResponse(
+            request: nil,
+            response: nil,
+            error: nil,
+            data: nil,
+            result: .failure(error)
+        )
         completion(response)
     }
 }

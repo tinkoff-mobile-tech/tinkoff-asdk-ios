@@ -17,12 +17,11 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct FinishAuthorizeRequest: APIRequest {
     typealias Payload = FinishAuthorizePayload
-    
+
     var requestPath: [String] { ["FinishAuthorize"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
@@ -36,7 +35,7 @@ struct FinishAuthorizeRequest: APIRequest {
         baseURL: URL
     ) {
         self.baseURL = baseURL
-        self.parameters = Self.createParameters(
+        parameters = Self.createParameters(
             paymentId: requestData.paymentId,
             paymentSource: requestData.paymentSource,
             infoEmail: requestData.infoEmail,
@@ -61,7 +60,7 @@ struct FinishAuthorizeRequest: APIRequest {
         baseURL: URL
     ) {
         self.baseURL = baseURL
-        self.parameters = Self.createParameters(
+        parameters = Self.createParameters(
             paymentId: paymentFinishRequestData.paymentId.description,
             paymentSource: paymentFinishRequestData.paymentSource,
             infoEmail: paymentFinishRequestData.infoEmail,
@@ -104,7 +103,6 @@ private extension FinishAuthorizeRequest {
             parameters[APIConstants.Keys.ipAddress] = ipAddress
         }
         if let deviceInfo = deviceInfo,
-           // TODO: Log error
            let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
             parameters[APIConstants.Keys.data] = deviceInfoJSON
         }
@@ -112,13 +110,12 @@ private extension FinishAuthorizeRequest {
         switch paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
-            // TODO: Log error
             if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
-            // TODO: Log error
+
             if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }

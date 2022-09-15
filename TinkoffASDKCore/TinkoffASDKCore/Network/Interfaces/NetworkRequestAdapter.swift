@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 protocol NetworkRequestAdapter: AnyObject {
@@ -29,8 +28,8 @@ extension NetworkRequestAdapter {
     func additionalHeaders(for request: NetworkRequest) -> HTTPHeaders {
         [:]
     }
+
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
         [:]
     }
 }
-

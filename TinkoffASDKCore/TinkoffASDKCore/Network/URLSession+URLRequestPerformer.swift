@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 extension URLSession: URLRequestPerformer {
@@ -26,4 +25,3 @@ extension URLSession: URLRequestPerformer {
         return urlSessionDataTask
     }
 }
-

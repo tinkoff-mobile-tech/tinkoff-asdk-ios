@@ -17,19 +17,20 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 final class AcquiringAPI: API {
     private let networkClient: NetworkClient
     private let apiResponseDecoder: APIResponseDecoder
-    
-    init(networkClient: NetworkClient,
-         apiResponseDecoder: APIResponseDecoder) {
+
+    init(
+        networkClient: NetworkClient,
+        apiResponseDecoder: APIResponseDecoder
+    ) {
         self.networkClient = networkClient
         self.apiResponseDecoder = apiResponseDecoder
     }
-    
+
     // MARK: - API
 
     func performRequest<Request: APIRequest>(
@@ -63,7 +64,7 @@ final class AcquiringAPI: API {
     func sendCertsConfigRequest(
         _ request: NetworkRequest,
         completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable  {
+    ) -> Cancellable {
         return networkClient.sendCertsConfigRequest(request, completionHandler: completionHandler)
     }
 }
