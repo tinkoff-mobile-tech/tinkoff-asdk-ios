@@ -39,12 +39,14 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
             return
         }
         
-        guard let confirmation3DSTerminationURLString = try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString,
-              let confirmation3DSTerminationV2URLString = try? threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL).absoluteString
-        else {
-            return
-        }
-        
+        let confirmation3DSTerminationURLString = threeDSURLBuilder
+            .buildURL(type: .confirmation3DSTerminationURL)
+            .absoluteString
+
+        let confirmation3DSTerminationV2URLString = threeDSURLBuilder
+            .buildURL(type: .confirmation3DSTerminationV2URL)
+            .absoluteString
+
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
             return
         }
