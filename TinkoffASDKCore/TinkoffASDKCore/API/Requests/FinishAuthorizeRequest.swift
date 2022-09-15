@@ -36,15 +36,7 @@ struct FinishAuthorizeRequest: APIRequest {
     ) {
         self.baseURL = baseURL
         parameters = Self.createParameters(
-            paymentId: requestData.paymentId,
-            paymentSource: requestData.paymentSource,
-            infoEmail: requestData.infoEmail,
-            sendEmail: requestData.sendEmail,
-            deviceInfo: requestData.deviceInfo,
-            ipAddress: requestData.ipAddress,
-            threeDSVersion: requestData.threeDSVersion,
-            source: requestData.source,
-            route: requestData.route,
+            data: requestData,
             encryptor: encryptor,
             cardDataFormatter: cardDataFormatter,
             publicKey: publicKey
@@ -61,15 +53,7 @@ struct FinishAuthorizeRequest: APIRequest {
     ) {
         self.baseURL = baseURL
         parameters = Self.createParameters(
-            paymentId: paymentFinishRequestData.paymentId.description,
-            paymentSource: paymentFinishRequestData.paymentSource,
-            infoEmail: paymentFinishRequestData.infoEmail,
-            sendEmail: paymentFinishRequestData.sendEmail,
-            deviceInfo: paymentFinishRequestData.deviceInfo,
-            ipAddress: paymentFinishRequestData.ipAddress,
-            threeDSVersion: paymentFinishRequestData.threeDSVersion,
-            source: paymentFinishRequestData.threeDSVersion,
-            route: paymentFinishRequestData.route,
+            data: paymentFinishRequestData,
             encryptor: encryptor,
             cardDataFormatter: cardDataFormatter,
             publicKey: publicKey
@@ -79,35 +63,70 @@ struct FinishAuthorizeRequest: APIRequest {
 
 private extension FinishAuthorizeRequest {
     static func createParameters(
-        paymentId: String,
-        paymentSource: PaymentSourceData,
-        infoEmail: String?,
-        sendEmail: Bool?,
-        deviceInfo: DeviceInfoParams?,
-        ipAddress: String?,
-        threeDSVersion: String?,
-        source: String?,
-        route: String?,
+        data: FinishPaymentRequestData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
-        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: paymentId]
-        if let sendEmail = sendEmail {
+        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: data.paymentId]
+        if let sendEmail = data.sendEmail {
             parameters[APIConstants.Keys.sendEmail] = sendEmail
         }
-        if let infoEmail = infoEmail {
+        if let infoEmail = data.infoEmail {
             parameters[APIConstants.Keys.infoEmail] = infoEmail
         }
-        if let ipAddress = ipAddress {
+        if let ipAddress = data.ipAddress {
             parameters[APIConstants.Keys.ipAddress] = ipAddress
         }
-        if let deviceInfo = deviceInfo,
+        if let deviceInfo = data.deviceInfo,
            let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
             parameters[APIConstants.Keys.data] = deviceInfoJSON
         }
 
-        switch paymentSource {
+        switch data.paymentSource {
+        case let .cardNumber(number, expDate, cvv):
+            let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
+            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+                parameters[APIConstants.Keys.cardData] = encryptedCardData
+            }
+        case let .savedCard(cardId, cvv):
+            let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
+
+            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+                parameters[APIConstants.Keys.cardData] = encryptedCardData
+            }
+        case let .paymentData(data):
+            parameters[APIConstants.Keys.encryptedPaymentData] = data
+            parameters[APIConstants.Keys.route] = APIConstants.Values.acq
+            parameters[APIConstants.Keys.source] = APIConstants.Values.applePaySource
+        default: break
+        }
+
+        return parameters
+    }
+
+    static func createParameters(
+        data: PaymentFinishRequestData,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey
+    ) -> HTTPParameters {
+        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: String(data.paymentId)]
+        if let sendEmail = data.sendEmail {
+            parameters[APIConstants.Keys.sendEmail] = sendEmail
+        }
+        if let infoEmail = data.infoEmail {
+            parameters[APIConstants.Keys.infoEmail] = infoEmail
+        }
+        if let ipAddress = data.ipAddress {
+            parameters[APIConstants.Keys.ipAddress] = ipAddress
+        }
+        if let deviceInfo = data.deviceInfo,
+           let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
+            parameters[APIConstants.Keys.data] = deviceInfoJSON
+        }
+
+        switch data.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
             if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
