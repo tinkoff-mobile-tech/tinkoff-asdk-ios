@@ -55,8 +55,10 @@ public final class InitAddCardRequest: RequestOperation, AcquiringRequestTokenPa
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [InitAddCardData.CodingKeys.checkType.rawValue,
-                                              InitAddCardData.CodingKeys.customerKey.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        InitAddCardData.CodingKeys.checkType.rawValue,
+        InitAddCardData.CodingKeys.customerKey.rawValue,
+    ]
 
     ///
     /// - Parameter requestData: `InitAddCardData`
@@ -78,8 +80,10 @@ class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [FinishAddCardData.CodingKeys.requestKey.stringValue,
-                                       PaymentFinishRequestData.CodingKeys.cardData.stringValue]
+    var tokenParamsKey: Set<String> = [
+        FinishAddCardData.CodingKeys.requestKey.stringValue,
+        PaymentFinishRequestData.CodingKeys.cardData.stringValue,
+    ]
 
     ///
     /// - Parameter requestData: `FinishAddCardData`
@@ -170,8 +174,10 @@ public final class InitDeactivateCardRequest: RequestOperation, AcquiringRequest
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [InitDeactivateCardData.CodingKeys.cardId.rawValue,
-                                              InitDeactivateCardData.CodingKeys.customerKey.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        InitDeactivateCardData.CodingKeys.cardId.rawValue,
+        InitDeactivateCardData.CodingKeys.customerKey.rawValue,
+    ]
 
     ///
     /// - Parameter requestData: `InitDeactivateCardData`

@@ -17,8 +17,8 @@
 //  limitations under the License.
 //
 
-@testable import TinkoffASDKCore
 import Foundation
+@testable import TinkoffASDKCore
 
 struct EmptyNetworkDataTask: NetworkDataTask {
     func resume() {}

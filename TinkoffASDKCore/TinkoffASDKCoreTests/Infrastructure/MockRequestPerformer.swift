@@ -17,9 +17,8 @@
 //  limitations under the License.
 //
 
-
-@testable import TinkoffASDKCore
 import Foundation
+@testable import TinkoffASDKCore
 
 final class MockRequestPerformer: URLRequestPerformer {
     var dataTaskMethodCalled = false
@@ -27,12 +26,14 @@ final class MockRequestPerformer: URLRequestPerformer {
     var data: Data?
     var urlResponse: URLResponse?
     var error: Error?
-    
-    func createDataTask(with request: URLRequest,
-                        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
-        self.dataTaskMethodCalled = true
+
+    func createDataTask(
+        with request: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> NetworkDataTask {
+        dataTaskMethodCalled = true
         self.request = request
-        
+
         completionHandler(data, urlResponse, error)
         return EmptyNetworkDataTask()
     }

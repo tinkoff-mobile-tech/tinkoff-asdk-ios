@@ -23,7 +23,7 @@ enum NetworkError: LocalizedError, CustomNSError {
     case transportError(Error)
     case serverError(statusCode: Int, data: Data?)
     case noData
-    
+
     var errorCode: Int {
         switch self {
         case let .transportError(error):
@@ -34,7 +34,7 @@ enum NetworkError: LocalizedError, CustomNSError {
             return 0
         }
     }
-    
+
     var errorDescription: String? {
         let description: String
         switch self {

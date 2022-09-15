@@ -20,13 +20,13 @@
 import Foundation
 
 final class APIParametersProvider: NetworkRequestAdapter {
-    
+
     private let terminalKey: String
-    
+
     init(terminalKey: String) {
         self.terminalKey = terminalKey
     }
-    
+
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
         let commonParameters: HTTPParameters = [APIConstants.Keys.terminalKey: terminalKey]
         return commonParameters

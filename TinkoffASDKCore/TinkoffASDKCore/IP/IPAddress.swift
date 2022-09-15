@@ -11,6 +11,6 @@ import Foundation
 public protocol IPAddress {
     var stringValue: String { get }
     var fullStringValue: String { get }
-    
+
     init?(_ stringValue: String)
 }

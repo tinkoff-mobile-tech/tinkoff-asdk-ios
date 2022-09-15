@@ -1781,7 +1781,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
         return try getCardListDataProvider().item(with: parentPaymentId)
     }
-    
+
     public func allCards() throws -> [PaymentCard] {
         return try getCardListDataProvider().allItems()
     }

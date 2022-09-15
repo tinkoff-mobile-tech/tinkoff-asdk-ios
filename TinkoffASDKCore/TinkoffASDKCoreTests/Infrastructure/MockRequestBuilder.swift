@@ -17,17 +17,18 @@
 //  limitations under the License.
 //
 
-
 @testable import TinkoffASDKCore
 
 final class MockRequestBuilder: NetworkClientRequestBuilder {
-    
+
     var buildURLRequestMethodCalled = false
-    
-    func buildURLRequest(baseURL: URL,
-                         request: NetworkRequest,
-                         requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
-        self.buildURLRequestMethodCalled = true
+
+    func buildURLRequest(
+        baseURL: URL,
+        request: NetworkRequest,
+        requestAdapter: NetworkRequestAdapter?
+    ) throws -> URLRequest {
+        buildURLRequestMethodCalled = true
         return URLRequest(url: baseURL)
     }
 }

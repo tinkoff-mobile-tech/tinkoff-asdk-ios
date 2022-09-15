@@ -9,21 +9,23 @@ import Foundation
 
 struct GetTinkoffLinkRequest: APIRequest {
     typealias Payload = GetTinkoffLinkPayload
-    
-    var requestPath: [String] { [self.createRequestName()] }
+
+    var requestPath: [String] { [createRequestName()] }
     var httpMethod: HTTPMethod { .get }
     var baseURL: URL
 
     // MARK: - Parameters
-    
+
     private let paymentId: String
     private let version: GetTinkoffPayStatusResponse.Status.Version
-    
+
     // MARK: - Init
-    
-    public init(paymentId: String,
-                version: GetTinkoffPayStatusResponse.Status.Version,
-                baseURL: URL) {
+
+    public init(
+        paymentId: String,
+        version: GetTinkoffPayStatusResponse.Status.Version,
+        baseURL: URL
+    ) {
         self.paymentId = paymentId
         self.version = version
         self.baseURL = baseURL

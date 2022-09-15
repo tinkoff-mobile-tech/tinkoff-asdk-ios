@@ -17,25 +17,23 @@
 //  limitations under the License.
 //
 
-
 @testable import TinkoffASDKCore
 
 final class MockNetworkRequestAdapter: NetworkRequestAdapter {
 
     var isAdditionalHeadersMethodCalled = false
     var isAdditionalParametersMethodCalled = false
-    
+
     var additionalHeaders: HTTPHeaders = [:]
     var additionalParameters: HTTPParameters = [:]
-    
+
     func additionalHeaders(for request: NetworkRequest) -> HTTPHeaders {
         isAdditionalHeadersMethodCalled = true
         return additionalHeaders
     }
-    
+
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
         isAdditionalParametersMethodCalled = true
         return additionalParameters
     }
 }
-

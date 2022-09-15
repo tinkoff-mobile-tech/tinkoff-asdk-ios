@@ -32,8 +32,10 @@ public class PaymentInvoiceQRCodeRequest: RequestOperation, AcquiringRequestToke
 
     ///
     /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [PaymentInvoiceQRCodeData.CodingKeys.paymentId.rawValue,
-                                              PaymentInvoiceQRCodeData.CodingKeys.paymentInvoiceType.rawValue]
+    public var tokenParamsKey: Set<String> = [
+        PaymentInvoiceQRCodeData.CodingKeys.paymentId.rawValue,
+        PaymentInvoiceQRCodeData.CodingKeys.paymentInvoiceType.rawValue,
+    ]
 
     ///
     /// - Parameter data: `PaymentInvoiceQRCodeData`

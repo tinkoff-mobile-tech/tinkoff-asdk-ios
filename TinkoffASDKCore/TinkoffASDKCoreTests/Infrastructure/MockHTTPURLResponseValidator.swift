@@ -17,14 +17,13 @@
 //  limitations under the License.
 //
 
-
 @testable import TinkoffASDKCore
 
 final class MockHTTPURLResponseValidator: HTTPURLResponseValidator {
-    
+
     var validateMethodCalled = true
     var result: Result<Void, Error> = .success(())
-    
+
     func validate(response: HTTPURLResponse) -> Result<Void, Error> {
         validateMethodCalled = true
         return result

@@ -25,12 +25,14 @@ struct TestsNetworkRequest: NetworkRequest {
     let parameters: HTTPParameters
     let parametersEncoding: HTTPParametersEncoding
     let headers: HTTPHeaders
-    
-    init(path: [String],
-         httpMethod: HTTPMethod,
-         parameters: HTTPParameters = [:],
-         parametersEncoding: HTTPParametersEncoding = .json,
-         headers: HTTPHeaders = [:]) {
+
+    init(
+        path: [String],
+        httpMethod: HTTPMethod,
+        parameters: HTTPParameters = [:],
+        parametersEncoding: HTTPParametersEncoding = .json,
+        headers: HTTPHeaders = [:]
+    ) {
         self.path = path
         self.httpMethod = httpMethod
         self.parameters = parameters

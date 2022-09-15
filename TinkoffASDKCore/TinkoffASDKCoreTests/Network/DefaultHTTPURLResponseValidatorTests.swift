@@ -17,50 +17,57 @@
 //  limitations under the License.
 //
 
-
 @testable import TinkoffASDKCore
 import XCTest
 
 class DefaultHTTPURLResponseValidatorTests: XCTestCase {
-    
+
     let url = URL(string: "https://tinkoff.ru")!
     let httpVersion = "HTTP/1.1"
-    
+
     let validator = DefaultHTTPURLResponseValidator()
-    
+
     func testValidIfStatusCode200() throws {
-        let response = HTTPURLResponse(url: url,
-                                       statusCode: 200,
-                                       httpVersion: httpVersion,
-                                       headerFields: nil)!
-        
+        let response = HTTPURLResponse(
+            url: url,
+            statusCode: 200,
+            httpVersion: httpVersion,
+            headerFields: nil
+        )!
+
         XCTAssertNoThrow(try validator.validate(response: response).get())
     }
-    
+
     func testValidIfStatusCode250() throws {
-        let response = HTTPURLResponse(url: url,
-                                       statusCode: 250,
-                                       httpVersion: httpVersion,
-                                       headerFields: nil)!
-        
+        let response = HTTPURLResponse(
+            url: url,
+            statusCode: 250,
+            httpVersion: httpVersion,
+            headerFields: nil
+        )!
+
         XCTAssertNoThrow(try validator.validate(response: response).get())
     }
-    
+
     func testValidIfStatusCode299() throws {
-        let response = HTTPURLResponse(url: url,
-                                       statusCode: 299,
-                                       httpVersion: httpVersion,
-                                       headerFields: nil)!
-        
+        let response = HTTPURLResponse(
+            url: url,
+            statusCode: 299,
+            httpVersion: httpVersion,
+            headerFields: nil
+        )!
+
         XCTAssertNoThrow(try validator.validate(response: response).get())
     }
-    
+
     func testInvalidIfStatusCode400() throws {
-        let response = HTTPURLResponse(url: url,
-                                       statusCode: 400,
-                                       httpVersion: httpVersion,
-                                       headerFields: nil)!
-        
+        let response = HTTPURLResponse(
+            url: url,
+            statusCode: 400,
+            httpVersion: httpVersion,
+            headerFields: nil
+        )!
+
         XCTAssertThrowsError(try validator.validate(response: response).get(), "") { error in
             guard let defaultHTTPURLResponseValidatorError = error as? DefaultHTTPURLResponseValidator.Error,
                   defaultHTTPURLResponseValidatorError == .failedStatusCode else {
@@ -69,13 +76,15 @@ class DefaultHTTPURLResponseValidatorTests: XCTestCase {
             }
         }
     }
-    
+
     func testInvalidIfStatusCode500() throws {
-        let response = HTTPURLResponse(url: url,
-                                       statusCode: 400,
-                                       httpVersion: httpVersion,
-                                       headerFields: nil)!
-        
+        let response = HTTPURLResponse(
+            url: url,
+            statusCode: 400,
+            httpVersion: httpVersion,
+            headerFields: nil
+        )!
+
         XCTAssertThrowsError(try validator.validate(response: response).get(), "") { error in
             guard let defaultHTTPURLResponseValidatorError = error as? DefaultHTTPURLResponseValidator.Error,
                   defaultHTTPURLResponseValidatorError == .failedStatusCode else {
