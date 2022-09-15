@@ -17,18 +17,17 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct AcquiringAPIResponseDecoder: APIResponseDecoder {
     private let decoder: JSONDecoder
-    
+
     init(decoder: JSONDecoder) {
         self.decoder = decoder
     }
-    
+
     // MARK: - APIResponseDecoder
-    
+
     func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload> {
         switch request.decodeStrategy {
         case .standart:
@@ -43,25 +42,29 @@ private extension AcquiringAPIResponseDecoder {
     func decodeStandart<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
         return try decoder.decode(APIResponse<Payload>.self, from: data)
     }
-    
+
     func decodeClipped<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
         do {
             let decoder = JSONDecoder()
 
-             let error = try? decoder.decode(APIFailureError.self, from: data)
+            let error = try? decoder.decode(APIFailureError.self, from: data)
 
-             if let error = error, error.errorCode != 0 {
-                 return APIResponse(success: false,
-                                    errorCode: error.errorCode,
-                                    terminalKey: nil,
-                                    result: .failure(error))
-             } else {
-                 let payload = try decoder.decode(Payload.self, from: data)
-                 return APIResponse(success: true,
-                                    errorCode: 0,
-                                    terminalKey: nil,
-                                    result: .success(payload))
-             }
+            if let error = error, error.errorCode != 0 {
+                return APIResponse(
+                    success: false,
+                    errorCode: error.errorCode,
+                    terminalKey: nil,
+                    result: .failure(error)
+                )
+            } else {
+                let payload = try decoder.decode(Payload.self, from: data)
+                return APIResponse(
+                    success: true,
+                    errorCode: 0,
+                    terminalKey: nil,
+                    result: .success(payload)
+                )
+            }
         } catch {
             return try decodeStandart(data: data)
         }

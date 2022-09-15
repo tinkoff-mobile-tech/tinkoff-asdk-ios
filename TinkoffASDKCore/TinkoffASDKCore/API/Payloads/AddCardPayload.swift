@@ -17,22 +17,21 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct AddCardPayload: Decodable, Equatable {
     public let requestKey: String
-    
+
     private enum CodingKeys: CodingKey {
         case requestKey
-        
+
         var stringValue: String {
             switch self {
             case .requestKey: return APIConstants.Keys.requestKey
             }
         }
     }
-    
+
     public init(requestKey: String) {
         self.requestKey = requestKey
     }

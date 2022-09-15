@@ -17,20 +17,20 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct ChargePaymentPayload: Decodable {
     public let status: PaymentStatus
     public let paymentState: GetPaymentStatePayload
-    
-    public init(status: PaymentStatus,
-                paymentState: GetPaymentStatePayload)
-    {
+
+    public init(
+        status: PaymentStatus,
+        paymentState: GetPaymentStatePayload
+    ) {
         self.status = status
         self.paymentState = paymentState
     }
-    
+
     public init(from decoder: Decoder) throws {
         paymentState = try GetPaymentStatePayload(from: decoder)
         status = paymentState.status

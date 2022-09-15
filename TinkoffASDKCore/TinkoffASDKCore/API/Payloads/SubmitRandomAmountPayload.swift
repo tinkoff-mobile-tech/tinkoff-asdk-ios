@@ -17,17 +17,16 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct SubmitRandomAmountPayload: Decodable {
     public let requestKey: String
     public let cardId: String?
-    
+
     private enum CodingKeys: CodingKey {
         case requestKey
         case cardId
-        
+
         var stringValue: String {
             switch self {
             case .requestKey: return APIConstants.Keys.requestKey
@@ -35,7 +34,7 @@ public struct SubmitRandomAmountPayload: Decodable {
             }
         }
     }
-    
+
     public init(requestKey: String, cardId: String?) {
         self.requestKey = requestKey
         self.cardId = cardId

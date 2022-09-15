@@ -17,12 +17,11 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct AddCardRequest: APIRequest {
     typealias Payload = AddCardPayload
-    
+
     var requestPath: [String] { ["AddCard"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL

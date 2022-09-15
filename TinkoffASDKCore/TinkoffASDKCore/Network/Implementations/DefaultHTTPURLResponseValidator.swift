@@ -17,16 +17,15 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct DefaultHTTPURLResponseValidator: HTTPURLResponseValidator {
-    
+
     enum Error: Swift.Error {
         case failedStatusCode
     }
-    
-    private let successStatusCodes = 200...299
+
+    private let successStatusCodes = 200 ... 299
     func validate(response: HTTPURLResponse) -> Swift.Result<Void, Swift.Error> {
         if successStatusCodes.contains(response.statusCode) {
             return .success(())

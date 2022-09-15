@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetPaymentStatePayload: Decodable {
@@ -25,13 +24,13 @@ public struct GetPaymentStatePayload: Decodable {
     public let amount: Int64
     public let orderId: String
     public let status: PaymentStatus
-    
+
     private enum CodingKeys: CodingKey {
         case amount
         case orderId
         case paymentId
         case status
-        
+
         var stringValue: String {
             switch self {
             case .amount: return APIConstants.Keys.amount
@@ -41,17 +40,19 @@ public struct GetPaymentStatePayload: Decodable {
             }
         }
     }
-    
-    public init(paymentId: String,
-                amount: Int64,
-                orderId: String,
-                status: PaymentStatus) {
+
+    public init(
+        paymentId: String,
+        amount: Int64,
+        orderId: String,
+        status: PaymentStatus
+    ) {
         self.paymentId = paymentId
         self.amount = amount
         self.orderId = orderId
         self.status = status
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         paymentId = try container.decode(String.self, forKey: .paymentId)

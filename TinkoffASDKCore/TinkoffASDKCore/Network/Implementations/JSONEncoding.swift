@@ -17,35 +17,36 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct JSONEncoding: ParametersEncoder {
-    
+
     enum Error: Swift.Error {
         case encodingFailed(error: Swift.Error)
     }
-    
+
     private let options: JSONSerialization.WritingOptions
-    
+
     init(options: JSONSerialization.WritingOptions = []) {
         self.options = options
     }
-    
+
     func encode(_ urlRequest: URLRequest, parameters: HTTPParameters) throws -> URLRequest {
         guard !parameters.isEmpty else { return urlRequest }
-        
+
         do {
-            let data = try JSONSerialization.data(withJSONObject: parameters,
-                                                  options: options)
-            
+            let data = try JSONSerialization.data(
+                withJSONObject: parameters,
+                options: options
+            )
+
             var mutableUrlRequest = urlRequest
             mutableUrlRequest.httpBody = data
-            
+
             if mutableUrlRequest.value(forHTTPHeaderField: .contentType) == nil {
                 mutableUrlRequest.setValue(.applicationJson, forHTTPHeaderField: .contentType)
             }
-            
+
             return mutableUrlRequest
         } catch {
             throw Error.encodingFailed(error: error)

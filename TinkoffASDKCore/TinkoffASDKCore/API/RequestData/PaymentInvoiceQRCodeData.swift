@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 /// Тип возвращаемых данных для генерации QR-кода
@@ -76,7 +75,7 @@ public struct PaymentInvoiceQRCodeData: Codable {
             self.paymentId = paymentId
         } else {
             let paymentIdNumber = try container.decode(Int64.self, forKey: .paymentId)
-            self.paymentId = String(paymentIdNumber)
+            paymentId = String(paymentIdNumber)
         }
     }
 

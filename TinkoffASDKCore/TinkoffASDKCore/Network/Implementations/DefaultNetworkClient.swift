@@ -147,7 +147,7 @@ final class DefaultNetworkClient: NetworkClient {
                         completion(.failure(error))
                         return
                     }
-
+                    // swiftlint:disable:next force_cast
                     completion(.success(delegatedResponse as! Response))
                     return
                 }

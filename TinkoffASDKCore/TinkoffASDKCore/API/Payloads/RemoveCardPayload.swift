@@ -17,17 +17,16 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct RemoveCardPayload: Decodable {
     public let cardId: String
     public let cardStatus: PaymentCardStatus
-    
+
     private enum CodingKeys: CodingKey {
         case cardId
         case cardStatus
-        
+
         var stringValue: String {
             switch self {
             case .cardId: return APIConstants.Keys.cardId

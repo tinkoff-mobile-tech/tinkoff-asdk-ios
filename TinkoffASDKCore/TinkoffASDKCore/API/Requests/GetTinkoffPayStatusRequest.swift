@@ -17,22 +17,21 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetTinkoffPayStatusRequest: APIRequest {
     typealias Payload = GetTinkoffPayStatusPayload
-    
-    var requestPath: [String] { [self.createRequestName()] }
+
+    var requestPath: [String] { [createRequestName()] }
     var httpMethod: HTTPMethod { .get }
     var baseURL: URL
 
     // MARK: - Parameters
-    
+
     private let terminalKey: String
-    
+
     // MARK: - Init
-    
+
     init(terminalKey: String, baseURL: URL) {
         self.terminalKey = terminalKey
         self.baseURL = baseURL

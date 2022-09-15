@@ -17,56 +17,55 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct CoreAssembly {
     private let configuration: AcquiringSdkConfiguration
     private let baseURLProvider: BaseURLProvider
-    
+
     init(configuration: AcquiringSdkConfiguration) throws {
         self.configuration = configuration
-        self.baseURLProvider = try DefaultBaseURLProvider(host: configuration.serverEnvironment.host)
+        baseURLProvider = try DefaultBaseURLProvider(host: configuration.serverEnvironment.host)
     }
-    
+
     func buildAPI() -> API {
         AcquiringAPI(
             networkClient: buildNetworkClient(
-            requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey)),
+                requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey)),
             apiResponseDecoder: buildAPIResponseDecoder()
         )
     }
-    
+
     func cardDataFormatter() -> CardDataFormatter {
         CardDataFormatter()
     }
-    
+
     func ipAddressProvider() -> IPAddressProvider {
         IPAddressProvider(factory: IPAddressFactory())
     }
-    
+
     func threeDSURLBuilder() -> ThreeDSURLBuilder {
         ThreeDSURLBuilder(baseURLProvider: baseURLProvider)
     }
-    
+
     func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {
         ThreeDSURLRequestBuilder(
             threeDSURLBuilder: threeDSURLBuilder(),
             deviceInfoProvider: deviceInfoProvider()
         )
     }
-    
+
     func deviceInfoProvider() -> DeviceInfoProvider {
         DefaultDeviceInfoProvider()
     }
-    
+
     func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
         ThreeDSWebViewHandler(
             threeDSURLBuilder: threeDSURLBuilder(),
             jsonDecoder: buildJSONDecoder()
         )
     }
-    
+
     func threeDSDeviceParamsProvider(screenSize: CGSize, language: AcquiringSdkLanguage) -> ThreeDSDeviceParamsProvider {
         DefaultThreeDSDeviceParamsProvider(
             screenSize: screenSize,
@@ -86,47 +85,47 @@ private extension CoreAssembly {
         networkClient.requestAdapter = requestAdapter
         return networkClient
     }
-    
+
     func buildURLSession() -> URLSession {
         URLSession(
             configuration: buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval)
         )
     }
-    
+
     func buildURLSessionConfiguration(requestsTimeoutInterval: TimeInterval) -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = requestsTimeoutInterval
         configuration.timeoutIntervalForResource = requestsTimeoutInterval
         return configuration
     }
-    
+
     func buildRequestBuilder() -> NetworkClientRequestBuilder {
         DefaultNetworkClientRequestBuilder()
     }
-    
+
     func buildResponseValidator() -> HTTPURLResponseValidator {
         DefaultHTTPURLResponseValidator()
     }
-    
+
     func buildAPIURLBuilder() -> APIURLBuilder {
         APIURLBuilder()
     }
-    
+
     func buildAPIHostProvider() -> APIHostProvider {
         APIHostProvider(
             sdkEnvironmentProvider: configuration.serverEnvironment,
             apiURLBuilder: buildAPIURLBuilder()
         )
     }
-    
+
     func buildAPIParametersProvider(terminalKey: String) -> APIParametersProvider {
         APIParametersProvider(terminalKey: terminalKey)
     }
-    
+
     func buildAPIResponseDecoder() -> APIResponseDecoder {
         AcquiringAPIResponseDecoder(decoder: buildJSONDecoder())
     }
-    
+
     func buildJSONDecoder() -> JSONDecoder {
         JSONDecoder()
     }

@@ -17,22 +17,21 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetStaticQrPayload: Decodable {
     public let qrCodeData: String
-    
+
     private enum CodingKeys: CodingKey {
         case qrCodeData
-        
+
         var stringValue: String {
             switch self {
             case .qrCodeData: return APIConstants.Keys.qrCodeData
             }
         }
     }
-    
+
     public init(qrCodeData: String) {
         self.qrCodeData = qrCodeData
     }

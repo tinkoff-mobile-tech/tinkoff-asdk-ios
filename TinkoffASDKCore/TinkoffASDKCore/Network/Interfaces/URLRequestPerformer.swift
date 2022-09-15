@@ -17,10 +17,11 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 protocol URLRequestPerformer {
-    func createDataTask(with request: URLRequest,
-                        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask
+    func createDataTask(
+        with request: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> NetworkDataTask
 }

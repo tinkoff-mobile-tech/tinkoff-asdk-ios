@@ -17,26 +17,25 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct APIHostProvider: HTTPHostProvider {
     private let apiEnvironmentProvider: APIEnvironmentProvider
     private let apiURLBuilder: APIURLBuilder
-    
+
     // MARK: - Init
-    
-    init(sdkEnvironmentProvider: APIEnvironmentProvider,
-         apiURLBuilder: APIURLBuilder) {
-        self.apiEnvironmentProvider = sdkEnvironmentProvider
+
+    init(
+        sdkEnvironmentProvider: APIEnvironmentProvider,
+        apiURLBuilder: APIURLBuilder
+    ) {
+        apiEnvironmentProvider = sdkEnvironmentProvider
         self.apiURLBuilder = apiURLBuilder
     }
-    
+
     // MARK: - HTTPHostProvider
-    
+
     func host() throws -> URL {
         try apiURLBuilder.buildURL(host: apiEnvironmentProvider.host)
     }
 }
-
-

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 class APIResponse<Model: Decodable>: Decodable {
@@ -25,12 +24,12 @@ class APIResponse<Model: Decodable>: Decodable {
     let errorCode: Int
     let terminalKey: String?
     let result: Swift.Result<Model, APIFailureError>
-    
+
     private enum CodingKeys: CodingKey {
         case success
         case terminalKey
         case errorCode
-        
+
         var stringValue: String {
             switch self {
             case .success: return APIConstants.Keys.success
@@ -39,10 +38,10 @@ class APIResponse<Model: Decodable>: Decodable {
             }
         }
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         terminalKey = try container.decodeIfPresent(String.self, forKey: .terminalKey)
         success = try container.decode(Bool.self, forKey: .success)
         let errorCodeString = try container.decode(String.self, forKey: .errorCode)
@@ -51,11 +50,13 @@ class APIResponse<Model: Decodable>: Decodable {
             ? .success(try Model(from: decoder))
             : .failure(try APIFailureError(from: decoder))
     }
-    
-    init(success: Bool,
-         errorCode: Int,
-         terminalKey: String?,
-         result: Swift.Result<Model, APIFailureError>) {
+
+    init(
+        success: Bool,
+        errorCode: Int,
+        terminalKey: String?,
+        result: Swift.Result<Model, APIFailureError>
+    ) {
         self.success = success
         self.terminalKey = terminalKey
         self.result = result

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct Localization {
@@ -26,7 +25,7 @@ struct Localization {
         static let serverError = localizationString(key: "NetworkError.serverError")
         static let emptyBody = localizationString(key: "NetworkError.emptyBody")
     }
-    
+
     struct APIError {
         static let failureError = localizationString(key: "APIError.failureError")
         static let invalidResponse = localizationString(key: "APIError.invalidResponse")

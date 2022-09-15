@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public protocol ThreeDSDeviceParamsProvider {
@@ -28,21 +27,25 @@ struct DefaultThreeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider {
     private let screenSize: CGSize
     private let language: AcquiringSdkLanguage
     private let threeDSURLBuilder: ThreeDSURLBuilder
-    
-    init(screenSize: CGSize,
-         language: AcquiringSdkLanguage,
-         threeDSURLBuilder: ThreeDSURLBuilder) {
+
+    init(
+        screenSize: CGSize,
+        language: AcquiringSdkLanguage,
+        threeDSURLBuilder: ThreeDSURLBuilder
+    ) {
         self.screenSize = screenSize
         self.language = language
         self.threeDSURLBuilder = threeDSURLBuilder
     }
-    
+
     var deviceInfoParams: DeviceInfoParams {
         let cresCallbackUrl = threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL).absoluteString
-        
-        return DeviceInfoParams(cresCallbackUrl: cresCallbackUrl,
-                                languageId: language.rawValue,
-                                screenWidth: Int(screenSize.width),
-                                screenHeight: Int(screenSize.height))
+
+        return DeviceInfoParams(
+            cresCallbackUrl: cresCallbackUrl,
+            languageId: language.rawValue,
+            screenWidth: Int(screenSize.width),
+            screenHeight: Int(screenSize.height)
+        )
     }
 }

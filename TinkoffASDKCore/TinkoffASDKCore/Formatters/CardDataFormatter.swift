@@ -17,14 +17,13 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct CardDataFormatter {
     func formatCardData(cardNumber: String, expDate: String, cvv: String) -> String {
         return "\(APIConstants.Keys.cardNumber)=\(cardNumber);\(APIConstants.Keys.cardExpDate)=\(expDate);\(APIConstants.Keys.cardCVV)=\(cvv)"
     }
-    
+
     func formatCardData(cardId: String, cvv: String?) -> String {
         var result = ""
         if let cvv = cvv {

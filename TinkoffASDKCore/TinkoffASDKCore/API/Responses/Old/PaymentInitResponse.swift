@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct PaymentInitResponse: ResponseOperation {
@@ -52,11 +51,11 @@ public struct PaymentInitResponse: ResponseOperation {
         errorMessage = try? container.decode(String.self, forKey: .errorMessage)
         errorDetails = try? container.decode(String.self, forKey: .errorDetails)
         terminalKey = try? container.decode(String.self, forKey: .terminalKey)
-        //
+
         amount = try container.decode(Int64.self, forKey: .amount)
-        /// orderId
+
         orderId = try container.decode(String.self, forKey: .orderId)
-        /// paymentId
+
         if let stringValue = try? container.decode(String.self, forKey: .paymentId), let value = Int64(stringValue) {
             paymentId = value
         } else {

@@ -17,12 +17,12 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 /// Статический QR-код для приема платежей
 public struct PaymentInvoiceQRCodeCollectorResponse: ResponseOperation {
     // MARK: AcquiringResponseProtocol
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -30,9 +30,11 @@ public struct PaymentInvoiceQRCodeCollectorResponse: ResponseOperation {
     public var terminalKey: String?
 
     // MARK: Invoice Collector
+
     public var qrCodeData: String
 
     // MARK: Codable
+
     private enum CodingKeys: String, CodingKey {
         case success = "Success"
         case errorCode = "ErrorCode"

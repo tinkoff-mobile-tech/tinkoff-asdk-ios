@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct Check3DSVersionPayload: Decodable, Equatable {
@@ -41,17 +40,19 @@ public struct Check3DSVersionPayload: Decodable, Equatable {
             }
         }
     }
-    
-    public init(version: String,
-                tdsServerTransID: String?,
-                threeDSMethodURL: String?,
-                paymentSystem: String?) {
+
+    public init(
+        version: String,
+        tdsServerTransID: String?,
+        threeDSMethodURL: String?,
+        paymentSystem: String?
+    ) {
         self.version = version
         self.tdsServerTransID = tdsServerTransID
         self.threeDSMethodURL = threeDSMethodURL
         self.paymentSystem = paymentSystem
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(String.self, forKey: .version)

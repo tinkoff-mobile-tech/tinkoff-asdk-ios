@@ -41,7 +41,7 @@ public final class AcquiringSdk: NSObject {
     private let baseURL: URL
     private let certsConfigUrl: URL
     @available(*, deprecated, message: "Property does not affect anything")
-    public var fpsEnabled: Bool = false
+    public var fpsEnabled = false
 
     private let coreAssembly: CoreAssembly
     private let api: API

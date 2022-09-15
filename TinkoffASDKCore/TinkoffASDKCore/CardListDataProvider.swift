@@ -51,7 +51,7 @@ public protocol FetchServiceProtocol {
 /// Обычно загружается массив объектов, чтобы получить доступ к dataSourrce использум протокол `FetchObjectsDataSourceProtocol`
 /// Получение объектов загруженных с исползованием `FetchServiceProtocol`
 public protocol FetchDataSourceProtocol: FetchServiceProtocol where ObjectType == [U] {
-    ///
+    // swiftlint:disable:next type_name
     associatedtype U
     /// Общее колчесво объектов
     func count() -> Int

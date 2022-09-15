@@ -17,13 +17,12 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 enum APIVersion {
     case v1
     case v2
-    
+
     var path: String {
         switch self {
         case .v1: return "rest"

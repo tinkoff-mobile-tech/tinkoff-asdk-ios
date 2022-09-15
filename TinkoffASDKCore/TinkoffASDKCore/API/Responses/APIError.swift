@@ -17,15 +17,14 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public enum APIError: LocalizedError, CustomNSError {
     case invalidResponse
     case failure(APIFailureError)
-    
+
     // MARK: - CustomNSError
-    
+
     public var errorCode: Int {
         switch self {
         case .invalidResponse:
@@ -34,16 +33,16 @@ public enum APIError: LocalizedError, CustomNSError {
             return apiFailureError.errorCode
         }
     }
-    
-    public var errorUserInfo: [String : Any] {
+
+    public var errorUserInfo: [String: Any] {
         guard let errorDescription = errorDescription else {
             return [:]
         }
         return [NSLocalizedDescriptionKey: errorDescription]
     }
-    
+
     // MARK: - LocalizedError
-    
+
     public var errorDescription: String? {
         switch self {
         case .invalidResponse:
@@ -53,4 +52,3 @@ public enum APIError: LocalizedError, CustomNSError {
         }
     }
 }
-

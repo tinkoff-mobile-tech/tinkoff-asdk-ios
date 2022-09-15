@@ -17,23 +17,21 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct GetQrRequest: APIRequest {
     typealias Payload = GetQrPayload
-    
+
     var requestPath: [String] { ["GetQr"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
 
     var parameters: HTTPParameters {
-        // TODO: Log error
-        return (try? data.encode2JSONObject()) ?? [:]
+        (try? data.encode2JSONObject()) ?? [:]
     }
-    
+
     private let data: PaymentInvoiceQRCodeData
-    
+
     init(data: PaymentInvoiceQRCodeData, baseURL: URL) {
         self.data = data
         self.baseURL = baseURL

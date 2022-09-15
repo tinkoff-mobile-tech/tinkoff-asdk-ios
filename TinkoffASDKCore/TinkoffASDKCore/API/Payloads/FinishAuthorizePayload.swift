@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct FinishAuthorizePayload: Decodable {
@@ -31,17 +30,19 @@ public struct FinishAuthorizePayload: Decodable {
         case errorCode = "ErrorCode"
         case errorMessage = "Message"
     }
-    
-    public init(status: PaymentStatus,
-                paymentState: GetPaymentStatePayload,
-                responseStatus: PaymentFinishResponseStatus,
-                rebillId: String? = nil) {
+
+    public init(
+        status: PaymentStatus,
+        paymentState: GetPaymentStatePayload,
+        responseStatus: PaymentFinishResponseStatus,
+        rebillId: String? = nil
+    ) {
         self.status = status
         self.paymentState = paymentState
         self.responseStatus = responseStatus
         self.rebillId = rebillId
     }
-    
+
     public init(from decoder: Decoder) throws {
         paymentState = try GetPaymentStatePayload(from: decoder)
         status = paymentState.status
@@ -56,7 +57,7 @@ public struct FinishAuthorizePayload: Decodable {
                 responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
             } else {
                 throw DecodingError.typeMismatch(
-                    FinishAuthorizePayload.self,
+                    Self.self,
                     DecodingError.Context(
                         codingPath: decoder.codingPath,
                         debugDescription: "FinishAuthorize must has Confirmation3DSData or Confirmation3DSDataACS if status is 3DS_CHECKING"
@@ -69,7 +70,7 @@ public struct FinishAuthorizePayload: Decodable {
             }
             // responseStatus = .success
         }
-        
+
         let container = try decoder.container(keyedBy: CodingKeys.self)
         rebillId = try container.decodeIfPresent(String.self, forKey: .rebillId)
     }

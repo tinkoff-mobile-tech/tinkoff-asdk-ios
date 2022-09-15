@@ -17,28 +17,29 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public final class ThreeDSWebViewHandler<Payload: Decodable> {
     public var didCancel: (() -> Void)?
     public var didFinish: ((Result<Payload, Error>) -> Void)?
-    
+
     private let threeDSURLBuilder: ThreeDSURLBuilder
     private let jsonDecoder: JSONDecoder
-    
-    init(threeDSURLBuilder: ThreeDSURLBuilder,
-         jsonDecoder: JSONDecoder) {
+
+    init(
+        threeDSURLBuilder: ThreeDSURLBuilder,
+        jsonDecoder: JSONDecoder
+    ) {
         self.threeDSURLBuilder = threeDSURLBuilder
         self.jsonDecoder = jsonDecoder
     }
-    
+
     public func handle(urlString: String, responseData data: Data) {
         guard !urlString.hasSuffix("cancel.do") else {
             didCancel?()
             return
         }
-        
+
         let confirmation3DSTerminationURLString = threeDSURLBuilder
             .buildURL(type: .confirmation3DSTerminationURL)
             .absoluteString
@@ -50,7 +51,7 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
             return
         }
-        
+
         do {
             let response = try jsonDecoder.decode(APIResponse<Payload>.self, from: data)
             switch response.result {

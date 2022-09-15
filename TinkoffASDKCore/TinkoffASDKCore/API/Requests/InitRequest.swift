@@ -17,21 +17,17 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct InitRequest: APIRequest {
     typealias Payload = InitPayload
-    
+
     var requestPath: [String] { ["Init"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
 
     var parameters: HTTPParameters {
-        // TODO: Log error
-        
-        return (try? paymentInitData
-                    .encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 
     private let paymentInitData: PaymentInitData

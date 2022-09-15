@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct DefaultBaseURLProvider: BaseURLProvider {
@@ -38,7 +37,6 @@ struct DefaultBaseURLProvider: BaseURLProvider {
     // MARK: Init
 
     init(host: String) throws {
-        self.baseURL = try URL(string: "https://\(host)").orThrow(Error(host: host))
+        baseURL = try URL(string: "https://\(host)").orThrow(Error(host: host))
     }
 }
-

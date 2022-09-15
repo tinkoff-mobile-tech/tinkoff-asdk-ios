@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public enum PaymentFinishResponseStatus {
@@ -26,7 +25,7 @@ public enum PaymentFinishResponseStatus {
 
     /// Требуется подтверждение 3DS v2.0 browser-based
     case needConfirmation3DSACS(Confirmation3DSDataACS)
-    
+
     /// Требуется подтверждение 3DS v2.0 app-based
     case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
 

@@ -19,6 +19,7 @@
 
 import Foundation
 
+// swiftlint:disable class_delegate_protocol
 public protocol NetworkTransportResponseDelegate {
     /// Делегирование обработки ответа сервера
     /// NetworkTransport проверяет ошибки сети, HTTP Status Code `200..<300` и наличие данных

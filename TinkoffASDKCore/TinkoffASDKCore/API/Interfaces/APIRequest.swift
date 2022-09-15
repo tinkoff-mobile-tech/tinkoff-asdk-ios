@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 enum APIRequestDecodeStrategy {
@@ -28,7 +27,7 @@ enum APIRequestDecodeStrategy {
 protocol APIRequest: NetworkRequest {
     associatedtype Payload: Decodable
     var decodeStrategy: APIRequestDecodeStrategy { get }
-    
+
     var requestPath: [String] { get }
     var apiVersion: APIVersion { get }
 }

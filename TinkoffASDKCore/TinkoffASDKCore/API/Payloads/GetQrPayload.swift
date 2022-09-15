@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetQrPayload: Decodable {
@@ -34,11 +33,11 @@ public struct GetQrPayload: Decodable {
             }
         }
     }
-    
+
     public let qrCodeData: String
     public let orderId: String
     public let paymentId: String
-    
+
     public init(
         qrCodeData: String,
         orderId: String,
@@ -48,16 +47,16 @@ public struct GetQrPayload: Decodable {
         self.orderId = orderId
         self.paymentId = paymentId
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         qrCodeData = try container.decode(String.self, forKey: .qrCodeData)
         orderId = try container.decode(String.self, forKey: .orderId)
-        
+
         if let paymentId = try? container.decode(String.self, forKey: .paymentId) {
             self.paymentId = paymentId
         } else {
-            self.paymentId = String(try container.decode(Int64.self, forKey: .paymentId))
+            paymentId = String(try container.decode(Int64.self, forKey: .paymentId))
         }
     }
 }

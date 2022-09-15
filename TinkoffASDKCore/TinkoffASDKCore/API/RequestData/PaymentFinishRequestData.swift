@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct FinishPaymentRequestData {
@@ -45,7 +44,7 @@ public struct FinishPaymentRequestData {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
         self.infoEmail = infoEmail
-        self.sendEmail = infoEmail != nil
+        sendEmail = infoEmail != nil
         self.deviceInfo = deviceInfo
         self.ipAddress = ipAddress
         self.threeDSVersion = threeDSVersion

@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 private enum DateDecodingError: Error {
@@ -31,7 +30,7 @@ extension JSONDecoder {
             .withFullDate,
             .withFullTime,
             .withDashSeparatorInDate,
-            .withColonSeparatorInTime
+            .withColonSeparatorInTime,
         ]
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in

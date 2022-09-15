@@ -17,15 +17,16 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct Check3DSRequestData {
     public let paymentId: String
     public let paymentSource: PaymentSourceData
-    
-    public init(paymentId: String,
-                paymentSource: PaymentSourceData) {
+
+    public init(
+        paymentId: String,
+        paymentSource: PaymentSourceData
+    ) {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
     }

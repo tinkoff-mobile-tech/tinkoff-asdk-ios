@@ -17,11 +17,10 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct CardListPayload: Decodable {
-    public var success: Bool = true
+    public var success = true
     public var errorCode: Int = 0
     public var errorMessage: String?
     public var errorDetails: String?

@@ -17,13 +17,12 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetCertsConfigPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case certificates = "certificatesInfo"
     }
-    
+
     public let certificates: [CertificateData]
 }

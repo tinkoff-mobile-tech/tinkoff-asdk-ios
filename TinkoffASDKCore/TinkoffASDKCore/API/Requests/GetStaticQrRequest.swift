@@ -17,12 +17,11 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct GetStaticQrRequest: APIRequest {
     typealias Payload = GetStaticQrPayload
-    
+
     var requestPath: [String] { ["GetStaticQr"] }
     var httpMethod: HTTPMethod { .post }
     var baseURL: URL
@@ -30,9 +29,9 @@ struct GetStaticQrRequest: APIRequest {
     var parameters: HTTPParameters {
         return [APIConstants.Keys.dataType: sourceType.rawValue]
     }
-    
+
     private let sourceType: PaymentInvoiceSBPSourceType
-    
+
     init(sourceType: PaymentInvoiceSBPSourceType, baseURL: URL) {
         self.sourceType = sourceType
         self.baseURL = baseURL

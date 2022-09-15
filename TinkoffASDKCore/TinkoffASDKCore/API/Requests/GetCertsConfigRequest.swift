@@ -17,12 +17,11 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct GetCertsConfigRequest: APIRequest {
     typealias Payload = GetCertsConfigPayload
-    
+
     var requestPath: [String] { ["certs-configs/asdk-certs-config.json"] }
     var httpMethod: HTTPMethod { .get }
     var baseURL: URL

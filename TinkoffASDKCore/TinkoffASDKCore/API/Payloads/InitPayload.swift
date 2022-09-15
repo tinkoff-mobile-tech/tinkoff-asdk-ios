@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct InitPayload: Decodable, Equatable {
@@ -25,13 +24,13 @@ public struct InitPayload: Decodable, Equatable {
     public let orderId: String
     public let paymentId: String
     public let status: PaymentStatus
-    
+
     private enum CodingKeys: CodingKey {
         case amount
         case orderId
         case paymentId
         case status
-        
+
         var stringValue: String {
             switch self {
             case .amount: return APIConstants.Keys.amount
@@ -42,16 +41,18 @@ public struct InitPayload: Decodable, Equatable {
         }
     }
 
-    public init(amount: Int64,
-                orderId: String,
-                paymentId: String,
-                status: PaymentStatus) {
+    public init(
+        amount: Int64,
+        orderId: String,
+        paymentId: String,
+        status: PaymentStatus
+    ) {
         self.amount = amount
         self.orderId = orderId
         self.paymentId = paymentId
         self.status = status
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         paymentId = try container.decode(String.self, forKey: .paymentId)

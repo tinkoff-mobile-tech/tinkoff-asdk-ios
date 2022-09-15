@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 struct APIConstants {
@@ -74,7 +73,7 @@ struct APIConstants {
         static let cards = "Cards"
         static let checkType = "CheckType"
     }
-    
+
     struct Values {
         static let acq = "ACQ"
         static let applePaySource = "ApplePay"

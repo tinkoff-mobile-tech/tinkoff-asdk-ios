@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct DeviceInfoParams: Codable {
@@ -57,22 +56,24 @@ public struct DeviceInfoParams: Codable {
         case sdkUiType
     }
 
-    public init(cresCallbackUrl: String,
-                languageId: String = "ru",
-                screenWidth: Int,
-                screenHeight: Int,
-                colorDepth: Int = 32,
-                sdkAppID: String? = nil,
-                sdkEphemPubKey: String? = nil,
-                sdkReferenceNumber: String? = nil,
-                sdkTransID: String? = nil,
-                sdkMaxTimeout: String? = nil,
-                sdkEncData: String? = nil) {
-        self.threeDSCompInd = "Y"
-        self.javaEnabled = "true"
+    public init(
+        cresCallbackUrl: String,
+        languageId: String = "ru",
+        screenWidth: Int,
+        screenHeight: Int,
+        colorDepth: Int = 32,
+        sdkAppID: String? = nil,
+        sdkEphemPubKey: String? = nil,
+        sdkReferenceNumber: String? = nil,
+        sdkTransID: String? = nil,
+        sdkMaxTimeout: String? = nil,
+        sdkEncData: String? = nil
+    ) {
+        threeDSCompInd = "Y"
+        javaEnabled = "true"
         self.colorDepth = colorDepth
-        self.language = languageId
-        self.timezone = TimeZone.current.secondsFromGMT() / 60
+        language = languageId
+        timezone = TimeZone.current.secondsFromGMT() / 60
         self.screenHeight = screenHeight
         self.screenWidth = screenWidth
         self.cresCallbackUrl = cresCallbackUrl
@@ -82,7 +83,7 @@ public struct DeviceInfoParams: Codable {
         self.sdkTransID = sdkTransID
         self.sdkMaxTimeout = sdkMaxTimeout
         self.sdkEncData = sdkEncData
-        self.sdkInterface = "03"
-        self.sdkUiType = "01,02,03,04,05"
+        sdkInterface = "03"
+        sdkUiType = "01,02,03,04,05"
     }
 }

@@ -17,19 +17,18 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct GetPaymentStateRequest: APIRequest {
     typealias Payload = GetPaymentStatePayload
-    
-    let requestPath: [String] =  ["GetState"]
+
+    let requestPath: [String] = ["GetState"]
     let httpMethod: HTTPMethod = .post
     let baseURL: URL
     let parameters: HTTPParameters
 
     init(data: GetPaymentStateData, baseURL: URL) {
         self.baseURL = baseURL
-        self.parameters = (try? data.encode2JSONObject()) ?? [:]
+        parameters = (try? data.encode2JSONObject()) ?? [:]
     }
 }
