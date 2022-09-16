@@ -9,7 +9,7 @@
 * [MIC-6293] Update ThreeDSWrapper to 1.0.7
 * [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
 * [MIC-6210] Integrate new Network Layer & Change Public Methods in ASDKCore & Deprecate old methods
-* [MIC-5908] Удалили лишние / битые проект файлы, перенесли Podfile а ASDKSample
+* [MIC-5908] Удалили лишние / битые проект файлы, перенесли Podfile в ASDKSample
 
 ## [2.10.2] - 2022-09-13Z
 

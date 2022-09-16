@@ -17,17 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: SwiftFormat Lint Run
-        working-directory: ASDKSample
-        run: swiftformat .. --lint
+        run: swiftformat . --lint --config .swiftformat
 
-  # swiftlint:
-  #   runs-on: ubuntu-latest
-  #   container: ghcr.io/realm/swiftlint:0.47.0
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Swiftlint Run
-  #       working-directory: ASDKSample
-  #       run: swiftlint --quiet
+  swiftlint:
+    runs-on: ubuntu-latest
+    container: ghcr.io/realm/swiftlint:0.47.0
+    steps:
+      - uses: actions/checkout@v3
+      - name: Swiftlint Run
+        working-directory: ASDKSample
+        run: swiftlint --quiet
 
   check:
     runs-on: macos-11
@@ -41,14 +40,6 @@ jobs:
 
       - name: Bundle install
         run: bundle install
-
-      - name: Pod Install
-        working-directory: ASDKSample
-        run: bundle exec pod install
-
-      - name: Swift Format Lint
-        working-directory: ASDKSample
-        run: Pods/SwiftFormat/CommandLineTool/swiftformat .. --lint
 
       - name: build Package.swift
         run: bundle exec fastlane build_spm

@@ -466,7 +466,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\npwd\ncd \"../TinkoffASDKUI\"\npwd\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
+			shellScript = "cd \"../TinkoffASDKUI\"\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
 		};
 		B17C228128D36E2E003C6897 /* SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -485,7 +485,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd .. # Go to root directory\n\"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" .\n";
+			shellScript = "\"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" .. --config \"../.swiftformat\"\n";
 		};
 		D7F4A4E825558AE900A8AD95 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
