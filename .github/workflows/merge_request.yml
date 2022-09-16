@@ -20,14 +20,14 @@ jobs:
         working-directory: ASDKSample
         run: swiftformat .. --lint
 
-  swiftlint:
-    runs-on: ubuntu-latest
-    container: ghcr.io/realm/swiftlint:0.47.0
-    steps:
-      - uses: actions/checkout@v3
-      - name: Swiftlint Run
-        working-directory: ASDKSample
-        run: swiftlint --quiet
+  # swiftlint:
+  #   runs-on: ubuntu-latest
+  #   container: ghcr.io/realm/swiftlint:0.47.0
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Swiftlint Run
+  #       working-directory: ASDKSample
+  #       run: swiftlint --quiet
 
   check:
     runs-on: macos-11
