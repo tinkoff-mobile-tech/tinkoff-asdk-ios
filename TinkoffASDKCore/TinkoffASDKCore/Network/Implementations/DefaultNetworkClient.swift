@@ -161,11 +161,7 @@ final class DefaultNetworkClient: NetworkClient {
 
                 // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
                 guard acquiringResponse.success else {
-                    var errorMessage: String = NSLocalizedString(
-                        "TinkoffAcquiring.response.error.statusFalse",
-                        tableName: nil, bundle: .coreResources,
-                        comment: "Acquiring Error Response 'Success: false'"
-                    )
+                    var errorMessage: String = Loc.TinkoffAcquiring.Response.Error.statusFalse
 
                     if let message = acquiringResponse.errorMessage {
                         errorMessage = message

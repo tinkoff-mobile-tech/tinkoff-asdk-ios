@@ -41,7 +41,7 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
     var showErrorBlock: (_ errorTitle: String, _ errorMessage: String) -> Void = { (errorTitle: String, errorMessage: String) in
         var alertController = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(
-            title: NSLocalizedString("OK", comment: "OK"),
+            title: Loc.Button.ok,
 
             style: UIAlertAction.Style.default,
 
@@ -58,7 +58,7 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        buttonClose.setTitle(NSLocalizedString("button.close", comment: "Закрыть"), for: .normal)
+        buttonClose.setTitle(Loc.Button.close, for: .normal)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -118,7 +118,7 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
         do {
             videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
         } catch let outError {
-            showError(NSLocalizedString("Device setup error occured", comment: ""), message: "\(outError)")
+            showError(Loc.Error.Device.setup, message: "\(outError)")
             return
         }
 
@@ -126,13 +126,9 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
             captureSession.addInput(videoInput)
         } else {
             showError(
-                NSLocalizedString("Camera error", comment: ""),
+                Loc.Error.Camera.setup,
 
-                message: NSLocalizedString(
-                    "No valid capture session found, I can't take any pictures or videos.",
-
-                    comment: ""
-                )
+                message: Loc.Error.Camera.noSessionFound
             )
             captureSession = nil
             return
@@ -147,13 +143,8 @@ class CardScanerViewController: UIViewController, AVCaptureMetadataOutputObjects
             metadataOutput.metadataObjectTypes = scannerMetadataObjectTypes
         } else {
             showError(
-                NSLocalizedString("Preset not supported", comment: ""),
-
-                message: NSLocalizedString(
-                    "Camera preset not supported. Please try another one.",
-
-                    comment: ""
-                )
+                Loc.Error.Camera.preset,
+                message: Loc.Error.Camera.Preset.message
             )
             return
         }

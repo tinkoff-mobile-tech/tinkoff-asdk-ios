@@ -1,0 +1,16 @@
+strings:
+  inputs: ASDKSample/Resources/Strings/ru.lproj
+  outputs:
+    - templateName: structured-swift5
+      output: ASDKSample/Resources/Generated/Strings+Generated.swift
+      params:
+        enumName: Loc
+
+xcassets:
+  inputs: ASDKSample/Resources/Assets.xcassets
+  outputs:
+    - templateName: swift5
+      output: ASDKSample/Resources/Generated/Assets+Generated.swift
+      params:
+        forceProvidesNamespaces: true
+      

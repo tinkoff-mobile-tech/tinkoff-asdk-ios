@@ -46,7 +46,7 @@ public enum APIError: LocalizedError, CustomNSError {
     public var errorDescription: String? {
         switch self {
         case .invalidResponse:
-            return Localization.APIError.invalidResponse
+            return Loc.APIError.invalidResponse
         case let .failure(apiFailureError):
             return apiFailureError.errorDescription
         }
