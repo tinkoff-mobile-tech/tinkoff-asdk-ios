@@ -11,12 +11,20 @@ on:
         type: string
 
 jobs:
+  swiftformat:
+    runs-on: ubuntu-latest
+    container: ghcr.io/nicklockwood/swiftformat:0.49.18
+    steps:
+      - uses: actions/checkout@v3
+      - name: SwiftFormat Lint Run
+        working-directory: ASDKSample
+        run: swiftformat .. --lint
+
   swiftlint:
     runs-on: ubuntu-latest
     container: ghcr.io/realm/swiftlint:0.47.0
     steps:
       - uses: actions/checkout@v3
-      
       - name: Swiftlint Run
         working-directory: ASDKSample
         run: swiftlint --quiet
