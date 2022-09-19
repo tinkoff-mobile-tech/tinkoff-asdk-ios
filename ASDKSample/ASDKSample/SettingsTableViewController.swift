@@ -114,7 +114,7 @@ class SettingsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = NSLocalizedString("title.settings", comment: "Настройки")
+        title = Loc.Title.settings
 
         tableView.registerCells(types: [SwitchTableViewCell.self, SegmentedTabeViewCell.self])
 
@@ -154,8 +154,8 @@ class SettingsTableViewController: UITableViewController {
                 cell.switcher.isOn = value
 
                 let title = value
-                    ? NSLocalizedString("status.sbp.on", comment: "Включены")
-                    : NSLocalizedString("status.sbp.off", comment: "Выключены")
+                    ? Loc.Status.Sbp.on
+                    : Loc.Status.Sbp.off
 
                 cell.labelTitle.text = title
                 cell.onSwitcherChange = { swither in
@@ -173,8 +173,8 @@ class SettingsTableViewController: UITableViewController {
                 cell.switcher.isOn = value
 
                 let title = value
-                    ? NSLocalizedString("status.sbp.on", comment: "Включены")
-                    : NSLocalizedString("status.sbp.off", comment: "Выключены")
+                    ? Loc.Status.Sbp.on
+                    : Loc.Status.Sbp.off
 
                 cell.labelTitle.text = title
                 cell.onSwitcherChange = { swither in
@@ -192,8 +192,8 @@ class SettingsTableViewController: UITableViewController {
                 cell.switcher.isOn = value
 
                 let title = value
-                    ? NSLocalizedString("status.showEmailField.on", comment: "Показывать")
-                    : NSLocalizedString("status.showEmailField.off", comment: "Скрыто")
+                    ? Loc.Status.ShowEmailField.on
+                    : Loc.Status.ShowEmailField.off
                 cell.labelTitle.text = title
 
                 cell.onSwitcherChange = { swither in
@@ -212,8 +212,8 @@ class SettingsTableViewController: UITableViewController {
                 cell.switcher.isOn = value
 
                 let title = value
-                    ? NSLocalizedString("status.alert.on", comment: "Aquaring")
-                    : NSLocalizedString("status.alert.off", comment: "Системные")
+                    ? Loc.Status.Alert.on
+                    : Loc.Status.Alert.off
                 cell.labelTitle.text = title
 
                 cell.onSwitcherChange = { swither in
@@ -278,37 +278,37 @@ class SettingsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch tableViewCells[section] {
         case .paySBP:
-            return NSLocalizedString("title.fasterPayments", comment: "Система Быстрых Платежей")
+            return Loc.Title.fasterPayments
         case .tinkoffPay:
-            return NSLocalizedString("TinkoffPay", comment: "TinkoffPay")
+            return Loc.Name.tinkoffPay
         case .showEmail:
-            return NSLocalizedString("title.showEmailField", comment: "")
+            return Loc.Title.showEmailField
         case .acquiring:
-            return NSLocalizedString("title.Acquiring", comment: "")
+            return Loc.Name.acquiring
         case .addCardCheckType:
-            return NSLocalizedString("title.savingCard", comment: "Сохранение карты")
+            return Loc.Title.savingCard
         case .language:
-            return NSLocalizedString("title.paymentFormLanguage", comment: "Локализация платежной формы")
+            return Loc.Title.paymentFormLanguage
         }
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch tableViewCells[section] {
         case .paySBP:
-            return NSLocalizedString("text.payBySBP.description", comment: "")
+            return Loc.Text.PayBySBP.description
         case .tinkoffPay:
             return ""
         case .showEmail:
-            return NSLocalizedString("text.showEmailField", comment: "")
+            return Loc.Text.showEmailField
 
         case .acquiring:
-            return NSLocalizedString("text.Acquiring.description", comment: "")
+            return Loc.Text.Acquiring.description
 
         case .addCardCheckType:
-            return NSLocalizedString("text.addCardCheckType.description", comment: "")
+            return Loc.Text.AddCardCheckType.description
 
         case .language:
-            return NSLocalizedString("text.language.description", comment: "")
+            return Loc.Text.Language.description
         }
     }
 }

@@ -39,11 +39,11 @@ enum NetworkError: LocalizedError, CustomNSError {
         let description: String
         switch self {
         case let .transportError(error):
-            description = "\(Localization.NetworkError.transportError): \(error.localizedDescription)"
+            description = "\(Loc.NetworkError.transportError): \(error.localizedDescription)"
         case let .serverError(statusCode, _):
-            description = "\(Localization.NetworkError.serverError): \(statusCode)"
+            description = "\(Loc.NetworkError.serverError): \(statusCode)"
         case .noData:
-            description = "\(Localization.NetworkError.emptyBody)"
+            description = "\(Loc.NetworkError.emptyBody)"
         }
         return description
     }

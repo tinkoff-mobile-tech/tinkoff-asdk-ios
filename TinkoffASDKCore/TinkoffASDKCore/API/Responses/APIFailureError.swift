@@ -65,7 +65,7 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
     // MARK: - LocalizedError
 
     public var errorDescription: String? {
-        var errorDescription = Localization.APIError.failureError
+        var errorDescription = Loc.APIError.failureError
         if errorMessage != nil || errorDetails != nil { errorDescription += ": " }
         if let errorMessage = errorMessage {
             errorDescription += errorMessage

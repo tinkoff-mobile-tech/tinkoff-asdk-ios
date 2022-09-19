@@ -154,4 +154,4 @@ fastlane/README.md
 .vscode
 
 # Xcode generated workspaces
-ASDKSample/ASDKSample.xcworkspace
+ASDKSample/ASDKSample.xcworkspace/**

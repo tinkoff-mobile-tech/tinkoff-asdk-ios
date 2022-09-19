@@ -36,7 +36,7 @@ class SelectRebuildCardViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = NSLocalizedString("title.paymentCardList", comment: "Сохраненные карты")
+        title = Loc.Title.paymentCardList
         tableView.register(
             UINib(
                 nibName: "RebuildCardTableViewCell",
@@ -71,8 +71,7 @@ class SelectRebuildCardViewController: UITableViewController {
             cell.labelCardName.text = card.pan
             cell.labelCardExpData.text = card.expDateFormat()
             if let rebuildId = card.parentPaymentId {
-                cell.labelRebuid.text
-                    = "(\(NSLocalizedString("text.parentPayment", comment: "родительский платеж")) \(rebuildId))"
+                cell.labelRebuid.text = "(\(Loc.Text.parentPayment) \(rebuildId))"
             }
 
             cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in

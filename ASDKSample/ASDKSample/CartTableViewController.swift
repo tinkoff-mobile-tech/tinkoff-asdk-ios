@@ -55,7 +55,7 @@ class CartTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = NSLocalizedString("title.cart", comment: "Корзина")
+        title = Loc.Title.cart
 
         tableView.registerCells(types: [CartEmptyTableViewCell.self])
         tableView.registerHeaderFooter(types: [CartBuyButtonView.self])
@@ -80,14 +80,8 @@ class CartTableViewController: UITableViewController {
             if let cell = tableView.dequeueReusableCell(withIdentifier: CartEmptyTableViewCell.nibName)
                 as? CartEmptyTableViewCell {
 
-                cell.labelTitle.text = NSLocalizedString("status.cartIsEmpty", comment: "Корзина пуста")
-                cell.buttonAction.setTitle(
-                    NSLocalizedString(
-                        "button.backToShop",
-                        comment: "Вернуться в магазин"
-                    ),
-                    for: .normal
-                )
+                cell.labelTitle.text = Loc.Status.cartIsEmpty
+                cell.buttonAction.setTitle(Loc.Button.backToShop, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
@@ -116,7 +110,7 @@ class CartTableViewController: UITableViewController {
         }
 
         footer.labelTitle.text = nil
-        footer.buttonBuy.setTitle(NSLocalizedString("button.pay", comment: "Оплатить"), for: .normal)
+        footer.buttonBuy.setTitle(Loc.Button.pay, for: .normal)
 
         footer.onButtonTouch = { [weak self] in
             guard

@@ -1,0 +1,9 @@
+strings:
+  inputs: TinkoffASDKCore/Resources/Strings/ru.lproj
+  outputs:
+    - templateName: structured-swift5
+      output: TinkoffASDKCore/Resources/Generated/Strings+Generated.swift
+      params:
+        enumName: Loc
+        bundle: Bundle.coreResources
+      

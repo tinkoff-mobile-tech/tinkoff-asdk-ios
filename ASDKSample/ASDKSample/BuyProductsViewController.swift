@@ -63,7 +63,7 @@ class BuyProductsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = NSLocalizedString("title.paymentSource", comment: "Источник оплаты")
+        title = Loc.Title.paymentSource
 
         tableView.registerCells(types: [ButtonTableViewCell.self])
         tableView.delegate = self
@@ -173,7 +173,7 @@ class BuyProductsViewController: UIViewController {
         viewConfigration.fields = []
         // InfoFields.amount
         let title = NSAttributedString(
-            string: NSLocalizedString("title.paymeny", comment: "Оплата"),
+            string: Loc.Title.paymeny,
 
             attributes: [.font: UIFont.boldSystemFont(ofSize: 22)]
         )
@@ -181,7 +181,7 @@ class BuyProductsViewController: UIViewController {
         let amountString = Utils.formatAmount(NSDecimalNumber(floatLiteral: productsAmount()))
 
         let amountTitle = NSAttributedString(
-            string: "\(NSLocalizedString("text.totalAmount", comment: "на сумму")) \(amountString)",
+            string: "\(Loc.Text.totalAmount) \(amountString)",
 
             attributes: [.font: UIFont.systemFont(ofSize: 17)]
         )
@@ -205,10 +205,7 @@ class BuyProductsViewController: UIViewController {
         if AppSetting.shared.showEmailField {
             let emailField = AcquiringViewConfiguration.InfoFields.email(
                 value: nil,
-                placeholder: NSLocalizedString(
-                    "plaseholder.email",
-                    comment: "Отправить квитанцию по адресу"
-                )
+                placeholder: Loc.Plaseholder.email
             )
             viewConfigration.fields.append(emailField)
         }
@@ -216,7 +213,7 @@ class BuyProductsViewController: UIViewController {
         viewConfigration.featuresOptions.fpsEnabled = AppSetting.shared.paySBP
         viewConfigration.featuresOptions.tinkoffPayEnabled = AppSetting.shared.tinkoffPay
 
-        viewConfigration.viewTitle = NSLocalizedString("title.pay", comment: "Оплата")
+        viewConfigration.viewTitle = Loc.Title.pay
         viewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
         return viewConfigration
@@ -225,14 +222,14 @@ class BuyProductsViewController: UIViewController {
     private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>) {
         switch response {
         case let .success(result):
-            var message = NSLocalizedString("text.paymentStatusAmount", comment: "Покупка на сумму")
+            var message = Loc.Text.paymentStatusAmount
             message.append(" \(Utils.formatAmount(result.amount)) ")
 
             if result.status == .cancelled {
-                message.append(NSLocalizedString("text.paymentStatusCancel", comment: "отменена"))
+                message.append(Loc.Text.paymentStatusCancel)
             } else {
                 message.append(" ")
-                message.append(NSLocalizedString("text.paymentStatusSuccess", comment: "paymentStatusSuccess"))
+                message.append(Loc.Text.paymentStatusSuccess)
                 message.append("\npaymentId = \(result.paymentId)")
             }
 
@@ -240,7 +237,7 @@ class BuyProductsViewController: UIViewController {
                 sdk.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
             } else {
                 let alertView = UIAlertController(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
-                alertView.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+                alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
                 present(alertView, animated: true, completion: nil)
             }
 
@@ -249,7 +246,7 @@ class BuyProductsViewController: UIViewController {
                 sdk.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
             } else {
                 let alertView = UIAlertController(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
-                alertView.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+                alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
                 present(alertView, animated: true, completion: nil)
             }
         }
@@ -430,7 +427,7 @@ extension BuyProductsViewController: UITableViewDataSource {
 
         case .pay:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                cell.button.setTitle(NSLocalizedString("button.pay", comment: "Оплатить"), for: .normal)
+                cell.button.setTitle(Loc.Button.pay, for: .normal)
                 cell.button.isEnabled = true
                 cell.button.backgroundColor = yellowButtonColor()
                 cell.button.setImage(nil, for: .normal)
@@ -453,7 +450,7 @@ extension BuyProductsViewController: UITableViewDataSource {
 
         case .payAndSaveAsParent:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                cell.button.setTitle(NSLocalizedString("button.pay", comment: "Оплатить"), for: .normal)
+                cell.button.setTitle(Loc.Button.pay, for: .normal)
                 cell.button.isEnabled = true
                 cell.button.backgroundColor = yellowButtonColor()
                 cell.button.setImage(nil, for: .normal)
@@ -467,7 +464,7 @@ extension BuyProductsViewController: UITableViewDataSource {
         case .payRequrent:
             if indexPath.row == 0 {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                    cell.button.setTitle(NSLocalizedString("button.paymentTryAgain", comment: "Повторить платеж"), for: .normal)
+                    cell.button.setTitle(Loc.Button.paymentTryAgain, for: .normal)
                     cell.button.backgroundColor = yellowButtonColor()
                     cell.button.setImage(nil, for: .normal)
                     if let card = paymentCardParentPaymentId {
@@ -490,7 +487,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             } else {
                 let cell = tableView.defaultCell()
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = NSLocalizedString("button.selectAnotherCard", comment: "выбрать другую карту")
+                cell.textLabel?.text = Loc.Button.selectAnotherCard
                 cell.detailTextLabel?.text = nil
                 return cell
             }
@@ -499,7 +496,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.setImage(UIImage(named: "buttonApplePay"), for: .normal)
+                cell.button.setImage(Asset.buttonApplePay.image, for: .normal)
                 cell.button.isEnabled = sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration)
 
                 cell.onButtonTouch = { [weak self] in
@@ -514,7 +511,7 @@ extension BuyProductsViewController: UITableViewDataSource {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
                 cell.button.isEnabled = sdk.canMakePaymentsSBP()
-                cell.button.setImage(UIImage(named: "logo_sbp"), for: .normal)
+                cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpQrImage()
                 }
@@ -527,7 +524,7 @@ extension BuyProductsViewController: UITableViewDataSource {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
                 cell.button.isEnabled = sdk.canMakePaymentsSBP()
-                cell.button.setImage(UIImage(named: "logo_sbp"), for: .normal)
+                cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpUrl()
                 }
@@ -542,22 +539,22 @@ extension BuyProductsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch tableViewCells[section] {
         case .products:
-            return NSLocalizedString("title.goods", comment: "Товары")
+            return Loc.Title.goods
 
         case .pay:
-            return NSLocalizedString("title.paymeny", comment: "Оплатить")
+            return Loc.Title.paymeny
 
         case .payAndSaveAsParent:
-            return NSLocalizedString("title.payAndSaveAsParent", comment: "Оплатить, начать регулярный платеж")
+            return Loc.Title.payAndSaveAsParent
 
         case .payRequrent:
-            return NSLocalizedString("title.paymentTryAgain", comment: "Повторить платеж")
+            return Loc.Title.paymentTryAgain
 
         case .payApplePay:
-            return NSLocalizedString("title.payByApplePay", comment: "Оплатить с помощью ApplePay")
+            return Loc.Title.payByApplePay
 
         case .paySbpUrl, .paySbpQrCode:
-            return NSLocalizedString("title.payBySBP", comment: "Оплатить с помощью Системы Быстрых Платежей")
+            return Loc.Title.payBySBP
         }
     }
 

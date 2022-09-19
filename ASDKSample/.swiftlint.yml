@@ -6,13 +6,13 @@ included:
   - ../TinkoffASDKCore
 
 excluded:
+  - ASDKSample/Resources/Generated
   - ../Pods
   - ../TinkoffASDKUI/TinkoffASDKUITests
   - ../TinkoffASDKCore/TinkoffASDKCoreTests
-  - ../TinkoffASDKUI/TinkoffASDKUI/Resources/Generated
   - ../TinkoffASDKUI/TinkoffASDKUI/InputMask
-  # Uncomment when the path will be present
-  # - ../TinkoffASDKCore/TinkoffASDKCore/Resources/Generated
+  - ../TinkoffASDKUI/TinkoffASDKUI/Resources/Generated
+  - ../TinkoffASDKCore/TinkoffASDKCore/Resources/Generated
 
 disabled_rules:
   # Допускаем TODO и FIXME в коде. Формат TODO и FIXME задан в custom_rules
