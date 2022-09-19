@@ -10,6 +10,7 @@
 * [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
 * [MIC-6210] Integrate new Network Layer & Change Public Methods in ASDKCore & Deprecate old methods
 * [MIC-5908] Deleted broken xproject files, moved Podfile into ASDKSample folder
+* [MIC-6276] SwiftGen for Core module + SwiftGen for Sample App
 
 ## [2.10.2] - 2022-09-13Z
 
