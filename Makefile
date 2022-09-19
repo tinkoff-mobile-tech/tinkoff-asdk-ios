@@ -1,3 +1,3 @@
 start:
-	bundle exec pod install
-	open ASDKSample/ASDKSample.xcworkspace
+	cd 'ASDKSample'; bundle exec pod install
+	open ASDKSample/ASDKSample.xcworkspace;

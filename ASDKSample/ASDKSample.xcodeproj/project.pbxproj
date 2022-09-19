@@ -106,8 +106,8 @@
 		B1419C5228D46AB2005C61DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B1419C5728D46D96005C61DE /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		B1419C5828D46D96005C61DE /* Assets+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Generated.swift"; sourceTree = "<group>"; };
-		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "../../Pods/Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
-		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "../../Pods/Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
+		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
+		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -324,10 +324,10 @@
 			buildConfigurationList = 2C9C7EE5239FBCB400DE4071 /* Build configuration list for PBXNativeTarget "ASDKSample" */;
 			buildPhases = (
 				6CFAB7742899CF1424BA2DC0 /* [CP] Check Pods Manifest.lock */,
+				B192738228D86A7500BD28DF /* SwiftFormat */,
 				B1A1021528D469DB0097664B /* SwiftGen [Sample] */,
 				B1353C3E28D462CD00823729 /* SwiftGen [TinkoffASDKCore] */,
 				B126457F28C5EE7900DBC580 /* SwiftGen [TinkoffASDKUI] */,
-				B17C228128D36E2E003C6897 /* SwiftFormat */,
 				D7F4A4E825558AE900A8AD95 /* SwiftLint */,
 				2C9C7EB7239FBCB200DE4071 /* Sources */,
 				2C9C7EB8239FBCB200DE4071 /* Frameworks */,
@@ -518,6 +518,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"../TinkoffASDKCore\"\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
+		};
+		B192738228D86A7500BD28DF /* SwiftFormat */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftFormat;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = " \"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" .. --config \"../.swiftformat\"\n";
 		};
 		B1A1021528D469DB0097664B /* SwiftGen [Sample] */ = {
 			isa = PBXShellScriptBuildPhase;
