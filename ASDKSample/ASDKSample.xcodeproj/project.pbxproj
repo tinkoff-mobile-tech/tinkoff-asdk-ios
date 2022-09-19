@@ -327,6 +327,7 @@
 				B1A1021528D469DB0097664B /* SwiftGen [Sample] */,
 				B1353C3E28D462CD00823729 /* SwiftGen [TinkoffASDKCore] */,
 				B126457F28C5EE7900DBC580 /* SwiftGen [TinkoffASDKUI] */,
+				B17C228128D36E2E003C6897 /* SwiftFormat */,
 				D7F4A4E825558AE900A8AD95 /* SwiftLint */,
 				2C9C7EB7239FBCB200DE4071 /* Sources */,
 				2C9C7EB8239FBCB200DE4071 /* Frameworks */,
@@ -554,7 +555,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n\n";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 		F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

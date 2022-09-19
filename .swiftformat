@@ -1,4 +1,4 @@
---exclude Pods, TinkoffASDKUI/TinkoffASDKUI/Resources/Generated, TinkoffASDKCore/TinkoffASDKCore/Resources/Generated, ASDKSample/ASDKSample/Resources/Generated
+--exclude **/Pods, **/Generated
 --swiftversion 5.0
 
 # Default Rules (enabled by default)
