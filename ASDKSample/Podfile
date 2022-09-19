@@ -1,7 +1,6 @@
 platform :ios, '12.3'
 
 use_frameworks!
-project 'ASDKSample.xcodeproj'
 target 'ASDKSample' do
 
 	pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
