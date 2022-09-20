@@ -1017,7 +1017,19 @@ public class AcquiringUISDK: NSObject {
                     }
                 case let .failure(error):
                     self?.paymentInitResponseData = nil
+
                     DispatchQueue.main.async {
+
+                        let completion: ()->Void = {
+                            self?.onPaymentCompletionHandler?(.failure(error))
+                        }
+
+                        if let acquiringView = self?.acquiringView {
+                            acquiringView.closeVC(animated: true, completion: completion)
+                        } else {
+                            completion()
+                        }
+
                         self?.acquiringView?.closeVC(animated: true) {
                             self?.onPaymentCompletionHandler?(.failure(error))
                         }
