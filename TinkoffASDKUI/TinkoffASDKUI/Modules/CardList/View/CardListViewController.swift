@@ -17,8 +17,7 @@
 //  limitations under the License.
 //
 
-
-import Foundation
+import UIKit
 
 protocol ICardListViewInput: AnyObject {
     func reload(cards: [CardList.Card])
@@ -72,11 +71,11 @@ final class CardListViewController: UIViewController {
     // MARK: Initial Configuration
 
     private func setupNavigationItem() {
-        title = "CardList.title".localized
+        title = Loc.CardList.title
         navigationItem.largeTitleDisplayMode = .never
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "TinkoffAcquiring.button.close".localized,
+            title: Loc.TinkoffAcquiring.Button.close,
             style: .plain,
             target: self,
             action: #selector(closeButtonTapped)
@@ -154,18 +153,18 @@ private extension UIAlertController {
         onConfirm: @escaping () -> Void
     ) -> UIAlertController {
         let alert = UIAlertController(
-            title: "CardList.alert.title.deleteCard".localized,
-            message: String(format: "CardList.alert.message.deleteCard".localized, pan),
+            title: Loc.CardList.Alert.Title.deleteCard,
+            message: Loc.CardList.Alert.Message.deleteCard(pan),
             preferredStyle: .alert
         )
 
         let cancel = UIAlertAction(
-            title: "CardList.alert.action.cancel".localized,
+            title: Loc.CardList.Alert.Action.cancel,
             style: .cancel
         )
 
         let delete = UIAlertAction(
-            title: "CardList.alert.action.delete".localized,
+            title: Loc.CardList.Alert.Action.delete,
             style: .destructive,
             handler: { _ in onConfirm() }
         )

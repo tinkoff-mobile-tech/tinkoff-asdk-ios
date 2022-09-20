@@ -32,6 +32,17 @@ public enum AcquiringSdkEnvironment: String {
     case prod = "securepay.tinkoff.ru"
 }
 
+public struct ConfigSdkEnvironment: RawRepresentable {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-test.cdn-tinkoff.ru") }
+    public static var prod: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-prod.cdn-tinkoff.ru") }
+}
+
 public struct AcquiringSdkCredential {
     public var terminalKey: String
     public var publicKey: String
@@ -46,15 +57,17 @@ public struct AcquiringSdkCredential {
     }
 }
 
-/// Кофигурация для экземпляра SDK
+/// Конфигурация для экземпляра SDK
 public class AcquiringSdkConfiguration: NSObject {
-    public var fpsEnabled: Bool = false
-
-    public private(set) var credential: AcquiringSdkCredential
-
-    public private(set) var serverEnvironment: AcquiringSdkEnvironment
-    
-    public private(set) var requestsTimeoutInterval: TimeInterval
+    public let credential: AcquiringSdkCredential
+    public let serverEnvironment: AcquiringSdkEnvironment
+    public let configEnvironment: ConfigSdkEnvironment
+    public let requestsTimeoutInterval: TimeInterval
+    @available(*, deprecated, message: "Property does not affect anything")
+    public var fpsEnabled = false
+    /// Показывать ошибки после выполнения запроса
+    @available(*, deprecated, message: "Property does not affect anything")
+    public var showErrorAlert = true
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
     ///
@@ -64,15 +77,12 @@ public class AcquiringSdkConfiguration: NSObject {
     /// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
     public private(set) var language: AcquiringSdkLanguage?
 
-    /// Логирование работы, реализаия `ASDKApiLoggerDelegate`
+    /// Логгер сетевых запросов. Реализация - `ASDKApiLoggerDelegate`
     public var logger: LoggerDelegate?
 
-    /// Показывать ошибки после выполнения запроса
-    public var showErrorAlert: Bool = true
-    
     /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
-    public var tinkoffPayStatusCacheLifeTime: TimeInterval = .defaultTinkoffPayStatusCacheLifeTime
-    
+    public var tinkoffPayStatusCacheLifeTime: TimeInterval
+
     ///
     /// - Parameters:
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
@@ -80,25 +90,16 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
     ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     /// - Returns: AcquiringSdkConfiguration
-    public init(credential: AcquiringSdkCredential,
-                server: AcquiringSdkEnvironment = .test,
-                requestsTimeoutInterval: TimeInterval,
-                tinkoffPayStatusCacheLifeTime: TimeInterval) {
+    public init(
+        credential: AcquiringSdkCredential,
+        server: AcquiringSdkEnvironment = .test,
+        requestsTimeoutInterval: TimeInterval = 40,
+        tinkoffPayStatusCacheLifeTime: TimeInterval = 300
+    ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
-        self.serverEnvironment = server
+        self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
+        serverEnvironment = server
+        configEnvironment = server == .test ? .test : .prod
     }
-    
-    public convenience init(credential: AcquiringSdkCredential,
-                            server: AcquiringSdkEnvironment = .test) {
-        self.init(credential: credential,
-                  server: server,
-                  requestsTimeoutInterval: .defaultRequestsTimeoutInterval,
-                  tinkoffPayStatusCacheLifeTime: .defaultTinkoffPayStatusCacheLifeTime)
-    }
-}
-
-private extension TimeInterval {
-    static let defaultRequestsTimeoutInterval: TimeInterval = 40
-    static let defaultTinkoffPayStatusCacheLifeTime: TimeInterval = 300
 }

@@ -19,6 +19,8 @@
 
 import UIKit
 
+// swiftlint:disable all
+
 class CenterFlowLayout: UICollectionViewFlowLayout {
     var insertingTopCells = false
     var sizeForTopInsertions = CGSize.zero
@@ -111,7 +113,7 @@ class CollectionViewCenteredFlowLayout: UICollectionViewFlowLayout {
                 let evaluatedMinimumInteritemSpacing = evaluatedMinimumInteritemSpacingForSection(at: section)
                 let groupWidth: CGFloat = group.reduce(0) { $0 + $1.frame.size.width }
                 var origin = (collectionView.bounds.width + evaluatedSectionInset.left - evaluatedSectionInset.right -
-                              groupWidth - CGFloat(group.count - 1) * evaluatedMinimumInteritemSpacing) / 2
+                    groupWidth - CGFloat(group.count - 1) * evaluatedMinimumInteritemSpacing) / 2
                 // we reposition each element of a group
                 return group.map {
                     $0.frame.origin.x = origin
@@ -163,3 +165,5 @@ extension UICollectionViewFlowLayout {
         return (collectionView?.delegate as? UICollectionViewDelegateFlowLayout)?.collectionView?(collectionView!, layout: self, minimumInteritemSpacingForSectionAt: section) ?? minimumInteritemSpacing
     }
 }
+
+// swiftlint:enable all

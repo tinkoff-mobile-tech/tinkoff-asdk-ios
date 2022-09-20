@@ -17,17 +17,20 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 extension Bundle {
-    
+
     private class UIResourcesToken {}
-    
+
     static var uiResources: Bundle {
-        Bundle(for: UIResourcesToken.self)
-            .url(forResource: .resourceName, withExtension: .bundleExtension)
-            .flatMap(Bundle.init(url:)) ?? Bundle(for: UIResourcesToken.self)
+        #if SWIFT_PACKAGE
+            .module
+        #else
+            Bundle(for: UIResourcesToken.self)
+                .url(forResource: .resourceName, withExtension: .bundleExtension)
+                .flatMap { Bundle(url: $0) } ?? Bundle(for: UIResourcesToken.self)
+        #endif
     }
 }
 

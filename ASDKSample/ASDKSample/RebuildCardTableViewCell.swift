@@ -22,11 +22,11 @@ import UIKit
 
 class RebuildCardTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var viewBorder: UIView!
-    @IBOutlet weak var imageViewLogo: UIImageView!
-    @IBOutlet weak var labelCardName: UILabel!
-    @IBOutlet weak var labelCardExpData: UILabel!
-    @IBOutlet weak var labelRebuid: UILabel!
+    @IBOutlet var viewBorder: UIView!
+    @IBOutlet var imageViewLogo: UIImageView!
+    @IBOutlet var labelCardName: UILabel!
+    @IBOutlet var labelCardExpData: UILabel!
+    @IBOutlet var labelRebuid: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -21,7 +21,7 @@ import UIKit
 
 class AboutViewController: UIViewController {
 
-    @IBOutlet weak var labelStatus: UILabel!
+    @IBOutlet var labelStatus: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()

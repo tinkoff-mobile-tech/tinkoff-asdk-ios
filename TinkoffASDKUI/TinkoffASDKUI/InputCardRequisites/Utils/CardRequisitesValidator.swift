@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 protocol ICardRequisitesValidator {
@@ -61,14 +60,14 @@ final class CardRequisitesValidator: ICardRequisitesValidator {
         let paymentSystem = paymentSystemResolver.resolve(by: inputPAN)
 
         return PANLengthValidator.validate(paymentSystem: paymentSystem, length: inputPAN.count)
-        && PANLuhnValidator.validate(inputPAN)
+            && PANLuhnValidator.validate(inputPAN)
     }
 
     // MARK: ValidThru Validation
 
     func validate(validThruYear year: Int, month: Int) -> Bool {
-        guard (0...99).contains(year),
-              (0...12).contains(month)
+        guard (0 ... 99).contains(year),
+              (0 ... 12).contains(month)
         else { return false }
 
         guard !options.contains(.disableExpiryDateValidation) else { return true }
@@ -121,11 +120,11 @@ private enum PANLengthValidator {
         case .resolved(.visa), .resolved(.masterCard):
             return length == 16
         case .resolved(.mir):
-            return (16...19).contains(length)
+            return (16 ... 19).contains(length)
         case .resolved(.maestro):
-            return (13...19).contains(length)
+            return (13 ... 19).contains(length)
         case .ambiguous, .unrecognized:
-            return (13...28).contains(length)
+            return (13 ... 28).contains(length)
         }
     }
 }

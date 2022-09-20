@@ -1,0 +1,11 @@
+"TinkoffAcquiring.response.error.statusFalse" = "Acquiring received error 'Success: false'";
+"TinkoffAcquiring.response.error.errorResponse" = "Received error response";
+"TinkoffAcquiring.response.error.invalidResponse" = "Received invalid response";
+"TinkoffAcquiring.request.error.cantCreateConfirmation" = "Can't create confirmation request";
+
+"NetworkError.transportError" = "Ошибка сети";
+"NetworkError.serverError" = "Ошибка сервера";
+"NetworkError.emptyBody" = "Пустой ответ";
+
+"APIError.failureError" = "Ошибка API экваринга";
+"APIError.invalidResponse" = "Некорректный ответ API";

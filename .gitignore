@@ -149,3 +149,9 @@ fastlane/README.md
 
 # AppCode
 .idea
+
+# VSCode
+.vscode
+
+# Xcode generated workspaces
+ASDKSample/ASDKSample.xcworkspace/**

@@ -17,8 +17,7 @@
 //  limitations under the License.
 //
 
-
-import Foundation
+import UIKit
 
 protocol IPaymentSystemImageResolver {
     func resolve(by inputPAN: String?) -> UIImage?
@@ -32,37 +31,19 @@ final class PaymentSystemImageResolver: IPaymentSystemImageResolver {
     }
 
     func resolve(by inputPAN: String?) -> UIImage? {
+        typealias Card = Asset.CardRequisites
+
         switch paymentSystemResolver.resolve(by: inputPAN) {
         case .resolved(.visa):
-            return .visa
+            return Card.visaLogo.image
         case .resolved(.masterCard):
-            return .masterCard
+            return Card.mcLogo.image
         case .resolved(.maestro):
-            return .maestro
+            return Card.maestroLogo.image
         case .resolved(.mir):
-            return .mir
+            return Card.mirLogo.image
         case .ambiguous, .unrecognized:
             return nil
         }
-    }
-}
-
-// MARK: - UIImage + Payment Systems
-
-private extension UIImage {
-    static var visa: UIImage? {
-        UIImage(named: "visa_logo", in: .uiResources, compatibleWith: nil)
-    }
-
-    static var masterCard: UIImage? {
-        UIImage(named: "mc_logo", in: .uiResources, compatibleWith: nil)
-    }
-
-    static var maestro: UIImage? {
-        UIImage(named: "maestro_logo", in: .uiResources, compatibleWith: nil)
-    }
-
-    static var mir: UIImage? {
-        UIImage(named: "mir_logo", in: .uiResources, compatibleWith: nil)
     }
 }

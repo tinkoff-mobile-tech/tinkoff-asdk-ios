@@ -17,31 +17,30 @@
 //  limitations under the License.
 //
 
-
 import Foundation
- 
+
 protocol SBPBankLoader {
     func loadBanks(completion: @escaping (Result<SBPBankResponse, Swift.Error>) -> Void)
 }
 
 final class DefaultSBPBankLoader: SBPBankLoader {
-    
+
     enum Error: Swift.Error {
         case failedToLoadBanksList
     }
-    
+
     func loadBanks(completion: @escaping (Result<SBPBankResponse, Swift.Error>) -> Void) {
         URLSession.shared.dataTask(with: .bankListURL) { data, _, error in
             guard error == nil else {
                 completion(.failure(error!))
                 return
             }
-            
+
             guard let data = data else {
                 completion(.failure(Error.failedToLoadBanksList))
                 return
             }
-            
+
             let decoder = JSONDecoder()
             do {
                 let response = try decoder.decode(SBPBankResponse.self, from: data)

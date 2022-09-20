@@ -17,9 +17,8 @@
 //  limitations under the License.
 //
 
-
-import Foundation
 import TinkoffASDKCore
+import UIKit
 
 /// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
 protocol ICardListAssembly {

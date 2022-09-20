@@ -17,38 +17,40 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class DimmingView: UIView {
     private let dismissedAlpha: CGFloat
     private let minimumAlpha: CGFloat
     private let maximumAlpha: CGFloat
-    
-    init(dismissedAlpha: CGFloat = 0.0,
-         minimumAlpha: CGFloat = 0.4,
-         maximumAlpha: CGFloat = 0.4) {
+
+    init(
+        dismissedAlpha: CGFloat = 0.0,
+        minimumAlpha: CGFloat = 0.4,
+        maximumAlpha: CGFloat = 0.4
+    ) {
         self.dismissedAlpha = dismissedAlpha
         self.minimumAlpha = minimumAlpha
         self.maximumAlpha = maximumAlpha
         super.init(frame: .zero)
         setup()
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func prepareForPresentationTransition() {
         alpha = dismissedAlpha
     }
-    
+
     func performPresentationTransition() {
         alpha = minimumAlpha
     }
-    
-    func prepareForDimissalTransition() { }
-    
+
+    func prepareForDimissalTransition() {}
+
     func performDismissalTransition() {
         alpha = dismissedAlpha
     }

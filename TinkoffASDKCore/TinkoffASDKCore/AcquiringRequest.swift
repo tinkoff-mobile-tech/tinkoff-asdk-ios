@@ -27,14 +27,23 @@ public protocol RequestOperation {
 
     /// Параметры которые отправляем на сервер в теле запроса
     var parameters: JSONObject? { get set }
-    
+
     /// Типа запроса
     var requestMethod: RequestMethod { get }
+
+    /// Формат запроса
+    var requestContentType: RequestContentType { get }
 }
 
 public extension RequestOperation {
     var requestMethod: RequestMethod {
         .post
+    }
+}
+
+public extension RequestOperation {
+    var requestContentType: RequestContentType {
+        .applicationJson
     }
 }
 
@@ -56,7 +65,7 @@ public protocol AcquiringRequestTokenParams {
 public extension AcquiringRequestTokenParams where Self: RequestOperation {
     // параметры для токена
     func tokenParams() -> JSONObject {
-        if let params = parameters?.filter({ (item) -> Bool in
+        if let params = parameters?.filter({ item -> Bool in
             tokenParamsKey.contains(item.key)
         }) {
             return params

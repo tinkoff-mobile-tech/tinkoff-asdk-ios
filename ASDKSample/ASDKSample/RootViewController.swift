@@ -65,10 +65,10 @@ class ProductTableViewCell: UITableViewCell {
 
 class RootViewController: UITableViewController {
 
-    @IBOutlet weak var buttonCart: UIBarButtonItem!
-    @IBOutlet weak var buttonSavedCards: UIBarButtonItem!
-    @IBOutlet weak var buttonSettings: UIBarButtonItem!
-    @IBOutlet weak var buttonAbount: UIBarButtonItem!
+    @IBOutlet var buttonCart: UIBarButtonItem!
+    @IBOutlet var buttonSavedCards: UIBarButtonItem!
+    @IBOutlet var buttonSettings: UIBarButtonItem!
+    @IBOutlet var buttonAbount: UIBarButtonItem!
 
     private var dataSource: [Product] = []
     private var onScannerResult: ((_ number: String?, _ date: String?) -> Void)?
@@ -76,7 +76,7 @@ class RootViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = NSLocalizedString("title.onlineShop", comment: "Онлайн магазин")
+        title = Loc.Title.onlineShop
 
         dataSource.append(Product(price: 100.0, name: "Шантарам - 2. Тень горы", id: 1))
         dataSource.append(Product(price: 200.0, name: "Воздушные змеи", id: 1))
@@ -93,6 +93,8 @@ class RootViewController: UITableViewController {
         } else {
             buttonCart.title = "🛒"
         }
+
+        tableView.reloadData()
     }
 
     // MARK: UITableViewDataSource
@@ -102,11 +104,14 @@ class RootViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        switch section {
+        case .zero:
             return dataSource.count
+        case 1:
+            return AppSetting.shared.paySBP ? 1 : 0
+        default:
+            return 0
         }
-
-        return 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -123,8 +128,8 @@ class RootViewController: UITableViewController {
 
         if indexPath.section == 1 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "MenuTableViewCell") {
-                cell.textLabel?.text = NSLocalizedString("button.generateQRCode", comment: "Сгенерировать QR-код")
-                cell.imageView?.image = UIImage(named: "logo_sbp")
+                cell.textLabel?.text = Loc.Button.generateQRCode
+                cell.imageView?.image = Asset.logoSbp.image
 
                 return cell
             }
@@ -135,8 +140,10 @@ class RootViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
-            let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      publicKey: StageTestData.testPublicKey)
+            let credentional = AcquiringSdkCredential(
+                terminalKey: StageTestData.terminalKey,
+                publicKey: StageTestData.testPublicKey
+            )
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -144,7 +151,7 @@ class RootViewController: UITableViewController {
             if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
 
                 let viewConfigration = AcquiringViewConfiguration()
-                viewConfigration.viewTitle = NSLocalizedString("title.qrcode", comment: "QR-код")
+                viewConfigration.viewTitle = Loc.Title.qrcode
 
                 sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
                 tableView.deselectRow(at: indexPath, animated: true)
@@ -160,15 +167,19 @@ class RootViewController: UITableViewController {
            let indexPath = tableView.indexPath(for: cell) {
             let product = dataSource[indexPath.row]
 
-            let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                      publicKey: StageTestData.testPublicKey)
+            let credentional = AcquiringSdkCredential(
+                terminalKey: StageTestData.terminalKey,
+                publicKey: StageTestData.testPublicKey
+            )
 
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
 
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
-                                             style: TinkoffASDKUI.DefaultStyle()) {
+            if let sdk = try? AcquiringUISDK(
+                configuration: acquiringSDKConfiguration,
+                style: TinkoffASDKUI.DefaultStyle()
+            ) {
                 viewController.scaner = self
                 viewController.sdk = sdk
                 viewController.customerKey = StageTestData.customerKey
@@ -185,10 +196,10 @@ class RootViewController: UITableViewController {
             switch result {
             case let .success(card):
                 if card != nil {
-                    alertMessage = NSLocalizedString("alert.title.cardSuccessAdded", comment: "")
+                    alertMessage = Loc.Alert.Title.cardSuccessAdded
                     alertIcon = .success
                 } else {
-                    alertMessage = NSLocalizedString("alert.message.addingCardCancel", comment: "")
+                    alertMessage = Loc.Alert.Message.addingCardCancel
                     alertIcon = .error
                 }
 
@@ -206,15 +217,17 @@ class RootViewController: UITableViewController {
     }
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
-        let credentional = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                  publicKey: StageTestData.testPublicKey)
+        let credentional = AcquiringSdkCredential(
+            terminalKey: StageTestData.terminalKey,
+            publicKey: StageTestData.testPublicKey
+        )
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
         let customerKey = StageTestData.customerKey
         let cardListViewConfigration = AcquiringViewConfiguration()
-        cardListViewConfigration.viewTitle = NSLocalizedString("title.paymentCardList", comment: "Список карт")
+        cardListViewConfigration.viewTitle = Loc.Title.paymentCardList
         cardListViewConfigration.scaner = self
 
         if AppSetting.shared.acquiring {
@@ -223,8 +236,10 @@ class RootViewController: UITableViewController {
 
         cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
-        if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
-                                         style: TinkoffASDKUI.DefaultStyle()) {
+        if let sdk = try? AcquiringUISDK(
+            configuration: acquiringSDKConfiguration,
+            style: TinkoffASDKUI.DefaultStyle()
+        ) {
             // открыть экран сиска карт
             addCardListView(sdk, customerKey, cardListViewConfigration)
             // или открыть экран добавлени карты

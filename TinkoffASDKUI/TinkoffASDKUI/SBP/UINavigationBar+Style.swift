@@ -17,21 +17,23 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
-
 public extension UINavigationBar {
-    func applyStyle(titleColor: UIColor,
-                    backgroundColor: UIColor) {
+    func applyStyle(
+        titleColor: UIColor,
+        backgroundColor: UIColor
+    ) {
         barTintColor = backgroundColor
         titleTextAttributes = [
-            .foregroundColor: titleColor
+            .foregroundColor: titleColor,
         ]
         shadowImage = UIImage()
         let backgroundImage = UIImage()
-        setBackgroundImage(backgroundImage,
-                           for: .default)
+        setBackgroundImage(
+            backgroundImage,
+            for: .default
+        )
         barStyle = .default
     }
 }

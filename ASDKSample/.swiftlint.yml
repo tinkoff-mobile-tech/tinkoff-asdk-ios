@@ -1,0 +1,132 @@
+warning_threshold: 1
+
+included:
+  - .
+  - ../TinkoffASDKUI
+  - ../TinkoffASDKCore
+
+excluded:
+  - ASDKSample/Resources/Generated
+  - ../Pods
+  - ../TinkoffASDKUI/TinkoffASDKUITests
+  - ../TinkoffASDKCore/TinkoffASDKCoreTests
+  - ../TinkoffASDKUI/TinkoffASDKUI/InputMask
+  - ../TinkoffASDKUI/TinkoffASDKUI/Resources/Generated
+  - ../TinkoffASDKCore/TinkoffASDKCore/Resources/Generated
+
+disabled_rules:
+  # Допускаем TODO и FIXME в коде. Формат TODO и FIXME задан в custom_rules
+  - todo
+  # Запятой после последнего элемента в массиве управляет SwiftFormat
+  - trailing_comma
+  # Ограничения на имя generic
+  - generic_type_name
+  # Порядок set и get в свойствах.
+  - computed_accessors_order
+  # ⛔ FIXME: - Enable after refactoring 
+  - file_length
+  # ⛔ FIXME: - Enable after refactoring 
+  - implicitly_unwrapped_optional
+
+opt_in_rules:
+  # Некоторые переопределяемые методы всегда должны вызывать super
+  - overridden_super_call
+  # Некоторые методы не должны вызывать super
+  - prohibited_super_call
+  # Избегаем непосредственного вызова .init()
+  - explicit_init
+  # Операторы должны быть окружены одиночным пробелом
+  - operator_usage_whitespace
+  # Следует избегать Implicitly unwrapped optionals когда это возможно.
+  - implicitly_unwrapped_optional
+  # Переменные не должны иметь избыточного указания типа
+  - redundant_type_annotation
+  # Конструкция `?? nil` избыточна
+  - redundant_nil_coalescing
+  # Операторы должны быть объявлены как статические функции,
+  # а не как свободные функции.
+  - static_operator
+  # Использование someBool.toggle() предпочтительнее someBool = !someBool.
+  - toggle_bool
+  # Нереализованные функции должны быть помечены как @unavailable.
+  - unavailable_function
+  # Все импортированные модули должны быть обязательными для компиляции файла.
+  - unused_import
+  # Предпочитайте .zero явной инициализации с нулевыми параметрами
+  # (например, CGPoint(x: 0, y: 0))
+  - prefer_zero_over_explicit_init
+  # Предпочитайте Self.type(of:self) при доступе к свойствам или вызове методов.
+  - prefer_self_type_over_type_of_self
+  # Статические ссылки должны иметь префикс Self вместо имени класса.
+  - prefer_self_in_static_references
+  # Не рекомендуется явное использование разделителя по умолчанию.
+  - joined_default_parameter
+  # Сравнение двух одинаковых идентификаторов скорее всего ошибка
+  - identical_operands
+
+  - explicitly_calling_dot_init
+
+large_tuple: 4
+
+line_length:
+  warning: 150
+  error: 151
+  ignores_comments: true
+  ignores_interpolated_strings: true
+
+function_parameter_count:
+  warning: 10
+  error: 15
+
+# Функция не должна быть слишком длинной
+function_body_length:
+  warning: 90
+  error: 100
+
+# Сложность тела функции должна быть ограничена
+# ⛔ FIXME: - Enable after refactoring commeted values 
+cyclomatic_complexity:
+  warning: 25 # 12
+  error: 30 # 18
+  ignores_case_statements: true
+
+file_length:
+  warning: 500
+
+type_body_length:
+  warning: 400
+  error: 450
+
+nesting:
+  type_level:
+    warning: 3
+  function_level:
+    warning: 5
+
+identifier_name:
+  min_length: 1
+  max_length: 65
+
+type_name:
+  min_length: 3
+  max_length: 65
+
+trailing_whitespace:
+  ignores_empty_lines: true
+
+custom_rules:
+  wrong_todo_syntax:
+    name: "Wrong TODO syntax"
+    regex: '\/\/\s*TODO:(?!\s*MIC-\d+)'
+    message: "Use TODO: MIC-1111 syntax"
+    severity: warning
+  wrong_fixme_syntax:
+    name: "Wrong FIXME syntax"
+    regex: '\/\/\s*FIXME:(?!\s*MIC-\d+)'
+    message: "Use FIXME: MIC-1111 syntax"
+    severity: warning
+  explicitly_calling_dot_init:
+    name: "Explicitly calling .init(...)"
+    regex: '(?<!self|super)\.init\('
+    message: "Explicitly calling .init(...) is allowed only when the receiver of the call is a metatype variable"
+    severity: error

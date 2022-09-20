@@ -1,0 +1,71 @@
+// titles
+"title.onlineShop" = "Online shop";
+"title.pay" = "Pay";
+"title.paymeny" = "Payment";
+"title.settings" = "Settings";
+"title.cart" = "Cart";
+"title.paymentCardList" = "Saved cards";
+"title.qrcode" = "QR-code";
+"title.savingCard" = "Saving card";
+"title.paymentFormLanguage" = "Payment Form Language";
+"title.fasterPayments" = "Faster Payments Service";
+"title.showEmailField" = "Email field";
+"title.aquaringAlertView" = "AlertView type";
+"title.paymentSource" = "Payment Source";
+"title.goods" = "Goods";
+"title.paymentTryAgain" = "Try quick payment";
+"title.payByApplePay" = "Pay By ApplePay";
+"title.payBySBP" = "Pay By SBP";
+"title.payAndSaveAsParent" = "Pay and save as parent payment";
+"title.Acquiring" = "Alert View Type";
+
+//  names
+"name.tinkoffPay" = "TinkoffPay";
+"name.acquiring" = "Acquiring";
+
+//
+"text.showEmailField" = "Show email field for required enter on a payment screen. After payment success, payment receipt sended to this email.";
+"text.Acquiring.description" = "Use AlertView system or from Acquiring SDK";
+"text.parentPayment" = "Parent payment";
+"text.totalAmount" = "total amount";
+"text.payBySBP.description" = "Show generate QR-code on main screen, add sbp button on a payment screen";
+"text.addCardCheckType.description" = "NO - save card without checking. In this case parent payment not generated.\n3DS - save card with 3ds chenking with payment for 1 ruble and refund 1 ruble. Cards without supported 3DS not saved. In success, if card is saved, this paymen save as the parent.\nHOLD - try payment for 1 ruble and refund 1 ruble.In success, if card is saved, this paymen save as the parent.\n3DSHOLD - save card with 3ds chenking with payment for 1 ruble and refund 1 ruble. Cards without supported 3DS not saved. In success, if card is saved, this paymen save as the parent.";
+"text.language.description" = "auto - Set system language region for payment form.\nru - Set Russian language for payment form.\nen - Set English language for payment form";
+"text.paymentStatusAmount" = "The purchase in the amount";
+"text.paymentStatusCancel" = "is cancelled";
+"text.paymentStatusSuccess" = "is succeed";
+
+// plaseholder
+"plaseholder.email" = "Send receipt to email";
+
+// buttons
+"button.pay" = "Pay";
+"button.cancel" = "Cancel";
+"button.done" = "Done";
+"button.backToShop" = "Back";
+"button.close" = "Close";
+"button.generateQRCode" = "Generate QR-code";
+"button.paymentTryAgain" = "Try Again";
+"button.selectAnotherCard" = "Select Another Card";
+"button.payAndSaveAsParent" = "Pay and save as Parent Payment";
+"button.ok" = "OK";
+
+// status
+"status.cartIsEmpty" = "Cart is empty";
+"status.sbp.on" = "Activated";
+"status.sbp.off" = "Deactivated";
+"status.showEmailField.on" = "Showing";
+"status.showEmailField.off" = "Hidden";
+"status.alert.on" = "Acquiring SDK";
+"status.alert.off" = "System";
+
+// alert
+"alert.title.cardSuccessAdded" = "Success";
+"alert.message.addingCardCancel" = "The operation was cancelled";
+
+// errors
+"error.device.setup" = "Device setup error occured";
+"error.camera.setup" = "Camera error";
+"error.camera.noSessionFound" = "No valid capture session found, I can't take any pictures or videos.";
+"error.camera.preset" = "Preset not supported";
+"error.camera.preset.message" = "Camera preset not supported. Please try another one.";

@@ -27,17 +27,23 @@ class SelectRebuildCardViewController: UITableViewController {
     var cards: [PaymentCard] = []
 
     private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
-    private lazy var buttonClose = UIBarButtonItem(barButtonSystemItem: .cancel,
-                                                   target: self,
-                                                   action: #selector(closeView(_:)))
+    private lazy var buttonClose = UIBarButtonItem(
+        barButtonSystemItem: .cancel,
+        target: self,
+        action: #selector(closeView(_:))
+    )
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = NSLocalizedString("title.paymentCardList", comment: "Сохраненные карты")
-        tableView.register(UINib(nibName: "RebuildCardTableViewCell",
-                                 bundle: Bundle(for: type(of: self))),
-                           forCellReuseIdentifier: "RebuildCardTableViewCell")
+        title = Loc.Title.paymentCardList
+        tableView.register(
+            UINib(
+                nibName: "RebuildCardTableViewCell",
+                bundle: Bundle(for: type(of: self))
+            ),
+            forCellReuseIdentifier: "RebuildCardTableViewCell"
+        )
 
         navigationItem.setLeftBarButton(buttonClose, animated: true)
     }
@@ -59,14 +65,13 @@ class SelectRebuildCardViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if
             let cell = tableView.dequeueReusableCell(withIdentifier: "RebuildCardTableViewCell")
-                as? RebuildCardTableViewCell {
+            as? RebuildCardTableViewCell {
             let card = cards[indexPath.row]
 
             cell.labelCardName.text = card.pan
             cell.labelCardExpData.text = card.expDateFormat()
             if let rebuildId = card.parentPaymentId {
-                cell.labelRebuid.text
-                    = "(\(NSLocalizedString("text.parentPayment", comment: "родительский платеж")) \(rebuildId))"
+                cell.labelRebuid.text = "(\(Loc.Text.parentPayment) \(rebuildId))"
             }
 
             cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in

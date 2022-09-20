@@ -24,9 +24,10 @@ class FinishResponseTests: XCTestCase {
     private var sdk: AcquiringSdk!
 
     override func setUp() {
-        let credential = AcquiringSdkCredential(terminalKey: StageTestData.terminalKey,
-                                                password: StageTestData.terminalPassword,
-                                                publicKey: StageTestData.testPublicKey)
+        let credential = AcquiringSdkCredential(
+            terminalKey: StageTestData.terminalKey,
+            publicKey: StageTestData.testPublicKey
+        )
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
@@ -42,8 +43,8 @@ class FinishResponseTests: XCTestCase {
      * Проверка статуса `Result.Error`
      */
     func test_FinishResponseError() {
-        let errorCode: Int = 243
-        let message: String = "Ошибка шифрования карточных данных."
+        let errorCode = 243
+        let message = "Ошибка шифрования карточных данных."
         //
         let jsonResponseData =
             """
@@ -71,8 +72,8 @@ class FinishResponseTests: XCTestCase {
      * Проверка стартуса `Result.Success`
      */
     func test_FinishResponseSuccess() {
-        let errorCode: Int = 0
-        let terminalKey: String = ASDKStageTestData.terminalKey
+        let errorCode = 0
+        let terminalKey: String = StageTestData.terminalKey
         let amount: Int64 = 20000
         let orderId: Int64 = 8_221_860
         let paymentId: Int64 = 142_639_745
@@ -102,7 +103,7 @@ class FinishResponseTests: XCTestCase {
             switch response.responseStatus {
             case let .done(status):
                 XCTAssertTrue(status.amount.int64Value == Int64(amount / 100))
-                XCTAssertTrue(status.orderId == orderId)
+                XCTAssertTrue(status.orderId == String(orderId))
                 XCTAssertTrue(status.paymentId == paymentId)
             default:
                 XCTAssert(false)
@@ -116,8 +117,8 @@ class FinishResponseTests: XCTestCase {
      * Проверка статуса Result.Success - нужно подтверждение платежа 3DS
      */
     func test_FinishResponseNeed3DSConfirmation() {
-        let errorCode: Int = 0
-        let terminalKey: String = ASDKStageTestData.terminalKey
+        let errorCode = 0
+        let terminalKey: String = StageTestData.terminalKey
         let amount: Int64 = 2332
         let orderId: Int64 = 87_654_321
         let paymentId: Int64 = 12_345_678
@@ -162,4 +163,9 @@ class FinishResponseTests: XCTestCase {
             XCTAssert(false, "error response data")
         }
     }
+}
+
+struct ASDKStageTestData {
+    static let terminalKey = "324324"
+    static let customerKey = "234234"
 }

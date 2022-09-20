@@ -17,51 +17,52 @@
 //  limitations under the License.
 //
 
-
-import Foundation
+import UIKit
 
 final class ImageLoader {
-    
+
     enum Error: Swift.Error {
         case failedToLoadImage
     }
-    
+
     private let cache = NSCache<NSURL, UIImage>()
     private var requests = [UUID: URLSessionDataTask]()
-    
-    func loadImage(url: URL,
-                   preCacheClosure: @escaping (UIImage) -> UIImage,
-                   completion: @escaping (Result<UIImage, Swift.Error>) -> Void) -> UUID? {
+
+    func loadImage(
+        url: URL,
+        preCacheClosure: @escaping (UIImage) -> UIImage,
+        completion: @escaping (Result<UIImage, Swift.Error>) -> Void
+    ) -> UUID? {
         if let cachedImage = cache.object(forKey: url as NSURL) {
             completion(.success(cachedImage))
             return nil
         }
-        
+
         let uuid = UUID()
-        
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
             guard let self = self else { return }
             guard error == nil else {
                 self.handleError(error!, completion: completion)
                 return
             }
-            
+
             guard let data = data, var image = UIImage(data: data) else {
                 completion(.failure(Error.failedToLoadImage))
                 return
             }
-            
+
             image = preCacheClosure(image)
             self.cache.setObject(image, forKey: url as NSURL)
             completion(.success(image))
         }
-        
+
         task.resume()
         requests[uuid] = task
-        
+
         return uuid
     }
-    
+
     func cancelImageLoad(uuid: UUID) {
         requests[uuid]?.cancel()
         requests.removeValue(forKey: uuid)

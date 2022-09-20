@@ -31,6 +31,8 @@ extension HTTPURLResponse {
     var textEncoding: String.Encoding? {
         guard let encodingName = textEncodingName else { return nil }
 
-        return String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName as CFString)))
+        return String.Encoding(
+            rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName as CFString))
+        )
     }
 }

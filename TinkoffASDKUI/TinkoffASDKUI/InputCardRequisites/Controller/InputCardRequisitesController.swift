@@ -24,10 +24,12 @@ protocol BecomeFirstResponderListener: AnyObject {
 }
 
 protocol InputCardRequisitesDataSource: AnyObject {
-    func setup(responderListener: BecomeFirstResponderListener?,
-               inputView: InputRequisitesViewInConnection?,
-               inputAccessoryView: InputAccessoryViewWithButton?,
-               scaner: ICardRequisitesScanner?)
+    func setup(
+        responderListener: BecomeFirstResponderListener?,
+        inputView: InputRequisitesViewInConnection?,
+        inputAccessoryView: InputAccessoryViewWithButton?,
+        scaner: ICardRequisitesScanner?
+    )
 
     func setupForCVC(responderListener: BecomeFirstResponderListener?, inputView: InputRequisitesViewInConnection?)
 
@@ -40,7 +42,7 @@ class InputCardRequisitesController: NSObject {
     // MARK: Constants
 
     private enum Constants {
-        static let cardNumberPlaceholder = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.cardNumber")
+        static let cardNumberPlaceholder = Loc.TinkoffAcquiring.Placeholder.cardNumber
         static let validThruPlaceholder = "01/23"
         static let cvcPlaceholder = "CVC"
         static let paymentSystemImageWidth: CGFloat = 20
@@ -95,9 +97,9 @@ class InputCardRequisitesController: NSObject {
 
     override init() {
         let paymentSystemResolver = PaymentSystemResolver()
-        self.inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
-        self.requisitesInputValidator = CardRequisitesValidator(paymentSystemResolver: paymentSystemResolver)
-        self.paymentSystemImageResolver = PaymentSystemImageResolver(paymentSystemResolver: paymentSystemResolver)
+        inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
+        requisitesInputValidator = CardRequisitesValidator(paymentSystemResolver: paymentSystemResolver)
+        paymentSystemImageResolver = PaymentSystemImageResolver(paymentSystemResolver: paymentSystemResolver)
         super.init()
     }
 
@@ -204,14 +206,14 @@ class InputCardRequisitesController: NSObject {
 
     private func validateRequisites() -> Bool {
         return requisitesInputValidator.validate(inputPAN: inputCardNumber)
-        && requisitesInputValidator.validate(inputValidThru: inputCardExpDate)
-        && requisitesInputValidator.validate(inputCVC: inputCardCVC)
+            && requisitesInputValidator.validate(inputValidThru: inputCardExpDate)
+            && requisitesInputValidator.validate(inputCVC: inputCardCVC)
     }
 
     private func activateScanerButton() {
         if cardRequisitesScanner != nil {
             inputView?.buttonRight.isHidden = false
-            inputView?.buttonRight.setImage(UIImage(named: "scan", in: .uiResources, compatibleWith: nil), for: .normal)
+            inputView?.buttonRight.setImage(Asset.scan.image, for: .normal)
             inputView?.onButtonRightTouch = onScanner
         } else {
             inputView?.buttonRight.isHidden = true
@@ -222,7 +224,7 @@ class InputCardRequisitesController: NSObject {
 
     private func activateNextButton() {
         inputView?.buttonRight.isHidden = false
-        inputView?.buttonRight.setImage(UIImage(named: "next", in: .uiResources, compatibleWith: nil), for: .normal)
+        inputView?.buttonRight.setImage(Asset.next.image, for: .normal)
         inputView?.onButtonRightTouch = onNext
     }
 }
@@ -236,7 +238,7 @@ extension InputCardRequisitesController: UITextFieldDelegate {
         }
 
         inputAccessoryViewWithButton?.updateViewSize(for: textField.traitCollection)
-        inputAccessoryViewWithButton?.buttonAction.setTitle(AcqLoc.instance.localize("TinkoffAcquiring.button.addCard"), for: .normal)
+        inputAccessoryViewWithButton?.buttonAction.setTitle(Loc.TinkoffAcquiring.Button.addCard, for: .normal)
         textField.inputAccessoryView = inputAccessoryViewWithButton
 
         return becomeFirstResponderListener?.textFieldShouldBecomeFirstResponder(textField) ?? true
@@ -317,8 +319,8 @@ extension InputCardRequisitesController: MaskedTextFieldDelegateListener {
         inputView?.imageViewPSLogo?.image = paymentSystemImage
 
         inputView?.imageViewPSLogoWidth.constant = paymentSystemImage == nil
-        ? .zero
-        : Constants.paymentSystemImageWidth
+            ? .zero
+            : Constants.paymentSystemImageWidth
 
         if requisitesInputValidator.validate(inputPAN: value) {
             activateNextButton()

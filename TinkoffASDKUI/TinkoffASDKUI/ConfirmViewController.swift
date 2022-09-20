@@ -22,7 +22,7 @@ import UIKit
 class ConfirmViewController: UIViewController {
     var onCancel: (() -> Void)?
 
-    private var needOnCancelNotification: Bool = true
+    private var needOnCancelNotification = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +32,12 @@ class ConfirmViewController: UIViewController {
         if #available(iOS 13.0, *) {
             cancelButton = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeViewColtroller))
         } else {
-            cancelButton = UIBarButtonItem(title: AcqLoc.instance.localize("TinkoffAcquiring.button.close"), style: .done, target: self, action: #selector(closeViewColtroller))
+            cancelButton = UIBarButtonItem(
+                title: Loc.TinkoffAcquiring.Button.close,
+                style: .done,
+                target: self,
+                action: #selector(closeViewColtroller)
+            )
         }
 
         navigationItem.setRightBarButton(cancelButton, animated: true)
