@@ -124,7 +124,7 @@ final class AcquaringNetworkTransport: NetworkTransport {
     }()
 
     private func setDefaultHTTPHeaders(for request: inout URLRequest) {
-        request.setValue("application/x-www-form-urlencoded; charset=utf-8; gzip,deflate;", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("text/html,application/xhtml+xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
         let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "xx"
         let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "x"
