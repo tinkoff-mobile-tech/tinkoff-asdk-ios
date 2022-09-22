@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-6445] Content Type header for 3DS Browser Based Requests
+
 ## [2.10.2] - 2022-09-13Z
 
 ### Added
