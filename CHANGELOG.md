@@ -12,6 +12,12 @@
 * [MIC-5908] Deleted broken xproject files, moved Podfile into ASDKSample folder
 * [MIC-6276] SwiftGen for Core module + SwiftGen for Sample App
 
+## [2.10.4] - 2022-09-26Z
+
+### Fixed
+
+* [MIC-6445] Content Type header for 3DS Browser Based Requests
+
 ## [2.10.2] - 2022-09-13Z
 
 ### Added
