@@ -1985,7 +1985,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
     // MARK: - PaymentController
 
-    // make public in future release
+    // TODO: MIC-6513 Make it public
     func paymentController(
         uiProvider: PaymentControllerUIProvider,
         delegate: PaymentControllerDelegate,

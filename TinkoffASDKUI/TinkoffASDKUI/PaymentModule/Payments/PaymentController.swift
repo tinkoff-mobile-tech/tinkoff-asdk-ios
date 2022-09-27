@@ -141,7 +141,7 @@ public final class PaymentController {
 
     // MARK: - Payments
 
-    // make public in future release
+    // TODO: MIC-6513 Make it public
     func performInitPayment(
         paymentOptions: PaymentOptions,
         paymentSource: PaymentSourceData
@@ -162,7 +162,7 @@ public final class PaymentController {
         }
     }
 
-    // make public in future release
+    // TODO: MIC-6513 Make it public
     func performFinishPayment(
         paymentId: PaymentId,
         paymentSource: PaymentSourceData,
