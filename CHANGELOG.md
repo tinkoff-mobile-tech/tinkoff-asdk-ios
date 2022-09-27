@@ -11,6 +11,7 @@
 * [MIC-6210] Integrate new Network Layer & Change Public Methods in ASDKCore & Deprecate old methods
 * [MIC-5908] Deleted broken xproject files, moved Podfile into ASDKSample folder
 * [MIC-6276] SwiftGen for Core module + SwiftGen for Sample App
+* [MIC-6279] Перенос логики совершения платежей без UI. Из ветки v3/root в текущую v2 версию. PaymentController - позволяет оплачивать (без вью части) только бизнес логика.
 
 ### Fixed
 
