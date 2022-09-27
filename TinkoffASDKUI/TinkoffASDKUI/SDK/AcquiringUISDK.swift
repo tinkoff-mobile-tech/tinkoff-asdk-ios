@@ -1985,7 +1985,8 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
     // MARK: - PaymentController
 
-    public func paymentController(
+    // make public in future release
+    func paymentController(
         uiProvider: PaymentControllerUIProvider,
         delegate: PaymentControllerDelegate,
         dataSource: PaymentControllerDataSource? = nil

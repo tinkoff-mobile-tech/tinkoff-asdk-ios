@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct Atomic<Value> {
+final class Atomic<Value> {
 
     private var value: Value
     private let lock = NSLock()
@@ -39,7 +39,7 @@ struct Atomic<Value> {
         return value
     }
 
-    mutating func store(newValue: Value) {
+    func store(newValue: Value) {
         lock.lock()
         defer { lock.unlock() }
         value = newValue

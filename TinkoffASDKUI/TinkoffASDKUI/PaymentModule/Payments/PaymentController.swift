@@ -141,7 +141,8 @@ public final class PaymentController {
 
     // MARK: - Payments
 
-    public func performInitPayment(
+    // make public in future release
+    func performInitPayment(
         paymentOptions: PaymentOptions,
         paymentSource: PaymentSourceData
     ) {
@@ -161,7 +162,8 @@ public final class PaymentController {
         }
     }
 
-    public func performFinishPayment(
+    // make public in future release
+    func performFinishPayment(
         paymentId: PaymentId,
         paymentSource: PaymentSourceData,
         customerOptions: CustomerOptions
