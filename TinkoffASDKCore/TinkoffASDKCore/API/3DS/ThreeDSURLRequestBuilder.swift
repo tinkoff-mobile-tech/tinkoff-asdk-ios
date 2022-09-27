@@ -113,7 +113,7 @@ private extension ThreeDSURLRequestBuilder {
     }
 
     func updateHeader(request: inout URLRequest) {
-        request.setValue("application/x-www-form-urlencoded;", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("text/html,application/xhtml+xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
 
         let userAgentString = "\(deviceInfoProvider.model)/\(deviceInfoProvider.systemName)/\(deviceInfoProvider.systemVersion)/TinkoffAcquiringSDK"
