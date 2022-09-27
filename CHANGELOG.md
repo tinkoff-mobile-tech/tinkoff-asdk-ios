@@ -12,6 +12,10 @@
 * [MIC-5908] Deleted broken xproject files, moved Podfile into ASDKSample folder
 * [MIC-6276] SwiftGen for Core module + SwiftGen for Sample App
 
+### Fixed
+
+* [MIC-6508] GetCardList response parsing  
+
 ## [2.10.4] - 2022-09-26Z
 
 ### Fixed
