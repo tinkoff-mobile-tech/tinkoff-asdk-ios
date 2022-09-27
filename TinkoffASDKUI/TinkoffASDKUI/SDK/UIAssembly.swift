@@ -17,7 +17,9 @@
 //  limitations under the License.
 //
 
+import struct CoreGraphics.CGSize
 import TinkoffASDKCore
+import class UIKit.UIScreen
 
 struct UIAssembly {
 
