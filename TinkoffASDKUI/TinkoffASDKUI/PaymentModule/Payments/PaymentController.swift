@@ -100,6 +100,8 @@ public final class PaymentController {
     private let paymentFactory: PaymentFactory
     private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
+    // App based threeDS
+    private let tdsController: TDSController
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -121,12 +123,14 @@ public final class PaymentController {
         paymentFactory: PaymentFactory,
         threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
+        tdsController: TDSController,
         acquiringUISDK: AcquiringUISDK /* temporary*/
     ) {
         self.acquiringSDK = acquiringSDK
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
         self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
+        self.tdsController = tdsController
         self.acquiringUISDK = acquiringUISDK
     }
 
@@ -369,6 +373,30 @@ extension PaymentController: PaymentProcessDelegate {
         } catch {
             completion(.failure(error))
         }
+    }
+
+    func payment(
+        _ paymentProcess: PaymentProcess,
+        need3DSConfirmationAppBased data: Confirmation3DS2AppBasedData,
+        version: String,
+        confirmationCancelled: @escaping () -> Void,
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
+    ) {
+        tdsController.completionHandler = { response in
+            let mappedResponse = response.map { statusResponse in
+                GetPaymentStatePayload(
+                    paymentId: String(statusResponse.paymentId),
+                    amount: Int64(truncating: statusResponse.amount),
+                    orderId: statusResponse.orderId,
+                    status: statusResponse.status
+                )
+            }
+
+            completion(mappedResponse)
+        }
+
+        tdsController.cancelHandler = confirmationCancelled
+        tdsController.doChallenge(with: data)
     }
 
     func interceptError(_ error: Error, for paymentProcess: PaymentProcess) -> Bool {

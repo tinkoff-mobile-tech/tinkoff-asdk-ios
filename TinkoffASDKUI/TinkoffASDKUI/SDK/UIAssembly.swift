@@ -30,6 +30,7 @@ struct UIAssembly {
             paymentFactory: paymentFactory(acquiringSDK: acquiringSDK),
             threeDSHandler: acquiringSDK.payment3DSHandler(),
             threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()),
+            tdsController: acquiringUISDK.tdsController,
             acquiringUISDK: acquiringUISDK
         )
     }

@@ -177,7 +177,7 @@ public class AcquiringUISDK: NSObject {
     private let cardListAssembly: ICardListAssembly
 
     // App based threeDS
-    private let tdsController: TDSController
+    let tdsController: TDSController
     // ThreeDS feature flag
     private let shouldUseAppBasedThreeDSFlow = false
 

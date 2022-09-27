@@ -55,6 +55,14 @@ protocol PaymentProcessDelegate: AnyObject {
         confirmationCancelled: @escaping () -> Void,
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     )
+
+    func payment(
+        _ paymentProcess: PaymentProcess,
+        need3DSConfirmationAppBased data: Confirmation3DS2AppBasedData,
+        version: String,
+        confirmationCancelled: @escaping () -> Void,
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
+    )
 }
 
 public protocol PaymentProcess: Cancellable {

@@ -155,7 +155,9 @@ private extension CardPaymentProcess {
             let check3DSData = Checking3DSURLData(
                 tdsServerTransID: tdsServerTransID,
                 threeDSMethodURL: threeDSMethodURL,
-                notificationURL: "" // empty for nowwww
+                notificationURL: acquiringSDK
+                    .confirmation3DSCompleteV2URL()
+                    .absoluteString
             )
             delegate?.payment(
                 self,
@@ -191,13 +193,7 @@ private extension CardPaymentProcess {
                 }
             )
         case let .needConfirmation3DSACS(data):
-            let version: String
-            if let threeDSVersion = threeDSVersion {
-                version = threeDSVersion
-            } else {
-                version = ""
-                // Log error
-            }
+            let version: String = threeDSVersion ?? ""
             delegate?.payment(
                 self,
                 need3DSConfirmationACS: data,
@@ -209,9 +205,19 @@ private extension CardPaymentProcess {
                     self?.handlePaymentResult(result, rebillId: payload.rebillId)
                 }
             )
-        case .needConfirmation3DS2AppBased:
-            // Handle this case for app based 3ds
-            break
+        case let .needConfirmation3DS2AppBased(data):
+            let version: String = threeDSVersion ?? ""
+            delegate?.payment(
+                self,
+                need3DSConfirmationAppBased: data,
+                version: version,
+                confirmationCancelled: { [weak self] in
+                    self?.handlePaymentCancelled(payload: payload)
+                },
+                completion: { [weak self] result in
+                    self?.handlePaymentResult(result, rebillId: payload.rebillId)
+                }
+            )
         case .unknown:
             break
         }
