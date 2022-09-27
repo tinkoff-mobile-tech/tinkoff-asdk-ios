@@ -502,21 +502,5 @@ extension PaymentController: PaymentProcessDelegate {
             completionHandler: { _ in
             }
         )
-
-//        acquiringUISDK.presentAcquiringPaymentView(
-//            presentingViewController: sourceViewController,
-//            customerKey: customerKey,
-//            configuration: viewConfiguration
-//        ) { view in
-//            view.changedStatus(.initWaiting)
-//            view.changedStatus(.paymentWainingCVC(cardParentId: parentPaymentId))
-//
-//            view.onTouchButtonPay = { [weak self, weak view] in
-//                guard let cardRequisites = view?.cardRequisites() else { return }
-//                self?.performInitPayment(paymentOptions: newPaymentOptions, paymentSource: cardRequisites)
-//            }
-//        }
-
-        // Temporary until refactor PaymentView! Remove ASAP!
     }
 }
