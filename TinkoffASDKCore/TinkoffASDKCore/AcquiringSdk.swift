@@ -403,7 +403,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = GetCardListRequest(getCardListData: GetCardListData(customerKey: data.customerKey), baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
     @discardableResult
