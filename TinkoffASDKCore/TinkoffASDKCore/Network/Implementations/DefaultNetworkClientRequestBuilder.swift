@@ -67,9 +67,48 @@ final class DefaultNetworkClientRequestBuilder: NetworkClientRequestBuilder {
         let encoder: ParametersEncoder
         switch parametersEncoding {
         case .json: encoder = JSONEncoding(options: .sortedKeys)
-        case .url: fatalError("TODO: URLEncoding")
         }
 
         return try encoder.encode(urlRequest, parameters: parameters)
+    }
+}
+
+protocol IRequestAdapter {
+    func adapt(request: NetworkRequest, completion: @escaping (Result<NetworkRequest, Error>) -> Void)
+}
+
+final class RequestAdapter {
+    func adapt(request: NetworkRequest, completion: @escaping (Result<NetworkRequest, Error>) -> Void) {}
+}
+
+final class URLRequestBuilder {
+    private let requestAdapter: IRequestAdapter
+    private let jsonEncoder: ParametersEncoder
+
+    init(requestAdapter: IRequestAdapter, jsonEncoder: ParametersEncoder) {
+        self.requestAdapter = requestAdapter
+        self.jsonEncoder = jsonEncoder
+    }
+
+    func build(request: NetworkRequest, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        requestAdapter.adapt(request: request) { [self] adaptingResult in
+            let urlRequestResult = adaptingResult.tryMap(build(from:))
+            completion(urlRequestResult)
+        }
+    }
+
+    private func build(from request: NetworkRequest) throws -> URLRequest {
+        let fullURL = request
+            .path
+            .reduce(into: request.baseURL) { $0.appendingPathComponent($1) }
+
+        var urlRequest = URLRequest(url: fullURL)
+        urlRequest.httpMethod = request.httpMethod.rawValue
+        request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
+
+        switch request.parametersEncoding {
+        case .json:
+            return try jsonEncoder.encode(urlRequest, parameters: request.parameters)
+        }
     }
 }

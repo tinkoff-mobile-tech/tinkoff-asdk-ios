@@ -26,7 +26,6 @@ enum HTTPMethod: String {
 
 enum HTTPParametersEncoding {
     case json
-    case url
 }
 
 typealias HTTPParameters = [String: Any]
