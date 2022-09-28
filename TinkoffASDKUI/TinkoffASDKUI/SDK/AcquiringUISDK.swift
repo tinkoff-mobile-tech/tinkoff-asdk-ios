@@ -177,17 +177,19 @@ public class AcquiringUISDK: NSObject {
     private let cardListAssembly: ICardListAssembly
 
     // App based threeDS
-    private let tdsController: TDSController
+    let tdsController: TDSController
     // ThreeDS feature flag
     private let shouldUseAppBasedThreeDSFlow = false
 
     private weak var logger: LoggerDelegate?
+    private let uiAssembly: UIAssembly
 
     public init(
         configuration: AcquiringSdkConfiguration,
         style: Style = DefaultStyle()
     ) throws {
         acquiringSdk = try AcquiringSdk(configuration: configuration)
+        uiAssembly = UIAssembly()
         self.style = style
         sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         tinkoffPayAssembly = TinkoffPayAssembly(
@@ -1979,6 +1981,24 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
                 self?.finishPaymentStatusResponse = finishResponse
             } // self.finishAuthorize
         }
+    }
+
+    // MARK: - PaymentController
+
+    // TODO: MIC-6513 Make it public
+    func paymentController(
+        uiProvider: PaymentControllerUIProvider,
+        delegate: PaymentControllerDelegate,
+        dataSource: PaymentControllerDataSource? = nil
+    ) -> PaymentController {
+        let paymentController = uiAssembly.paymentController(
+            acquiringSDK: acquiringSdk,
+            acquiringUISDK: self
+        )
+        paymentController.uiProvider = uiProvider
+        paymentController.delegate = delegate
+        paymentController.dataSource = dataSource
+        return paymentController
     }
 }
 

@@ -51,6 +51,19 @@ public struct FinishPaymentRequestData {
         self.source = source
         self.route = route
     }
+
+    public init(from request: PaymentFinishRequestData) {
+        self = Self(
+            paymentId: String(request.paymentId),
+            paymentSource: request.paymentSource,
+            infoEmail: request.infoEmail,
+            deviceInfo: request.deviceInfo,
+            ipAddress: request.ipAddress,
+            threeDSVersion: request.threeDSVersion,
+            source: request.source,
+            route: request.route
+        )
+    }
 }
 
 public struct PaymentFinishRequestData: Codable {
