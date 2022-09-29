@@ -22,6 +22,8 @@ import Foundation
 final class AcquiringAPI: API {
     private let networkClient: NetworkClient
     private let apiResponseDecoder: APIResponseDecoder
+    @available(*, deprecated, message: "Use apiResponseDecoder instead")
+    private let deprecatedDecoder = DeprecatedDecoder()
 
     init(
         networkClient: NetworkClient,
@@ -52,22 +54,54 @@ final class AcquiringAPI: API {
     }
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
+    func sendCertsConfigRequest(
+        _ request: NetworkRequest,
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable {
+        networkClient.performRequest(request) { response in
+            let result: Result<GetCertsConfigResponse, Error> = response.result.tryMap { data in
+                let parsedResponse = try? JSONDecoder.customISO8601Decoding.decode(GetCertsConfigResponse.self, from: data)
+                return try parsedResponse.orThrow(APIError.invalidResponse)
+            }
+
+            completionHandler(result)
+        }
+    }
+
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
         _ request: Request,
         delegate: NetworkTransportResponseDelegate?,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable {
-        return networkClient.performDeprecatedRequest(request, delegate: delegate, completion: completion)
-    }
 
-    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func sendCertsConfigRequest(
-        _ request: NetworkRequest,
-        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable {
-        return networkClient.sendCertsConfigRequest(request, completionHandler: completionHandler)
+        networkClient.performRequest(request) { [deprecatedDecoder] response in
+            let result: Result<Response, Error> = response.result.tryMap { data in
+                if let delegate = delegate,
+                   let urlRequest = response.request,
+                   let httpResponse = response.response {
+
+                    guard let delegatedResponse = try? delegate.networkTransport(
+                        didCompleteRawTaskForRequest: urlRequest,
+                        withData: data,
+                        response: httpResponse,
+                        error: response.error
+                    ) else {
+                        throw HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)
+                    }
+                    // swiftlint:disable:next force_cast
+                    return delegatedResponse as! Response
+                }
+
+                return try deprecatedDecoder.decode(data: data, with: response.response)
+            }
+
+            completion(result)
+        }
     }
 }
+
+// MARK: - Helpers
 
 private extension AcquiringAPI {
     func handleResponseData<Request: APIRequest>(
@@ -83,6 +117,48 @@ private extension AcquiringAPI {
             completion(.failure(APIError.failure(apiFailureError)))
         } catch {
             completion(.failure(APIError.invalidResponse))
+        }
+    }
+}
+
+private final class DeprecatedDecoder {
+    private let decoder = JSONDecoder()
+
+    func decode<Response: ResponseOperation>(data: Data, with response: HTTPURLResponse?) throws -> Response {
+        let response = try response.orThrow(NSError(domain: "Response must exist", code: 1))
+
+        // decode as a default `AcquiringResponse`
+        guard let acquiringResponse = try? decoder.decode(AcquiringResponse.self, from: data) else {
+            throw HTTPResponseError(body: data, response: response, kind: .invalidResponse)
+        }
+
+        // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
+        guard acquiringResponse.success else {
+            var errorMessage: String = Loc.TinkoffAcquiring.Response.Error.statusFalse
+
+            if let message = acquiringResponse.errorMessage {
+                errorMessage = message
+            }
+
+            if let details = acquiringResponse.errorDetails, details.isEmpty == false {
+                errorMessage.append(contentsOf: " ")
+                errorMessage.append(contentsOf: details)
+            }
+
+            let error = NSError(
+                domain: errorMessage,
+                code: acquiringResponse.errorCode,
+                userInfo: try? acquiringResponse.encode2JSONObject()
+            )
+
+            throw error
+        }
+
+        // decode to `Response`
+        if let responseObject: Response = try? decoder.decode(Response.self, from: data) {
+            return responseObject
+        } else {
+            throw HTTPResponseError(body: data, response: response, kind: .invalidResponse)
         }
     }
 }

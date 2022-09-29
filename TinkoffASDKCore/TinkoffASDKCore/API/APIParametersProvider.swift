@@ -19,7 +19,23 @@
 
 import Foundation
 
-final class APIParametersProvider: NetworkRequestAdapter {
+protocol IRequestAdapter {
+    func adapt(request: NetworkRequest, completion: @escaping (Result<NetworkRequest, Error>) -> Void)
+}
+
+final class RequestAdapter: IRequestAdapter {
+    // MARK: AdaptedRequest
+
+    private struct AdaptedRequest: NetworkRequest {
+        let baseURL: URL
+        let path: [String]
+        let httpMethod: HTTPMethod
+        let headers: HTTPHeaders
+        let parameters: HTTPParameters
+        let parametersEncoding: HTTPParametersEncoding
+    }
+
+    // MARK: Dependencies
 
     private let terminalKey: String
 
@@ -27,8 +43,16 @@ final class APIParametersProvider: NetworkRequestAdapter {
         self.terminalKey = terminalKey
     }
 
-    func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
-        let commonParameters: HTTPParameters = [APIConstants.Keys.terminalKey: terminalKey]
-        return commonParameters
+    func adapt(request: NetworkRequest, completion: @escaping (Result<NetworkRequest, Error>) -> Void) {
+        let adaptedRequest = AdaptedRequest(
+            baseURL: request.baseURL,
+            path: request.path,
+            httpMethod: request.httpMethod,
+            headers: request.headers,
+            parameters: request.parameters.merging([APIConstants.Keys.terminalKey: terminalKey]) { $1 },
+            parametersEncoding: request.parametersEncoding
+        )
+
+        completion(.success(adaptedRequest))
     }
 }

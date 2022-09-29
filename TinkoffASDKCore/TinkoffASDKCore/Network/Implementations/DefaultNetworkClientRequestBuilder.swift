@@ -19,88 +19,32 @@
 
 import Foundation
 
-final class DefaultNetworkClientRequestBuilder: NetworkClientRequestBuilder {
+protocol IURLRequestBuilder {
+    func build(request: NetworkRequest) throws -> URLRequest
+}
+
+final class URLRequestBuilder: IURLRequestBuilder {
+    // MARK: Error
 
     enum Error: Swift.Error {
         case failedToBuildPath
     }
 
-    // MARK: - NetworkClientRequestBuilder
+    // MARK: Dependencies
 
-    func buildURLRequest(request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
-        let endpoint = request.path.joined(separator: "/")
-        guard let url = URL(string: endpoint, relativeTo: request.baseURL) else {
-            throw Error.failedToBuildPath
-        }
+    private let jsonParametersEncoder: ParametersEncoder
 
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = request.httpMethod.rawValue
+    // MARK: Init
 
-        var parameters = request.parameters
-        var headers = request.headers
-
-        if let requestAdapter = requestAdapter {
-            parameters.merge(requestAdapter.additionalParameters(for: request)) { _, new in new }
-            headers.merge(requestAdapter.additionalHeaders(for: request)) { _, new in new }
-        }
-
-        headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
-
-        urlRequest = try encodeJSONParameters(
-            parameters,
-            parametersEncoding: request.parametersEncoding,
-            urlRequest: urlRequest
-        )
-
-        return urlRequest
+    init(jsonParametersEncoder: ParametersEncoder) {
+        self.jsonParametersEncoder = jsonParametersEncoder
     }
 
-    // MARK: - Parameters Encoding
+    // MARK: IURLRequestBuilder
 
-    private func encodeJSONParameters(
-        _ parameters: HTTPParameters,
-        parametersEncoding: HTTPParametersEncoding,
-        urlRequest: URLRequest
-    ) throws -> URLRequest {
-        guard !parameters.isEmpty else { return urlRequest }
-
-        let encoder: ParametersEncoder
-        switch parametersEncoding {
-        case .json: encoder = JSONEncoding(options: .sortedKeys)
-        }
-
-        return try encoder.encode(urlRequest, parameters: parameters)
-    }
-}
-
-protocol IRequestAdapter {
-    func adapt(request: NetworkRequest, completion: @escaping (Result<NetworkRequest, Error>) -> Void)
-}
-
-final class RequestAdapter {
-    func adapt(request: NetworkRequest, completion: @escaping (Result<NetworkRequest, Error>) -> Void) {}
-}
-
-final class URLRequestBuilder {
-    private let requestAdapter: IRequestAdapter
-    private let jsonEncoder: ParametersEncoder
-
-    init(requestAdapter: IRequestAdapter, jsonEncoder: ParametersEncoder) {
-        self.requestAdapter = requestAdapter
-        self.jsonEncoder = jsonEncoder
-    }
-
-    func build(request: NetworkRequest, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-        requestAdapter.adapt(request: request) { [self] adaptingResult in
-            let urlRequestResult = adaptingResult.tryMap(build(from:))
-            completion(urlRequestResult)
-        }
-    }
-
-    private func build(from request: NetworkRequest) throws -> URLRequest {
-        let fullURL = request
-            .path
-            .reduce(into: request.baseURL) { $0.appendingPathComponent($1) }
+    func build(request: NetworkRequest) throws -> URLRequest {
+        let fullURL = try URL(string: request.path.joined(separator: "/"), relativeTo: request.baseURL)
+            .orThrow(Error.failedToBuildPath)
 
         var urlRequest = URLRequest(url: fullURL)
         urlRequest.httpMethod = request.httpMethod.rawValue
@@ -108,7 +52,7 @@ final class URLRequestBuilder {
 
         switch request.parametersEncoding {
         case .json:
-            return try jsonEncoder.encode(urlRequest, parameters: request.parameters)
+            return try jsonParametersEncoder.encode(urlRequest, parameters: request.parameters)
         }
     }
 }

@@ -31,8 +31,7 @@ struct CoreAssembly {
 
     func buildAPI() -> API {
         AcquiringAPI(
-            networkClient: buildNetworkClient(
-                requestAdapter: buildAPIParametersProvider(terminalKey: configuration.credential.terminalKey)),
+            networkClient: buildNetworkClient(),
             apiResponseDecoder: buildAPIResponseDecoder()
         )
     }
@@ -63,7 +62,7 @@ struct CoreAssembly {
     func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
         ThreeDSWebViewHandler(
             threeDSURLBuilder: threeDSURLBuilder(),
-            jsonDecoder: buildJSONDecoder()
+            jsonDecoder: JSONDecoder()
         )
     }
 
@@ -77,13 +76,14 @@ struct CoreAssembly {
 }
 
 private extension CoreAssembly {
-    func buildNetworkClient(requestAdapter: NetworkRequestAdapter) -> NetworkClient {
+    func buildNetworkClient() -> NetworkClient {
         let networkClient = DefaultNetworkClient(
-            urlRequestPerfomer: buildURLSession(),
-            requestBuilder: buildRequestBuilder(),
-            responseValidator: buildResponseValidator()
+            requestAdapter: RequestAdapter(terminalKey: configuration.credential.terminalKey),
+            requestBuilder: URLRequestBuilder(jsonParametersEncoder: JSONEncoding(options: .sortedKeys)),
+            urlRequestPerformer: buildURLSession(),
+            responseValidator: DefaultHTTPURLResponseValidator()
         )
-        networkClient.requestAdapter = requestAdapter
+
         return networkClient
     }
 
@@ -100,14 +100,6 @@ private extension CoreAssembly {
         return configuration
     }
 
-    func buildRequestBuilder() -> NetworkClientRequestBuilder {
-        DefaultNetworkClientRequestBuilder()
-    }
-
-    func buildResponseValidator() -> HTTPURLResponseValidator {
-        DefaultHTTPURLResponseValidator()
-    }
-
     func buildAPIURLBuilder() -> APIURLBuilder {
         APIURLBuilder()
     }
@@ -119,15 +111,7 @@ private extension CoreAssembly {
         )
     }
 
-    func buildAPIParametersProvider(terminalKey: String) -> APIParametersProvider {
-        APIParametersProvider(terminalKey: terminalKey)
-    }
-
     func buildAPIResponseDecoder() -> APIResponseDecoder {
-        AcquiringAPIResponseDecoder(decoder: buildJSONDecoder())
-    }
-
-    func buildJSONDecoder() -> JSONDecoder {
-        JSONDecoder()
+        AcquiringAPIResponseDecoder(decoder: JSONDecoder())
     }
 }

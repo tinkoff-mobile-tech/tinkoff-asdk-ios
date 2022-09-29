@@ -32,12 +32,12 @@ typealias HTTPParameters = [String: Any]
 typealias HTTPHeaders = [String: String]
 
 protocol NetworkRequest {
+    var baseURL: URL { get }
     var path: [String] { get }
     var httpMethod: HTTPMethod { get }
+    var headers: HTTPHeaders { get }
     var parameters: HTTPParameters { get }
     var parametersEncoding: HTTPParametersEncoding { get }
-    var headers: HTTPHeaders { get }
-    var baseURL: URL { get }
 }
 
 extension NetworkRequest {
