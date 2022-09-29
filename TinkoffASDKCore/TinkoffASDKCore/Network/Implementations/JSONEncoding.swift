@@ -20,7 +20,6 @@
 import Foundation
 
 struct JSONEncoding: ParametersEncoder {
-
     enum Error: Swift.Error {
         case encodingFailed(error: Swift.Error)
     }
@@ -53,6 +52,8 @@ struct JSONEncoding: ParametersEncoder {
         }
     }
 }
+
+// MARK: - Constants
 
 private extension String {
     static let contentType = "Content-Type"
