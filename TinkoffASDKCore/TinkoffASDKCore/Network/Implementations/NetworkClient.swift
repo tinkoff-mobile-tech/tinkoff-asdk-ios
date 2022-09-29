@@ -1,6 +1,6 @@
 //
 //
-//  DefaultNetworkClient.swift
+//  NetworkClient.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,12 @@
 
 import Foundation
 
-final class DefaultNetworkClient: NetworkClient {
+protocol INetworkClient: AnyObject {
+    @discardableResult
+    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
+}
+
+final class NetworkClient: INetworkClient {
     // MARK: Dependencies
 
     private let requestAdapter: IRequestAdapter
@@ -41,7 +46,7 @@ final class DefaultNetworkClient: NetworkClient {
         self.responseValidator = responseValidator
     }
 
-    // MARK: NetworkClient
+    // MARK: INetworkClient
 
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {

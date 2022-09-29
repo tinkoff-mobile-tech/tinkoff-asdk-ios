@@ -1,6 +1,6 @@
 //
 //
-//  NetworkClient.swift
+//  INetworkClient.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,8 +18,3 @@
 //
 
 import Foundation
-
-protocol NetworkClient: AnyObject {
-    @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
-}

@@ -76,8 +76,8 @@ struct CoreAssembly {
 }
 
 private extension CoreAssembly {
-    func buildNetworkClient() -> NetworkClient {
-        let networkClient = DefaultNetworkClient(
+    func buildNetworkClient() -> INetworkClient {
+        let networkClient = NetworkClient(
             requestAdapter: RequestAdapter(terminalKey: configuration.credential.terminalKey),
             requestBuilder: URLRequestBuilder(jsonParametersEncoder: JSONEncoding(options: .sortedKeys)),
             urlRequestPerformer: buildURLSession(),

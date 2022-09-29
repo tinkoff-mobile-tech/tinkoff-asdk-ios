@@ -20,13 +20,13 @@
 import Foundation
 
 final class AcquiringAPI: API {
-    private let networkClient: NetworkClient
+    private let networkClient: INetworkClient
     private let apiResponseDecoder: APIResponseDecoder
     @available(*, deprecated, message: "Use apiResponseDecoder instead")
     private let deprecatedDecoder = DeprecatedDecoder()
 
     init(
-        networkClient: NetworkClient,
+        networkClient: INetworkClient,
         apiResponseDecoder: APIResponseDecoder
     ) {
         self.networkClient = networkClient
