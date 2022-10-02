@@ -25,7 +25,7 @@ class DefaultHTTPURLResponseValidatorTests: XCTestCase {
     let url = URL(string: "https://tinkoff.ru")!
     let httpVersion = "HTTP/1.1"
 
-    let validator = DefaultHTTPURLResponseValidator()
+    let validator = HTTPURLResponseValidator()
 
     func testValidIfStatusCode200() throws {
         let response = HTTPURLResponse(
@@ -69,7 +69,7 @@ class DefaultHTTPURLResponseValidatorTests: XCTestCase {
         )!
 
         XCTAssertThrowsError(try validator.validate(response: response).get(), "") { error in
-            guard let defaultHTTPURLResponseValidatorError = error as? DefaultHTTPURLResponseValidator.Error,
+            guard let defaultHTTPURLResponseValidatorError = error as? HTTPURLResponseValidator.Error,
                   defaultHTTPURLResponseValidatorError == .failedStatusCode else {
                 XCTFail("response with 400 status code must produce error DefaultHTTPURLResponseValidator.failedStatusCode")
                 return
@@ -86,7 +86,7 @@ class DefaultHTTPURLResponseValidatorTests: XCTestCase {
         )!
 
         XCTAssertThrowsError(try validator.validate(response: response).get(), "") { error in
-            guard let defaultHTTPURLResponseValidatorError = error as? DefaultHTTPURLResponseValidator.Error,
+            guard let defaultHTTPURLResponseValidatorError = error as? HTTPURLResponseValidator.Error,
                   defaultHTTPURLResponseValidatorError == .failedStatusCode else {
                 XCTFail("response with 400 status code must produce error DefaultHTTPURLResponseValidator.failedStatusCode")
                 return

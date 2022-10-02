@@ -20,7 +20,7 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-final class MockHTTPURLResponseValidator: HTTPURLResponseValidator {
+final class MockHTTPURLResponseValidator: IHTTPURLResponseValidator {
 
     var validateMethodCalled = true
     var result: Result<Void, Error> = .success(())

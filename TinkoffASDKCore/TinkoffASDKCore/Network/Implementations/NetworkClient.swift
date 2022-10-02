@@ -29,14 +29,14 @@ final class NetworkClient: INetworkClient {
 
     private let requestBuilder: IURLRequestBuilder
     private let urlRequestPerformer: URLRequestPerformer
-    private let responseValidator: HTTPURLResponseValidator
+    private let responseValidator: IHTTPURLResponseValidator
 
     // MARK: Init
 
     init(
         requestBuilder: IURLRequestBuilder,
         urlRequestPerformer: URLRequestPerformer,
-        responseValidator: HTTPURLResponseValidator
+        responseValidator: IHTTPURLResponseValidator
     ) {
         self.requestBuilder = requestBuilder
         self.urlRequestPerformer = urlRequestPerformer
@@ -75,11 +75,7 @@ final class NetworkClient: INetworkClient {
                 }
 
                 let httpResponse = try (response as? HTTPURLResponse).orThrow(NetworkError.noData)
-
-                try responseValidator
-                    .validate(response: httpResponse)
-                    .mapError { _ in NetworkError.serverError(statusCode: httpResponse.statusCode, data: data) }
-                    .get()
+                try responseValidator.validate(response: httpResponse)
 
                 return try data.orThrow(NetworkError.noData)
             }

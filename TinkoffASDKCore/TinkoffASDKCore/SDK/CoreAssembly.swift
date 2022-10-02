@@ -80,7 +80,7 @@ private extension CoreAssembly {
         let networkClient = NetworkClient(
             requestBuilder: buildURLRequestBuilder(),
             urlRequestPerformer: buildURLSession(),
-            responseValidator: DefaultHTTPURLResponseValidator()
+            responseValidator: HTTPURLResponseValidator()
         )
 
         return networkClient

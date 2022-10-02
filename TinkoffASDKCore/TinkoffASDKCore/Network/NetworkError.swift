@@ -21,14 +21,14 @@ import Foundation
 
 enum NetworkError: LocalizedError, CustomNSError {
     case transportError(Error)
-    case serverError(statusCode: Int, data: Data?)
+    case serverError(statusCode: Int)
     case noData
 
     var errorCode: Int {
         switch self {
         case let .transportError(error):
             return (error as NSError).code
-        case let .serverError(statusCode, _):
+        case let .serverError(statusCode):
             return statusCode
         case .noData:
             return 0
@@ -40,7 +40,7 @@ enum NetworkError: LocalizedError, CustomNSError {
         switch self {
         case let .transportError(error):
             description = "\(Loc.NetworkError.transportError): \(error.localizedDescription)"
-        case let .serverError(statusCode, _):
+        case let .serverError(statusCode):
             description = "\(Loc.NetworkError.serverError): \(statusCode)"
         case .noData:
             description = "\(Loc.NetworkError.emptyBody)"

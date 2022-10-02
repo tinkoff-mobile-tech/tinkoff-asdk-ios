@@ -1,6 +1,6 @@
 //
 //
-//  DefaultHTTPURLResponseValidator.swift
+//  HTTPURLResponseValidator.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,18 +19,26 @@
 
 import Foundation
 
-struct DefaultHTTPURLResponseValidator: HTTPURLResponseValidator {
+protocol IHTTPURLResponseValidator {
+    func validate(response: HTTPURLResponse) throws
+}
 
-    enum Error: Swift.Error {
-        case failedStatusCode
+struct HTTPURLResponseValidator: IHTTPURLResponseValidator {
+    // MARK: Dependencies
+
+    private let successStatusCodes: ClosedRange<Int>
+
+    // MARK: Init
+
+    init(successStatusCodes: ClosedRange<Int> = 200 ... 299) {
+        self.successStatusCodes = successStatusCodes
     }
 
-    private let successStatusCodes = 200 ... 299
-    func validate(response: HTTPURLResponse) -> Swift.Result<Void, Swift.Error> {
-        if successStatusCodes.contains(response.statusCode) {
-            return .success(())
-        } else {
-            return .failure(Error.failedStatusCode)
+    // MARK: IHTTPURLResponseValidator
+
+    func validate(response: HTTPURLResponse) throws {
+        guard successStatusCodes.contains(response.statusCode) else {
+            throw NetworkError.serverError(statusCode: response.statusCode)
         }
     }
 }

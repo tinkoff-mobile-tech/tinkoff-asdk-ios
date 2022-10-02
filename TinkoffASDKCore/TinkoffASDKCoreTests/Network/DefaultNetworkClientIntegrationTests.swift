@@ -29,7 +29,7 @@ class DefaultNetworkClientIntegrationTests: XCTestCase {
     lazy var networkClient = NetworkClient(
         urlRequestPerfomer: urlRequestPerformer,
         requestBuilder: DefaultNetworkClientRequestBuilder(),
-        responseValidator: DefaultHTTPURLResponseValidator()
+        responseValidator: HTTPURLResponseValidator()
     )
 
     override func setUp() {
