@@ -19,12 +19,7 @@
 
 import Foundation
 
-class APIResponse<Model: Decodable>: Decodable {
-    let success: Bool
-    let errorCode: Int
-    let terminalKey: String?
-    let result: Swift.Result<Model, APIFailureError>
-
+struct APIResponse<Model: Decodable>: Decodable {
     private enum CodingKeys: CodingKey {
         case success
         case terminalKey
@@ -39,7 +34,12 @@ class APIResponse<Model: Decodable>: Decodable {
         }
     }
 
-    required init(from decoder: Decoder) throws {
+    let success: Bool
+    let errorCode: Int
+    let terminalKey: String?
+    let result: Swift.Result<Model, APIFailureError>
+
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         terminalKey = try container.decodeIfPresent(String.self, forKey: .terminalKey)
