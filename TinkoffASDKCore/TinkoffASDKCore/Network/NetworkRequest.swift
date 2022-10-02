@@ -19,9 +19,11 @@
 
 import Foundation
 
-enum HTTPMethod: String {
-    case get = "GET"
-    case post = "POST"
+struct HTTPMethod: RawRepresentable {
+    static let get = HTTPMethod(rawValue: "GET")
+    static let post = HTTPMethod(rawValue: "POST")
+
+    let rawValue: String
 }
 
 enum HTTPParametersEncoding {

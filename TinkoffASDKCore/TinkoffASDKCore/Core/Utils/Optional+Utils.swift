@@ -1,6 +1,6 @@
 //
 //
-//  Result+Utils.swift
+//  Optional+Utils.swift
 //
 //  Copyright (c) 2022 Tinkoff Bank
 //
@@ -19,17 +19,12 @@
 
 import Foundation
 
-extension Result {
-    func tryMap<T>(_ transform: (Success) throws -> T) -> Result<T, Error> {
-        switch self {
-        case let .success(success):
-            do {
-                return .success(try transform(success))
-            } catch {
-                return .failure(error)
-            }
-        case let .failure(failure):
-            return .failure(failure)
+extension Optional {
+    func orThrow<E: Error>(_ error: @autoclosure () -> E) throws -> Wrapped {
+        guard let self = self else {
+            throw error()
         }
+
+        return self
     }
 }

@@ -1,6 +1,6 @@
 //
 //
-//  Result+Utils.swift
+//  Synchronizable.swift
 //
 //  Copyright (c) 2022 Tinkoff Bank
 //
@@ -19,17 +19,20 @@
 
 import Foundation
 
-extension Result {
-    func tryMap<T>(_ transform: (Success) throws -> T) -> Result<T, Error> {
-        switch self {
-        case let .success(success):
-            do {
-                return .success(try transform(success))
-            } catch {
-                return .failure(error)
-            }
-        case let .failure(failure):
-            return .failure(failure)
-        }
+protocol Synchronizable {
+    func sync<T>(_ block: () throws -> T) rethrows -> T
+}
+
+// MARK: - NSLocking + Synchronizable
+
+extension Synchronizable where Self: NSLocking {
+    func sync<T>(_ block: () throws -> T) rethrows -> T {
+        lock()
+        defer { unlock() }
+        return try block()
     }
 }
+
+// MARK: - NSLock + Synchronizable
+
+extension NSLock: Synchronizable {}

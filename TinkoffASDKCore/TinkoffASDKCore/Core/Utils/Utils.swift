@@ -170,16 +170,6 @@ extension String {
     }
 }
 
-extension Optional {
-    func orThrow<E: Error>(_ error: @autoclosure () -> E) throws -> Wrapped {
-        guard let self = self else {
-            throw error()
-        }
-
-        return self
-    }
-}
-
 extension UIDevice {
     var deviceModel: String {
         var systemInfo = utsname()
