@@ -19,34 +19,6 @@
 
 import Foundation
 
-///
-/// Инициирует платёжную сессию и регистрирует заказ в системе Банка.
-public final class PaymentInitRequest: RequestOperation, AcquiringRequestTokenParams {
-    // MARK: RequestOperation
-
-    public var name = "Init"
-    public var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        PaymentInitData.CodingKeys.amount.rawValue,
-        PaymentInitData.CodingKeys.orderId.rawValue,
-        PaymentInitData.CodingKeys.customerKey.rawValue,
-        PaymentInitData.CodingKeys.savingAsParentPayment.rawValue,
-    ]
-
-    ///
-    /// - Parameter data: `PaymentInitPaymentData`
-    public init(data: PaymentInitData) {
-        if let json = try? data.encode2JSONObject(dateEncodingStrategy: .iso8601) {
-            parameters = json
-        }
-    }
-}
-
 @available(*, deprecated, message: "Will be removed soon")
 public struct PaymentInitResponseData {
     public let amount: Int64

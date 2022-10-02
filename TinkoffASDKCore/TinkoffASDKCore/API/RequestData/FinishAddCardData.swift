@@ -19,23 +19,7 @@
 
 import Foundation
 
-public struct FinishAddCardData: Codable {
-    enum CodingKeys: CodingKey {
-        case cardNumber
-        case expDate
-        case cvv
-        case requestKey
-
-        var stringValue: String {
-            switch self {
-            case .cardNumber: return APIConstants.Keys.cardNumber
-            case .expDate: return APIConstants.Keys.cardExpDate
-            case .cvv: return APIConstants.Keys.cardCVV
-            case .requestKey: return APIConstants.Keys.requestKey
-            }
-        }
-    }
-
+public struct FinishAddCardData {
     let cardNumber: String
     let expDate: String
     let cvv: String
@@ -49,6 +33,6 @@ public struct FinishAddCardData: Codable {
     }
 
     func cardData() -> String {
-        return "\(CodingKeys.cardNumber.stringValue)=\(cardNumber);\(CodingKeys.expDate.stringValue)=\(expDate);\(CodingKeys.cvv.stringValue)=\(cvv)"
+        return "\(APIConstants.Keys.cardNumber)=\(cardNumber);\(APIConstants.Keys.cardExpDate)=\(expDate);\(APIConstants.Keys.cardCVV)=\(cvv)"
     }
 }

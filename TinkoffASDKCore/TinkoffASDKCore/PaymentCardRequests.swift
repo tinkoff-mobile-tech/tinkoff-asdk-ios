@@ -19,81 +19,6 @@
 
 import Foundation
 
-// MARK: Список карт
-
-public final class CardListRequest: RequestOperation, AcquiringRequestTokenParams {
-    // MARK: RequestOperation
-
-    public var name = "GetCardList"
-
-    public var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [GetCardListData.CodingKeys.customerKey.rawValue]
-
-    ///
-    /// - Parameter requestData: `InitGetCardListData`
-    public init(data: GetCardListData) {
-        if let json = try? data.encode2JSONObject() {
-            parameters = json
-        }
-    }
-}
-
-// MARK: Добавит карту
-
-public final class InitAddCardRequest: RequestOperation, AcquiringRequestTokenParams {
-    // MARK: RequestOperation
-
-    public var name = "AddCard"
-
-    public var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        InitAddCardData.CodingKeys.checkType.rawValue,
-        InitAddCardData.CodingKeys.customerKey.rawValue,
-    ]
-
-    ///
-    /// - Parameter requestData: `InitAddCardData`
-    public init(requestData: InitAddCardData) {
-        if let json = try? requestData.encode2JSONObject() {
-            parameters = json
-        }
-    }
-}
-
-class FinishAddCardRequest: AcquiringRequestTokenParams, RequestOperation {
-    // MARK: RequestOperation
-
-    var name = "AttachCard"
-
-    var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    var tokenParamsKey: Set<String> = [
-        FinishAddCardData.CodingKeys.requestKey.stringValue,
-        PaymentFinishRequestData.CodingKeys.cardData.stringValue,
-    ]
-
-    ///
-    /// - Parameter requestData: `FinishAddCardData`
-    init(requestData: FinishAddCardData) {
-        parameters = [:]
-        parameters?.updateValue(requestData.cardData(), forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-        parameters?.updateValue(requestData.requestKey, forKey: FinishAddCardData.CodingKeys.requestKey.stringValue)
-    }
-}
-
 public enum AddCardFinishResponseStatus {
     /// Требуется подтверждение 3DS v1.0
     case needConfirmation3DS(Confirmation3DSData)
@@ -158,32 +83,5 @@ public struct AddCardStatusResponse: ResponseOperation {
         //
         try? container.encode(terminalKey, forKey: .terminalKey)
         try? container.encode(cardId, forKey: .cardId)
-    }
-} // AddCardStatusResponse
-
-// MARK: Удалить карту
-
-public final class InitDeactivateCardRequest: RequestOperation, AcquiringRequestTokenParams {
-    // MARK: RequestOperation
-
-    public var name = "RemoveCard"
-
-    public var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        InitDeactivateCardData.CodingKeys.cardId.rawValue,
-        InitDeactivateCardData.CodingKeys.customerKey.rawValue,
-    ]
-
-    ///
-    /// - Parameter requestData: `InitDeactivateCardData`
-    public init(requestData: InitDeactivateCardData) {
-        if let json = try? requestData.encode2JSONObject() {
-            parameters = json
-        }
     }
 }

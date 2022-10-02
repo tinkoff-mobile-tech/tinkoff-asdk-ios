@@ -19,7 +19,7 @@
 
 import Foundation
 
-/// Источинк оплаты
+/// Источник оплаты
 public enum PaymentSourceData: Codable {
     /// при оплате по реквизитам  карты
     ///
@@ -107,80 +107,6 @@ public enum PaymentSourceData: Codable {
         }
     }
 }
-
-public class PaymentFinishRequest: RequestOperation, AcquiringRequestTokenParams {
-    // MARK: RequestOperation
-
-    public var name: String {
-        return "FinishAuthorize"
-    }
-
-    public var parameters: JSONObject?
-
-    // MARK: AcquiringRequestTokenParams
-
-    ///
-    /// отмечаем параметры которые участвуют в вычислении `token`
-    public var tokenParamsKey: Set<String> = [
-        PaymentFinishRequestData.CodingKeys.paymentId.rawValue,
-        PaymentFinishRequestData.CodingKeys.cardData.rawValue,
-        PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue,
-        PaymentFinishRequestData.CodingKeys.sendEmail.rawValue,
-        PaymentFinishRequestData.CodingKeys.infoEmail.rawValue,
-        PaymentFinishRequestData.CodingKeys.ipAddress.rawValue,
-        PaymentFinishRequestData.CodingKeys.source.rawValue,
-        PaymentFinishRequestData.CodingKeys.route.rawValue,
-    ]
-
-    ///
-    /// - Parameter data: `PaymentFinishRequestData`
-    public init(data: PaymentFinishRequestData) {
-        parameters = [:]
-        parameters?.updateValue(data.paymentId, forKey: PaymentFinishRequestData.CodingKeys.paymentId.rawValue)
-
-        if let value = data.sendEmail {
-            parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.sendEmail.rawValue)
-        }
-
-        if let value = data.infoEmail {
-            parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.infoEmail.rawValue)
-        }
-
-        if let ip = data.ipAddress {
-            parameters?.updateValue(ip, forKey: PaymentFinishRequestData.CodingKeys.ipAddress.rawValue)
-        }
-
-        if let deviceInfo = data.deviceInfo, let value = try? deviceInfo.encode2JSONObject() {
-            parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.deviceInfo.rawValue)
-        }
-
-        if let source = data.source {
-            parameters?.updateValue(source, forKey: PaymentFinishRequestData.CodingKeys.source.rawValue)
-        }
-
-        if let route = data.route {
-            parameters?.updateValue(route, forKey: PaymentFinishRequestData.CodingKeys.route.rawValue)
-        }
-
-        switch data.paymentSource {
-        case let .cardNumber(number, expDate, cvv):
-            let value = "\(PaymentSourceData.CodingKeys.cardNumber.rawValue)=\(number);\(PaymentSourceData.CodingKeys.cardExpDate.rawValue)=\(expDate);\(PaymentSourceData.CodingKeys.cardCVV.rawValue)=\(cvv)"
-            parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-
-        case let .savedCard(cardId, cvv):
-            var value = ""
-            if let cardCVV = cvv { value.append("\(PaymentSourceData.CodingKeys.cardCVV.rawValue)=\(cardCVV);") }
-            value.append("\(PaymentSourceData.CodingKeys.savedCardId.rawValue)=\(cardId)")
-            parameters?.updateValue(value, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-
-        case let .paymentData(token):
-            parameters?.updateValue(token, forKey: PaymentFinishRequestData.CodingKeys.encryptedPaymentData.rawValue)
-
-        default:
-            break
-        }
-    }
-} // PaymentFinishRequest
 
 public struct Confirmation3DS2AppBasedData: Codable {
     public let acsSignedContent: String

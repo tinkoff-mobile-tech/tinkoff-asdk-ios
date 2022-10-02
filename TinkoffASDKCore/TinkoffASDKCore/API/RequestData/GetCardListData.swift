@@ -22,12 +22,18 @@ import Foundation
 @available(*, deprecated, renamed: "GetCardListData")
 public typealias InitGetCardListData = GetCardListData
 
-public struct GetCardListData: Codable {
-    public enum CodingKeys: String, CodingKey {
-        case customerKey = "CustomerKey"
+public struct GetCardListData: Encodable {
+    private enum CodingKeys: CodingKey {
+        case customerKey
+
+        var stringValue: String {
+            switch self {
+            case .customerKey: return APIConstants.Keys.customerKey
+            }
+        }
     }
 
-    public var customerKey: String
+    public let customerKey: String
 
     public init(customerKey: String) {
         self.customerKey = customerKey
