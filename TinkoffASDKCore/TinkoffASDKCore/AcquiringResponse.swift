@@ -1,5 +1,5 @@
 //
-//  AcquiringRequest.swift
+//  AcquiringResponse.swift
 //  TinkoffASDKCore
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,64 +19,6 @@
 
 import Foundation
 
-// MARK: AcquiringRequest
-
-public protocol RequestOperation {
-    /// Название операции
-    var name: String { get }
-
-    /// Параметры которые отправляем на сервер в теле запроса
-    var parameters: JSONObject? { get set }
-
-    /// Типа запроса
-    var requestMethod: RequestMethod { get }
-
-    /// Формат запроса
-    var requestContentType: RequestContentType { get }
-}
-
-public extension RequestOperation {
-    var requestMethod: RequestMethod {
-        .post
-    }
-}
-
-public extension RequestOperation {
-    var requestContentType: RequestContentType {
-        .applicationJson
-    }
-}
-
-protocol AcquiringRequestOperation: RequestOperation {
-    func validate() -> Error?
-
-    var tokenParamenters: JSONObject? { get }
-}
-
-public protocol AcquiringRequestTokenParams {
-    /// Отмечаем параметры которые участвуют в вычислении токена
-    /// ключи параметров которые нужны для токена
-    var tokenParamsKey: Set<String> { get }
-
-    /// значеня параметров котоыре нужны для токена, есть базовая реализация в `AcquiringRequestTokenParams`
-    func tokenParams() -> JSONObject
-}
-
-public extension AcquiringRequestTokenParams where Self: RequestOperation {
-    // параметры для токена
-    func tokenParams() -> JSONObject {
-        if let params = parameters?.filter({ item -> Bool in
-            tokenParamsKey.contains(item.key)
-        }) {
-            return params
-        }
-
-        return [:]
-    }
-}
-
-// MARK: AcquiringResponse
-
 public protocol ResponseOperation: Codable {
     var success: Bool { get }
     var errorCode: Int { get }
@@ -86,6 +28,32 @@ public protocol ResponseOperation: Codable {
 }
 
 public class AcquiringResponse: ResponseOperation {
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
+        case status
+        case paymentId
+        case orderId
+        case amount
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .status: return APIConstants.Keys.status
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .orderId: return APIConstants.Keys.orderId
+            case .amount: return APIConstants.Keys.amount
+            }
+        }
+    }
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -95,18 +63,6 @@ public class AcquiringResponse: ResponseOperation {
     public let paymentId: String?
     public let orderId: String?
     public let amount: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
-        case status = "Status"
-        case paymentId = "PaymentId"
-        case orderId = "OrderId"
-        case amount = "Amount"
-    }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

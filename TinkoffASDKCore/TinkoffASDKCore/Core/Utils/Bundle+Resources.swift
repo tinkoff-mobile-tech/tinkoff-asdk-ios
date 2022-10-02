@@ -1,6 +1,6 @@
 //
 //
-//  Bundle+TinkoffASDKCoreResources.swift
+//  Bundle+Resources.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //

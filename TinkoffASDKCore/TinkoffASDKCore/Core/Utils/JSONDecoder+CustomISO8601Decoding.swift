@@ -1,6 +1,6 @@
 //
 //
-//  JSONDecoder+ISO8601Decoding.swift
+//  JSONDecoder+CustomISO8601Decoding.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,11 +19,11 @@
 
 import Foundation
 
-private enum DateDecodingError: Error {
-    case invalidDate
-}
-
 extension JSONDecoder {
+    private enum DateDecodingError: Error {
+        case invalidDate
+    }
+
     static var customISO8601Decoding: JSONDecoder {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [
