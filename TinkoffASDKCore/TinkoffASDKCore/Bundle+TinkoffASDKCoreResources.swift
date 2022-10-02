@@ -20,16 +20,15 @@
 import Foundation
 
 extension Bundle {
-
-    private class CoreResourcesToken {}
+    private final class Token {}
 
     static var coreResources: Bundle {
         #if SWIFT_PACKAGE
             .module
         #else
-            Bundle(for: CoreResourcesToken.self)
+            Bundle(for: Token.self)
                 .url(forResource: .resourceName, withExtension: .bundleExtension)
-                .flatMap { Bundle(url: $0) } ?? Bundle(for: CoreResourcesToken.self)
+                .flatMap { Bundle(url: $0) } ?? Bundle(for: Token.self)
         #endif
     }
 }

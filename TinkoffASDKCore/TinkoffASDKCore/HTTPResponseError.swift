@@ -64,3 +64,19 @@ public struct HTTPResponseError: Error, LocalizedError {
         return "\(kind.description) (\(response.statusCode) \(response.statusCodeDescription)): \(bodyDescription)"
     }
 }
+
+// MARK: - Helpers
+
+private extension HTTPURLResponse {
+    var statusCodeDescription: String {
+        return HTTPURLResponse.localizedString(forStatusCode: statusCode)
+    }
+
+    var textEncoding: String.Encoding? {
+        guard let encodingName = textEncodingName else { return nil }
+
+        return String.Encoding(
+            rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName as CFString))
+        )
+    }
+}
