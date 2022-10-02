@@ -1,5 +1,5 @@
 //
-//  PaymentInitRequest.swift
+//  PaymentInitResponseData.swift
 //  TinkoffASDKCore
 //
 //  Copyright (c) 2020 Tinkoff Bank

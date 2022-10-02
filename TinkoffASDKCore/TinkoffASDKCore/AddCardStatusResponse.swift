@@ -1,5 +1,5 @@
 //
-//  PaymentCardRequests.swift
+//  AddCardStatusResponse.swift
 //  TinkoffASDKCore
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,43 +19,38 @@
 
 import Foundation
 
-public enum AddCardFinishResponseStatus {
-    /// Требуется подтверждение 3DS v1.0
-    case needConfirmation3DS(Confirmation3DSData)
-
-    /// Требуется подтверждение 3DS v2.0
-    case needConfirmation3DSACS(Confirmation3DSDataACS)
-
-    /// Требуется подтвержить оплату указать сумму из смс для `requestKey`
-    case needConfirmationRandomAmount(String)
-
-    /// Успешная оплата
-    case done(AddCardStatusResponse)
-
-    /// что-то пошло не так
-    case unknown
-}
-
 public struct AddCardStatusResponse: ResponseOperation {
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
+
+        case requestKey
+        case cardId
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .requestKey: return APIConstants.Keys.requestKey
+            case .cardId: return APIConstants.Keys.cardId
+            }
+        }
+    }
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
-    //
+
     public var requestKey: String?
     public var cardId: String?
-
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
-        //
-        case requestKey = "RequestKey"
-        case cardId = "CardId"
-    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -64,7 +59,7 @@ public struct AddCardStatusResponse: ResponseOperation {
         errorMessage = try? container.decode(String.self, forKey: .errorMessage)
         errorDetails = try? container.decode(String.self, forKey: .errorDetails)
         terminalKey = try? container.decode(String.self, forKey: .terminalKey)
-        //
+
         requestKey? = try container.decode(String.self, forKey: .requestKey)
         cardId = try? container.decode(String.self, forKey: .cardId)
     }
@@ -80,7 +75,7 @@ public struct AddCardStatusResponse: ResponseOperation {
         try container.encode(errorCode, forKey: .errorCode)
         try? container.encode(errorMessage, forKey: .errorMessage)
         try? container.encode(errorDetails, forKey: .errorDetails)
-        //
+
         try? container.encode(terminalKey, forKey: .terminalKey)
         try? container.encode(cardId, forKey: .cardId)
     }

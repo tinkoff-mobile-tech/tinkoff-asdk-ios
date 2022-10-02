@@ -48,6 +48,7 @@ enum APIConstants {
         static let cardCVV = "CVV"
         static let cardId = "CardId"
         static let cardData = "CardData"
+        static let paymentData = "PaymentData"
         static let encryptedPaymentData = "EncryptedPaymentData"
         static let route = "Route"
         static let source = "Source"
@@ -72,6 +73,10 @@ enum APIConstants {
         static let rebillId = "RebillId"
         static let cards = "Cards"
         static let checkType = "CheckType"
+        static let acsSignedContent = "AcsSignedContent"
+        static let acsTransId = "AcsTransId"
+        static let tdsServerTransId = "TdsServerTransId"
+        static let acsRefNumber = "AcsReferenceNumber"
     }
 
     enum Values {
