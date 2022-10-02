@@ -20,7 +20,7 @@
 import Foundation
 
 /// Тип возвращаемых данных для генерации QR-кода
-public enum PaymentInvoiceSBPSourceType: String, Codable {
+public enum PaymentInvoiceSBPSourceType: String, Encodable {
     /// `IMAGE` – В ответе возвращается SVG изображение QR-кода
     case imageSVG = "IMAGE"
 
@@ -35,8 +35,8 @@ public enum PaymentInvoiceSBPSourceType: String, Codable {
     }
 }
 
-public struct PaymentInvoiceQRCodeData: Codable {
-    enum CodingKeys: CodingKey {
+public struct PaymentInvoiceQRCodeData: Encodable {
+    private enum CodingKeys: CodingKey {
         case paymentId
         case paymentInvoiceType
 
@@ -62,21 +62,6 @@ public struct PaymentInvoiceQRCodeData: Codable {
     public init(paymentId: Int64, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
         self.paymentId = String(paymentId)
         self.paymentInvoiceType = paymentInvoiceType
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        if let typeValue = try? container.decode(String.self, forKey: .paymentInvoiceType) {
-            paymentInvoiceType = PaymentInvoiceSBPSourceType(rawValue: typeValue)
-        } else {
-            paymentInvoiceType = .url
-        }
-        if let paymentId = try? container.decode(String.self, forKey: .paymentId) {
-            self.paymentId = paymentId
-        } else {
-            let paymentIdNumber = try container.decode(Int64.self, forKey: .paymentId)
-            paymentId = String(paymentIdNumber)
-        }
     }
 
     public func encode(to encoder: Encoder) throws {

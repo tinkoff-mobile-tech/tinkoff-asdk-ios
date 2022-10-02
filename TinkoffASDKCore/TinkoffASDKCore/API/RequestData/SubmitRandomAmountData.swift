@@ -19,8 +19,8 @@
 
 import Foundation
 
-public struct SubmitRandomAmountData: Codable {
-    enum CodingKeys: CodingKey {
+public struct SubmitRandomAmountData: Encodable {
+    private enum CodingKeys: CodingKey {
         case amount
         case requestKey
 

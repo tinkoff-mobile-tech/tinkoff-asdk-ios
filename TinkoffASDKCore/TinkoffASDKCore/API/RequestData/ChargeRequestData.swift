@@ -1,5 +1,5 @@
 //
-//  PaymentChargeRequest.swift
+//  ChargeRequestData.swift
 //  TinkoffASDKCore
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct ChargeRequestData: Codable {
+public struct ChargeRequestData: Encodable {
     private enum CodingKeys: CodingKey {
         case paymentId
         case rebillId
@@ -44,7 +44,19 @@ public struct ChargeRequestData: Codable {
 }
 
 @available(*, deprecated, message: "Use `ChargeRequestData` instead")
-public struct PaymentChargeRequestData: Codable {
+public struct PaymentChargeRequestData: Encodable {
+    private enum CodingKeys: CodingKey {
+        case paymentId
+        case parentPaymentId
+
+        var stringValue: String {
+            switch self {
+            case .paymentId: return APIConstants.Keys.paymentId
+            case .parentPaymentId: return APIConstants.Keys.rebillId
+            }
+        }
+    }
+
     /// Номер заказа в системе Продавца
     public var paymentId: Int64
     /// Родительский платеж
@@ -53,16 +65,5 @@ public struct PaymentChargeRequestData: Codable {
     public init(paymentId: Int64, parentPaymentId: Int64) {
         self.paymentId = paymentId
         self.parentPaymentId = parentPaymentId
-    }
-
-    public enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-        case parentPaymentId = "RebillId"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
-        parentPaymentId = try container.decode(Int64.self, forKey: .parentPaymentId)
     }
 }

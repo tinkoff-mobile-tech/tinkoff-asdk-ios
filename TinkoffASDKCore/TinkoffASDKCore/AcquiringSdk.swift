@@ -798,13 +798,4 @@ extension AcquiringSdk {
 
         return parameters
     }
-
-    /// Обновляем информацию о реквизитах карты, добавляем шифрование
-    private func updateCardDataRequestParams(_ parameters: inout JSONObject?) {
-        if let cardData = parameters?[PaymentFinishRequestData.CodingKeys.cardData.rawValue] as? String {
-            if let encodedCardData = RSAEncryption.encrypt(string: cardData, publicKey: publicKey) {
-                parameters?.updateValue(encodedCardData, forKey: PaymentFinishRequestData.CodingKeys.cardData.rawValue)
-            }
-        }
-    }
 }

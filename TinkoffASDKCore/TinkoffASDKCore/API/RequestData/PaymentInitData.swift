@@ -20,7 +20,41 @@
 import Foundation
 
 /// Инициализация платежа, подробнее: [Init - создание заказа на оплату](https://oplata.tinkoff.ru/develop/api/payments/init-request/)
-public struct PaymentInitData: Codable {
+public struct PaymentInitData: Encodable {
+    private enum CodingKeys: CodingKey {
+        case amount
+        case orderId
+        case customerKey
+        case description
+        case payType
+        case savingAsParentPayment
+        case paymentFormData
+        case receipt
+        case shops
+        case receipts
+        case redirectDueDate
+        case successURL
+        case failURL
+
+        var stringValue: String {
+            switch self {
+            case .amount: return APIConstants.Keys.amount
+            case .orderId: return APIConstants.Keys.orderId
+            case .customerKey: return APIConstants.Keys.customerKey
+            case .description: return APIConstants.Keys.description
+            case .payType: return APIConstants.Keys.payType
+            case .savingAsParentPayment: return APIConstants.Keys.savingAsParentPayment
+            case .paymentFormData: return APIConstants.Keys.data
+            case .receipt: return APIConstants.Keys.receipt
+            case .shops: return APIConstants.Keys.shops
+            case .receipts: return APIConstants.Keys.receipts
+            case .redirectDueDate: return APIConstants.Keys.redirectDueDate
+            case .successURL: return APIConstants.Keys.successURL
+            case .failURL: return APIConstants.Keys.failURL
+            }
+        }
+    }
+
     /// Сумма в копейках. Например, сумма 3руб. 12коп. это число `312`.
     /// Параметр должен быть равен сумме всех товаров в чеке (параметров "Amount", переданных в объекте Items)
     public var amount: Int64
@@ -60,77 +94,6 @@ public struct PaymentInitData: Codable {
     /// Страница ошибки
     public var failURL: String?
 
-    public mutating func addPaymentData(_ additionalData: [String: String]) {
-        var updatedData: [String: String] = [:]
-
-        paymentFormData?.forEach { item in
-            updatedData.updateValue(item.value, forKey: item.key)
-        }
-
-        additionalData.forEach { item in
-            updatedData.updateValue(item.value, forKey: item.key)
-        }
-
-        paymentFormData = updatedData
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case amount = "Amount"
-        case orderId = "OrderId"
-        case customerKey = "CustomerKey"
-        case description = "Description"
-        case payType = "PayType"
-        case savingAsParentPayment = "Recurrent"
-        case paymentFormData = "DATA"
-        case receipt = "Receipt"
-        case shops = "Shops"
-        case receipts = "Receipts"
-        case redirectDueDate = "RedirectDueDate"
-        case successURL = "SuccessURL"
-        case failURL = "FailURL"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        amount = try container.decode(Int64.self, forKey: .amount)
-        orderId = try container.decode(String.self, forKey: .orderId)
-        customerKey = try container.decodeIfPresent(String.self, forKey: .customerKey)
-        description = try? container.decode(String.self, forKey: .description)
-        redirectDueDate = try? container.decode(Date.self, forKey: .redirectDueDate)
-
-        if let payTypeValue = try? container.decode(String.self, forKey: .payType) {
-            payType = PayType(rawValue: payTypeValue)
-        }
-
-        if let value = try? container.decode(String.self, forKey: .savingAsParentPayment), value.uppercased() == "Y" {
-            savingAsParentPayment = true
-        }
-
-        paymentFormData = try? container.decode([String: String].self, forKey: .paymentFormData)
-        receipt = try? container.decode(Receipt.self, forKey: .receipt)
-        shops = try? container.decode([Shop].self, forKey: .shops)
-        receipts = try? container.decode([Receipt].self, forKey: .receipts)
-        successURL = try? container.decode(String.self, forKey: .successURL)
-        failURL = try? container.decode(String.self, forKey: .failURL)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(amount, forKey: .amount)
-        try container.encode(orderId, forKey: .orderId)
-        try container.encodeIfPresent(customerKey, forKey: .customerKey)
-        try container.encodeIfPresent(payType?.rawValue, forKey: .payType)
-        if description != nil { try? container.encode(description, forKey: .description) }
-        if redirectDueDate != nil { try? container.encode(redirectDueDate, forKey: .redirectDueDate) }
-        if let value = savingAsParentPayment, value == true { try container.encode("Y", forKey: .savingAsParentPayment) }
-        if receipt != nil { try? container.encode(receipt, forKey: .receipt) }
-        if shops != nil { try? container.encode(shops, forKey: .shops) }
-        if receipts != nil { try? container.encode(receipts, forKey: .receipts) }
-        if paymentFormData != nil { try? container.encode(paymentFormData, forKey: .paymentFormData) }
-        if successURL != nil { try? container.encode(successURL, forKey: .successURL) }
-        if failURL != nil { try? container.encode(failURL, forKey: .failURL) }
-    }
-
     public init(
         amount: Int64,
         orderId: String,
@@ -168,5 +131,36 @@ public struct PaymentInitData: Codable {
             successURL: successURL,
             failURL: failURL
         )
+    }
+
+    public mutating func addPaymentData(_ additionalData: [String: String]) {
+        var updatedData: [String: String] = [:]
+
+        paymentFormData?.forEach { item in
+            updatedData.updateValue(item.value, forKey: item.key)
+        }
+
+        additionalData.forEach { item in
+            updatedData.updateValue(item.value, forKey: item.key)
+        }
+
+        paymentFormData = updatedData
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(orderId, forKey: .orderId)
+        try container.encodeIfPresent(customerKey, forKey: .customerKey)
+        try container.encodeIfPresent(payType?.rawValue, forKey: .payType)
+        if description != nil { try? container.encode(description, forKey: .description) }
+        if redirectDueDate != nil { try? container.encode(redirectDueDate, forKey: .redirectDueDate) }
+        if let value = savingAsParentPayment, value == true { try container.encode("Y", forKey: .savingAsParentPayment) }
+        if receipt != nil { try? container.encode(receipt, forKey: .receipt) }
+        if shops != nil { try? container.encode(shops, forKey: .shops) }
+        if receipts != nil { try? container.encode(receipts, forKey: .receipts) }
+        if paymentFormData != nil { try? container.encode(paymentFormData, forKey: .paymentFormData) }
+        if successURL != nil { try? container.encode(successURL, forKey: .successURL) }
+        if failURL != nil { try? container.encode(failURL, forKey: .failURL) }
     }
 }

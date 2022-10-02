@@ -22,8 +22,8 @@ import Foundation
 @available(*, deprecated, renamed: "GetPaymentStateData")
 public typealias PaymentInfoData = GetPaymentStateData
 
-public struct GetPaymentStateData: Codable {
-    enum CodingKeys: CodingKey {
+public struct GetPaymentStateData: Encodable {
+    private enum CodingKeys: CodingKey {
         case paymentId
 
         var stringValue: String {

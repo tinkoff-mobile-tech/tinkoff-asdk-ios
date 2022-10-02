@@ -77,6 +77,8 @@ enum APIConstants {
         static let acsTransId = "AcsTransId"
         static let tdsServerTransId = "TdsServerTransId"
         static let acsRefNumber = "AcsReferenceNumber"
+        static let successURL = "SuccessURL"
+        static let failURL = "FailURL"
     }
 
     enum Values {

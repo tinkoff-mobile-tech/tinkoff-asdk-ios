@@ -19,20 +19,21 @@
 
 import Foundation
 
-public struct InitDeactivateCardData: Codable {
-    public var cardId: String
-    public var customerKey: String
+public struct InitDeactivateCardData: Encodable {
+    private enum CodingKeys: CodingKey {
+        case cardId
+        case customerKey
 
-    public enum CodingKeys: String, CodingKey {
-        case cardId = "CardId"
-        case customerKey = "CustomerKey"
+        var stringValue: String {
+            switch self {
+            case .cardId: return APIConstants.Keys.cardId
+            case .customerKey: return APIConstants.Keys.customerKey
+            }
+        }
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        cardId = try container.decode(String.self, forKey: .cardId)
-        customerKey = try container.decode(String.self, forKey: .customerKey)
-    }
+    public let cardId: String
+    public let customerKey: String
 
     public init(cardId: String, customerKey: String) {
         self.cardId = cardId

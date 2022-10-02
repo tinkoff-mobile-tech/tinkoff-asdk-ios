@@ -20,13 +20,20 @@
 import Foundation
 
 public struct InitAddCardData: Codable {
-    public enum CodingKeys: String, CodingKey {
-        case checkType = "CheckType"
-        case customerKey = "CustomerKey"
+    private enum CodingKeys: CodingKey {
+        case checkType
+        case customerKey
+
+        var stringValue: String {
+            switch self {
+            case .checkType: return APIConstants.Keys.checkType
+            case .customerKey: return APIConstants.Keys.customerKey
+            }
+        }
     }
 
-    public var checkType: String
-    public var customerKey: String
+    public let checkType: String
+    public let customerKey: String
 
     public init(with checkType: String, customerKey: String) {
         self.checkType = checkType

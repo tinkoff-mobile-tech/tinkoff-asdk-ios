@@ -1,6 +1,6 @@
 //
 //
-//  PaymentFinishRequestData.swift
+//  FinishPaymentRequestData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -66,7 +66,7 @@ public struct FinishPaymentRequestData {
     }
 }
 
-public struct PaymentFinishRequestData: Codable {
+public struct PaymentFinishRequestData {
     /// Номер платежа, полученного после инициализации платежа
     var paymentId: Int64
     var paymentSource: PaymentSourceData
@@ -109,42 +109,5 @@ public struct PaymentFinishRequestData: Codable {
         self.paymentSource = paymentSource
         self.source = source
         self.route = route
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case paymentId = "PaymentId"
-        case paymentSource = "PaymentSource"
-        case sendEmail = "SendEmail"
-        case infoEmail = "InfoEmail"
-        case cardData = "CardData"
-        case encryptedPaymentData = "EncryptedPaymentData"
-        case deviceInfo = "DATA"
-        case ipAddress = "IP"
-        case source = "Source"
-        case route = "Route"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        paymentId = try container.decode(Int64.self, forKey: .paymentId)
-        paymentSource = try container.decode(PaymentSourceData.self, forKey: .paymentSource)
-        sendEmail = try? container.decode(Bool.self, forKey: .sendEmail)
-        infoEmail = try? container.decode(String.self, forKey: .infoEmail)
-        deviceInfo = try? container.decode(DeviceInfoParams.self, forKey: .deviceInfo)
-        ipAddress = try? container.decode(String.self, forKey: .ipAddress)
-        source = try? container.decode(String.self, forKey: .source)
-        route = try? container.decode(String.self, forKey: .route)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(paymentId, forKey: .paymentId)
-        try container.encode(paymentSource, forKey: .paymentSource)
-        if sendEmail != nil { try? container.encode(sendEmail, forKey: .sendEmail) }
-        if infoEmail != nil { try? container.encode(infoEmail, forKey: .infoEmail) }
-        if deviceInfo != nil { try? container.encode(deviceInfo, forKey: .deviceInfo) }
-        if ipAddress != nil { try? container.encode(ipAddress, forKey: .ipAddress) }
-        if source != nil { try? container.encode(source, forKey: .source) }
-        if route != nil { try? container.encode(route, forKey: .route) }
     }
 }
