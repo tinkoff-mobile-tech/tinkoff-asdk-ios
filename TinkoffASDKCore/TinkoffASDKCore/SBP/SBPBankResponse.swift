@@ -20,11 +20,11 @@
 import Foundation
 
 public struct SBPBankResponse: Decodable {
-    public let banks: [SBPBank]
-
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case banks = "dictionary"
     }
+
+    public let banks: [SBPBank]
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
