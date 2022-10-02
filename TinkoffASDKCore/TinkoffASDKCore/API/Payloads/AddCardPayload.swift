@@ -20,8 +20,6 @@
 import Foundation
 
 public struct AddCardPayload: Decodable, Equatable {
-    public let requestKey: String
-
     private enum CodingKeys: CodingKey {
         case requestKey
 
@@ -31,6 +29,8 @@ public struct AddCardPayload: Decodable, Equatable {
             }
         }
     }
+
+    public let requestKey: String
 
     public init(requestKey: String) {
         self.requestKey = requestKey

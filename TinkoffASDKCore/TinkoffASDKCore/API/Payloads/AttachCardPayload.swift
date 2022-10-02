@@ -20,11 +20,6 @@
 import Foundation
 
 public struct AttachCardPayload: Decodable {
-    public let status: PaymentStatus
-    public let requestKey: String
-    public let cardId: String?
-    public let attachCardStatus: AttachCardStatus
-
     private enum CodingKeys: CodingKey {
         case status
         case requestKey
@@ -38,6 +33,11 @@ public struct AttachCardPayload: Decodable {
             }
         }
     }
+
+    public let status: PaymentStatus
+    public let requestKey: String
+    public let cardId: String?
+    public let attachCardStatus: AttachCardStatus
 
     public init(
         status: PaymentStatus,

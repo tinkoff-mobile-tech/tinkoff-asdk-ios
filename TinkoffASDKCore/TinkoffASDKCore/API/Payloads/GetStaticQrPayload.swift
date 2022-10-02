@@ -20,8 +20,6 @@
 import Foundation
 
 public struct GetStaticQrPayload: Decodable {
-    public let qrCodeData: String
-
     private enum CodingKeys: CodingKey {
         case qrCodeData
 
@@ -31,6 +29,8 @@ public struct GetStaticQrPayload: Decodable {
             }
         }
     }
+
+    public let qrCodeData: String
 
     public init(qrCodeData: String) {
         self.qrCodeData = qrCodeData

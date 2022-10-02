@@ -26,13 +26,13 @@ public struct GetTinkoffPayStatusPayload {
             case version2 = "2.0"
         }
 
-        case disallowed
-        case allowed(version: Version)
-
         private enum CodingKeys: String, CodingKey {
             case isAllowed = "Allowed"
             case version = "Version"
         }
+
+        case disallowed
+        case allowed(version: Version)
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -20,9 +20,6 @@
 import Foundation
 
 public struct SubmitRandomAmountPayload: Decodable {
-    public let requestKey: String
-    public let cardId: String?
-
     private enum CodingKeys: CodingKey {
         case requestKey
         case cardId
@@ -34,6 +31,9 @@ public struct SubmitRandomAmountPayload: Decodable {
             }
         }
     }
+
+    public let requestKey: String
+    public let cardId: String?
 
     public init(requestKey: String, cardId: String?) {
         self.requestKey = requestKey

@@ -20,16 +20,20 @@
 import Foundation
 
 public struct FinishAuthorizePayload: Decodable {
+    private enum CodingKeys: CodingKey {
+        case rebillId
+
+        var stringValue: String {
+            switch self {
+            case .rebillId: return APIConstants.Keys.rebillId
+            }
+        }
+    }
+
     public let status: PaymentStatus
     public let paymentState: GetPaymentStatePayload
     public var responseStatus: PaymentFinishResponseStatus
     public let rebillId: String?
-
-    enum CodingKeys: String, CodingKey {
-        case rebillId = "RebillId"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-    }
 
     public init(
         status: PaymentStatus,
@@ -68,7 +72,6 @@ public struct FinishAuthorizePayload: Decodable {
             if let finishStatus = try? PaymentStatusResponse(from: decoder) {
                 responseStatus = .done(finishStatus)
             }
-            // responseStatus = .success
         }
 
         let container = try decoder.container(keyedBy: CodingKeys.self)

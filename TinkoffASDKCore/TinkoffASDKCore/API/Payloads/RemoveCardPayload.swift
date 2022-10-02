@@ -20,9 +20,6 @@
 import Foundation
 
 public struct RemoveCardPayload: Decodable {
-    public let cardId: String
-    public let cardStatus: PaymentCardStatus
-
     private enum CodingKeys: CodingKey {
         case cardId
         case cardStatus
@@ -34,4 +31,7 @@ public struct RemoveCardPayload: Decodable {
             }
         }
     }
+
+    public let cardId: String
+    public let cardStatus: PaymentCardStatus
 }

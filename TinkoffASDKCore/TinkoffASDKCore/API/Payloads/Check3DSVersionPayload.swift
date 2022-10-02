@@ -20,11 +20,6 @@
 import Foundation
 
 public struct Check3DSVersionPayload: Decodable, Equatable {
-    public let version: String
-    public let tdsServerTransID: String?
-    public let threeDSMethodURL: String?
-    public let paymentSystem: String?
-
     private enum CodingKeys: CodingKey {
         case version
         case tdsServerTransID
@@ -40,6 +35,11 @@ public struct Check3DSVersionPayload: Decodable, Equatable {
             }
         }
     }
+
+    public let version: String
+    public let tdsServerTransID: String?
+    public let threeDSMethodURL: String?
+    public let paymentSystem: String?
 
     public init(
         version: String,

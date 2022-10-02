@@ -20,20 +20,13 @@
 import Foundation
 
 public struct CardListPayload: Decodable {
-    public var success = true
-    public var errorCode: Int = 0
-    public var errorMessage: String?
-    public var errorDetails: String?
-    public var terminalKey: String?
-    public let cards: [PaymentCard]
-
-    private enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: CodingKey {
         case errorCode
         case success
         case errorMessage
         case errorDetails
         case terminalKey
-        case cards = "Cards"
+        case cards
 
         var stringValue: String {
             switch self {
@@ -46,6 +39,13 @@ public struct CardListPayload: Decodable {
             }
         }
     }
+
+    public var success = true
+    public var errorCode: Int = 0
+    public var errorMessage: String?
+    public var errorDetails: String?
+    public var terminalKey: String?
+    public let cards: [PaymentCard]
 
     init(cards: [PaymentCard]) {
         self.cards = cards
@@ -60,16 +60,5 @@ public struct CardListPayload: Decodable {
         terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         //
         cards = try container.decode([PaymentCard].self, forKey: .cards)
-    }
-
-    public init(from decoder: Decoder, cardsList: [PaymentCard]) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        success = try container.decode(Bool.self, forKey: .success)
-        errorCode = try container.decode(Int.self, forKey: .errorCode)
-        errorMessage = try? container.decode(String.self, forKey: .errorMessage)
-        errorDetails = try? container.decode(String.self, forKey: .errorDetails)
-        terminalKey = try? container.decode(String.self, forKey: .terminalKey)
-        //
-        cards = cardsList
     }
 }

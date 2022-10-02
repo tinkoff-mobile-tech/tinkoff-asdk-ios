@@ -20,11 +20,6 @@
 import Foundation
 
 public struct InitPayload: Decodable, Equatable {
-    public let amount: Int64
-    public let orderId: String
-    public let paymentId: String
-    public let status: PaymentStatus
-
     private enum CodingKeys: CodingKey {
         case amount
         case orderId
@@ -40,6 +35,11 @@ public struct InitPayload: Decodable, Equatable {
             }
         }
     }
+
+    public let amount: Int64
+    public let orderId: String
+    public let paymentId: String
+    public let status: PaymentStatus
 
     public init(
         amount: Int64,
