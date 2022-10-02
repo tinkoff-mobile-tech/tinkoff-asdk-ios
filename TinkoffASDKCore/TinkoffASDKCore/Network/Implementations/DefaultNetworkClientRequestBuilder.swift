@@ -20,7 +20,7 @@
 import Foundation
 
 protocol IURLRequestBuilder {
-    func build(request: NetworkRequest) throws -> URLRequest
+    func build(request: NetworkRequest, completion: @escaping (Result<URLRequest, Error>) -> Void)
 }
 
 final class URLRequestBuilder: IURLRequestBuilder {
@@ -32,17 +32,26 @@ final class URLRequestBuilder: IURLRequestBuilder {
 
     // MARK: Dependencies
 
+    private let additionalParametersProvider: IAdditionalParametersProvider
     private let jsonParametersEncoder: ParametersEncoder
 
     // MARK: Init
 
-    init(jsonParametersEncoder: ParametersEncoder) {
+    init(additionalParametersProvider: IAdditionalParametersProvider, jsonParametersEncoder: ParametersEncoder) {
         self.jsonParametersEncoder = jsonParametersEncoder
+        self.additionalParametersProvider = additionalParametersProvider
     }
 
     // MARK: IURLRequestBuilder
 
-    func build(request: NetworkRequest) throws -> URLRequest {
+    func build(request: NetworkRequest, completion: @escaping (Result<URLRequest, Swift.Error>) -> Void) {
+        additionalParametersProvider.parameters(for: request) { [self] parametersResult in
+            let urlRequestResult = parametersResult.tryMap { try build(request: request, with: $0) }
+            completion(urlRequestResult)
+        }
+    }
+
+    private func build(request: NetworkRequest, with additionalParameters: [String: Any]) throws -> URLRequest {
         let fullURL = try URL(string: request.path.joined(separator: "/"), relativeTo: request.baseURL)
             .orThrow(Error.failedToBuildPath)
 
@@ -52,7 +61,10 @@ final class URLRequestBuilder: IURLRequestBuilder {
 
         switch request.parametersEncoding {
         case .json:
-            return try jsonParametersEncoder.encode(urlRequest, parameters: request.parameters)
+            return try jsonParametersEncoder.encode(
+                urlRequest,
+                parameters: request.parameters.merging(additionalParameters) { $1 }
+            )
         }
     }
 }

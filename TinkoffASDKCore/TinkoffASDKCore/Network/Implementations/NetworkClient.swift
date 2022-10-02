@@ -27,7 +27,6 @@ protocol INetworkClient: AnyObject {
 final class NetworkClient: INetworkClient {
     // MARK: Dependencies
 
-    private let requestAdapter: IRequestAdapter
     private let requestBuilder: IURLRequestBuilder
     private let urlRequestPerformer: URLRequestPerformer
     private let responseValidator: HTTPURLResponseValidator
@@ -35,12 +34,10 @@ final class NetworkClient: INetworkClient {
     // MARK: Init
 
     init(
-        requestAdapter: IRequestAdapter,
         requestBuilder: IURLRequestBuilder,
         urlRequestPerformer: URLRequestPerformer,
         responseValidator: HTTPURLResponseValidator
     ) {
-        self.requestAdapter = requestAdapter
         self.requestBuilder = requestBuilder
         self.urlRequestPerformer = urlRequestPerformer
         self.responseValidator = responseValidator
@@ -52,9 +49,7 @@ final class NetworkClient: INetworkClient {
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
         let cancellableWrapper = CancellableWrapper()
 
-        requestAdapter.adapt(request: request) { [self] adaptingResult in
-            let urlRequestResult = adaptingResult.tryMap(requestBuilder.build(request:))
-
+        requestBuilder.build(request: request) { [self] urlRequestResult in
             switch urlRequestResult {
             case let .success(urlRequest):
                 let networkTask = createNetworkTask(with: urlRequest, completion: completion)

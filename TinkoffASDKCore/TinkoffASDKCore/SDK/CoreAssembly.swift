@@ -78,8 +78,7 @@ struct CoreAssembly {
 private extension CoreAssembly {
     func buildNetworkClient() -> INetworkClient {
         let networkClient = NetworkClient(
-            requestAdapter: RequestAdapter(terminalKey: configuration.credential.terminalKey),
-            requestBuilder: URLRequestBuilder(jsonParametersEncoder: JSONEncoding(options: .sortedKeys)),
+            requestBuilder: buildURLRequestBuilder(),
             urlRequestPerformer: buildURLSession(),
             responseValidator: DefaultHTTPURLResponseValidator()
         )
@@ -113,5 +112,12 @@ private extension CoreAssembly {
 
     func buildAPIResponseDecoder() -> APIResponseDecoder {
         AcquiringAPIResponseDecoder(decoder: JSONDecoder())
+    }
+
+    private func buildURLRequestBuilder() -> IURLRequestBuilder {
+        URLRequestBuilder(
+            additionalParametersProvider: AdditionalParametersProvider(terminalKey: configuration.credential.terminalKey),
+            jsonParametersEncoder: JSONEncoding(options: .sortedKeys)
+        )
     }
 }
