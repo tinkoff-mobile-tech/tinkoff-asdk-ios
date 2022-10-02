@@ -20,7 +20,7 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-final class MockRequestPerformer: URLRequestPerformer {
+final class MockRequestPerformer: IURLRequestPerformer {
     var dataTaskMethodCalled = false
     var request: URLRequest?
     var data: Data?

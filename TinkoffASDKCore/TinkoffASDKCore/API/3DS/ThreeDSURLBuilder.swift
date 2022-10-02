@@ -23,39 +23,24 @@ struct ThreeDSURLBuilder {
     // MARK: Three3DSURLType
 
     enum Three3DSURLType: String {
-        case threeDSCheckNotificationURL = "Complete3DSMethodv2"
-        case confirmation3DSTerminationURL = "Submit3DSAuthorization"
-        case confirmation3DSTerminationV2URL = "Submit3DSAuthorizationV2"
+        case threeDSCheckNotificationURL = "v2/Complete3DSMethodv2"
+        case confirmation3DSTerminationURL = "rest/Submit3DSAuthorization"
+        case confirmation3DSTerminationV2URL = "v2/Submit3DSAuthorizationV2"
     }
 
     // MARK: Dependencies
 
-    private let baseURLProvider: BaseURLProvider
+    private let baseURLProvider: IBaseURLProvider
 
     // MARK: Init
 
-    init(baseURLProvider: BaseURLProvider) {
+    init(baseURLProvider: IBaseURLProvider) {
         self.baseURLProvider = baseURLProvider
     }
 
     // MARK: URL Building
 
     func buildURL(type: Three3DSURLType) -> URL {
-        baseURLProvider.baseURL
-            .appendingPathComponent(type.apiVersion.path)
-            .appendingPathComponent(type.rawValue)
-    }
-}
-
-// MARK: Helpers
-
-private extension ThreeDSURLBuilder.Three3DSURLType {
-    var apiVersion: APIVersion {
-        switch self {
-        case .threeDSCheckNotificationURL, .confirmation3DSTerminationV2URL:
-            return .v2
-        case .confirmation3DSTerminationURL:
-            return .v1
-        }
+        baseURLProvider.baseURL.appendingPathComponent(type.rawValue)
     }
 }

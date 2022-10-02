@@ -19,7 +19,11 @@
 
 import Foundation
 
-struct JSONEncoding: ParametersEncoder {
+protocol IParametersEncoder {
+    func encode(_ urlRequest: URLRequest, parameters: HTTPParameters) throws -> URLRequest
+}
+
+struct JSONEncoding: IParametersEncoder {
     enum Error: Swift.Error {
         case encodingFailed(error: Swift.Error)
     }

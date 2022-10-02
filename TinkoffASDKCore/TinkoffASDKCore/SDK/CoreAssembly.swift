@@ -22,11 +22,11 @@ import Foundation
 
 struct CoreAssembly {
     private let configuration: AcquiringSdkConfiguration
-    private let baseURLProvider: BaseURLProvider
+    private let baseURLProvider: IBaseURLProvider
 
     init(configuration: AcquiringSdkConfiguration) throws {
         self.configuration = configuration
-        baseURLProvider = try DefaultBaseURLProvider(host: configuration.serverEnvironment.host)
+        baseURLProvider = try BaseURLProvider(host: configuration.serverEnvironment.rawValue)
     }
 
     func buildAPI() -> API {
@@ -78,42 +78,24 @@ struct CoreAssembly {
 private extension CoreAssembly {
     func buildNetworkClient() -> INetworkClient {
         let networkClient = NetworkClient(
+            session: buildNetworkSession(),
             requestBuilder: buildURLRequestBuilder(),
-            urlRequestPerformer: buildURLSession(),
             responseValidator: HTTPURLResponseValidator()
         )
 
         return networkClient
     }
 
-    func buildURLSession() -> URLSession {
-        let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = self.configuration.requestsTimeoutInterval
-        configuration.timeoutIntervalForResource = self.configuration.requestsTimeoutInterval
-
-        return URLSession(configuration: configuration)
+    func buildNetworkSession() -> INetworkSession {
+        let urlSessionConfiguration = URLSessionConfiguration.default
+        urlSessionConfiguration.timeoutIntervalForRequest = configuration.requestsTimeoutInterval
+        urlSessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
+        let urlSession = URLSession(configuration: urlSessionConfiguration)
+        return NetworkSession(urlSession: urlSession)
     }
 
-    func buildURLSessionConfiguration(requestsTimeoutInterval: TimeInterval) -> URLSessionConfiguration {
-        let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = requestsTimeoutInterval
-        configuration.timeoutIntervalForResource = requestsTimeoutInterval
-        return configuration
-    }
-
-    func buildAPIURLBuilder() -> APIURLBuilder {
-        APIURLBuilder()
-    }
-
-    func buildAPIHostProvider() -> APIHostProvider {
-        APIHostProvider(
-            sdkEnvironmentProvider: configuration.serverEnvironment,
-            apiURLBuilder: buildAPIURLBuilder()
-        )
-    }
-
-    func buildAPIResponseDecoder() -> APIResponseDecoder {
-        AcquiringAPIResponseDecoder(decoder: JSONDecoder())
+    func buildAPIResponseDecoder() -> IAPIResponseDecoder {
+        APIResponseDecoder(decoder: JSONDecoder())
     }
 
     private func buildURLRequestBuilder() -> IURLRequestBuilder {

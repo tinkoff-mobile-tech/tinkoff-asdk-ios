@@ -1,6 +1,6 @@
 //
 //
-//  APIHostProvider.swift
+//  APIRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,23 +19,16 @@
 
 import Foundation
 
-struct APIHostProvider: HTTPHostProvider {
-    private let apiEnvironmentProvider: APIEnvironmentProvider
-    private let apiURLBuilder: APIURLBuilder
+enum APIRequestDecodingStrategy {
+    case standard
+    case clipped
+}
 
-    // MARK: - Init
+protocol APIRequest: NetworkRequest {
+    associatedtype Payload: Decodable
+    var decodingStrategy: APIRequestDecodingStrategy { get }
+}
 
-    init(
-        sdkEnvironmentProvider: APIEnvironmentProvider,
-        apiURLBuilder: APIURLBuilder
-    ) {
-        apiEnvironmentProvider = sdkEnvironmentProvider
-        self.apiURLBuilder = apiURLBuilder
-    }
-
-    // MARK: - HTTPHostProvider
-
-    func host() throws -> URL {
-        try apiURLBuilder.buildURL(host: apiEnvironmentProvider.host)
-    }
+extension APIRequest {
+    var decodingStrategy: APIRequestDecodingStrategy { .standard }
 }

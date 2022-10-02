@@ -26,7 +26,7 @@ struct GetCardListRequest: APIRequest {
     let path: String = "v2/GetCardList"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    var decodeStrategy: APIRequestDecodeStrategy { .clipped }
+    var decodingStrategy: APIRequestDecodingStrategy { .clipped }
 
     init(getCardListData: GetCardListData, baseURL: URL) {
         self.baseURL = baseURL

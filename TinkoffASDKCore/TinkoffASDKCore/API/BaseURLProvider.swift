@@ -19,6 +19,28 @@
 
 import Foundation
 
-protocol BaseURLProvider {
+protocol IBaseURLProvider {
     var baseURL: URL { get }
+}
+
+struct BaseURLProvider: IBaseURLProvider {
+    // MARK: Error
+
+    private struct Error: LocalizedError {
+        private let host: String
+
+        init(host: String) {
+            self.host = host
+        }
+    }
+
+    // MARK: Dependencies
+
+    let baseURL: URL
+
+    // MARK: Init
+
+    init(host: String) throws {
+        baseURL = try URL(string: "https://\(host)").orThrow(Error(host: host))
+    }
 }

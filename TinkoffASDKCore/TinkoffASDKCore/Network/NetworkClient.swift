@@ -27,19 +27,19 @@ protocol INetworkClient: AnyObject {
 final class NetworkClient: INetworkClient {
     // MARK: Dependencies
 
+    private let session: INetworkSession
     private let requestBuilder: IURLRequestBuilder
-    private let urlRequestPerformer: URLRequestPerformer
     private let responseValidator: IHTTPURLResponseValidator
 
     // MARK: Init
 
     init(
+        session: INetworkSession,
         requestBuilder: IURLRequestBuilder,
-        urlRequestPerformer: URLRequestPerformer,
         responseValidator: IHTTPURLResponseValidator
     ) {
+        self.session = session
         self.requestBuilder = requestBuilder
-        self.urlRequestPerformer = urlRequestPerformer
         self.responseValidator = responseValidator
     }
 
@@ -67,8 +67,8 @@ final class NetworkClient: INetworkClient {
 
     // MARK: NetworkTask Creation
 
-    private func createNetworkTask(with urlRequest: URLRequest, completion: @escaping (NetworkResponse) -> Void) -> NetworkDataTask {
-        urlRequestPerformer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
+    private func createNetworkTask(with urlRequest: URLRequest, completion: @escaping (NetworkResponse) -> Void) -> INetworkDataTask {
+        session.dataTask(with: urlRequest) { [responseValidator] data, response, error in
             let result = Result<Data, Error> {
                 if let error = error {
                     throw NetworkError.transportError(error)

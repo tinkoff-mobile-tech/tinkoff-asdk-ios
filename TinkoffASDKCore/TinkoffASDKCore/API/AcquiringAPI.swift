@@ -51,13 +51,13 @@ extension API {
 
 final class AcquiringAPI: API {
     private let networkClient: INetworkClient
-    private let apiResponseDecoder: APIResponseDecoder
+    private let apiResponseDecoder: IAPIResponseDecoder
     @available(*, deprecated, message: "Use apiResponseDecoder instead")
     private let deprecatedDecoder = DeprecatedDecoder()
 
     init(
         networkClient: INetworkClient,
-        apiResponseDecoder: APIResponseDecoder
+        apiResponseDecoder: IAPIResponseDecoder
     ) {
         self.networkClient = networkClient
         self.apiResponseDecoder = apiResponseDecoder

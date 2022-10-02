@@ -19,6 +19,9 @@
 
 import Foundation
 
+typealias HTTPParameters = [String: Any]
+typealias HTTPHeaders = [String: String]
+
 struct HTTPMethod: RawRepresentable {
     static let get = HTTPMethod(rawValue: "GET")
     static let post = HTTPMethod(rawValue: "POST")
@@ -29,9 +32,6 @@ struct HTTPMethod: RawRepresentable {
 enum HTTPParametersEncoding {
     case json
 }
-
-typealias HTTPParameters = [String: Any]
-typealias HTTPHeaders = [String: String]
 
 protocol NetworkRequest {
     var baseURL: URL { get }

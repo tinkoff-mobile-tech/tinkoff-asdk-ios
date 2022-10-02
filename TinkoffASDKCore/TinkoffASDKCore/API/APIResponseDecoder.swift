@@ -1,6 +1,6 @@
 //
 //
-//  AcquiringAPIResponseDecoder.swift
+//  APIResponseDecoder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,34 +19,36 @@
 
 import Foundation
 
-struct AcquiringAPIResponseDecoder: APIResponseDecoder {
+protocol IAPIResponseDecoder {
+    func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload>
+}
+
+final class APIResponseDecoder: IAPIResponseDecoder {
     private let decoder: JSONDecoder
 
     init(decoder: JSONDecoder) {
         self.decoder = decoder
     }
 
-    // MARK: - APIResponseDecoder
+    // MARK: IAPIResponseDecoder
 
     func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload> {
-        switch request.decodeStrategy {
-        case .standart:
-            return try decodeStandart(data: data)
+        switch request.decodingStrategy {
+        case .standard:
+            return try decodeStandard(data: data)
         case .clipped:
             return try decodeClipped(data: data)
         }
     }
-}
 
-private extension AcquiringAPIResponseDecoder {
-    func decodeStandart<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
+    // MARK: Helpers
+
+    private func decodeStandard<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
         return try decoder.decode(APIResponse<Payload>.self, from: data)
     }
 
-    func decodeClipped<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
+    private func decodeClipped<Payload: Decodable>(data: Data) throws -> APIResponse<Payload> {
         do {
-            let decoder = JSONDecoder()
-
             let error = try? decoder.decode(APIFailureError.self, from: data)
 
             if let error = error, error.errorCode != 0 {
@@ -66,7 +68,7 @@ private extension AcquiringAPIResponseDecoder {
                 )
             }
         } catch {
-            return try decodeStandart(data: data)
+            return try decodeStandard(data: data)
         }
     }
 }

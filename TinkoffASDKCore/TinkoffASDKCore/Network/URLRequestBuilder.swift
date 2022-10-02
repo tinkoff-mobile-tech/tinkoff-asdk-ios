@@ -33,11 +33,11 @@ final class URLRequestBuilder: IURLRequestBuilder {
     // MARK: Dependencies
 
     private let additionalParametersProvider: IAdditionalParametersProvider
-    private let jsonParametersEncoder: ParametersEncoder
+    private let jsonParametersEncoder: IParametersEncoder
 
     // MARK: Init
 
-    init(additionalParametersProvider: IAdditionalParametersProvider, jsonParametersEncoder: ParametersEncoder) {
+    init(additionalParametersProvider: IAdditionalParametersProvider, jsonParametersEncoder: IParametersEncoder) {
         self.jsonParametersEncoder = jsonParametersEncoder
         self.additionalParametersProvider = additionalParametersProvider
     }
