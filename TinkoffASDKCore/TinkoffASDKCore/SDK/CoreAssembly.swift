@@ -87,9 +87,11 @@ private extension CoreAssembly {
     }
 
     func buildURLSession() -> URLSession {
-        URLSession(
-            configuration: buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval)
-        )
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = self.configuration.requestsTimeoutInterval
+        configuration.timeoutIntervalForResource = self.configuration.requestsTimeoutInterval
+
+        return URLSession(configuration: configuration)
     }
 
     func buildURLSessionConfiguration(requestsTimeoutInterval: TimeInterval) -> URLSessionConfiguration {
