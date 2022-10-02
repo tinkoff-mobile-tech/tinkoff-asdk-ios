@@ -19,8 +19,8 @@
 
 import Foundation
 
-struct APIConstants {
-    struct Keys {
+enum APIConstants {
+    enum Keys {
         static let amount = "Amount"
         static let orderId = "OrderId"
         static let customerKey = "CustomerKey"
@@ -74,7 +74,7 @@ struct APIConstants {
         static let checkType = "CheckType"
     }
 
-    struct Values {
+    enum Values {
         static let acq = "ACQ"
         static let applePaySource = "ApplePay"
     }
