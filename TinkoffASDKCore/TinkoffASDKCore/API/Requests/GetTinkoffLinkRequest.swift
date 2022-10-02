@@ -10,35 +10,26 @@ import Foundation
 struct GetTinkoffLinkRequest: APIRequest {
     typealias Payload = GetTinkoffLinkPayload
 
-    var requestPath: [String] { [createRequestName()] }
-    var httpMethod: HTTPMethod { .get }
-    var baseURL: URL
-
-    // MARK: - Parameters
-
-    private let paymentId: String
-    private let version: GetTinkoffPayStatusResponse.Status.Version
+    let baseURL: URL
+    let path: String
+    let httpMethod: HTTPMethod = .get
 
     // MARK: - Init
 
-    public init(
+    init(
         paymentId: String,
         version: GetTinkoffPayStatusResponse.Status.Version,
         baseURL: URL
     ) {
-        self.paymentId = paymentId
-        self.version = version
         self.baseURL = baseURL
+        path = .path(paymentId: paymentId, version: version)
     }
 }
 
-private extension GetTinkoffLinkRequest {
-    func createRequestName() -> String {
-        var endpointURL = URL(string: "TinkoffPay/transactions")!
-        endpointURL.appendPathComponent(paymentId)
-        endpointURL.appendPathComponent("versions")
-        endpointURL.appendPathComponent(version.rawValue)
-        endpointURL.appendPathComponent("link")
-        return endpointURL.absoluteString
+// MARK: - String + Helpers
+
+private extension String {
+    static func path(paymentId: String, version: GetTinkoffPayStatusResponse.Status.Version) -> String {
+        "v2/TinkoffPay/transactions/\(paymentId)/versions/\(version.rawValue)/link"
     }
 }

@@ -22,18 +22,13 @@ import Foundation
 struct SubmitRandomAmountRequest: APIRequest {
     typealias Payload = SubmitRandomAmountPayload
 
-    var requestPath: [String] { ["SubmitRandomAmount"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        (try? submitRandomAmountData.encode2JSONObject()) ?? [:]
-    }
-
-    private let submitRandomAmountData: SubmitRandomAmountData
+    let baseURL: URL
+    let path: String = "v2/SubmitRandomAmount"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(submitRandomAmountData: SubmitRandomAmountData, baseURL: URL) {
-        self.submitRandomAmountData = submitRandomAmountData
         self.baseURL = baseURL
+        parameters = (try? submitRandomAmountData.encode2JSONObject()) ?? [:]
     }
 }

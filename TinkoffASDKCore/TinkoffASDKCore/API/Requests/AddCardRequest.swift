@@ -22,18 +22,13 @@ import Foundation
 struct AddCardRequest: APIRequest {
     typealias Payload = AddCardPayload
 
-    var requestPath: [String] { ["AddCard"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        return (try? initAddCardData.encode2JSONObject()) ?? [:]
-    }
-
-    private let initAddCardData: InitAddCardData
+    let baseURL: URL
+    let path: String = "v2/AddCard"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(initAddCardData: InitAddCardData, baseURL: URL) {
-        self.initAddCardData = initAddCardData
         self.baseURL = baseURL
+        parameters = (try? initAddCardData.encode2JSONObject()) ?? [:]
     }
 }

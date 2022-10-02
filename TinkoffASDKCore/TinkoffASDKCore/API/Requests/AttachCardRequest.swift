@@ -22,16 +22,10 @@ import Foundation
 struct AttachCardRequest: APIRequest {
     typealias Payload = AttachCardPayload
 
-    var requestPath: [String] { ["AttachCard"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    private(set) var parameters: HTTPParameters = [:]
-
-    private let finishAddCardData: FinishAddCardData
-    private let encryptor: RSAEncryptor
-    private let cardDataFormatter: CardDataFormatter
-    private let publicKey: SecKey
+    let baseURL: URL
+    let path: String = "v2/AttachCard"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(
         finishAddCardData: FinishAddCardData,
@@ -40,17 +34,25 @@ struct AttachCardRequest: APIRequest {
         publicKey: SecKey,
         baseURL: URL
     ) {
-        self.finishAddCardData = finishAddCardData
-        self.encryptor = encryptor
-        self.cardDataFormatter = cardDataFormatter
-        self.publicKey = publicKey
         self.baseURL = baseURL
-        parameters = createParameters(with: finishAddCardData)
+        parameters = .parameters(
+            requestData: finishAddCardData,
+            encryptor: encryptor,
+            cardDataFormatter: cardDataFormatter,
+            publicKey: publicKey
+        )
     }
 }
 
-private extension AttachCardRequest {
-    func createParameters(with requestData: FinishAddCardData) -> HTTPParameters {
+// MARK: HTTPParameters + Helpers
+
+private extension HTTPParameters {
+    static func parameters(
+        requestData: FinishAddCardData,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey
+    ) -> HTTPParameters {
         var parameters: HTTPParameters = [APIConstants.Keys.requestKey: requestData.requestKey]
 
         let formattedCardData = cardDataFormatter.formatCardData(

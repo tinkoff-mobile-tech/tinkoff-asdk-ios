@@ -22,18 +22,13 @@ import Foundation
 struct RemoveCardRequest: APIRequest {
     typealias Payload = RemoveCardPayload
 
-    var requestPath: [String] { ["RemoveCard"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
+    let baseURL: URL
+    let path: String = "v2/RemoveCard"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
-    var parameters: HTTPParameters {
-        (try? deactivateCardData.encode2JSONObject()) ?? [:]
-    }
-
-    private let deactivateCardData: InitDeactivateCardData
-
-    public init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
-        self.deactivateCardData = deactivateCardData
+    init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
         self.baseURL = baseURL
+        parameters = (try? deactivateCardData.encode2JSONObject()) ?? [:]
     }
 }

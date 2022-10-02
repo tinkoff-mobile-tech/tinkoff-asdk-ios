@@ -22,19 +22,14 @@ import Foundation
 struct GetCardListRequest: APIRequest {
     typealias Payload = [PaymentCard]
 
-    var requestPath: [String] { ["GetCardList"] }
-    var httpMethod: HTTPMethod { .post }
+    let baseURL: URL
+    let path: String = "v2/GetCardList"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
     var decodeStrategy: APIRequestDecodeStrategy { .clipped }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        return (try? getCardListData.encode2JSONObject()) ?? [:]
-    }
-
-    private let getCardListData: GetCardListData
 
     init(getCardListData: GetCardListData, baseURL: URL) {
-        self.getCardListData = getCardListData
         self.baseURL = baseURL
+        parameters = (try? getCardListData.encode2JSONObject()) ?? [:]
     }
 }

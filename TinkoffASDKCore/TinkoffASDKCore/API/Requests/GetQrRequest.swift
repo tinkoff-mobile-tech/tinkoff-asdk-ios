@@ -22,18 +22,13 @@ import Foundation
 struct GetQrRequest: APIRequest {
     typealias Payload = GetQrPayload
 
-    var requestPath: [String] { ["GetQr"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        (try? data.encode2JSONObject()) ?? [:]
-    }
-
-    private let data: PaymentInvoiceQRCodeData
+    let baseURL: URL
+    let path: String = "v2/GetQr"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(data: PaymentInvoiceQRCodeData, baseURL: URL) {
-        self.data = data
         self.baseURL = baseURL
+        parameters = (try? data.encode2JSONObject()) ?? [:]
     }
 }

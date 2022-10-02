@@ -22,18 +22,13 @@ import Foundation
 struct GetStaticQrRequest: APIRequest {
     typealias Payload = GetStaticQrPayload
 
-    var requestPath: [String] { ["GetStaticQr"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        return [APIConstants.Keys.dataType: sourceType.rawValue]
-    }
-
-    private let sourceType: PaymentInvoiceSBPSourceType
+    let baseURL: URL
+    let path: String = "v2/GetStaticQr"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(sourceType: PaymentInvoiceSBPSourceType, baseURL: URL) {
-        self.sourceType = sourceType
         self.baseURL = baseURL
+        parameters = [APIConstants.Keys.dataType: sourceType.rawValue]
     }
 }

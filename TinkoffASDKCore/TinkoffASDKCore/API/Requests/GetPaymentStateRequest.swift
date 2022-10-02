@@ -19,12 +19,12 @@
 
 import Foundation
 
-public struct GetPaymentStateRequest: APIRequest {
+struct GetPaymentStateRequest: APIRequest {
     typealias Payload = GetPaymentStatePayload
 
-    let requestPath: [String] = ["GetState"]
-    let httpMethod: HTTPMethod = .post
     let baseURL: URL
+    let path: String = "v2/GetState"
+    let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
     init(data: GetPaymentStateData, baseURL: URL) {

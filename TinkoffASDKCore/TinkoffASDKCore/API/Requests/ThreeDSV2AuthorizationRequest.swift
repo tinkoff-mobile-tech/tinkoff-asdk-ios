@@ -23,21 +23,16 @@ struct CresData: Encodable {
     let cres: String
 }
 
-public struct ThreeDSV2AuthorizationRequest: APIRequest {
+struct ThreeDSV2AuthorizationRequest: APIRequest {
     typealias Payload = PaymentStatusResponse
 
-    var requestPath: [String] { ["Submit3DSAuthorizationV2"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
-
-    private let data: CresData
+    let baseURL: URL
+    let path: String = "v2/Submit3DSAuthorizationV2"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(data: CresData, baseURL: URL) {
-        self.data = data
         self.baseURL = baseURL
+        parameters = (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }

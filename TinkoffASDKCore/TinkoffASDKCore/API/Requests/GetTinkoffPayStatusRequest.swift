@@ -22,28 +22,22 @@ import Foundation
 public struct GetTinkoffPayStatusRequest: APIRequest {
     typealias Payload = GetTinkoffPayStatusPayload
 
-    var requestPath: [String] { [createRequestName()] }
-    var httpMethod: HTTPMethod { .get }
-    var baseURL: URL
-
-    // MARK: - Parameters
-
-    private let terminalKey: String
+    let baseURL: URL
+    let path: String
+    let httpMethod: HTTPMethod = .get
 
     // MARK: - Init
 
     init(terminalKey: String, baseURL: URL) {
-        self.terminalKey = terminalKey
         self.baseURL = baseURL
+        path = .path(terminalKey: terminalKey)
     }
 }
 
-private extension GetTinkoffPayStatusRequest {
-    func createRequestName() -> String {
-        var endpointURL = URL(string: "TinkoffPay/terminals")!
-        let postfixPart = "status"
-        endpointURL.appendPathComponent(terminalKey)
-        endpointURL.appendPathComponent(postfixPart)
-        return endpointURL.absoluteString
+// MARK: - String + Helpers
+
+private extension String {
+    static func path(terminalKey: String) -> String {
+        "v2/TinkoffPay/terminals/\(terminalKey)/status"
     }
 }

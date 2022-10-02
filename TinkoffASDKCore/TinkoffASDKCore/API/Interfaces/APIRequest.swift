@@ -27,13 +27,8 @@ enum APIRequestDecodeStrategy {
 protocol APIRequest: NetworkRequest {
     associatedtype Payload: Decodable
     var decodeStrategy: APIRequestDecodeStrategy { get }
-
-    var requestPath: [String] { get }
-    var apiVersion: APIVersion { get }
 }
 
 extension APIRequest {
     var decodeStrategy: APIRequestDecodeStrategy { .standart }
-    var apiVersion: APIVersion { .v2 }
-    var path: [String] { [apiVersion.path] + requestPath }
 }

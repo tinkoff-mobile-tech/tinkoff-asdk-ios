@@ -22,9 +22,9 @@ import Foundation
 struct FinishAuthorizeRequest: APIRequest {
     typealias Payload = FinishAuthorizePayload
 
-    var requestPath: [String] { ["FinishAuthorize"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
+    let baseURL: URL
+    let path: String = "v2/FinishAuthorize"
+    let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
     init(
@@ -35,7 +35,7 @@ struct FinishAuthorizeRequest: APIRequest {
         baseURL: URL
     ) {
         self.baseURL = baseURL
-        parameters = Self.createParameters(
+        parameters = .parameters(
             data: requestData,
             encryptor: encryptor,
             cardDataFormatter: cardDataFormatter,
@@ -52,7 +52,7 @@ struct FinishAuthorizeRequest: APIRequest {
         baseURL: URL
     ) {
         self.baseURL = baseURL
-        parameters = Self.createParameters(
+        parameters = .parameters(
             data: paymentFinishRequestData,
             encryptor: encryptor,
             cardDataFormatter: cardDataFormatter,
@@ -61,8 +61,10 @@ struct FinishAuthorizeRequest: APIRequest {
     }
 }
 
-private extension FinishAuthorizeRequest {
-    static func createParameters(
+// MARK: - HTTPParameters + Helpers
+
+private extension HTTPParameters {
+    static func parameters(
         data: FinishPaymentRequestData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
@@ -105,7 +107,7 @@ private extension FinishAuthorizeRequest {
         return parameters
     }
 
-    static func createParameters(
+    static func parameters(
         data: PaymentFinishRequestData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,

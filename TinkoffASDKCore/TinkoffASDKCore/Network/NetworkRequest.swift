@@ -35,7 +35,7 @@ typealias HTTPHeaders = [String: String]
 
 protocol NetworkRequest {
     var baseURL: URL { get }
-    var path: [String] { get }
+    var path: String { get }
     var httpMethod: HTTPMethod { get }
     var headers: HTTPHeaders { get }
     var parameters: HTTPParameters { get }

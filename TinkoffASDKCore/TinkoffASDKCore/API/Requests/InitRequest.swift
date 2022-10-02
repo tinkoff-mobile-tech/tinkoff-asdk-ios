@@ -22,18 +22,13 @@ import Foundation
 struct InitRequest: APIRequest {
     typealias Payload = InitPayload
 
-    var requestPath: [String] { ["Init"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    var parameters: HTTPParameters {
-        (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
-
-    private let paymentInitData: PaymentInitData
+    let baseURL: URL
+    let path: String = "v2/Init"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(paymentInitData: PaymentInitData, baseURL: URL) {
-        self.paymentInitData = paymentInitData
         self.baseURL = baseURL
+        parameters = (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }

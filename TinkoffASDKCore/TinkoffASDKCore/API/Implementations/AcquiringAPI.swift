@@ -19,6 +19,36 @@
 
 import Foundation
 
+protocol API {
+    func performRequest<Request: APIRequest>(
+        _ request: Request,
+        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
+    ) -> Cancellable
+
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
+    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
+        _ request: Request,
+        delegate: NetworkTransportResponseDelegate?,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) -> Cancellable
+
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
+    func sendCertsConfigRequest(
+        _ request: NetworkRequest,
+        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
+    ) -> Cancellable
+}
+
+extension API {
+    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
+    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
+        _ request: Request,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) -> Cancellable {
+        performDeprecatedRequest(request, delegate: nil, completion: completion)
+    }
+}
+
 final class AcquiringAPI: API {
     private let networkClient: INetworkClient
     private let apiResponseDecoder: APIResponseDecoder
@@ -99,12 +129,10 @@ final class AcquiringAPI: API {
             completion(result)
         }
     }
-}
 
-// MARK: - Helpers
+    // MARK: Helpers
 
-private extension AcquiringAPI {
-    func handleResponseData<Request: APIRequest>(
+    private func handleResponseData<Request: APIRequest>(
         _ data: Data,
         for request: Request,
         completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void

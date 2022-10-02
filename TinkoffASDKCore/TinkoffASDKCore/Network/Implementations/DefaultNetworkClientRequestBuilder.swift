@@ -52,7 +52,7 @@ final class URLRequestBuilder: IURLRequestBuilder {
     }
 
     private func build(request: NetworkRequest, with additionalParameters: [String: Any]) throws -> URLRequest {
-        let fullURL = try URL(string: request.path.joined(separator: "/"), relativeTo: request.baseURL)
+        let fullURL = try URL(string: request.path, relativeTo: request.baseURL)
             .orThrow(Error.failedToBuildPath)
 
         var urlRequest = URLRequest(url: fullURL)

@@ -22,16 +22,10 @@ import Foundation
 struct Check3DSVersionRequest: APIRequest {
     typealias Payload = Check3DSVersionPayload
 
-    var requestPath: [String] { ["Check3dsVersion"] }
-    var httpMethod: HTTPMethod { .post }
-    var baseURL: URL
-
-    private(set) var parameters: HTTPParameters = [:]
-
-    private let check3DSRequestData: Check3DSRequestData
-    private let encryptor: RSAEncryptor
-    private let cardDataFormatter: CardDataFormatter
-    private let publicKey: SecKey
+    let baseURL: URL
+    let path: String = "v2/Check3dsVersion"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
     init(
         check3DSRequestData: Check3DSRequestData,
@@ -40,17 +34,25 @@ struct Check3DSVersionRequest: APIRequest {
         publicKey: SecKey,
         baseURL: URL
     ) {
-        self.check3DSRequestData = check3DSRequestData
-        self.encryptor = encryptor
-        self.cardDataFormatter = cardDataFormatter
-        self.publicKey = publicKey
         self.baseURL = baseURL
-        parameters = createParameters(with: check3DSRequestData)
+        parameters = .create(
+            requestData: check3DSRequestData,
+            encryptor: encryptor,
+            cardDataFormatter: cardDataFormatter,
+            publicKey: publicKey
+        )
     }
 }
 
-private extension Check3DSVersionRequest {
-    func createParameters(with requestData: Check3DSRequestData) -> HTTPParameters {
+// MARK: - HTTPParameters + Helpers
+
+private extension HTTPParameters {
+    static func create(
+        requestData: Check3DSRequestData,
+        encryptor: RSAEncryptor,
+        cardDataFormatter: CardDataFormatter,
+        publicKey: SecKey
+    ) -> HTTPParameters {
         var parameters: HTTPParameters = [APIConstants.Keys.paymentId: requestData.paymentId]
 
         switch requestData.paymentSource {

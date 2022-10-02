@@ -22,9 +22,9 @@ import Foundation
 struct ChargePaymentRequest: APIRequest {
     typealias Payload = ChargePaymentPayload
 
-    let requestPath: [String] = ["Charge"]
-    let httpMethod: HTTPMethod = .post
     let baseURL: URL
+    let path: String = "v2/Charge"
+    let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
     init(data: ChargeRequestData, baseURL: URL) {
