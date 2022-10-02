@@ -50,7 +50,7 @@ final class NetworkClient: INetworkClient {
 
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
-        let taskHolder = NetworkTaskHolder()
+        let cancellableWrapper = CancellableWrapper()
 
         requestAdapter.adapt(request: request) { [self] adaptingResult in
             let urlRequestResult = adaptingResult.tryMap(requestBuilder.build(request:))
@@ -58,15 +58,16 @@ final class NetworkClient: INetworkClient {
             switch urlRequestResult {
             case let .success(urlRequest):
                 let networkTask = createNetworkTask(with: urlRequest, completion: completion)
-                if taskHolder.store(networkTask) {
-                    networkTask.resume()
-                }
+                cancellableWrapper.addCancellationHandler(networkTask.cancel)
+                networkTask.resume()
             case let .failure(error):
-                completion(.requestBuildingFailure(error: error))
+                if !cancellableWrapper.isCancelled {
+                    completion(.requestBuildingFailure(error: error))
+                }
             }
         }
 
-        return taskHolder
+        return cancellableWrapper
     }
 
     // MARK: NetworkTask Creation
@@ -88,14 +89,15 @@ final class NetworkClient: INetworkClient {
                 return try data.orThrow(NetworkError.noData)
             }
 
-            completion(
-                .executionStatus(
-                    request: urlRequest,
-                    response: response,
-                    error: error, data: data,
-                    result: result
-                )
+            let response = NetworkResponse(
+                request: urlRequest,
+                response: response as? HTTPURLResponse,
+                error: error,
+                data: data,
+                result: result
             )
+
+            completion(response)
         }
     }
 }
@@ -110,22 +112,6 @@ private extension NetworkResponse {
             error: nil,
             data: nil,
             result: .failure(error)
-        )
-    }
-
-    static func executionStatus(
-        request: URLRequest,
-        response: URLResponse?,
-        error: Error?,
-        data: Data?,
-        result: Result<Data, Error>
-    ) -> NetworkResponse {
-        NetworkResponse(
-            request: request,
-            response: response as? HTTPURLResponse,
-            error: error,
-            data: data,
-            result: result
         )
     }
 }
