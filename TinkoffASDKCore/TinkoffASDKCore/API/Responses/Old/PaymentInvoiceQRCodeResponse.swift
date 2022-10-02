@@ -20,16 +20,16 @@
 import Foundation
 
 public struct PaymentInvoiceQRCodeResponse: ResponseOperation {
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
         //
-        case orderId = "OrderId"
-        case paymentId = "PaymentId"
-        case qrCodeData = "Data"
+        case orderId
+        case paymentId
+        case qrCodeData
 
         var stringValue: String {
             switch self {

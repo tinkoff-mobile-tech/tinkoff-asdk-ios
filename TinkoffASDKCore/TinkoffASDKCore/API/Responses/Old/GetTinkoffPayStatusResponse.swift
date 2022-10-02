@@ -14,13 +14,20 @@ public struct GetTinkoffPayStatusResponse {
             case version2 = "2.0"
         }
 
+        private enum CodingKeys: String, CodingKey {
+            case isAllowed
+            case version
+
+            var stringValue: String {
+                switch self {
+                case .isAllowed: return APIConstants.Keys.isAllowed
+                case .version: return APIConstants.Keys.version
+                }
+            }
+        }
+
         case disallowed
         case allowed(version: Version)
-
-        private enum CodingKeys: String, CodingKey {
-            case isAllowed = "Allowed"
-            case version = "Version"
-        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -54,12 +61,22 @@ public struct GetTinkoffPayStatusResponse {
 }
 
 extension GetTinkoffPayStatusResponse: ResponseOperation {
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case params = "Params"
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case params
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .params: return APIConstants.Keys.params
+            }
+        }
     }
 
     public init(from decoder: Decoder) throws {

@@ -79,6 +79,9 @@ enum APIConstants {
         static let acsRefNumber = "AcsReferenceNumber"
         static let successURL = "SuccessURL"
         static let failURL = "FailURL"
+        static let params = "Params"
+        static let redirectUrl = "RedirectUrl"
+        static let isAllowed = "Allowed"
     }
 
     enum Values {

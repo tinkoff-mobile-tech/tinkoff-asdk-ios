@@ -20,6 +20,27 @@
 import Foundation
 
 public struct PaymentFinishResponse: ResponseOperation {
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
+        // по этому полю определяем статус платежа
+        case paymentStatus
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .paymentStatus: return APIConstants.Keys.status
+            }
+        }
+    }
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -28,17 +49,6 @@ public struct PaymentFinishResponse: ResponseOperation {
     public var paymentStatus: PaymentStatus
     // Поля для удачного статуса, совершенного платежа, завершаем процесс оплаты
     public var responseStatus: PaymentFinishResponseStatus
-
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
-        // по этому полю определяем статус платежа
-        case paymentStatus = "Status"
-        case responseStatus
-    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

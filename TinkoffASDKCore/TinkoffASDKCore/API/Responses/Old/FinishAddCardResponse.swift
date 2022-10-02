@@ -20,6 +20,31 @@
 import Foundation
 
 public struct FinishAddCardResponse: ResponseOperation {
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
+        case paymentStatus
+        //
+        case requestKey
+        case cardId
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .paymentStatus: return APIConstants.Keys.status
+            case .requestKey: return APIConstants.Keys.requestKey
+            case .cardId: return APIConstants.Keys.cardId
+            }
+        }
+    }
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -29,18 +54,6 @@ public struct FinishAddCardResponse: ResponseOperation {
     public var responseStatus: AddCardFinishResponseStatus
     //
     var cardId: String?
-
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
-        case paymentStatus = "Status"
-        //
-        case requestKey = "RequestKey"
-        case cardId = "CardId"
-    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -21,6 +21,33 @@ import Foundation
 
 /// Проверка версии для прохождения 3DS
 public struct Check3dsVersionResponse: ResponseOperation {
+    private enum CodingKeys: CodingKey {
+        case success
+        case errorCode
+        case errorMessage
+        case errorDetails
+        case terminalKey
+        //
+        case tdsServerTransID
+        case threeDSMethodURL
+        case version
+        case paymentSystem
+
+        var stringValue: String {
+            switch self {
+            case .success: return APIConstants.Keys.success
+            case .errorCode: return APIConstants.Keys.errorCode
+            case .errorMessage: return APIConstants.Keys.errorMessage
+            case .errorDetails: return APIConstants.Keys.errorDetails
+            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .tdsServerTransID: return APIConstants.Keys.tdsServerTransID
+            case .threeDSMethodURL: return APIConstants.Keys.threeDSMethodURL
+            case .version: return APIConstants.Keys.version
+            case .paymentSystem: return APIConstants.Keys.paymentSystem
+            }
+        }
+    }
+
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -31,19 +58,6 @@ public struct Check3dsVersionResponse: ResponseOperation {
     public var threeDSMethodURL: String?
     public var version: String
     public let paymentSystem: String?
-
-    private enum CodingKeys: String, CodingKey {
-        case success = "Success"
-        case errorCode = "ErrorCode"
-        case errorMessage = "Message"
-        case errorDetails = "Details"
-        case terminalKey = "TerminalKey"
-        //
-        case tdsServerTransID = "TdsServerTransID"
-        case threeDSMethodURL = "ThreeDSMethodURL"
-        case version = "Version"
-        case paymentSystem = "PaymentSystem"
-    }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
