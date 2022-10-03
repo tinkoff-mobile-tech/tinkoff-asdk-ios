@@ -20,15 +20,6 @@
 import Foundation
 
 public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
-    public let errorCode: Int
-    public let errorMessage: String?
-    public let errorDetails: String?
-    public let terminalKey: String?
-    public let status: String?
-    public let orderId: String?
-    public let paymentId: String?
-    public let amount: Int?
-
     private enum CodingKeys: CodingKey {
         case errorCode
         case errorMessage
@@ -52,6 +43,15 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
             }
         }
     }
+
+    public let errorCode: Int
+    public let errorMessage: String?
+    public let errorDetails: String?
+    public let terminalKey: String?
+    public let status: String?
+    public let orderId: String?
+    public let paymentId: String?
+    public let amount: Int?
 
     // MARK: - CustomNSError
 

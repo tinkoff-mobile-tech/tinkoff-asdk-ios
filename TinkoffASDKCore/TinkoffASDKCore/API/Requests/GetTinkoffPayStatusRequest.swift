@@ -25,6 +25,7 @@ public struct GetTinkoffPayStatusRequest: APIRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     // MARK: - Init
 

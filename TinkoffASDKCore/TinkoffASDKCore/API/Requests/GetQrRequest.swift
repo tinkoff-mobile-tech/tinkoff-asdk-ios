@@ -26,6 +26,7 @@ struct GetQrRequest: APIRequest {
     let path: String = "v2/GetQr"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(data: PaymentInvoiceQRCodeData, baseURL: URL) {
         self.baseURL = baseURL

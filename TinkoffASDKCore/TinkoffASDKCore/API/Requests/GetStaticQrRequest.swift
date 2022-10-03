@@ -26,6 +26,7 @@ struct GetStaticQrRequest: APIRequest {
     let path: String = "v2/GetStaticQr"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(sourceType: PaymentInvoiceSBPSourceType, baseURL: URL) {
         self.baseURL = baseURL

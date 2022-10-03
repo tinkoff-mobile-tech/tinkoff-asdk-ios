@@ -1,6 +1,6 @@
 //
 //
-//  GetCertsConfigResponse.swift
+//  Get3DSAppBasedCertsConfigRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,10 +19,15 @@
 
 import Foundation
 
-public struct GetCertsConfigResponse: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case certificates = "certificatesInfo"
-    }
+struct Get3DSAppBasedCertsConfigRequest: APIRequest {
+    typealias Payload = Get3DSAppBasedCertsConfigPayload
 
-    public let certificates: [CertificateData]
+    let baseURL: URL
+    let path: String = "certs-configs/asdk-certs-config.json"
+    let httpMethod: HTTPMethod = .get
+    let decodingStrategy: APIDecodingStrategy = .plain
+
+    init(baseURL: URL) {
+        self.baseURL = baseURL
+    }
 }

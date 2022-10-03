@@ -1,6 +1,6 @@
 //
 //
-//  APIResponseDecoder.swift
+//  APIDecoder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,25 +19,35 @@
 
 import Foundation
 
-protocol IAPIResponseDecoder {
-    func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload>
+protocol IAPIDecoder {
+    func decode<Payload: Decodable>(
+        _ type: Payload.Type,
+        from data: Data,
+        with strategy: APIDecodingStrategy
+    ) throws -> Payload
 }
 
-final class APIResponseDecoder: IAPIResponseDecoder {
+final class APIDecoder: IAPIDecoder {
     private let decoder: JSONDecoder
 
     init(decoder: JSONDecoder) {
         self.decoder = decoder
     }
 
-    // MARK: IAPIResponseDecoder
+    // MARK: IAPIDecoder
 
-    func decode<Request: APIRequest>(data: Data, for request: Request) throws -> APIResponse<Request.Payload> {
-        switch request.decodingStrategy {
-        case .standard:
-            return try decodeStandard(data: data)
-        case .clipped:
-            return try decodeClipped(data: data)
+    func decode<Payload: Decodable>(
+        _ type: Payload.Type,
+        from data: Data,
+        with strategy: APIDecodingStrategy
+    ) throws -> Payload {
+        switch strategy {
+        case .acquiring(.standard):
+            return try decodeStandard(data: data).result.get()
+        case .acquiring(.clipped):
+            return try decodeClipped(data: data).result.get()
+        case .plain:
+            return try decoder.decode(type, from: data)
         }
     }
 

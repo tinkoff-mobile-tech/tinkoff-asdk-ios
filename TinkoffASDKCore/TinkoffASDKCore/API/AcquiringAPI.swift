@@ -31,12 +31,6 @@ protocol API {
         delegate: NetworkTransportResponseDelegate?,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable
-
-    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func sendCertsConfigRequest(
-        _ request: NetworkRequest,
-        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable
 }
 
 extension API {
@@ -51,16 +45,16 @@ extension API {
 
 final class AcquiringAPI: API {
     private let networkClient: INetworkClient
-    private let apiResponseDecoder: IAPIResponseDecoder
-    @available(*, deprecated, message: "Use apiResponseDecoder instead")
+    private let apiDecoder: IAPIDecoder
+    @available(*, deprecated, message: "Use apiDecoder instead")
     private let deprecatedDecoder = DeprecatedDecoder()
 
     init(
         networkClient: INetworkClient,
-        apiResponseDecoder: IAPIResponseDecoder
+        apiDecoder: IAPIDecoder
     ) {
         self.networkClient = networkClient
-        self.apiResponseDecoder = apiResponseDecoder
+        self.apiDecoder = apiDecoder
     }
 
     // MARK: - API
@@ -69,32 +63,26 @@ final class AcquiringAPI: API {
         _ request: Request,
         completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
     ) -> Cancellable {
-        networkClient.performRequest(request) { response in
-            do {
-                let data = try response.result.get()
-                self.handleResponseData(
-                    data,
-                    for: request,
-                    completion: completion
+        networkClient.performRequest(request) { [apiDecoder] response in
+            let result = response.result.tryMap { data in
+                try apiDecoder.decode(
+                    Request.Payload.self,
+                    from: data,
+                    with: request.decodingStrategy
                 )
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-
-    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func sendCertsConfigRequest(
-        _ request: NetworkRequest,
-        completionHandler: @escaping (Result<GetCertsConfigResponse, Error>) -> Void
-    ) -> Cancellable {
-        networkClient.performRequest(request) { response in
-            let result: Result<GetCertsConfigResponse, Error> = response.result.tryMap { data in
-                let parsedResponse = try? JSONDecoder.customISO8601Decoding.decode(GetCertsConfigResponse.self, from: data)
-                return try parsedResponse.orThrow(APIError.invalidResponse)
             }
 
-            completionHandler(result)
+            completion(result)
+//            do {
+//                let data = try response.result.get()
+//                self.handleResponseData(
+//                    data,
+//                    for: request,
+//                    completion: completion
+//                )
+//            } catch {
+//                completion(.failure(error))
+//            }
         }
     }
 
@@ -132,21 +120,21 @@ final class AcquiringAPI: API {
 
     // MARK: Helpers
 
-    private func handleResponseData<Request: APIRequest>(
-        _ data: Data,
-        for request: Request,
-        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
-    ) {
-        do {
-            let apiResponse = try apiResponseDecoder.decode(data: data, for: request)
-            let payload = try apiResponse.result.get()
-            completion(.success(payload))
-        } catch let apiFailureError as APIFailureError {
-            completion(.failure(APIError.failure(apiFailureError)))
-        } catch {
-            completion(.failure(APIError.invalidResponse))
-        }
-    }
+//    private func handleResponseData<Request: APIRequest>(
+//        _ data: Data,
+//        for request: Request,
+//        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
+//    ) {
+//        do {
+//            let apiResponse = try apiResponseDecoder.decode(data: data, for: request)
+//            let payload = try apiResponse.result.get()
+//            completion(.success(payload))
+//        } catch let apiFailureError as APIFailureError {
+//            completion(.failure(APIError.failure(apiFailureError)))
+//        } catch {
+//            completion(.failure(APIError.invalidResponse))
+//        }
+//    }
 }
 
 private final class DeprecatedDecoder {

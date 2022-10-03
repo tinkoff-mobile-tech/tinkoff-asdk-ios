@@ -26,6 +26,7 @@ struct GetPaymentStateRequest: APIRequest {
     let path: String = "v2/GetState"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(data: GetPaymentStateData, baseURL: URL) {
         self.baseURL = baseURL

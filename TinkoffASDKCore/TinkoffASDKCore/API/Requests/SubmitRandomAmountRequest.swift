@@ -26,6 +26,7 @@ struct SubmitRandomAmountRequest: APIRequest {
     let path: String = "v2/SubmitRandomAmount"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(submitRandomAmountData: SubmitRandomAmountData, baseURL: URL) {
         self.baseURL = baseURL

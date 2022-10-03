@@ -26,6 +26,7 @@ struct InitRequest: APIRequest {
     let path: String = "v2/Init"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(paymentInitData: PaymentInitData, baseURL: URL) {
         self.baseURL = baseURL

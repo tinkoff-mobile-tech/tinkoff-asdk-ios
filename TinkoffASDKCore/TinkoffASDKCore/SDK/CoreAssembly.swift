@@ -32,7 +32,7 @@ struct CoreAssembly {
     func buildAPI() -> API {
         AcquiringAPI(
             networkClient: buildNetworkClient(),
-            apiResponseDecoder: buildAPIResponseDecoder()
+            apiDecoder: buildAPIDecoder()
         )
     }
 
@@ -94,8 +94,8 @@ private extension CoreAssembly {
         return NetworkSession(urlSession: urlSession)
     }
 
-    func buildAPIResponseDecoder() -> IAPIResponseDecoder {
-        APIResponseDecoder(decoder: JSONDecoder())
+    func buildAPIDecoder() -> IAPIDecoder {
+        APIDecoder(decoder: .customISO8601Decoding)
     }
 
     private func buildURLRequestBuilder() -> IURLRequestBuilder {

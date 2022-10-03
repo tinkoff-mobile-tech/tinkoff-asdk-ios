@@ -26,6 +26,7 @@ struct RemoveCardRequest: APIRequest {
     let path: String = "v2/RemoveCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
         self.baseURL = baseURL

@@ -26,6 +26,7 @@ struct AddCardRequest: APIRequest {
     let path: String = "v2/AddCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(initAddCardData: InitAddCardData, baseURL: URL) {
         self.baseURL = baseURL

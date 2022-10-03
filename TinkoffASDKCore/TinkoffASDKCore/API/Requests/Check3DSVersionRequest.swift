@@ -26,6 +26,7 @@ struct Check3DSVersionRequest: APIRequest {
     let path: String = "v2/Check3dsVersion"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(
         check3DSRequestData: Check3DSRequestData,

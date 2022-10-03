@@ -30,6 +30,7 @@ struct ThreeDSV2AuthorizationRequest: APIRequest {
     let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(data: CresData, baseURL: URL) {
         self.baseURL = baseURL

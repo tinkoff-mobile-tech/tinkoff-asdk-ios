@@ -773,18 +773,13 @@ public final class AcquiringSdk: NSObject {
         return api.performRequest(request, completion: completion)
     }
 
-    // MARK: Get Certs Config
-
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
     /// Получить конфигурацию для работы с сертификатами 3DS AppBased
     ///
-    /// - Parameter completion: Callback с результатом запроса. `GetCertsConfigResponse` - при успехе, `Error` - при ошибке
+    /// - Parameter completion: Callback с результатом запроса. `Get3DSAppBasedCertsConfigPayload` - при успехе, `Error` - при ошибке
     /// - Returns: Cancellable
     @discardableResult
-    public func getCertsConfig(completion: @escaping (Result<GetCertsConfigResponse, Error>) -> Void) -> Cancellable {
-        let request = GetCertsConfigRequest(baseURL: certsConfigUrl)
-        return api.sendCertsConfigRequest(request, completionHandler: completion)
+    public func getCertsConfig(completion: @escaping (Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void) -> Cancellable {
+        api.performRequest(Get3DSAppBasedCertsConfigRequest(baseURL: certsConfigUrl), completion: completion)
     }
 }
 
