@@ -32,7 +32,7 @@ struct CoreAssembly {
     func buildAPI() -> API {
         AcquiringAPI(
             networkClient: buildNetworkClient(),
-            apiDecoder: buildAPIDecoder()
+            apiDecoder: APIDecoder()
         )
     }
 
@@ -92,10 +92,6 @@ private extension CoreAssembly {
         urlSessionConfiguration.timeoutIntervalForResource = configuration.requestsTimeoutInterval
         let urlSession = URLSession(configuration: urlSessionConfiguration)
         return NetworkSession(urlSession: urlSession)
-    }
-
-    func buildAPIDecoder() -> IAPIDecoder {
-        APIDecoder(decoder: .customISO8601Decoding)
     }
 
     private func buildURLRequestBuilder() -> IURLRequestBuilder {

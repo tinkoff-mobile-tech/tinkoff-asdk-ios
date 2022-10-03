@@ -28,11 +28,7 @@ protocol IAPIDecoder {
 }
 
 final class APIDecoder: IAPIDecoder {
-    private let decoder: JSONDecoder
-
-    init(decoder: JSONDecoder) {
-        self.decoder = decoder
-    }
+    private let decoder: JSONDecoder = .customISO8601Decoding
 
     // MARK: IAPIDecoder
 
@@ -80,5 +76,32 @@ final class APIDecoder: IAPIDecoder {
         } catch {
             return try decodeStandard(data: data)
         }
+    }
+}
+
+// MARK: JSONDecoder + CustomISO8601Decoding
+
+private extension JSONDecoder {
+    private enum DateDecodingError: Error {
+        case invalidDate
+    }
+
+    /// Используется кастомная логика парсинга даты для запроса `Get3DSAppBasedCertsConfigRequest`,
+    /// в остальных случаях даты в полях не приходят
+    static var customISO8601Decoding: JSONDecoder {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [
+            .withFullDate,
+            .withFullTime,
+            .withDashSeparatorInDate,
+            .withColonSeparatorInTime,
+        ]
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let stringDate = try container.decode(String.self)
+            return try formatter.date(from: stringDate).orThrow(DateDecodingError.invalidDate)
+        }
+        return decoder
     }
 }
