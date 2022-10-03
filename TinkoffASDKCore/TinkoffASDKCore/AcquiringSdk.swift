@@ -196,7 +196,7 @@ public final class AcquiringSdk: NSObject {
         let enrichedData = paramsEnricher.enrich(data)
         let request = InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Finish Payment
@@ -240,7 +240,7 @@ public final class AcquiringSdk: NSObject {
             publicKey: publicKey,
             baseURL: baseURL
         )
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Check 3DS Version
@@ -286,7 +286,7 @@ public final class AcquiringSdk: NSObject {
             baseURL: baseURL
         )
 
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Submit 3DS Authorization V2
@@ -301,7 +301,7 @@ public final class AcquiringSdk: NSObject {
         let cresData = CresData(cres: cres)
         let request = ThreeDSV2AuthorizationRequest(data: cresData, baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
     // MARK: Get Payment State
@@ -335,7 +335,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = GetPaymentStateRequest(data: data, baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Charge Payment
@@ -369,7 +369,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = ChargePaymentRequest(paymentChargeRequestData: data, baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Get Card List
@@ -446,7 +446,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = AddCardRequest(initAddCardData: data, baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
     @discardableResult
@@ -503,7 +503,7 @@ public final class AcquiringSdk: NSObject {
             baseURL: baseURL
         )
 
-        return api.performDeprecatedRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
     /// Завершает привязку карты к клиенту
@@ -622,7 +622,7 @@ public final class AcquiringSdk: NSObject {
         completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         let request = RemoveCardRequest(deactivateCardData: data, baseURL: baseURL)
-        return api.performDeprecatedRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
     /// Удаление привязанной карты покупателя
@@ -670,7 +670,7 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void
     ) -> Cancellable {
         let request = GetQrRequest(data: data, baseURL: baseURL)
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Get Static QR Code
@@ -703,7 +703,7 @@ public final class AcquiringSdk: NSObject {
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void
     ) -> Cancellable {
         let request = GetStaticQrRequest(sourceType: data, baseURL: baseURL)
-        return api.performDeprecatedRequest(request, completion: completionHandler)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Load SBP Banks
@@ -729,7 +729,7 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
 
-        return api.performDeprecatedRequest(request, completion: completion)
+        return api.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
     // MARK: Get TinkoffPay Link

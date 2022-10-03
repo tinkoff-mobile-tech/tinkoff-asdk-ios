@@ -33,16 +33,6 @@ protocol API {
     ) -> Cancellable
 }
 
-extension API {
-    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
-        _ request: Request,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) -> Cancellable {
-        performDeprecatedRequest(request, delegate: nil, completion: completion)
-    }
-}
-
 final class AcquiringAPI: API {
     private let networkClient: INetworkClient
     private let apiDecoder: IAPIDecoder
