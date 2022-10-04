@@ -110,7 +110,7 @@ final class CardListView: UIView {
 
     func reload(cards: [CardList.Card]) {
         self.cards = cards
-        collectionView.reloadSections(IndexSet(integer: .zero))
+        collectionView.reloadData()
         updateNoCardsViewVisibility()
     }
 
@@ -251,6 +251,17 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         .zero
     }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        CGSize(
+            width: collectionView.frame.width,
+            height: primaryButton.frame.height + .contentAdditionalSpaceFromButton
+        )
+    }
 }
 
 // MARK: - Constants
@@ -259,6 +270,7 @@ private extension CGFloat {
     static let itemHeight: CGFloat = 56
     static let buttonBottomInset: CGFloat = 40
     static let buttonHorizontalInsets: CGFloat = 16
+    static let contentAdditionalSpaceFromButton: CGFloat = 16
 }
 
 private extension TimeInterval {
