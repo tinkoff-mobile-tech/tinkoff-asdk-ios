@@ -779,7 +779,9 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: Cancellable
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void) -> Cancellable {
-        api.performRequest(Get3DSAppBasedCertsConfigRequest(baseURL: certsConfigUrl), completion: completion)
+        let request = Get3DSAppBasedCertsConfigRequest(baseURL: certsConfigUrl)
+
+        return api.performRequest(request, completion: completion)
     }
 }
 
