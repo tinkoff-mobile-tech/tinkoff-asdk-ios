@@ -398,6 +398,7 @@ extension InputCardRequisitesController: InputCardRequisitesDataSource {
         maskedTextFieldCardCVCDelegate.listener = self
         self.inputView?.textFieldCardCVC.delegate = maskedTextFieldCardCVCDelegate
         self.inputView?.textFieldCardCVC.placeholder = Constants.cvcPlaceholder
+        self.inputView?.textFieldCardCVC.isSecureTextEntry = true
 
         activateStep(.addRequisites)
     }
