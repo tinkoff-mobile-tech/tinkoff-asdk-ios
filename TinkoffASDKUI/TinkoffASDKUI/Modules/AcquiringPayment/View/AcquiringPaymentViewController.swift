@@ -22,6 +22,24 @@ import UIKit
 import WebKit
 
 /// получение информации для отрисовки списка карт
+public protocol ICardsListDataSource {
+    /// Количество доступных, активных карт
+    func getNumberOfActiveCards() -> Int
+    /// Статус обновления списока карт
+    func getCardsListFetchStatus() -> FetchStatus<[PaymentCard]>
+    /// Получить карту
+    func getCard(at index: Int) -> PaymentCard
+    /// Получить карту по cardId
+    func getCard(with cardId: String) -> PaymentCard?
+    /// Получить карту по parentPaymentId
+    func getCard(with parentPaymentId: Int64) -> PaymentCard?
+    /// Получить все карты
+    func getActiveCards() -> [PaymentCard]
+    /// Перезагрузить, обновить список карт
+    func cardListReload()
+}
+
+/// получение информации для отрисовки списка карт
 protocol AcquiringCardListDataSourceDelegate: AnyObject {
     /// Количество доступных, активных карт
     func getCardListNumberOfCards() -> Int
@@ -176,15 +194,31 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     private var tableViewCells: [AcquiringViewTableViewCells] = []
     private var userTableViewCells: [AcquiringViewTableViewCells] = []
 
-    private lazy var cardListController: CardListViewOutConnection = CardListController()
+    private let cardListController: CardListViewOutConnection
+    private let cardListDataSource: ICardsListDataSource
     private lazy var inputEmailPresenter: InputEmailControllerOutConnection = InputEmailController()
 
-    var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
 
     var acquiringPaymentController: AcquiringPaymentController?
     var tinkoffPayStatus: GetTinkoffPayStatusResponse.Status?
+
+    init(
+        cardListController: CardListViewOutConnection,
+        cardListDataSource: ICardsListDataSource,
+        nibName: String?,
+        bundle: Bundle?
+    ) {
+        self.cardListController = cardListController
+        self.cardListDataSource = cardListDataSource
+        super.init(nibName: nibName, bundle: bundle)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: Lifecycle
 
@@ -215,8 +249,6 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        cardListDataSourceDelegate = nil
         onCancelPayment?()
     }
 
@@ -227,12 +259,10 @@ class AcquiringPaymentViewController: PopUpViewContoller {
     }
 
     override func pushToNavigationStackAndActivate(firstResponder textField: UIView?, completion _: (() -> Void)? = nil) -> Bool {
-        let tmpCardListDataSourceDelegate = cardListDataSourceDelegate
         let tmpOnCancelPayment = onCancelPayment
         onCancelPayment = nil
 
         return super.pushToNavigationStackAndActivate(firstResponder: textField) {
-            self.cardListDataSourceDelegate = tmpCardListDataSourceDelegate
             if tmpOnCancelPayment != nil {
                 self.onCancelPayment = tmpOnCancelPayment
             }
@@ -258,7 +288,7 @@ class AcquiringPaymentViewController: PopUpViewContoller {
 
         tableViewCells.append(.cardList)
         if paymentType == .standard,
-           (cardListDataSourceDelegate?.getCardListNumberOfCards() ?? .zero) > .zero {
+           cardListDataSource.getNumberOfActiveCards() > .zero {
             tableViewCells.append(.chooseAnotherCard)
         }
 
@@ -407,7 +437,6 @@ extension AcquiringPaymentViewController: UITableViewDataSource {
     private func makeCellForCardList() -> ScrollableTableViewCell? {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ScrollableTableViewCell") as? ScrollableTableViewCell else { return nil }
         cardListController.presentCardList(
-            dataSource: cardListDataSourceDelegate,
             in: cell,
             becomeFirstResponderListener: self,
             scanner: scanerDataSource != nil ? self : nil
@@ -687,7 +716,6 @@ extension AcquiringPaymentViewController: AcquiringView {
     }
 
     func closeVC(animated _: Bool, completion: (() -> Void)?) {
-        cardListDataSourceDelegate = nil
         onCancelPayment = nil
         closeViewController {
             completion?()
@@ -699,12 +727,10 @@ extension AcquiringPaymentViewController: AcquiringView {
         animated: Bool,
         completion: (() -> Void)? = nil
     ) {
-        let tmpCardListDataSourceDelegate = cardListDataSourceDelegate
         let tmpOnCancelPayment = onCancelPayment
         onCancelPayment = nil
 
         present(viewControllerToPresent, animated: animated, completion: {
-            self.cardListDataSourceDelegate = tmpCardListDataSourceDelegate
             self.onCancelPayment = tmpOnCancelPayment
             completion?()
         })

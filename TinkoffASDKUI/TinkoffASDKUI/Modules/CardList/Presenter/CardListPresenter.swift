@@ -93,6 +93,7 @@ final class CardListPresenter: ICardListModule {
 // MARK: - ICardListViewOutput
 
 extension CardListPresenter: ICardListViewOutput {
+
     func viewDidLoad() {
         view?.showLoader()
         provider.fetchActiveCards { [self] result in
@@ -100,11 +101,14 @@ extension CardListPresenter: ICardListViewOutput {
             case let .success(paymentCards):
                 activeCardsCache = paymentCards
                 view?.reload(cards: transform(paymentCards))
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
+            case let .failure(error):
+                view?.show(
+                    alert: CardList.Alert(
+                        title: "Fetching cards error. " + error.localizedDescription,
+                        message: "",
+                        icon: .error
+                    )
+                )
             }
 
             view?.hideLoader()
@@ -126,11 +130,14 @@ extension CardListPresenter: ICardListViewOutput {
             case .success:
                 activeCardsCache.removeAll { $0.cardId == card.id }
                 view?.remove(card: card)
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
+            case let .failure(error):
+                view?.show(
+                    alert: CardList.Alert(
+                        title: error.localizedDescription,
+                        message: nil,
+                        icon: .error
+                    )
+                )
             }
             view?.hideLoader()
         }

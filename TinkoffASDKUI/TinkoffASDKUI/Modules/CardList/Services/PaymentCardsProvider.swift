@@ -39,11 +39,11 @@ final class PaymentCardsProvider: IPaymentCardsProvider {
 
     // MARK: Dependencies
 
-    private let dataProvider: CardListDataProvider
+    private let cardsManager: ICardsManager
     private let fetchingStrategy: FetchingStrategy
 
-    init(dataProvider: CardListDataProvider, fetchingStrategy: FetchingStrategy) {
-        self.dataProvider = dataProvider
+    init(cardsManager: ICardsManager, fetchingStrategy: FetchingStrategy) {
+        self.cardsManager = cardsManager
         self.fetchingStrategy = fetchingStrategy
     }
 
@@ -52,29 +52,18 @@ final class PaymentCardsProvider: IPaymentCardsProvider {
     func fetchActiveCards(_ completion: @escaping (Result<[PaymentCard], Error>) -> Void) {
         switch fetchingStrategy {
         case .cacheOnly:
-            completion(.success(dataProvider.allItems()))
+            completion(.success(cardsManager.getActiveCards()))
         case .backendOnly:
-            dataProvider.fetch(startHandler: nil) { cards, error in
-                let result: Result<[PaymentCard], Error> = Result {
-                    if let error = error {
-                        throw error
-                    }
-                    return cards ?? []
-                }
-                completion(result)
-            }
+            cardsManager.getCards(completion: completion)
         }
     }
 
     func deactivateCard(cardId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        dataProvider.deactivateCard(cardId: cardId, startHandler: nil) { paymentCard in
-            // Из-за некорректной реализации `CardListDataProvider` приходится исходить
-            // из того, что отсутствие `PaymentCard` в `completion` - признак возникшей ошибки
-            let result: Result<Void, Error> = paymentCard == nil
-                ? .failure(Failure.inconsistentState)
-                : .success(())
-
-            completion(result)
-        }
+        cardsManager.removeCard(
+            cardId: cardId,
+            completion: { result in
+                completion(result.map { _ in () })
+            }
+        )
     }
 }

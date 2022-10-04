@@ -31,4 +31,17 @@ public enum AttachCardStatus {
 
     /// Успешная оплата
     case done
+
+    public func convertToAddCardFinishResponseStatus() -> AddCardFinishResponseStatus {
+        switch self {
+        case let .needConfirmation3DS(confirmation3DSData):
+            return .needConfirmation3DS(confirmation3DSData)
+        case let .needConfirmation3DSACS(confirmation3DSDataACS):
+            return .needConfirmation3DSACS(confirmation3DSDataACS)
+        case let .needConfirmationRandomAmount(string):
+            return .needConfirmationRandomAmount(string)
+        case .done:
+            return .done(AddCardStatusResponse(success: true, errorCode: 0))
+        }
+    }
 }

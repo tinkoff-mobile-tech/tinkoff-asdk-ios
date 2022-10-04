@@ -26,7 +26,7 @@ protocol ICardListAssembly {
     ///
     /// Доступные операции: добавление, удаление
     func cardsPresentingModule(
-        cardListProvider: CardListDataProvider,
+        cardsManager: ICardsManager,
         configuration: AcquiringViewConfiguration
     ) -> (view: UIViewController, module: ICardListModule)
 
@@ -34,7 +34,7 @@ protocol ICardListAssembly {
     ///
     /// Доступные операции: добавление, удаление, выбор карты
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
+        cardsManager: ICardsManager,
         configuration: AcquiringViewConfiguration
     ) -> (view: UIViewController, module: ICardListModule)
 }
@@ -49,22 +49,22 @@ final class CardListAssembly: ICardListAssembly {
     // MARK: ICardListAssembly
 
     func cardsPresentingModule(
-        cardListProvider: CardListDataProvider,
+        cardsManager: ICardsManager,
         configuration: AcquiringViewConfiguration
     ) -> (view: UIViewController, module: ICardListModule) {
         buildModule(
-            provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
+            provider: PaymentCardsProvider(cardsManager: cardsManager, fetchingStrategy: .backendOnly),
             style: .presenting(primaryButtonStyle: primaryButtonStyle),
             configuration: configuration
         )
     }
 
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
+        cardsManager: ICardsManager,
         configuration: AcquiringViewConfiguration
     ) -> (view: UIViewController, module: ICardListModule) {
         buildModule(
-            provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
+            provider: PaymentCardsProvider(cardsManager: cardsManager, fetchingStrategy: .cacheOnly),
             style: .selection(primaryButtonStyle: primaryButtonStyle),
             configuration: configuration
         )

@@ -46,7 +46,6 @@ protocol CardListViewOutConnection: InputViewStatus {
     func updateView()
     func setPaymentType(_ paymentType: PaymentType)
     func presentCardList(
-        dataSource: AcquiringCardListDataSourceDelegate?,
         in view: CardListViewInConnection,
         becomeFirstResponderListener: BecomeFirstResponderListener?,
         scanner: ICardRequisitesScanner?
@@ -106,9 +105,16 @@ class CardListController: NSObject {
     // MARK: Weak objects
 
     private weak var cardListCollectionView: UICollectionView?
-    private weak var dataSource: AcquiringCardListDataSourceDelegate?
     private weak var scanner: ICardRequisitesScanner?
     private weak var becomeFirstResponderListener: BecomeFirstResponderListener?
+
+    // MARK: - Dependencies
+
+    private let dataSource: ICardsListDataSource
+
+    init(dataSource: ICardsListDataSource) {
+        self.dataSource = dataSource
+    }
 
     // MARK: Helpers
 
@@ -140,13 +146,11 @@ class CardListController: NSObject {
     }
 
     private func getCardsForCurrentPaymentType() -> [PaymentCard] {
-        guard let dataSource = dataSource else { return [] }
-
         switch paymentType {
         case .standard:
-            return dataSource.getAllCards()
+            return dataSource.getActiveCards()
         case .recurrent:
-            return dataSource.getAllCards().filter { $0.parentPaymentId != nil }
+            return dataSource.getActiveCards().filter { $0.parentPaymentId != nil }
         }
     }
 
@@ -163,7 +167,7 @@ class CardListController: NSObject {
 
     private func setupCollectionDataSource() {
         cellIndex = []
-        switch dataSource?.getCardListFetchStatus() {
+        switch dataSource.getCardsListFetchStatus() {
         case .object:
             let cards = getCardsForCurrentPaymentType()
 
@@ -203,7 +207,7 @@ extension CardListController: UICollectionViewDelegate {
 
         switch cellInfo.type {
         case .card:
-            switch dataSource?.getCardListFetchStatus() {
+            switch dataSource.getCardsListFetchStatus() {
             case .loading:
                 if let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: "CardListLoadingCollectionViewCell",
@@ -337,10 +341,9 @@ extension CardListController: CardListViewOutConnection {
 
         switch cellIndex[selectedCardCellIndex].type {
         case .card:
-            if let card = dataSource?.getCardListCard(at: selectedCardCellIndex) {
-                let cvc = inputCardCVCRequisitesPresenter.cardCVC()
-                return CardRequisitesState.savedCard(card: card, cvc: cvc)
-            }
+            let card = dataSource.getCard(at: selectedCardCellIndex)
+            let cvc = inputCardCVCRequisitesPresenter.cardCVC()
+            return CardRequisitesState.savedCard(card: card, cvc: cvc)
 
         case .requisites:
             let requisites = inputCardRequisitesController.requisies()
@@ -352,12 +355,10 @@ extension CardListController: CardListViewOutConnection {
     }
 
     func presentCardList(
-        dataSource: AcquiringCardListDataSourceDelegate?,
         in view: CardListViewInConnection,
         becomeFirstResponderListener: BecomeFirstResponderListener?,
         scanner: ICardRequisitesScanner?
     ) {
-        self.dataSource = dataSource
         self.becomeFirstResponderListener = becomeFirstResponderListener
         self.scanner = scanner
 

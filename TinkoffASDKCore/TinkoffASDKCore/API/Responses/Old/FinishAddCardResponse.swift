@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct FinishAddCardResponse: ResponseOperation {
+public struct FinishAddCardResponse {
     public var success: Bool
     public var errorCode: Int
     public var errorMessage: String?
@@ -41,6 +41,42 @@ public struct FinishAddCardResponse: ResponseOperation {
         case requestKey = "RequestKey"
         case cardId = "CardId"
     }
+
+    public init(
+        success: Bool,
+        errorCode: Int,
+        errorMessage: String? = nil,
+        errorDetails: String? = nil,
+        terminalKey: String? = nil,
+        paymentStatus: PaymentStatus,
+        responseStatus: AddCardFinishResponseStatus,
+        cardId: String? = nil
+    ) {
+        self.success = success
+        self.errorCode = errorCode
+        self.errorMessage = errorMessage
+        self.errorDetails = errorDetails
+        self.terminalKey = terminalKey
+        self.paymentStatus = paymentStatus
+        self.responseStatus = responseStatus
+        self.cardId = cardId
+    }
+
+    public init(from payload: AttachCardPayload) {
+        self = Self(
+            success: true,
+            errorCode: 0,
+            errorMessage: nil,
+            errorDetails: nil,
+            terminalKey: nil,
+            paymentStatus: payload.status,
+            responseStatus: payload.attachCardStatus.convertToAddCardFinishResponseStatus(),
+            cardId: payload.cardId
+        )
+    }
+}
+
+extension FinishAddCardResponse: ResponseOperation {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -104,4 +140,4 @@ public struct FinishAddCardResponse: ResponseOperation {
         //
         try? container.encode(cardId, forKey: .cardId)
     } // encode
-} // FinishAddCardResponse
+}

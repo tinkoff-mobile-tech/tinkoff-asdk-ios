@@ -28,7 +28,7 @@ final class AcquiringPaymentController {
     private let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
     private let tinkoffPayController: TinkoffPayController
     private let payController: PayController
-    private let cardListDataProvider: CardListDataProvider?
+    private let cardsManager: CardsManager
 
     weak var delegate: AcquiringPaymentControllerDelegate?
     weak var tinkoffPayDelegate: TinkoffPayDelegate?
@@ -37,12 +37,12 @@ final class AcquiringPaymentController {
         acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
         tinkoffPayController: TinkoffPayController,
         payController: PayController,
-        cardListDataProvider: CardListDataProvider?
+        cardsManager: CardsManager
     ) {
         self.acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration
         self.tinkoffPayController = tinkoffPayController
         self.payController = payController
-        self.cardListDataProvider = cardListDataProvider
+        self.cardsManager = cardsManager
     }
 
     func loadCardsAndCheckTinkoffPayAvailability() {
@@ -55,10 +55,10 @@ final class AcquiringPaymentController {
         }
 
         dispatchGroup.enter()
-        cardListDataProvider?.fetch(startHandler: nil, completeHandler: { [weak self] _, _ in
+        cardsManager.getCards { [weak self] _ in
             self?.handleCardsFetch()
             dispatchGroup.leave()
-        })
+        }
 
         dispatchGroup.notify(queue: .main) { [weak self] in
             guard let self = self else { return }
@@ -103,7 +103,7 @@ private extension AcquiringPaymentController {
     }
 
     func handleCardsFetch() {
-        guard let status = cardListDataProvider?.fetchStatus else { return }
+        let status = cardsManager.getCardsListFetchStatus()
         delegate?.acquiringPaymentController(self, didUpdateCards: status)
     }
 }

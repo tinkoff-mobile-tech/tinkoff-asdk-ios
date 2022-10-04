@@ -168,8 +168,8 @@ public class AcquiringUISDK: NSObject {
     //
     private var webViewFor3DSChecking: WKWebView?
 
-    // data providers
-    private var cardListDataProvider: CardListDataProvider?
+    private var cardsManager: ICardsManager?
+    //  private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
     private let sbpAssembly: SBPAssembly
@@ -213,34 +213,8 @@ public class AcquiringUISDK: NSObject {
     /// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
 
-    public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
-        resolveCardListDataProvider(customerKey: customer, statusListener: statusListener)
-    }
-
-    @discardableResult
-    private func resolveCardListDataProvider(
-        customerKey: String,
-        statusListener: CardListDataSourceStatusListener? = nil
-    ) -> CardListDataProvider {
-        let provider: CardListDataProvider
-        if let cardListDataProvider = cardListDataProvider {
-            provider = cardListDataProvider.customerKey == customerKey
-                ? cardListDataProvider
-                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
-        } else {
-            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
-        }
-
-        cardListDataProvider = provider
-
-        if statusListener == nil {
-            cardListDataProvider?.dataSourceStatusListener = self
-        } else {
-            cardListDataProvider?.dataSourceStatusListener = statusListener
-        }
-
-        return provider
-    }
+    @available(*, deprecated, message: "Will be removed soon")
+    public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {}
 
     public func presentAddCardView(
         on presentingViewController: UIViewController,
@@ -248,17 +222,26 @@ public class AcquiringUISDK: NSObject {
         configuration: AcquiringViewConfiguration,
         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
     ) {
+
+        let cardsService = CardsService(
+            customerKey: customerKey,
+            coreSdk: acquiringSdk,
+            confirmationHandler: self
+        )
+
+        let cardsManager = CardsManager(cardsService: cardsService, errorHandler: nil)
+
         self.presentingViewController = presentingViewController
         acquiringViewConfiguration = configuration
 
-        setupCardListDataProvider(for: customerKey)
-
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        modalViewController.cardListDataSourceDelegate = self
+        let modalViewController = AddNewCardViewController(
+            cardsManager: cardsManager,
+            cardCheckType: addCardNeedSetCheckTypeHandler?() ?? .no,
+            nibName: "PopUpViewContoller",
+            bundle: .uiResources
+        )
+
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
         modalViewController.popupStyle = configuration.popupStyle
@@ -934,11 +917,29 @@ public class AcquiringUISDK: NSObject {
     ) {
         self.presentingViewController = presentingViewController
 
+        var cardsService: ICardsService?
+
+        if let customerKey = customerKey {
+            cardsService = CardsService(
+                customerKey: customerKey,
+                coreSdk: acquiringSdk,
+                confirmationHandler: self
+            )
+        }
+
+        let cardsManager = CardsManager(cardsService: cardsService, errorHandler: nil)
+        self.cardsManager = cardsManager
+        let cardListController = CardListController(dataSource: cardsManager)
+
         // create
         let modalViewController = AcquiringPaymentViewController(
+            cardListController: cardListController,
+            cardListDataSource: cardsManager,
             nibName: "AcquiringPaymentViewController",
             bundle: .uiResources
         )
+
+        cardsManager.cardListReload()
 
         modalViewController.style = AcquiringPaymentViewController.Style(
             payButtonStyle: style.bigButtonStyle,
@@ -986,42 +987,22 @@ public class AcquiringUISDK: NSObject {
 
         acquiringView = modalViewController
 
-        var injectableCardListProvider: CardListDataProvider?
-
-        if let key = customerKey {
-            if loadCardsOutside {
-                setupCardListDataProvider(for: key)
-                cardListDataProvider?.update()
-                // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-                // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-                // будет краш из-за того, что там необходим force unwrap
-                modalViewController.cardListDataSourceDelegate = self
-                injectableCardListProvider = nil
-            } else {
-                setupCardListDataProvider(for: key)
-                modalViewController.cardListDataSourceDelegate = self
-                injectableCardListProvider = cardListDataProvider
-            }
-        }
-
         if let acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration {
             let acquiringPaymentController = AcquiringPaymentController(
                 acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
                 tinkoffPayController: tinkoffPayAssembly.tinkoffPayController,
                 payController: PayController(sdk: acquiringSdk),
-                cardListDataProvider: injectableCardListProvider
+                cardsManager: cardsManager
             )
             acquiringPaymentController.delegate = modalViewController
             modalViewController.acquiringPaymentController = acquiringPaymentController
         }
 
-        modalViewController.onTouchButtonShowCardList = { [injectableCardListProvider, weak self, weak modalViewController] in
-            guard let self = self,
-                  let cardListProvider = injectableCardListProvider
-            else { return }
+        modalViewController.onTouchButtonShowCardList = { [weak self, weak modalViewController] in
+            guard let self = self else { return }
 
             let (cardsView, module) = self.cardListAssembly.cardSelectionModule(
-                cardListProvider: cardListProvider,
+                cardsManager: cardsManager,
                 configuration: configuration
             )
 
@@ -1628,109 +1609,31 @@ extension AcquiringUISDK: CardListDataSourceStatusListener {
     }
 }
 
-extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
-    func getCardListNumberOfCards() -> Int {
-        return cardListDataProvider!.count()
-    }
+public extension AcquiringUISDK {
 
-    func getCardListFetchStatus() -> FetchStatus<[PaymentCard]> {
-        return cardListDataProvider!.fetchStatus
-    }
-
-    func getCardListCard(at index: Int) -> PaymentCard {
-        return cardListDataProvider!.item(at: index)
-    }
-
-    func getCardListCard(with cardId: String) -> PaymentCard? {
-        return cardListDataProvider!.item(with: cardId)
-    }
-
-    func getCardListCard(with parentPaymentId: Int64) -> PaymentCard? {
-        return cardListDataProvider!.item(with: parentPaymentId)
-    }
-
-    func getAllCards() -> [PaymentCard] {
-        return cardListDataProvider!.allItems()
-    }
-
-    func cardListReload() {
-        cardListDataProvider!.update()
-    }
-
-    func cardListToDeactivateCard(
-        at index: Int,
-        startHandler: (() -> Void)?,
-        completion: ((PaymentCard?) -> Void)?
-    ) {
-        let card = cardListDataProvider!.item(at: index)
-        cardListDataProvider!.deactivateCard(
-            cardId: card.cardId,
-            startHandler: {
-                startHandler?()
-            },
-            completeHandler: { card in
-                completion?(card)
-            }
-        )
-    }
-
-    func cardListToAddCard(
-        number: String,
-        expDate: String,
-        cvc: String,
-        addCardViewPresenter: AcquiringView,
-        alertViewHelper: AcquiringAlertViewProtocol?,
-        completeHandler: @escaping (Result<PaymentCard?, Error>) -> Void
-    ) {
-        let checkType: String
-        if let value = addCardNeedSetCheckTypeHandler?() {
-            checkType = value.rawValue
-        } else {
-            checkType = PaymentCardCheckType.no.rawValue
-        }
-
-        cardListDataProvider!.addCard(
-            number: number,
-            expDate: expDate,
-            cvc: cvc,
-            checkType: checkType,
-            confirmationHandler: { confirmationResponse, confirmationComplete in
-                DispatchQueue.main.async { [weak self] in
-                    self?.checkConfirmAddCard(
-                        confirmationResponse,
-                        presenter: addCardViewPresenter,
-                        alertViewHelper: alertViewHelper,
-                        confirmationComplete
-                    )
-                }
-            },
-            completeHandler: { response in
-                DispatchQueue.main.async {
-                    completeHandler(response)
-                }
-            }
-        )
-    }
-
-    func presentAddCard(
+    internal func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
         configuration: AcquiringViewConfiguration,
         completeHandler: @escaping (Result<PaymentCard?, Error>) -> Void
     ) {
+        assert(cardsManager != nil)
+
+        guard let cardsManager = cardsManager else {
+            return
+        }
 
         self.presentingViewController = presentingViewController
         acquiringViewConfiguration = configuration
 
-        setupCardListDataProvider(for: customerKey)
-
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
+        let modalViewController = AddNewCardViewController(
+            cardsManager: cardsManager,
+            cardCheckType: addCardNeedSetCheckTypeHandler?() ?? .no,
+            nibName: "PopUpViewContoller",
+            bundle: .uiResources
+        )
 
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        modalViewController.cardListDataSourceDelegate = self
         modalViewController.scanerDataSource = configuration.scaner
         modalViewController.alertViewHelper = configuration.alertViewHelper
         modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
@@ -1747,64 +1650,63 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         })
     }
 
-    // MARK: AcquiringPaymentCardLidtDataSourceDelegate
+    // MARK: AcquiringPaymentCardLidtDataSourceDelegate Ended
 
-    public enum SDKError: Error {
+    enum SDKError: Error {
         case noCustomerKey
     }
 
-    private func getCardListDataProvider() throws -> CardListDataProvider {
-        guard let cardListDataProvider = cardListDataProvider else {
+    private func getCardsManager() throws -> ICardsManager {
+        guard let cardsManager = cardsManager else {
             throw SDKError.noCustomerKey
         }
-        return cardListDataProvider
+        return cardsManager
     }
 
-    public func customerKey() throws -> String {
-        return try getCardListDataProvider().customerKey
+    func customerKey() throws -> String {
+        return try getCardsManager().getCustomerKey()
     }
 
-    public func cardListNumberOfCards() throws -> Int {
-        return try getCardListDataProvider().count()
+    func cardListNumberOfCards() throws -> Int {
+        return try getCardsManager().getNumberOfActiveCards()
     }
 
-    public func cardListFetchStatus() throws -> FetchStatus<[PaymentCard]> {
-        return try getCardListDataProvider().fetchStatus
+    func cardListFetchStatus() throws -> FetchStatus<[PaymentCard]> {
+        return try getCardsManager().getCardsListFetchStatus()
     }
 
-    public func cardListCard(at index: Int) throws -> PaymentCard {
-        return try getCardListDataProvider().item(at: index)
+    func cardListCard(at index: Int) throws -> PaymentCard {
+        return try getCardsManager().getCard(at: index)
     }
 
-    public func cardListCard(with cardId: String) throws -> PaymentCard? {
-        return try getCardListDataProvider().item(with: cardId)
+    func cardListCard(with cardId: String) throws -> PaymentCard? {
+        return try getCardsManager().getCard(with: cardId)
     }
 
-    public func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
-        return try getCardListDataProvider().item(with: parentPaymentId)
+    func cardListCard(with parentPaymentId: Int64) throws -> PaymentCard? {
+        return try getCardsManager().getCard(with: parentPaymentId)
     }
 
-    public func allCards() throws -> [PaymentCard] {
-        return try getCardListDataProvider().allItems()
+    func allCards() throws -> [PaymentCard] {
+        return try getCardsManager().getActiveCards()
     }
 
-    public func cardListReloadData() throws {
-        return try getCardListDataProvider().update()
+    func cardListReloadData() throws {
+        return try getCardsManager().cardListReload()
     }
 
-    public func cardListDeactivateCard(at index: Int, startHandler: (() -> Void)?, completion: ((Result<PaymentCard?, Error>) -> Void)?) {
+    func cardListDeactivateCard(
+        at index: Int,
+        startHandler: (() -> Void)?,
+        completion: ((Result<PaymentCard?, Error>) -> Void)?
+    ) {
         do {
-            let cardListProvider = try getCardListDataProvider()
-            let card = cardListProvider.item(at: index)
-            cardListProvider.deactivateCard(
-                cardId: card.cardId,
-                startHandler: {
-                    startHandler?()
-                },
-                completeHandler: { card in
+            let cardsManager = try getCardsManager()
+            let card = cardsManager.getCard(at: index)
+            cardsManager.removeCard(
+                cardId: card.cardId) { _ in
                     completion?(.success(card))
                 }
-            )
         } catch {
             completion?(.failure(error))
         }
@@ -1858,7 +1760,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    func cardListAddCard(
+    internal func cardListAddCard(
         number: String,
         expDate: String,
         cvc: String,
@@ -1868,28 +1770,14 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     ) {
 
         do {
-            let cardListDataProvider = try getCardListDataProvider()
+            let cardsManager = try getCardsManager()
             let checkType: PaymentCardCheckType = addCardNeedSetCheckTypeHandler?() ?? .no
 
-            cardListDataProvider.addCard(
-                number: number,
-                expDate: expDate,
-                cvc: cvc,
-                checkType: checkType.rawValue,
-                confirmationHandler: { [weak self] confirmationResponse, confirmationComplete in
-                    DispatchQueue.main.async {
-                        self?.checkConfirmAddCard(
-                            confirmationResponse,
-                            presenter: addCardViewPresenter,
-                            alertViewHelper: alertViewHelper,
-                            confirmationComplete
-                        )
-                    }
-                },
-                completeHandler: { response in
-                    DispatchQueue.main.async {
-                        completeHandler(response)
-                    }
+            cardsManager.addCard(
+                Card(number: number, expDate: expDate, cvc: cvc),
+                checkType: checkType,
+                completion: { _ in
+                    completeHandler(.success(nil))
                 }
             )
         } catch {
@@ -1897,7 +1785,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    public func presentCardList(
+    func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String,
         configuration: AcquiringViewConfiguration
@@ -1911,10 +1799,13 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             self.presentingViewController = presentingViewController
         }
 
-        let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
+        let cardsManager: ICardsManager = (try? getCardsManager()) ?? CardsManager(
+            cardsService: CardsService(customerKey: customerKey, coreSdk: acquiringSdk, confirmationHandler: self),
+            errorHandler: nil
+        )
 
         let (view, module) = cardListAssembly.cardsPresentingModule(
-            cardListProvider: cardListProvider,
+            cardsManager: cardsManager,
             configuration: configuration
         )
 
@@ -2100,4 +1991,28 @@ extension AcquiringUISDK: WKNavigationDelegate {
             } // termURL.hasSuffix confirmation3DSTerminationURL
         } // document.baseURI
     } // func webView didFinish
+}
+
+// MARK: - AcquiringSDK + ConfirmationHandler
+
+extension AcquiringUISDK: ConfirmationHandler {
+
+    public func handleAddCardConfirmation(
+        response: AttachCardPayload,
+        resultHandler: @escaping (Result<String, Error>) -> Void
+    ) {
+        guard let acquringView = acquiringView,
+              let alertViewHelper = acquiringViewConfiguration?.alertViewHelper else {
+            return
+        }
+
+        checkConfirmAddCard(
+            FinishAddCardResponse(from: response),
+            presenter: acquringView,
+            alertViewHelper: alertViewHelper
+        ) { result in
+            let mappedResult = result.map { $0.cardId ?? "" }
+            resultHandler(mappedResult)
+        }
+    }
 }

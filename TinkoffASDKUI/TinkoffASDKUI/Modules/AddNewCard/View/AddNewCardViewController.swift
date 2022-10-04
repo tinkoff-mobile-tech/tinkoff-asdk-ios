@@ -38,7 +38,8 @@ class AddNewCardViewController: PopUpViewContoller {
     //
     private var tableViewCells: [AddCardTableViewCells]!
     private var inputCardRequisitesController: InputCardRequisitesDataSource!
-    weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
+    private let cardsManager: ICardsManager
+    private let cardCheckType: PaymentCardCheckType
     var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
@@ -50,6 +51,24 @@ class AddNewCardViewController: PopUpViewContoller {
     }
 
     var style: Style?
+
+    // MARK: - Init
+
+    init(
+        cardsManager: ICardsManager,
+        cardCheckType: PaymentCardCheckType,
+        nibName: String?,
+        bundle: Bundle?
+    ) {
+        self.cardsManager = cardsManager
+        self.cardCheckType = cardCheckType
+        super.init(nibName: nibName, bundle: bundle)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - View Life Cycle
 
@@ -72,26 +91,32 @@ class AddNewCardViewController: PopUpViewContoller {
 
     private func onButtonAddTouch() {
         let requisites = inputCardRequisitesController.requisies()
-        if let number = requisites.number, let expDate = requisites.expDate, let cvc = requisites.cvc {
-            let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
-            if cardRequisitesValidator.validate(inputPAN: number),
-               cardRequisitesValidator.validate(inputValidThru: expDate),
-               cardRequisitesValidator.validate(inputCVC: cvc) {
-                viewWaiting.isHidden = false
-                cardListDataSourceDelegate?.cardListToAddCard(
-                    number: number,
-                    expDate: expDate,
-                    cvc: cvc,
-                    addCardViewPresenter: self,
-                    alertViewHelper: alertViewHelper,
-                    completeHandler: { [weak self] response in
-                        self?.closeViewController {
-                            self?.completeHandler?(response)
-                        }
-                    }
-                )
-            } // validate card requisites
+        let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
+
+        guard let number = requisites.number,
+              let expDate = requisites.expDate,
+              let cvc = requisites.cvc else {
+            return
         }
+
+        guard cardRequisitesValidator.validate(inputPAN: number),
+              cardRequisitesValidator.validate(inputValidThru: expDate),
+              cardRequisitesValidator.validate(inputCVC: cvc) else {
+            return
+        }
+
+        viewWaiting.isHidden = false
+
+        cardsManager.addCard(
+            Card(number: number, expDate: expDate, cvc: cvc),
+            checkType: cardCheckType,
+            completion: { [weak self] result in
+                self?.closeViewController {
+                    let mappedResult = result.map { _ -> PaymentCard? in nil }
+                    self?.completeHandler?(mappedResult)
+                }
+            }
+        )
     } // onButtonAddTouch
 }
 
