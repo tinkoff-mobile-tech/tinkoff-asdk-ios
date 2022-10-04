@@ -15,6 +15,7 @@
 ### Fixed
 
 * [MIC-6508] GetCardList response parsing  
+* [MIC-6551] CardList last card visibility
 
 ## [2.10.4] - 2022-09-26Z
 
