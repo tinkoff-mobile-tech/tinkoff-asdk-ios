@@ -143,17 +143,16 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                             case let .failure(error):
                                 completeHandler(.failure(error))
                             case let .success(confirmResponse):
-                                if let cardId = confirmResponse.cardId {
-                                    self?.fetch(startHandler: nil, completeHandler: { _, _ in
-                                        if let card = self?.item(with: cardId) {
-                                            completeHandler(.success(card))
-                                        } else if let card = self?.activeCards.last {
-                                            completeHandler(.success(card))
-                                        }
-                                    }) // fetch catrs list
-                                } else {
-                                    completeHandler(.success(nil))
-                                }
+                                let oldActiveCardIds = (self?.activeCards ?? []).map(\.cardId)
+
+                                self?.fetch(startHandler: nil, completeHandler: { _, _ in
+                                    if let card = confirmResponse.cardId.flatMap({ self?.item(with: $0) }) {
+                                        completeHandler(.success(card))
+                                    } else {
+                                        let card = self?.activeCards.first { !oldActiveCardIds.contains($0.cardId) }
+                                        completeHandler(.success(card))
+                                    }
+                                }) // fetch catrs list
                             }
                         } // confirmationHandler
                     }
