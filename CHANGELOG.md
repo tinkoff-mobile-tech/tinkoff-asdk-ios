@@ -17,6 +17,7 @@
 * [MIC-6508] GetCardList response parsing  
 * [MIC-6551] CardList last card visibility
 * [MIC-6567] CVC code fixed masking on add new card flow
+* [MIC-6552] Successful status of card addition response when using 3ds
 
 ## [2.10.4] - 2022-09-26Z
 
