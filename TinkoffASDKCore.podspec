@@ -5,6 +5,7 @@ Pod::Spec.new do |spec|
 	spec.summary = 'Мобильный SDK'
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
+	spec.changelog = 'https://github.com/Tinkoff/AcquiringSdk_IOS/blob/master/CHANGELOG.md'
 	spec.documentation_url = 'https://oplata.tinkoff.ru/develop/api/payments/'
 	spec.license = { :type => 'Apache 2.0', :file => 'TinkoffASDKCore/License.txt' }
 	spec.author = { 'Tinkoff' => 'v.budnikov@tinkoff.ru' }
@@ -16,6 +17,9 @@ Pod::Spec.new do |spec|
 	spec.source_files = 'TinkoffASDKCore/TinkoffASDKCore/**/*.swift'
 	spec.resource_bundles = {
 		'TinkoffASDKCoreResources' => ['TinkoffASDKCore/TinkoffASDKCore/**/*.{lproj,strings}']
+	}
+	spec.pod_target_xcconfig = { 
+		'CODE_SIGN_IDENTITY' => '' 
 	}
 	
   spec.test_spec 'Tests' do |test_spec|
