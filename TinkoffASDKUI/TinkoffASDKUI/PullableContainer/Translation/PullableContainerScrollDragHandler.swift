@@ -17,24 +17,25 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class PullableContainerScrollDragHandler: NSObject, PullableContainerDragHandler {
     private weak var dragController: PullableContainerDragController?
     private let scrollView: UIScrollView
-    
+
     private var isMoving = false
     private var translatingBeginOffset: CGFloat = 0
-    
-    init(dragController: PullableContainerDragController?,
-         scrollView: UIScrollView) {
+
+    init(
+        dragController: PullableContainerDragController?,
+        scrollView: UIScrollView
+    ) {
         self.dragController = dragController
         self.scrollView = scrollView
         super.init()
         setup()
     }
-    
+
     func cancel() {
         scrollView.panGestureRecognizer.isEnabled = false
         scrollView.panGestureRecognizer.isEnabled = true
@@ -45,15 +46,15 @@ private extension PullableContainerScrollDragHandler {
     func setup() {
         scrollView.panGestureRecognizer.addTarget(self, action: #selector(scrollPanGestureAction(_:)))
     }
-    
+
     @objc func scrollPanGestureAction(_ recognizer: UIPanGestureRecognizer) {
         let yTranslation = recognizer.translation(in: scrollView).y
         let yVelocity = recognizer.velocity(in: scrollView).y
-        
+
         let isScrollDown = yVelocity > 0
         let isOnTop = scrollView.contentOffset.y <= 0
         let isMovingDownAction = (isScrollDown && isOnTop)
-        
+
         switch recognizer.state {
         case .possible:
             scrollView.contentOffset = .zero
@@ -70,7 +71,7 @@ private extension PullableContainerScrollDragHandler {
                 }
                 let movingOffset = yTranslation - translatingBeginOffset
                 dragController?.didDragWith(offset: movingOffset)
-                self.scrollView.contentOffset = .zero
+                scrollView.contentOffset = .zero
             } else {
                 if isMoving {
                     scrollView.setContentOffset(.zero, animated: false)
@@ -79,7 +80,6 @@ private extension PullableContainerScrollDragHandler {
                     isMoving = !(movingOffset < 0)
                 }
             }
-            break
         case .cancelled, .ended:
             if isMoving {
                 dragController?.didEndDragging(offset: yTranslation, velocity: yVelocity)

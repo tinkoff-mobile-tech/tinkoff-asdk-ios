@@ -94,16 +94,16 @@ public class CardRequisitesBrandInfo: CardRequisites, CardRequisitesBrandInfoPro
         case .unrecognized:
             break
         case .mastercard:
-            result = UIImage(named: "mc_logo", in: .uiResources, compatibleWith: nil)
+            result = Asset.CardRequisites.mcLogo.image
             size = sizeLogoPaymentSystem
         case .visa:
-            result = UIImage(named: "visa_logo", in: .uiResources, compatibleWith: nil)
+            result = Asset.CardRequisites.visaLogo.image
             size = sizeLogoPaymentSystem
         case .mir:
-            result = UIImage(named: "mir_logo", in: .uiResources, compatibleWith: nil)
+            result = Asset.CardRequisites.mirLogo.image
             size = sizeLogoPaymentSystem
         case .maestro:
-            result = UIImage(named: "maestro_logo", in: .uiResources, compatibleWith: nil)
+            result = Asset.CardRequisites.maestroLogo.image
             size = sizeLogoPaymentSystem
         }
 

@@ -51,7 +51,7 @@ protocol CardListViewOutConnection: InputViewStatus {
         becomeFirstResponderListener: BecomeFirstResponderListener?,
         scanner: ICardRequisitesScanner?
     )
-    
+
     func selectCard(withId cardId: String)
     func selectRequisitesInput()
 }
@@ -383,7 +383,7 @@ extension CardListController: CardListViewOutConnection {
             }
         }
     }
-    
+
     func setPaymentType(_ paymentType: PaymentType) {
         self.paymentType = paymentType
     }
@@ -393,7 +393,7 @@ extension CardListController: CardListViewOutConnection {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
             if let indexPath = self?.lastActiveCardIndexPath,
-                indexPath.row != self?.scrollViewCurrentPage(self?.cardListCollectionView) {
+               indexPath.row != self?.scrollViewCurrentPage(self?.cardListCollectionView) {
                 self?.cardListCollectionView?.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             }
         }

@@ -1,6 +1,25 @@
 # Changelog
 ## [Unreleased]
 
+### Changed
+
+* [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
+* [MIC-6275] Swift Gen integration for TinkoffASDKUI module
+* [MIC-6292] Swift Package Support & build Package.swift step for CI/CD
+* [MIC-6293] Update ThreeDSWrapper to 1.0.7
+* [MIC-6364] SwiftLint & SwiftFormat + Automation + Merge Request required rules
+* [MIC-6210] Integrate new Network Layer & Change Public Methods in ASDKCore & Deprecate old methods
+* [MIC-5908] Deleted broken xproject files, moved Podfile into ASDKSample folder
+* [MIC-6276] SwiftGen for Core module + SwiftGen for Sample App
+
+### Fixed
+
+* [MIC-6508] GetCardList response parsing  
+* [MIC-6551] CardList last card visibility
+* [MIC-6567] CVC code fixed masking on add new card flow
+* [MIC-6552] Successful status of card addition response when using 3ds
+* [MIC-6541] Fixed Xcode 14 error Code signing bundles
+
 ## [2.10.4] - 2022-09-26Z
 
 ### Fixed

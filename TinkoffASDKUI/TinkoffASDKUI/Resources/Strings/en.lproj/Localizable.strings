@@ -1,0 +1,109 @@
+/*
+ *  Localizable.strings
+ *  TinkoffASDKUI
+ *
+ *  Copyright (c) 2020 Tinkoff Bank
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+"TinkoffAcquiring.unknown.response.status" = "Unknown Status";
+"TinkoffAcquiring.unknown.error.status" = "Unknown Error.\nPlease try again later.";
+//
+"TinkoffAcquiring.alert.title.error" = "Error";
+"TinkoffAcquiring.alert.title.cardSuccessAdded" = "Success";
+"TinkoffAcquiring.alert.title.addingCard" = "Adding card";
+"TinkoffAcquiring.alert.message.addingCardCancel" = "The operation was cancelled";
+//
+"TinkoffAcquiring.button.update" = "Update";
+"TinkoffAcquiring.button.cancel" = "Cancel";
+"TinkoffAcquiring.button.close" = "Close";
+"TinkoffAcquiring.button.ok" = "OK";
+"TinkoffAcquiring.button.payByCard" = "Pay by card";
+"TinkoffAcquiring.button.payBy" = "Pay by ";
+"TinkoffAcquiring.button.qrcode" = "QR-code";
+"TinkoffAcquiring.button.addCard" = "Add Card";
+"TinkoffAcquiring.button.confirm" = "Confirm";
+"TinkoffAcquiring.button.delete" = "Delete";
+//
+"TinkoffAcquiring.text.status.waitingInitPayment" = "Waiting payment initializer";
+"TinkoffAcquiring.text.status.waitingPayment" = "Waiting for payment receipt";
+"TinkoffAcquiring.text.status.cardListEmpty" = "Card List Empty";
+"TinkoffAcquiring.text.status.loading" = "Loading";
+"TinkoffAcquiring.text.status.selectingPaymentSource" = "Selecting a payment source";
+"TinkoffAcquiring.text.status.error.email" = "Incorrect email";
+"TinkoffAcquiring.text.status.error.emailEmpty" = "Please enter email";
+"TinkoffAcquiring.text.addcard" = "Add card";
+"TinkoffAcquiring.text.addNewCard" = "Add new card";
+"TinkoffAcquiring.text.loopConfirmation" = "To confirm the operation, we debited and refunded a small amount (up to 1,99 rubles)\nPlease specify it.";
+"TinkoffAcquiring.text.or" = "or";
+//
+"TinkoffAcquiring.hint.loopAmount" = "all amount, down to the penny";
+//
+"TinkoffAcquiring.error.loopAmount" = "please, enter the amount";
+//
+"TinkoffAcquiring.placeholder.cardNumber" = "Card number";
+"TinkoffAcquiring.placeholder.sendReceiptToEmail" = "Send receipt to email";
+"TinkoffAcquiring.placeholder.loopAmount" = "for example 0,89";
+//
+"TinkoffAcquiring.view.title.pay" = "Payment";
+"TinkoffAcquiring.view.title.savedCards" = "Saved cards";
+"TinkoffAcquiring.view.title.payQRCode" = "Payment by QR-code";
+"TinkoffAcquiring.view.title.confimration" = "Confirmation";
+
+// SBP Banks List
+"SBP.BanksList.Header.Title" = "Choose bank app";
+"SBP.BanksList.Header.Subtitle" = "Chosen app will be opened in order to confirm the purchase";
+"SBP.BanksList.Button.Title" = "Continue";
+
+"SBP.EmptyBanks.Title" = "No bank app is installed on your device";
+"SBP.EmptyBanks.Description" = "Install bank app that supports FPS to confirm the purchase";
+"SBP.EmptyBanks.ConfirmationButton.Title" = "OK";
+"SBP.EmptyBanks.InformationButton.Title" = "Check details on website";
+
+"SBP.Error.Title" = "Error occured during transaction";
+"SBP.Error.Description" = "Try again";
+
+"SBP.OpenApplication.Error" = "Failed to open application";
+"SBP.LoadingStatus.Title" = "Payment confirmation awaiting";
+
+// Tinkoff Pay
+"TP.Error.Title" = "Error occured during transaction";
+"TP.Error.Description" = "Try again";
+
+"TP.LoadingStatus.Title" = "Payment confirmation awaiting";
+
+"TP.NoTinkoffBankApp.Title" = "Tinkoff Bank is not installed";
+"TP.NoTinkoffBankApp.Description" = "Download the app or choose another payment method";
+"TP.NoTinkoffBankApp.Button.Install" = "Install";
+"TP.NoTinkoffBankApp.Button.Сancel" = "Cancel";
+
+// 3ds app-based
+"TinkoffAcquiring.threeds.cancelAuth" = "Cancel";
+"TinkoffAcquiring.threeds.acceptAuth" = "Confirmation";
+
+"TinkoffAcquiring.threeds.error.invalidPaymentSystem" = "Payment system is not supported";
+"TinkoffAcquiring.threeds.error.updatingCertsError" = "Unable to update certificates";
+"TinkoffAcquiring.threeds.error.timeout" = "3DS operation timed out";
+
+// CardList
+"CardList.title" = "Payment cards";
+"CardList.alert.title.deleteCard" = "Delete this card";
+"CardList.alert.message.deleteCard" = "Are you sure you want to delete the card %@?";
+"CardList.alert.action.cancel" = "Cancel";
+"CardList.alert.action.delete" = "Delete";
+"CardList.status.noCards" = "You don't have any saved cards";
+"CardList.button.addNewCard" = "Add new card";
+
+// AcquiringPayment
+"AcquiringPayment.button.chooseCard" = "Choose another card";

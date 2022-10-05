@@ -21,8 +21,8 @@ import UIKit
 
 class ButtonTableViewCell: UITableViewCell, NibLoadable {
 
-    @IBOutlet weak var button: UIButton!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var button: UIButton!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
     var onButtonTouch: (() -> Void)?
 

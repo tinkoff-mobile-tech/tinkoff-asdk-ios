@@ -1,0 +1,21 @@
+{
+    "payloads": [
+        {
+            "directoryServerID": "A000000658",
+            "type": "dsPublicKey",
+            "filename": "TestMirPublicKey",
+            "fileExtension": "cer",
+            "algorithm": "rsa",
+            "sha256Fingerprint": "0D:EB:BE:B4:67:6B:A6:C0:8D:84:3F:2F:3F:D0:C2:72:4E:D5:45:58:B0:22:F0:88:6A:CE:E3:D5:9B:9B:E2:2B",
+            "notAfterDate": "2026-05-19 10:07:27Z"
+        },
+        {   "directoryServerID": "A000000658",
+            "type": "dsRootCA",
+            "filename": "TestMirRootCA",
+            "fileExtension": "cer",
+            "algorithm": "rsa",
+            "sha256Fingerprint": "F3:74:47:BA:46:08:EC:CC:4C:23:2D:7D:29:52:9A:25:C2:3E:A4:40:53:1C:8D:91:C9:9F:3E:3F:11:4E:DD:33",
+            "notAfterDate": "2031-11-23 07:45:42Z"
+        }
+    ]
+}

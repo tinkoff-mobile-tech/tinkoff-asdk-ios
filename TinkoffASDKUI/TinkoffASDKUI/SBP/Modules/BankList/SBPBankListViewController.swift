@@ -17,16 +17,15 @@
 //  limitations under the License.
 //
 
-
-import UIKit
 import TinkoffASDKCore
+import UIKit
 
 public enum SBPPaymentError: Error {
     case failedToOpenBankApp(SBPBank)
 }
 
 final class SBPBankListViewController: UIViewController, PaymentPollingContent, CustomViewLoadable {
-    
+
     var didStartLoading: ((String) -> Void)?
     var didStopLoading: (() -> Void)?
     var didUpdatePaymentStatusResponse: ((PaymentStatusResponse) -> Void)?
@@ -34,19 +33,19 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
     var paymentStatusResponse: (() -> PaymentStatusResponse?)?
     var showAlert: ((String, String?, Error) -> Void)?
     var didStartPayment: (() -> Void)?
-    
+
     typealias CustomView = SBPBankListView
-    
+
     var scrollView: UIScrollView {
         customView.tableView
     }
-    
+
     var contentHeight: CGFloat {
         customView.tableView.contentSize.height + customView.continueButtonContainer.bounds.height
     }
-    
+
     var contentHeightDidChange: ((PullableContainerContent) -> Void)?
-    
+
     var banks: [SBPBank] {
         get {
             tableManager.banks
@@ -55,7 +54,7 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
             tableManager.banks = newValue
         }
     }
-    
+
     var selectedIndex: Int? {
         get {
             tableManager.selectedIndex
@@ -65,7 +64,7 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
             customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
         }
     }
-    
+
     private let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
     private let paymentService: PaymentService
     private let sbpBanksService: SBPBanksService
@@ -73,18 +72,20 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
     private let sbpPaymentService: SBPPaymentService
     private let style: SBPBankListView.Style
     private let tableManager: SBPBankListTableManager
-    
+
     private var sbpURL: URL?
-    
+
     // MARK: - Init
 
-    init(acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
-         paymentService: PaymentService,
-         sbpBanksService: SBPBanksService,
-         sbpApplicationService: SBPApplicationOpener,
-         sbpPaymentService: SBPPaymentService,
-         style: SBPBankListView.Style,
-         tableManager: SBPBankListTableManager) {
+    init(
+        acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+        paymentService: PaymentService,
+        sbpBanksService: SBPBanksService,
+        sbpApplicationService: SBPApplicationOpener,
+        sbpPaymentService: SBPPaymentService,
+        style: SBPBankListView.Style,
+        tableManager: SBPBankListTableManager
+    ) {
         self.acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration
         self.paymentService = paymentService
         self.sbpBanksService = sbpBanksService
@@ -94,23 +95,24 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
         self.tableManager = tableManager
         super.init(nibName: nil, bundle: nil)
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - View Life Cycle
-    
+
     override func loadView() {
         view = SBPBankListView(style: style)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         start()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         contentHeightDidChange?(self)
@@ -119,27 +121,22 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
 
 private extension SBPBankListViewController {
     func setup() {
-        customView.headerView.titleLabel.text = AcqLoc.instance.localize(
-            "SBP.BanksList.Header.Title"
-        )
-        customView.headerView.subtitleLabel.text = AcqLoc.instance.localize(
-            "SBP.BanksList.Header.Subtitle"
-        )
-        customView.continueButton.setTitle(AcqLoc.instance.localize(
-            "SBP.BanksList.Button.Title"
-        ), for: .normal)
-        
+        customView.headerView.titleLabel.text = Loc.Sbp.BanksList.Header.title
+        customView.headerView.subtitleLabel.text = Loc.Sbp.BanksList.Header.subtitle
+        customView.continueButton.setTitle(Loc.Sbp.BanksList.Button.title, for: .normal)
         customView.continueButton.isEnabled = customView.tableView.indexPathForSelectedRow != nil
-        customView.continueButton.addTarget(self,
-                                            action: #selector(didTapContinueButton),
-                                            for: .touchUpInside)
-        
+        customView.continueButton.addTarget(
+            self,
+            action: #selector(didTapContinueButton),
+            for: .touchUpInside
+        )
+
         tableManager.setTableView(customView.tableView)
-        tableManager.rowSelection = { [weak self] index in
+        tableManager.rowSelection = { [weak self] _ in
             self?.customView.continueButton.isEnabled = true
         }
     }
-    
+
     @objc func didTapContinueButton() {
         guard let selectedIndex = customView.tableView.indexPathForSelectedRow else {
             return
@@ -147,10 +144,10 @@ private extension SBPBankListViewController {
         let bank = banks[selectedIndex.row]
         openBankApplication(bank: bank)
     }
-    
+
     func start() {
         didStartLoading?("")
-        
+
         switch acquiringPaymentStageConfiguration.paymentStage {
         case let .finish(paymentId):
             paymentService.getPaymentStatus(paymentId: paymentId) { [weak self] result in
@@ -168,26 +165,28 @@ private extension SBPBankListViewController {
                 case let .failure(error):
                     self?.handleError(error)
                 case let .success(response):
-                    let statusResponse: PaymentStatusResponse = .init(success: true,
-                                                                      errorCode: 0,
-                                                                      errorMessage: nil,
-                                                                      orderId: response.orderId,
-                                                                      paymentId: response.paymentId,
-                                                                      amount: response.amount,
-                                                                      status: .new)
+                    let statusResponse = PaymentStatusResponse(
+                        success: true,
+                        errorCode: 0,
+                        errorMessage: nil,
+                        orderId: response.orderId,
+                        paymentId: response.paymentId,
+                        amount: response.amount,
+                        status: .new
+                    )
                     self?.didUpdatePaymentStatusResponse?(statusResponse)
                     self?.createSPBUrl(paymentId: response.paymentId)
                 }
             }
         }
     }
-    
+
     func createSPBUrl(paymentId: Int64) {
         sbpPaymentService.createSBPUrl(paymentId: paymentId) { [weak self] result in
             self?.handleSPBUrlCreation(result: result)
         }
     }
-    
+
     func handleSPBUrlCreation(result: Result<URL, Error>) {
         switch result {
         case let .success(url):
@@ -201,7 +200,7 @@ private extension SBPBankListViewController {
             }
         }
     }
-    
+
     func loadBanks() {
         sbpBanksService.loadBanks { [weak self] result in
             DispatchQueue.main.async {
@@ -217,65 +216,71 @@ private extension SBPBankListViewController {
             }
         }
     }
-    
+
     func handleBanksLoaded(banks: [SBPBank]) {
         let result = sbpBanksService.checkBankAvailabilityAndHandleTinkoff(banks: banks)
-        
+
         guard !result.banks.isEmpty else {
             noBanksAppAvailable?(self, cancelledResponse)
             return
         }
-        
+
         guard result.banks.count > 1 else {
             openBankApplication(bank: result.banks[0])
             return
         }
-        
+
         self.banks = result.banks
         selectedIndex = result.selectedIndex
         didStopLoading?()
     }
-    
+
     func openBankApplication(bank: SBPBank) {
-        guard let url = self.sbpURL else {
+        guard let url = sbpURL else {
             return
         }
-        
+
         do {
             try sbpApplicationService.openSBPUrl(url, in: bank, completion: { [weak self] result in
                 self?.didStartPayment?()
                 self?.handleBankApplicationOpen(result: result)
             })
         } catch {
-            showAlert?(AcqLoc.instance.localize("SBP.OpenApplication.Error"),
-                       nil,
-                       SBPPaymentError.failedToOpenBankApp(bank))
+            showAlert?(
+                Loc.Sbp.OpenApplication.error,
+                nil,
+                SBPPaymentError.failedToOpenBankApp(bank)
+            )
         }
     }
-    
+
     func handleBankApplicationOpen(result: Bool) {
         guard result else { return }
-        didStartLoading?(AcqLoc.instance.localize("SBP.LoadingStatus.Title"))
+        didStartLoading?(Loc.Sbp.LoadingStatus.title)
     }
-    
+
     func handleError(_ error: Error) {
         DispatchQueue.main.async {
-            let alertTitle = AcqLoc.instance.localize("SBP.Error.Title")
-            let alertDescription = AcqLoc.instance.localize("SBP.Error.Description")
-            
-            self.showAlert?(alertTitle,
-                            alertDescription,
-                            error)
+            let alertTitle = Loc.Sbp.Error.title
+            let alertDescription = Loc.Sbp.Error.description
+
+            self.showAlert?(
+                alertTitle,
+                alertDescription,
+                error
+            )
         }
     }
-    
+
     var cancelledResponse: PaymentStatusResponse {
-        PaymentStatusResponse(success: false,
-                              errorCode: 0,
-                              errorMessage: nil,
-                              orderId: paymentStatusResponse?()?.orderId ?? "",
-                              paymentId: paymentStatusResponse?()?.paymentId ?? 0,
-                              amount: paymentStatusResponse?()?.amount.int64Value ?? 0,
-                              status: .cancelled)
+        PaymentStatusResponse(
+            success: false,
+            errorCode: 0,
+            errorMessage: nil,
+            orderId: paymentStatusResponse?()?.orderId ?? "",
+            paymentId: paymentStatusResponse?()?.paymentId ?? 0,
+            amount: paymentStatusResponse?()?.amount.int64Value ?? 0,
+            status: .cancelled
+        )
     }
 }

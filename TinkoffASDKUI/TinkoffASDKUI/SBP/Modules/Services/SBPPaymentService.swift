@@ -17,30 +17,36 @@
 //  limitations under the License.
 //
 
-
+import Foundation
 import TinkoffASDKCore
 
 public protocol SBPPaymentService {
-    func createSBPUrl(paymentId: Int64,
-                      completion: ((Result<URL, Error>) -> Void)?)
+    func createSBPUrl(
+        paymentId: Int64,
+        completion: ((Result<URL, Error>) -> Void)?
+    )
 }
 
 public final class DefaultSBPPaymentService: SBPPaymentService {
     private let coreSDK: AcquiringSdk
-    
+
     public init(coreSDK: AcquiringSdk) {
         self.coreSDK = coreSDK
     }
-    
-    public func createSBPUrl(paymentId: Int64,
-                             completion: ((Result<URL, Error>) -> Void)?) {
+
+    public func createSBPUrl(
+        paymentId: Int64,
+        completion: ((Result<URL, Error>) -> Void)?
+    ) {
         requestSBPUrl(paymentId: paymentId, completion: completion)
     }
 }
 
 private extension DefaultSBPPaymentService {
-    func requestSBPUrl(paymentId: Int64,
-                       completion: ((Result<URL, Error>) -> Void)?) {
+    func requestSBPUrl(
+        paymentId: Int64,
+        completion: ((Result<URL, Error>) -> Void)?
+    ) {
         let paymentInvoice = PaymentInvoiceQRCodeData(paymentId: paymentId, paymentInvoiceType: .url)
         _ = coreSDK.paymentInvoiceQRCode(data: paymentInvoice) { result in
             switch result {
@@ -55,5 +61,3 @@ private extension DefaultSBPPaymentService {
         }
     }
 }
-
-

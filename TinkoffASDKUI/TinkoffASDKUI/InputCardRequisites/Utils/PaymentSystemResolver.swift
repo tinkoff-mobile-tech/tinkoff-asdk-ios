@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 enum PaymentSystemDecision {
@@ -67,7 +66,7 @@ final class PaymentSystemResolver: IPaymentSystemResolver {
         .visa: Pattern.visa,
         .masterCard: Pattern.masterCard,
         .maestro: Pattern.maestro,
-        .mir: Pattern.mir
+        .mir: Pattern.mir,
     ].compactMapValues(\.regex)
 
     // MARK: IPaymentSystemResolver

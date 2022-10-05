@@ -51,7 +51,7 @@ public protocol FetchServiceProtocol {
 /// Обычно загружается массив объектов, чтобы получить доступ к dataSourrce использум протокол `FetchObjectsDataSourceProtocol`
 /// Получение объектов загруженных с исползованием `FetchServiceProtocol`
 public protocol FetchDataSourceProtocol: FetchServiceProtocol where ObjectType == [U] {
-    ///
+    // swiftlint:disable:next type_name
     associatedtype U
     /// Общее колчесво объектов
     func count() -> Int
@@ -104,16 +104,25 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
     @available(*, deprecated, message: "Use init(coreSDK:customerKey:) instead")
     public init(sdk: AcquiringSdk?, customerKey: String) {
-        self.coreSDK = sdk
+        coreSDK = sdk
         self.customerKey = customerKey
     }
 
     // MARK: Card List
 
-    public func addCard(number: String, expDate: String, cvc: String, checkType: String,
-                        confirmationHandler: @escaping ((_ result: FinishAddCardResponse, _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void) -> Void),
-                        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void)
-    {
+    public func addCard(
+        number: String,
+        expDate: String,
+        cvc: String,
+        checkType: String,
+        confirmationHandler: @escaping (
+            (
+                _ result: FinishAddCardResponse,
+                _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
+            ) -> Void
+        ),
+        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
+    ) {
         // Step 1 init
         let initAddCardData = InitAddCardData(with: checkType, customerKey: customerKey)
         queryStatus = coreSDK?.cardListAddCardInit(data: initAddCardData, completion: { [weak self] responseInit in
@@ -134,17 +143,16 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                             case let .failure(error):
                                 completeHandler(.failure(error))
                             case let .success(confirmResponse):
-                                if let cardId = confirmResponse.cardId {
-                                    self?.fetch(startHandler: nil, completeHandler: { _, _ in
-                                        if let card = self?.item(with: cardId) {
-                                            completeHandler(.success(card))
-                                        } else if let card = self?.activeCards.last {
-                                            completeHandler(.success(card))
-                                        }
-                                    }) // fetch catrs list
-                                } else {
-                                    completeHandler(.success(nil))
-                                }
+                                let oldActiveCardIds = (self?.activeCards ?? []).map(\.cardId)
+
+                                self?.fetch(startHandler: nil, completeHandler: { _, _ in
+                                    if let card = confirmResponse.cardId.flatMap({ self?.item(with: $0) }) {
+                                        completeHandler(.success(card))
+                                    } else {
+                                        let card = self?.activeCards.first { !oldActiveCardIds.contains($0.cardId) }
+                                        completeHandler(.success(card))
+                                    }
+                                }) // fetch catrs list
                             }
                         } // confirmationHandler
                     }
@@ -165,7 +173,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
             case let .failure(error):
                 status = FetchStatus.error(error)
             case let .success(cardResponse):
-                if let cards = self?.dataSource.map({ (card) -> PaymentCard in
+                if let cards = self?.dataSource.map({ card -> PaymentCard in
                     if card.cardId == cardResponse.cardId {
                         var deactivated = card
                         deactivated.status = .deleted
@@ -178,7 +186,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                     self?.dataSource = cards
                 }
 
-                self?.activeCards = self?.dataSource.filter { (card) -> Bool in
+                self?.activeCards = self?.dataSource.filter { card -> Bool in
                     card.status == .active
                 } ?? []
 
@@ -202,7 +210,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         fetchStatus = .loading
         DispatchQueue.main.async { startHandler?() }
 
-        let initGetCardListData = InitGetCardListData(customerKey: customerKey)
+        let initGetCardListData = GetCardListData(customerKey: customerKey)
         queryStatus = coreSDK?.cardList(data: initGetCardListData, responseDelegate: self, completion: { [weak self] response in
             var status: FetchStatus<[PaymentCard]> = .loading
             var responseError: Error?
@@ -212,7 +220,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                 status = FetchStatus.error(error)
             case let .success(cardListResponse):
                 self?.dataSource = cardListResponse.cards
-                let activeCards = cardListResponse.cards.filter { (card) -> Bool in
+                let activeCards = cardListResponse.cards.filter { card -> Bool in
                     card.status == .active
                 }
                 self?.activeCards = activeCards
@@ -240,13 +248,13 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     }
 
     public func item(with identifier: String?) -> PaymentCard? {
-        return dataSource.first { (card) -> Bool in
+        return dataSource.first { card -> Bool in
             card.cardId == identifier
         }
     }
 
     public func item(with parentPaymentId: Int64) -> PaymentCard? {
-        return dataSource.first { (card) -> Bool in
+        return dataSource.first { card -> Bool in
             if let cardParentPaymentId = card.parentPaymentId {
                 return parentPaymentId == cardParentPaymentId
             }
@@ -254,21 +262,27 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
             return false
         }
     }
-    
+
     public func allItems() -> [PaymentCard] {
         return activeCards
     }
 }
 
 extension CardListDataProvider: NetworkTransportResponseDelegate {
-    public func networkTransport(didCompleteRawTaskForRequest request: URLRequest, withData data: Data, response _: URLResponse, error _: Error?) throws -> ResponseOperation {
+    public func networkTransport(
+        didCompleteRawTaskForRequest request: URLRequest,
+        withData data: Data,
+        response: URLResponse,
+        error: Error?
+    ) throws -> ResponseOperation {
         let cardLidt = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
 
         var parameters: [String: Any] = [:]
         parameters.updateValue(true, forKey: "Success")
         parameters.updateValue(0, forKey: "ErrorCode")
 
-        if let requestParamsData = request.httpBody, let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
+        if let requestParamsData = request.httpBody,
+           let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
             if let terminalKey = requestParams["TerminalKey"] {
                 parameters.updateValue(terminalKey, forKey: "TerminalKey")
             }

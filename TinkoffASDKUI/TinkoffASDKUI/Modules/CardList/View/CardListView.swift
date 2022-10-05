@@ -17,8 +17,7 @@
 //  limitations under the License.
 //
 
-
-import Foundation
+import UIKit
 
 protocol CardListViewDelegate: AnyObject {
     func cardListView(_ view: CardListView, didSelectCard card: CardList.Card)
@@ -81,7 +80,7 @@ final class CardListView: UIView {
     private lazy var primaryButton: ASDKButton = {
         let button = ASDKButton(
             style: .primary(
-                title: "CardList.button.addNewCard".localized,
+                title: Loc.CardList.Button.addNewCard,
                 buttonStyle: style.primaryButtonStyle
             )
         )
@@ -111,7 +110,7 @@ final class CardListView: UIView {
 
     func reload(cards: [CardList.Card]) {
         self.cards = cards
-        collectionView.reloadSections(IndexSet(integer: .zero))
+        collectionView.reloadData()
         updateNoCardsViewVisibility()
     }
 
@@ -155,7 +154,7 @@ final class CardListView: UIView {
             primaryButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             primaryButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.buttonBottomInset),
             primaryButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .buttonHorizontalInsets),
-            primaryButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.buttonHorizontalInsets)
+            primaryButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.buttonHorizontalInsets),
         ])
     }
 
@@ -252,6 +251,17 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         .zero
     }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        CGSize(
+            width: collectionView.frame.width,
+            height: primaryButton.frame.height + .contentAdditionalSpaceFromButton
+        )
+    }
 }
 
 // MARK: - Constants
@@ -260,6 +270,7 @@ private extension CGFloat {
     static let itemHeight: CGFloat = 56
     static let buttonBottomInset: CGFloat = 40
     static let buttonHorizontalInsets: CGFloat = 16
+    static let contentAdditionalSpaceFromButton: CGFloat = 16
 }
 
 private extension TimeInterval {
@@ -271,12 +282,8 @@ private extension TimeInterval {
 private extension MessageView.Style {
     static var noCards: MessageView.Style {
         MessageView.Style(
-            largeImage: UIImage(
-                named: "illustrations-common-light-card",
-                in: .uiResources,
-                compatibleWith: nil
-            ),
-            message: "CardList.status.noCards".localized
+            largeImage: Asset.Illustrations.illustrationsCommonLightCard.image,
+            message: Loc.CardList.Status.noCards
         )
     }
 }

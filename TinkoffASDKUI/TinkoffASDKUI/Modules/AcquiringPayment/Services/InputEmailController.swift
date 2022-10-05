@@ -20,10 +20,13 @@
 import UIKit
 
 protocol InputEmailControllerOutConnection: InputViewStatus {
-    func present(hint: String?, preFilledValue: String?, textFieldCell: InputFieldTableViewCellStatusProtocol, tableView: UITableView, firstResponderListener: BecomeFirstResponderListener?)
-
+    func present(
+        hint: String?, preFilledValue: String?,
+        textFieldCell: InputFieldTableViewCellStatusProtocol,
+        tableView: UITableView,
+        firstResponderListener: BecomeFirstResponderListener?
+    )
     func validateEmail(_ value: String?) -> Bool
-
     func inputValue() -> String?
 }
 
@@ -35,16 +38,17 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
     private var hint: String?
     private var text: String?
 
-    func present(hint: String?,
-                 preFilledValue: String?,
-                 textFieldCell: InputFieldTableViewCellStatusProtocol,
-                 tableView: UITableView,
-                 firstResponderListener: BecomeFirstResponderListener?)
-    {
+    func present(
+        hint: String?,
+        preFilledValue: String?,
+        textFieldCell: InputFieldTableViewCellStatusProtocol,
+        tableView: UITableView,
+        firstResponderListener: BecomeFirstResponderListener?
+    ) {
         if let value = hint {
             self.hint = value
         } else {
-            self.hint = AcqLoc.instance.localize("TinkoffAcquiring.placeholder.sendReceiptToEmail")
+            self.hint = Loc.TinkoffAcquiring.Placeholder.sendReceiptToEmail
         }
 
         self.textFieldCell = textFieldCell
@@ -69,14 +73,14 @@ class InputEmailController: NSObject, InputEmailControllerOutConnection {
             let result = predicate.evaluate(with: email)
             if result == false {
                 tableView.beginUpdates()
-                textFieldCell.setStatus(.error, statusText: AcqLoc.instance.localize("TinkoffAcquiring.text.status.error.email"))
+                textFieldCell.setStatus(.error, statusText: Loc.TinkoffAcquiring.Text.Status.Error.email)
                 tableView.endUpdates()
             }
 
             return result
         } else {
             tableView.beginUpdates()
-            textFieldCell.setStatus(.error, statusText: AcqLoc.instance.localize("TinkoffAcquiring.text.status.error.emailEmpty"))
+            textFieldCell.setStatus(.error, statusText: Loc.TinkoffAcquiring.Text.Status.Error.emailEmpty)
             tableView.endUpdates()
         }
 

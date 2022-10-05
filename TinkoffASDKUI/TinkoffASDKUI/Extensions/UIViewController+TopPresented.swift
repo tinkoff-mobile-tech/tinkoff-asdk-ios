@@ -17,24 +17,26 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 extension UIViewController {
     var topPresentedViewControllerOrSelfIfNotPresenting: UIViewController {
-        if let presentedViewController = self.presentedViewController {
+        if let presentedViewController = presentedViewController {
             return presentedViewController.topPresentedViewControllerOrSelfIfNotPresenting
         } else {
             return self
         }
     }
-    
-    func presentOnTop(viewController: UIViewController,
-                      animated: Bool,
-                      completion: (() -> Void)? = nil) {
-        self.topPresentedViewControllerOrSelfIfNotPresenting.present(viewController,
-                                                                     animated: animated,
-                                                                     completion: completion)
+
+    func presentOnTop(
+        viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)? = nil
+    ) {
+        topPresentedViewControllerOrSelfIfNotPresenting.present(
+            viewController,
+            animated: animated,
+            completion: completion
+        )
     }
 }
-

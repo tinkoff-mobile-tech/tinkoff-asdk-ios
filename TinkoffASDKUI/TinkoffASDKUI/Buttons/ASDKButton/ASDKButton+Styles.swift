@@ -17,19 +17,18 @@
 //  limitations under the License.
 //
 
-
-import Foundation
+import UIKit
 
 extension ASDKButton.Style {
     static var sbpPayment: ASDKButton.Style {
         ASDKButton.Style(
             title: Title(
-                text: AcqLoc.instance.localize("TinkoffAcquiring.button.payBy"),
+                text: Loc.TinkoffAcquiring.Button.payBy,
                 color: .asdk.dynamic.background.elevation1,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             icon: Icon(
-                image: UIImage(named: "buttonIconSBP", in: .uiResources, compatibleWith: nil),
+                image: Asset.buttonIconSBP.image,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             border: Border(cornerRadius: 4, width: 1, color: .sbpBorder),

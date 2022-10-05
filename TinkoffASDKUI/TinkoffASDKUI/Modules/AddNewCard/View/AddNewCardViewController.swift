@@ -38,19 +38,19 @@ class AddNewCardViewController: PopUpViewContoller {
     //
     private var tableViewCells: [AddCardTableViewCells]!
     private var inputCardRequisitesController: InputCardRequisitesDataSource!
-    var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
+    weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
     var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
     weak var scanerDataSource: AcquiringScanerProtocol?
     weak var alertViewHelper: AcquiringAlertViewProtocol?
-    
+
     // MARK: - Style
-    
+
     struct Style {
         let addCardButtonStyle: ButtonStyle
     }
-    
+
     var style: Style?
-    
+
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {
@@ -60,7 +60,10 @@ class AddNewCardViewController: PopUpViewContoller {
 
         inputCardRequisitesController = InputCardRequisitesController()
 
-        tableView.register(UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "InputCardRequisitesTableViewCell")
+        tableView.register(
+            UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources),
+            forCellReuseIdentifier: "InputCardRequisitesTableViewCell"
+        )
         tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AmountTableViewCell")
         tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PSLogoTableViewCell")
 
@@ -73,19 +76,20 @@ class AddNewCardViewController: PopUpViewContoller {
             let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
             if cardRequisitesValidator.validate(inputPAN: number),
                cardRequisitesValidator.validate(inputValidThru: expDate),
-               cardRequisitesValidator.validate(inputCVC: cvc)
-            {
+               cardRequisitesValidator.validate(inputCVC: cvc) {
                 viewWaiting.isHidden = false
-                cardListDataSourceDelegate?.cardListToAddCard(number: number,
-                                                            expDate: expDate,
-                                                            cvc: cvc,
-                                                            addCardViewPresenter: self,
-                                                            alertViewHelper: alertViewHelper,
-                                                            completeHandler: { [weak self] response in
-                                                                self?.closeViewController {
-                                                                    self?.completeHandler?(response)
-                                                                }
-                                                            })
+                cardListDataSourceDelegate?.cardListToAddCard(
+                    number: number,
+                    expDate: expDate,
+                    cvc: cvc,
+                    addCardViewPresenter: self,
+                    alertViewHelper: alertViewHelper,
+                    completeHandler: { [weak self] response in
+                        self?.closeViewController {
+                            self?.completeHandler?(response)
+                        }
+                    }
+                )
             } // validate card requisites
         }
     } // onButtonAddTouch
@@ -102,15 +106,21 @@ extension AddNewCardViewController: UITableViewDataSource {
         switch tableViewCells[indexPath.row] {
         case .title:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "AmountTableViewCell") as? AmountTableViewCell {
-                cell.labelTitle.text = AcqLoc.instance.localize("TinkoffAcquiring.text.addNewCard")
+                cell.labelTitle.text = Loc.TinkoffAcquiring.Text.addNewCard
                 cell.labelTitle.font = UIFont.boldSystemFont(ofSize: 22.0)
 
                 return cell
             }
 
         case .requisites:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "InputCardRequisitesTableViewCell") as? InputCardRequisitesTableViewCell {
-                let accessoryView = Bundle.uiResources.loadNibNamed("ButtonInputAccessoryView", owner: nil, options: nil)?.first as? ButtonInputAccessoryView
+            if let cell = tableView.dequeueReusableCell(
+                withIdentifier: "InputCardRequisitesTableViewCell"
+            ) as? InputCardRequisitesTableViewCell {
+                let accessoryView = Bundle.uiResources.loadNibNamed(
+                    "ButtonInputAccessoryView",
+                    owner: nil,
+                    options: nil
+                )?.first as? ButtonInputAccessoryView
                 if let style = style {
                     accessoryView?.buttonAction.backgroundColor = style.addCardButtonStyle.backgroundColor
                     accessoryView?.buttonAction.tintColor = style.addCardButtonStyle.titleColor
@@ -118,10 +128,12 @@ extension AddNewCardViewController: UITableViewDataSource {
                     assertionFailure("must inject style via property")
                 }
 
-                inputCardRequisitesController.setup(responderListener: self,
-                                                    inputView: cell,
-                                                    inputAccessoryView: accessoryView,
-                                                    scaner: scanerDataSource != nil ? self : nil)
+                inputCardRequisitesController.setup(
+                    responderListener: self,
+                    inputView: cell,
+                    inputAccessoryView: accessoryView,
+                    scaner: scanerDataSource != nil ? self : nil
+                )
                 inputCardRequisitesController.onButtonInputAccessoryTouch = { [weak self] in
                     self?.onButtonAddTouch()
                 }

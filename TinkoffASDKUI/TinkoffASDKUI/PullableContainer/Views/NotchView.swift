@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class NotchView: UIView {
@@ -25,12 +24,12 @@ final class NotchView: UIView {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         layer.cornerRadius = bounds.height / 2
@@ -43,4 +42,3 @@ private extension NotchView {
         layer.masksToBounds = true
     }
 }
-

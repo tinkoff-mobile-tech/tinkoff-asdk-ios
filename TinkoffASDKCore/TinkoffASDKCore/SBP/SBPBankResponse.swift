@@ -17,16 +17,15 @@
 //  limitations under the License.
 //
 
-
 import Foundation
 
 public struct SBPBankResponse: Decodable {
     public let banks: [SBPBank]
-    
+
     enum CodingKeys: String, CodingKey {
         case banks = "dictionary"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         var banksArray = try container.nestedUnkeyedContainer(forKey: .banks)
@@ -37,7 +36,6 @@ public struct SBPBankResponse: Decodable {
             }
             resultBanks.append(bank)
         }
-        self.banks = resultBanks
+        banks = resultBanks
     }
 }
-

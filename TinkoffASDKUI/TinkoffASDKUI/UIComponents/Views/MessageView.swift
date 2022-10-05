@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class MessageView: UIView {
@@ -79,7 +78,7 @@ final class MessageView: UIView {
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .contentHorizontalInsets),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentHorizontalInsets),
             stack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
-            stack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -.contentSpacing)
+            stack.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -.contentSpacing),
         ])
     }
 }

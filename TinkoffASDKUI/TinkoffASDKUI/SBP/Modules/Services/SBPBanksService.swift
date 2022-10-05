@@ -17,7 +17,7 @@
 //  limitations under the License.
 //
 
-
+import Foundation
 import TinkoffASDKCore
 
 protocol SBPBanksService {
@@ -26,19 +26,21 @@ protocol SBPBanksService {
 }
 
 final class DefaultSBPBanksService: SBPBanksService {
-    
+
     private let coreSDK: AcquiringSdk
     private let bundleImageProvider: BundleImageProvider
     private let bankAppAvailabilityChecker: SBPBankAppAvailabilityChecker
-    
-    init(coreSDK: AcquiringSdk,
-         bundleImageProvider: BundleImageProvider,
-         bankAppAvailabilityChecker: SBPBankAppAvailabilityChecker) {
+
+    init(
+        coreSDK: AcquiringSdk,
+        bundleImageProvider: BundleImageProvider,
+        bankAppAvailabilityChecker: SBPBankAppAvailabilityChecker
+    ) {
         self.coreSDK = coreSDK
         self.bundleImageProvider = bundleImageProvider
         self.bankAppAvailabilityChecker = bankAppAvailabilityChecker
     }
-    
+
     func loadBanks(completion: @escaping (Result<[SBPBank], Error>) -> Void) {
         coreSDK.loadSBPBanks(completion: { result in
             switch result {
@@ -49,31 +51,35 @@ final class DefaultSBPBanksService: SBPBanksService {
             }
         })
     }
-    
+
     func checkBankAvailabilityAndHandleTinkoff(banks: [SBPBank]) -> (banks: [SBPBank], selectedIndex: Int?) {
         var selectedIndex: Int?
         var resultBanks = banks.filter { bankAppAvailabilityChecker.checkIfBankAppAvailable(bank: $0) }
-        
+
         if let tinkoffIndex = resultBanks.firstIndex(where: { $0.name.contains(String.tinkoffBankName) }) {
             let tinkoff = resultBanks.remove(at: tinkoffIndex)
             resultBanks.insert(tinkoff, at: 0)
             selectedIndex = 0
         } else {
-            let tinkoff = SBPBank(name: .tinkoffBankName,
-                                  logoURL: buildTinkoffIconUrl(),
-                                  schema: .tinkoffScheme)
+            let tinkoff = SBPBank(
+                name: .tinkoffBankName,
+                logoURL: buildTinkoffIconUrl(),
+                schema: .tinkoffScheme
+            )
             if bankAppAvailabilityChecker.checkIfBankAppAvailable(bank: tinkoff) {
                 resultBanks.insert(tinkoff, at: 0)
                 selectedIndex = 0
             }
         }
-        
+
         return (resultBanks, selectedIndex)
     }
-    
+
     func buildTinkoffIconUrl() -> URL? {
-        bundleImageProvider.urlForImage(named: .tinkoffLogoName,
-                                        imageExtension: .tinkoffLogoExtension)
+        bundleImageProvider.urlForImage(
+            named: .tinkoffLogoName,
+            imageExtension: .tinkoffLogoExtension
+        )
     }
 }
 

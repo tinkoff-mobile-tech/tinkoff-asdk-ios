@@ -1,228 +1,475 @@
-## Исключаем из проверки директорию подов и локализации с картинками
---exclude Pods,/**/Generated
-
-## Определяем версию swift
+--exclude **/Pods, **/Generated
 --swiftversion 5.0
 
-## Применяемые правила
-
-
-## Заменяем && на запятую внутри if, guard, while
+# Default Rules (enabled by default)
+# 📃[andOperator] - Prefer comma over && in if, guard or while conditions.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#andOperator
 --enable andOperator
 
-## Заменяем class на AnyObject при объявлении протокола
+# 📃[anyObjectProtocol] - Prefer AnyObject over class in protocol definitions.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#anyObjectProtocol
 --enable anyObjectProtocol
 
-## Добавляем по одной строчке до и после MARK:
---enable blankLinesAroundMark
+# 📃[assertionFailures] - Changes all instances of assert(false, ...) to assertionFailure(...) and precondition(false, ...) to preconditionFailure(...).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#assertionFailures
+--enable assertionFailures
 
-## Убираем пустую строчку в конце объявления (например, массива или функции)
+# 📃[blankLinesAroundMark] - Insert blank line before and after MARK: comments.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#blankLinesAroundMark
+--enable blankLinesAroundMark
+# [lineaftermarks] - Insert blank line after "MARK:": "true" (default) or "false"
+--lineaftermarks true
+
+# 📃[blankLinesAtEndOfScope] - Remove trailing blank line at the end of a scope.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#blankLinesAtEndOfScope
 --enable blankLinesAtEndOfScope
 
-## Добавляем пустую строку перед class, struct, enum, extension, protocol, function
---enable blankLinesBetweenScopes
-
-## Открывающиеся скобки на той же строке (где if и else)
---allman false
-
-## Убираем лишние пустые строчки (остается одна)
---enable consecutiveBlankLines
-
-## Убираем лишние пробелы
---enable consecutiveSpaces
-
-## Убираем дублирующиеся импорты
---enable duplicateImports
-
-## Где писать else (на той же строке)
---elseposition same-line
-
-## Убираем все между пустых скобок
---enable emptyBraces
-
-
-## Меняем заголовок каждого файла согласно следующему формату
-#--header " \n {file}\n\n Создано и поддерживается командой разработки общих компонентов\n Дата создания: {created}\n\n Копирайт (c) {year} АО «Тинькофф Банк», лицензия ЦБ РФ № 2673. Все права защищены.\n//"
-
-
-## Убирает в начало объявления let и var внутри скоупа, например (let foo, let bar) = baz() на let (foo, bar) = baz()
---patternlet hoist
-
-## Левый отступ по tab (альтернативно, число пробелов)
---indent 4
-
-## Отступ внутри switch не применять (case пишется под switch)
---indentcase false
-
-## Форматирование if else конструкции
---ifdef indent
-
-## Заменяем проверку count == 0 на isEmpty
---enable isEmpty
-
-## Перемещаем разделитель : или ; или , с начала новой линии на конец предыдущей
---enable leadingDelimiters
-
-## Обеспечиваем пустую строчку в конце файла
---enable linebreakAtEndOfFile
-
-## Все разрывы строк используют один и тот же символ
---linebreaks lf
-
-## Разбиваем длинные бинарные числа на группы по 4 цифры (например, 0b01_0101_0101)
---binarygrouping 4,8
-
-## Разбиваем длинные десятичные числа на группы по 3 цифры
---decimalgrouping 3,6
-
-## Разбиваем длинные шестнадцатиричные числа на группы по 4 цифры
---hexgrouping 4,8
-
-## Разбиваем длинные восьмиричные числа на группы по 4 цифры
---octalgrouping 4,8
-
-## Разбиваем по группам экспоненциальные значения
---exponentgrouping disabled
-
-## Буквы в шестнадцетиричных числах прописным шрифтом
---hexliteralcase uppercase
-
-## Символ e строчными в экспоненциальном числе
---exponentcase lowercase
-
-## Включаем пробелы при описании рейнжей
---ranges spaced
-
-## Убираем лишние `` в случае если это не ключевое слово
---enable redundantBackticks
-
-## Убираем лишние break из switch
---enable redundantBreak
-
-## Убираем дублирующий параметра контроля доступа при объявлении расширения с параметром доступа
---enable redundantExtensionACL
-
-## Убираем ненужный get {} у read-only свойства
---enable redundantGet
-
-## Заменяем инициализацию с помощью .init() на ()
---enable redundantInit
-
-## Убираем let / var перед игнорируемой переменной _
---enable redundantLet
-
-## Убираем let error из catch, когда это не нужно
---enable redundantLetError
-
-## Убираем лишнюю инициализацию nil-ом при объявлении свойства опциональным
---enable redundantNilInit
-
-## Убираем лишнее объявление с @objc ключевым словом
---enable redundantObjc
-
-## Убираем лишние круглые скобки, где не обязательно
---enable redundantParens
-
-## Заменяем игнорируемый паттерн (_,_) на _
---enable redundantPattern
-
-## Убираем лишние объявления строк в enum: String при совпадении с именем кейса
---enable redundantRawValues
-
-## Убираем ненужный return из однострочных замыканий
---enable redundantReturn
-
-## Оставляем self только в init, для автозамыканий нужно определить selfrequired
---self init-only
-
-## Убираем ненужный возвращаемый тип Void из объявления функции
---enable redundantVoidReturnType
-
-## Убираем лишние ;
---semicolons inline
-
-## Убираем/добавляем пробелы около { }
---enable spaceAroundBraces
-
-## Убираем/добавляем пробелы около [ ]
---enable spaceAroundBrackets
-
-## Добавляем пробел около комментов
---enable spaceAroundComments
-
-## Убираем пробел около дженерика < >
---enable spaceAroundGenerics
-
-## Добавляем пробел между инфиксными операторами, также для операторов функции
---operatorfunc spaced
-
-## Добавляет/удаляет пробел около ( )
---enable spaceAroundParens
-
-## Добавляет пробел внутри { }
---enable spaceInsideBraces
-
-## Удаляет пробел внутри [ ]
---enable spaceInsideBrackets
-
-## Добавляем пробел/ы внутри комментариев (перед и после если нужно)
---enable spaceInsideComments
-
-## Убираем лишние пробелы внутри дженериков < >
---enable spaceInsideGenerics
-
-## Убираем лишние пробелы внутри ( )
---enable spaceInsideParens
-
-## Нормализует порядок спецификаторов для свойств, классов, функций (public, weak, lazy и т.д.)
---enable specifiers
-
-## Заменяем `self` на self при guard let `self` = self для weak self references
---enable strongifiedSelf
-
-## Исправляем если надо, чтобы видел Xcode
---enable todos
-
-## Не добавляем запятую после последнего элемента в массиве
---commas inline
-
-## Удаляем пробел в конце строчки
---trimwhitespace always
-
-## Применяем синтаксический сахар где можно
---enable typeSugar
-
-## Заменяем неиспользуемые переменные только в замыканиях
---stripunusedargs closure-only
-
-## Заменяем () на Void
---empty void
-
-## Элементы в словарях, массивах пишем после первого на одной строчке с объявлением
---wrapcollections before-first
-
-## Аргументы в функциях под названием функции
---wraparguments after-first
-
-## Круглая закрывающая скобка на строке с последним аргументом (balanced переносит на новую строчку)
---closingparen same-line
-
-
-## Отключенные правила
-
-
-## Отключаем удаление пустой линии вначале внутри {}, [], ()
+# 📃[blankLinesAtStartOfScope] - Remove leading blank line at the start of a scope.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#blankLinesAtStartOfScope
 --disable blankLinesAtStartOfScope
 
-## Отключаем замену fileprivate на private когда эквивалентны
---disable redundantFileprivate
+# 📃[blankLinesBetweenScopes] - Remove blank lines between import statements.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#blankLinesBetweenScopes
+--enable blankLinesBetweenScopes
 
-## Отключаем удаление weak спецификатора из @IBOutlet свойств
---disable strongOutlets
+# 📃[braces] - Wrap braces in accordance with selected style (K&R or Allman).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#braces
+--enable braces
+# [allman] - Use allman indentation style: "true" or "false" (default)
+--allman false
 
-## Отключаем конвертацию последнего аргумента замыкания в вызов замыкания
---disable trailingClosures
+# 📃[consecutiveBlankLines] - Replace consecutive blank lines with a single blank line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#consecutiveBlankLines
+--enable consecutiveBlankLines
 
+# 📃[consecutiveSpaces] - Replace consecutive spaces with a single space.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#consecutiveSpaces
+--enable consecutiveSpaces
+
+# 📃[duplicateImports] - Remove duplicate import statements.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#duplicateImports
+--enable duplicateImports
+
+# 📃[elseOnSameLine] - Place else, catch or while keyword in accordance with current style (same or next line).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#elseOnSameLine
+--enable elseOnSameLine
+# [elseposition] - Placement of else/catch: "same-line" (default) or "next-line"
+--elseposition same-line
+# [guardelse] - Guard else: "same-line", "next-line" or "auto" (default)
+--guardelse auto
+
+# 📃[emptyBraces] - Remove whitespace inside empty braces.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#emptyBraces
+--enable emptyBraces
+# [emptybraces] - Empty braces: "no-space" (default), "spaced" or "linebreak"
+--emptybraces no-space
+
+# 📃[enumNamespaces] - Converts types used for hosting only static members into enums (an empty enum is the canonical way to create a namespace in Swift as it can't be instantiated).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#enumNamespaces
+--disable enumNamespaces
+
+# 📃[extensionAccessControl] - Configure the placement of an extension's access control keyword.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#extensionAccessControl
+--enable extensionAccessControl
+# [extensionacl] - Place ACL "on-extension" (default) or "on-declarations"
+--extensionacl on-extension
+
+# 📃[fileHeader] - Use specified source file header template for all files.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#fileHeader
+--enable fileHeader
+# [header] - Header comments: "strip", "ignore", or the text you wish use
+--header ignore
+
+# 📃[hoistPatternLet] - Reposition let or var bindings within pattern.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#hoistPatternLet
+--enable hoistPatternLet
+# [patternlet] - let/var placement in patterns: "hoist" (default) or "inline"
+--patternlet hoist
+
+# 📃[indent] - Indent code in accordance with the scope level.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#indent
+--enable indent
+# [indent] - Number of spaces to indent, or "tab" to use tabs
+--indent 4
+# [tabwidth] - The width of a tab character. Defaults to "unspecified"
+--tabwidth unspecified
+# [smarttabs] - Align code independently of tab width. defaults to "enabled"
+--smarttabs enabled
+# [indentcase] - Indent cases inside a switch: "true" or "false" (default)
+--indentcase false
+# [ifdef] - #if indenting: "indent" (default), "no-indent" or "outdent"
+--ifdef indent
+# [xcodeindentation] - Match Xcode indenting: "enabled" or "disabled" (default)
+--xcodeindentation disabled
+# [indentstrings] - Indent Multiline Strings: "false" (default) or "true"
+--indentstrings false
+
+# 📃[initCoderUnavailable] - Add @available(*, unavailable) attribute to required init(coder:) when it hasn't been implemented.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#initCoderUnavailable
+--enable initCoderUnavailable
+
+# 📃[leadingDelimiters] - Move leading delimiters to the end of the previous line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#leadingDelimiters
+--enable leadingDelimiters
+
+# 📃[linebreakAtEndOfFile] - Add empty blank line at end of file.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#linebreakAtEndOfFile
+--enable linebreakAtEndOfFile
+
+# 📃[linebreaks] - Use specified linebreak character for all linebreaks (CR, LF or CRLF).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#linebreaks
+--enable linebreaks
+# [linebreaks] - Linebreak character to use: "cr", "crlf" or "lf" (default)
+--linebreaks lf
+
+# 📃[modifierOrder] - Use consistent ordering for member modifiers.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#modifierOrder
+--enable modifierOrder
+# [modifierorder] - Comma-delimited list of modifiers in preferred order
+--modifierorder
+
+# 📃[numberFormatting] - Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#numberFormatting
+--enable numberFormatting
+# [decimalgrouping] - Decimal grouping,threshold (default: 3,6) or "none", "ignore"
+--decimalgrouping 3,6
+# [binarygrouping] - Binary grouping,threshold (default: 4,8) or "none", "ignore"
+--binarygrouping 4,8
+# [octalgrouping] - Octal grouping,threshold (default: 4,8) or "none", "ignore"
+--octalgrouping 4,8
+# [hexgrouping] - Hex grouping,threshold (default: 4,8) or "none", "ignore"
+--hexgrouping 4,8
+# [fractiongrouping] - Group digits after '.': "enabled" or "disabled" (default)
+--fractiongrouping disabled
+# [exponentgrouping] - Group exponent digits: "enabled" or "disabled" (default)
+--exponentgrouping disabled
+# [hexliteralcase] - Casing for hex literals: "uppercase" (default) or "lowercase"
+--hexliteralcase uppercase
+# [exponentcase] - Case of 'e' in numbers: "lowercase" or "uppercase" (default)
+--exponentcase uppercase
+
+# 📃[preferKeyPath] - Convert trivial map { $0.foo } closures to keyPath-based syntax.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#preferKeyPath
+--enable preferKeyPath
+
+# 📃[redundantBackticks] - Remove redundant backticks around identifiers.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantBackticks
+--enable redundantBackticks
+
+# 📃[redundantBreak] - Remove redundant break in switch case.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantBreak
+--enable redundantBreak
+
+# 📃[redundantClosure] - Removes redundant closures bodies, containing a single statement, which are called immediately.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantClosure
+--enable redundantClosure
+
+# 📃[redundantExtensionACL] - Remove redundant access control modifiers.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantExtensionACL
+--enable redundantExtensionACL
+
+# 📃[redundantFileprivate] - Prefer private over fileprivate where equivalent.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantFileprivate
+--enable redundantFileprivate
+
+# 📃[redundantGet] - Remove unneeded get clause inside computed properties.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantGet
+--enable redundantGet
+
+# 📃[redundantInit] - Remove explicit init if not required.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantInit
+--enable redundantInit
+
+# 📃[redundantLet] - Remove redundant let/var from ignored variables.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantLet
+--enable redundantLet
+
+# 📃[redundantLetError] - Remove redundant let error from catch clause.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantLetError
+--enable redundantLetError
+
+# 📃[redundantNilInit] - Remove redundant nil default value (Optional vars are nil by default).
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantNilInit
+--enable redundantNilInit
+
+# 📃[redundantObjc] - Remove redundant @objc annotations.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantObjc
+--enable redundantObjc
+
+# 📃[redundantParens] - Remove redundant parentheses.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantParens
+--enable redundantParens
+
+# 📃[redundantPattern] - Remove redundant pattern matching parameter syntax.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantPattern
+--enable redundantPattern
+
+# 📃[redundantRawValues] - Remove redundant raw string values for enum cases.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantRawValues
+--enable redundantRawValues
+
+# 📃[redundantReturn] - Remove unneeded return keyword.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantReturn
+--enable redundantReturn
+
+# 📃[redundantSelf] - Insert/remove explicit self where applicable.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantSelf
+--enable redundantSelf
+# [self] - Explicit self: "insert", "remove" (default) or "init-only"
+--self remove
+# [selfrequired] - Comma-delimited list of functions with @autoclosure arguments
+--selfrequired
+
+# 📃[redundantType] - Remove redundant type from variable declarations.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantType
+--enable redundantType
+# [redundanttype] -  "inferred", "explicit", or "infer-locals-only" (default)
+--redundanttype infer-locals-only
+
+# 📃[redundantVoidReturnType] - Remove explicit Void return type.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantVoidReturnType
+--enable redundantVoidReturnType
+# [closurevoid] - Closure void returns: "remove" (default) or "preserve"
+--closurevoid remove
+
+# 📃[semicolons] - Remove semicolons.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#semicolons
+--enable semicolons
+# [semicolons] - Allow semicolons: "never" or "inline" (default)
+--semicolons inline
+
+# 📃[sortDeclarations] - Sorts the body of declarations with // swiftformat:sort and declarations between // swiftformat:sort:begin and // swiftformat:sort:end comments.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#sortDeclarations
+--enable sortDeclarations
+
+# 📃[sortedImports] - Sort import statements alphabetically.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#sortedImports
+--enable sortedImports
+# [importgrouping] - "testable-first/last", "alpha" (default) or "length"
+--importgrouping alpha
+
+# 📃[spaceAroundBraces] - Add or remove space around curly braces.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceAroundBraces
+--enable spaceAroundBraces
+
+# 📃[spaceAroundBrackets] - Add or remove space around square brackets.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceAroundBrackets
+--enable spaceAroundBrackets
+
+# 📃[spaceAroundComments] - Add space before and/or after comments.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceAroundComments
+--enable spaceAroundComments
+
+# 📃[spaceAroundGenerics] - Remove space around angle brackets.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceAroundGenerics
+--enable spaceAroundGenerics
+
+# 📃[spaceAroundOperators] - Add or remove space around operators or delimiters.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceAroundOperators
+--enable spaceAroundOperators
+# [operatorfunc] - Spacing for operator funcs: "spaced" (default) or "no-space"
+--operatorfunc spaced
+# [nospaceoperators] - Comma-delimited list of operators without surrounding space
+--nospaceoperators
+# [ranges] - Spacing for ranges: "spaced" (default) or "no-space"
+--ranges spaced
+
+# 📃[spaceAroundParens] - Add or remove space around parentheses.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceAroundParens
+--enable spaceAroundParens
+
+# 📃[spaceInsideBraces] - Add space inside curly braces.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceInsideBraces
+--enable spaceInsideBraces
+
+# 📃[spaceInsideBrackets] - Remove space inside square brackets.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceInsideBrackets
+--enable spaceInsideBrackets
+
+# 📃[spaceInsideComments] - Add leading and/or trailing space inside comments.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceInsideComments
+--enable spaceInsideComments
+
+# 📃[spaceInsideGenerics] - Remove space inside angle brackets.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceInsideGenerics
+--enable spaceInsideGenerics
+
+# 📃[spaceInsideParens] - Remove space inside parentheses.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#spaceInsideParens
+--enable spaceInsideParens
+
+# 📃[strongOutlets] - Remove weak modifier from @IBOutlet properties.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#strongOutlets
+--enable strongOutlets
+
+# 📃[strongifiedSelf] - Remove backticks around self in Optional unwrap expressions.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#strongifiedSelf
+--enable strongifiedSelf
+
+# 📃[todos] - Use correct formatting for TODO:, MARK: or FIXME: comments.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#todos
+--enable todos
+
+# 📃[trailingClosures] - Use trailing closure syntax where applicable.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#trailingClosures
+--enable trailingClosures
+# [trailingclosures] - Comma-delimited list of functions that use trailing closures
+--trailingclosures
+# [nevertrailing] - List of functions that should never use trailing closures
+--nevertrailing
+
+# 📃[trailingCommas] - Add or remove trailing comma from the last item in a collection literal.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#trailingCommas
+--enable trailingCommas
+# [commas] - Commas in collection literals: "always" (default) or "inline"
+--commas always
+
+# 📃[trailingSpace] - Remove trailing space at end of a line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#trailingSpace
+--enable trailingSpace
+# [trimwhitespace] - Trim trailing space: "always" (default) or "nonblank-lines"
+--trimwhitespace always
+
+# 📃[typeSugar] - Prefer shorthand syntax for Arrays, Dictionaries and Optionals.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#typeSugar
+--enable typeSugar
+# [shortoptionals] - Use ? for Optionals "always" (default) or "except-properties"
+--shortoptionals always
+
+# 📃[unusedArguments] - Mark unused function arguments with _.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#unusedArguments
+--disable unusedArguments
+# [stripunusedargs] - "closure-only", "unnamed-only" or "always" (default)
+--stripunusedargs always
+
+# 📃[void] - Use Void for type declarations and () for values.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#void
+--enable void
+# [voidtype] - How Void types are represented: "void" (default) or "tuple"
+--voidtype void
+
+# 📃[wrap] - Wrap lines that exceed the specified maximum width.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrap
+--enable wrap
+# [maxwidth] - Maximum length of a line before wrapping. defaults to "none"
+--maxwidth none
+# [nowrapoperators] - Comma-delimited list of operators that shouldn't be wrapped
+--nowrapoperators 
+# [assetliterals] - color/image literal width. "actual-width" or "visual-width"
+--assetliterals visual-width
+# [wrapternary] - Wrap ternary operators: "default", "before-operators"
+--wrapternary default
+
+# 📃[wrapArguments] - Align wrapped function arguments or collection elements.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrapArguments
+--enable wrapArguments
+# [wraparguments] - Wrap all arguments: "before-first", "after-first", "preserve"
+--wraparguments before-first
+# [wrapparameters] - Wrap func params: "before-first", "after-first", "preserve"
+--wrapparameters before-first
+# [wrapcollections] - Wrap array/dict: "before-first", "after-first", "preserve"
+--wrapcollections before-first
+# [closingparen] - Closing paren position: "balanced" (default) or "same-line"
+--closingparen balanced
+# [wrapreturntype] - Wrap return type: "if-multiline", "preserve" (default)
+--wrapreturntype preserve
+# [wrapconditions] - Wrap conditions: "before-first", "after-first", "preserve"
+--wrapconditions preserve
+# [wraptypealiases] - Wrap typealiases: "before-first", "after-first", "preserve"
+--wraptypealiases preserve
+
+# 📃[wrapAttributes] - Wrap @attributes onto a separate line, or keep them on the same line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrapAttributes
+--enable wrapAttributes
+# [funcattributes] - Function @attributes: "preserve", "prev-line", or "same-line"
+--funcattributes preserve
+# [typeattributes] - Type @attributes: "preserve", "prev-line", or "same-line"
+--typeattributes preserve
+# [varattributes] - Property @attributes: "preserve", "prev-line", or "same-line"
+--varattributes preserve
+
+# 📃[wrapMultilineStatementBraces] - Wrap the opening brace of multiline statements.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrapMultilineStatementBraces
 --disable wrapMultilineStatementBraces
 
---disable trailingSpace
+# 📃[yodaConditions] - Prefer constant values to be on the right-hand-side of expressions.
+# 🔗  https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#yodaConditions
+--enable yodaConditions
+# [yodaswap] - Swap yoda values: "always" (default) or "literals-only"
+--yodaswap always
+
+# Opt-in Rules (disabled by default)
+
+# 📃[acronyms] - Capitalizes acronyms when the first character is capitalized
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#acronyms
+--disable acronyms
+# [acronyms] - Acronyms to auto-capitalize. Defaults to "ID,URL,UUID".
+--acronyms ID,URL,UUID
+
+# 📃[blankLinesBetweenImports] - Remove blank lines between import statements.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#blankLinesBetweenImports
+--disable blankLinesBetweenImports
+
+# 📃[blockComments] - Changes block comments to single line comments.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#blockComments
+--disable blockComments
+
+# 📃[isEmpty] - Prefer isEmpty over comparing count against zero.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#isEmpty
+--disable isEmpty
+
+# 📃[markTypes] - Adds a mark comment before top-level types and extensions.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#markTypes
+--disable markTypes
+# [marktypes] - Mark types "always" (default), "never", "if-not-empty"
+# --marktypes if-not-empty
+# [typemark] - Template for type mark comments. Defaults to "MARK: - %t"
+--typemark "MARK: - %t"
+# [markextensions] - Mark extensions "always" (default), "never", "if-not-empty"
+# --markextensions if-not-empty
+# [extensionmark] - Mark for standalone extensions. Defaults to "MARK: - %t + %c"
+--extensionmark "MARK: - %t + %c"
+# [groupedextension] - Mark for extension grouped with extended type. ("MARK: %c")
+--groupedextension "MARK: %c"
+
+# 📃[organizeDeclarations] - Organizes declarations within class, struct, enum, actor, and extension bodies.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#organizeDeclarations
+--disable organizeDeclarations
+# [categorymark] - Template for category mark comments. Defaults to "MARK: %c"
+--categorymark "MARK: %c"
+# [markcategories] - Insert MARK comments between categories (true by default)
+--markcategories true
+# [beforemarks] - Declarations placed before first mark (e.g. typealias,struct)
+--beforemarks 
+# [lifecycle] - Names of additional Lifecycle methods (e.g. viewDidLoad)
+--lifecycle 
+# [organizetypes] - Declarations to organize (default: class,actor,struct,enum)
+# --organizetypes 
+# [structthreshold] - Minimum line count to organize struct body. Defaults to 0
+--structthreshold 0
+# [classthreshold] - Minimum line count to organize class body. Defaults to 0
+--classthreshold 0
+# [enumthreshold] - Minimum line count to organize enum body. Defaults to 0
+--enumthreshold 0
+# [extensionlength] - Minimum line count to organize extension body. Defaults to 0
+--extensionlength 0
+
+# 📃[preferDouble] - Replaces occurrences of CGFloat with Double when targeting Swift 5.5 and above.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#preferDouble
+--disable preferDouble
+
+# 📃[sortedSwitchCases] - Sorts switch cases alphabetically.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#sortedSwitchCases
+--disable sortedSwitchCases
+
+# 📃[wrapConditionalBodies] - Wrap the bodies of inline conditional statements onto a new line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrapConditionalBodies
+--disable wrapConditionalBodies
+
+# 📃[wrapEnumCases] - Writes one enum case per line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrapEnumCases
+--disable wrapEnumCases
+
+# 📃[wrapSwitchCases] - Writes one switch case per line.
+# 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#wrapSwitchCases
+--disable wrapSwitchCases

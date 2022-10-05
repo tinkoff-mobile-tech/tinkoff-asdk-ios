@@ -21,8 +21,8 @@ import UIKit
 
 class CartBuyButtonView: UITableViewHeaderFooterView, NibLoadable {
 
-    @IBOutlet weak var buttonBuy: UIButton!
-    @IBOutlet weak var labelTitle: UILabel!
+    @IBOutlet var buttonBuy: UIButton!
+    @IBOutlet var labelTitle: UILabel!
 
     var onButtonTouch: (() -> Void)?
 

@@ -17,29 +17,28 @@
 //  limitations under the License.
 //
 
-
 import TinkoffASDKCore
 
 public protocol PaymentService {
     func initPaymentWith(paymentData: PaymentInitData, completion: @escaping (Result<PaymentInitResponse, Error>) -> Void)
     func getPaymentStatus(paymentId: Int64, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void)
 }
- 
+
 final class DefaultPaymentService: PaymentService {
     private let coreSDK: AcquiringSdk
-    
+
     public init(coreSDK: AcquiringSdk) {
         self.coreSDK = coreSDK
     }
-    
+
     func initPaymentWith(paymentData: PaymentInitData, completion: @escaping (Result<PaymentInitResponse, Error>) -> Void) {
         _ = coreSDK.paymentInit(data: paymentData) { result in
             completion(result)
         }
     }
-    
+
     func getPaymentStatus(paymentId: Int64, completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void) {
-        _ = coreSDK.paymentOperationStatus(data: .init(paymentId: paymentId), completionHandler: { result in
+        _ = coreSDK.paymentOperationStatus(data: PaymentInfoData(paymentId: paymentId), completionHandler: { result in
             completion(result)
         })
     }

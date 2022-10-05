@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 public protocol CustomViewLoadable {
@@ -32,4 +31,3 @@ public extension CustomViewLoadable where Self: UIViewController {
         return customView
     }
 }
-

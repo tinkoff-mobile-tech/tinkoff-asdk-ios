@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-
 import UIKit
 
 final class PaymentCardRemovableView: UIView {
@@ -32,7 +31,7 @@ final class PaymentCardRemovableView: UIView {
     private lazy var removeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(
-            .cross?.withRenderingMode(.alwaysTemplate),
+            Asset.tuiIcServiceCross24.image.withRenderingMode(.alwaysTemplate),
             for: .normal
         )
         button.tintColor = .asdk.dynamic.text.tertiary
@@ -65,7 +64,7 @@ final class PaymentCardRemovableView: UIView {
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .leadingInset),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor),
             stack.bottomAnchor.constraint(equalTo: bottomAnchor),
-            removeButton.widthAnchor.constraint(equalToConstant: .removeButtonWidth)
+            removeButton.widthAnchor.constraint(equalToConstant: .removeButtonWidth),
         ])
     }
 
@@ -108,12 +107,6 @@ private extension CGFloat {
     static let removeButtonWidth: CGFloat = 48
 }
 
-private extension UIImage {
-    static var cross: UIImage? {
-        UIImage(named: "tui_ic_service_cross_24", in: .uiResources, compatibleWith: nil)
-    }
-}
-
 // MARK: - Configuration Mapping
 
 private extension PaymentCardRemovableView.Configuration {
@@ -125,4 +118,3 @@ private extension PaymentCardRemovableView.Configuration {
         )
     }
 }
-

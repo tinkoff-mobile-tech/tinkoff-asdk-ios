@@ -17,8 +17,8 @@
 //  limitations under the License.
 //
 
-
 import Foundation
+import class UIKit.UIDevice
 
 protocol IPaymentInitDataParamsEnricher {
     func enrich(_ paymentInitData: PaymentInitData) -> PaymentInitData
@@ -32,9 +32,9 @@ final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
             .connectionType: String.mobileSDK,
             .version: Version.versionString,
             .softwareVersion: UIDevice.current.systemVersion,
-            .deviceModel: UIDevice.current.deviceModel
+            .deviceModel: UIDevice.current.deviceModel,
         ]
-        
+
         paymentData.addPaymentData(additionalParams)
         return paymentData
     }

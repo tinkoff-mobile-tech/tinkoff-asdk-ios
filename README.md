@@ -17,16 +17,38 @@ Acquiring SDK позволяет интегрировать Интернет-Э�
 ## Требования и ограничения
 
 Для работы Tinkoff Acquiring SDK необходимо:
-* Поддержка iOS 11 и выше;
+* Поддержка iOS 12.3 и выше;
 
 ## Подключение
-Рекомендуется использовать [Cocoa Pods][cocoapods]. 
-Для подключения добавьте в файл Podfile зависимости:
+
+### Cocoapods
+
+Для подключения добавьте в файл `Podfile` зависимости:
 ```c
 pod 'TinkoffASDKCore'
 pod 'TinkoffASDKUI'
 ```
-Если вы не используете Cocoa Pods, необходимо добавить _**TinkoffASDKUI.xcodeproj**_ в проект.
+
+### Swift Package Manager
+
+1. Используя `Package.swift`
+   
+	Чтобы интегрировать AcquiringSdk в ваш проект используя `Package.swift` нужно указать зависимость.
+
+	```swift
+	dependencies: [
+   	 .package(url: "https://github.com/Tinkoff/AcquiringSdk_IOS.git", .upToNextMajor(from: "2.10.1"))
+	]
+	```
+1. Через Xcode
+
+	File -> Add packages -> https://github.com/Tinkoff/AcquiringSdk_IOS.git
+   
+Выберите нужные библиотеки:
+* **TinkoffASDKCore** - если вам нужен только Core функционал без UI части.
+* **TinkoffASDKUI** - уже включает в себя Core часть. Полное sdk - Core + UI часть.
+  
+![spm-products][img-spm-products]
 
 ## Подготовка к работе
 
@@ -334,6 +356,7 @@ if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration,
 [acquiring]: https://www.tinkoff.ru/kassa/
 [applepay]: https://developer.apple.com/documentation/passkit/apple_pay
 [cocoapods]: https://cocoapods.org
+[img-spm-products]: Docs/images/spm_products.png
 [img-pay]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/payscreen.png
 [img-pay2]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/payscreen2.png
 [img-pay3]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/payscreen3.png

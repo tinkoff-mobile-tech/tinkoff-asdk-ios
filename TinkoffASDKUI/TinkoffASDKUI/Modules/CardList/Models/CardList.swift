@@ -17,9 +17,8 @@
 //  limitations under the License.
 //
 
-
-import Foundation
 import TinkoffASDKCore
+import UIKit
 
 struct CardList {
     struct Card {
@@ -41,7 +40,7 @@ struct CardList {
 extension CardList.Alert {
     static func cardAdded(card: PaymentCard) -> CardList.Alert {
         CardList.Alert(
-            title: "TinkoffAcquiring.alert.title.cardSuccessAdded".localized,
+            title: Loc.TinkoffAcquiring.Alert.Title.cardSuccessAdded,
             message: "card id = \(card.cardId),\n\(card.pan) \(card.expDateFormat() ?? "")",
             icon: .success
         )
@@ -49,7 +48,7 @@ extension CardList.Alert {
 
     static func cardAddingFailed(with error: Error) -> CardList.Alert {
         CardList.Alert(
-            title: "TinkoffAcquiring.alert.title.error".localized,
+            title: Loc.TinkoffAcquiring.Alert.Title.error,
             message: error.localizedDescription,
             icon: .error
         )
