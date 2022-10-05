@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.11.0] - 2022-10-05Z
+
 ### Changed
 
 * [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
