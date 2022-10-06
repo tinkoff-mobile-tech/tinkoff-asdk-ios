@@ -1,6 +1,6 @@
 //
 //
-//  RemoveCardRequest.swift
+//  DeactivateCardRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,13 +19,13 @@
 
 import Foundation
 
-struct RemoveCardRequest: AcquiringRequest {
+struct DeactivateCardRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/RemoveCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
-    init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
+    init(deactivateCardData: DeactivateCardData, baseURL: URL) {
         self.baseURL = baseURL
         parameters = (try? deactivateCardData.encode2JSONObject()) ?? [:]
     }

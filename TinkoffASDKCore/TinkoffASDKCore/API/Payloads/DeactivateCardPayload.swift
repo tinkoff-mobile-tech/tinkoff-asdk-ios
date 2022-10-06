@@ -1,6 +1,6 @@
 //
 //
-//  RemoveCardPayload.swift
+//  DeactivateCardPayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct RemoveCardPayload: Decodable {
+public struct DeactivateCardPayload: Decodable {
     private enum CodingKeys: CodingKey {
         case cardId
         case cardStatus

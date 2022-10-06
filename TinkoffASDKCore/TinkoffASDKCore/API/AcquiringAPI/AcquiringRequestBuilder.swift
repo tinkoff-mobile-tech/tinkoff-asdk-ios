@@ -76,7 +76,7 @@ final class AcquiringRequestBuilder {
         AddCardRequest(initAddCardData: data, baseURL: baseURL)
     }
 
-    func attachCard(data: FinishAddCardData) -> AcquiringRequest {
+    func attachCard(data: AttachCardData) -> AcquiringRequest {
         AttachCardRequest(
             finishAddCardData: data,
             encryptor: rsaEncryptor,
@@ -90,8 +90,8 @@ final class AcquiringRequestBuilder {
         SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURL)
     }
 
-    func deactivateCard(data: InitDeactivateCardData) -> AcquiringRequest {
-        RemoveCardRequest(deactivateCardData: data, baseURL: baseURL)
+    func deactivateCard(data: DeactivateCardData) -> AcquiringRequest {
+        DeactivateCardRequest(deactivateCardData: data, baseURL: baseURL)
     }
 
     func getQR(data: PaymentInvoiceQRCodeData) -> AcquiringRequest {

@@ -131,7 +131,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                 DispatchQueue.main.async { completeHandler(.failure(error)) }
             case let .success(initAddCardResponse):
                 // Step 2 finish
-                let finishData = FinishAddCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
+                let finishData = AttachCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
                 self?.queryStatus = self?.coreSDK?.cardListAddCardFinish(data: finishData, responseDelegate: nil, completion: { responseFinish in
                     switch responseFinish {
                     case let .failure(error):
@@ -162,7 +162,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     }
 
     public func deactivateCard(cardId: String, startHandler: (() -> Void)?, completeHandler: @escaping (PaymentCard?) -> Void) {
-        let initData = InitDeactivateCardData(cardId: cardId, customerKey: customerKey)
+        let initData = DeactivateCardData(cardId: cardId, customerKey: customerKey)
 
         startHandler?()
 

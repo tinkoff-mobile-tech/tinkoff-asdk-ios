@@ -26,7 +26,7 @@ struct AttachCardRequest: AcquiringRequest {
     let parameters: HTTPParameters
 
     init(
-        finishAddCardData: FinishAddCardData,
+        finishAddCardData: AttachCardData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
@@ -46,7 +46,7 @@ struct AttachCardRequest: AcquiringRequest {
 
 private extension HTTPParameters {
     static func parameters(
-        requestData: FinishAddCardData,
+        requestData: AttachCardData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey

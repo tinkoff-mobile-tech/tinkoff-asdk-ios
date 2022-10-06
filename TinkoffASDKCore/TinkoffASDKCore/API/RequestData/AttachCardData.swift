@@ -1,6 +1,6 @@
 //
 //
-//  FinishAddCardData.swift
+//  AttachCardData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,10 @@
 
 import Foundation
 
-public struct FinishAddCardData {
+@available(*, deprecated, renamed: "AttachCardData")
+public typealias FinishAddCardData = AttachCardData
+
+public struct AttachCardData {
     let cardNumber: String
     let expDate: String
     let cvv: String

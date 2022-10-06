@@ -1,6 +1,6 @@
 //
 //
-//  InitDeactivateCardData.swift
+//  DeactivateCardData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,10 @@
 
 import Foundation
 
-public struct InitDeactivateCardData: Encodable {
+@available(*, deprecated, renamed: "DeactivateCardData")
+public typealias InitDeactivateCardData = DeactivateCardData
+
+public struct DeactivateCardData: Encodable {
     private enum CodingKeys: CodingKey {
         case cardId
         case customerKey
