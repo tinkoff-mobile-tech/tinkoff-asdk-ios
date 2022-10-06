@@ -73,6 +73,10 @@ struct CoreAssembly {
             threeDSURLBuilder: threeDSURLBuilder()
         )
     }
+
+    func externalAPIClient() -> IExternalAPIClient {
+        ExternalAPIClient(networkClient: buildNetworkClient())
+    }
 }
 
 private extension CoreAssembly {

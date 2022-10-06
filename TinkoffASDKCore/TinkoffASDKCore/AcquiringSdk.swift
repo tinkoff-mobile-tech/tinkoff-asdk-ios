@@ -40,12 +40,14 @@ public final class AcquiringSdk: NSObject {
     private let terminalKey: String
     private let publicKey: SecKey
     private let baseURL: URL
-    private let certsConfigUrl: URL
     @available(*, deprecated, message: "Property does not affect anything")
     public var fpsEnabled = false
 
     private let coreAssembly: CoreAssembly
     private let api: API
+    private let requestBuilder: AcquiringRequestBuilder
+    private let externalAPI: IExternalAPIClient
+    private let externalRequestBuilder: IExternalRequestsBuilder
 
     // MARK: Init
 
@@ -66,10 +68,18 @@ public final class AcquiringSdk: NSObject {
         if let url = URL(string: "https://\(configuration.serverEnvironment.rawValue)/"),
            let certsConfigUrl = URL(string: "https://\(configuration.configEnvironment.rawValue)/") {
             baseURL = url
-            self.certsConfigUrl = certsConfigUrl
+            self.externalRequestBuilder = ExternalRequestsBuilder(appBasedConfigURL: certsConfigUrl)
         } else {
             throw AcquiringSdkError.url
         }
+
+        self.requestBuilder = AcquiringRequestBuilder(
+            terminalKey: terminalKey,
+            publicKey: publicKey,
+            baseURL: baseURL
+        )
+
+        self.externalAPI = coreAssembly.externalAPIClient()
     }
 
     /// Получить IP адрес
@@ -173,11 +183,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentInitData,
         completion: @escaping (_ result: Result<InitPayload, Error>) -> Void
     ) -> Cancellable {
-        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
-        let enrichedData = paramsEnricher.enrich(data)
-        let request = InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.initRequest(data: data), completion: completion)
     }
 
     /// Инициирует платежную сессию для платежа
@@ -211,15 +217,7 @@ public final class AcquiringSdk: NSObject {
         data: FinishPaymentRequestData,
         completion: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = FinishAuthorizeRequest(
-            requestData: data,
-            encryptor: RSAEncryptor(),
-            cardDataFormatter: coreAssembly.cardDataFormatter(),
-            publicKey: publicKey,
-            baseURL: baseURL
-        )
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.finishAuthorize(data: data), completion: completion)
     }
 
     /// Подтверждает инициированный платеж передачей карточных данных
@@ -255,15 +253,7 @@ public final class AcquiringSdk: NSObject {
         data: Check3DSRequestData,
         completion: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = Check3DSVersionRequest(
-            check3DSRequestData: data,
-            encryptor: RSAEncryptor(),
-            cardDataFormatter: coreAssembly.cardDataFormatter(),
-            publicKey: publicKey,
-            baseURL: baseURL
-        )
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.check3DSVersion(data: data), completion: completion)
     }
 
     /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
@@ -316,9 +306,7 @@ public final class AcquiringSdk: NSObject {
         data: GetPaymentStateData,
         completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = GetPaymentStateRequest(data: data, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.getPaymentState(data: data), completion: completion)
     }
 
     /// Получить статус платежа
@@ -351,8 +339,7 @@ public final class AcquiringSdk: NSObject {
         data: ChargeRequestData,
         completion: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = ChargePaymentRequest(data: data, baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.charge(data: data), completion: completion)
     }
 
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
@@ -385,9 +372,7 @@ public final class AcquiringSdk: NSObject {
         data: GetCardListData,
         completion: @escaping (_ result: Result<[PaymentCard], Error>) -> Void
     ) -> Cancellable {
-        let request = GetCardListRequest(getCardListData: data, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.getCardList(data: data), completion: completion)
     }
 
     /// - Parameters:
@@ -429,9 +414,7 @@ public final class AcquiringSdk: NSObject {
         data: InitAddCardData,
         completion: @escaping (_ result: Result<AddCardPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = AddCardRequest(initAddCardData: data, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.addCard(data: data), completion: completion)
     }
 
     /// - Parameters:
@@ -471,15 +454,7 @@ public final class AcquiringSdk: NSObject {
         data: FinishAddCardData,
         completion: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = AttachCardRequest(
-            finishAddCardData: data,
-            encryptor: RSAEncryptor(),
-            cardDataFormatter: coreAssembly.cardDataFormatter(),
-            publicKey: publicKey,
-            baseURL: baseURL
-        )
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.attachCard(data: data), completion: completion)
     }
 
     /// Завершает привязку карты к клиенту
@@ -539,9 +514,7 @@ public final class AcquiringSdk: NSObject {
         data: SubmitRandomAmountData,
         completion: @escaping (_ result: Result<SubmitRandomAmountPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.submitRandomAmount(data: data), completion: completion)
     }
 
     /// Подтверждение карты путем блокировки случайной суммы
@@ -605,9 +578,7 @@ public final class AcquiringSdk: NSObject {
         data: InitDeactivateCardData,
         completion: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = RemoveCardRequest(deactivateCardData: data, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.deactivateCard(data: data), completion: completion)
     }
 
     /// Удаление привязанной карты покупателя
@@ -652,9 +623,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentInvoiceQRCodeData,
         completion: @escaping (_ result: Result<GetQrPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = GetQrRequest(data: data, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.getQR(data: data), completion: completion)
     }
 
     /// Сгенерировать QR-код для оплаты
@@ -686,8 +655,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentInvoiceSBPSourceType,
         completion: @escaping (_ result: Result<GetStaticQrPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = GetStaticQrRequest(sourceType: data, baseURL: baseURL)
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.getStaticQR(data: data), completion: completion)
     }
 
     /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
@@ -727,9 +695,7 @@ public final class AcquiringSdk: NSObject {
     public func getTinkoffPayStatus(
         completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
-
-        return api.performDeprecatedRequest(request, delegate: nil, completion: completion)
+        api.performDeprecatedRequest(requestBuilder.getTinkoffPayStatus(), delegate: nil, completion: completion)
     }
 
     // MARK: Get TinkoffPay Link
@@ -749,9 +715,7 @@ public final class AcquiringSdk: NSObject {
         version: GetTinkoffPayStatusResponse.Status.Version,
         completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
-
-        return api.performRequest(request, completion: completion)
+        api.performRequest(requestBuilder.getTinkoffPayLink(paymentId: paymentId, version: version), completion: completion)
     }
 
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
@@ -779,9 +743,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns: Cancellable
     @discardableResult
     public func getCertsConfig(completion: @escaping (Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void) -> Cancellable {
-        let request = Get3DSAppBasedCertsConfigRequest(baseURL: certsConfigUrl)
-
-        return api.performRequest(request, completion: completion)
+        externalAPI.perform(externalRequestBuilder.get3DSAppBasedConfigRequest(), completion: completion)
     }
 }
 

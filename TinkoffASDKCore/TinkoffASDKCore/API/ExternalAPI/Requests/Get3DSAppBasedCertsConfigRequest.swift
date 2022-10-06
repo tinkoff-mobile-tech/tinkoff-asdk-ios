@@ -19,13 +19,10 @@
 
 import Foundation
 
-struct Get3DSAppBasedCertsConfigRequest: APIRequest {
-    typealias Payload = Get3DSAppBasedCertsConfigPayload
-
+struct Get3DSAppBasedCertsConfigRequest: NetworkRequest {
     let baseURL: URL
     let path: String = "certs-configs/asdk-certs-config.json"
     let httpMethod: HTTPMethod = .get
-    let decodingStrategy: APIDecodingStrategy = .plain
 
     init(baseURL: URL) {
         self.baseURL = baseURL
