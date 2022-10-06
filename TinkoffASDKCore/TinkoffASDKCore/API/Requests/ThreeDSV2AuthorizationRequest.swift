@@ -19,10 +19,6 @@
 
 import Foundation
 
-struct CresData: Encodable {
-    let cres: String
-}
-
 struct ThreeDSV2AuthorizationRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Submit3DSAuthorizationV2"
