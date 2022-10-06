@@ -68,13 +68,22 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
                 networkClient.performRequest(request) { response in
                     guard !cancellable.isCancelled else { return }
 
-                    let result = response.result.tryMap { data in
-                        try apiDecoder.decode(Payload.self, from: data, with: request.decodingStrategy)
-                    }
+                    let result = response
+                        .result
+                        .tryMap { data in
+                            try apiDecoder.decode(Payload.self, from: data, with: request.decodingStrategy)
+                        }
+                        .mapError { error -> Error in
+                            switch error {
+                            case let error as APIFailureError:
+                                return APIError.failure(error)
+                            default:
+                                return APIError.invalidResponse
+                            }
+                        }
 
                     completion(result)
                 }
-
             case let .failure(error):
                 completion(.failure(error))
             }
@@ -114,24 +123,6 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
             completion(result)
         }
     }
-
-    // MARK: Helpers
-
-//    private func handleResponseData<Request: APIRequest>(
-//        _ data: Data,
-//        for request: Request,
-//        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
-//    ) {
-//        do {
-//            let apiResponse = try apiResponseDecoder.decode(data: data, for: request)
-//            let payload = try apiResponse.result.get()
-//            completion(.success(payload))
-//        } catch let apiFailureError as APIFailureError {
-//            completion(.failure(APIError.failure(apiFailureError)))
-//        } catch {
-//            completion(.failure(APIError.invalidResponse))
-//        }
-//    }
 }
 
 private final class DeprecatedDecoder {
