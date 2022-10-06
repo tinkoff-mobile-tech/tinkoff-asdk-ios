@@ -1,6 +1,6 @@
 //
 //
-//  FinishPaymentRequestData.swift
+//  FinishAuthorizeData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct FinishPaymentRequestData {
+public struct FinishAuthorizeData {
     /// Номер платежа, полученного после инициализации платежа
     let paymentId: String
     let paymentSource: PaymentSourceData

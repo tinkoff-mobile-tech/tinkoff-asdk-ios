@@ -36,10 +36,10 @@ final class AcquiringRequestBuilder {
         return InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
     }
 
-    func finishAuthorize(data: FinishPaymentRequestData) -> AcquiringRequest {
+    func finishAuthorize(data: FinishAuthorizeData) -> AcquiringRequest {
         FinishAuthorizeRequest(
             requestData: data,
-            encryptor: RSAEncryptor(),
+            encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
             publicKey: publicKey,
             baseURL: baseURL
@@ -49,7 +49,7 @@ final class AcquiringRequestBuilder {
     func check3DSVersion(data: Check3DSRequestData) -> AcquiringRequest {
         Check3DSVersionRequest(
             check3DSRequestData: data,
-            encryptor: RSAEncryptor(),
+            encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
             publicKey: publicKey,
             baseURL: baseURL

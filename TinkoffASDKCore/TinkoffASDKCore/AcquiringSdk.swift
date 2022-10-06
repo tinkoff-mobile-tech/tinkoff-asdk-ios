@@ -196,16 +196,16 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
-    // MARK: Finish Payment
+    // MARK: Finish Authorize
 
     /// Подтверждает инициированный платеж передачей карточных данных
     ///
     /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
+    ///   - data: `FinishAuthorizeData`
     ///   - completion: результат операции `FinishAuthorizePayload` в случае удачного проведения платежа и `Error` - в случае ошибки.
     @discardableResult
-    public func finishPayment(
-        data: FinishPaymentRequestData,
+    public func finishAuthorize(
+        data: FinishAuthorizeData,
         completion: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.finishAuthorize(data: data)
@@ -223,7 +223,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void
     ) -> Cancellable {
-        let finishData = FinishPaymentRequestData(
+        let finishData = FinishAuthorizeData(
             paymentId: String(data.paymentId),
             paymentSource: data.paymentSource,
             infoEmail: data.infoEmail,

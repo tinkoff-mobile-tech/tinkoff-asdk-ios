@@ -26,7 +26,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
     let parameters: HTTPParameters
 
     init(
-        requestData: FinishPaymentRequestData,
+        requestData: FinishAuthorizeData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
@@ -63,7 +63,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
 
 private extension HTTPParameters {
     static func parameters(
-        data: FinishPaymentRequestData,
+        data: FinishAuthorizeData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
