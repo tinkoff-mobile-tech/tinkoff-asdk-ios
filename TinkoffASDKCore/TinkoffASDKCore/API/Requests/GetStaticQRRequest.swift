@@ -1,6 +1,6 @@
 //
 //
-//  GetStaticQrPayload.swift
+//  GetStaticQRRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,20 +19,14 @@
 
 import Foundation
 
-public struct GetStaticQrPayload: Decodable {
-    private enum CodingKeys: CodingKey {
-        case qrCodeData
+struct GetStaticQRRequest: AcquiringRequest {
+    let baseURL: URL
+    let path: String = "v2/GetStaticQr"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
-        var stringValue: String {
-            switch self {
-            case .qrCodeData: return APIConstants.Keys.qrCodeData
-            }
-        }
-    }
-
-    public let qrCodeData: String
-
-    public init(qrCodeData: String) {
-        self.qrCodeData = qrCodeData
+    init(sourceType: GetQRDataType, baseURL: URL) {
+        self.baseURL = baseURL
+        parameters = [APIConstants.Keys.dataType: sourceType.rawValue]
     }
 }

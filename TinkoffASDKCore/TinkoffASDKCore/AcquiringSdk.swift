@@ -608,7 +608,7 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Сгенерировать QR-код для оплаты
+    /// Сгенерировать QR для оплаты
     ///
     /// - Parameters:
     ///   - data: `GetQRData` информация о заказе на оплату
@@ -624,31 +624,31 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
-    // MARK: Get Static QR Code
+    // MARK: Get Static QR
 
-    /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
+    /// Выставить счет / принять оплату, сгенерировать QR для принятия платежей
     ///
     /// - Parameters:
     ///   - data: `GetQRDataType` тип возвращаемых данных для генерации QR-кода
-    ///   - completion: результат операции `GetStaticQrPayload` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - completion: результат операции `GetStaticQRPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    public func getStaticQRCode(
+    public func getStaticQR(
         data: GetQRDataType,
-        completion: @escaping (_ result: Result<GetStaticQrPayload, Error>) -> Void
+        completion: @escaping (_ result: Result<GetStaticQRPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.getStaticQR(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
+    /// Выставить счет / принять оплату, сгенерировать QR для принятия платежей
     ///
     /// - Parameters:
-    ///   - data: `PaymentInvoiceQRCodeResponseType` информация о заказе на оплату
+    ///   - data: `GetQRDataType` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use `getStaticQRCode(data:completion:)` instead")
+    @available(*, deprecated, message: "Use `getStaticQR(data:completion:)` instead")
     public func paymentInvoiceQRCodeCollector(
         data: GetQRDataType,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void

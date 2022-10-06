@@ -99,7 +99,7 @@ final class AcquiringRequestBuilder {
     }
 
     func getStaticQR(data: GetQRDataType) -> AcquiringRequest {
-        GetStaticQrRequest(sourceType: data, baseURL: baseURL)
+        GetStaticQRRequest(sourceType: data, baseURL: baseURL)
     }
 
     func getTinkoffPayStatus() -> AcquiringRequest {
