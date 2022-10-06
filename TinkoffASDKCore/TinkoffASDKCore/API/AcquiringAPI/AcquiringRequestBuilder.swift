@@ -11,18 +11,28 @@ final class AcquiringRequestBuilder {
     private let terminalKey: String
     private let publicKey: SecKey
     private let baseURL: URL
-    private let cardDataFormatter = CardDataFormatter()
-    private let rsaEncryptor = RSAEncryptor()
+    private let initParamsEnricher: IPaymentInitDataParamsEnricher
+    private let cardDataFormatter: CardDataFormatter
+    private let rsaEncryptor: RSAEncryptor
 
-    init(terminalKey: String, publicKey: SecKey, baseURL: URL) {
+    init(
+        terminalKey: String,
+        publicKey: SecKey,
+        baseURL: URL,
+        initParamsEnricher: IPaymentInitDataParamsEnricher,
+        cardDataFormatter: CardDataFormatter,
+        rsaEncryptor: RSAEncryptor
+    ) {
         self.terminalKey = terminalKey
         self.baseURL = baseURL
         self.publicKey = publicKey
+        self.initParamsEnricher = initParamsEnricher
+        self.cardDataFormatter = cardDataFormatter
+        self.rsaEncryptor = rsaEncryptor
     }
 
     func initRequest(data: PaymentInitData) -> AcquiringRequest {
-        let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
-        let enrichedData = paramsEnricher.enrich(data)
+        let enrichedData = initParamsEnricher.enrich(data)
         return InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
     }
 
@@ -44,6 +54,10 @@ final class AcquiringRequestBuilder {
             publicKey: publicKey,
             baseURL: baseURL
         )
+    }
+
+    func submit3DSAuthorizationV2(data: CresData) -> AcquiringRequest {
+        ThreeDSV2AuthorizationRequest(data: data, baseURL: baseURL)
     }
 
     func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest {

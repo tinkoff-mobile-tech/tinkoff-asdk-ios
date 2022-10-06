@@ -29,7 +29,7 @@ struct CoreAssembly {
         baseURLProvider = try BaseURLProvider(host: configuration.serverEnvironment.rawValue)
     }
 
-    func buildAPI() -> IAcquiringAPIClient {
+    func buildAcquiringClient() -> IAcquiringAPIClient {
         AcquiringAPIClient(
             requestAdapter: AcquiringRequestAdapter(terminalKey: configuration.credential.terminalKey),
             networkClient: buildNetworkClient(),
@@ -67,10 +67,10 @@ struct CoreAssembly {
         )
     }
 
-    func threeDSDeviceParamsProvider(screenSize: CGSize, language: AcquiringSdkLanguage) -> ThreeDSDeviceParamsProvider {
+    func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
         DefaultThreeDSDeviceParamsProvider(
             screenSize: screenSize,
-            language: language,
+            language: configuration.language ?? .ru,
             threeDSURLBuilder: threeDSURLBuilder()
         )
     }

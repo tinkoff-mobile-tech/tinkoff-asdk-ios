@@ -82,6 +82,7 @@ enum APIConstants {
         static let params = "Params"
         static let redirectUrl = "RedirectUrl"
         static let isAllowed = "Allowed"
+        static let language = "Language"
     }
 
     enum Values {
