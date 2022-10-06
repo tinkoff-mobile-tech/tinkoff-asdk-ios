@@ -1,6 +1,6 @@
 //
 //
-//  Check3DSRequestData.swift
+//  Check3DSData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct Check3DSRequestData {
+public struct Check3DSVersionData {
     public let paymentId: String
     public let paymentSource: PaymentSourceData
 

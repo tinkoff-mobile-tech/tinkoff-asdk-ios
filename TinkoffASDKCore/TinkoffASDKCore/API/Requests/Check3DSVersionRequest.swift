@@ -26,7 +26,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
     let parameters: HTTPParameters
 
     init(
-        check3DSRequestData: Check3DSRequestData,
+        check3DSRequestData: Check3DSVersionData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
@@ -46,7 +46,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
 
 private extension HTTPParameters {
     static func create(
-        requestData: Check3DSRequestData,
+        requestData: Check3DSVersionData,
         encryptor: RSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey

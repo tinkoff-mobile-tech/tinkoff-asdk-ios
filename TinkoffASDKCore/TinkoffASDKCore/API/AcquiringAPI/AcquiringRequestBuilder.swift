@@ -46,7 +46,7 @@ final class AcquiringRequestBuilder {
         )
     }
 
-    func check3DSVersion(data: Check3DSRequestData) -> AcquiringRequest {
+    func check3DSVersion(data: Check3DSVersionData) -> AcquiringRequest {
         Check3DSVersionRequest(
             check3DSRequestData: data,
             encryptor: rsaEncryptor,

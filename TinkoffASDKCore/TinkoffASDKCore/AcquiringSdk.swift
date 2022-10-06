@@ -218,7 +218,7 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `PaymentFinishRequestData`
     ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведения платежа и `Error` - в случае ошибки.
     @discardableResult
-    @available(*, deprecated, message: "Use `finishPayment(data:completion:)` instead")
+    @available(*, deprecated, message: "Use `finishAuthorize(data:completion:)` instead")
     public func paymentFinish(
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void
@@ -242,11 +242,11 @@ public final class AcquiringSdk: NSObject {
     /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
     ///
     /// - Parameters:
-    ///   - data: `Check3DSRequestData`
+    ///   - data: `Check3DSVersionData`
     ///   - completion: результат операции `Check3DSVersionPayload` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
     public func check3DSVersion(
-        data: Check3DSRequestData,
+        data: Check3DSVersionData,
         completion: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.check3DSVersion(data: data)
@@ -264,7 +264,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentFinishRequestData,
         completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
     ) -> Cancellable {
-        let check3DSData = Check3DSRequestData(paymentId: String(data.paymentId), paymentSource: data.paymentSource)
+        let check3DSData = Check3DSVersionData(paymentId: String(data.paymentId), paymentSource: data.paymentSource)
         let request = acquiringRequests.check3DSVersion(data: check3DSData)
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
