@@ -44,7 +44,7 @@ public final class AcquiringSdk: NSObject {
     public var fpsEnabled = false
 
     private let coreAssembly: CoreAssembly
-    private let api: API
+    private let api: IAcquiringAPIClient
     private let requestBuilder: AcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequestBuilder: IExternalRequestsBuilder

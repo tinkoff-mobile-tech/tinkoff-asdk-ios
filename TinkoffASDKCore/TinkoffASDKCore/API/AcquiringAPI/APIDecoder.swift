@@ -23,27 +23,25 @@ protocol IAPIDecoder {
     func decode<Payload: Decodable>(
         _ type: Payload.Type,
         from data: Data,
-        with strategy: APIDecodingStrategy
+        with strategy: AcquiringDecodingStrategy
     ) throws -> Payload
 }
 
 final class APIDecoder: IAPIDecoder {
-    private let decoder: JSONDecoder = .customISO8601Decoding
+    private let decoder = JSONDecoder()
 
     // MARK: IAPIDecoder
 
     func decode<Payload: Decodable>(
         _ type: Payload.Type,
         from data: Data,
-        with strategy: APIDecodingStrategy
+        with strategy: AcquiringDecodingStrategy
     ) throws -> Payload {
         switch strategy {
-        case .acquiring(.standard):
+        case .standard:
             return try decodeStandard(data: data).result.get()
-        case .acquiring(.clipped):
+        case .clipped:
             return try decodeClipped(data: data).result.get()
-        case .plain:
-            return try decoder.decode(type, from: data)
         }
     }
 
@@ -76,32 +74,5 @@ final class APIDecoder: IAPIDecoder {
         } catch {
             return try decodeStandard(data: data)
         }
-    }
-}
-
-// MARK: JSONDecoder + CustomISO8601Decoding
-
-private extension JSONDecoder {
-    private enum DateDecodingError: Error {
-        case invalidDate
-    }
-
-    /// Используется кастомная логика парсинга даты для запроса `Get3DSAppBasedCertsConfigRequest`,
-    /// в остальных случаях даты в полях не приходят
-    static var customISO8601Decoding: JSONDecoder {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [
-            .withFullDate,
-            .withFullTime,
-            .withDashSeparatorInDate,
-            .withColonSeparatorInTime,
-        ]
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .custom { decoder in
-            let container = try decoder.singleValueContainer()
-            let stringDate = try container.decode(String.self)
-            return try formatter.date(from: stringDate).orThrow(DateDecodingError.invalidDate)
-        }
-        return decoder
     }
 }

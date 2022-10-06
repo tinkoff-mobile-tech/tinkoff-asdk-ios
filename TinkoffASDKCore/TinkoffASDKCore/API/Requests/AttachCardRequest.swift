@@ -20,13 +20,10 @@
 import Foundation
 
 struct AttachCardRequest: APIRequest {
-    typealias Payload = AttachCardPayload
-
     let baseURL: URL
     let path: String = "v2/AttachCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(
         finishAddCardData: FinishAddCardData,

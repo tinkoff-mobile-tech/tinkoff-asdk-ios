@@ -20,13 +20,10 @@
 import Foundation
 
 struct ChargePaymentRequest: APIRequest {
-    typealias Payload = ChargePaymentPayload
-
     let baseURL: URL
     let path: String = "v2/Charge"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(data: ChargeRequestData, baseURL: URL) {
         self.baseURL = baseURL

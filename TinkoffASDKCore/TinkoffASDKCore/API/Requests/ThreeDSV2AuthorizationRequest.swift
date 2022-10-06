@@ -24,13 +24,10 @@ struct CresData: Encodable {
 }
 
 struct ThreeDSV2AuthorizationRequest: APIRequest {
-    typealias Payload = PaymentStatusResponse
-
     let baseURL: URL
     let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(data: CresData, baseURL: URL) {
         self.baseURL = baseURL

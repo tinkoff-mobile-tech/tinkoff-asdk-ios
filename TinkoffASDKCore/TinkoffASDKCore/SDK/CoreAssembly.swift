@@ -29,8 +29,8 @@ struct CoreAssembly {
         baseURLProvider = try BaseURLProvider(host: configuration.serverEnvironment.rawValue)
     }
 
-    func buildAPI() -> API {
-        AcquiringAPI(
+    func buildAPI() -> IAcquiringAPIClient {
+        AcquiringAPIClient(
             networkClient: buildNetworkClient(),
             apiDecoder: APIDecoder()
         )

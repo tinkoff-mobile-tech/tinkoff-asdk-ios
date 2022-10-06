@@ -20,12 +20,9 @@
 import Foundation
 
 public struct GetTinkoffPayStatusRequest: APIRequest {
-    typealias Payload = GetTinkoffPayStatusPayload
-
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     // MARK: - Init
 

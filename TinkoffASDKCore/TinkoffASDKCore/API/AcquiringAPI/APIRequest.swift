@@ -19,17 +19,15 @@
 
 import Foundation
 
-enum APIDecodingStrategy {
-    enum AcquiringDecodingStrategy {
-        case standard
-        case clipped
-    }
-
-    case acquiring(AcquiringDecodingStrategy)
-    case plain
+enum AcquiringDecodingStrategy {
+    case standard
+    case clipped
 }
 
 protocol APIRequest: NetworkRequest {
-    associatedtype Payload: Decodable
-    var decodingStrategy: APIDecodingStrategy { get }
+    var decodingStrategy: AcquiringDecodingStrategy { get }
+}
+
+extension APIRequest {
+    var decodingStrategy: AcquiringDecodingStrategy { .standard }
 }

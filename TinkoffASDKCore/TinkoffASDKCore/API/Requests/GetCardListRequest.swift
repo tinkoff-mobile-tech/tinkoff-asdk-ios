@@ -20,13 +20,11 @@
 import Foundation
 
 struct GetCardListRequest: APIRequest {
-    typealias Payload = [PaymentCard]
-
     let baseURL: URL
     let path: String = "v2/GetCardList"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.clipped)
+    let decodingStrategy: AcquiringDecodingStrategy = .clipped
 
     init(getCardListData: GetCardListData, baseURL: URL) {
         self.baseURL = baseURL

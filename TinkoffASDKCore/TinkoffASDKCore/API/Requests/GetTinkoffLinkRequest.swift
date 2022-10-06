@@ -8,12 +8,9 @@
 import Foundation
 
 struct GetTinkoffLinkRequest: APIRequest {
-    typealias Payload = GetTinkoffLinkPayload
-
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     // MARK: - Init
 

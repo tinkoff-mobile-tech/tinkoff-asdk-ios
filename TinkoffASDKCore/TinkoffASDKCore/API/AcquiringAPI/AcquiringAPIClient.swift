@@ -1,6 +1,6 @@
 //
 //
-//  AcquiringAPI.swift
+//  AcquiringAPIClient.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,10 +19,10 @@
 
 import Foundation
 
-protocol API {
-    func performRequest<Request: APIRequest>(
-        _ request: Request,
-        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
+protocol IAcquiringAPIClient {
+    func performRequest<Payload: Decodable>(
+        _ request: APIRequest,
+        completion: @escaping (Result<Payload, Error>) -> Void
     ) -> Cancellable
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
@@ -33,7 +33,7 @@ protocol API {
     ) -> Cancellable
 }
 
-final class AcquiringAPI: API {
+final class AcquiringAPIClient: IAcquiringAPIClient {
     private let networkClient: INetworkClient
     private let apiDecoder: IAPIDecoder
     @available(*, deprecated, message: "Use apiDecoder instead")
@@ -47,32 +47,28 @@ final class AcquiringAPI: API {
         self.apiDecoder = apiDecoder
     }
 
-    // MARK: - API
+    // MARK: API
 
-    func performRequest<Request: APIRequest>(
-        _ request: Request,
-        completion: @escaping (Swift.Result<Request.Payload, Error>) -> Void
+    func performRequest<Payload: Decodable>(
+        _ request: APIRequest,
+        completion: @escaping (Swift.Result<Payload, Error>) -> Void
     ) -> Cancellable {
         networkClient.performRequest(request) { [apiDecoder] response in
             let result = response.result.tryMap { data in
-                try apiDecoder.decode(
-                    Request.Payload.self,
-                    from: data,
-                    with: request.decodingStrategy
-                )
+                try apiDecoder.decode(Payload.self, from: data, with: request.decodingStrategy)
             }
 
             completion(result)
-//            do {
-//                let data = try response.result.get()
-//                self.handleResponseData(
-//                    data,
-//                    for: request,
-//                    completion: completion
-//                )
-//            } catch {
-//                completion(.failure(error))
-//            }
+            //            do {
+            //                let data = try response.result.get()
+            //                self.handleResponseData(
+            //                    data,
+            //                    for: request,
+            //                    completion: completion
+            //                )
+            //            } catch {
+            //                completion(.failure(error))
+            //            }
         }
     }
 

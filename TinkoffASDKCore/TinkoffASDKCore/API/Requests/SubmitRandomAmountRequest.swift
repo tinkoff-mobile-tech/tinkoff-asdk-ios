@@ -20,13 +20,10 @@
 import Foundation
 
 struct SubmitRandomAmountRequest: APIRequest {
-    typealias Payload = SubmitRandomAmountPayload
-
     let baseURL: URL
     let path: String = "v2/SubmitRandomAmount"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(submitRandomAmountData: SubmitRandomAmountData, baseURL: URL) {
         self.baseURL = baseURL

@@ -20,13 +20,10 @@
 import Foundation
 
 struct FinishAuthorizeRequest: APIRequest {
-    typealias Payload = FinishAuthorizePayload
-
     let baseURL: URL
     let path: String = "v2/FinishAuthorize"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(
         requestData: FinishPaymentRequestData,

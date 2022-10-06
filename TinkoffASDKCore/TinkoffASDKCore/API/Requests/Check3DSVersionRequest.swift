@@ -20,13 +20,10 @@
 import Foundation
 
 struct Check3DSVersionRequest: APIRequest {
-    typealias Payload = Check3DSVersionPayload
-
     let baseURL: URL
     let path: String = "v2/Check3dsVersion"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(
         check3DSRequestData: Check3DSRequestData,

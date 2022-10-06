@@ -20,13 +20,10 @@
 import Foundation
 
 struct RemoveCardRequest: APIRequest {
-    typealias Payload = RemoveCardPayload
-
     let baseURL: URL
     let path: String = "v2/RemoveCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: APIDecodingStrategy = .acquiring(.standard)
 
     init(deactivateCardData: InitDeactivateCardData, baseURL: URL) {
         self.baseURL = baseURL
