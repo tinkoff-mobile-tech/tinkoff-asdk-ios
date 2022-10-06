@@ -700,7 +700,7 @@ public final class AcquiringSdk: NSObject {
         completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.getTinkoffPayLink(paymentId: paymentId, version: version)
-        return acquiringAPI.performRequest(request, completion: completion)
+        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
     /// Получить ссылку для оплаты с помощью `TinkoffPay`

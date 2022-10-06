@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetTinkoffLinkPayload {
+public struct GetTinkoffLinkPayload: ResponseOperation {
     public enum Status: Codable {
         public enum Version: String, Codable {
             case version1 = "1.0"
