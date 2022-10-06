@@ -9,13 +9,13 @@ import Foundation
 
 protocol IAcquiringRequestAdapter {
     func adapt(
-        request: APIRequest,
-        completion: @escaping (Result<APIRequest, Error>) -> Void
+        request: AcquiringRequest,
+        completion: @escaping (Result<AcquiringRequest, Error>) -> Void
     )
 }
 
 final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
-    fileprivate struct AdaptedRequest: APIRequest {
+    fileprivate struct AdaptedRequest: AcquiringRequest {
         let baseURL: URL
         let path: String
         let httpMethod: HTTPMethod
@@ -32,8 +32,8 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
     }
 
     func adapt(
-        request: APIRequest,
-        completion: @escaping (Result<APIRequest, Error>) -> Void
+        request: AcquiringRequest,
+        completion: @escaping (Result<AcquiringRequest, Error>) -> Void
     ) {
         guard !request.parameters.isEmpty else {
             return completion(.success(request))
@@ -50,7 +50,7 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
 }
 
 private extension AcquiringRequestAdapter.AdaptedRequest {
-    static func copy(request: APIRequest) -> AcquiringRequestAdapter.AdaptedRequest {
+    static func copy(request: AcquiringRequest) -> AcquiringRequestAdapter.AdaptedRequest {
         AcquiringRequestAdapter.AdaptedRequest(
             baseURL: request.baseURL,
             path: request.path,

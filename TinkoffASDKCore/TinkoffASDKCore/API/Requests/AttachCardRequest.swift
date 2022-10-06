@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct AttachCardRequest: APIRequest {
+struct AttachCardRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/AttachCard"
     let httpMethod: HTTPMethod = .post

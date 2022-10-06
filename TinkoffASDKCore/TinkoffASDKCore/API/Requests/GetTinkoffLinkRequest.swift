@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GetTinkoffLinkRequest: APIRequest {
+struct GetTinkoffLinkRequest: AcquiringRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get

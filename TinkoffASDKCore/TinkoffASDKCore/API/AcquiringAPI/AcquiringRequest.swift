@@ -1,6 +1,6 @@
 //
 //
-//  APIRequest.swift
+//  AcquiringRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -24,10 +24,10 @@ enum AcquiringDecodingStrategy {
     case clipped
 }
 
-protocol APIRequest: NetworkRequest {
+protocol AcquiringRequest: NetworkRequest {
     var decodingStrategy: AcquiringDecodingStrategy { get }
 }
 
-extension APIRequest {
+extension AcquiringRequest {
     var decodingStrategy: AcquiringDecodingStrategy { .standard }
 }

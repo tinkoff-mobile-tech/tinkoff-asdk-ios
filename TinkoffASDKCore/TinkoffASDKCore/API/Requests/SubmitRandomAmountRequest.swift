@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct SubmitRandomAmountRequest: APIRequest {
+struct SubmitRandomAmountRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/SubmitRandomAmount"
     let httpMethod: HTTPMethod = .post

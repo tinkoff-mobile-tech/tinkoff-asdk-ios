@@ -21,13 +21,13 @@ import Foundation
 
 protocol IAcquiringAPIClient {
     func performRequest<Payload: Decodable>(
-        _ request: APIRequest,
+        _ request: AcquiringRequest,
         completion: @escaping (Result<Payload, Error>) -> Void
     ) -> Cancellable
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func performDeprecatedRequest<Response: ResponseOperation>(
-        _ request: APIRequest,
+        _ request: AcquiringRequest,
         delegate: NetworkTransportResponseDelegate?,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable
@@ -50,7 +50,7 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
     // MARK: API
 
     func performRequest<Payload: Decodable>(
-        _ request: APIRequest,
+        _ request: AcquiringRequest,
         completion: @escaping (Swift.Result<Payload, Error>) -> Void
     ) -> Cancellable {
         networkClient.performRequest(request) { [apiDecoder] response in
@@ -74,7 +74,7 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
     func performDeprecatedRequest<Response: ResponseOperation>(
-        _ request: APIRequest,
+        _ request: AcquiringRequest,
         delegate: NetworkTransportResponseDelegate?,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable {

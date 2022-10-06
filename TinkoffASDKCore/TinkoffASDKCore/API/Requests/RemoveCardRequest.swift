@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct RemoveCardRequest: APIRequest {
+struct RemoveCardRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/RemoveCard"
     let httpMethod: HTTPMethod = .post

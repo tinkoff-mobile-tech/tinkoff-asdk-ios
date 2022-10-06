@@ -23,7 +23,7 @@ struct CresData: Encodable {
     let cres: String
 }
 
-struct ThreeDSV2AuthorizationRequest: APIRequest {
+struct ThreeDSV2AuthorizationRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post

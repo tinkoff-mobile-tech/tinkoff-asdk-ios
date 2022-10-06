@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct ChargePaymentRequest: APIRequest {
+struct ChargePaymentRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Charge"
     let httpMethod: HTTPMethod = .post

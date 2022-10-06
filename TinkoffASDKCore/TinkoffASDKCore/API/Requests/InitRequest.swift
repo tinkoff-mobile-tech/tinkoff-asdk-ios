@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct InitRequest: APIRequest {
+struct InitRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Init"
     let httpMethod: HTTPMethod = .post

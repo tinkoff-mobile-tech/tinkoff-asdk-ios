@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct FinishAuthorizeRequest: APIRequest {
+struct FinishAuthorizeRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/FinishAuthorize"
     let httpMethod: HTTPMethod = .post

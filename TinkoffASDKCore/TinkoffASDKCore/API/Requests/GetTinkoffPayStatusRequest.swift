@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetTinkoffPayStatusRequest: APIRequest {
+public struct GetTinkoffPayStatusRequest: AcquiringRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get

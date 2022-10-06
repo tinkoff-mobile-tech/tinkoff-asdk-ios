@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct GetCardListRequest: APIRequest {
+struct GetCardListRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/GetCardList"
     let httpMethod: HTTPMethod = .post

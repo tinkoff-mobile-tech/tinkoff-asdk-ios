@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct Check3DSVersionRequest: APIRequest {
+struct Check3DSVersionRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Check3dsVersion"
     let httpMethod: HTTPMethod = .post

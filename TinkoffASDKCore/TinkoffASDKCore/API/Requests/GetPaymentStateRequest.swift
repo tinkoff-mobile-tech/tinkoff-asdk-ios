@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct GetPaymentStateRequest: APIRequest {
+struct GetPaymentStateRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/GetState"
     let httpMethod: HTTPMethod = .post

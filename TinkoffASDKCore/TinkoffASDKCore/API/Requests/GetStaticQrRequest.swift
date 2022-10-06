@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct GetStaticQrRequest: APIRequest {
+struct GetStaticQrRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/GetStaticQr"
     let httpMethod: HTTPMethod = .post
