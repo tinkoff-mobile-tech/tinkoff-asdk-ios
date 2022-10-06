@@ -287,7 +287,7 @@ public final class AcquiringSdk: NSObject {
     /// Получить статус платежа
     ///
     /// - Parameters:
-    ///   - data: `PaymentInfoData`
+    ///   - data: `GetPaymentStateData`
     ///   - completion: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
     public func getPaymentState(
@@ -319,12 +319,12 @@ public final class AcquiringSdk: NSObject {
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
     ///
     /// - Parameters:
-    ///   - data: `ChargeRequestData`
+    ///   - data: `ChargeData`
     ///   - completion: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случае ошибки.
     /// - Returns: `Cancellable`
     @discardableResult
     public func charge(
-        data: ChargeRequestData,
+        data: ChargeData,
         completion: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.charge(data: data)
@@ -334,7 +334,7 @@ public final class AcquiringSdk: NSObject {
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
     ///
     /// - Parameters:
-    ///   - data: `ChargeRequestData`
+    ///   - data: `PaymentChargeRequestData`
     ///   - completion: результат операции `PaymentStatusResponse` в случае удачного ответа и `Error` - в случае ошибки.
     /// - Returns: `Cancellable`
     @discardableResult
@@ -343,7 +343,7 @@ public final class AcquiringSdk: NSObject {
         data: PaymentChargeRequestData,
         completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let chargeData = ChargeRequestData(paymentId: String(data.paymentId), rebillId: String(data.parentPaymentId))
+        let chargeData = ChargeData(paymentId: String(data.paymentId), rebillId: String(data.parentPaymentId))
         let request = acquiringRequests.charge(data: chargeData)
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }

@@ -1,5 +1,5 @@
 //
-//  ChargeRequestData.swift
+//  ChargeData.swift
 //  TinkoffASDKCore
 //
 //  Copyright (c) 2020 Tinkoff Bank
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct ChargeRequestData: Encodable {
+public struct ChargeData: Encodable {
     private enum CodingKeys: CodingKey {
         case paymentId
         case rebillId

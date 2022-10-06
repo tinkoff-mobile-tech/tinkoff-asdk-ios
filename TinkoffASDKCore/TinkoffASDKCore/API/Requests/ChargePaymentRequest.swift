@@ -25,7 +25,7 @@ struct ChargePaymentRequest: AcquiringRequest {
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
-    init(data: ChargeRequestData, baseURL: URL) {
+    init(data: ChargeData, baseURL: URL) {
         self.baseURL = baseURL
         parameters = (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }

@@ -64,7 +64,7 @@ final class AcquiringRequestBuilder {
         GetPaymentStateRequest(data: data, baseURL: baseURL)
     }
 
-    func charge(data: ChargeRequestData) -> AcquiringRequest {
+    func charge(data: ChargeData) -> AcquiringRequest {
         ChargePaymentRequest(data: data, baseURL: baseURL)
     }
 
