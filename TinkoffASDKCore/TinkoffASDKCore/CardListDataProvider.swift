@@ -124,7 +124,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
     ) {
         // Step 1 init
-        let initAddCardData = InitAddCardData(with: checkType, customerKey: customerKey)
+        let initAddCardData = AddCardData(with: checkType, customerKey: customerKey)
         queryStatus = coreSDK?.cardListAddCardInit(data: initAddCardData, completion: { [weak self] responseInit in
             switch responseInit {
             case let .failure(error):

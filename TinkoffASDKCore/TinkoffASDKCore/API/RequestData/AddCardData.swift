@@ -1,6 +1,6 @@
 //
 //
-//  InitAddCardData.swift
+//  AddCardData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct InitAddCardData: Codable {
+public struct AddCardData: Codable {
     private enum CodingKeys: CodingKey {
         case checkType
         case customerKey

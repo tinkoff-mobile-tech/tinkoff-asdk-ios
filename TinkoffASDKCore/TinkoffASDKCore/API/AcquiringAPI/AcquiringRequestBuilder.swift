@@ -72,7 +72,7 @@ final class AcquiringRequestBuilder {
         GetCardListRequest(getCardListData: data, baseURL: baseURL)
     }
 
-    func addCard(data: InitAddCardData) -> AcquiringRequest {
+    func addCard(data: AddCardData) -> AcquiringRequest {
         AddCardRequest(initAddCardData: data, baseURL: baseURL)
     }
 

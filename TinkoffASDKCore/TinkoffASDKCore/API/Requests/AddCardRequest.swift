@@ -25,7 +25,7 @@ struct AddCardRequest: AcquiringRequest {
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
-    init(initAddCardData: InitAddCardData, baseURL: URL) {
+    init(initAddCardData: AddCardData, baseURL: URL) {
         self.baseURL = baseURL
         parameters = (try? initAddCardData.encode2JSONObject()) ?? [:]
     }

@@ -376,7 +376,7 @@ public final class AcquiringSdk: NSObject {
         responseDelegate: NetworkTransportResponseDelegate? = nil,
         completion: @escaping (_ result: Result<CardListResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.getCardList(data: GetCardListData(customerKey: data.customerKey))
+        let request = acquiringRequests.getCardList(data: data)
         return acquiringAPI.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
@@ -390,17 +390,17 @@ public final class AcquiringSdk: NSObject {
         cardList(data: data, responseDelegate: responseDelegate, completion: completionHandler)
     }
 
-    // MARK: Init Add Card
+    // MARK: Add Card
 
     /// Инициирует привязку карты к клиенту
     ///
     /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе привязки карты
+    ///   - data: `AddCardData` информация о клиенте и типе привязки карты
     ///   - completion: результат операции `AddCardPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    public func initAddCard(
-        data: InitAddCardData,
+    public func addCard(
+        data: AddCardData,
         completion: @escaping (_ result: Result<AddCardPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.addCard(data: data)
@@ -408,13 +408,13 @@ public final class AcquiringSdk: NSObject {
     }
 
     /// - Parameters:
-    ///   - data: `InitAddCardData` информация о клиенте и типе новой карты
+    ///   - data: `AddCardData` информация о клиенте и типе новой карты
     ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
     @available(*, deprecated, message: "Use `initAddCard(data:completion:)` instead")
     public func cardListAddCardInit(
-        data: InitAddCardData,
+        data: AddCardData,
         completion: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.addCard(data: data)
@@ -424,7 +424,7 @@ public final class AcquiringSdk: NSObject {
     @discardableResult
     @available(*, deprecated, message: "Use `initAddCard(data:completion:)` instead")
     public func сardListAddCardInit(
-        data: InitAddCardData,
+        data: AddCardData,
         completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         cardListAddCardInit(data: data, completion: completionHandler)
