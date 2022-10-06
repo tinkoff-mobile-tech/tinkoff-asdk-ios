@@ -31,6 +31,7 @@ struct CoreAssembly {
 
     func buildAPI() -> IAcquiringAPIClient {
         AcquiringAPIClient(
+            requestAdapter: AcquiringRequestAdapter(terminalKey: configuration.credential.terminalKey),
             networkClient: buildNetworkClient(),
             apiDecoder: APIDecoder()
         )
@@ -100,7 +101,6 @@ private extension CoreAssembly {
 
     private func buildURLRequestBuilder() -> IURLRequestBuilder {
         URLRequestBuilder(
-            additionalParametersProvider: AdditionalParametersProvider(terminalKey: configuration.credential.terminalKey),
             jsonParametersEncoder: JSONEncoding(options: .sortedKeys)
         )
     }

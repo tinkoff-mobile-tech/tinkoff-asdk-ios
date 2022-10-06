@@ -34,15 +34,18 @@ protocol IAcquiringAPIClient {
 }
 
 final class AcquiringAPIClient: IAcquiringAPIClient {
+    private let requestAdapter: IAcquiringRequestAdapter
     private let networkClient: INetworkClient
     private let apiDecoder: IAPIDecoder
     @available(*, deprecated, message: "Use apiDecoder instead")
     private let deprecatedDecoder = DeprecatedDecoder()
 
     init(
+        requestAdapter: IAcquiringRequestAdapter,
         networkClient: INetworkClient,
         apiDecoder: IAPIDecoder
     ) {
+        self.requestAdapter = requestAdapter
         self.networkClient = networkClient
         self.apiDecoder = apiDecoder
     }
@@ -53,23 +56,31 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
         _ request: AcquiringRequest,
         completion: @escaping (Swift.Result<Payload, Error>) -> Void
     ) -> Cancellable {
-        networkClient.performRequest(request) { [apiDecoder] response in
-            let result = response.result.tryMap { data in
-                try apiDecoder.decode(Payload.self, from: data, with: request.decodingStrategy)
-            }
+        let cancellable = CancellableWrapper()
 
-            completion(result)
-            //            do {
-            //                let data = try response.result.get()
-            //                self.handleResponseData(
-            //                    data,
-            //                    for: request,
-            //                    completion: completion
-            //                )
-            //            } catch {
-            //                completion(.failure(error))
-            //            }
+        requestAdapter.adapt(request: request) { [networkClient, apiDecoder] adaptingResult in
+            guard !cancellable.isCancelled else { return }
+
+            switch adaptingResult {
+            case let .success(request):
+                cancellable.addCancellationHandler(cancellable.cancel)
+
+                networkClient.performRequest(request) { response in
+                    guard !cancellable.isCancelled else { return }
+
+                    let result = response.result.tryMap { data in
+                        try apiDecoder.decode(Payload.self, from: data, with: request.decodingStrategy)
+                    }
+
+                    completion(result)
+                }
+
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
+
+        return cancellable
     }
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")

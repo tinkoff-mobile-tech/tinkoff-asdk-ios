@@ -47,22 +47,18 @@ final class NetworkClient: INetworkClient {
 
     @discardableResult
     func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
-        let cancellableWrapper = CancellableWrapper()
+        let urlRequest: URLRequest
 
-        requestBuilder.build(request: request) { [self] urlRequestResult in
-            switch urlRequestResult {
-            case let .success(urlRequest):
-                let networkTask = createNetworkTask(with: urlRequest, completion: completion)
-                cancellableWrapper.addCancellationHandler(networkTask.cancel)
-                networkTask.resume()
-            case let .failure(error):
-                if !cancellableWrapper.isCancelled {
-                    completion(.requestBuildingFailure(error: error))
-                }
-            }
+        do {
+            urlRequest = try requestBuilder.build(request: request)
+        } catch {
+            completion(.requestBuildingFailure(error: error))
+            return EmptyCancellable()
         }
 
-        return cancellableWrapper
+        let networkTask = createNetworkTask(with: urlRequest, completion: completion)
+        networkTask.resume()
+        return networkTask
     }
 
     // MARK: NetworkTask Creation
