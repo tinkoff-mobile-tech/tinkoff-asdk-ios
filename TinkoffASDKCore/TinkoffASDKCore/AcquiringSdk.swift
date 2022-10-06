@@ -591,18 +591,18 @@ public final class AcquiringSdk: NSObject {
         cardListDeactivateCard(data: data, completion: completionHandler)
     }
 
-    // MARK: Get QR Code
+    // MARK: Get QR
 
-    /// Сгенерировать QR-код для оплаты
+    /// Сгенерировать QR для оплаты
     ///
     /// - Parameters:
-    ///   - data: `PaymentInvoiceQRCodeData` информация о заказе на оплату
-    ///   - completion: результат операции `GetQrPayload` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - data: `GetQRData` информация о заказе на оплату
+    ///   - completion: результат операции `GetQRPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    public func getQRCode(
-        data: PaymentInvoiceQRCodeData,
-        completion: @escaping (_ result: Result<GetQrPayload, Error>) -> Void
+    public func getQR(
+        data: GetQRData,
+        completion: @escaping (_ result: Result<GetQRPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.getQR(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
@@ -611,13 +611,13 @@ public final class AcquiringSdk: NSObject {
     /// Сгенерировать QR-код для оплаты
     ///
     /// - Parameters:
-    ///   - data: `PaymentInvoiceQRCodeData` информация о заказе на оплату
+    ///   - data: `GetQRData` информация о заказе на оплату
     ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use `getQRCode(data:completion:)` instead")
+    @available(*, deprecated, message: "Use `getQR(data:completion:)` instead")
     public func paymentInvoiceQRCode(
-        data: PaymentInvoiceQRCodeData,
+        data: GetQRData,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.getQR(data: data)
@@ -629,12 +629,12 @@ public final class AcquiringSdk: NSObject {
     /// Выставить счет / принять оплату, сгенерировать QR-код для принятия платежей
     ///
     /// - Parameters:
-    ///   - data: `PaymentInvoiceSBPSourceType` тип возвращаемых данных для генерации QR-кода
+    ///   - data: `GetQRDataType` тип возвращаемых данных для генерации QR-кода
     ///   - completion: результат операции `GetStaticQrPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
     public func getStaticQRCode(
-        data: PaymentInvoiceSBPSourceType,
+        data: GetQRDataType,
         completion: @escaping (_ result: Result<GetStaticQrPayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.getStaticQR(data: data)
@@ -650,7 +650,7 @@ public final class AcquiringSdk: NSObject {
     @discardableResult
     @available(*, deprecated, message: "Use `getStaticQRCode(data:completion:)` instead")
     public func paymentInvoiceQRCodeCollector(
-        data: PaymentInvoiceSBPSourceType,
+        data: GetQRDataType,
         completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.getStaticQR(data: data)

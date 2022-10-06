@@ -1,6 +1,6 @@
 //
 //
-//  GetQrRequest.swift
+//  GetQRRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,13 +19,13 @@
 
 import Foundation
 
-struct GetQrRequest: AcquiringRequest {
+struct GetQRRequest: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/GetQr"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
-    init(data: PaymentInvoiceQRCodeData, baseURL: URL) {
+    init(data: GetQRData, baseURL: URL) {
         self.baseURL = baseURL
         parameters = (try? data.encode2JSONObject()) ?? [:]
     }

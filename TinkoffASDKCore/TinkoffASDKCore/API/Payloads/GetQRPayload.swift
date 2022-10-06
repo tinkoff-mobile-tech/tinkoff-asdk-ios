@@ -1,6 +1,6 @@
 //
 //
-//  GetQrPayload.swift
+//  GetQRPayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetQrPayload: Decodable {
+public struct GetQRPayload: Decodable {
     private enum CodingKeys: CodingKey {
         case qrCodeData
         case orderId

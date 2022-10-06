@@ -1,6 +1,6 @@
 //
 //
-//  PaymentInvoiceQRCodeData.swift
+//  GetQRData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,8 +19,11 @@
 
 import Foundation
 
+@available(*, deprecated, renamed: "GetQRDataType")
+public typealias PaymentInvoiceSBPSourceType = GetQRDataType
+
 /// Тип возвращаемых данных для генерации QR-кода
-public enum PaymentInvoiceSBPSourceType: String, Encodable {
+public enum GetQRDataType: String, Encodable {
     /// `IMAGE` – В ответе возвращается SVG изображение QR-кода
     case imageSVG = "IMAGE"
 
@@ -35,15 +38,18 @@ public enum PaymentInvoiceSBPSourceType: String, Encodable {
     }
 }
 
-public struct PaymentInvoiceQRCodeData: Encodable {
+@available(*, deprecated, renamed: "GetQRData")
+public typealias PaymentInvoiceQRCodeData = GetQRData
+
+public struct GetQRData: Encodable {
     private enum CodingKeys: CodingKey {
         case paymentId
-        case paymentInvoiceType
+        case dataType
 
         var stringValue: String {
             switch self {
             case .paymentId: return APIConstants.Keys.paymentId
-            case .paymentInvoiceType: return APIConstants.Keys.dataType
+            case .dataType: return APIConstants.Keys.dataType
             }
         }
     }
@@ -51,22 +57,22 @@ public struct PaymentInvoiceQRCodeData: Encodable {
     /// Уникальный идентификатор транзакции в системе Банка
     let paymentId: String
     /// Тип возвращаемых данных
-    let paymentInvoiceType: PaymentInvoiceSBPSourceType
+    let dataType: GetQRDataType
 
-    public init(paymentId: String, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
+    public init(paymentId: String, paymentInvoiceType: GetQRDataType = .url) {
         self.paymentId = paymentId
-        self.paymentInvoiceType = paymentInvoiceType
+        dataType = paymentInvoiceType
     }
 
     @available(*, deprecated, message: "Use `init(paymentId, paymentInvoiceType)` with string `paymentId` instead")
     public init(paymentId: Int64, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
         self.paymentId = String(paymentId)
-        self.paymentInvoiceType = paymentInvoiceType
+        dataType = paymentInvoiceType
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(paymentId, forKey: .paymentId)
-        try container.encode(paymentInvoiceType.rawValue, forKey: .paymentInvoiceType)
+        try container.encode(dataType.rawValue, forKey: .dataType)
     }
 }

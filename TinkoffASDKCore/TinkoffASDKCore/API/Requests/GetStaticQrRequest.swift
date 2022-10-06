@@ -25,7 +25,7 @@ struct GetStaticQrRequest: AcquiringRequest {
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
 
-    init(sourceType: PaymentInvoiceSBPSourceType, baseURL: URL) {
+    init(sourceType: GetQRDataType, baseURL: URL) {
         self.baseURL = baseURL
         parameters = [APIConstants.Keys.dataType: sourceType.rawValue]
     }

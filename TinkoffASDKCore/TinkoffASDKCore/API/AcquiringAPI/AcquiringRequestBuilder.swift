@@ -94,11 +94,11 @@ final class AcquiringRequestBuilder {
         DeactivateCardRequest(deactivateCardData: data, baseURL: baseURL)
     }
 
-    func getQR(data: PaymentInvoiceQRCodeData) -> AcquiringRequest {
-        GetQrRequest(data: data, baseURL: baseURL)
+    func getQR(data: GetQRData) -> AcquiringRequest {
+        GetQRRequest(data: data, baseURL: baseURL)
     }
 
-    func getStaticQR(data: PaymentInvoiceSBPSourceType) -> AcquiringRequest {
+    func getStaticQR(data: GetQRDataType) -> AcquiringRequest {
         GetStaticQrRequest(sourceType: data, baseURL: baseURL)
     }
 
