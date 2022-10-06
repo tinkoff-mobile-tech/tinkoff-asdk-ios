@@ -26,8 +26,8 @@ protocol IAcquiringAPIClient {
     ) -> Cancellable
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
-        _ request: Request,
+    func performDeprecatedRequest<Response: ResponseOperation>(
+        _ request: APIRequest,
         delegate: NetworkTransportResponseDelegate?,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable
@@ -73,8 +73,8 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
     }
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func performDeprecatedRequest<Request: APIRequest, Response: ResponseOperation>(
-        _ request: Request,
+    func performDeprecatedRequest<Response: ResponseOperation>(
+        _ request: APIRequest,
         delegate: NetworkTransportResponseDelegate?,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable {

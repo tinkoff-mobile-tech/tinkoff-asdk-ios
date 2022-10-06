@@ -20,13 +20,13 @@ final class AcquiringRequestBuilder {
         self.publicKey = publicKey
     }
 
-    func initRequest(data: PaymentInitData) -> InitRequest {
+    func initRequest(data: PaymentInitData) -> APIRequest {
         let paramsEnricher: IPaymentInitDataParamsEnricher = PaymentInitDataParamsEnricher()
         let enrichedData = paramsEnricher.enrich(data)
         return InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
     }
 
-    func finishAuthorize(data: FinishPaymentRequestData) -> FinishAuthorizeRequest {
+    func finishAuthorize(data: FinishPaymentRequestData) -> APIRequest {
         FinishAuthorizeRequest(
             requestData: data,
             encryptor: RSAEncryptor(),
@@ -36,7 +36,7 @@ final class AcquiringRequestBuilder {
         )
     }
 
-    func check3DSVersion(data: Check3DSRequestData) -> Check3DSVersionRequest {
+    func check3DSVersion(data: Check3DSRequestData) -> APIRequest {
         Check3DSVersionRequest(
             check3DSRequestData: data,
             encryptor: RSAEncryptor(),
@@ -46,23 +46,23 @@ final class AcquiringRequestBuilder {
         )
     }
 
-    func getPaymentState(data: GetPaymentStateData) -> GetPaymentStateRequest {
+    func getPaymentState(data: GetPaymentStateData) -> APIRequest {
         GetPaymentStateRequest(data: data, baseURL: baseURL)
     }
 
-    func charge(data: ChargeRequestData) -> ChargePaymentRequest {
+    func charge(data: ChargeRequestData) -> APIRequest {
         ChargePaymentRequest(data: data, baseURL: baseURL)
     }
 
-    func getCardList(data: GetCardListData) -> GetCardListRequest {
+    func getCardList(data: GetCardListData) -> APIRequest {
         GetCardListRequest(getCardListData: data, baseURL: baseURL)
     }
 
-    func addCard(data: InitAddCardData) -> AddCardRequest {
+    func addCard(data: InitAddCardData) -> APIRequest {
         AddCardRequest(initAddCardData: data, baseURL: baseURL)
     }
 
-    func attachCard(data: FinishAddCardData) -> AttachCardRequest {
+    func attachCard(data: FinishAddCardData) -> APIRequest {
         AttachCardRequest(
             finishAddCardData: data,
             encryptor: rsaEncryptor,
@@ -72,30 +72,30 @@ final class AcquiringRequestBuilder {
         )
     }
 
-    func submitRandomAmount(data: SubmitRandomAmountData) -> SubmitRandomAmountRequest {
+    func submitRandomAmount(data: SubmitRandomAmountData) -> APIRequest {
         SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURL)
     }
 
-    func deactivateCard(data: InitDeactivateCardData) -> RemoveCardRequest {
+    func deactivateCard(data: InitDeactivateCardData) -> APIRequest {
         RemoveCardRequest(deactivateCardData: data, baseURL: baseURL)
     }
 
-    func getQR(data: PaymentInvoiceQRCodeData) -> GetQrRequest {
+    func getQR(data: PaymentInvoiceQRCodeData) -> APIRequest {
         GetQrRequest(data: data, baseURL: baseURL)
     }
 
-    func getStaticQR(data: PaymentInvoiceSBPSourceType) -> GetStaticQrRequest {
+    func getStaticQR(data: PaymentInvoiceSBPSourceType) -> APIRequest {
         GetStaticQrRequest(sourceType: data, baseURL: baseURL)
     }
 
-    func getTinkoffPayStatus() -> GetTinkoffPayStatusRequest {
+    func getTinkoffPayStatus() -> APIRequest {
         GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
     }
 
     func getTinkoffPayLink(
         paymentId: String,
         version: GetTinkoffPayStatusResponse.Status.Version
-    ) -> GetTinkoffLinkRequest {
+    ) -> APIRequest {
         GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
     }
 }
