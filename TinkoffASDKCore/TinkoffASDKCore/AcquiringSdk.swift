@@ -320,12 +320,12 @@ public final class AcquiringSdk: NSObject {
     ///
     /// - Parameters:
     ///   - data: `ChargeData`
-    ///   - completion: результат операции `ChargePaymentPayload` в случае удачного ответа и `Error` - в случае ошибки.
+    ///   - completion: результат операции `ChargePayload` в случае удачного ответа и `Error` - в случае ошибки.
     /// - Returns: `Cancellable`
     @discardableResult
     public func charge(
         data: ChargeData,
-        completion: @escaping (_ result: Result<ChargePaymentPayload, Error>) -> Void
+        completion: @escaping (_ result: Result<ChargePayload, Error>) -> Void
     ) -> Cancellable {
         let request = acquiringRequests.charge(data: data)
         return acquiringAPI.performRequest(request, completion: completion)

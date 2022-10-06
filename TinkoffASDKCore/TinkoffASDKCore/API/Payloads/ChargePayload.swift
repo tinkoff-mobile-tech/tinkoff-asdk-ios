@@ -1,6 +1,6 @@
 //
 //
-//  ChargePaymentPayload.swift
+//  ChargePayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct ChargePaymentPayload: Decodable {
+public struct ChargePayload: Decodable {
     public let status: PaymentStatus
     public let paymentState: GetPaymentStatePayload
 
