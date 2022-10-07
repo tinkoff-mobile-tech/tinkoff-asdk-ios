@@ -19,15 +19,16 @@
 
 import Foundation
 
-struct RSAEncryptor {
+protocol IRSAEncryptor {
+    func createPublicSecKey(publicKey: String) -> SecKey?
+    func encrypt(string: String, publicKey: SecKey) -> String?
+}
 
-    enum Error: Swift.Error {
-        case failedToCreatePublicSecKey
-        case failedToEncryptStringWithPublicSecKey
-    }
-
-    func createPublicSecKey(publicKey: String) throws -> SecKey {
-        guard let data = Data(base64Encoded: publicKey) else { throw Error.failedToCreatePublicSecKey }
+final class RSAEncryptor: IRSAEncryptor {
+    func createPublicSecKey(publicKey: String) -> SecKey? {
+        guard let data = Data(base64Encoded: publicKey) else {
+            return nil
+        }
 
         var attributes: CFDictionary {
             return [
@@ -39,21 +40,18 @@ struct RSAEncryptor {
         }
 
         var error: Unmanaged<CFError>?
-        guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
-            throw Error.failedToCreatePublicSecKey
-        }
-
-        return secKey
+        return SecKeyCreateWithData(data as CFData, attributes, &error)
     }
 
-    func encrypt(string: String, publicKey: SecKey) throws -> String {
+    func encrypt(string: String, publicKey: SecKey) -> String? {
         let buffer = [UInt8](string.utf8)
 
         var keySize = SecKeyGetBlockSize(publicKey)
         var keyBuffer = [UInt8](repeating: 0, count: keySize)
 
-        guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess
-        else { throw Error.failedToEncryptStringWithPublicSecKey }
+        guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else {
+            return nil
+        }
 
         return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
     }

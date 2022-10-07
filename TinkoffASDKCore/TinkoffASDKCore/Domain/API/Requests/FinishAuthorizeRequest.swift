@@ -27,7 +27,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
 
     init(
         requestData: FinishAuthorizeData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
         baseURL: URL
@@ -44,7 +44,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
     @available(*, deprecated, message: "Use init(requestData:encryptor:cardDataFormatter:publicKey:baseURL) instead")
     init(
         paymentFinishRequestData: PaymentFinishRequestData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
         baseURL: URL
@@ -64,7 +64,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
 private extension HTTPParameters {
     static func parameters(
         data: FinishAuthorizeData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
@@ -86,13 +86,13 @@ private extension HTTPParameters {
         switch data.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
-            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
 
-            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .paymentData(data):
@@ -107,7 +107,7 @@ private extension HTTPParameters {
 
     static func parameters(
         data: PaymentFinishRequestData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
@@ -129,13 +129,13 @@ private extension HTTPParameters {
         switch data.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
-            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
 
-            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .paymentData(data):

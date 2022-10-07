@@ -27,7 +27,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
 
     init(
         check3DSRequestData: Check3DSVersionData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
         baseURL: URL
@@ -47,7 +47,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
 private extension HTTPParameters {
     static func create(
         requestData: Check3DSVersionData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
@@ -57,13 +57,13 @@ private extension HTTPParameters {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
 
-            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
 
-            if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[APIConstants.Keys.cardData] = encryptedCardData
             }
         case let .paymentData(data):

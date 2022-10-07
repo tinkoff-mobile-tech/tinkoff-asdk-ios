@@ -13,7 +13,7 @@ final class AcquiringRequestBuilder {
     private let terminalKeyProvider: IStringProvider
     private let initParamsEnricher: IPaymentInitDataParamsEnricher
     private let cardDataFormatter: CardDataFormatter
-    private let rsaEncryptor: RSAEncryptor
+    private let rsaEncryptor: IRSAEncryptor
 
     init(
         baseURLProvider: IURLProvider,
@@ -21,7 +21,7 @@ final class AcquiringRequestBuilder {
         terminalKeyProvider: IStringProvider,
         initParamsEnricher: IPaymentInitDataParamsEnricher,
         cardDataFormatter: CardDataFormatter,
-        rsaEncryptor: RSAEncryptor
+        rsaEncryptor: IRSAEncryptor
     ) {
         self.baseURLProvider = baseURLProvider
         self.publicKeyProvider = publicKeyProvider

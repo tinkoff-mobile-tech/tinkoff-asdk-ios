@@ -27,7 +27,7 @@ struct AttachCardRequest: AcquiringRequest {
 
     init(
         finishAddCardData: AttachCardData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
         baseURL: URL
@@ -47,7 +47,7 @@ struct AttachCardRequest: AcquiringRequest {
 private extension HTTPParameters {
     static func parameters(
         requestData: AttachCardData,
-        encryptor: RSAEncryptor,
+        encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
@@ -59,7 +59,7 @@ private extension HTTPParameters {
             cvv: requestData.cvv
         )
 
-        if let encryptedCardData = try? encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
+        if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
             parameters[APIConstants.Keys.cardData] = encryptedCardData
         }
 
