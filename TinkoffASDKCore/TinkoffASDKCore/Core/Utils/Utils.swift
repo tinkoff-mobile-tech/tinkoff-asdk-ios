@@ -20,27 +20,6 @@
 import CommonCrypto
 import Foundation
 import Security
-import class UIKit.UIDevice
-
-protocol DeviceInfoProvider {
-    var model: String { get }
-    var systemName: String { get }
-    var systemVersion: String { get }
-}
-
-struct DefaultDeviceInfoProvider: DeviceInfoProvider {
-    var model: String {
-        UIDevice.current.localizedModel
-    }
-
-    var systemName: String {
-        UIDevice.current.systemName
-    }
-
-    var systemVersion: String {
-        UIDevice.current.systemVersion
-    }
-}
 
 struct RSAEncryption {
     static func secKey(string: String?) -> SecKey? {
@@ -96,20 +75,6 @@ struct DeviceInfo {
     var systemName: String // = UIDevice.current.systemName
     var systemVersion: String // = UIDevice.current.systemVersion
 }
-
-// MARK: URL Session Conformance
-
-public protocol Cancellable {
-    func cancel()
-}
-
-public final class EmptyCancellable: Cancellable {
-    public init() {}
-
-    public func cancel() {}
-}
-
-extension URLSessionTask: Cancellable {}
 
 // MARK: JSON Conformance
 

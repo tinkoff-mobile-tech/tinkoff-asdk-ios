@@ -25,11 +25,11 @@ final class ThreeDSURLRequestBuilder {
     }
 
     let threeDSURLBuilder: ThreeDSURLBuilder
-    let deviceInfoProvider: DeviceInfoProvider
+    let deviceInfoProvider: IDeviceInfoProvider
 
     init(
         threeDSURLBuilder: ThreeDSURLBuilder,
-        deviceInfoProvider: DeviceInfoProvider
+        deviceInfoProvider: IDeviceInfoProvider
     ) {
         self.threeDSURLBuilder = threeDSURLBuilder
         self.deviceInfoProvider = deviceInfoProvider

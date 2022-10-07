@@ -30,7 +30,7 @@ public extension AcquiringSdk {
         let externalClient = ExternalAPIClient(networkClient: networkClient)
         let externalRequests = ExternalRequestBuilder(appBasedConfigURLProvider: appBasedConfigURLProvider)
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
-        let deviceInfoProvider = DefaultDeviceInfoProvider()
+        let deviceInfoProvider = DeviceInfoProvider()
         let acquiringClient = AcquiringAPIClient.build(terminalKeyProvider: terminalKeyProvider, networkClient: networkClient)
         let threeDSURLBuilder = ThreeDSURLBuilder(urlProvider: acquiringURLProvider)
 

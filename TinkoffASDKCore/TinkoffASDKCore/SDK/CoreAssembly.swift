@@ -48,8 +48,8 @@ struct CoreAssembly {
         )
     }
 
-    func deviceInfoProvider() -> DeviceInfoProvider {
-        DefaultDeviceInfoProvider()
+    func deviceInfoProvider() -> IDeviceInfoProvider {
+        DeviceInfoProvider()
     }
 
     func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
