@@ -25,6 +25,24 @@ protocol INetworkClient: AnyObject {
 }
 
 final class NetworkClient: INetworkClient {
+    // MARK: Error
+
+    private enum Error: LocalizedError, CustomNSError {
+        case sessionError(Swift.Error)
+        case noDataFound
+
+        var errorDescription: String? {
+            let description: String
+            switch self {
+            case let .sessionError(error):
+                description = "\(Loc.NetworkError.transportError): \(error.localizedDescription)"
+            case .noDataFound:
+                description = "\(Loc.NetworkError.emptyBody)"
+            }
+            return description
+        }
+    }
+
     // MARK: Dependencies
 
     private let session: INetworkSession
@@ -65,15 +83,15 @@ final class NetworkClient: INetworkClient {
 
     private func createNetworkTask(with urlRequest: URLRequest, completion: @escaping (NetworkResponse) -> Void) -> INetworkDataTask {
         session.dataTask(with: urlRequest) { [responseValidator] data, response, error in
-            let result = Result<Data, Error> {
+            let result = Result<Data, Swift.Error> {
                 if let error = error {
-                    throw NetworkError.transportError(error)
+                    throw Error.sessionError(error)
                 }
 
-                let httpResponse = try (response as? HTTPURLResponse).orThrow(NetworkError.noData)
+                let httpResponse = try (response as? HTTPURLResponse).orThrow(Error.noDataFound)
                 try responseValidator.validate(response: httpResponse)
 
-                return try data.orThrow(NetworkError.noData)
+                return try data.orThrow(Error.noDataFound)
             }
 
             let response = NetworkResponse(

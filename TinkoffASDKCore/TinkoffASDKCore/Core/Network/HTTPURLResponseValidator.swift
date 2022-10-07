@@ -24,6 +24,16 @@ protocol IHTTPURLResponseValidator {
 }
 
 struct HTTPURLResponseValidator: IHTTPURLResponseValidator {
+    // MARK: Error
+
+    private struct Error: LocalizedError, CustomNSError {
+        let statusCode: Int
+
+        var errorDescription: String? {
+            "\(Loc.NetworkError.serverError): \(statusCode)"
+        }
+    }
+
     // MARK: Dependencies
 
     private let successStatusCodes: ClosedRange<Int>
@@ -38,7 +48,7 @@ struct HTTPURLResponseValidator: IHTTPURLResponseValidator {
 
     func validate(response: HTTPURLResponse) throws {
         guard successStatusCodes.contains(response.statusCode) else {
-            throw NetworkError.serverError(statusCode: response.statusCode)
+            throw Error(statusCode: response.statusCode)
         }
     }
 }
