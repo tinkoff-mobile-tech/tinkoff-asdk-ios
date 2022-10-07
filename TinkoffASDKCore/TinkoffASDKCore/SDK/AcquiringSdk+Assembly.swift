@@ -15,7 +15,9 @@ public enum AcquiringSdkError: Error {
 public extension AcquiringSdk {
     /// Создает новый экземпляр SDK
     convenience init(configuration: AcquiringSdkConfiguration) throws {
-        let publicKeyProvider = try PublicKeyProvider(string: configuration.credential.publicKey)
+        let encryptor = RSAEncryptor()
+
+        let publicKeyProvider = try PublicKeyProvider(string: configuration.credential.publicKey, encryptor: encryptor)
             .orThrow(AcquiringSdkError.publicKey(configuration.credential.publicKey))
 
         let acquiringURLProvider = try URLProvider(host: configuration.serverEnvironment.rawValue)
@@ -34,11 +36,13 @@ public extension AcquiringSdk {
         let acquiringClient = AcquiringAPIClient.build(terminalKeyProvider: terminalKeyProvider, networkClient: networkClient)
         let threeDSURLBuilder = ThreeDSURLBuilder(urlProvider: acquiringURLProvider)
 
-        let acquiringRequests = AcquiringRequestBuilder.build(
-            acquiringURLProvider: acquiringURLProvider,
+        let acquiringRequests = AcquiringRequestBuilder(
+            baseURLProvider: acquiringURLProvider,
             publicKeyProvider: publicKeyProvider,
             terminalKeyProvider: terminalKeyProvider,
-            language: configuration.language
+            initParamsEnricher: PaymentInitDataParamsEnricher(language: configuration.language),
+            cardDataFormatter: CardDataFormatter(),
+            rsaEncryptor: encryptor
         )
 
         let threeDSURLRequestsBuilder = ThreeDSURLRequestBuilder(
@@ -70,26 +74,6 @@ private extension AcquiringAPIClient {
             requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider),
             networkClient: networkClient,
             apiDecoder: APIDecoder()
-        )
-    }
-}
-
-// MARK: - AcquiringRequestBuilder
-
-private extension AcquiringRequestBuilder {
-    static func build(
-        acquiringURLProvider: IURLProvider,
-        publicKeyProvider: IPublicKeyProvider,
-        terminalKeyProvider: IStringProvider,
-        language: AcquiringSdkLanguage?
-    ) -> AcquiringRequestBuilder {
-        AcquiringRequestBuilder(
-            baseURLProvider: acquiringURLProvider,
-            publicKeyProvider: publicKeyProvider,
-            terminalKeyProvider: terminalKeyProvider,
-            initParamsEnricher: PaymentInitDataParamsEnricher(language: language),
-            cardDataFormatter: CardDataFormatter(),
-            rsaEncryptor: RSAEncryptor()
         )
     }
 }

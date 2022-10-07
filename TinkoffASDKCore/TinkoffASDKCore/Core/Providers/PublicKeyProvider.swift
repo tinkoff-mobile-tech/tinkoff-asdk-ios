@@ -14,8 +14,8 @@ protocol IPublicKeyProvider {
 final class PublicKeyProvider: IPublicKeyProvider {
     let publicKey: SecKey
 
-    init?(string: String) {
-        guard let secKey = RSAEncryption.secKey(string: string) else {
+    init?(string: String, encryptor: IRSAEncryptor) {
+        guard let secKey = encryptor.createPublicSecKey(publicKey: string) else {
             return nil
         }
 
