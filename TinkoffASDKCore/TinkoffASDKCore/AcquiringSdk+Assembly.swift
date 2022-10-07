@@ -7,6 +7,11 @@
 
 import Foundation
 
+public enum AcquiringSdkError: Error {
+    case publicKey(String)
+    case url
+}
+
 public extension AcquiringSdk {
     /// Создает новый экземпляр SDK
     convenience init(configuration: AcquiringSdkConfiguration) throws {
@@ -60,10 +65,7 @@ public extension AcquiringSdk {
 // MARK: - AcquiringAPIClient
 
 private extension AcquiringAPIClient {
-    static func build(
-        terminalKeyProvider: IStringProvider,
-        networkClient: INetworkClient
-    ) -> IAcquiringAPIClient {
+    static func build(terminalKeyProvider: IStringProvider, networkClient: INetworkClient) -> IAcquiringAPIClient {
         AcquiringAPIClient(
             requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider),
             networkClient: networkClient,

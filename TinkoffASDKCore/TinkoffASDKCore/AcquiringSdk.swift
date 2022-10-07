@@ -21,11 +21,6 @@ import struct CoreGraphics.CGSize
 import Foundation
 import UIKit
 
-public enum AcquiringSdkError: Error {
-    case publicKey(String)
-    case url
-}
-
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     @available(*, deprecated, message: "Property does not affect anything")
