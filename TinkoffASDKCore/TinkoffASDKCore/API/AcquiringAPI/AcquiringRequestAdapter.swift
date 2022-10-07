@@ -25,10 +25,10 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         let decodingStrategy: AcquiringDecodingStrategy
     }
 
-    private let terminalKey: String
+    private let terminalKeyProvider: IStringProvider
 
-    init(terminalKey: String) {
-        self.terminalKey = terminalKey
+    init(terminalKeyProvider: IStringProvider) {
+        self.terminalKeyProvider = terminalKeyProvider
     }
 
     func adapt(
@@ -43,7 +43,7 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
 
         adaptedRequest
             .parameters
-            .merge([APIConstants.Keys.terminalKey: terminalKey]) { $1 }
+            .merge([APIConstants.Keys.terminalKey: terminalKeyProvider.value]) { $1 }
 
         completion(.success(adaptedRequest))
     }

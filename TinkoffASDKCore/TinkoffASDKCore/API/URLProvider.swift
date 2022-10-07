@@ -1,6 +1,6 @@
 //
 //
-//  BaseURLProvider.swift
+//  URLProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,28 +19,20 @@
 
 import Foundation
 
-protocol IBaseURLProvider {
-    var baseURL: URL { get }
+protocol IURLProvider {
+    var url: URL { get }
 }
 
-struct BaseURLProvider: IBaseURLProvider {
-    // MARK: Error
-
-    private struct Error: LocalizedError {
-        private let host: String
-
-        init(host: String) {
-            self.host = host
-        }
-    }
-
-    // MARK: Dependencies
-
-    let baseURL: URL
+struct URLProvider: IURLProvider {
+    let url: URL
 
     // MARK: Init
 
-    init(host: String) throws {
-        baseURL = try URL(string: "https://\(host)").orThrow(Error(host: host))
+    init?(host: String) {
+        guard let url = URL(string: "https://\(host)/") else {
+            return nil
+        }
+
+        self.url = url
     }
 }

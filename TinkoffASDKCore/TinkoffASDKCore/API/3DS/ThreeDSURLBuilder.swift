@@ -22,25 +22,27 @@ import Foundation
 struct ThreeDSURLBuilder {
     // MARK: Three3DSURLType
 
-    enum Three3DSURLType: String {
-        case threeDSCheckNotificationURL = "v2/Complete3DSMethodv2"
-        case confirmation3DSTerminationURL = "rest/Submit3DSAuthorization"
-        case confirmation3DSTerminationV2URL = "v2/Submit3DSAuthorizationV2"
+    struct URLType: RawRepresentable {
+        static let threeDSCheckNotificationURL = URLType(rawValue: "v2/Complete3DSMethodv2")
+        static let confirmation3DSTerminationURL = URLType(rawValue: "rest/Submit3DSAuthorization")
+        static let confirmation3DSTerminationV2URL = URLType(rawValue: "v2/Submit3DSAuthorizationV2")
+
+        let rawValue: String
     }
 
     // MARK: Dependencies
 
-    private let baseURLProvider: IBaseURLProvider
+    private let urlProvider: IURLProvider
 
     // MARK: Init
 
-    init(baseURLProvider: IBaseURLProvider) {
-        self.baseURLProvider = baseURLProvider
+    init(urlProvider: IURLProvider) {
+        self.urlProvider = urlProvider
     }
 
     // MARK: URL Building
 
-    func buildURL(type: Three3DSURLType) -> URL {
-        baseURLProvider.baseURL.appendingPathComponent(type.rawValue)
+    func buildURL(type: URLType) -> URL {
+        urlProvider.url.appendingPathComponent(type.rawValue)
     }
 }

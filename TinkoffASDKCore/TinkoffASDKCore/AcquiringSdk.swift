@@ -33,55 +33,50 @@ public final class AcquiringSdk: NSObject {
 
     /// Текущий IP адрес
     public var ipAddress: IPAddress? {
-        coreAssembly.ipAddressProvider().ipAddress
+        ipAddressProvider.ipAddress
     }
 
     public let languageKey: AcquiringSdkLanguage?
 
     // MARK: Dependencies
 
-    private let coreAssembly: CoreAssembly
     private let acquiringAPI: IAcquiringAPIClient
     private let acquiringRequests: AcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestsBuilder
+    private let ipAddressProvider: IPAddressProvider
+    private let threeDSURLRequestBuilder: ThreeDSURLRequestBuilder
+    private let threeDSURLBuilder: ThreeDSURLBuilder
+    private let coreAssembly: CoreAssembly
 
     // MARK: Init
 
-    /// Создает новый экземпляр SDK
-    public init(configuration: AcquiringSdkConfiguration) throws {
-        let publicKey = try RSAEncryption.secKey(string: configuration.credential.publicKey)
-            .orThrow(AcquiringSdkError.publicKey(configuration.credential.publicKey))
-
-        let acquiringURL = try URL(string: "https://\(configuration.serverEnvironment.rawValue)/")
-            .orThrow(AcquiringSdkError.url)
-
-        let certificatesConfigURL = try URL(string: "https://\(configuration.configEnvironment.rawValue)/")
-            .orThrow(AcquiringSdkError.url)
-
-        coreAssembly = try CoreAssembly(configuration: configuration)
-        acquiringAPI = coreAssembly.buildAcquiringClient()
-        languageKey = configuration.language
-        self.acquiringRequests = AcquiringRequestBuilder(
-            terminalKey: configuration.credential.terminalKey,
-            publicKey: publicKey,
-            baseURL: acquiringURL,
-            initParamsEnricher: PaymentInitDataParamsEnricher(language: configuration.language),
-            cardDataFormatter: CardDataFormatter(),
-            rsaEncryptor: RSAEncryptor()
-        )
-
-        self.externalAPI = coreAssembly.externalAPIClient()
-        self.externalRequests = ExternalRequestsBuilder(appBasedConfigURL: certificatesConfigURL)
+    init(
+        coreAssembly: CoreAssembly,
+        acquiringAPI: IAcquiringAPIClient,
+        acquiringRequests: AcquiringRequestBuilder,
+        externalAPI: IExternalAPIClient,
+        externalRequests: IExternalRequestsBuilder,
+        ipAddressProvider: IPAddressProvider,
+        threeDSURLRequestBuilder: ThreeDSURLRequestBuilder,
+        threeDSURLBuilder: ThreeDSURLBuilder,
+        language: AcquiringSdkLanguage?
+    ) {
+        self.acquiringAPI = acquiringAPI
+        self.acquiringRequests = acquiringRequests
+        self.externalAPI = externalAPI
+        self.externalRequests = externalRequests
+        self.ipAddressProvider = ipAddressProvider
+        self.threeDSURLRequestBuilder = threeDSURLRequestBuilder
+        self.threeDSURLBuilder = threeDSURLBuilder
+        self.languageKey = language
+        self.coreAssembly = coreAssembly
     }
 
     /// Получить IP адрес
     @available(*, deprecated, message: "Use `ipAddress` instead")
     public func networkIpAddress() -> String? {
-        coreAssembly
-            .ipAddressProvider()
-            .ipAddress?
-            .stringValue
+        ipAddressProvider.ipAddress?.stringValue
     }
 
     // MARK: 3DS Request building
@@ -93,9 +88,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        try coreAssembly
-            .threeDSURLRequestBuilder()
-            .buildConfirmation3DSRequest(requestData: data)
+        try threeDSURLRequestBuilder.buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтверждения платежа 3DS формы
@@ -108,9 +101,7 @@ public final class AcquiringSdk: NSObject {
         data: Confirmation3DSDataACS,
         messageVersion: String
     ) throws -> URLRequest {
-        try coreAssembly
-            .threeDSURLRequestBuilder()
-            .buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
+        try threeDSURLRequestBuilder.buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
     }
 
     /// Проверяет параметры для 3DS формы
@@ -120,9 +111,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        try coreAssembly
-            .threeDSURLRequestBuilder()
-            .build3DSCheckURLRequest(requestData: data)
+        try threeDSURLRequestBuilder.build3DSCheckURLRequest(requestData: data)
     }
 
     // MARK: 3DS URL Building
@@ -132,21 +121,15 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URL
     public func confirmation3DSTerminationURL() -> URL {
-        coreAssembly
-            .threeDSURLBuilder()
-            .buildURL(type: .confirmation3DSTerminationURL)
+        threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL)
     }
 
     public func confirmation3DSTerminationV2URL() -> URL {
-        coreAssembly
-            .threeDSURLBuilder()
-            .buildURL(type: .confirmation3DSTerminationV2URL)
+        threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL)
     }
 
     public func confirmation3DSCompleteV2URL() -> URL {
-        coreAssembly
-            .threeDSURLBuilder()
-            .buildURL(type: .threeDSCheckNotificationURL)
+        threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL)
     }
 
     // MARK: 3DS Handling

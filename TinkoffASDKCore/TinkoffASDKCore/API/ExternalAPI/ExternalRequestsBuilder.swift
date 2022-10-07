@@ -12,13 +12,13 @@ protocol IExternalRequestsBuilder {
 }
 
 final class ExternalRequestsBuilder: IExternalRequestsBuilder {
-    private let appBasedConfigURL: URL
+    private let appBasedConfigURLProvider: IURLProvider
 
-    init(appBasedConfigURL: URL) {
-        self.appBasedConfigURL = appBasedConfigURL
+    init(appBasedConfigURLProvider: IURLProvider) {
+        self.appBasedConfigURLProvider = appBasedConfigURLProvider
     }
 
     func get3DSAppBasedConfigRequest() -> NetworkRequest {
-        Get3DSAppBasedCertsConfigRequest(baseURL: appBasedConfigURL)
+        Get3DSAppBasedCertsConfigRequest(baseURL: appBasedConfigURLProvider.url)
     }
 }

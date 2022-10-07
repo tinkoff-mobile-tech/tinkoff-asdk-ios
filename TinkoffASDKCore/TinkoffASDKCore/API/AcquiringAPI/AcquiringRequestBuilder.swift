@@ -8,24 +8,24 @@
 import Foundation
 
 final class AcquiringRequestBuilder {
-    private let terminalKey: String
-    private let publicKey: SecKey
-    private let baseURL: URL
+    private let baseURLProvider: IURLProvider
+    private let publicKeyProvider: IPublicKeyProvider
+    private let terminalKeyProvider: IStringProvider
     private let initParamsEnricher: IPaymentInitDataParamsEnricher
     private let cardDataFormatter: CardDataFormatter
     private let rsaEncryptor: RSAEncryptor
 
     init(
-        terminalKey: String,
-        publicKey: SecKey,
-        baseURL: URL,
+        baseURLProvider: IURLProvider,
+        publicKeyProvider: IPublicKeyProvider,
+        terminalKeyProvider: IStringProvider,
         initParamsEnricher: IPaymentInitDataParamsEnricher,
         cardDataFormatter: CardDataFormatter,
         rsaEncryptor: RSAEncryptor
     ) {
-        self.terminalKey = terminalKey
-        self.baseURL = baseURL
-        self.publicKey = publicKey
+        self.baseURLProvider = baseURLProvider
+        self.publicKeyProvider = publicKeyProvider
+        self.terminalKeyProvider = terminalKeyProvider
         self.initParamsEnricher = initParamsEnricher
         self.cardDataFormatter = cardDataFormatter
         self.rsaEncryptor = rsaEncryptor
@@ -33,7 +33,7 @@ final class AcquiringRequestBuilder {
 
     func initRequest(data: PaymentInitData) -> AcquiringRequest {
         let enrichedData = initParamsEnricher.enrich(data)
-        return InitRequest(paymentInitData: enrichedData, baseURL: baseURL)
+        return InitRequest(paymentInitData: enrichedData, baseURL: baseURLProvider.url)
     }
 
     func finishAuthorize(data: FinishAuthorizeData) -> AcquiringRequest {
@@ -41,8 +41,8 @@ final class AcquiringRequestBuilder {
             requestData: data,
             encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
-            publicKey: publicKey,
-            baseURL: baseURL
+            publicKey: publicKeyProvider.publicKey,
+            baseURL: baseURLProvider.url
         )
     }
 
@@ -51,29 +51,29 @@ final class AcquiringRequestBuilder {
             check3DSRequestData: data,
             encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
-            publicKey: publicKey,
-            baseURL: baseURL
+            publicKey: publicKeyProvider.publicKey,
+            baseURL: baseURLProvider.url
         )
     }
 
     func submit3DSAuthorizationV2(data: CresData) -> AcquiringRequest {
-        ThreeDSV2AuthorizationRequest(data: data, baseURL: baseURL)
+        ThreeDSV2AuthorizationRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest {
-        GetPaymentStateRequest(data: data, baseURL: baseURL)
+        GetPaymentStateRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func charge(data: ChargeData) -> AcquiringRequest {
-        ChargePaymentRequest(data: data, baseURL: baseURL)
+        ChargePaymentRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func getCardList(data: GetCardListData) -> AcquiringRequest {
-        GetCardListRequest(getCardListData: data, baseURL: baseURL)
+        GetCardListRequest(getCardListData: data, baseURL: baseURLProvider.url)
     }
 
     func addCard(data: AddCardData) -> AcquiringRequest {
-        AddCardRequest(initAddCardData: data, baseURL: baseURL)
+        AddCardRequest(initAddCardData: data, baseURL: baseURLProvider.url)
     }
 
     func attachCard(data: AttachCardData) -> AcquiringRequest {
@@ -81,35 +81,38 @@ final class AcquiringRequestBuilder {
             finishAddCardData: data,
             encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
-            publicKey: publicKey,
-            baseURL: baseURL
+            publicKey: publicKeyProvider.publicKey,
+            baseURL: baseURLProvider.url
         )
     }
 
     func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest {
-        SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURL)
+        SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURLProvider.url)
     }
 
     func deactivateCard(data: DeactivateCardData) -> AcquiringRequest {
-        DeactivateCardRequest(deactivateCardData: data, baseURL: baseURL)
+        DeactivateCardRequest(deactivateCardData: data, baseURL: baseURLProvider.url)
     }
 
     func getQR(data: GetQRData) -> AcquiringRequest {
-        GetQRRequest(data: data, baseURL: baseURL)
+        GetQRRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func getStaticQR(data: GetQRDataType) -> AcquiringRequest {
-        GetStaticQRRequest(sourceType: data, baseURL: baseURL)
+        GetStaticQRRequest(sourceType: data, baseURL: baseURLProvider.url)
     }
 
     func getTinkoffPayStatus() -> AcquiringRequest {
-        GetTinkoffPayStatusRequest(terminalKey: terminalKey, baseURL: baseURL)
+        GetTinkoffPayStatusRequest(
+            terminalKey: terminalKeyProvider.value,
+            baseURL: baseURLProvider.url
+        )
     }
 
     func getTinkoffPayLink(
         paymentId: String,
         version: GetTinkoffPayStatusResponse.Status.Version
     ) -> AcquiringRequest {
-        GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURL)
+        GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURLProvider.url)
     }
 }

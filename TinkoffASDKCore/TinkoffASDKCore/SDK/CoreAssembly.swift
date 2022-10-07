@@ -22,19 +22,11 @@ import Foundation
 
 struct CoreAssembly {
     private let configuration: AcquiringSdkConfiguration
-    private let baseURLProvider: IBaseURLProvider
+    private let urlProvider: IURLProvider
 
-    init(configuration: AcquiringSdkConfiguration) throws {
+    init(configuration: AcquiringSdkConfiguration, urlProvider: IURLProvider) {
         self.configuration = configuration
-        baseURLProvider = try BaseURLProvider(host: configuration.serverEnvironment.rawValue)
-    }
-
-    func buildAcquiringClient() -> IAcquiringAPIClient {
-        AcquiringAPIClient(
-            requestAdapter: AcquiringRequestAdapter(terminalKey: configuration.credential.terminalKey),
-            networkClient: buildNetworkClient(),
-            apiDecoder: APIDecoder()
-        )
+        self.urlProvider = urlProvider
     }
 
     func cardDataFormatter() -> CardDataFormatter {
@@ -46,7 +38,7 @@ struct CoreAssembly {
     }
 
     func threeDSURLBuilder() -> ThreeDSURLBuilder {
-        ThreeDSURLBuilder(baseURLProvider: baseURLProvider)
+        ThreeDSURLBuilder(urlProvider: urlProvider)
     }
 
     func threeDSURLRequestBuilder() -> ThreeDSURLRequestBuilder {
