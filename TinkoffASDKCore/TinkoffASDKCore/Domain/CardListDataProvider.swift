@@ -295,3 +295,15 @@ extension CardListDataProvider: NetworkTransportResponseDelegate {
         return try JSONDecoder().decode(CardListResponse.self, from: cardData)
     }
 }
+
+// MARK: - Serialization Helper
+
+private enum JSONSerializationFormat {
+    static func serialize(value: [String: JSONObject]) throws -> Data {
+        return try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+    }
+
+    static func deserialize(data: Data) throws -> JSONValue {
+        return try JSONSerialization.jsonObject(with: data, options: [])
+    }
+}

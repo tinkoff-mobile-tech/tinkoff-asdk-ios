@@ -20,8 +20,6 @@
 import Foundation
 
 public struct HTTPResponseError: Error, LocalizedError {
-    private let serializationFormat = JSONSerializationFormat.self
-
     public enum ErrorKind {
         case errorResponse
         case invalidResponse
