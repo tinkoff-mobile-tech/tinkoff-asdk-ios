@@ -12,6 +12,7 @@ protocol IDeviceInfoProvider {
     var model: String { get }
     var systemName: String { get }
     var systemVersion: String { get }
+    var modelVersion: String { get }
 }
 
 final class DeviceInfoProvider: IDeviceInfoProvider {
@@ -25,5 +26,16 @@ final class DeviceInfoProvider: IDeviceInfoProvider {
 
     var systemVersion: String {
         UIDevice.current.systemVersion
+    }
+
+    var modelVersion: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
     }
 }

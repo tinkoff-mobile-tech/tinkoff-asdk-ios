@@ -35,12 +35,13 @@ public extension AcquiringSdk {
         let deviceInfoProvider = DeviceInfoProvider()
         let acquiringClient = AcquiringAPIClient.build(terminalKeyProvider: terminalKeyProvider, networkClient: networkClient)
         let threeDSURLBuilder = ThreeDSURLBuilder(urlProvider: acquiringURLProvider)
+        let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
 
         let acquiringRequests = AcquiringRequestBuilder(
             baseURLProvider: acquiringURLProvider,
             publicKeyProvider: publicKeyProvider,
             terminalKeyProvider: terminalKeyProvider,
-            initParamsEnricher: PaymentInitDataParamsEnricher(language: configuration.language),
+            initParamsEnricher: initEnricher,
             cardDataFormatter: CardDataFormatter(),
             rsaEncryptor: encryptor
         )

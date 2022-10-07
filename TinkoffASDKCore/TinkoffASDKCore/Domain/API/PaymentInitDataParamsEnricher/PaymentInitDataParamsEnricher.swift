@@ -25,9 +25,11 @@ protocol IPaymentInitDataParamsEnricher {
 }
 
 final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
+    private let deviceInfoProvider: IDeviceInfoProvider
     private let language: AcquiringSdkLanguage?
 
-    init(language: AcquiringSdkLanguage?) {
+    init(deviceInfoProvider: IDeviceInfoProvider, language: AcquiringSdkLanguage?) {
+        self.deviceInfoProvider = deviceInfoProvider
         self.language = language
     }
 
@@ -35,10 +37,10 @@ final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
         var paymentData = paymentInitData
 
         let additionalParams: [String: String] = [
-            .connectionType: String.mobileSDK,
+            .connectionType: .mobileSDK,
             .version: Version.versionString,
-            .softwareVersion: UIDevice.current.systemVersion,
-            .deviceModel: UIDevice.current.deviceModel,
+            .softwareVersion: deviceInfoProvider.systemVersion,
+            .deviceModel: deviceInfoProvider.modelVersion,
             APIConstants.Keys.language: language?.rawValue,
         ].compactMapValues { $0 }
 
