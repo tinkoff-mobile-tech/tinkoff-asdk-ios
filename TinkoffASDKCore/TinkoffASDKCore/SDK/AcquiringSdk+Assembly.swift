@@ -28,7 +28,7 @@ public extension AcquiringSdk {
         let networkSession = NetworkSession.build(requestsTimeout: configuration.requestsTimeoutInterval)
         let networkClient = NetworkClient.build(session: networkSession)
         let externalClient = ExternalAPIClient(networkClient: networkClient)
-        let externalRequests = ExternalRequestsBuilder(appBasedConfigURLProvider: appBasedConfigURLProvider)
+        let externalRequests = ExternalRequestBuilder(appBasedConfigURLProvider: appBasedConfigURLProvider)
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
         let deviceInfoProvider = DefaultDeviceInfoProvider()
         let acquiringClient = AcquiringAPIClient.build(terminalKeyProvider: terminalKeyProvider, networkClient: networkClient)

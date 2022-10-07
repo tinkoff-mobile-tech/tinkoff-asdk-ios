@@ -38,7 +38,7 @@ public final class AcquiringSdk: NSObject {
     private let acquiringAPI: IAcquiringAPIClient
     private let acquiringRequests: AcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
-    private let externalRequests: IExternalRequestsBuilder
+    private let externalRequests: IExternalRequestBuilder
     private let ipAddressProvider: IPAddressProvider
     private let threeDSURLRequestBuilder: ThreeDSURLRequestBuilder
     private let threeDSURLBuilder: ThreeDSURLBuilder
@@ -51,7 +51,7 @@ public final class AcquiringSdk: NSObject {
         acquiringAPI: IAcquiringAPIClient,
         acquiringRequests: AcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
-        externalRequests: IExternalRequestsBuilder,
+        externalRequests: IExternalRequestBuilder,
         ipAddressProvider: IPAddressProvider,
         threeDSURLRequestBuilder: ThreeDSURLRequestBuilder,
         threeDSURLBuilder: ThreeDSURLBuilder,
