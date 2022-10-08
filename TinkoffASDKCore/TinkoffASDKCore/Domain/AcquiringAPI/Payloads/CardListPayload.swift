@@ -30,12 +30,12 @@ public struct CardListPayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .cards: return APIConstants.Keys.cards
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .success: return APIConstants.Keys.success
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .terminalKey: return APIConstants.Keys.terminalKey
+            case .cards: return Constants.Keys.cards
+            case .errorCode: return Constants.Keys.errorCode
+            case .success: return Constants.Keys.success
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .terminalKey: return Constants.Keys.terminalKey
             }
         }
     }

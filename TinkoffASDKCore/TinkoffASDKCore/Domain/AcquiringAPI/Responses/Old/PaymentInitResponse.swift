@@ -34,15 +34,15 @@ public struct PaymentInitResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .amount: return APIConstants.Keys.amount
-            case .orderId: return APIConstants.Keys.orderId
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .status: return APIConstants.Keys.status
+            case .success: return Constants.Keys.success
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .amount: return Constants.Keys.amount
+            case .orderId: return Constants.Keys.orderId
+            case .paymentId: return Constants.Keys.paymentId
+            case .status: return Constants.Keys.status
             }
         }
     }

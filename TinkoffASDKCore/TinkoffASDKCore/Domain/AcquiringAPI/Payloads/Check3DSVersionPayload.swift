@@ -28,10 +28,10 @@ public struct Check3DSVersionPayload: Decodable, Equatable {
 
         var stringValue: String {
             switch self {
-            case .version: return APIConstants.Keys.version
-            case .tdsServerTransID: return APIConstants.Keys.tdsServerTransID
-            case .threeDSMethodURL: return APIConstants.Keys.threeDSMethodURL
-            case .paymentSystem: return APIConstants.Keys.paymentSystem
+            case .version: return Constants.Keys.version
+            case .tdsServerTransID: return Constants.Keys.tdsServerTransID
+            case .threeDSMethodURL: return Constants.Keys.threeDSMethodURL
+            case .paymentSystem: return Constants.Keys.paymentSystem
             }
         }
     }

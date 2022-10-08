@@ -51,25 +51,25 @@ private extension HTTPParameters {
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
-        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: requestData.paymentId]
+        var parameters: HTTPParameters = [Constants.Keys.paymentId: requestData.paymentId]
 
         switch requestData.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
 
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[APIConstants.Keys.cardData] = encryptedCardData
+                parameters[Constants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
 
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[APIConstants.Keys.cardData] = encryptedCardData
+                parameters[Constants.Keys.cardData] = encryptedCardData
             }
         case let .paymentData(data):
-            parameters[APIConstants.Keys.encryptedPaymentData] = data
-            parameters[APIConstants.Keys.route] = APIConstants.Values.acq
-            parameters[APIConstants.Keys.source] = APIConstants.Values.applePaySource
+            parameters[Constants.Keys.encryptedPaymentData] = data
+            parameters[Constants.Keys.route] = Constants.Values.acq
+            parameters[Constants.Keys.source] = Constants.Values.applePaySource
         default: break
         }
 

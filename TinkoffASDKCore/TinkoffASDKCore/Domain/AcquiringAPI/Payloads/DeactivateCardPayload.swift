@@ -26,8 +26,8 @@ public struct DeactivateCardPayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .cardId: return APIConstants.Keys.cardId
-            case .cardStatus: return APIConstants.Keys.status
+            case .cardId: return Constants.Keys.cardId
+            case .cardStatus: return Constants.Keys.status
             }
         }
     }

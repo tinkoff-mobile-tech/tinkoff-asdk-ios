@@ -32,12 +32,12 @@ public struct PaymentInvoiceQRCodeCollectorResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .qrCodeData: return APIConstants.Keys.qrCodeData
+            case .success: return Constants.Keys.success
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .qrCodeData: return Constants.Keys.qrCodeData
             }
         }
     }

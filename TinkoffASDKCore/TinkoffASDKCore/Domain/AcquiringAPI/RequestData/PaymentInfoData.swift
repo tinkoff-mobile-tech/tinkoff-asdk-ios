@@ -29,7 +29,7 @@ public struct GetPaymentStateData: Encodable {
         var stringValue: String {
             switch self {
             case .paymentId:
-                return APIConstants.Keys.paymentId
+                return Constants.Keys.paymentId
             }
         }
     }

@@ -43,7 +43,7 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
 
         adaptedRequest
             .parameters
-            .merge([APIConstants.Keys.terminalKey: terminalKeyProvider.value]) { $1 }
+            .merge([Constants.Keys.terminalKey: terminalKeyProvider.value]) { $1 }
 
         completion(.success(adaptedRequest))
     }

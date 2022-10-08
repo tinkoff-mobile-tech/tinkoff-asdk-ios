@@ -26,8 +26,8 @@ public struct AddCardData: Codable {
 
         var stringValue: String {
             switch self {
-            case .checkType: return APIConstants.Keys.checkType
-            case .customerKey: return APIConstants.Keys.customerKey
+            case .checkType: return Constants.Keys.checkType
+            case .customerKey: return Constants.Keys.customerKey
             }
         }
     }

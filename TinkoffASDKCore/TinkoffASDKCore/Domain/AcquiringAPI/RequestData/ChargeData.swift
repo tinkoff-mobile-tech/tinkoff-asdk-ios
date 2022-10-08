@@ -26,8 +26,8 @@ public struct ChargeData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .rebillId: return APIConstants.Keys.rebillId
+            case .paymentId: return Constants.Keys.paymentId
+            case .rebillId: return Constants.Keys.rebillId
             }
         }
     }
@@ -51,8 +51,8 @@ public struct PaymentChargeRequestData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .parentPaymentId: return APIConstants.Keys.rebillId
+            case .paymentId: return Constants.Keys.paymentId
+            case .parentPaymentId: return Constants.Keys.rebillId
             }
         }
     }

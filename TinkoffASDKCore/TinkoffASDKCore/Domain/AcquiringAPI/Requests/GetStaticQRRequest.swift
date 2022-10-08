@@ -27,6 +27,6 @@ struct GetStaticQRRequest: AcquiringRequest {
 
     init(sourceType: GetQRDataType, baseURL: URL) {
         self.baseURL = baseURL
-        parameters = [APIConstants.Keys.dataType: sourceType.rawValue]
+        parameters = [Constants.Keys.dataType: sourceType.rawValue]
     }
 }

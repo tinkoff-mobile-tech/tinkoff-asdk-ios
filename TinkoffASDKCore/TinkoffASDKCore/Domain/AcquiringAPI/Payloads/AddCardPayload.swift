@@ -25,7 +25,7 @@ public struct AddCardPayload: Decodable, Equatable {
 
         var stringValue: String {
             switch self {
-            case .requestKey: return APIConstants.Keys.requestKey
+            case .requestKey: return Constants.Keys.requestKey
             }
         }
     }

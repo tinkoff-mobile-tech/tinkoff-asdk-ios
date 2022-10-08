@@ -26,8 +26,8 @@ public struct SubmitRandomAmountData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .amount: return APIConstants.Keys.amount
-            case .requestKey: return APIConstants.Keys.requestKey
+            case .amount: return Constants.Keys.amount
+            case .requestKey: return Constants.Keys.requestKey
             }
         }
     }

@@ -28,10 +28,10 @@ public struct GetPaymentStatePayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .amount: return APIConstants.Keys.amount
-            case .orderId: return APIConstants.Keys.orderId
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .status: return APIConstants.Keys.status
+            case .amount: return Constants.Keys.amount
+            case .orderId: return Constants.Keys.orderId
+            case .paymentId: return Constants.Keys.paymentId
+            case .status: return Constants.Keys.status
             }
         }
     }

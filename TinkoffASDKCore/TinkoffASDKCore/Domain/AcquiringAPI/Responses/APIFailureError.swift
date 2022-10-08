@@ -32,14 +32,14 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
 
         var stringValue: String {
             switch self {
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .status: return APIConstants.Keys.status
-            case .orderId: return APIConstants.Keys.orderId
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .amount: return APIConstants.Keys.amount
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .status: return Constants.Keys.status
+            case .orderId: return Constants.Keys.orderId
+            case .paymentId: return Constants.Keys.paymentId
+            case .amount: return Constants.Keys.amount
             }
         }
     }

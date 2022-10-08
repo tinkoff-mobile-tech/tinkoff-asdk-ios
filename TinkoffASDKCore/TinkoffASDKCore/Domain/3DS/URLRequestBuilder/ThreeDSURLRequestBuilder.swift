@@ -50,11 +50,11 @@ final class ThreeDSURLRequestBuilder: IThreeDSURLRequestBuilder {
         }
 
         let creqJson = [
-            APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransId,
-            APIConstants.Keys.acsTransID: requestData.acsTransId,
-            APIConstants.Keys.messageVersion: version,
-            APIConstants.Keys.challengeWindowSize: "05",
-            APIConstants.Keys.messageType: "CReq",
+            Constants.Keys.threeDSServerTransID: requestData.tdsServerTransId,
+            Constants.Keys.acsTransID: requestData.acsTransId,
+            Constants.Keys.messageVersion: version,
+            Constants.Keys.challengeWindowSize: "05",
+            Constants.Keys.messageType: "CReq",
         ]
         let creq = try JSONSerialization.data(
             withJSONObject: creqJson,
@@ -65,7 +65,7 @@ final class ThreeDSURLRequestBuilder: IThreeDSURLRequestBuilder {
         /// About padding you can read here: https://www.pixelstech.net/article/1457585550-How-does-Base64-work
         let noPaddingCreq = creq.replacingOccurrences(of: "=", with: "")
 
-        return request(url: url, body: "\(APIConstants.Keys.creq)=\(noPaddingCreq)".data(using: .utf8))
+        return request(url: url, body: "\(Constants.Keys.creq)=\(noPaddingCreq)".data(using: .utf8))
     }
 
     func buildConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest {
@@ -75,9 +75,9 @@ final class ThreeDSURLRequestBuilder: IThreeDSURLRequestBuilder {
 
         let termUrl = urlBuilder.url(ofType: .confirmation3DSTerminationURL).absoluteString
         let parameters = [
-            APIConstants.Keys.paReq: requestData.pareq,
-            APIConstants.Keys.md: requestData.md,
-            APIConstants.Keys.termUrl: termUrl,
+            Constants.Keys.paReq: requestData.pareq,
+            Constants.Keys.md: requestData.md,
+            Constants.Keys.termUrl: termUrl,
         ]
 
         let allowedCharacterSet = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
@@ -95,8 +95,8 @@ final class ThreeDSURLRequestBuilder: IThreeDSURLRequestBuilder {
 
         let threeDSMethodNotificationURL = urlBuilder.url(ofType: .threeDSCheckNotificationURL).absoluteString
         let threeDSMethodJson = [
-            APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransID,
-            APIConstants.Keys.threeDSMethodNotificationURL: threeDSMethodNotificationURL,
+            Constants.Keys.threeDSServerTransID: requestData.tdsServerTransID,
+            Constants.Keys.threeDSMethodNotificationURL: threeDSMethodNotificationURL,
         ]
         let threeDSMethodData = try JSONSerialization.data(
             withJSONObject: threeDSMethodJson,
@@ -105,7 +105,7 @@ final class ThreeDSURLRequestBuilder: IThreeDSURLRequestBuilder {
 
         let noPaddingThreeDSMethodData = threeDSMethodData.replacingOccurrences(of: "=", with: "")
 
-        return request(url: check3DSMethodURL, body: "\(APIConstants.Keys.threeDSMethodData)=\(noPaddingThreeDSMethodData)".data(using: .utf8))
+        return request(url: check3DSMethodURL, body: "\(Constants.Keys.threeDSMethodData)=\(noPaddingThreeDSMethodData)".data(using: .utf8))
     }
 }
 

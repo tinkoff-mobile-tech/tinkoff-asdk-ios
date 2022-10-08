@@ -27,9 +27,9 @@ public struct GetQRPayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .qrCodeData: return APIConstants.Keys.qrCodeData
-            case .orderId: return APIConstants.Keys.orderId
-            case .paymentId: return APIConstants.Keys.paymentId
+            case .qrCodeData: return Constants.Keys.qrCodeData
+            case .orderId: return Constants.Keys.orderId
+            case .paymentId: return Constants.Keys.paymentId
             }
         }
     }

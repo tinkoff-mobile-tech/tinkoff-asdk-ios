@@ -32,13 +32,13 @@ public struct AddCardStatusResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .requestKey: return APIConstants.Keys.requestKey
-            case .cardId: return APIConstants.Keys.cardId
+            case .success: return Constants.Keys.success
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .requestKey: return Constants.Keys.requestKey
+            case .cardId: return Constants.Keys.cardId
             }
         }
     }

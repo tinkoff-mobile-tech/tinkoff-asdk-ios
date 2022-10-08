@@ -68,37 +68,37 @@ private extension HTTPParameters {
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
-        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: data.paymentId]
+        var parameters: HTTPParameters = [Constants.Keys.paymentId: data.paymentId]
         if let sendEmail = data.sendEmail {
-            parameters[APIConstants.Keys.sendEmail] = sendEmail
+            parameters[Constants.Keys.sendEmail] = sendEmail
         }
         if let infoEmail = data.infoEmail {
-            parameters[APIConstants.Keys.infoEmail] = infoEmail
+            parameters[Constants.Keys.infoEmail] = infoEmail
         }
         if let ipAddress = data.ipAddress {
-            parameters[APIConstants.Keys.ipAddress] = ipAddress
+            parameters[Constants.Keys.ipAddress] = ipAddress
         }
         if let deviceInfo = data.deviceInfo,
            let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
-            parameters[APIConstants.Keys.data] = deviceInfoJSON
+            parameters[Constants.Keys.data] = deviceInfoJSON
         }
 
         switch data.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[APIConstants.Keys.cardData] = encryptedCardData
+                parameters[Constants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
 
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[APIConstants.Keys.cardData] = encryptedCardData
+                parameters[Constants.Keys.cardData] = encryptedCardData
             }
         case let .paymentData(data):
-            parameters[APIConstants.Keys.encryptedPaymentData] = data
-            parameters[APIConstants.Keys.route] = APIConstants.Values.acq
-            parameters[APIConstants.Keys.source] = APIConstants.Values.applePaySource
+            parameters[Constants.Keys.encryptedPaymentData] = data
+            parameters[Constants.Keys.route] = Constants.Values.acq
+            parameters[Constants.Keys.source] = Constants.Values.applePaySource
         default: break
         }
 
@@ -111,37 +111,37 @@ private extension HTTPParameters {
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
-        var parameters: HTTPParameters = [APIConstants.Keys.paymentId: String(data.paymentId)]
+        var parameters: HTTPParameters = [Constants.Keys.paymentId: String(data.paymentId)]
         if let sendEmail = data.sendEmail {
-            parameters[APIConstants.Keys.sendEmail] = sendEmail
+            parameters[Constants.Keys.sendEmail] = sendEmail
         }
         if let infoEmail = data.infoEmail {
-            parameters[APIConstants.Keys.infoEmail] = infoEmail
+            parameters[Constants.Keys.infoEmail] = infoEmail
         }
         if let ipAddress = data.ipAddress {
-            parameters[APIConstants.Keys.ipAddress] = ipAddress
+            parameters[Constants.Keys.ipAddress] = ipAddress
         }
         if let deviceInfo = data.deviceInfo,
            let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
-            parameters[APIConstants.Keys.data] = deviceInfoJSON
+            parameters[Constants.Keys.data] = deviceInfoJSON
         }
 
         switch data.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[APIConstants.Keys.cardData] = encryptedCardData
+                parameters[Constants.Keys.cardData] = encryptedCardData
             }
         case let .savedCard(cardId, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
 
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[APIConstants.Keys.cardData] = encryptedCardData
+                parameters[Constants.Keys.cardData] = encryptedCardData
             }
         case let .paymentData(data):
-            parameters[APIConstants.Keys.encryptedPaymentData] = data
-            parameters[APIConstants.Keys.route] = APIConstants.Values.acq
-            parameters[APIConstants.Keys.source] = APIConstants.Values.applePaySource
+            parameters[Constants.Keys.encryptedPaymentData] = data
+            parameters[Constants.Keys.route] = Constants.Values.acq
+            parameters[Constants.Keys.source] = Constants.Values.applePaySource
         default: break
         }
 

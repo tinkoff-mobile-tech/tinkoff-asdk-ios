@@ -20,11 +20,11 @@ public enum PaymentSourceData: Codable {
 
         var stringValue: String {
             switch self {
-            case .cardNumber: return APIConstants.Keys.cardNumber
-            case .cardExpDate: return APIConstants.Keys.cardExpDate
-            case .cardCVV: return APIConstants.Keys.cardCVV
-            case .savedCardId: return APIConstants.Keys.cardId
-            case .paymentData: return APIConstants.Keys.paymentData
+            case .cardNumber: return Constants.Keys.cardNumber
+            case .cardExpDate: return Constants.Keys.cardExpDate
+            case .cardCVV: return Constants.Keys.cardCVV
+            case .savedCardId: return Constants.Keys.cardId
+            case .paymentData: return Constants.Keys.paymentData
             }
         }
     }

@@ -28,7 +28,7 @@ public struct GetCardListData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .customerKey: return APIConstants.Keys.customerKey
+            case .customerKey: return Constants.Keys.customerKey
             }
         }
     }

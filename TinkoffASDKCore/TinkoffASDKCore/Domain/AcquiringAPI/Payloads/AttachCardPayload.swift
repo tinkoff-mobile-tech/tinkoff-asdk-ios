@@ -27,9 +27,9 @@ public struct AttachCardPayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .status: return APIConstants.Keys.status
-            case .requestKey: return APIConstants.Keys.requestKey
-            case .cardId: return APIConstants.Keys.cardId
+            case .status: return Constants.Keys.status
+            case .requestKey: return Constants.Keys.requestKey
+            case .cardId: return Constants.Keys.cardId
             }
         }
     }

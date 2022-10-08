@@ -35,15 +35,15 @@ public struct Check3dsVersionResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .tdsServerTransID: return APIConstants.Keys.tdsServerTransID
-            case .threeDSMethodURL: return APIConstants.Keys.threeDSMethodURL
-            case .version: return APIConstants.Keys.version
-            case .paymentSystem: return APIConstants.Keys.paymentSystem
+            case .success: return Constants.Keys.success
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .tdsServerTransID: return Constants.Keys.tdsServerTransID
+            case .threeDSMethodURL: return Constants.Keys.threeDSMethodURL
+            case .version: return Constants.Keys.version
+            case .paymentSystem: return Constants.Keys.paymentSystem
             }
         }
     }

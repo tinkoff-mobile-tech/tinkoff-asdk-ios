@@ -48,8 +48,8 @@ public struct GetQRData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .dataType: return APIConstants.Keys.dataType
+            case .paymentId: return Constants.Keys.paymentId
+            case .dataType: return Constants.Keys.dataType
             }
         }
     }

@@ -29,8 +29,8 @@ public struct DeactivateCardData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .cardId: return APIConstants.Keys.cardId
-            case .customerKey: return APIConstants.Keys.customerKey
+            case .cardId: return Constants.Keys.cardId
+            case .customerKey: return Constants.Keys.customerKey
             }
         }
     }

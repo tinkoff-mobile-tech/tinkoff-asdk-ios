@@ -25,7 +25,7 @@ public struct FinishAuthorizePayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .rebillId: return APIConstants.Keys.rebillId
+            case .rebillId: return Constants.Keys.rebillId
             }
         }
     }

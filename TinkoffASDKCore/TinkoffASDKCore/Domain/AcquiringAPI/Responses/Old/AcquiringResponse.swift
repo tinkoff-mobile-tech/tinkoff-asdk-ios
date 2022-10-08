@@ -41,15 +41,15 @@ public class AcquiringResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .status: return APIConstants.Keys.status
-            case .paymentId: return APIConstants.Keys.paymentId
-            case .orderId: return APIConstants.Keys.orderId
-            case .amount: return APIConstants.Keys.amount
+            case .success: return Constants.Keys.success
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .status: return Constants.Keys.status
+            case .paymentId: return Constants.Keys.paymentId
+            case .orderId: return Constants.Keys.orderId
+            case .amount: return Constants.Keys.amount
             }
         }
     }

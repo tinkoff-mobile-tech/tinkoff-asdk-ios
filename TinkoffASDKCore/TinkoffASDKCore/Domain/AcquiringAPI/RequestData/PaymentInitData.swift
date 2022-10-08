@@ -38,19 +38,19 @@ public struct PaymentInitData: Encodable {
 
         var stringValue: String {
             switch self {
-            case .amount: return APIConstants.Keys.amount
-            case .orderId: return APIConstants.Keys.orderId
-            case .customerKey: return APIConstants.Keys.customerKey
-            case .description: return APIConstants.Keys.description
-            case .payType: return APIConstants.Keys.payType
-            case .savingAsParentPayment: return APIConstants.Keys.savingAsParentPayment
-            case .paymentFormData: return APIConstants.Keys.data
-            case .receipt: return APIConstants.Keys.receipt
-            case .shops: return APIConstants.Keys.shops
-            case .receipts: return APIConstants.Keys.receipts
-            case .redirectDueDate: return APIConstants.Keys.redirectDueDate
-            case .successURL: return APIConstants.Keys.successURL
-            case .failURL: return APIConstants.Keys.failURL
+            case .amount: return Constants.Keys.amount
+            case .orderId: return Constants.Keys.orderId
+            case .customerKey: return Constants.Keys.customerKey
+            case .description: return Constants.Keys.description
+            case .payType: return Constants.Keys.payType
+            case .savingAsParentPayment: return Constants.Keys.savingAsParentPayment
+            case .paymentFormData: return Constants.Keys.data
+            case .receipt: return Constants.Keys.receipt
+            case .shops: return Constants.Keys.shops
+            case .receipts: return Constants.Keys.receipts
+            case .redirectDueDate: return Constants.Keys.redirectDueDate
+            case .successURL: return Constants.Keys.successURL
+            case .failURL: return Constants.Keys.failURL
             }
         }
     }

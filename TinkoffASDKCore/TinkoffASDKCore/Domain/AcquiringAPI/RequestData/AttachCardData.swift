@@ -36,6 +36,6 @@ public struct AttachCardData {
     }
 
     func cardData() -> String {
-        return "\(APIConstants.Keys.cardNumber)=\(cardNumber);\(APIConstants.Keys.cardExpDate)=\(expDate);\(APIConstants.Keys.cardCVV)=\(cvv)"
+        return "\(Constants.Keys.cardNumber)=\(cardNumber);\(Constants.Keys.cardExpDate)=\(expDate);\(Constants.Keys.cardCVV)=\(cvv)"
     }
 }

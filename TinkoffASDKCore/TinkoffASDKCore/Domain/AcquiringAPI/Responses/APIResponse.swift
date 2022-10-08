@@ -27,9 +27,9 @@ struct APIResponse<Model: Decodable>: Decodable {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .terminalKey: return APIConstants.Keys.terminalKey
-            case .errorCode: return APIConstants.Keys.errorCode
+            case .success: return Constants.Keys.success
+            case .terminalKey: return Constants.Keys.terminalKey
+            case .errorCode: return Constants.Keys.errorCode
             }
         }
     }

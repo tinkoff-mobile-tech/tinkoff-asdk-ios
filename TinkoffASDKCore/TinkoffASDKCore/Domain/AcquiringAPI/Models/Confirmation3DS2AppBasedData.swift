@@ -16,10 +16,10 @@ public struct Confirmation3DS2AppBasedData: Codable {
 
         var stringValue: String {
             switch self {
-            case .acsSignedContent: return APIConstants.Keys.acsSignedContent
-            case .acsTransId: return APIConstants.Keys.acsTransId
-            case .tdsServerTransId: return APIConstants.Keys.tdsServerTransId
-            case .acsRefNumber: return APIConstants.Keys.acsRefNumber
+            case .acsSignedContent: return Constants.Keys.acsSignedContent
+            case .acsTransId: return Constants.Keys.acsTransId
+            case .tdsServerTransId: return Constants.Keys.tdsServerTransId
+            case .acsRefNumber: return Constants.Keys.acsRefNumber
             }
         }
     }

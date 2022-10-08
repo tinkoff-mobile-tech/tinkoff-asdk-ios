@@ -26,8 +26,8 @@ public struct SubmitRandomAmountPayload: Decodable {
 
         var stringValue: String {
             switch self {
-            case .requestKey: return APIConstants.Keys.requestKey
-            case .cardId: return APIConstants.Keys.cardId
+            case .requestKey: return Constants.Keys.requestKey
+            case .cardId: return Constants.Keys.cardId
             }
         }
     }

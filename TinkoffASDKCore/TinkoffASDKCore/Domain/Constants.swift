@@ -1,6 +1,6 @@
 //
 //
-//  APIConstants.swift
+//  Constants.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-enum APIConstants {
+enum Constants {
     enum Keys {
         static let amount = "Amount"
         static let orderId = "OrderId"

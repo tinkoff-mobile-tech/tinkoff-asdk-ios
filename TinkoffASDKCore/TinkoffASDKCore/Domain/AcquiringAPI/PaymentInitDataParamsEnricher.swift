@@ -41,7 +41,7 @@ final class PaymentInitDataParamsEnricher: IPaymentInitDataParamsEnricher {
             .version: Version.versionString,
             .softwareVersion: deviceInfoProvider.systemVersion,
             .deviceModel: deviceInfoProvider.modelVersion,
-            APIConstants.Keys.language: language?.rawValue,
+            Constants.Keys.language: language?.rawValue,
         ].compactMapValues { $0 }
 
         paymentData.addPaymentData(additionalParams)

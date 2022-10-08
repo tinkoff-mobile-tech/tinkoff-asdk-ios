@@ -20,8 +20,8 @@ public struct GetTinkoffLinkResponse {
 
             var stringValue: String {
                 switch self {
-                case .isAllowed: return APIConstants.Keys.isAllowed
-                case .version: return APIConstants.Keys.version
+                case .isAllowed: return Constants.Keys.isAllowed
+                case .version: return Constants.Keys.version
                 }
             }
         }
@@ -70,11 +70,11 @@ extension GetTinkoffLinkResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .success: return APIConstants.Keys.success
-            case .errorCode: return APIConstants.Keys.errorCode
-            case .errorMessage: return APIConstants.Keys.errorMessage
-            case .errorDetails: return APIConstants.Keys.errorDetails
-            case .params: return APIConstants.Keys.params
+            case .success: return Constants.Keys.success
+            case .errorCode: return Constants.Keys.errorCode
+            case .errorMessage: return Constants.Keys.errorMessage
+            case .errorDetails: return Constants.Keys.errorDetails
+            case .params: return Constants.Keys.params
             }
         }
     }
@@ -84,7 +84,7 @@ extension GetTinkoffLinkResponse: ResponseOperation {
 
         var stringValue: String {
             switch self {
-            case .redirectUrl: return APIConstants.Keys.redirectUrl
+            case .redirectUrl: return Constants.Keys.redirectUrl
             }
         }
     }

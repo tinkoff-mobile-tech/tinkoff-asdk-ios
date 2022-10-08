@@ -51,7 +51,7 @@ private extension HTTPParameters {
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
-        var parameters: HTTPParameters = [APIConstants.Keys.requestKey: requestData.requestKey]
+        var parameters: HTTPParameters = [Constants.Keys.requestKey: requestData.requestKey]
 
         let formattedCardData = cardDataFormatter.formatCardData(
             cardNumber: requestData.cardNumber,
@@ -60,7 +60,7 @@ private extension HTTPParameters {
         )
 
         if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-            parameters[APIConstants.Keys.cardData] = encryptedCardData
+            parameters[Constants.Keys.cardData] = encryptedCardData
         }
 
         return parameters
