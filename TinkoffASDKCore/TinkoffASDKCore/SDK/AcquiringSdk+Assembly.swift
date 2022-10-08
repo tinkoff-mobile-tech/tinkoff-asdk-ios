@@ -27,6 +27,7 @@ public extension AcquiringSdk {
             .orThrow(AcquiringSdkError.url)
 
         let terminalKeyProvider = StringProvider(value: configuration.credential.terminalKey)
+        let languageProvider = LanguageProvider(language: configuration.language)
         let networkSession = NetworkSession.build(requestsTimeout: configuration.requestsTimeoutInterval)
         let networkClient = NetworkClient.build(session: networkSession)
         let externalClient = ExternalAPIClient(networkClient: networkClient)
@@ -34,8 +35,8 @@ public extension AcquiringSdk {
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
         let deviceInfoProvider = DeviceInfoProvider()
         let acquiringClient = AcquiringAPIClient.build(terminalKeyProvider: terminalKeyProvider, networkClient: networkClient)
-        let threeDSURLBuilder = ThreeDSURLBuilder(urlProvider: acquiringURLProvider)
         let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
+        let threeDSFacade = ThreeDSFacade.build(acquiringURLProvider: acquiringURLProvider, languageProvider: languageProvider)
 
         let acquiringRequests = AcquiringRequestBuilder(
             baseURLProvider: acquiringURLProvider,
@@ -46,23 +47,14 @@ public extension AcquiringSdk {
             rsaEncryptor: encryptor
         )
 
-        let threeDSURLRequestsBuilder = ThreeDSURLRequestBuilder(
-            threeDSURLBuilder: threeDSURLBuilder,
-            deviceInfoProvider: deviceInfoProvider
-        )
-
-        let coreAssembly = CoreAssembly(configuration: configuration, urlProvider: acquiringURLProvider)
-
         self.init(
-            coreAssembly: coreAssembly,
             acquiringAPI: acquiringClient,
             acquiringRequests: acquiringRequests,
             externalAPI: externalClient,
             externalRequests: externalRequests,
             ipAddressProvider: ipAddressProvider,
-            threeDSURLRequestBuilder: threeDSURLRequestsBuilder,
-            threeDSURLBuilder: threeDSURLBuilder,
-            language: configuration.language
+            threeDSFacade: threeDSFacade,
+            languageProvider: languageProvider
         )
     }
 }
@@ -108,5 +100,24 @@ private extension NetworkSession {
 private extension URLRequestBuilder {
     static func build() -> URLRequestBuilder {
         URLRequestBuilder(jsonParametersEncoder: JSONEncoding(options: .sortedKeys))
+    }
+}
+
+// MARK: - ThreeDSFacade
+
+private extension ThreeDSFacade {
+    static func build(acquiringURLProvider: IURLProvider, languageProvider: ILanguageProvider) -> ThreeDSFacade {
+        let urlBuilder = ThreeDSURLBuilder(baseURLProvider: acquiringURLProvider)
+        let deviceInfoProvider = DeviceInfoProvider()
+        let urlRequestBuilder = ThreeDSURLRequestBuilder(urlBuilder: urlBuilder, deviceInfoProvider: deviceInfoProvider)
+        let webViewHandlerBuilder = ThreeDSWebViewHandlerBuilder(threeDSURLBuilder: urlBuilder, decoder: JSONDecoder())
+        let deviceParamsProviderBuilder = ThreeDSDeviceParamsProviderBuilder(languageProvider: languageProvider, urlBuilder: urlBuilder)
+
+        return ThreeDSFacade(
+            threeDSURLBuilder: urlBuilder,
+            threeDSURLRequestBuilder: urlRequestBuilder,
+            webViewHandlerBuilder: webViewHandlerBuilder,
+            deviceParamsProviderBuilder: deviceParamsProviderBuilder
+        )
     }
 }

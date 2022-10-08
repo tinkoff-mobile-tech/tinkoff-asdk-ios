@@ -31,7 +31,9 @@ public final class AcquiringSdk: NSObject {
         ipAddressProvider.ipAddress
     }
 
-    public let languageKey: AcquiringSdkLanguage?
+    public var languageKey: AcquiringSdkLanguage? {
+        languageProvider.language
+    }
 
     // MARK: Dependencies
 
@@ -40,32 +42,27 @@ public final class AcquiringSdk: NSObject {
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestBuilder
     private let ipAddressProvider: IPAddressProvider
-    private let threeDSURLRequestBuilder: ThreeDSURLRequestBuilder
-    private let threeDSURLBuilder: ThreeDSURLBuilder
-    private let coreAssembly: CoreAssembly
+    private let threeDSFacade: IThreeDSFacade
+    private let languageProvider: ILanguageProvider
 
     // MARK: Init
 
     init(
-        coreAssembly: CoreAssembly,
         acquiringAPI: IAcquiringAPIClient,
         acquiringRequests: AcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
         externalRequests: IExternalRequestBuilder,
         ipAddressProvider: IPAddressProvider,
-        threeDSURLRequestBuilder: ThreeDSURLRequestBuilder,
-        threeDSURLBuilder: ThreeDSURLBuilder,
-        language: AcquiringSdkLanguage?
+        threeDSFacade: IThreeDSFacade,
+        languageProvider: ILanguageProvider
     ) {
         self.acquiringAPI = acquiringAPI
         self.acquiringRequests = acquiringRequests
         self.externalAPI = externalAPI
         self.externalRequests = externalRequests
         self.ipAddressProvider = ipAddressProvider
-        self.threeDSURLRequestBuilder = threeDSURLRequestBuilder
-        self.threeDSURLBuilder = threeDSURLBuilder
-        self.languageKey = language
-        self.coreAssembly = coreAssembly
+        self.threeDSFacade = threeDSFacade
+        self.languageProvider = languageProvider
     }
 
     /// Получить IP адрес
@@ -83,7 +80,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createConfirmation3DSRequest(data: Confirmation3DSData) throws -> URLRequest {
-        try threeDSURLRequestBuilder.buildConfirmation3DSRequest(requestData: data)
+        try threeDSFacade.buildConfirmation3DSRequest(requestData: data)
     }
 
     /// Создать запрос для подтверждения платежа 3DS формы
@@ -92,11 +89,8 @@ public final class AcquiringSdk: NSObject {
     ///   - data: `Confirmation3DSData`
     /// - Returns:
     ///   - URLRequest
-    public func createConfirmation3DSRequestACS(
-        data: Confirmation3DSDataACS,
-        messageVersion: String
-    ) throws -> URLRequest {
-        try threeDSURLRequestBuilder.buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
+    public func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest {
+        try threeDSFacade.buildConfirmation3DSRequestACS(requestData: data, version: messageVersion)
     }
 
     /// Проверяет параметры для 3DS формы
@@ -106,7 +100,7 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URLRequest
     public func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
-        try threeDSURLRequestBuilder.build3DSCheckURLRequest(requestData: data)
+        try threeDSFacade.build3DSCheckURLRequest(requestData: data)
     }
 
     // MARK: 3DS URL Building
@@ -116,29 +110,29 @@ public final class AcquiringSdk: NSObject {
     /// - Returns:
     ///   - URL
     public func confirmation3DSTerminationURL() -> URL {
-        threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL)
+        threeDSFacade.url(ofType: .confirmation3DSTerminationURL)
     }
 
     public func confirmation3DSTerminationV2URL() -> URL {
-        threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL)
+        threeDSFacade.url(ofType: .confirmation3DSTerminationV2URL)
     }
 
     public func confirmation3DSCompleteV2URL() -> URL {
-        threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL)
+        threeDSFacade.url(ofType: .threeDSCheckNotificationURL)
     }
 
     // MARK: 3DS Handling
 
     public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
-        coreAssembly.threeDSWebViewHandler()
+        threeDSFacade.threeDSWebViewHandler()
     }
 
     public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
-        coreAssembly.threeDSWebViewHandler()
+        threeDSFacade.threeDSWebViewHandler()
     }
 
     public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        coreAssembly.threeDSDeviceParamsProvider(screenSize: screenSize)
+        threeDSFacade.deviceParamsProvider(screenSize: screenSize)
     }
 
     // MARK: Init Payment

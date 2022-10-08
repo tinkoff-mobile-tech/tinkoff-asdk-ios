@@ -19,19 +19,25 @@
 
 import Foundation
 
-final class ThreeDSURLRequestBuilder {
-    enum Error: Swift.Error {
+protocol IThreeDSURLRequestBuilder {
+    func buildConfirmation3DSRequestACS(requestData: Confirmation3DSDataACS, version: String) throws -> URLRequest
+    func buildConfirmation3DSRequest(requestData: Confirmation3DSData) throws -> URLRequest
+    func build3DSCheckURLRequest(requestData: Checking3DSURLData) throws -> URLRequest
+}
+
+final class ThreeDSURLRequestBuilder: IThreeDSURLRequestBuilder {
+    private enum Error: Swift.Error {
         case incorrectUrl(String)
     }
 
-    let threeDSURLBuilder: ThreeDSURLBuilder
-    let deviceInfoProvider: IDeviceInfoProvider
+    private let urlBuilder: IThreeDSURLBuilder
+    private let deviceInfoProvider: IDeviceInfoProvider
 
     init(
-        threeDSURLBuilder: ThreeDSURLBuilder,
+        urlBuilder: IThreeDSURLBuilder,
         deviceInfoProvider: IDeviceInfoProvider
     ) {
-        self.threeDSURLBuilder = threeDSURLBuilder
+        self.urlBuilder = urlBuilder
         self.deviceInfoProvider = deviceInfoProvider
     }
 
@@ -67,7 +73,7 @@ final class ThreeDSURLRequestBuilder {
             throw Error.incorrectUrl(requestData.acsUrl)
         }
 
-        let termUrl = threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationURL).absoluteString
+        let termUrl = urlBuilder.url(ofType: .confirmation3DSTerminationURL).absoluteString
         let parameters = [
             APIConstants.Keys.paReq: requestData.pareq,
             APIConstants.Keys.md: requestData.md,
@@ -87,7 +93,7 @@ final class ThreeDSURLRequestBuilder {
             throw Error.incorrectUrl(requestData.threeDSMethodURL)
         }
 
-        let threeDSMethodNotificationURL = threeDSURLBuilder.buildURL(type: .threeDSCheckNotificationURL).absoluteString
+        let threeDSMethodNotificationURL = urlBuilder.url(ofType: .threeDSCheckNotificationURL).absoluteString
         let threeDSMethodJson = [
             APIConstants.Keys.threeDSServerTransID: requestData.tdsServerTransID,
             APIConstants.Keys.threeDSMethodNotificationURL: threeDSMethodNotificationURL,

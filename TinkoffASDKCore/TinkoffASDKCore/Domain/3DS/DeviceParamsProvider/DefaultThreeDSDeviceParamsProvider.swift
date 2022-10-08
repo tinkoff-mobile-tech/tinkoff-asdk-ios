@@ -1,6 +1,6 @@
 //
 //
-//  ThreeDSDeviceParamsProvider.swift
+//  DefaultThreeDSDeviceParamsProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -24,29 +24,27 @@ public protocol ThreeDSDeviceParamsProvider {
     var deviceInfoParams: DeviceInfoParams { get }
 }
 
-struct DefaultThreeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider {
-    private let screenSize: CGSize
-    private let language: AcquiringSdkLanguage
-    private let threeDSURLBuilder: ThreeDSURLBuilder
-
-    init(
-        screenSize: CGSize,
-        language: AcquiringSdkLanguage,
-        threeDSURLBuilder: ThreeDSURLBuilder
-    ) {
-        self.screenSize = screenSize
-        self.language = language
-        self.threeDSURLBuilder = threeDSURLBuilder
-    }
-
+final class DefaultThreeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider {
     var deviceInfoParams: DeviceInfoParams {
-        let cresCallbackUrl = threeDSURLBuilder.buildURL(type: .confirmation3DSTerminationV2URL).absoluteString
-
-        return DeviceInfoParams(
-            cresCallbackUrl: cresCallbackUrl,
-            languageId: language.rawValue,
+        DeviceInfoParams(
+            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString,
+            languageId: (languageProvider.language ?? .ru).rawValue,
             screenWidth: Int(screenSize.width),
             screenHeight: Int(screenSize.height)
         )
+    }
+
+    private let screenSize: CGSize
+    private let languageProvider: ILanguageProvider
+    private let urlBuilder: IThreeDSURLBuilder
+
+    init(
+        screenSize: CGSize,
+        languageProvider: ILanguageProvider,
+        urlBuilder: IThreeDSURLBuilder
+    ) {
+        self.screenSize = screenSize
+        self.languageProvider = languageProvider
+        self.urlBuilder = urlBuilder
     }
 }

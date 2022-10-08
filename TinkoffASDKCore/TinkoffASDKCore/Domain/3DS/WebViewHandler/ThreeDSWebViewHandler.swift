@@ -23,14 +23,14 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
     public var didCancel: (() -> Void)?
     public var didFinish: ((Result<Payload, Error>) -> Void)?
 
-    private let threeDSURLBuilder: ThreeDSURLBuilder
+    private let urlBuilder: IThreeDSURLBuilder
     private let jsonDecoder: JSONDecoder
 
     init(
-        threeDSURLBuilder: ThreeDSURLBuilder,
+        urlBuilder: IThreeDSURLBuilder,
         jsonDecoder: JSONDecoder
     ) {
-        self.threeDSURLBuilder = threeDSURLBuilder
+        self.urlBuilder = urlBuilder
         self.jsonDecoder = jsonDecoder
     }
 
@@ -40,12 +40,12 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
             return
         }
 
-        let confirmation3DSTerminationURLString = threeDSURLBuilder
-            .buildURL(type: .confirmation3DSTerminationURL)
+        let confirmation3DSTerminationURLString = urlBuilder
+            .url(ofType: .confirmation3DSTerminationURL)
             .absoluteString
 
-        let confirmation3DSTerminationV2URLString = threeDSURLBuilder
-            .buildURL(type: .confirmation3DSTerminationV2URL)
+        let confirmation3DSTerminationV2URLString = urlBuilder
+            .url(ofType: .confirmation3DSTerminationV2URL)
             .absoluteString
 
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
