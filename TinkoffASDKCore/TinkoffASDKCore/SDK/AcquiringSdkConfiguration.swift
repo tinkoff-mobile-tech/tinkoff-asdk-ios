@@ -22,25 +22,28 @@ import UIKit
 
 public enum AcquiringSdkLanguage: String {
     case ru
-
     case en
 }
 
 public enum AcquiringSdkEnvironment: String {
     case test = "rest-api-test.tcsbank.ru"
-
     case prod = "securepay.tinkoff.ru"
 }
 
-public struct ConfigSdkEnvironment: RawRepresentable {
-    public let rawValue: String
-
-    public init(rawValue: String) {
-        self.rawValue = rawValue
+struct ConfigSdkEnvironment: RawRepresentable {
+    static var test: ConfigSdkEnvironment {
+        ConfigSdkEnvironment(rawValue: "asdk-config-test.cdn-tinkoff.ru")
     }
 
-    public static var test: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-test.cdn-tinkoff.ru") }
-    public static var prod: ConfigSdkEnvironment { ConfigSdkEnvironment(rawValue: "asdk-config-prod.cdn-tinkoff.ru") }
+    static var prod: ConfigSdkEnvironment {
+        ConfigSdkEnvironment(rawValue: "asdk-config-prod.cdn-tinkoff.ru")
+    }
+
+    let rawValue: String
+
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
 }
 
 public struct AcquiringSdkCredential {
@@ -61,13 +64,13 @@ public struct AcquiringSdkCredential {
 public class AcquiringSdkConfiguration: NSObject {
     public let credential: AcquiringSdkCredential
     public let serverEnvironment: AcquiringSdkEnvironment
-    public let configEnvironment: ConfigSdkEnvironment
     public let requestsTimeoutInterval: TimeInterval
     @available(*, deprecated, message: "Property does not affect anything")
     public var fpsEnabled = false
     /// Показывать ошибки после выполнения запроса
     @available(*, deprecated, message: "Property does not affect anything")
     public var showErrorAlert = true
+    let configEnvironment: ConfigSdkEnvironment
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
     ///
@@ -87,7 +90,7 @@ public class AcquiringSdkConfiguration: NSObject {
     /// - Parameters:
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
-    ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
+    ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, значение по-умолчанию - 40 секунд
     ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     /// - Returns: AcquiringSdkConfiguration
     public init(
