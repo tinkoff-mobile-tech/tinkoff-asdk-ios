@@ -8,12 +8,22 @@
 import Foundation
 
 public struct PaymentCard: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case pan = "Pan"
-        case cardId = "CardId"
-        case status = "Status"
-        case parentPaymentId = "RebillId"
-        case expDate = "ExpDate"
+    private enum CodingKeys: CodingKey {
+        case pan
+        case cardId
+        case status
+        case parentPaymentId
+        case expDate
+
+        var stringValue: String {
+            switch self {
+            case .pan: return "Pan"
+            case .cardId: return Constants.Keys.cardId
+            case .status: return Constants.Keys.status
+            case .parentPaymentId: return Constants.Keys.rebillId
+            case .expDate: return Constants.Keys.cardExpDate
+            }
+        }
     }
 
     /// Название карты, по умолчанию выставяется замаскированный номер, например `430000******0777`

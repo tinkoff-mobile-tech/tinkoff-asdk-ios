@@ -22,16 +22,12 @@ import Foundation
 public enum PaymentFinishResponseStatus {
     /// Требуется подтверждение 3DS v1.0
     case needConfirmation3DS(Confirmation3DSData)
-
     /// Требуется подтверждение 3DS v2.0 browser-based
     case needConfirmation3DSACS(Confirmation3DSDataACS)
-
     /// Требуется подтверждение 3DS v2.0 app-based
     case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
-
     /// Успешная оплата
     case done(PaymentStatusResponse)
-
     /// что-то пошло не так
     case unknown
 }
