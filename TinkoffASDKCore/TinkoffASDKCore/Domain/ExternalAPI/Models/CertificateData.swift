@@ -20,7 +20,6 @@
 import Foundation
 
 public struct CertificateData: Decodable {
-
     public enum CertificateType: String, Decodable {
         case publicKey = "dsPublicKey"
         case rootCA = "dsRootCA"

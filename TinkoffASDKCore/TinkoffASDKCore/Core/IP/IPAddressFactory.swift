@@ -9,12 +9,6 @@ import Foundation
 
 struct IPAddressFactory {
     func ipAddress(with string: String) -> IPAddress? {
-        if let ipv4Address = IPv4Address(string) {
-            return ipv4Address
-        } else if let ipv6Address = IPv6Address(string) {
-            return ipv6Address
-        } else {
-            return nil
-        }
+        IPv4Address(string) ?? IPv6Address(string)
     }
 }
