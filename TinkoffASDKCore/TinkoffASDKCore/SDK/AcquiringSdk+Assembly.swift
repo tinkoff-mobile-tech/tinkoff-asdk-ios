@@ -66,7 +66,8 @@ private extension AcquiringAPIClient {
         AcquiringAPIClient(
             requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider),
             networkClient: networkClient,
-            apiDecoder: APIDecoder()
+            apiDecoder: APIDecoder(),
+            deprecatedDecoder: DeprecatedDecoder()
         )
     }
 }

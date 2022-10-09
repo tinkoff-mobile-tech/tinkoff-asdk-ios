@@ -37,17 +37,18 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
     private let requestAdapter: IAcquiringRequestAdapter
     private let networkClient: INetworkClient
     private let apiDecoder: IAPIDecoder
-    @available(*, deprecated, message: "Use apiDecoder instead")
-    private let deprecatedDecoder = DeprecatedDecoder()
+    private let deprecatedDecoder: IDeprecatedDecoder
 
     init(
         requestAdapter: IAcquiringRequestAdapter,
         networkClient: INetworkClient,
-        apiDecoder: IAPIDecoder
+        apiDecoder: IAPIDecoder,
+        deprecatedDecoder: IDeprecatedDecoder
     ) {
         self.requestAdapter = requestAdapter
         self.networkClient = networkClient
         self.apiDecoder = apiDecoder
+        self.deprecatedDecoder = deprecatedDecoder
     }
 
     // MARK: API
@@ -121,48 +122,6 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
             }
 
             completion(result)
-        }
-    }
-}
-
-private final class DeprecatedDecoder {
-    private let decoder = JSONDecoder()
-
-    func decode<Response: ResponseOperation>(data: Data, with response: HTTPURLResponse?) throws -> Response {
-        let response = try response.orThrow(NSError(domain: "Response must exist", code: 1))
-
-        // decode as a default `AcquiringResponse`
-        guard let acquiringResponse = try? decoder.decode(AcquiringResponse.self, from: data) else {
-            throw HTTPResponseError(body: data, response: response, kind: .invalidResponse)
-        }
-
-        // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
-        guard acquiringResponse.success else {
-            var errorMessage: String = Loc.TinkoffAcquiring.Response.Error.statusFalse
-
-            if let message = acquiringResponse.errorMessage {
-                errorMessage = message
-            }
-
-            if let details = acquiringResponse.errorDetails, details.isEmpty == false {
-                errorMessage.append(contentsOf: " ")
-                errorMessage.append(contentsOf: details)
-            }
-
-            let error = NSError(
-                domain: errorMessage,
-                code: acquiringResponse.errorCode,
-                userInfo: try? acquiringResponse.encode2JSONObject()
-            )
-
-            throw error
-        }
-
-        // decode to `Response`
-        if let responseObject: Response = try? decoder.decode(Response.self, from: data) {
-            return responseObject
-        } else {
-            throw HTTPResponseError(body: data, response: response, kind: .invalidResponse)
         }
     }
 }
