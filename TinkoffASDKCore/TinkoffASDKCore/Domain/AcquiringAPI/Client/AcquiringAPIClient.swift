@@ -34,6 +34,13 @@ protocol IAcquiringAPIClient {
 }
 
 final class AcquiringAPIClient: IAcquiringAPIClient {
+    // MARK: Adaptation Response
+
+    private struct ResponseBatch {
+        let adaptedRequest: AcquiringRequest
+        let networkResponse: NetworkResponse
+    }
+
     // MARK: Dependencies
 
     private let requestAdapter: IAcquiringRequestAdapter
@@ -62,18 +69,13 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
         completion: @escaping (Swift.Result<Payload, Error>) -> Void
     ) -> Cancellable {
         performAdapting(request: request) { [apiDecoder] networkResult in
-            let result: Result<Payload, Error> = networkResult
-                .tryMap { response in
-                    try apiDecoder.decode(Payload.self, from: response.data, with: request.decodingStrategy)
-                }
-                .mapError { error in
-                    switch error {
-                    case let error as APIFailureError:
-                        return APIError.failure(error)
-                    default:
-                        return APIError.invalidResponse
-                    }
-                }
+            let result: Result<Payload, Error> = networkResult.tryMap { response in
+                try apiDecoder.decode(
+                    Payload.self,
+                    from: response.networkResponse.data,
+                    with: response.adaptedRequest.decodingStrategy
+                )
+            }
 
             completion(result)
         }
@@ -89,14 +91,14 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
             let result: Result<Response, Error> = networkResult.tryMap { response in
                 if let delegate = delegate {
                     guard let delegatedResponse = try? delegate.networkTransport(
-                        didCompleteRawTaskForRequest: response.urlRequest,
-                        withData: response.data,
-                        response: response.httpResponse,
+                        didCompleteRawTaskForRequest: response.networkResponse.urlRequest,
+                        withData: response.networkResponse.data,
+                        response: response.networkResponse.httpResponse,
                         error: nil
                     ) else {
                         throw HTTPResponseError(
-                            body: response.data,
-                            response: response.httpResponse,
+                            body: response.networkResponse.data,
+                            response: response.networkResponse.httpResponse,
                             kind: .invalidResponse
                         )
                     }
@@ -104,7 +106,10 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
                     return delegatedResponse as! Response
                 }
 
-                return try deprecatedDecoder.decode(data: response.data, with: response.httpResponse)
+                return try deprecatedDecoder.decode(
+                    data: response.networkResponse.data,
+                    with: response.networkResponse.httpResponse
+                )
             }
 
             completion(result)
@@ -115,20 +120,25 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
 
     private func performAdapting(
         request: AcquiringRequest,
-        completion: @escaping (Result<NetworkResponse, Error>) -> Void
+        completion: @escaping (Result<ResponseBatch, Error>) -> Void
     ) -> Cancellable {
         let outerCancellable = CancellableWrapper()
+
         requestAdapter.adapt(request: request) { [networkClient] adaptingResult in
             guard !outerCancellable.isCancelled else { return }
 
             switch adaptingResult {
-            case let .success(request):
-                let networkCancellable = networkClient.performRequest(request) { networkResult in
+            case let .success(adaptedRequest):
+                let networkCancellable = networkClient.performRequest(adaptedRequest) { networkResult in
                     guard !outerCancellable.isCancelled else { return }
 
-                    let result = networkResult.mapError { $0 as Error }
+                    let result = networkResult
+                        .map { ResponseBatch(adaptedRequest: adaptedRequest, networkResponse: $0) }
+                        .mapError { $0 as Error }
+
                     completion(result)
                 }
+
                 outerCancellable.addCancellationHandler(networkCancellable.cancel)
             case let .failure(error):
                 completion(.failure(error))

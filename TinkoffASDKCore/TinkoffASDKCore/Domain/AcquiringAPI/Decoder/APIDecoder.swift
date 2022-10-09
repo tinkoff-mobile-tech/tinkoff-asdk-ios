@@ -37,12 +37,23 @@ final class APIDecoder: IAPIDecoder {
         from data: Data,
         with strategy: AcquiringDecodingStrategy
     ) throws -> Payload {
-        switch strategy {
-        case .standard:
-            return try decodeStandard(data: data).result.get()
-        case .clipped:
-            return try decodeClipped(data: data).result.get()
+        let apiResponse: APIResponse<Payload>
+
+        do {
+            switch strategy {
+            case .standard:
+                apiResponse = try decodeStandard(data: data)
+            case .clipped:
+                apiResponse = try decodeClipped(data: data)
+            }
+        } catch {
+            throw APIError.invalidResponse
         }
+
+        return try apiResponse
+            .result
+            .mapError { APIError.failure($0) }
+            .get()
     }
 
     // MARK: Helpers
