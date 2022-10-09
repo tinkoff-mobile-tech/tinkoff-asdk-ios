@@ -24,14 +24,14 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
     public var didFinish: ((Result<Payload, Error>) -> Void)?
 
     private let urlBuilder: IThreeDSURLBuilder
-    private let jsonDecoder: JSONDecoder
+    private let decoder: IAcquiringDecoder
 
     init(
         urlBuilder: IThreeDSURLBuilder,
-        jsonDecoder: JSONDecoder
+        decoder: IAcquiringDecoder
     ) {
         self.urlBuilder = urlBuilder
-        self.jsonDecoder = jsonDecoder
+        self.decoder = decoder
     }
 
     public func handle(urlString: String, responseData data: Data) {
@@ -52,16 +52,10 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
             return
         }
 
-        do {
-            let response = try jsonDecoder.decode(APIResponse<Payload>.self, from: data)
-            switch response.result {
-            case let .success(payload):
-                didFinish?(.success(payload))
-            case let .failure(error):
-                didFinish?(.failure(error))
-            }
-        } catch {
-            didFinish?(.failure(APIError.invalidResponse))
+        let result = Result {
+            try decoder.decode(Payload.self, from: data, with: .standard)
         }
+
+        didFinish?(result)
     }
 }

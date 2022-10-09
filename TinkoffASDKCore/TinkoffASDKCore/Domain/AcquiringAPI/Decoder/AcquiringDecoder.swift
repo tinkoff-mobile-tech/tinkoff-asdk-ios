@@ -1,6 +1,6 @@
 //
 //
-//  APIDecoder.swift
+//  AcquiringDecoder.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import Foundation
 
-protocol IAPIDecoder {
+protocol IAcquiringDecoder {
     func decode<Payload: Decodable>(
         _ type: Payload.Type,
         from data: Data,
@@ -27,10 +27,10 @@ protocol IAPIDecoder {
     ) throws -> Payload
 }
 
-final class APIDecoder: IAPIDecoder {
+final class AcquiringDecoder: IAcquiringDecoder {
     private let decoder = JSONDecoder()
 
-    // MARK: IAPIDecoder
+    // MARK: IAcquiringDecoder
 
     func decode<Payload: Decodable>(
         _ type: Payload.Type,

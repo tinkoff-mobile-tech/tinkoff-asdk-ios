@@ -45,7 +45,7 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
 
     private let requestAdapter: IAcquiringRequestAdapter
     private let networkClient: INetworkClient
-    private let apiDecoder: IAPIDecoder
+    private let decoder: IAcquiringDecoder
     private let deprecatedDecoder: IDeprecatedDecoder
 
     // MARK: Init
@@ -53,12 +53,12 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
     init(
         requestAdapter: IAcquiringRequestAdapter,
         networkClient: INetworkClient,
-        apiDecoder: IAPIDecoder,
+        decoder: IAcquiringDecoder,
         deprecatedDecoder: IDeprecatedDecoder
     ) {
         self.requestAdapter = requestAdapter
         self.networkClient = networkClient
-        self.apiDecoder = apiDecoder
+        self.decoder = decoder
         self.deprecatedDecoder = deprecatedDecoder
     }
 
@@ -68,9 +68,9 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
         _ request: AcquiringRequest,
         completion: @escaping (Result<Payload, Error>) -> Void
     ) -> Cancellable {
-        performAdapting(request: request) { [apiDecoder] networkResult in
+        performAdapting(request: request) { [decoder] networkResult in
             let result: Result<Payload, Error> = networkResult.tryMap { response in
-                try apiDecoder.decode(
+                try decoder.decode(
                     Payload.self,
                     from: response.networkResponse.data,
                     with: response.adaptedRequest.decodingStrategy

@@ -34,9 +34,20 @@ public extension AcquiringSdk {
         let externalRequests = ExternalRequestBuilder(appBasedConfigURLProvider: appBasedConfigURLProvider)
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
         let deviceInfoProvider = DeviceInfoProvider()
-        let acquiringClient = AcquiringAPIClient.build(terminalKeyProvider: terminalKeyProvider, networkClient: networkClient)
+        let acquiringDecoder = AcquiringDecoder()
         let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
-        let threeDSFacade = ThreeDSFacade.build(acquiringURLProvider: acquiringURLProvider, languageProvider: languageProvider)
+
+        let acquiringClient = AcquiringAPIClient.build(
+            terminalKeyProvider: terminalKeyProvider,
+            networkClient: networkClient,
+            decoder: acquiringDecoder
+        )
+
+        let threeDSFacade = ThreeDSFacade.build(
+            acquiringURLProvider: acquiringURLProvider,
+            languageProvider: languageProvider,
+            decoder: acquiringDecoder
+        )
 
         let acquiringRequests = AcquiringRequestBuilder(
             baseURLProvider: acquiringURLProvider,
@@ -62,11 +73,15 @@ public extension AcquiringSdk {
 // MARK: - AcquiringAPIClient
 
 private extension AcquiringAPIClient {
-    static func build(terminalKeyProvider: IStringProvider, networkClient: INetworkClient) -> IAcquiringAPIClient {
+    static func build(
+        terminalKeyProvider: IStringProvider,
+        networkClient: INetworkClient,
+        decoder: IAcquiringDecoder
+    ) -> IAcquiringAPIClient {
         AcquiringAPIClient(
             requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider),
             networkClient: networkClient,
-            apiDecoder: APIDecoder(),
+            decoder: decoder,
             deprecatedDecoder: DeprecatedDecoder()
         )
     }
@@ -99,11 +114,15 @@ private extension NetworkSession {
 // MARK: - ThreeDSFacade
 
 private extension ThreeDSFacade {
-    static func build(acquiringURLProvider: IURLProvider, languageProvider: ILanguageProvider) -> ThreeDSFacade {
+    static func build(
+        acquiringURLProvider: IURLProvider,
+        languageProvider: ILanguageProvider,
+        decoder: IAcquiringDecoder
+    ) -> ThreeDSFacade {
         let urlBuilder = ThreeDSURLBuilder(baseURLProvider: acquiringURLProvider)
         let deviceInfoProvider = DeviceInfoProvider()
         let urlRequestBuilder = ThreeDSURLRequestBuilder(urlBuilder: urlBuilder, deviceInfoProvider: deviceInfoProvider)
-        let webViewHandlerBuilder = ThreeDSWebViewHandlerBuilder(threeDSURLBuilder: urlBuilder, decoder: JSONDecoder())
+        let webViewHandlerBuilder = ThreeDSWebViewHandlerBuilder(threeDSURLBuilder: urlBuilder, decoder: decoder)
         let deviceParamsProviderBuilder = ThreeDSDeviceParamsProviderBuilder(languageProvider: languageProvider, urlBuilder: urlBuilder)
 
         return ThreeDSFacade(

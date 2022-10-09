@@ -20,7 +20,6 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         let path: String
         let httpMethod: HTTPMethod
         var parameters: HTTPParameters
-        let parametersEncoding: HTTPParametersEncoding
         let headers: HTTPHeaders
         let decodingStrategy: AcquiringDecodingStrategy
     }
@@ -56,7 +55,6 @@ private extension AcquiringRequestAdapter.AdaptedRequest {
             path: request.path,
             httpMethod: request.httpMethod,
             parameters: request.parameters,
-            parametersEncoding: request.parametersEncoding,
             headers: request.headers,
             decodingStrategy: request.decodingStrategy
         )

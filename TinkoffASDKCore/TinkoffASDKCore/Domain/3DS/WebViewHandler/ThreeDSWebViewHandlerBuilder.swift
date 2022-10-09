@@ -13,9 +13,9 @@ protocol IThreeDSWebViewHandlerBuilder {
 
 final class ThreeDSWebViewHandlerBuilder: IThreeDSWebViewHandlerBuilder {
     private let threeDSURLBuilder: IThreeDSURLBuilder
-    private let decoder: JSONDecoder
+    private let decoder: IAcquiringDecoder
 
-    init(threeDSURLBuilder: IThreeDSURLBuilder, decoder: JSONDecoder) {
+    init(threeDSURLBuilder: IThreeDSURLBuilder, decoder: IAcquiringDecoder) {
         self.threeDSURLBuilder = threeDSURLBuilder
         self.decoder = decoder
     }
@@ -23,7 +23,7 @@ final class ThreeDSWebViewHandlerBuilder: IThreeDSWebViewHandlerBuilder {
     func threeDSWebViewHandler<Payload>() -> ThreeDSWebViewHandler<Payload> where Payload: Decodable {
         ThreeDSWebViewHandler(
             urlBuilder: threeDSURLBuilder,
-            jsonDecoder: decoder
+            decoder: decoder
         )
     }
 }
