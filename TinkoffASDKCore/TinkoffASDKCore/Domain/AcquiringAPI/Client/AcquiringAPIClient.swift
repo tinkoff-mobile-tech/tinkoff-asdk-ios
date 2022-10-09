@@ -122,7 +122,7 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
         request: AcquiringRequest,
         completion: @escaping (Result<ResponseBatch, Error>) -> Void
     ) -> Cancellable {
-        let outerCancellable = CancellableWrapper()
+        let outerCancellable = CancellableNode()
 
         requestAdapter.adapt(request: request) { [networkClient] adaptingResult in
             guard !outerCancellable.isCancelled else { return }

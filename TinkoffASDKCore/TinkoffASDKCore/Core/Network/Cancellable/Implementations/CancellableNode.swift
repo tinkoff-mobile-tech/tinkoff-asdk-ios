@@ -1,5 +1,5 @@
 //
-//  CancellableWrapper.swift
+//  CancellableNode.swift
 //  TinkoffASDKCore
 //
 //  Created by r.akhmadeev on 29.09.2022.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CancellableWrapper: Cancellable {
+final class CancellableNode: Cancellable {
     typealias VoidClosure = () -> Void
 
     var isCancelled: Bool {
