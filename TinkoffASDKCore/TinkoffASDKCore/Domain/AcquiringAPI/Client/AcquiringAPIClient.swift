@@ -64,13 +64,12 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
 
             switch adaptingResult {
             case let .success(request):
-                let networkCancellable = networkClient.performRequest(request) { response in
+                let networkCancellable = networkClient.performRequest(request) { networkResult in
                     guard !outerCancellable.isCancelled else { return }
 
-                    let result = response
-                        .result
-                        .tryMap { data in
-                            try apiDecoder.decode(Payload.self, from: data, with: request.decodingStrategy)
+                    let result = networkResult
+                        .tryMap { response in
+                            try apiDecoder.decode(Payload.self, from: response.data, with: request.decodingStrategy)
                         }
                         .mapError { error -> Error in
                             switch error {
@@ -99,25 +98,26 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> Cancellable {
 
-        networkClient.performRequest(request) { [deprecatedDecoder] response in
-            let result: Result<Response, Error> = response.result.tryMap { data in
-                if let delegate = delegate,
-                   let urlRequest = response.request,
-                   let httpResponse = response.response {
-
+        networkClient.performRequest(request) { [deprecatedDecoder] networkResult in
+            let result: Result<Response, Error> = networkResult.tryMap { response in
+                if let delegate = delegate {
                     guard let delegatedResponse = try? delegate.networkTransport(
-                        didCompleteRawTaskForRequest: urlRequest,
-                        withData: data,
-                        response: httpResponse,
-                        error: response.error
+                        didCompleteRawTaskForRequest: response.urlRequest,
+                        withData: response.data,
+                        response: response.httpResponse,
+                        error: nil
                     ) else {
-                        throw HTTPResponseError(body: data, response: httpResponse, kind: .invalidResponse)
+                        throw HTTPResponseError(
+                            body: response.data,
+                            response: response.httpResponse,
+                            kind: .invalidResponse
+                        )
                     }
                     // swiftlint:disable:next force_cast
                     return delegatedResponse as! Response
                 }
 
-                return try deprecatedDecoder.decode(data: data, with: response.response)
+                return try deprecatedDecoder.decode(data: response.data, with: response.httpResponse)
             }
 
             completion(result)

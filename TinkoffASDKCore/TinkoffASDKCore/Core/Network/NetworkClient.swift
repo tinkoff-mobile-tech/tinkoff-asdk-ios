@@ -19,29 +19,49 @@
 
 import Foundation
 
+// MARK: - NetworkResponse
+
+struct NetworkResponse {
+    let urlRequest: URLRequest
+    let httpResponse: HTTPURLResponse
+    let data: Data
+}
+
+// MARK: - NetworkError
+
+enum NetworkError: Error {
+    case failedToBuildURLRequest(Error)
+    case sessionError(Error)
+    case incorrectResponse
+}
+
+// MARK: - INetworkClient
+
 protocol INetworkClient: AnyObject {
     @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable
+    func performRequest(_ request: NetworkRequest, completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void) -> Cancellable
 }
+
+// MARK: - NetworkClient
 
 final class NetworkClient: INetworkClient {
     // MARK: Error
 
-    private enum Error: LocalizedError, CustomNSError {
-        case sessionError(Swift.Error)
-        case noDataFound
-
-        var errorDescription: String? {
-            let description: String
-            switch self {
-            case let .sessionError(error):
-                description = "\(Loc.NetworkError.transportError): \(error.localizedDescription)"
-            case .noDataFound:
-                description = "\(Loc.NetworkError.emptyBody)"
-            }
-            return description
-        }
-    }
+//    private enum Error: LocalizedError, CustomNSError {
+//        case sessionError(Swift.Error)
+//        case noDataFound
+//
+//        var errorDescription: String? {
+//            let description: String
+//            switch self {
+//            case let .sessionError(error):
+//                description = "\(Loc.NetworkError.transportError): \(error.localizedDescription)"
+//            case .noDataFound:
+//                description = "\(Loc.NetworkError.emptyBody)"
+//            }
+//            return description
+//        }
+//    }
 
     // MARK: Dependencies
 
@@ -64,13 +84,16 @@ final class NetworkClient: INetworkClient {
     // MARK: INetworkClient
 
     @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (NetworkResponse) -> Void) -> Cancellable {
+    func performRequest(
+        _ request: NetworkRequest,
+        completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
+    ) -> Cancellable {
         let urlRequest: URLRequest
 
         do {
             urlRequest = try requestBuilder.build(request: request)
         } catch {
-            completion(.requestBuildingFailure(error: error))
+            completion(.failure(.failedToBuildURLRequest(error)))
             return EmptyCancellable()
         }
 
@@ -81,42 +104,38 @@ final class NetworkClient: INetworkClient {
 
     // MARK: NetworkTask Creation
 
-    private func createNetworkTask(with urlRequest: URLRequest, completion: @escaping (NetworkResponse) -> Void) -> INetworkDataTask {
+    private func createNetworkTask(
+        with urlRequest: URLRequest,
+        completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
+    ) -> INetworkDataTask {
         session.dataTask(with: urlRequest) { [responseValidator] data, response, error in
-            let result = Result<Data, Swift.Error> {
-                if let error = error {
-                    throw Error.sessionError(error)
-                }
+            let result: Result<NetworkResponse, NetworkError>
+            defer { completion(result) }
 
-                let httpResponse = try (response as? HTTPURLResponse).orThrow(Error.noDataFound)
-                try responseValidator.validate(response: httpResponse)
-
-                return try data.orThrow(Error.noDataFound)
+            if let error = error {
+                result = .failure(.sessionError(error))
+                return
             }
 
-            let response = NetworkResponse(
-                request: urlRequest,
-                response: response as? HTTPURLResponse,
-                error: error,
-                data: data,
-                result: result
-            )
+            guard let httpResponse = response as? HTTPURLResponse else {
+                result = .failure(.incorrectResponse)
+                return
+            }
 
-            completion(response)
+            do {
+                try responseValidator.validate(response: httpResponse)
+            } catch {
+                result = .failure(.incorrectResponse)
+                return
+            }
+
+            guard let data = data else {
+                result = .failure(.incorrectResponse)
+                return
+            }
+
+            let networkResponse = NetworkResponse(urlRequest: urlRequest, httpResponse: httpResponse, data: data)
+            result = .success(networkResponse)
         }
-    }
-}
-
-// MARK: - NetworkResponse + Mapping
-
-private extension NetworkResponse {
-    static func requestBuildingFailure(error: Error) -> NetworkResponse {
-        NetworkResponse(
-            request: nil,
-            response: nil,
-            error: nil,
-            data: nil,
-            result: .failure(error)
-        )
     }
 }

@@ -27,9 +27,9 @@ final class ExternalAPIClient: IExternalAPIClient {
         _ request: NetworkRequest,
         completion: @escaping (Result<Payload, Error>) -> Void
     ) -> Cancellable {
-        networkClient.performRequest(request) { [decoder] response in
-            let result = response.result.tryMap { data in
-                try decoder.decode(Payload.self, from: data)
+        networkClient.performRequest(request) { [decoder] networkResult in
+            let result = networkResult.tryMap { response in
+                try decoder.decode(Payload.self, from: response.data)
             }
 
             completion(result)
