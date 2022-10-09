@@ -7,7 +7,28 @@
 
 import Foundation
 
-final class AcquiringRequestBuilder {
+protocol IAcquiringRequestBuilder {
+    func initRequest(data: PaymentInitData) -> AcquiringRequest
+    func finishAuthorize(data: FinishAuthorizeData) -> AcquiringRequest
+    func check3DSVersion(data: Check3DSVersionData) -> AcquiringRequest
+    func submit3DSAuthorizationV2(data: CresData) -> AcquiringRequest
+    func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest
+    func charge(data: ChargeData) -> AcquiringRequest
+    func getCardList(data: GetCardListData) -> AcquiringRequest
+    func addCard(data: AddCardData) -> AcquiringRequest
+    func attachCard(data: AttachCardData) -> AcquiringRequest
+    func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest
+    func deactivateCard(data: DeactivateCardData) -> AcquiringRequest
+    func getQR(data: GetQRData) -> AcquiringRequest
+    func getStaticQR(data: GetQRDataType) -> AcquiringRequest
+    func getTinkoffPayStatus() -> AcquiringRequest
+    func getTinkoffPayLink(
+        paymentId: String,
+        version: GetTinkoffPayStatusResponse.Status.Version
+    ) -> AcquiringRequest
+}
+
+final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
     private let baseURLProvider: IURLProvider
     private let publicKeyProvider: IPublicKeyProvider
     private let terminalKeyProvider: IStringProvider

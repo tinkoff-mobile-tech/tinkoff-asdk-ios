@@ -38,7 +38,7 @@ public final class AcquiringSdk: NSObject {
     // MARK: Dependencies
 
     private let acquiringAPI: IAcquiringAPIClient
-    private let acquiringRequests: AcquiringRequestBuilder
+    private let acquiringRequests: IAcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestBuilder
     private let ipAddressProvider: IPAddressProvider
@@ -49,7 +49,7 @@ public final class AcquiringSdk: NSObject {
 
     init(
         acquiringAPI: IAcquiringAPIClient,
-        acquiringRequests: AcquiringRequestBuilder,
+        acquiringRequests: IAcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
         externalRequests: IExternalRequestBuilder,
         ipAddressProvider: IPAddressProvider,
@@ -692,6 +692,8 @@ public final class AcquiringSdk: NSObject {
         let request = acquiringRequests.getTinkoffPayLink(paymentId: String(paymentId), version: version)
         return acquiringAPI.performRequest(request, completion: completion)
     }
+
+    // MARK: - Get Certs Config
 
     /// Получить конфигурацию для работы с сертификатами 3DS AppBased
     ///
