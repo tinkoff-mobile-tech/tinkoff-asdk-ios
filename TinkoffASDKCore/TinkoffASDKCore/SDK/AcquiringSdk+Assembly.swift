@@ -78,7 +78,7 @@ private extension NetworkClient {
     static func build(session: INetworkSession) -> NetworkClient {
         NetworkClient(
             session: session,
-            requestBuilder: URLRequestBuilder.build(),
+            requestBuilder: URLRequestBuilder(),
             statusCodeValidator: HTTPStatusCodeValidator()
         )
     }
@@ -93,14 +93,6 @@ private extension NetworkSession {
         urlSessionConfiguration.timeoutIntervalForResource = requestsTimeout
         let urlSession = URLSession(configuration: urlSessionConfiguration)
         return NetworkSession(urlSession: urlSession)
-    }
-}
-
-// MARK: - URLRequestBuilder
-
-private extension URLRequestBuilder {
-    static func build() -> URLRequestBuilder {
-        URLRequestBuilder(jsonParametersEncoder: JSONEncoding(options: .sortedKeys))
     }
 }
 

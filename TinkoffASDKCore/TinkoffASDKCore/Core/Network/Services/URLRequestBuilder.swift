@@ -28,16 +28,7 @@ final class URLRequestBuilder: IURLRequestBuilder {
 
     enum Error: Swift.Error {
         case failedToBuildPath
-    }
-
-    // MARK: Dependencies
-
-    private let jsonParametersEncoder: IParametersEncoder
-
-    // MARK: Init
-
-    init(jsonParametersEncoder: IParametersEncoder) {
-        self.jsonParametersEncoder = jsonParametersEncoder
+        case encodingFailed(error: Swift.Error)
     }
 
     // MARK: IURLRequestBuilder
@@ -50,9 +41,34 @@ final class URLRequestBuilder: IURLRequestBuilder {
         urlRequest.httpMethod = request.httpMethod.rawValue
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
-        switch request.parametersEncoding {
-        case .json:
-            return try jsonParametersEncoder.encode(urlRequest, parameters: request.parameters)
+        if request.httpMethod != .get {
+            try encodeJSON(with: request.parameters, toURLRequest: &urlRequest)
         }
+
+        return urlRequest
     }
+
+    // MARK: Encoding
+
+    private func encodeJSON(
+        with parameters: HTTPParameters,
+        toURLRequest urlRequest: inout URLRequest
+    ) throws {
+        guard !parameters.isEmpty else { return }
+
+        do {
+            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .sortedKeys)
+        } catch {
+            throw Error.encodingFailed(error: error)
+        }
+
+        urlRequest.setValue(.applicationJSON, forHTTPHeaderField: .contentType)
+    }
+}
+
+// MARK: - Constants
+
+private extension String {
+    static let contentType = "Content-Type"
+    static let applicationJSON = "application/json"
 }
