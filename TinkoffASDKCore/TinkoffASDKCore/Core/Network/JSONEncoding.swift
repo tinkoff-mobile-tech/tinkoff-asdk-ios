@@ -37,23 +37,22 @@ struct JSONEncoding: IParametersEncoder {
     func encode(_ urlRequest: URLRequest, parameters: HTTPParameters) throws -> URLRequest {
         guard !parameters.isEmpty else { return urlRequest }
 
+        let httpBody: Data
+
         do {
-            let data = try JSONSerialization.data(
-                withJSONObject: parameters,
-                options: options
-            )
-
-            var mutableUrlRequest = urlRequest
-            mutableUrlRequest.httpBody = data
-
-            if mutableUrlRequest.value(forHTTPHeaderField: .contentType) == nil {
-                mutableUrlRequest.setValue(.applicationJson, forHTTPHeaderField: .contentType)
-            }
-
-            return mutableUrlRequest
+            httpBody = try JSONSerialization.data(withJSONObject: parameters, options: options)
         } catch {
             throw Error.encodingFailed(error: error)
         }
+
+        var mutableUrlRequest = urlRequest
+        mutableUrlRequest.httpBody = httpBody
+
+        if mutableUrlRequest.value(forHTTPHeaderField: .contentType) == nil {
+            mutableUrlRequest.setValue(.applicationJson, forHTTPHeaderField: .contentType)
+        }
+
+        return mutableUrlRequest
     }
 }
 
