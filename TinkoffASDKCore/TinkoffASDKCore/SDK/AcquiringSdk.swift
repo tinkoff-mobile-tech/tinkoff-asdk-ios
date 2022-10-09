@@ -476,7 +476,7 @@ public final class AcquiringSdk: NSObject {
     /// Подтверждение карты путем блокировки случайной суммы
     ///
     /// - Parameters:
-    ///   - amount: `Double` сумма в копейках
+    ///   - amount: `Double` сумма с копейками
     ///   - requestKey: `String` ключ для привязки карты
     ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
     /// - Returns: `Cancellable`
@@ -488,7 +488,7 @@ public final class AcquiringSdk: NSObject {
         responseDelegate: NetworkTransportResponseDelegate? = nil,
         completion: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submitRandomAmount(data: SubmitRandomAmountData(amount: Int64(amount), requestKey: requestKey))
+        let request = acquiringRequests.submitRandomAmount(data: SubmitRandomAmountData(amount: Int64(amount * 100), requestKey: requestKey))
         return acquiringAPI.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
     }
 
