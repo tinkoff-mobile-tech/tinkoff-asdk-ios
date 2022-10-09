@@ -57,17 +57,15 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
         _ request: AcquiringRequest,
         completion: @escaping (Swift.Result<Payload, Error>) -> Void
     ) -> Cancellable {
-        let cancellable = CancellableWrapper()
+        let outerCancellable = CancellableWrapper()
 
         requestAdapter.adapt(request: request) { [networkClient, apiDecoder] adaptingResult in
-            guard !cancellable.isCancelled else { return }
+            guard !outerCancellable.isCancelled else { return }
 
             switch adaptingResult {
             case let .success(request):
-                cancellable.addCancellationHandler(cancellable.cancel)
-
-                networkClient.performRequest(request) { response in
-                    guard !cancellable.isCancelled else { return }
+                let networkCancellable = networkClient.performRequest(request) { response in
+                    guard !outerCancellable.isCancelled else { return }
 
                     let result = response
                         .result
@@ -85,12 +83,13 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
 
                     completion(result)
                 }
+                outerCancellable.addCancellationHandler(networkCancellable.cancel)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
 
-        return cancellable
+        return outerCancellable
     }
 
     @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
