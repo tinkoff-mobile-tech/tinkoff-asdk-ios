@@ -66,7 +66,7 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
 
     func performRequest<Payload: Decodable>(
         _ request: AcquiringRequest,
-        completion: @escaping (Swift.Result<Payload, Error>) -> Void
+        completion: @escaping (Result<Payload, Error>) -> Void
     ) -> Cancellable {
         performAdapting(request: request) { [apiDecoder] networkResult in
             let result: Result<Payload, Error> = networkResult.tryMap { response in

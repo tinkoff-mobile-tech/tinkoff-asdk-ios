@@ -5,7 +5,8 @@
 
 "NetworkError.transportError" = "Transport error";
 "NetworkError.serverError" = "Server error";
-"NetworkError.emptyBody" = "Empty body response";
+"NetworkError.emptyResponse" = "Empty body response";
+"NetworkError.failedToCreateRequest" = "Failed to create request";
 
 "APIError.failureError" = "Acquiring API error";
 "APIError.invalidResponse" = "Invalid API response";

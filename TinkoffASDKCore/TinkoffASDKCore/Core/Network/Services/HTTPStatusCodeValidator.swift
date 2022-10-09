@@ -1,6 +1,6 @@
 //
 //
-//  HTTPURLResponseValidator.swift
+//  HTTPStatusCodeValidator.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,21 +19,11 @@
 
 import Foundation
 
-protocol IHTTPURLResponseValidator {
-    func validate(response: HTTPURLResponse) throws
+protocol IHTTPStatusCodeValidator {
+    func validate(statusCode: Int) -> Bool
 }
 
-struct HTTPURLResponseValidator: IHTTPURLResponseValidator {
-    // MARK: Error
-
-    private struct Error: LocalizedError, CustomNSError {
-        let statusCode: Int
-
-        var errorDescription: String? {
-            "\(Loc.NetworkError.serverError): \(statusCode)"
-        }
-    }
-
+struct HTTPStatusCodeValidator: IHTTPStatusCodeValidator {
     // MARK: Dependencies
 
     private let successStatusCodes: ClosedRange<Int>
@@ -44,11 +34,9 @@ struct HTTPURLResponseValidator: IHTTPURLResponseValidator {
         self.successStatusCodes = successStatusCodes
     }
 
-    // MARK: IHTTPURLResponseValidator
+    // MARK: IHTTPStatusCodeValidator
 
-    func validate(response: HTTPURLResponse) throws {
-        guard successStatusCodes.contains(response.statusCode) else {
-            throw Error(statusCode: response.statusCode)
-        }
+    func validate(statusCode: Int) -> Bool {
+        successStatusCodes.contains(statusCode)
     }
 }

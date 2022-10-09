@@ -79,7 +79,7 @@ private extension NetworkClient {
         NetworkClient(
             session: session,
             requestBuilder: URLRequestBuilder.build(),
-            responseValidator: HTTPURLResponseValidator()
+            statusCodeValidator: HTTPStatusCodeValidator()
         )
     }
 }

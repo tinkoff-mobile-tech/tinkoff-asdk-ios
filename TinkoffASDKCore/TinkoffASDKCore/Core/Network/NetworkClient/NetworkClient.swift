@@ -19,66 +19,31 @@
 
 import Foundation
 
-// MARK: - NetworkResponse
-
-struct NetworkResponse {
-    let urlRequest: URLRequest
-    let httpResponse: HTTPURLResponse
-    let data: Data
-}
-
-// MARK: - NetworkError
-
-enum NetworkError: Error {
-    case failedToBuildURLRequest(Error)
-    case sessionError(Error)
-    case incorrectResponse
-}
-
-// MARK: - INetworkClient
-
 protocol INetworkClient: AnyObject {
     @discardableResult
-    func performRequest(_ request: NetworkRequest, completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void) -> Cancellable
+    func performRequest(
+        _ request: NetworkRequest,
+        completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
+    ) -> Cancellable
 }
 
-// MARK: - NetworkClient
-
 final class NetworkClient: INetworkClient {
-    // MARK: Error
-
-//    private enum Error: LocalizedError, CustomNSError {
-//        case sessionError(Swift.Error)
-//        case noDataFound
-//
-//        var errorDescription: String? {
-//            let description: String
-//            switch self {
-//            case let .sessionError(error):
-//                description = "\(Loc.NetworkError.transportError): \(error.localizedDescription)"
-//            case .noDataFound:
-//                description = "\(Loc.NetworkError.emptyBody)"
-//            }
-//            return description
-//        }
-//    }
-
     // MARK: Dependencies
 
     private let session: INetworkSession
     private let requestBuilder: IURLRequestBuilder
-    private let responseValidator: IHTTPURLResponseValidator
+    private let statusCodeValidator: IHTTPStatusCodeValidator
 
     // MARK: Init
 
     init(
         session: INetworkSession,
         requestBuilder: IURLRequestBuilder,
-        responseValidator: IHTTPURLResponseValidator
+        statusCodeValidator: IHTTPStatusCodeValidator
     ) {
         self.session = session
         self.requestBuilder = requestBuilder
-        self.responseValidator = responseValidator
+        self.statusCodeValidator = statusCodeValidator
     }
 
     // MARK: INetworkClient
@@ -93,7 +58,7 @@ final class NetworkClient: INetworkClient {
         do {
             urlRequest = try requestBuilder.build(request: request)
         } catch {
-            completion(.failure(.failedToBuildURLRequest(error)))
+            completion(.failure(.failedToCreateRequest(error)))
             return EmptyCancellable()
         }
 
@@ -108,33 +73,36 @@ final class NetworkClient: INetworkClient {
         with urlRequest: URLRequest,
         completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
     ) -> INetworkDataTask {
-        session.dataTask(with: urlRequest) { [responseValidator] data, response, error in
+        session.dataTask(with: urlRequest) { [statusCodeValidator] data, response, error in
             let result: Result<NetworkResponse, NetworkError>
             defer { completion(result) }
 
             if let error = error {
-                result = .failure(.sessionError(error))
+                result = .failure(.transportError(error))
                 return
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                result = .failure(.incorrectResponse)
+                result = .failure(.emptyResponse)
                 return
             }
 
-            do {
-                try responseValidator.validate(response: httpResponse)
-            } catch {
-                result = .failure(.incorrectResponse)
+            guard statusCodeValidator.validate(statusCode: httpResponse.statusCode) else {
+                result = .failure(.serverError(statusCode: httpResponse.statusCode))
                 return
             }
 
             guard let data = data else {
-                result = .failure(.incorrectResponse)
+                result = .failure(.emptyResponse)
                 return
             }
 
-            let networkResponse = NetworkResponse(urlRequest: urlRequest, httpResponse: httpResponse, data: data)
+            let networkResponse = NetworkResponse(
+                urlRequest: urlRequest,
+                httpResponse: httpResponse,
+                data: data
+            )
+
             result = .success(networkResponse)
         }
     }
