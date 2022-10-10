@@ -515,37 +515,36 @@ public final class AcquiringSdk: NSObject {
         )
     }
 
-    // MARK: Deactivate Card
+    // MARK: Remove Card
 
     /// Удаление привязанной карты покупателя
     ///
     /// - Parameters:
-    ///   - data: `DeactivateCardData`
-    ///   - completion: результат операции `DeactivateCardPayload` в случае удачной регистрации и  `Error` - ошибка.
+    ///   - data: `RemoveCardData`
+    ///   - completion: результат операции `RemoveCardPayload` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
-
     @discardableResult
-    public func deactivateCard(
-        data: DeactivateCardData,
-        completion: @escaping (_ result: Result<DeactivateCardPayload, Error>) -> Void
+    public func removeCard(
+        data: RemoveCardData,
+        completion: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.deactivateCard(data: data)
+        let request = acquiringRequests.removeCard(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
     /// Удаление привязанной карты покупателя
     ///
     /// - Parameters:
-    ///   - data: `DeactivateCardData`
+    ///   - data: `RemoveCardData`
     ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use `deactivateCard(data:completion:)` instead")
+    @available(*, deprecated, message: "Use `removeCard(data:completion:)` instead")
     public func cardListDeactivateCard(
-        data: DeactivateCardData,
+        data: RemoveCardData,
         completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.deactivateCard(data: data)
+        let request = acquiringRequests.removeCard(data: data)
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
@@ -555,9 +554,9 @@ public final class AcquiringSdk: NSObject {
     ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
     /// - Returns: `Cancellable`
     @discardableResult
-    @available(*, deprecated, message: "Use `deactivateCard(data:completion:)` instead")
+    @available(*, deprecated, message: "Use `removeCard(data:completion:)` instead")
     public func сardListDeactivateCard(
-        data: DeactivateCardData,
+        data: RemoveCardData,
         completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
     ) -> Cancellable {
         cardListDeactivateCard(data: data, completion: completionHandler)

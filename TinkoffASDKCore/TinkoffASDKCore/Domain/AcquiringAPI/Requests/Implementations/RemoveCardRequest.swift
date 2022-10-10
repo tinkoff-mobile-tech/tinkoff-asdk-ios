@@ -1,6 +1,6 @@
 //
 //
-//  DeactivateCardPayload.swift
+//  RemoveCardRequest.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,19 +19,14 @@
 
 import Foundation
 
-public struct DeactivateCardPayload: Decodable {
-    private enum CodingKeys: CodingKey {
-        case cardId
-        case cardStatus
+struct RemoveCardRequest: AcquiringRequest {
+    let baseURL: URL
+    let path: String = "v2/RemoveCard"
+    let httpMethod: HTTPMethod = .post
+    let parameters: HTTPParameters
 
-        var stringValue: String {
-            switch self {
-            case .cardId: return Constants.Keys.cardId
-            case .cardStatus: return Constants.Keys.status
-            }
-        }
+    init(data: RemoveCardData, baseURL: URL) {
+        self.baseURL = baseURL
+        parameters = (try? data.encode2JSONObject()) ?? [:]
     }
-
-    public let cardId: String
-    public let cardStatus: PaymentCardStatus
 }

@@ -18,7 +18,7 @@ protocol IAcquiringRequestBuilder {
     func addCard(data: AddCardData) -> AcquiringRequest
     func attachCard(data: AttachCardData) -> AcquiringRequest
     func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest
-    func deactivateCard(data: DeactivateCardData) -> AcquiringRequest
+    func removeCard(data: RemoveCardData) -> AcquiringRequest
     func getQR(data: GetQRData) -> AcquiringRequest
     func getStaticQR(data: GetQRDataType) -> AcquiringRequest
     func getTinkoffPayStatus() -> AcquiringRequest
@@ -111,8 +111,8 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
         SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURLProvider.url)
     }
 
-    func deactivateCard(data: DeactivateCardData) -> AcquiringRequest {
-        DeactivateCardRequest(deactivateCardData: data, baseURL: baseURLProvider.url)
+    func removeCard(data: RemoveCardData) -> AcquiringRequest {
+        RemoveCardRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func getQR(data: GetQRData) -> AcquiringRequest {

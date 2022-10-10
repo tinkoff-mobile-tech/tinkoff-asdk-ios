@@ -1,6 +1,6 @@
 //
 //
-//  DeactivateCardData.swift
+//  RemoveCardPayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,27 +19,19 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "DeactivateCardData")
-public typealias InitDeactivateCardData = DeactivateCardData
-
-public struct DeactivateCardData: Encodable {
+public struct RemoveCardPayload: Decodable {
     private enum CodingKeys: CodingKey {
         case cardId
-        case customerKey
+        case cardStatus
 
         var stringValue: String {
             switch self {
             case .cardId: return Constants.Keys.cardId
-            case .customerKey: return Constants.Keys.customerKey
+            case .cardStatus: return Constants.Keys.status
             }
         }
     }
 
     public let cardId: String
-    public let customerKey: String
-
-    public init(cardId: String, customerKey: String) {
-        self.cardId = cardId
-        self.customerKey = customerKey
-    }
+    public let cardStatus: PaymentCardStatus
 }

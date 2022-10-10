@@ -162,7 +162,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     }
 
     public func deactivateCard(cardId: String, startHandler: (() -> Void)?, completeHandler: @escaping (PaymentCard?) -> Void) {
-        let initData = DeactivateCardData(cardId: cardId, customerKey: customerKey)
+        let initData = RemoveCardData(cardId: cardId, customerKey: customerKey)
 
         startHandler?()
 
