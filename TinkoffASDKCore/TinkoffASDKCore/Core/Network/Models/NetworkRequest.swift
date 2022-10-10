@@ -22,7 +22,7 @@ import Foundation
 typealias HTTPParameters = [String: Any]
 typealias HTTPHeaders = [String: String]
 
-struct HTTPMethod: RawRepresentable {
+struct HTTPMethod: RawRepresentable, Hashable {
     static let get = HTTPMethod(rawValue: "GET")
     static let post = HTTPMethod(rawValue: "POST")
 

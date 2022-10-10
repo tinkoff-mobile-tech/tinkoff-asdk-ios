@@ -31,6 +31,13 @@ final class URLRequestBuilder: IURLRequestBuilder {
         case encodingFailed(error: Swift.Error)
     }
 
+    private let serializationOptions: JSONSerialization.WritingOptions
+    private let methodsAllowedToContainJSONBody: Set<HTTPMethod> = [.post]
+
+    init(serializationOptions: JSONSerialization.WritingOptions = .sortedKeys) {
+        self.serializationOptions = serializationOptions
+    }
+
     // MARK: IURLRequestBuilder
 
     func build(request: NetworkRequest) throws -> URLRequest {
@@ -39,11 +46,14 @@ final class URLRequestBuilder: IURLRequestBuilder {
 
         var urlRequest = URLRequest(url: fullURL)
         urlRequest.httpMethod = request.httpMethod.rawValue
+
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
-        if request.httpMethod != .get {
-            try encodeJSON(with: request.parameters, toURLRequest: &urlRequest)
-        }
+        try encodeJSON(
+            with: request.parameters,
+            method: request.httpMethod,
+            toURLRequest: &urlRequest
+        )
 
         return urlRequest
     }
@@ -52,12 +62,16 @@ final class URLRequestBuilder: IURLRequestBuilder {
 
     private func encodeJSON(
         with parameters: HTTPParameters,
+        method: HTTPMethod,
         toURLRequest urlRequest: inout URLRequest
     ) throws {
-        guard !parameters.isEmpty else { return }
+        guard !parameters.isEmpty,
+              methodsAllowedToContainJSONBody.contains(method) else {
+            return
+        }
 
         do {
-            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .sortedKeys)
+            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: serializationOptions)
         } catch {
             throw Error.encodingFailed(error: error)
         }

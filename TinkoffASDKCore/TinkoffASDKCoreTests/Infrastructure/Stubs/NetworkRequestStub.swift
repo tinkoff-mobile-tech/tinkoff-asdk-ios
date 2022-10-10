@@ -1,6 +1,6 @@
 //
 //
-//  MockRequestBuilder.swift
+//  NetworkRequestStub.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,12 +20,25 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-final class MockRequestBuilder: NetworkClientRequestBuilder {
-    var stubbedURLRequest = URLRequest(url: URL(string: "https://www.tinkoff.ru")!)
-    var buildURLRequestMethodCalled = false
+struct NetworkRequestStub: NetworkRequest {
+    let baseURL: URL
+    let path: String
+    let httpMethod: HTTPMethod
+    var headers: HTTPHeaders
+    var parameters: HTTPParameters
 
-    func buildURLRequest(request: NetworkRequest, requestAdapter: NetworkRequestAdapter?) throws -> URLRequest {
-        buildURLRequestMethodCalled = true
-        return stubbedURLRequest
+    init(
+        baseURL: URL = URL(string: "https://www.tinkoff.ru")!,
+        path: String = "doesNotMatter",
+        httpMethod: HTTPMethod = .get,
+        headers: HTTPHeaders = [:],
+        parameters: HTTPParameters = [:]
+
+    ) {
+        self.baseURL = baseURL
+        self.path = path
+        self.httpMethod = httpMethod
+        self.headers = headers
+        self.parameters = parameters
     }
 }
