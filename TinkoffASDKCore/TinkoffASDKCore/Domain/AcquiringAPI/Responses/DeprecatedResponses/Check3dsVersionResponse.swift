@@ -27,7 +27,6 @@ public struct Check3dsVersionResponse: ResponseOperation {
         case errorMessage
         case errorDetails
         case terminalKey
-        //
         case tdsServerTransID
         case threeDSMethodURL
         case version
@@ -53,7 +52,6 @@ public struct Check3dsVersionResponse: ResponseOperation {
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
-    //
     public var tdsServerTransID: String?
     public var threeDSMethodURL: String?
     public var version: String
@@ -71,7 +69,7 @@ public struct Check3dsVersionResponse: ResponseOperation {
         threeDSMethodURL = try? container.decode(String.self, forKey: .threeDSMethodURL)
         version = try container.decode(String.self, forKey: .version)
         paymentSystem = try? container.decode(String.self, forKey: .paymentSystem)
-    } // init
+    }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -80,10 +78,9 @@ public struct Check3dsVersionResponse: ResponseOperation {
         try? container.encode(errorMessage, forKey: .errorMessage)
         try? container.encode(errorDetails, forKey: .errorDetails)
         try? container.encode(terminalKey, forKey: .terminalKey)
-        //
         try? container.encode(tdsServerTransID, forKey: .tdsServerTransID)
         try? container.encode(threeDSMethodURL, forKey: .threeDSMethodURL)
         try container.encode(version, forKey: .version)
         try container.encode(paymentSystem, forKey: .paymentSystem)
-    } // encode
-} // FinishResponse
+    }
+}

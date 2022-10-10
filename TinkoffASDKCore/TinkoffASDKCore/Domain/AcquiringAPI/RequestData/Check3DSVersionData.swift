@@ -1,6 +1,6 @@
 //
 //
-//  Check3DSData.swift
+//  Check3DSVersionData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //

@@ -22,7 +22,7 @@ final class URLRequestBuilderTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_sut_throws_thenReceiveEmptyPath() {
+    func test_build_withEmptyPath_shouldThrowError() {
         // given
         let request = NetworkRequestStub(path: "")
 
@@ -37,7 +37,7 @@ final class URLRequestBuilderTests: XCTestCase {
         }
     }
 
-    func test_sut_noThrows_thenReceiveValidPath() {
+    func test_build_withValidPath_shouldNotThrowError() {
         // given
         let request = NetworkRequestStub(path: "doesNotMatter")
 
@@ -51,7 +51,7 @@ final class URLRequestBuilderTests: XCTestCase {
         XCTAssertNoThrow(try result.get())
     }
 
-    func test_sut_createsURLRequest_forPostRequest() throws {
+    func test_build_withPostMethod_shouldBuildCorrectURLRequest() throws {
         // given
         let request = NetworkRequestStub(
             httpMethod: .post,
@@ -72,7 +72,7 @@ final class URLRequestBuilderTests: XCTestCase {
         XCTAssertEqual(expectedParamsData, urlRequest.httpBody)
     }
 
-    func test_sut_ignoresJSONBody_forGetRequests() throws {
+    func test_build_withGetMethod_shouldIgnoreBodyParams_and_shouldNotWriteContentType() throws {
         // given
         let request = NetworkRequestStub(
             httpMethod: .get,

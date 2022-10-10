@@ -23,7 +23,7 @@ import XCTest
 class HTTPStatusCodeValidatorTests: XCTestCase {
     let sut = HTTPStatusCodeValidator()
 
-    func test_sut_shouldReturnTrue_thenReceiveValidRange() {
+    func test_validate_withValidStatusCodesRange_shouldReturnTrue() {
         // given
         let statusCodes = 200 ... 299
 
@@ -34,7 +34,7 @@ class HTTPStatusCodeValidatorTests: XCTestCase {
         XCTAssert(allStatusesAreValid)
     }
 
-    func test_sut_shouldReturnFalse_thenReceiveInvalidRange() {
+    func test_validate_withInvalidStatusCodesRange_ShouldReturnFalse() {
         // given
         let statusCodesLessThan200 = Array(-1 ... 199)
         let statusCodesMoreThan299 = Array(300 ... 600)
