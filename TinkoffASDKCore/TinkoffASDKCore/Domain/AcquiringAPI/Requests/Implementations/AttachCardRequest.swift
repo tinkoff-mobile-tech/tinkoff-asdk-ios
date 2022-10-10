@@ -24,9 +24,10 @@ struct AttachCardRequest: AcquiringRequest {
     let path: String = "v2/AttachCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includingAll
 
     init(
-        finishAddCardData: AttachCardData,
+        data: AttachCardData,
         encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
         publicKey: SecKey,
@@ -34,7 +35,7 @@ struct AttachCardRequest: AcquiringRequest {
     ) {
         self.baseURL = baseURL
         parameters = .parameters(
-            requestData: finishAddCardData,
+            requestData: data,
             encryptor: encryptor,
             cardDataFormatter: cardDataFormatter,
             publicKey: publicKey

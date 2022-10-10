@@ -24,6 +24,7 @@ struct GetPaymentStateRequest: AcquiringRequest {
     let path: String = "v2/GetState"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includingAll
 
     init(data: GetPaymentStateData, baseURL: URL) {
         self.baseURL = baseURL

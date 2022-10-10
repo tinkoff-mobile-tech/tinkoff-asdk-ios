@@ -44,5 +44,4 @@ protocol AcquiringRequest: NetworkRequest {
 
 extension AcquiringRequest {
     var decodingStrategy: AcquiringDecodingStrategy { .standard }
-    var tokenFormationStrategy: TokenFormationStrategy { .none }
 }

@@ -24,6 +24,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
     let path: String = "v2/FinishAuthorize"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .excluding(Constants.Keys.data)
 
     init(
         requestData: FinishAuthorizeData,

@@ -24,6 +24,7 @@ struct ChargePaymentRequest: AcquiringRequest {
     let path: String = "v2/Charge"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includingAll
 
     init(data: ChargeData, baseURL: URL) {
         self.baseURL = baseURL

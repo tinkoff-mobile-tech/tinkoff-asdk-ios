@@ -23,6 +23,7 @@ public struct GetTinkoffPayStatusRequest: AcquiringRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get
+    let tokenFormationStrategy: TokenFormationStrategy = .none
 
     // MARK: - Init
 
