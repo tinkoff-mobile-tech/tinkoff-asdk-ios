@@ -79,7 +79,7 @@ private extension AcquiringAPIClient {
         decoder: IAcquiringDecoder
     ) -> IAcquiringAPIClient {
         AcquiringAPIClient(
-            requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider),
+            requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider, tokenProvider: nil),
             networkClient: networkClient,
             decoder: decoder,
             deprecatedDecoder: DeprecatedDecoder()

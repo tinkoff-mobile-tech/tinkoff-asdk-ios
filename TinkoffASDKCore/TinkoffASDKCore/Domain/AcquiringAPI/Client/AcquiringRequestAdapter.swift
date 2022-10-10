@@ -15,20 +15,19 @@ protocol IAcquiringRequestAdapter {
 }
 
 final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
-    fileprivate struct AdaptedRequest: AcquiringRequest {
-        let baseURL: URL
-        let path: String
-        let httpMethod: HTTPMethod
-        var parameters: HTTPParameters
-        let headers: HTTPHeaders
-        let decodingStrategy: AcquiringDecodingStrategy
-    }
+    // MARK: Dependencies
 
     private let terminalKeyProvider: IStringProvider
+    private let tokenProvider: ITokenProvider?
 
-    init(terminalKeyProvider: IStringProvider) {
+    // MARK: Init
+
+    init(terminalKeyProvider: IStringProvider, tokenProvider: ITokenProvider?) {
         self.terminalKeyProvider = terminalKeyProvider
+        self.tokenProvider = tokenProvider
     }
+
+    // MARK: IAcquiringRequestAdapter
 
     func adapt(
         request: AcquiringRequest,
@@ -38,25 +37,74 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
             return completion(.success(request))
         }
 
-        var adaptedRequest = AdaptedRequest.copy(request: request)
+        let requestWithTerminalKey = request.adapted(withTerminalKey: terminalKeyProvider.value)
 
-        adaptedRequest
+        switch request.tokenFormationStrategy {
+        case .none:
+            completion(.success(requestWithTerminalKey))
+        case let .excluding(excludingParams):
+            adaptWithToken(
+                request: requestWithTerminalKey,
+                excludingParameters: excludingParams,
+                completion: completion
+            )
+        }
+    }
+
+    // MARK: Helpers
+
+    private func adaptWithToken(
+        request: AcquiringRequest,
+        excludingParameters: Set<String>,
+        completion: @escaping (Result<AcquiringRequest, Error>) -> Void
+    ) {
+        guard let tokenProvider = tokenProvider else {
+            return completion(.success(request))
+        }
+
+        let tokenParameters = request
             .parameters
-            .merge([Constants.Keys.terminalKey: terminalKeyProvider.value]) { $1 }
+            .filter { !excludingParameters.contains($0.key) }
 
-        completion(.success(adaptedRequest))
+        tokenProvider.provideToken(forRequestParameters: tokenParameters) { tokenResult in
+            let result = tokenResult.map(request.adapted(withToken:))
+            completion(result)
+        }
     }
 }
 
-private extension AcquiringRequestAdapter.AdaptedRequest {
-    static func copy(request: AcquiringRequest) -> AcquiringRequestAdapter.AdaptedRequest {
-        AcquiringRequestAdapter.AdaptedRequest(
-            baseURL: request.baseURL,
-            path: request.path,
-            httpMethod: request.httpMethod,
-            parameters: request.parameters,
-            headers: request.headers,
-            decodingStrategy: request.decodingStrategy
+// MARK: - AdaptedRequest
+
+private struct AdaptedRequest: AcquiringRequest {
+    let baseURL: URL
+    let path: String
+    let httpMethod: HTTPMethod
+    let parameters: HTTPParameters
+    let headers: HTTPHeaders
+    let decodingStrategy: AcquiringDecodingStrategy
+    let tokenFormationStrategy: TokenFormationStrategy
+}
+
+// MARK: - AcquiringRequest + Adaptation
+
+private extension AcquiringRequest {
+    func adapted(withTerminalKey terminalKey: String) -> AcquiringRequest {
+        adapted(mergingParameters: [Constants.Keys.terminalKey: terminalKey])
+    }
+
+    func adapted(withToken token: String) -> AcquiringRequest {
+        adapted(mergingParameters: [Constants.Keys.token: token])
+    }
+
+    private func adapted(mergingParameters: HTTPParameters = [:]) -> AcquiringRequest {
+        AdaptedRequest(
+            baseURL: baseURL,
+            path: path,
+            httpMethod: httpMethod,
+            parameters: parameters.merging(mergingParameters) { $1 },
+            headers: headers,
+            decodingStrategy: decodingStrategy,
+            tokenFormationStrategy: tokenFormationStrategy
         )
     }
 }
