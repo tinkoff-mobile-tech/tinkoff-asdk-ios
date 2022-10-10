@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.11.1] - 2022-10-10Z
+
 ### Fixed
 
 * [MIC-6624] Remove TerminalKey providing for GET requests
