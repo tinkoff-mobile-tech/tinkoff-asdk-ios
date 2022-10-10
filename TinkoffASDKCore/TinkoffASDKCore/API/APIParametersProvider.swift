@@ -28,6 +28,10 @@ final class APIParametersProvider: NetworkRequestAdapter {
     }
 
     func additionalParameters(for request: NetworkRequest) -> HTTPParameters {
+        guard request.httpMethod != .get else {
+            return [:]
+        }
+
         let commonParameters: HTTPParameters = [APIConstants.Keys.terminalKey: terminalKey]
         return commonParameters
     }
