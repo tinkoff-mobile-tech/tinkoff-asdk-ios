@@ -1,6 +1,14 @@
 # Changelog
 ## [Unreleased]
 
+### Changed
+
+* [MIC-6423] Fix ASDKCore architecture after merging versions
+* [MIC-6431] Remove unused entities in ASDKCore
+* [MIC-6432] Dependency inversion in ASDKCore
+* [MIC-6433] File structure in ASDKCore
+* [MIC-6434] Adapt the network layer for different response formats in ASDKCore
+
 ## [2.11.0] - 2022-10-05Z
 
 ### Changed

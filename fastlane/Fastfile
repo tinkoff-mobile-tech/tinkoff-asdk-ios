@@ -4,7 +4,7 @@ import_from_git(
 )
 
 override_lane :extend_bump_version do |options|
-  version_swift="TinkoffASDKCore/TinkoffASDKCore/Version.swift"
+  version_swift="TinkoffASDKCore/TinkoffASDKCore/SDK/Version.swift"
   relative_file_path = "../" + version_swift
   data = File.read(relative_file_path)
   data = data.gsub(/versionString = \"([\d.]+)\"/, "versionString = \"#{options[:version]}\"")

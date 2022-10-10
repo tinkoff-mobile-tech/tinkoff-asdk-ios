@@ -18,7 +18,9 @@ internal enum Loc {
   }
   internal enum NetworkError {
     /// Пустой ответ
-    internal static let emptyBody = Loc.tr("Localizable", "NetworkError.emptyBody", fallback: #"Пустой ответ"#)
+    internal static let emptyResponse = Loc.tr("Localizable", "NetworkError.emptyResponse", fallback: #"Пустой ответ"#)
+    /// Не удалось создать запрос
+    internal static let failedToCreateRequest = Loc.tr("Localizable", "NetworkError.failedToCreateRequest", fallback: #"Не удалось создать запрос"#)
     /// Ошибка сервера
     internal static let serverError = Loc.tr("Localizable", "NetworkError.serverError", fallback: #"Ошибка сервера"#)
     /// Ошибка сети
