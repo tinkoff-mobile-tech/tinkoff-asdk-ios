@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import struct UIKit.CGSize
 
 typealias IThreeDSFacade = IThreeDSURLBuilder & IThreeDSURLRequestBuilder & IThreeDSWebViewHandlerBuilder & IThreeDSDeviceParamsProviderBuilder
 
