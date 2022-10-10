@@ -82,8 +82,8 @@ public final class TinkoffPayButton: UIButton {
 
         var image: UIImage? {
             switch color {
-            case .black: return Asset.TinkoffPay.tinkoffPayLogoBlack.image
-            case .white: return Asset.TinkoffPay.tinkoffPayLogoWhite.image
+            case .black: return Asset.TinkoffPay.tinkoffPayLogoWhite.image
+            case .white: return Asset.TinkoffPay.tinkoffPayLogoBlack.image
             }
         }
     }
