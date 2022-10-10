@@ -100,7 +100,7 @@ public enum PaymentSourceData: Codable {
 
     // MARK: Helpers
 
-    func getCardAndRebillId() -> (cardId: String?, rebillId: String?) {
+    public func getCardAndRebillId() -> (cardId: String?, rebillId: String?) {
         switch self {
         case let .parentPayment(rebillId):
             return (nil, rebillId)
