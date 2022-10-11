@@ -25,7 +25,7 @@ struct GetCardListRequest: AcquiringRequest {
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
     let decodingStrategy: AcquiringDecodingStrategy = .clipped
-    let tokenFormationStrategy: TokenFormationStrategy = .includingAll
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(getCardListData: GetCardListData, baseURL: URL) {
         self.baseURL = baseURL

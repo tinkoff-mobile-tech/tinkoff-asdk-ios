@@ -24,7 +24,7 @@ struct RemoveCardRequest: AcquiringRequest {
     let path: String = "v2/RemoveCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let tokenFormationStrategy: TokenFormationStrategy = .includingAll
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(data: RemoveCardData, baseURL: URL) {
         self.baseURL = baseURL

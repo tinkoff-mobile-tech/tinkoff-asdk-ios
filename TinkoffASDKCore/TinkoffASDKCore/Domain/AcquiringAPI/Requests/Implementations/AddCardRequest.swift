@@ -24,7 +24,7 @@ struct AddCardRequest: AcquiringRequest {
     let path: String = "v2/AddCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let tokenFormationStrategy: TokenFormationStrategy = .includingAll
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(initAddCardData: AddCardData, baseURL: URL) {
         self.baseURL = baseURL

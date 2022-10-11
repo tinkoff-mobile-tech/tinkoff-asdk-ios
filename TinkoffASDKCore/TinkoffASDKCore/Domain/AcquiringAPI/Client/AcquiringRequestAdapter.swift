@@ -42,7 +42,7 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         switch request.tokenFormationStrategy {
         case .none:
             completion(.success(requestWithTerminalKey))
-        case let .excluding(excludingParams):
+        case let .includeAll(excludingParams):
             adaptWithToken(
                 request: requestWithTerminalKey,
                 excludingParameters: excludingParams,

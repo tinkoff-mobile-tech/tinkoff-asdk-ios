@@ -25,16 +25,14 @@ enum AcquiringDecodingStrategy {
 }
 
 enum TokenFormationStrategy {
-    static var includingAll: TokenFormationStrategy {
-        .excluding([])
-    }
-
-    static func excluding(_ params: String...) -> TokenFormationStrategy {
-        .excluding(Set(params))
-    }
-
     case none
-    case excluding(Set<String>)
+    case includeAll(exceptParameters: Set<String>)
+}
+
+extension TokenFormationStrategy {
+    static func includeAll(except parameters: String...) -> TokenFormationStrategy {
+        .includeAll(exceptParameters: Set(parameters))
+    }
 }
 
 protocol AcquiringRequest: NetworkRequest {
