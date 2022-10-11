@@ -120,18 +120,9 @@ class CartTableViewController: UITableViewController {
                 return
             }
 
-            let credentional = AcquiringSdkCredential(
-                terminalKey: StageTestData.terminalKey,
-                publicKey: StageTestData.testPublicKey
-            )
-
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
-            acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-            acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
-
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
+            if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
                 viewController.sdk = sdk
-                viewController.customerKey = StageTestData.customerKey
+                viewController.customerKey = AppSetting.shared.activeSdkCredentials.customerKey
             }
 
             viewController.products = CartDataProvider.shared.dataSource

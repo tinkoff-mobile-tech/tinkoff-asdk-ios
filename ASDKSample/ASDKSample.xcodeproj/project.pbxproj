@@ -36,12 +36,26 @@
 		2CF833BE24B2FDC0009832BD /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF833BD24B2FDC0009832BD /* StageTestData.swift */; };
 		2CFEEE08246EA4910009E633 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEEE07246EA4910009E633 /* InfoPlist.strings */; };
 		4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */; };
+		B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */; };
+		B121157B28EED63D007C6543 /* CGFloat+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157A28EED63D007C6543 /* CGFloat+Ext.swift */; };
 		B1419C5328D46AB2005C61DE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4B28D46AB2005C61DE /* Localizable.strings */; };
 		B1419C5428D46AB2005C61DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4E28D46AB2005C61DE /* Assets.xcassets */; };
 		B1419C5528D46AB2005C61DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4F28D46AB2005C61DE /* LaunchScreen.storyboard */; };
 		B1419C5628D46AB2005C61DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1419C5128D46AB2005C61DE /* Main.storyboard */; };
 		B1419C5928D46D96005C61DE /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1419C5728D46D96005C61DE /* Strings+Generated.swift */; };
 		B1419C5A28D46D96005C61DE /* Assets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1419C5828D46D96005C61DE /* Assets+Generated.swift */; };
+		B156F90C28F0440000ABABDD /* UIEdgeInsets+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */; };
+		B156F90E28F06B3700ABABDD /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156F90D28F06B3700ABABDD /* UIView+Ext.swift */; };
+		B1A4EDD828F3FB56004D0C99 /* ConstraintsDsl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDD728F3FB56004D0C99 /* ConstraintsDsl.swift */; };
+		B1A4EDDB28F3FC2C004D0C99 /* ViewProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */; };
+		B1A4EDDD28F3FCB0004D0C99 /* GenericTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */; };
+		B1A4EDDF28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */; };
+		B1A4EDE128F3FD73004D0C99 /* VerticalEditableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */; };
+		B1A4EDE328F3FD86004D0C99 /* CredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */; };
+		B1C97B7828F46E4000DC007B /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */; };
+		B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A0F28F5731C00D429F4 /* AppSetting.swift */; };
+		B1D01A1228F5A20800D429F4 /* JustButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A1128F5A20800D429F4 /* JustButton.swift */; };
+		B1D01A1428F5AE6000D429F4 /* SdkAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +113,8 @@
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
 		2CF833BD24B2FDC0009832BD /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StageTestData.swift; path = ../../TinkoffASDKCore/TinkoffASDKCoreTests/StageTestData.swift; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSdkCredentialsViewController.swift; sourceTree = "<group>"; };
+		B121157A28EED63D007C6543 /* CGFloat+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Ext.swift"; sourceTree = "<group>"; };
 		B1419C4C28D46AB2005C61DE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B1419C4D28D46AB2005C61DE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B1419C4E28D46AB2005C61DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -106,6 +122,18 @@
 		B1419C5228D46AB2005C61DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B1419C5728D46D96005C61DE /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		B1419C5828D46D96005C61DE /* Assets+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Generated.swift"; sourceTree = "<group>"; };
+		B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Ext.swift"; sourceTree = "<group>"; };
+		B156F90D28F06B3700ABABDD /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
+		B1A4EDD728F3FB56004D0C99 /* ConstraintsDsl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintsDsl.swift; sourceTree = "<group>"; };
+		B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewProtocols.swift; sourceTree = "<group>"; };
+		B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTableCell.swift; sourceTree = "<group>"; };
+		B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalTitleSwitchView.swift; sourceTree = "<group>"; };
+		B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalEditableView.swift; sourceTree = "<group>"; };
+		B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsView.swift; sourceTree = "<group>"; };
+		B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
+		B1D01A0F28F5731C00D429F4 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
+		B1D01A1128F5A20800D429F4 /* JustButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustButton.swift; sourceTree = "<group>"; };
+		B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SdkAssembly.swift; sourceTree = "<group>"; };
 		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
 		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -165,6 +193,7 @@
 				2C6560812476D18800DEA4A9 /* SegmentedTabeViewCell.swift */,
 				2C6560822476D18800DEA4A9 /* SegmentedTabeViewCell.xib */,
 				2C4D782D23F42090003A355D /* SettingsTableViewController.swift */,
+				B1D01A0F28F5731C00D429F4 /* AppSetting.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -197,6 +226,7 @@
 				B1419C4828D46AB2005C61DE /* Resources */,
 				2CFEEE0C246EA7670009E633 /* Scaner */,
 				2C9C7EC2239FBCB200DE4071 /* RootViewController.swift */,
+				B1A4EDD628F3FB38004D0C99 /* Creds */,
 				2CA7764A2451AA8E0078AEB3 /* About */,
 				2C4D782C23F4207A003A355D /* Settings */,
 				2C4D782623F3EF68003A355D /* ProductDetail */,
@@ -250,8 +280,13 @@
 			isa = PBXGroup;
 			children = (
 				2CF833BD24B2FDC0009832BD /* StageTestData.swift */,
+				B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */,
 				2CA0206023F2C2B600C2AB0E /* Utils.swift */,
 				2CA0206423F2CE5700C2AB0E /* UIUtils.swift */,
+				B121157A28EED63D007C6543 /* CGFloat+Ext.swift */,
+				B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */,
+				B156F90D28F06B3700ABABDD /* UIView+Ext.swift */,
+				B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -314,6 +349,29 @@
 				B1419C4B28D46AB2005C61DE /* Localizable.strings */,
 			);
 			path = Strings;
+			sourceTree = "<group>";
+		};
+		B1A4EDD628F3FB38004D0C99 /* Creds */ = {
+			isa = PBXGroup;
+			children = (
+				B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */,
+				B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */,
+				B1D01A1128F5A20800D429F4 /* JustButton.swift */,
+				B1A4EDD928F3FB5A004D0C99 /* ConstraintsDsl */,
+				B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */,
+				B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */,
+				B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */,
+				B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */,
+			);
+			name = Creds;
+			sourceTree = "<group>";
+		};
+		B1A4EDD928F3FB5A004D0C99 /* ConstraintsDsl */ = {
+			isa = PBXGroup;
+			children = (
+				B1A4EDD728F3FB56004D0C99 /* ConstraintsDsl.swift */,
+			);
+			name = ConstraintsDsl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -412,6 +470,8 @@
 				ru,
 			);
 			mainGroup = 2C9C7EB2239FBCB200DE4071;
+			packageReferences = (
+			);
 			productRefGroup = 2C9C7EBC239FBCB200DE4071 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -600,26 +660,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1A4EDE128F3FD73004D0C99 /* VerticalEditableView.swift in Sources */,
 				2C06D08B23F1492C006FC588 /* AboutViewController.swift in Sources */,
 				B1419C5928D46D96005C61DE /* Strings+Generated.swift in Sources */,
 				2C9C7EC3239FBCB200DE4071 /* RootViewController.swift in Sources */,
 				2CAE6DE324628FD200F48739 /* ButtonTableViewCell.swift in Sources */,
 				2CA0206D23F2D1F400C2AB0E /* CartEmptyTableViewCell.swift in Sources */,
 				2CF833BE24B2FDC0009832BD /* StageTestData.swift in Sources */,
+				B1A4EDDD28F3FCB0004D0C99 /* GenericTableCell.swift in Sources */,
+				B1A4EDD828F3FB56004D0C99 /* ConstraintsDsl.swift in Sources */,
+				B1C97B7828F46E4000DC007B /* UIImage+Ext.swift in Sources */,
+				B1A4EDDB28F3FC2C004D0C99 /* ViewProtocols.swift in Sources */,
+				B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */,
 				2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */,
 				2C9C7EBF239FBCB200DE4071 /* AppDelegate.swift in Sources */,
 				2CA0206723F2CF8700C2AB0E /* CartBuyButtonView.swift in Sources */,
 				2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */,
 				2CA0206523F2CE5700C2AB0E /* UIUtils.swift in Sources */,
+				B156F90E28F06B3700ABABDD /* UIView+Ext.swift in Sources */,
+				B1D01A1428F5AE6000D429F4 /* SdkAssembly.swift in Sources */,
+				B1A4EDDF28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift in Sources */,
 				2C6560832476D18800DEA4A9 /* SegmentedTabeViewCell.swift in Sources */,
 				2CAEC1A5246D20F20052E07C /* SwitchTableViewCell.swift in Sources */,
 				2CA0205F23F2C01500C2AB0E /* CartTableViewController.swift in Sources */,
+				B1A4EDE328F3FD86004D0C99 /* CredentialsView.swift in Sources */,
+				B121157B28EED63D007C6543 /* CGFloat+Ext.swift in Sources */,
 				2CA0206123F2C2B600C2AB0E /* Utils.swift in Sources */,
 				2C4683FD247258BC0067DA48 /* BuyProductsViewController.swift in Sources */,
+				B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */,
 				2CD7522424A36D19005FA56C /* RebuildCardTableViewCell.swift in Sources */,
 				2C4683FB247258AA0067DA48 /* CardScanerViewController.swift in Sources */,
 				B1419C5A28D46D96005C61DE /* Assets+Generated.swift in Sources */,
+				B156F90C28F0440000ABABDD /* UIEdgeInsets+Ext.swift in Sources */,
 				2CA77649245183A90078AEB3 /* SceneDelegate.swift in Sources */,
+				B1D01A1228F5A20800D429F4 /* JustButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -738,7 +812,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -798,7 +872,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
