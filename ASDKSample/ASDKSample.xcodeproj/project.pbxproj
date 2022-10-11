@@ -227,6 +227,12 @@
 		2C9C7EBD239FBCB200DE4071 /* ASDKSample */ = {
 			isa = PBXGroup;
 			children = (
+				B1347FFF28F5B5AB00CB88FF /* App */,
+				B1347FFE28F5B59700CB88FF /* Extensions */,
+				B1A4EDD928F3FB5A004D0C99 /* Dsl */,
+				B1347FFD28F5B57600CB88FF /* Protocols */,
+				B1347FFC28F5B56700CB88FF /* TableCells */,
+				B1347FFB28F5B54C00CB88FF /* Views */,
 				B1419C4828D46AB2005C61DE /* Resources */,
 				2CFEEE0C246EA7670009E633 /* Scaner */,
 				2C9C7EC2239FBCB200DE4071 /* RootViewController.swift */,
@@ -236,8 +242,6 @@
 				2C4D782623F3EF68003A355D /* ProductDetail */,
 				2CA0206A23F2D1D000C2AB0E /* Cart */,
 				2CA776512451AB270078AEB3 /* Utils */,
-				2C9C7EBE239FBCB200DE4071 /* AppDelegate.swift */,
-				2CA77648245183A90078AEB3 /* SceneDelegate.swift */,
 			);
 			path = ASDKSample;
 			sourceTree = "<group>";
@@ -283,17 +287,12 @@
 		2CA776512451AB270078AEB3 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				2CF833BD24B2FDC0009832BD /* StageTestData.swift */,
 				B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */,
 				2CA0206023F2C2B600C2AB0E /* Utils.swift */,
 				57EEFB8928F409A300809488 /* StageTestData.swift */,
 				57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */,
 				57EEFB9128F544D500809488 /* SHA256.swift */,
 				2CA0206423F2CE5700C2AB0E /* UIUtils.swift */,
-				B121157A28EED63D007C6543 /* CGFloat+Ext.swift */,
-				B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */,
-				B156F90D28F06B3700ABABDD /* UIView+Ext.swift */,
-				B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -324,6 +323,53 @@
 				0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B1347FFB28F5B54C00CB88FF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */,
+				B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */,
+				B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */,
+				B1D01A1128F5A20800D429F4 /* JustButton.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		B1347FFC28F5B56700CB88FF /* TableCells */ = {
+			isa = PBXGroup;
+			children = (
+				B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */,
+			);
+			name = TableCells;
+			sourceTree = "<group>";
+		};
+		B1347FFD28F5B57600CB88FF /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		B1347FFE28F5B59700CB88FF /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B121157A28EED63D007C6543 /* CGFloat+Ext.swift */,
+				B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */,
+				B156F90D28F06B3700ABABDD /* UIView+Ext.swift */,
+				B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		B1347FFF28F5B5AB00CB88FF /* App */ = {
+			isa = PBXGroup;
+			children = (
+				2C9C7EBE239FBCB200DE4071 /* AppDelegate.swift */,
+				2CA77648245183A90078AEB3 /* SceneDelegate.swift */,
+			);
+			name = App;
 			sourceTree = "<group>";
 		};
 		B1419C4828D46AB2005C61DE /* Resources */ = {
@@ -362,23 +408,16 @@
 			isa = PBXGroup;
 			children = (
 				B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */,
-				B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */,
-				B1D01A1128F5A20800D429F4 /* JustButton.swift */,
-				B1A4EDD928F3FB5A004D0C99 /* ConstraintsDsl */,
-				B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */,
-				B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */,
-				B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */,
-				B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */,
 			);
 			name = Creds;
 			sourceTree = "<group>";
 		};
-		B1A4EDD928F3FB5A004D0C99 /* ConstraintsDsl */ = {
+		B1A4EDD928F3FB5A004D0C99 /* Dsl */ = {
 			isa = PBXGroup;
 			children = (
 				B1A4EDD728F3FB56004D0C99 /* ConstraintsDsl.swift */,
 			);
-			name = ConstraintsDsl;
+			name = Dsl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -673,7 +712,6 @@
 				2C9C7EC3239FBCB200DE4071 /* RootViewController.swift in Sources */,
 				2CAE6DE324628FD200F48739 /* ButtonTableViewCell.swift in Sources */,
 				2CA0206D23F2D1F400C2AB0E /* CartEmptyTableViewCell.swift in Sources */,
-				2CF833BE24B2FDC0009832BD /* StageTestData.swift in Sources */,
 				B1A4EDDD28F3FCB0004D0C99 /* GenericTableCell.swift in Sources */,
 				B1A4EDD828F3FB56004D0C99 /* ConstraintsDsl.swift in Sources */,
 				B1C97B7828F46E4000DC007B /* UIImage+Ext.swift in Sources */,

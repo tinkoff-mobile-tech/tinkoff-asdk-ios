@@ -32,8 +32,11 @@ struct SdkAssembly {
             publicKey: creds.publicKey
         )
 
-        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
-        acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
+        let tokenProvider = SampleTokenProvider()
+        let logger = AcquiringLoggerDefault()
+
+        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional, tokenProvider: tokenProvider)
+        acquiringSDKConfiguration.logger = logger
 
         return try AcquiringUISDK(configuration: acquiringSDKConfiguration, style: style)
     }

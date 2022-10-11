@@ -29,6 +29,11 @@ final class GenericTableCell<View>: UITableViewCell, ReusableIdentifier where Vi
         innerView.dsl.makeEqualToSuperview()
     }
 
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func prepareForReuse() {
         innerView.prepareForReuse()
         super.prepareForReuse()
