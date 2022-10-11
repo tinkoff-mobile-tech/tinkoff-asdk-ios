@@ -5,7 +5,8 @@
 
 "NetworkError.transportError" = "Ошибка сети";
 "NetworkError.serverError" = "Ошибка сервера";
-"NetworkError.emptyBody" = "Пустой ответ";
+"NetworkError.emptyResponse" = "Пустой ответ";
+"NetworkError.failedToCreateRequest" = "Не удалось создать запрос";
 
 "APIError.failureError" = "Ошибка API экваринга";
 "APIError.invalidResponse" = "Некорректный ответ API";

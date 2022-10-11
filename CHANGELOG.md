@@ -3,6 +3,27 @@
 
 ### Changed
 
+* [MIC-6423] Fix ASDKCore architecture after merging versions
+* [MIC-6431] Remove unused entities in ASDKCore
+* [MIC-6432] Dependency inversion in ASDKCore
+* [MIC-6433] File structure in ASDKCore
+* [MIC-6434] Adapt the network layer for different response formats in ASDKCore
+
+### Added
+
+* [MIC-6063] Implement token providing logic for ASDK requests
+* [MIC-6184] Implement SampleTokenProvider in ASDKSample
+
+## [2.11.1] - 2022-10-10Z
+
+### Fixed
+
+* [MIC-6624] Remove TerminalKey providing for GET requests
+
+## [2.11.0] - 2022-10-05Z
+
+### Changed
+
 * [MIC-6194] SPB Feature is False by default in AcquiringViewConfiguration.FeaturesOptions
 * [MIC-6275] Swift Gen integration for TinkoffASDKUI module
 * [MIC-6292] Swift Package Support & build Package.swift step for CI/CD

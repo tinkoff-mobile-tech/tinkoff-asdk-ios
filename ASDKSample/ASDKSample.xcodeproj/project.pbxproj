@@ -33,9 +33,11 @@
 		2CD7522424A36D19005FA56C /* RebuildCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7522124A36D19005FA56C /* RebuildCardTableViewCell.swift */; };
 		2CD7522524A36D19005FA56C /* RebuildCardTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */; };
 		2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */; };
-		2CF833BE24B2FDC0009832BD /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF833BD24B2FDC0009832BD /* StageTestData.swift */; };
 		2CFEEE08246EA4910009E633 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEEE07246EA4910009E633 /* InfoPlist.strings */; };
 		4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */; };
+		57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8928F409A300809488 /* StageTestData.swift */; };
+		57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */; };
+		57EEFB9228F544D500809488 /* SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB9128F544D500809488 /* SHA256.swift */; };
 		B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */; };
 		B121157B28EED63D007C6543 /* CGFloat+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157A28EED63D007C6543 /* CGFloat+Ext.swift */; };
 		B1419C5328D46AB2005C61DE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4B28D46AB2005C61DE /* Localizable.strings */; };
@@ -111,8 +113,10 @@
 		2CD7522124A36D19005FA56C /* RebuildCardTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RebuildCardTableViewCell.swift; sourceTree = "<group>"; };
 		2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebuildCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
-		2CF833BD24B2FDC0009832BD /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StageTestData.swift; path = ../../TinkoffASDKCore/TinkoffASDKCoreTests/StageTestData.swift; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		57EEFB8928F409A300809488 /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StageTestData.swift; sourceTree = "<group>"; };
+		57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTokenProvider.swift; sourceTree = "<group>"; };
+		57EEFB9128F544D500809488 /* SHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHA256.swift; sourceTree = "<group>"; };
 		B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSdkCredentialsViewController.swift; sourceTree = "<group>"; };
 		B121157A28EED63D007C6543 /* CGFloat+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Ext.swift"; sourceTree = "<group>"; };
 		B1419C4C28D46AB2005C61DE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -282,6 +286,9 @@
 				2CF833BD24B2FDC0009832BD /* StageTestData.swift */,
 				B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */,
 				2CA0206023F2C2B600C2AB0E /* Utils.swift */,
+				57EEFB8928F409A300809488 /* StageTestData.swift */,
+				57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */,
+				57EEFB9128F544D500809488 /* SHA256.swift */,
 				2CA0206423F2CE5700C2AB0E /* UIUtils.swift */,
 				B121157A28EED63D007C6543 /* CGFloat+Ext.swift */,
 				B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */,
@@ -673,6 +680,7 @@
 				B1A4EDDB28F3FC2C004D0C99 /* ViewProtocols.swift in Sources */,
 				B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */,
 				2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */,
+				57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */,
 				2C9C7EBF239FBCB200DE4071 /* AppDelegate.swift in Sources */,
 				2CA0206723F2CF8700C2AB0E /* CartBuyButtonView.swift in Sources */,
 				2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */,
@@ -689,8 +697,10 @@
 				2C4683FD247258BC0067DA48 /* BuyProductsViewController.swift in Sources */,
 				B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */,
 				2CD7522424A36D19005FA56C /* RebuildCardTableViewCell.swift in Sources */,
+				57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */,
 				2C4683FB247258AA0067DA48 /* CardScanerViewController.swift in Sources */,
 				B1419C5A28D46D96005C61DE /* Assets+Generated.swift in Sources */,
+				57EEFB9228F544D500809488 /* SHA256.swift in Sources */,
 				B156F90C28F0440000ABABDD /* UIEdgeInsets+Ext.swift in Sources */,
 				2CA77649245183A90078AEB3 /* SceneDelegate.swift in Sources */,
 				B1D01A1228F5A20800D429F4 /* JustButton.swift in Sources */,

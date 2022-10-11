@@ -57,7 +57,7 @@ final class CardPaymentProcess: PaymentProcess {
             initPayment(data: paymentOptions.convertToPaymentInitData())
         case let .finish(paymentId, _):
             self.paymentId = paymentId
-            check3DSVersion(data: Check3DSRequestData(paymentId: paymentId, paymentSource: paymentSource))
+            check3DSVersion(data: Check3DSVersionData(paymentId: paymentId, paymentSource: paymentSource))
         }
     }
 
@@ -84,7 +84,7 @@ private extension CardPaymentProcess {
         currentRequest?.store(newValue: request)
     }
 
-    func check3DSVersion(data: Check3DSRequestData) {
+    func check3DSVersion(data: Check3DSVersionData) {
         let request = acquiringSDK.check3DSVersion(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
@@ -101,8 +101,8 @@ private extension CardPaymentProcess {
     }
 
     func finishPayment(data: PaymentFinishRequestData, threeDSVersion: String? = nil) {
-        let finishRequestData = FinishPaymentRequestData(from: data)
-        let request = acquiringSDK.finishPayment(data: finishRequestData) { [weak self] result in
+        let finishRequestData = FinishAuthorizeData(from: data)
+        let request = acquiringSDK.finishAuthorize(data: finishRequestData) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -122,7 +122,7 @@ private extension CardPaymentProcess {
 
         switch paymentSource {
         case .cardNumber, .savedCard:
-            check3DSVersion(data: Check3DSRequestData(paymentId: payload.paymentId, paymentSource: paymentSource))
+            check3DSVersion(data: Check3DSVersionData(paymentId: payload.paymentId, paymentSource: paymentSource))
         case .paymentData:
             guard let paymentId = Int64(payload.paymentId) else { return }
             var data = PaymentFinishRequestData(

@@ -98,7 +98,7 @@ private extension ChargePaymentProcess {
     }
 
     func performCharge(data: PaymentChargeRequestData) {
-        let newData = ChargeRequestData(
+        let newData = ChargeData(
             paymentId: String(data.paymentId),
             rebillId: String(data.parentPaymentId)
         )
@@ -132,7 +132,7 @@ private extension ChargePaymentProcess {
         performCharge(data: data)
     }
 
-    func handleChargeResult(payload: ChargePaymentPayload) {
+    func handleChargeResult(payload: ChargePayload) {
         guard !isCancelled.wrappedValue else { return }
 
         let (cardId, rebillId) = paymentSource.getCardAndRebillId()
