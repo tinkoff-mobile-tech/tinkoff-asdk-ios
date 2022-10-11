@@ -65,6 +65,7 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         let tokenParameters = request
             .parameters
             .filter { !excludingParameters.contains($0.key) }
+            .mapValues { String(describing: $0) }
 
         tokenProvider.provideToken(forRequestParameters: tokenParameters) { tokenResult in
             let result = tokenResult.map(request.adapted(withToken:))

@@ -16,7 +16,7 @@ public protocol ITokenProvider {
     ///   Может быть сериализован с помощью `JSONSerialization`
     ///   - completion: Замыкание, возвращающее результат формирования токена
     func provideToken(
-        forRequestParameters parameters: [String: Any],
+        forRequestParameters parameters: [String: String],
         completion: @escaping (Result<String, Error>) -> Void
     )
 }
