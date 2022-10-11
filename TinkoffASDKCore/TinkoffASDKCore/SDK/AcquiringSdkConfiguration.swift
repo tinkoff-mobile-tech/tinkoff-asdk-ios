@@ -87,7 +87,7 @@ public class AcquiringSdkConfiguration: NSObject {
     public var tinkoffPayStatusCacheLifeTime: TimeInterval
 
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
-    private let tokenProvider: ITokenProvider?
+    let tokenProvider: ITokenProvider?
 
     /// Инициализация конфигурации для `AcquiringSdk`
     ///
