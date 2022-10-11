@@ -13,6 +13,8 @@
 
 * [MIC-6063] Implement token providing logic for ASDK requests
 * [MIC-6184] Implement SampleTokenProvider in ASDKSample
+* [MIC-6582] CustomerKey editing now available in ASDKSample app
+* [MIC-6584] Switching terminal now available in ASDKSample app
 
 ## [2.11.1] - 2022-10-10Z
 
