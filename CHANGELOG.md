@@ -14,6 +14,12 @@
 * [MIC-6063] Implement token providing logic for ASDK requests
 * [MIC-6184] Implement SampleTokenProvider in ASDKSample
 
+## [2.11.1] - 2022-10-10Z
+
+### Fixed
+
+* [MIC-6624] Remove TerminalKey providing for GET requests
+
 ## [2.11.0] - 2022-10-05Z
 
 ### Changed
