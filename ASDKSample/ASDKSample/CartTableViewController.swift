@@ -125,7 +125,11 @@ class CartTableViewController: UITableViewController {
                 publicKey: StageTestData.testPublicKey
             )
 
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(
+                credential: credentional,
+                tokenProvider: SampleTokenProvider()
+            )
+
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
 
