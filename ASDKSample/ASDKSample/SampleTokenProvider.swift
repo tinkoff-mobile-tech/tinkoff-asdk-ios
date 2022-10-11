@@ -1,6 +1,6 @@
 //
 //
-//  GetTinkoffPayStatusRequest.swift
+//  SampleTokenProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -18,25 +18,29 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
-public struct GetTinkoffPayStatusRequest: AcquiringRequest {
-    let baseURL: URL
-    let path: String
-    let httpMethod: HTTPMethod = .get
-    let tokenFormationStrategy: TokenFormationStrategy = .none
+final class SampleTokenProvider: ITokenProvider {
+    func provideToken(
+        forRequestParameters parameters: [String: String],
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+        let sourceString = parameters
+            .merging([.password: StageTestData.terminalPassword]) { $1 }
+            .sorted { $0.key < $1.key }
+            .map(\.value)
+            .joined()
 
-    // MARK: - Init
+        let hashingResult = Result {
+            try SHA256.hash(from: sourceString)
+        }
 
-    init(terminalKey: String, baseURL: URL) {
-        self.baseURL = baseURL
-        path = .path(terminalKey: terminalKey)
+        completion(hashingResult)
     }
 }
 
-// MARK: - String + Helpers
+// MARK: - Constants
 
 private extension String {
-    static func path(terminalKey: String) -> String {
-        "v2/TinkoffPay/terminals/\(terminalKey)/status"
-    }
+    static let password = "Password"
 }

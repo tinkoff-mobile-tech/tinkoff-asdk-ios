@@ -24,6 +24,7 @@ struct ThreeDSV2AuthorizationRequest: AcquiringRequest {
     let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(data: CresData, baseURL: URL) {
         self.baseURL = baseURL

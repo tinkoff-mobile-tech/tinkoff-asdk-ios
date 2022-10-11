@@ -24,6 +24,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
     let path: String = "v2/Check3dsVersion"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(
         check3DSRequestData: Check3DSVersionData,

@@ -24,6 +24,13 @@ struct InitRequest: AcquiringRequest {
     let path: String = "v2/Init"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll(
+        except:
+        Constants.Keys.data,
+        Constants.Keys.shops,
+        Constants.Keys.receipt,
+        Constants.Keys.receipts
+    )
 
     init(paymentInitData: PaymentInitData, baseURL: URL) {
         self.baseURL = baseURL

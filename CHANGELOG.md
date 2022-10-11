@@ -9,6 +9,11 @@
 * [MIC-6433] File structure in ASDKCore
 * [MIC-6434] Adapt the network layer for different response formats in ASDKCore
 
+### Added
+
+* [MIC-6063] Implement token providing logic for ASDK requests
+* [MIC-6184] Implement SampleTokenProvider in ASDKSample
+
 ## [2.11.0] - 2022-10-05Z
 
 ### Changed

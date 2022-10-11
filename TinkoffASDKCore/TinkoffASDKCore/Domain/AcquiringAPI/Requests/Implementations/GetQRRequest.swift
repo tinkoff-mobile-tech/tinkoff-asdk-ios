@@ -24,6 +24,7 @@ struct GetQRRequest: AcquiringRequest {
     let path: String = "v2/GetQr"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(data: GetQRData, baseURL: URL) {
         self.baseURL = baseURL

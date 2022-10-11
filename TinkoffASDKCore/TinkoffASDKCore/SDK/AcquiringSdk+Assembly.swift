@@ -40,7 +40,8 @@ public extension AcquiringSdk {
         let acquiringClient = AcquiringAPIClient.build(
             terminalKeyProvider: terminalKeyProvider,
             networkClient: networkClient,
-            decoder: acquiringDecoder
+            decoder: acquiringDecoder,
+            tokenProvider: configuration.tokenProvider
         )
 
         let threeDSFacade = ThreeDSFacade.build(
@@ -76,10 +77,11 @@ private extension AcquiringAPIClient {
     static func build(
         terminalKeyProvider: IStringProvider,
         networkClient: INetworkClient,
-        decoder: IAcquiringDecoder
+        decoder: IAcquiringDecoder,
+        tokenProvider: ITokenProvider?
     ) -> IAcquiringAPIClient {
         AcquiringAPIClient(
-            requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider),
+            requestAdapter: AcquiringRequestAdapter(terminalKeyProvider: terminalKeyProvider, tokenProvider: tokenProvider),
             networkClient: networkClient,
             decoder: decoder,
             deprecatedDecoder: DeprecatedDecoder()

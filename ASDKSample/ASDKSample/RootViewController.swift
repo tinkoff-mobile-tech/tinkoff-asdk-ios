@@ -145,7 +145,11 @@ class RootViewController: UITableViewController {
                 publicKey: StageTestData.testPublicKey
             )
 
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(
+                credential: credentional,
+                tokenProvider: SampleTokenProvider()
+            )
+
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
             if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
@@ -172,7 +176,11 @@ class RootViewController: UITableViewController {
                 publicKey: StageTestData.testPublicKey
             )
 
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(
+                credential: credentional,
+                tokenProvider: SampleTokenProvider()
+            )
+
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
 
@@ -222,7 +230,11 @@ class RootViewController: UITableViewController {
             publicKey: StageTestData.testPublicKey
         )
 
-        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+        let acquiringSDKConfiguration = AcquiringSdkConfiguration(
+            credential: credentional,
+            tokenProvider: SampleTokenProvider()
+        )
+
         acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
         let customerKey = StageTestData.customerKey
@@ -233,8 +245,6 @@ class RootViewController: UITableViewController {
         if AppSetting.shared.acquiring {
             cardListViewConfigration.alertViewHelper = self
         }
-
-        cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
         if let sdk = try? AcquiringUISDK(
             configuration: acquiringSDKConfiguration,

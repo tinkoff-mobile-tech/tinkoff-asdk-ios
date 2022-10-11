@@ -99,7 +99,7 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
 
     func attachCard(data: AttachCardData) -> AcquiringRequest {
         AttachCardRequest(
-            finishAddCardData: data,
+            data: data,
             encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
             publicKey: publicKeyProvider.publicKey,
