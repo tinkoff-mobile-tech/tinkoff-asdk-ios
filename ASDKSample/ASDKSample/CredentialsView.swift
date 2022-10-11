@@ -153,7 +153,6 @@ final class CredentialsView: UIView, CredentialsViewInput {
             Asset.Icons.editing.image
                 .resizeImageVerticallyIfNeeded(fitSize: UIConstants.buttonImageSize)
                 .addInsetsInside(inset: UIConstants.buttonImageInset),
-
             for: .normal
         )
         editButton.setTitle(Loc.CredentialsView.Title.edit, for: .normal)
@@ -225,6 +224,15 @@ extension CredentialsView: ConfigurableAndReusable {
             isEditing
                 ? Loc.CredentialsView.Title.save
                 : Loc.CredentialsView.Title.edit,
+            for: .normal
+        )
+
+        let editImage = isEditing ? Asset.Icons.done.image : Asset.Icons.editing.image
+
+        editButton.setImage(
+            editImage
+                .resizeImageVerticallyIfNeeded(fitSize: UIConstants.buttonImageSize)
+                .addInsetsInside(inset: UIConstants.buttonImageInset),
             for: .normal
         )
 
