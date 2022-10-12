@@ -26,7 +26,7 @@ public enum AcquiringSdkLanguage: String {
 }
 
 public enum AcquiringSdkEnvironment: String {
-    case test = "rest-api-test.tcsbank.ru"
+    case test = "rest-api-test.tinkoff.ru"
     case prod = "securepay.tinkoff.ru"
 }
 
