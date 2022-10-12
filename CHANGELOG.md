@@ -8,6 +8,8 @@
 * [MIC-6432] Dependency inversion in ASDKCore
 * [MIC-6433] File structure in ASDKCore
 * [MIC-6434] Adapt the network layer for different response formats in ASDKCore
+* [MIC-6671] Change host for test environment to rest-api-test.tinkoff.ru
+* [MIC-6671] Change public key in ASDKSample
 
 ### Added
 
