@@ -30,8 +30,9 @@ jobs:
 
   check:
     runs-on: macos-11
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
@@ -41,14 +42,21 @@ jobs:
       - name: Bundle install
         run: bundle install
 
+      - name: Pod install
+        working-directory: ASDKSample
+        run: bundle exec pod install
+
       - name: build Package.swift
         run: bundle exec fastlane build_spm
+
+      - name: Testing Target [Unit Tests]
+        run: bundle exec fastlane tests
 
       - name: tests lint
         env:
           XCODEPROJ_PATH: ${{ inputs.xcodeproj_path }}
           SCHEME_NAME: ${{ inputs.scheme_name }}
         run: bundle exec fastlane check
-    
+
   # check:
   #   uses: tinkoff-mobile-tech/workflows/.github/workflows/ios_lib.merge_request.yml@v1
