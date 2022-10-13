@@ -84,19 +84,19 @@ final class HorizontalTitleSwitchView: UIView, ConfigurableAndReusable, Stylable
         setupViews()
         spacingBetween = style.spacingBetween
 
-        switchView.dsl.makeConstraints { make in
+        switchView.makeConstraints { make in
             [
-                make.right.constraint(equalTo: make.superview.rightAnchor),
-                make.centerY.constraint(equalTo: make.superview.centerYAnchor),
+                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor),
+                make.centerYAnchor.constraint(equalTo: make.forcedSuperview.centerYAnchor),
             ]
         }
 
-        label.dsl.makeConstraints { make in
+        label.makeConstraints { make in
             [
-                make.left.constraint(equalTo: make.superview.leftAnchor),
-                make.right.constraint(lessThanOrEqualTo: switchView.dsl.left, constant: -spacingBetween),
-                make.top.constraint(equalTo: make.superview.topAnchor),
-                make.bottom.constraint(equalTo: make.superview.bottomAnchor),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
+                make.rightAnchor.constraint(lessThanOrEqualTo: switchView.leftAnchor, constant: -spacingBetween),
+                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
+                make.bottomAnchor.constraint(equalTo: make.forcedSuperview.bottomAnchor),
             ]
         }
     }

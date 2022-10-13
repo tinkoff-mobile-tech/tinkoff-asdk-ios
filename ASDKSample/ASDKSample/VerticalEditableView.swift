@@ -82,23 +82,23 @@ final class VerticalEditableView: UIView, ConfigurableAndReusable, Stylable {
         setupViews(style: style)
 
         let insetsLabel = style.label.insets
-        label.dsl.makeConstraints { make in
+        label.makeConstraints { make in
             [
-                make.top.constraint(equalTo: make.superview.dsl.top, constant: insetsLabel.top),
-                make.left.constraint(equalTo: make.superview.dsl.left, constant: insetsLabel.left),
-                make.right.constraint(equalTo: make.superview.dsl.right, constant: -insetsLabel.right),
-                make.bottom.constraint(lessThanOrEqualTo: textField.bottomAnchor),
+                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor, constant: insetsLabel.top),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor, constant: insetsLabel.left),
+                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor, constant: -insetsLabel.right),
+                make.bottomAnchor.constraint(lessThanOrEqualTo: textField.bottomAnchor),
             ]
         }
 
         let insetsTextField = style.textField.insets
 
-        textField.dsl.makeConstraints { make in
+        textField.makeConstraints { make in
             [
-                make.top.constraint(equalTo: label.dsl.bottom, constant: insetsTextField.top),
-                make.left.constraint(equalTo: make.superview.dsl.left, constant: insetsTextField.left),
-                make.right.constraint(equalTo: make.superview.dsl.right, constant: -insetsTextField.right),
-                make.bottom.constraint(lessThanOrEqualTo: make.superview.bottomAnchor),
+                make.topAnchor.constraint(equalTo: label.bottomAnchor, constant: insetsTextField.top),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor, constant: insetsTextField.left),
+                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor, constant: -insetsTextField.right),
+                make.bottomAnchor.constraint(lessThanOrEqualTo: make.forcedSuperview.bottomAnchor),
             ]
         }
     }

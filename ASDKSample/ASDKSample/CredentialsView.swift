@@ -157,37 +157,46 @@ final class CredentialsView: UIView, CredentialsViewInput {
     }
 
     private func setupConstraints() {
-        borderView.dsl.makeEqualToSuperview(
+        borderView.makeEqualToSuperview(
             insets: UIEdgeInsets(side: .normalInset)
         )
 
-        isActiveTitleSwitchView.dsl.makeConstraints { make in
+        isActiveTitleSwitchView.makeConstraints { make in
             [
-                make.top.constraint(equalTo: borderView.topAnchor, constant: .smallInset),
-                make.right.constraint(equalTo: borderView.rightAnchor, constant: -.smallInset),
+                make.topAnchor.constraint(equalTo: borderView.topAnchor, constant: .smallInset),
+                make.rightAnchor.constraint(equalTo: borderView.rightAnchor, constant: -.smallInset),
             ]
         }
 
-        editButton.dsl.makeConstraints { make in
+        editButton.makeConstraints { make in
             [
-                make.centerY.constraint(equalTo: isActiveTitleSwitchView.dsl.centerY),
-                make.left.constraint(equalTo: make.superview.leftAnchor, constant: .smallInset),
+                make.centerYAnchor.constraint(equalTo: isActiveTitleSwitchView.centerYAnchor),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor, constant: .smallInset),
             ]
         }
 
-        deleteButton.dsl.makeConstraints { make in
+        deleteButton.makeConstraints { make in
             [
-                make.centerY.constraint(equalTo: editButton.dsl.centerY),
-                make.left.constraint(equalTo: editButton.dsl.right, constant: .smallInset),
+                make.centerYAnchor.constraint(equalTo: editButton.centerYAnchor),
+                make.leftAnchor.constraint(equalTo: editButton.rightAnchor, constant: .smallInset),
             ]
         }
 
-        verticalStackView.dsl.makeConstraints { make in
+        verticalStackView.makeConstraints { make in
             [
-                make.top.constraint(equalTo: isActiveTitleSwitchView.dsl.bottom, constant: .normalInset),
-                make.bottom.constraint(lessThanOrEqualTo: borderView.dsl.bottom, constant: -.smallInset),
-                make.left.constraint(equalTo: make.superview.dsl.left, constant: .smallInset),
-                make.right.constraint(equalTo: make.superview.dsl.right, constant: -.smallInset),
+                make.topAnchor.constraint(equalTo: isActiveTitleSwitchView.bottomAnchor, constant: .normalInset),
+                make.bottomAnchor.constraint(lessThanOrEqualTo: borderView.bottomAnchor, constant: -.smallInset),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor, constant: .smallInset),
+                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor, constant: -.smallInset),
+            ]
+        }
+
+        verticalStackView.makeConstraints { make in
+            [
+                make.topAnchor.constraint(equalTo: isActiveTitleSwitchView.bottomAnchor, constant: .normalInset),
+                make.bottomAnchor.constraint(lessThanOrEqualTo: borderView.bottomAnchor, constant: -.smallInset),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor, constant: .smallInset),
+                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor, constant: -.smallInset),
             ]
         }
     }

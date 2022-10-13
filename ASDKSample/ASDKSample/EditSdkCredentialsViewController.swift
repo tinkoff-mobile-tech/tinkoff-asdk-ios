@@ -37,7 +37,7 @@ final class EditSdkCredentialsViewController: UIViewController {
     }
 
     private func setupTableView() {
-        tableView.dsl.makeEqualToSuperviewToSafeArea()
+        tableView.makeEqualToSuperviewToSafeArea()
         tableView.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self

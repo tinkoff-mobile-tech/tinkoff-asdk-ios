@@ -26,7 +26,7 @@ final class GenericTableCell<View>: UITableViewCell, ReusableIdentifier where Vi
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: Self.reusableId)
         contentView.addSubview(innerView)
-        innerView.dsl.makeEqualToSuperview()
+        innerView.makeEqualToSuperview()
     }
 
     @available(*, unavailable)
