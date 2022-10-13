@@ -20,7 +20,6 @@
 import struct CoreGraphics.CGFloat
 
 extension CGFloat {
-
-    static let sixteen: CGFloat = 16
-    static let eight: CGFloat = 8
+    static let normalInset: CGFloat = 16
+    static let smallInset: CGFloat = 8
 }

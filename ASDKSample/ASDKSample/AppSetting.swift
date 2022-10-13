@@ -25,133 +25,129 @@ protocol ActiveCredentialsListener: AnyObject {
 
 final class AppSetting {
 
+    static let shared = AppSetting()
     private var activeCredenetialslisteners: [() -> ActiveCredentialsListener?] = []
 
-    private let keySBP = "SettingKeySBP"
-    private let keyTinkoffPay = "SettingKeyTinkoffPay"
-    private let keyShowEmailField = "SettingKeyShowEmailField"
-    private let keyKindForAlertView = "KindForAlertView"
-    private let keyAddCardCheckType = "AddCardChekType"
-    private let keyLanguageId = "LanguageId"
-    private let keySdkCredentials = "keySdkCredentials"
-    private let listKeySdkCredentials = "listKeySdkCredentials"
+    // MARK: - User Defaults Values
 
     /// Система быстрых платежей
     var paySBP = false {
         didSet {
-            UserDefaults.standard.set(paySBP, forKey: keySBP)
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(paySBP, forKey: .keySBP)
         }
     }
 
-    ///
+    /// Текущая активная схема Credentials для SDK
     var activeSdkCredentials: SdkCredentials {
         get {
-            let jsonString = UserDefaults.standard.string(forKey: keySdkCredentials)
-            let decoder = JSONDecoder()
-
-            guard let jsonString = jsonString,
-                  let data = jsonString.data(using: .utf8),
-                  let creds = try? decoder.decode(SdkCredentials.self, from: data) else {
+            let result = try? formGetter(key: .keySdkCredentials, defaultValue: SdkCredentials.test)
+            if result == nil {
                 self.activeSdkCredentials = .test
-                return .test
             }
 
-            return creds
+            return result ?? .test
         }
         set {
-            let encoder = JSONEncoder()
-
-            guard let data = try? encoder.encode(newValue),
-                  let jsonString = String(data: data, encoding: .utf8) else {
-                return
-            }
-
-            UserDefaults.standard.set(jsonString, forKey: keySdkCredentials)
+            try? formSetter(key: .keySdkCredentials, valueToEncode: newValue)
             notifyListenersAboutActiveCredentialsChange(newActiveCreds: newValue)
         }
     }
 
-    ///
+    /// Список сохраненных Sdk Credentials
     var listOfSdkCredentials: [SdkCredentials] {
         get {
-            let jsonString = UserDefaults.standard.string(forKey: listKeySdkCredentials)
-            let decoder = JSONDecoder()
-            guard let data = jsonString?.data(using: .utf8) else {
-                return [activeSdkCredentials]
+            let result = try? formGetter(key: .keyListSdkCredentials, defaultValue: [activeSdkCredentials])
+            if result == nil {
+                self.listOfSdkCredentials = [activeSdkCredentials]
             }
-
-            guard var creds = try? decoder.decode([SdkCredentials].self, from: data) else {
-                return []
-            }
-
-            if creds.isEmpty {
-                creds.append(activeSdkCredentials)
-            }
-
-            return creds
+            return result ?? [activeSdkCredentials]
         }
 
         set {
-            let encoder = JSONEncoder()
-            guard let encodedData = try? encoder.encode(newValue) else {
-                return
-            }
-            let jsonString = String(data: encodedData, encoding: .utf8)
-            UserDefaults.standard.set(jsonString, forKey: listKeySdkCredentials)
+            try? formSetter(key: .keyListSdkCredentials, valueToEncode: newValue)
         }
     }
 
     /// TinkoffPay
     var tinkoffPay = false {
         didSet {
-            UserDefaults.standard.set(tinkoffPay, forKey: keyTinkoffPay)
+            UserDefaults.standard.set(tinkoffPay, forKey: .keyTinkoffPay)
         }
     }
 
     /// Показыть на форме оплаты поле для ввода email для отправки чека
     var showEmailField = false {
         didSet {
-            UserDefaults.standard.set(showEmailField, forKey: keyShowEmailField)
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(showEmailField, forKey: .keyShowEmailField)
         }
     }
 
     var acquiring = false {
         didSet {
-            UserDefaults.standard.set(acquiring, forKey: keyKindForAlertView)
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(acquiring, forKey: .keyKindForAlertView)
         }
     }
 
     var addCardChekType: PaymentCardCheckType = .no {
         didSet {
-            UserDefaults.standard.set(addCardChekType.rawValue, forKey: keyAddCardCheckType)
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(addCardChekType.rawValue, forKey: .keyAddCardCheckType)
         }
     }
 
     var languageId: String? {
         didSet {
-            UserDefaults.standard.set(languageId, forKey: keyLanguageId)
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(languageId, forKey: .keyLanguageId)
         }
     }
 
-    static let shared = AppSetting()
+    // MARK: - Init
 
     private init() {
-        let usd = UserDefaults.standard
+        let userDefaults = UserDefaults.standard
 
-        paySBP = usd.bool(forKey: keySBP)
-        tinkoffPay = usd.bool(forKey: keyTinkoffPay)
-        showEmailField = usd.bool(forKey: keyShowEmailField)
-        acquiring = usd.bool(forKey: keyKindForAlertView)
-        if let value = usd.value(forKey: keyAddCardCheckType) as? String {
+        paySBP = userDefaults.bool(forKey: .keySBP)
+        tinkoffPay = userDefaults.bool(forKey: .keyTinkoffPay)
+        showEmailField = userDefaults.bool(forKey: .keyShowEmailField)
+        acquiring = userDefaults.bool(forKey: .keyKindForAlertView)
+        if let value = userDefaults.string(forKey: .keyAddCardCheckType) {
             addCardChekType = PaymentCardCheckType(rawValue: value)
         }
 
-        languageId = usd.string(forKey: keyLanguageId)
+        languageId = userDefaults.string(forKey: .keyLanguageId)
+    }
+}
+
+extension AppSetting {
+
+    enum Error: Swift.Error {
+        case couldntFormData
+        case couldntFormJsonString
+    }
+
+    private func formGetter<T: Decodable>(key: String, defaultValue: T) throws -> T {
+        let jsonString = UserDefaults.standard.string(forKey: .keySdkCredentials)
+        let decoder = JSONDecoder()
+
+        guard let jsonString = jsonString else {
+            return defaultValue
+        }
+
+        guard let data = jsonString.data(using: .utf8) else {
+            throw Error.couldntFormData
+        }
+
+        return try decoder.decode(T.self, from: data)
+    }
+
+    private func formSetter<T: Encodable>(key: String, valueToEncode: T) throws {
+        let encoder = JSONEncoder()
+
+        let data = try encoder.encode(valueToEncode)
+        guard let jsonString = String(data: data, encoding: .utf8) else {
+            throw Error.couldntFormJsonString
+        }
+
+        UserDefaults.standard.set(jsonString, forKey: key)
     }
 }
 
@@ -174,4 +170,15 @@ extension AppSetting {
             $0()?.activeCredentialsSetNew(creds: newActiveCreds)
         }
     }
+}
+
+private extension String {
+    static let keySBP = "SettingKeySBP"
+    static let keyTinkoffPay = "SettingKeyTinkoffPay"
+    static let keyShowEmailField = "SettingKeyShowEmailField"
+    static let keyKindForAlertView = "KindForAlertView"
+    static let keyAddCardCheckType = "AddCardChekType"
+    static let keyLanguageId = "LanguageId"
+    static let keySdkCredentials = "keySdkCredentials"
+    static let keyListSdkCredentials = "keyListSdkCredentials"
 }

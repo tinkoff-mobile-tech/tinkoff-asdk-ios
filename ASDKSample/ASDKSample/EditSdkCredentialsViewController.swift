@@ -19,13 +19,6 @@
 
 import UIKit
 
-private enum UIConstants {
-    static let addButtonSize = CGSize(width: 30, height: 30)
-    static let addButtonImageInset: UInt = 5
-    static let addButtonInsets = UIEdgeInsets(side: 10)
-    static let tableViewBottomInset: CGFloat = 420
-}
-
 final class EditSdkCredentialsViewController: UIViewController {
 
     private let tableView = UITableView()
@@ -76,10 +69,6 @@ final class EditSdkCredentialsViewController: UIViewController {
 }
 
 extension EditSdkCredentialsViewController: UITableViewDelegate {
-
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return CredentialsView.getSize(width: tableView.frame.width).height
-//    }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
@@ -215,4 +204,11 @@ extension EditSdkCredentialsViewController: CredentialsViewOutput {
         AppSetting.shared.activeSdkCredentials = currentActiveCreds
         tableView.reloadData()
     }
+}
+
+private enum UIConstants {
+    static let addButtonSize = CGSize(width: 30, height: 30)
+    static let addButtonImageInset: UInt = 5
+    static let addButtonInsets = UIEdgeInsets(side: 10)
+    static let tableViewBottomInset: CGFloat = 420
 }

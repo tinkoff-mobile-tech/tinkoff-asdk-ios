@@ -21,11 +21,21 @@ import UIKit
 
 typealias CredentialsTableCell = GenericTableCell<CredentialsView>
 
-private enum UIConstants {
-    static let buttonsBar: CGFloat = 25
-    static let buttonImageInset: UInt = 2
-    static let verticalStackSpacing: CGFloat = 20
-    static let buttonImageSize = CGSize(width: 24, height: 24)
+// MARK: - Protocols
+
+protocol CredentialsViewOutput: AnyObject {
+    func onEditing(credentialsViewInput: CredentialsViewInput)
+    func onSaveAfterEdit(
+        credentialsViewInput: CredentialsViewInput,
+        newCreds: SdkCredentials,
+        credsUuid: String
+    )
+    func onDelete(credentialsViewInput: CredentialsViewInput, credsUuid: String)
+    func onSwitch(credsUuid: String, isOn: Bool)
+}
+
+protocol CredentialsViewInput: AnyObject {
+    var output: CredentialsViewOutput? { get }
 }
 
 // MARK: - Model
@@ -43,25 +53,10 @@ extension CredentialsView {
     }
 }
 
-protocol CredentialsViewOutput: AnyObject {
-    func onEditing(credentialsViewInput: CredentialsViewInput)
-    func onSaveAfterEdit(
-        credentialsViewInput: CredentialsViewInput,
-        newCreds: SdkCredentials,
-        credsUuid: String
-    )
-    func onDelete(credentialsViewInput: CredentialsViewInput, credsUuid: String)
-    func onSwitch(credsUuid: String, isOn: Bool)
-}
-
-protocol CredentialsViewInput: AnyObject {
-    var output: CredentialsViewOutput? { get }
-}
-
 // MARK: - CredentialsView
 
 final class CredentialsView: UIView, CredentialsViewInput {
-    var output: CredentialsViewOutput?
+    private(set) var output: CredentialsViewOutput?
 
     private let borderView = UIView()
 
@@ -163,42 +158,43 @@ final class CredentialsView: UIView, CredentialsViewInput {
 
     private func setupConstraints() {
         borderView.dsl.makeEqualToSuperview(
-            insets: UIEdgeInsets(side: .sixteen)
+            insets: UIEdgeInsets(side: .normalInset)
         )
 
         isActiveTitleSwitchView.dsl.makeConstraints { make in
             [
-                make.top.constraint(equalTo: borderView.topAnchor, constant: .eight),
-                make.right.constraint(equalTo: borderView.rightAnchor, constant: -.eight),
+                make.top.constraint(equalTo: borderView.topAnchor, constant: .smallInset),
+                make.right.constraint(equalTo: borderView.rightAnchor, constant: -.smallInset),
             ]
         }
 
         editButton.dsl.makeConstraints { make in
             [
                 make.centerY.constraint(equalTo: isActiveTitleSwitchView.dsl.centerY),
-                make.left.constraint(equalTo: make.superview.leftAnchor, constant: .eight),
+                make.left.constraint(equalTo: make.superview.leftAnchor, constant: .smallInset),
             ]
         }
 
         deleteButton.dsl.makeConstraints { make in
             [
                 make.centerY.constraint(equalTo: editButton.dsl.centerY),
-                make.left.constraint(equalTo: editButton.dsl.right, constant: .eight),
+                make.left.constraint(equalTo: editButton.dsl.right, constant: .smallInset),
             ]
         }
 
         verticalStackView.dsl.makeConstraints { make in
             [
-                make.top.constraint(equalTo: isActiveTitleSwitchView.dsl.bottom, constant: .sixteen),
-                make.bottom.constraint(lessThanOrEqualTo: borderView.dsl.bottom, constant: -.eight),
-                make.left.constraint(equalTo: make.superview.dsl.left, constant: .eight),
-                make.right.constraint(equalTo: make.superview.dsl.right, constant: -.eight),
+                make.top.constraint(equalTo: isActiveTitleSwitchView.dsl.bottom, constant: .normalInset),
+                make.bottom.constraint(lessThanOrEqualTo: borderView.dsl.bottom, constant: -.smallInset),
+                make.left.constraint(equalTo: make.superview.dsl.left, constant: .smallInset),
+                make.right.constraint(equalTo: make.superview.dsl.right, constant: -.smallInset),
             ]
         }
     }
 }
 
 extension CredentialsView: ConfigurableAndReusable {
+
     private func saveCreds() {
         let newCreds = SdkCredentials(
             uuid: modelUuid,
@@ -248,9 +244,7 @@ extension CredentialsView: ConfigurableAndReusable {
 
         verticalStackView.arrangedSubviews
             .compactMap { $0 as? VerticalEditableView }
-            .forEach {
-                $0.changeIsEditable(to: isEditing)
-            }
+            .forEach { $0.changeIsEditable(to: isEditing) }
     }
 
     @objc private func onDeletePressed() {
@@ -336,4 +330,11 @@ extension CredentialsView: ConfigurableAndReusable {
         publicKeyInfoView.prepareForReuse()
         customerKeyInfoView.prepareForReuse()
     }
+}
+
+private enum UIConstants {
+    static let buttonsBar: CGFloat = 25
+    static let buttonImageInset: UInt = 2
+    static let verticalStackSpacing: CGFloat = 20
+    static let buttonImageSize = CGSize(width: 24, height: 24)
 }
