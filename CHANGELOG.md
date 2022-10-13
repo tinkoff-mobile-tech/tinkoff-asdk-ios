@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.11.2] - 2022-10-13Z
+
 ### Fixed
 * pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
 
