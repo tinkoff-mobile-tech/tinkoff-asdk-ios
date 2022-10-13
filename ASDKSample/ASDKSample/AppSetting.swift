@@ -125,7 +125,7 @@ extension AppSetting {
     }
 
     private func formGetter<T: Decodable>(key: String, defaultValue: T) throws -> T {
-        let jsonString = UserDefaults.standard.string(forKey: .keySdkCredentials)
+        let jsonString = UserDefaults.standard.string(forKey: key)
         let decoder = JSONDecoder()
 
         guard let jsonString = jsonString else {
