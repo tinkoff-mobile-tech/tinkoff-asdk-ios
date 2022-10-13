@@ -73,7 +73,6 @@ final class CredentialsView: UIView, CredentialsViewInput {
     private let descriptionInfoView = VerticalEditableView()
     private let terminalKeyInfoView = VerticalEditableView()
     private let terminalPasswordInfoView = VerticalEditableView()
-    private let publicKeyInfoView = VerticalEditableView()
     private let customerKeyInfoView = VerticalEditableView()
 
     // MARK: - State
@@ -82,6 +81,7 @@ final class CredentialsView: UIView, CredentialsViewInput {
 
     private var isEditing = false
     private var modelUuid: String = ""
+    private var currentCreds: SdkCredentials?
     private var isActiveSwitchModel: HorizontalTitleSwitchView.Model?
 
     // MARK: - Methods
@@ -124,7 +124,6 @@ final class CredentialsView: UIView, CredentialsViewInput {
         verticalStackView.addArrangedSubview(descriptionInfoView)
         verticalStackView.addArrangedSubview(terminalKeyInfoView)
         verticalStackView.addArrangedSubview(terminalPasswordInfoView)
-        verticalStackView.addArrangedSubview(publicKeyInfoView)
         verticalStackView.addArrangedSubview(customerKeyInfoView)
 
         borderView.layer.borderColor = UIColor.lightGray.cgColor
@@ -209,7 +208,7 @@ extension CredentialsView: ConfigurableAndReusable {
             uuid: modelUuid,
             name: nameInfoView.getTextFieldText(),
             description: descriptionInfoView.getTextFieldText(),
-            publicKey: publicKeyInfoView.getTextFieldText(),
+            publicKey: currentCreds?.publicKey ?? "",
             terminalKey: terminalKeyInfoView.getTextFieldText(),
             terminalPassword: terminalPasswordInfoView.getTextFieldText(),
             customerKey: customerKeyInfoView.getTextFieldText()
@@ -263,6 +262,7 @@ extension CredentialsView: ConfigurableAndReusable {
     func configure(model: CredentialsView.Model) {
         viewOutput = model.viewOutput
         modelUuid = model.creds.uuid
+        currentCreds = model.creds
         isActiveSwitchModel = model.isActiveSwitchModel
 
         deleteButton.isHidden = !model.shouldShowDeleteButton
@@ -304,12 +304,6 @@ extension CredentialsView: ConfigurableAndReusable {
                 textFieldText: model.creds.terminalPassword
             )
         )
-        publicKeyInfoView.configure(
-            model: VerticalEditableView.Model(
-                labelText: Loc.CredentialsView.Title.publicKey,
-                textFieldText: model.creds.publicKey
-            )
-        )
         customerKeyInfoView.configure(
             model: VerticalEditableView.Model(
                 labelText: Loc.CredentialsView.Title.customerKey,
@@ -328,6 +322,7 @@ extension CredentialsView: ConfigurableAndReusable {
 
     func prepareForReuse() {
         modelUuid = ""
+        currentCreds = nil
         viewOutput = nil
         isActiveSwitchModel = nil
         deleteButton.isHidden = false
@@ -336,7 +331,6 @@ extension CredentialsView: ConfigurableAndReusable {
         descriptionInfoView.prepareForReuse()
         terminalKeyInfoView.prepareForReuse()
         terminalPasswordInfoView.prepareForReuse()
-        publicKeyInfoView.prepareForReuse()
         customerKeyInfoView.prepareForReuse()
     }
 }

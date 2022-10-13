@@ -117,6 +117,17 @@ class RootViewController: UITableViewController {
         }
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        if indexPath.section == 1 {
+            showSpbQrCollector()
+        } else {
+            showBuyProductsViewController(rowIndex: indexPath.row)
+        }
+
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let product = dataSource[indexPath.row]
@@ -141,39 +152,7 @@ class RootViewController: UITableViewController {
         return tableView.defaultCell()
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-
-            if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
-                let viewConfigration = AcquiringViewConfiguration()
-                viewConfigration.viewTitle = Loc.Title.qrcode
-
-                sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
-                tableView.deselectRow(at: indexPath, animated: true)
-            }
-        }
-    }
-
     // MARK: - Navigation
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let viewController = segue.destination as? BuyProductsViewController,
-           let cell = sender as? UITableViewCell,
-           let indexPath = tableView.indexPath(for: cell) {
-            let product = dataSource[indexPath.row]
-
-            AppSetting.shared.addListener(self)
-            buyProductsVieController = viewController
-
-            if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
-                viewController.scaner = self
-                viewController.sdk = sdk
-                viewController.customerKey = AppSetting.shared.activeSdkCredentials.customerKey
-            }
-
-            viewController.products = [product]
-        }
-    }
 
     private func addCardView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
         sdk.presentAddCardView(on: self, customerKey: customerKey, configuration: cardListViewConfigration) { result in
@@ -252,13 +231,36 @@ extension RootViewController: AcquiringAlertViewProtocol {
     }
 }
 
-extension RootViewController: ActiveCredentialsListener {
+// MARK: - Private methods only
 
-    func activeCredentialsSetNew(creds: SdkCredentials) {
-        guard let viewController = buyProductsVieController else { return }
-        if let sdk = try? SdkAssembly.assembleUIsdk(creds: creds) {
+private extension RootViewController {
+
+    private func showSpbQrCollector() {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            let viewConfigration = AcquiringViewConfiguration()
+            viewConfigration.viewTitle = Loc.Title.qrcode
+
+            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
+        }
+    }
+
+    private func showBuyProductsViewController(rowIndex: Int) {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            let product = dataSource[rowIndex]
+
+            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+            guard let viewController = storyboard.instantiateViewController(
+                withIdentifier: String(describing: BuyProductsViewController.self)
+            ) as? BuyProductsViewController
+            else {
+                return
+            }
+
+            viewController.scaner = self
             viewController.sdk = sdk
-            viewController.customerKey = creds.customerKey
+            viewController.customerKey = AppSetting.shared.activeSdkCredentials.customerKey
+            viewController.products = [product]
+            navigationController?.pushViewController(viewController, animated: true)
         }
     }
 }

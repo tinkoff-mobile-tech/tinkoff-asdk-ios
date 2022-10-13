@@ -56,7 +56,7 @@ final class EditSdkCredentialsViewController: UIViewController {
             uuid: UUID().uuidString,
             name: fillMe,
             description: fillMe,
-            publicKey: fillMe,
+            publicKey: StageTestData.testPublicKey, // предзаполняем, валиден для всех
             terminalKey: fillMe,
             terminalPassword: fillMe,
             customerKey: fillMe

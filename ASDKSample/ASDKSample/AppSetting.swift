@@ -19,14 +19,9 @@
 
 import TinkoffASDKCore
 
-protocol ActiveCredentialsListener: AnyObject {
-    func activeCredentialsSetNew(creds: SdkCredentials)
-}
-
 final class AppSetting {
 
     static let shared = AppSetting()
-    private var activeCredenetialslisteners: [() -> ActiveCredentialsListener?] = []
 
     // MARK: - User Defaults Values
 
@@ -49,7 +44,6 @@ final class AppSetting {
         }
         set {
             try? formSetter(key: .keySdkCredentials, valueToEncode: newValue)
-            notifyListenersAboutActiveCredentialsChange(newActiveCreds: newValue)
         }
     }
 
@@ -148,27 +142,6 @@ extension AppSetting {
         }
 
         UserDefaults.standard.set(jsonString, forKey: key)
-    }
-}
-
-extension AppSetting {
-
-    func addListener(_ listener: ActiveCredentialsListener) {
-        activeCredenetialslisteners.append { [weak listener] in
-            listener
-        }
-    }
-
-    func removeListener(_ listener: ActiveCredentialsListener) {
-        activeCredenetialslisteners.removeAll(where: {
-            $0() === listener
-        })
-    }
-
-    func notifyListenersAboutActiveCredentialsChange(newActiveCreds: SdkCredentials) {
-        activeCredenetialslisteners.forEach {
-            $0()?.activeCredentialsSetNew(creds: newActiveCreds)
-        }
     }
 }
 
