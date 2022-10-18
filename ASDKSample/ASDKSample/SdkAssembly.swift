@@ -32,7 +32,7 @@ struct SdkAssembly {
             publicKey: creds.publicKey
         )
 
-        let tokenProvider = SampleTokenProvider()
+        let tokenProvider = SampleTokenProvider(password: creds.terminalPassword)
         let logger = AcquiringLoggerDefault()
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional, tokenProvider: tokenProvider)
