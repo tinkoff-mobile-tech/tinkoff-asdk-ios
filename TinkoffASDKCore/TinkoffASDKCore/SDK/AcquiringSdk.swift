@@ -21,6 +21,9 @@ import struct CoreGraphics.CGSize
 import Foundation
 import UIKit
 
+extension AcquiringSdk: IAcquiringThreeDsService,
+    IAcquiringPaymentsService {}
+
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     @available(*, deprecated, message: "Property does not affect anything")
@@ -37,11 +40,12 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Dependencies
 
+    public let ipAddressProvider: IIPAddressProvider
+
     private let acquiringAPI: IAcquiringAPIClient
     private let acquiringRequests: IAcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestBuilder
-    private let ipAddressProvider: IPAddressProvider
     private let threeDSFacade: IThreeDSFacade
     private let languageProvider: ILanguageProvider
 
@@ -52,7 +56,7 @@ public final class AcquiringSdk: NSObject {
         acquiringRequests: IAcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
         externalRequests: IExternalRequestBuilder,
-        ipAddressProvider: IPAddressProvider,
+        ipAddressProvider: IIPAddressProvider,
         threeDSFacade: IThreeDSFacade,
         languageProvider: ILanguageProvider
     ) {

@@ -19,7 +19,7 @@
 
 import TinkoffASDKCore
 
-public enum PaymentFlow {
+public enum PaymentFlow: Equatable {
     case full(paymentOptions: PaymentOptions)
     case finish(paymentId: PaymentId, customerOptions: CustomerOptions)
 }

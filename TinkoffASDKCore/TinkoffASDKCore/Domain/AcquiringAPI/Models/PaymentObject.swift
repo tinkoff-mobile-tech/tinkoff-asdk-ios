@@ -8,7 +8,7 @@
 import Foundation
 
 /// Признак предмета расчета
-public enum PaymentObject: String {
+public enum PaymentObject: String, Equatable {
     /// Подакцизный товар
     case excise
     /// Работа

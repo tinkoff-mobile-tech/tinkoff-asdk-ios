@@ -19,7 +19,7 @@
 
 import TinkoffASDKCore
 
-public struct PaymentOptions {
+public struct PaymentOptions: Equatable {
     let orderOptions: OrderOptions
     let customerOptions: CustomerOptions
     let failedPaymentId: PaymentId?

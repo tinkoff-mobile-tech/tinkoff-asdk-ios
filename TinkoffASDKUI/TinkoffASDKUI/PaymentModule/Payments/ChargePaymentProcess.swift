@@ -20,7 +20,7 @@
 import TinkoffASDKCore
 
 final class ChargePaymentProcess: PaymentProcess {
-    private let acquiringSDK: AcquiringSdk
+    private let paymentsService: IAcquiringPaymentsService
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
 
@@ -40,12 +40,12 @@ final class ChargePaymentProcess: PaymentProcess {
     }
 
     init(
-        acquiringSDK: AcquiringSdk,
+        paymentsService: IAcquiringPaymentsService,
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
         delegate: PaymentProcessDelegate
     ) {
-        self.acquiringSDK = acquiringSDK
+        self.paymentsService = paymentsService
         self.paymentSource = paymentSource
         self.paymentFlow = paymentFlow
         self.delegate = delegate
@@ -69,7 +69,7 @@ final class ChargePaymentProcess: PaymentProcess {
 
 private extension ChargePaymentProcess {
     func initPayment(data: PaymentInitData) {
-        let request = acquiringSDK.initPayment(data: data) { [weak self] result in
+        let request = paymentsService.initPayment(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -103,7 +103,7 @@ private extension ChargePaymentProcess {
             rebillId: String(data.parentPaymentId)
         )
 
-        let request = acquiringSDK.charge(data: newData) { [weak self] result in
+        let request = paymentsService.charge(data: newData) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 

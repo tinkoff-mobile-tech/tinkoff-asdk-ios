@@ -20,7 +20,10 @@
 import TinkoffASDKCore
 
 final class CardPaymentProcess: PaymentProcess {
-    private let acquiringSDK: AcquiringSdk
+
+    private let paymentsService: IAcquiringPaymentsService
+    private let threeDsService: IAcquiringThreeDsService
+    private let ipProvider: IIPAddressProvider
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
 
@@ -40,12 +43,17 @@ final class CardPaymentProcess: PaymentProcess {
     }
 
     init(
-        acquiringSDK: AcquiringSdk,
+        paymentsService: IAcquiringPaymentsService,
+        threeDsService: IAcquiringThreeDsService,
+        ipProvider: IIPAddressProvider,
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
         delegate: PaymentProcessDelegate
     ) {
-        self.acquiringSDK = acquiringSDK
+
+        self.paymentsService = paymentsService
+        self.threeDsService = threeDsService
+        self.ipProvider = ipProvider
         self.paymentSource = paymentSource
         self.paymentFlow = paymentFlow
         self.delegate = delegate
@@ -69,7 +77,7 @@ final class CardPaymentProcess: PaymentProcess {
 
 private extension CardPaymentProcess {
     func initPayment(data: PaymentInitData) {
-        let request = acquiringSDK.initPayment(data: data) { [weak self] result in
+        let request = paymentsService.initPayment(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -85,7 +93,7 @@ private extension CardPaymentProcess {
     }
 
     func check3DSVersion(data: Check3DSVersionData) {
-        let request = acquiringSDK.check3DSVersion(data: data) { [weak self] result in
+        let request = threeDsService.check3DSVersion(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -102,7 +110,7 @@ private extension CardPaymentProcess {
 
     func finishPayment(data: PaymentFinishRequestData, threeDSVersion: String? = nil) {
         let finishRequestData = FinishAuthorizeData(from: data)
-        let request = acquiringSDK.finishAuthorize(data: finishRequestData) { [weak self] result in
+        let request = paymentsService.finishAuthorize(data: finishRequestData) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -155,7 +163,7 @@ private extension CardPaymentProcess {
             let check3DSData = Checking3DSURLData(
                 tdsServerTransID: tdsServerTransID,
                 threeDSMethodURL: threeDSMethodURL,
-                notificationURL: acquiringSDK
+                notificationURL: threeDsService
                     .confirmation3DSCompleteV2URL()
                     .absoluteString
             )
@@ -165,7 +173,7 @@ private extension CardPaymentProcess {
                 completion: { [weak self] deviceInfo in
                     guard let self = self else { return }
                     data.setDeviceInfo(info: deviceInfo)
-                    data.setIpAddress(self.acquiringSDK.ipAddress?.fullStringValue)
+                    data.setIpAddress(self.ipProvider.ipAddress?.fullStringValue)
                     data.setThreeDSVersion(payload.version)
                     performPaymentFinish(data)
                 }

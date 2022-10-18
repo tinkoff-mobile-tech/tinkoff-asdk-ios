@@ -46,3 +46,16 @@ public struct OrderOptions {
         self.savingAsParentPayment = savingAsParentPayment
     }
 }
+
+extension OrderOptions: Equatable {
+
+    public static func == (lhs: OrderOptions, rhs: OrderOptions) -> Bool {
+        lhs.orderId == rhs.orderId &&
+            lhs.amount == rhs.amount &&
+            lhs.description == rhs.description &&
+            lhs.receipt == rhs.receipt &&
+            lhs.shops == rhs.shops &&
+            lhs.receipts == rhs.receipts &&
+            lhs.savingAsParentPayment == rhs.savingAsParentPayment
+    }
+}

@@ -1992,7 +1992,8 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     ) -> PaymentController {
         let paymentController = uiAssembly.paymentController(
             acquiringSDK: acquiringSdk,
-            acquiringUISDK: self
+            acquiringUISDK: self,
+            ipProvider: acquiringSdk.ipAddressProvider
         )
         paymentController.uiProvider = uiProvider
         paymentController.delegate = delegate

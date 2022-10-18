@@ -19,9 +19,22 @@
 
 import Foundation
 
-public final class ThreeDSWebViewHandler<Payload: Decodable> {
+public protocol IThreeDSWebViewHandler {
+    var didCancel: (() -> Void)? { get set }
+
+    func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) -> Result<Payload, Error>
+}
+
+public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHandler {
+
+    public enum GenericError: Swift.Error {
+        case genericError
+    }
+
     public var didCancel: (() -> Void)?
-    public var didFinish: ((Result<Payload, Error>) -> Void)?
 
     private let urlBuilder: IThreeDSURLBuilder
     private let decoder: IAcquiringDecoder
@@ -34,10 +47,14 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
         self.decoder = decoder
     }
 
-    public func handle(urlString: String, responseData data: Data) {
+    public func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) -> Result<Payload, Error> {
+
         guard !urlString.hasSuffix("cancel.do") else {
             didCancel?()
-            return
+            return .failure(GenericError.genericError)
         }
 
         let confirmation3DSTerminationURLString = urlBuilder
@@ -49,13 +66,13 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
             .absoluteString
 
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
-            return
+            return .failure(GenericError.genericError)
         }
 
         let result = Result {
             try decoder.decode(Payload.self, from: data, with: .standard)
         }
 
-        didFinish?(result)
+        return result
     }
 }

@@ -23,16 +23,20 @@ import WebKit
 
 final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavigationDelegate {
     private let urlRequest: URLRequest
-    private let handler: ThreeDSWebViewHandler<Payload>
+    private let handler: IThreeDSWebViewHandler
 
     lazy var webView = WKWebView()
 
+    private var didHandle: ((Result<Payload, Error>) -> Void)?
+
     init(
         urlRequest: URLRequest,
-        handler: ThreeDSWebViewHandler<Payload>
+        handler: IThreeDSWebViewHandler,
+        didHandle: ((Result<Payload, Error>) -> Void)?
     ) {
         self.urlRequest = urlRequest
         self.handler = handler
+        self.didHandle = didHandle
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -65,11 +69,13 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
             }
 
             webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { [weak self] value, _ in
-                guard let response = value as? String, let responseData = response.data(using: .utf8) else {
+                guard let self = self, let response = value as? String, let responseData = response.data(using: .utf8) else {
                     return
                 }
 
-                self?.handler.handle(urlString: uri, responseData: responseData)
+                let result: Result<Payload, Error> = self.handler.handle(urlString: uri, responseData: responseData)
+
+                self.didHandle?(result)
             }
         }
     }

@@ -20,7 +20,23 @@
 import ThreeDSWrapper
 import TinkoffASDKCore
 
-final class TDSController {
+protocol ITDSController {
+    var completionHandler: PaymentCompletionHandler? { get set }
+    var cancelHandler: (() -> Void)? { get set }
+
+    /// Получает необходимые параметры для проведения 3дс
+    func enrichRequestDataWithAuthParams(
+        with paymentSystem: String,
+        messageVersion: String,
+        finishRequestData: PaymentFinishRequestData,
+        completion: @escaping (Result<PaymentFinishRequestData, Error>) -> Void
+    )
+
+    /// Начинает испытание на стороне 3дс-сдк
+    func doChallenge(with appBasedData: Confirmation3DS2AppBasedData)
+}
+
+final class TDSController: ITDSController {
 
     // Dependencies
 

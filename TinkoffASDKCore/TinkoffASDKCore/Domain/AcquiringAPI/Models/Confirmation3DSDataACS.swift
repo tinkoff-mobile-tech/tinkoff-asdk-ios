@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct Confirmation3DSDataACS: Codable {
+public struct Confirmation3DSDataACS: Codable, Equatable {
     var acsUrl: String
     var acsTransId: String
     var tdsServerTransId: String

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Тип оплаты
-public enum PaymentMethod: String {
+public enum PaymentMethod: String, Equatable {
     /// Предоплата 100%
     /// Полная предварительная оплата до момента передачи предмета расчета
     case fullPrepayment = "full_prepayment"
