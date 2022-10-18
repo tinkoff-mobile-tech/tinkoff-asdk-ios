@@ -21,12 +21,18 @@ import Foundation
 import TinkoffASDKCore
 
 final class SampleTokenProvider: ITokenProvider {
+    private let password: String
+
+    init(password: String) {
+        self.password = password
+    }
+
     func provideToken(
         forRequestParameters parameters: [String: String],
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         let sourceString = parameters
-            .merging([.password: StageTestData.terminalPassword]) { $1 }
+            .merging([.password: password]) { $1 }
             .sorted { $0.key < $1.key }
             .map(\.value)
             .joined()
