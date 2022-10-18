@@ -18,6 +18,11 @@
 * [MIC-6582] CustomerKey editing now available in ASDKSample app
 * [MIC-6584] Switching terminal now available in ASDKSample app
 
+## [2.11.2] - 2022-10-13Z
+
+### Fixed
+* pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
+
 ## [2.11.1] - 2022-10-10Z
 
 ### Fixed
