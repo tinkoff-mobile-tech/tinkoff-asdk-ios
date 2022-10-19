@@ -21,7 +21,9 @@
 ## [2.11.2] - 2022-10-13Z
 
 ### Fixed
+
 * pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
+* [MIC-6735] Response validation by condition `success == true && errorCode == 0`
 
 ## [2.11.1] - 2022-10-10Z
 
