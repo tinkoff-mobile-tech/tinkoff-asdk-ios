@@ -23,7 +23,7 @@ final class DeprecatedDecoder: IDeprecatedDecoder {
         }
 
         // data  in `AcquiringResponse` format but `Success = 0;` ( `false` )
-        guard acquiringResponse.success else {
+        guard acquiringResponse.success, acquiringResponse.errorCode == 0 else {
             var errorMessage: String = Loc.TinkoffAcquiring.Response.Error.statusFalse
 
             if let message = acquiringResponse.errorMessage {
