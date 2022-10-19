@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "TinkoffASDK",
     defaultLocalization: "ru",
-    platforms: [.iOS(.v11)],
+    platforms: [.iOS("12.3")],
     products: [
         .library(name: "TinkoffASDKCore", targets: ["TinkoffASDKCore"]),
         .library(name: "TinkoffASDKUI", targets: ["TinkoffASDKUI"]),
