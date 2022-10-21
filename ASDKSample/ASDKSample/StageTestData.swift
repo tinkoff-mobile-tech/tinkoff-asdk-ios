@@ -17,7 +17,8 @@
 //  limitations under the License.
 //
 
-import Foundation
+import TinkoffASDKCore
+import TinkoffASDKUI
 
 /// Тестовые данные для проведения тестовых платежей
 public enum StageTestData {
@@ -33,4 +34,29 @@ public enum StageTestData {
 
     /// Идентификатор клиента в системе продавца. Например, для этого идентификатора будут сохраняться список карт.
     public static let customerKey = "TestSDK_CustomerKey1"
+}
+
+struct SdkCredentials: Equatable, Codable {
+    let uuid: String
+    let name: String
+    let description: String
+
+    // Actual sdk Data
+    let publicKey: String
+    let terminalKey: String
+    let terminalPassword: String
+    let customerKey: String
+}
+
+extension SdkCredentials {
+
+    static let test = Self(
+        uuid: UUID().uuidString,
+        name: "Test",
+        description: "Test stage",
+        publicKey: StageTestData.testPublicKey,
+        terminalKey: StageTestData.terminalKey,
+        terminalPassword: StageTestData.terminalPassword,
+        customerKey: StageTestData.customerKey
+    )
 }

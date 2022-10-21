@@ -1,6 +1,6 @@
 //
 //
-//  Version.swift
+//  UIEdgeInsets+Ext.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,9 +17,21 @@
 //  limitations under the License.
 //
 
-import Foundation
+import UIKit
 
-/// Текущая версия компонента
-struct Version {
-    static let versionString = "2.11.2"
+extension UIEdgeInsets {
+    var vertical: CGFloat { top + bottom }
+    var horizontal: CGFloat { left + right }
+
+    init(side: CGFloat) {
+        self.init(top: side, left: side, bottom: side, right: side)
+    }
+
+    init(vertical: CGFloat) {
+        self.init(top: vertical, left: 0, bottom: vertical, right: 0)
+    }
+
+    init(horizontal: CGFloat) {
+        self.init(top: 0, left: horizontal, bottom: 0, right: horizontal)
+    }
 }

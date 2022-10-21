@@ -2,9 +2,11 @@ PODS:
   - SwiftFormat/CLI (0.49.18)
   - SwiftGen (6.6.2)
   - SwiftLint (0.47.0)
-  - TinkoffASDKCore (2.11.1)
-  - TinkoffASDKCore/Tests (2.11.1)
-  - TinkoffASDKUI (2.11.1):
+  - TinkoffASDKCore (2.11.2)
+  - TinkoffASDKCore/Tests (2.11.2)
+  - TinkoffASDKUI (2.11.2):
+    - TinkoffASDKCore
+  - TinkoffASDKUI/Tests (2.11.2):
     - TinkoffASDKCore
   - TinkoffASDKUI/Tests (2.11.1):
     - TinkoffASDKCore
