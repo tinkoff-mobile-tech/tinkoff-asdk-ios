@@ -42,6 +42,46 @@ internal enum Loc {
     /// Выбрать другую карту
     internal static let selectAnotherCard = Loc.tr("Localizable", "button.selectAnotherCard", fallback: "Выбрать другую карту")
   }
+  internal enum Credentials {
+    internal enum Buttons {
+      /// Active
+      internal static let active = Loc.tr("Localizable", "credentials.buttons.active", fallback: "Active")
+      /// Добавить
+      internal static let add = Loc.tr("Localizable", "credentials.buttons.add", fallback: "Добавить")
+    }
+    internal enum Settings {
+      /// Изменить SDK Credentials
+      internal static let changeCreds = Loc.tr("Localizable", "credentials.settings.changeCreds", fallback: "Изменить SDK Credentials")
+      /// ASDK Credentials
+      internal static let header = Loc.tr("Localizable", "credentials.settings.header", fallback: "ASDK Credentials")
+    }
+    internal enum Viewcontroller {
+      /// Sdk Credentials
+      internal static let title = Loc.tr("Localizable", "credentials.viewcontroller.title", fallback: "Sdk Credentials")
+    }
+  }
+  internal enum CredentialsView {
+    internal enum Title {
+      /// Customer Key
+      internal static let customerKey = Loc.tr("Localizable", "credentialsView.title.customerKey", fallback: "Customer Key")
+      /// Delete
+      internal static let delete = Loc.tr("Localizable", "credentialsView.title.delete", fallback: "Delete")
+      /// Description
+      internal static let descriptiom = Loc.tr("Localizable", "credentialsView.title.descriptiom", fallback: "Description")
+      /// Edit
+      internal static let edit = Loc.tr("Localizable", "credentialsView.title.edit", fallback: "Edit")
+      /// Name
+      internal static let name = Loc.tr("Localizable", "credentialsView.title.name", fallback: "Name")
+      /// Public Key
+      internal static let publicKey = Loc.tr("Localizable", "credentialsView.title.publicKey", fallback: "Public Key")
+      /// Save
+      internal static let save = Loc.tr("Localizable", "credentialsView.title.save", fallback: "Save")
+      /// Terminal Key
+      internal static let terminalKey = Loc.tr("Localizable", "credentialsView.title.terminalKey", fallback: "Terminal Key")
+      /// Terminal Password
+      internal static let terminalPassword = Loc.tr("Localizable", "credentialsView.title.terminalPassword", fallback: "Terminal Password")
+    }
+  }
   internal enum Error {
     internal enum Camera {
       /// Не найдена камера.
