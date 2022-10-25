@@ -43,11 +43,11 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting(request)
 
         // then
-        XCTAssert(requestBuilder.invokedBuild)
-        XCTAssert(session.invokedDataTask)
-        XCTAssert(session.stubbedDataTaskResult.invokedResume)
+        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(session.invokedDataTaskCount, 1)
+        XCTAssertEqual(session.stubbedDataTaskResult.invokedResumeCount, 1)
         XCTAssertFalse(session.stubbedDataTaskResult.invokedCancel)
-        XCTAssert(statusCodeValidator.invokedValidate)
+        XCTAssertEqual(statusCodeValidator.invokedValidateCount, 1)
         XCTAssertNoThrow(try result.get())
     }
 
@@ -60,7 +60,7 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssert(requestBuilder.invokedBuild)
+        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
         XCTAssertFalse(session.invokedDataTask)
         XCTAssertFalse(statusCodeValidator.invokedValidate)
 
@@ -81,8 +81,8 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssert(requestBuilder.invokedBuild)
-        XCTAssert(session.invokedDataTask)
+        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssertFalse(statusCodeValidator.invokedValidate)
 
         XCTAssertThrowsError(try result.get()) { error in
@@ -101,9 +101,9 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssert(requestBuilder.invokedBuild)
-        XCTAssert(session.invokedDataTask)
-        XCTAssert(statusCodeValidator.invokedValidate)
+        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(session.invokedDataTaskCount, 1)
+        XCTAssertEqual(statusCodeValidator.invokedValidateCount, 1)
 
         XCTAssertThrowsError(try result.get()) { error in
             guard case NetworkError.emptyResponse = error else {
@@ -120,8 +120,8 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssert(requestBuilder.invokedBuild)
-        XCTAssert(session.invokedDataTask)
+        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssertFalse(statusCodeValidator.invokedValidate)
 
         XCTAssertThrowsError(try result.get()) { error in
@@ -142,8 +142,8 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssert(requestBuilder.invokedBuild)
-        XCTAssert(session.invokedDataTask)
+        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssert(statusCodeValidator.invokedValidate)
 
         XCTAssertThrowsError(try result.get()) { error in

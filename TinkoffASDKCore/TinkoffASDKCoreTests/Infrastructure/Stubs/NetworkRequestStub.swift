@@ -28,7 +28,7 @@ struct NetworkRequestStub: NetworkRequest {
     var parameters: HTTPParameters
 
     init(
-        baseURL: URL = URL(string: "https://www.tinkoff.ru")!,
+        baseURL: URL = .doesNotMatter,
         path: String = "doesNotMatter",
         httpMethod: HTTPMethod = .get,
         headers: HTTPHeaders = [:],
