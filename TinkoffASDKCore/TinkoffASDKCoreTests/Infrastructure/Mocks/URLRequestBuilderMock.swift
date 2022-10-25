@@ -14,7 +14,7 @@ final class URLRequestBuilderMock: IURLRequestBuilder {
     var invokedBuildParameters: (request: NetworkRequest, Void)?
     var invokedBuildParametersList = [(request: NetworkRequest, Void)]()
     var stubbedBuildError: Error?
-    var stubbedBuildResult: URLRequest!
+    var stubbedBuildResult: URLRequest = .init(url: .doesNotMatter)
 
     func build(request: NetworkRequest) throws -> URLRequest {
         invokedBuild = true
