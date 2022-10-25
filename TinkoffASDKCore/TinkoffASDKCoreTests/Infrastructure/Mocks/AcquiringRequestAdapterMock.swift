@@ -9,11 +9,15 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class AcquiringRequestAdapterMock: IAcquiringRequestAdapter {
+    typealias AdaptCompletion = (Result<AcquiringRequest, Error>) -> Void
+
     var invokedAdapt = false
     var invokedAdaptCount = 0
-    var invokedAdaptParameters: (request: AcquiringRequest, Void)?
-    var invokedAdaptParametersList = [(request: AcquiringRequest, Void)]()
-    var stubbedAdaptCompletionResult: (Result<AcquiringRequest, Error>, Void)?
+    var invokedAdaptParameter: AcquiringRequest?
+    var invokedAdaptParametersList = [AcquiringRequest]()
+    var adaptMethodStub = { (request: AcquiringRequest, completion: @escaping AdaptCompletion) in
+        completion(.success(request))
+    }
 
     func adapt(
         request: AcquiringRequest,
@@ -21,10 +25,8 @@ final class AcquiringRequestAdapterMock: IAcquiringRequestAdapter {
     ) {
         invokedAdapt = true
         invokedAdaptCount += 1
-        invokedAdaptParameters = (request, ())
-        invokedAdaptParametersList.append((request, ()))
-        if let result = stubbedAdaptCompletionResult {
-            completion(result.0)
-        }
+        invokedAdaptParameter = request
+        invokedAdaptParametersList.append(request)
+        adaptMethodStub(request, completion)
     }
 }

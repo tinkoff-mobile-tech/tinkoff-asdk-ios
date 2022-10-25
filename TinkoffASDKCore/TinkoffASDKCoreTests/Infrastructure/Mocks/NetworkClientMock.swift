@@ -9,12 +9,16 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class NetworkClientMock: INetworkClient {
+    typealias PerformRequestCompletion = (Result<NetworkResponse, NetworkError>) -> Void
+
     var invokedPerformRequest = false
     var invokedPerformRequestCount = 0
-    var invokedPerformRequestParameters: (request: NetworkRequest, Void)?
-    var invokedPerformRequestParametersList = [(request: NetworkRequest, Void)]()
-    var stubbedPerformRequestCompletionResult: (Result<NetworkResponse, NetworkError>, Void)?
-    var stubbedPerformRequestResult: Cancellable!
+    var invokedPerformRequestParameter: NetworkRequest?
+    var invokedPerformRequestParametersList = [NetworkRequest]()
+    var performRequestMethodStub = { (request: NetworkRequest, completion: @escaping PerformRequestCompletion) -> Cancellable in
+        completion(.success(.stub()))
+        return CancellableMock()
+    }
 
     func performRequest(
         _ request: NetworkRequest,
@@ -22,11 +26,8 @@ final class NetworkClientMock: INetworkClient {
     ) -> Cancellable {
         invokedPerformRequest = true
         invokedPerformRequestCount += 1
-        invokedPerformRequestParameters = (request, ())
-        invokedPerformRequestParametersList.append((request, ()))
-        if let result = stubbedPerformRequestCompletionResult {
-            completion(result.0)
-        }
-        return stubbedPerformRequestResult
+        invokedPerformRequestParameter = request
+        invokedPerformRequestParametersList.append(request)
+        return performRequestMethodStub(request, completion)
     }
 }

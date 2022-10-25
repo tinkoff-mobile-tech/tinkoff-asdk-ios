@@ -8,7 +8,7 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-final class DeprecatedDecoder: IDeprecatedDecoder {
+final class DeprecatedDecoderMock: IDeprecatedDecoder {
     var invokedDecode = false
     var invokedDecodeCount = 0
     var invokedDecodeParameters: (data: Data, response: HTTPURLResponse?)?

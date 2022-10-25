@@ -24,7 +24,7 @@ enum AcquiringDecodingStrategy {
     case clipped
 }
 
-enum TokenFormationStrategy {
+enum TokenFormationStrategy: Equatable {
     case none
     case includeAll(exceptParameters: Set<String>)
 }

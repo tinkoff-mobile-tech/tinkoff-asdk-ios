@@ -14,7 +14,7 @@ final class AcquiringDecoderMock: IAcquiringDecoder {
     var invokedDecodeParameters: (type: Any, data: Data, strategy: AcquiringDecodingStrategy)?
     var invokedDecodeParametersList = [(type: Any, data: Data, strategy: AcquiringDecodingStrategy)]()
     var stubbedDecodeError: Error?
-    var stubbedDecodeResult: Any!
+    var stubbedDecodeResult: Any = EmptyDecodable()
 
     func decode<Payload: Decodable>(
         _ type: Payload.Type,
