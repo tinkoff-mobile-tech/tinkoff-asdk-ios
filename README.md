@@ -160,7 +160,15 @@ func provideToken(forRequestParameters parameters: [String: String], completion:
 Вызывается метод _**FinishAuthorize**_ с реквизитами карты или _**FinishAuthorize**_ с номером ранее сохраненной карты.
 Во время проведения платежа сервер может запросить подтверждение  в этом случае пользователю показывается форма 3D Secure в зависимости от выбранного источника оплаты, это решение принимается сервером. 
 
-
+### PaymentController (AcquiringUISDK)
+**PaymentController** - позволяет совершать оплату (без вью части) только бизнес логика.
+```swift
+  public func paymentController(
+        uiProvider: PaymentControllerUIProvider,
+        delegate: PaymentControllerDelegate,
+        dataSource: PaymentControllerDataSource? = nil
+    ) -> PaymentController
+```
 
 #### TinkoffPay
 

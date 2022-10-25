@@ -15,6 +15,7 @@
 
 * [MIC-6063] Implement token providing logic for ASDK requests
 * [MIC-6184] Implement SampleTokenProvider in ASDKSample
+* [MIC-6513+MIC-6279] Implementation of PaymentController from v3/root is now added master version. PaymentController - let's you have all the logic needed for payments without depening on UI.
 * [MIC-6582] CustomerKey editing now available in ASDKSample app
 * [MIC-6584] Switching terminal now available in ASDKSample app
 
