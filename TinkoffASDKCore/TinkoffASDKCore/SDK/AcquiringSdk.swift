@@ -21,9 +21,6 @@ import struct CoreGraphics.CGSize
 import Foundation
 import UIKit
 
-extension AcquiringSdk: IAcquiringThreeDsService,
-    IAcquiringPaymentsService {}
-
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
     @available(*, deprecated, message: "Property does not affect anything")
@@ -664,7 +661,7 @@ public final class AcquiringSdk: NSObject {
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
     ///
     /// - Parameters:
-    ///   - paymentId: `PaymentId` - идентификтор платежа
+    ///   - paymentId: `String` - идентификтор платежа
     ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
     ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
     /// - Returns: `Cancellable`

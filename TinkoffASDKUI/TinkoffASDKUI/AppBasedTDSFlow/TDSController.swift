@@ -20,7 +20,7 @@
 import ThreeDSWrapper
 import TinkoffASDKCore
 
-protocol ITDSController {
+protocol ITDSController: AnyObject {
     var completionHandler: PaymentCompletionHandler? { get set }
     var cancelHandler: (() -> Void)? { get set }
 

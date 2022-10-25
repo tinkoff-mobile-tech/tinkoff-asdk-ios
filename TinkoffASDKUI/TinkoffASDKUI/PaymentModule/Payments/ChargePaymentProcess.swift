@@ -26,7 +26,7 @@ final class ChargePaymentProcess: PaymentProcess {
 
     let paymentSource: PaymentSourceData
     let paymentFlow: PaymentFlow
-    private(set) var paymentId: PaymentId?
+    private(set) var paymentId: String?
 
     private weak var delegate: PaymentProcessDelegate?
 
@@ -83,7 +83,7 @@ private extension ChargePaymentProcess {
         currentRequest?.store(newValue: request)
     }
 
-    func finishPayment(paymentId: PaymentId) {
+    func finishPayment(paymentId: String) {
         guard let paymentId = Int64(paymentId),
               let parentPaymentId = Int64(getRebillId())
         else {

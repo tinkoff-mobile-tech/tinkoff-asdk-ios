@@ -5,9 +5,9 @@
 //  Created by Ivan Glushko on 19.10.2022.
 //
 
-import Foundation
+import TinkoffASDKCore
 
-public protocol IAcquiringPaymentsService {
+protocol IAcquiringPaymentsService {
 
     // MARK: Init Payment
 

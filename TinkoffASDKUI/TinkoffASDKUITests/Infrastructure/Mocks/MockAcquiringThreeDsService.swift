@@ -7,6 +7,7 @@
 
 import Foundation
 @testable import TinkoffASDKCore
+@testable import TinkoffASDKUI
 
 extension URL {
     static let empty = URL(string: "www.vk.com")!
@@ -16,7 +17,7 @@ extension URLRequest {
     static let empty = URLRequest(url: .empty)
 }
 
-final class MockAcquiringThreeDsService: IAcquiringThreeDsService {
+final class MockAcquiringThreeDsService: IAcquiringThreeDSService {
 
     // MARK: - check3DSVersion
 

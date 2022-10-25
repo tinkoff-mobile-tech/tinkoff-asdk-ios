@@ -34,7 +34,7 @@ enum Constants {
         static let receipts = "Receipts"
         static let redirectDueDate = "RedirectDueDate"
         static let terminalKey = "TerminalKey"
-        static let paymentId = "PaymentId"
+        static let paymentId = "String"
         static let token = "Token"
         static let success = "Success"
         static let errorCode = "ErrorCode"

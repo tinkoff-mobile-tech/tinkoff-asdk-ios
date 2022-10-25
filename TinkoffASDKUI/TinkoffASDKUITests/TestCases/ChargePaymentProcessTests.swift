@@ -16,6 +16,8 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_when_paymentFlow_full_InitPayment_failure() {
 
+        // given
+
         let paymentOptions = UIASDKTestsAssembly.makePaymentOptions()
         let dependencies = Self.makeDependencies(
             paymentFlow: .full(paymentOptions: paymentOptions)

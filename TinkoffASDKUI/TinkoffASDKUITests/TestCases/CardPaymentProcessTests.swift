@@ -38,7 +38,7 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
 
-        let didFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedPassedArguments
+        let paymentDidFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedPassedArguments
 
         let cardId = sutPaymentProcess.paymentSource.getCardAndRebillId().cardId
         let rebillId = sutPaymentProcess.paymentSource.getCardAndRebillId().rebillId
@@ -50,10 +50,10 @@ final class CardPaymentProcessTests: XCTestCase {
         )
 
         XCTAssertTrue(dependencies.paymentDelegateMock.paymentDidFailedCallCounter == 1)
-        XCTAssertEqual(didFailedArgs?.paymentProcess.paymentSource, sutPaymentProcess.paymentSource)
-        XCTAssertEqual(didFailedArgs?.cardId, cardId)
-        XCTAssertEqual(didFailedArgs?.rebillId, rebillId)
-        XCTAssertNotNil(didFailedArgs?.error)
+        XCTAssertEqual(paymentDidFailedArgs?.paymentProcess.paymentSource, sutPaymentProcess.paymentSource)
+        XCTAssertEqual(paymentDidFailedArgs?.cardId, cardId)
+        XCTAssertEqual(paymentDidFailedArgs?.rebillId, rebillId)
+        XCTAssertNotNil(paymentDidFailedArgs?.error)
     }
 
     func test_start_payment_success_paymentSource_Card_finishAuthorize_success_responseStatus_done() throws {
@@ -175,12 +175,12 @@ final class CardPaymentProcessTests: XCTestCase {
 
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
 
-        let didFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedPassedArguments
+        let payemtnDidFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedPassedArguments
         let paymentSourceCardId = sutPaymentProcess.paymentSource.getCardAndRebillId().cardId
 
         XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedCallCounter, 1)
 
-        XCTAssertEqual(didFailedArgs?.cardId, paymentSourceCardId)
+        XCTAssertEqual(payemtnDidFailedArgs?.cardId, paymentSourceCardId)
     }
 
     // MARK: - when start() + paymentsFlow == .finish()

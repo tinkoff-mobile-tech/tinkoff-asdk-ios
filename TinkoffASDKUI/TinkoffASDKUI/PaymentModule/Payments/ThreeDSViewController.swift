@@ -73,9 +73,13 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
                     return
                 }
 
-                let result: Result<Payload, Error> = self.handler.handle(urlString: uri, responseData: responseData)
+                let result: Result<Payload, Error>? = Result {
+                    try self.handler.handle(urlString: uri, responseData: responseData)
+                }
 
-                self.didHandle?(result)
+                if let result = result {
+                    self.didHandle?(result)
+                }
             }
         }
     }

@@ -20,8 +20,6 @@
 import TinkoffASDKCore
 import WebKit
 
-public typealias PaymentId = String
-
 /// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа
 public protocol PaymentControllerUIProvider: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
@@ -96,12 +94,12 @@ public final class PaymentController {
 
     // MARK: - Dependencies
 
-    private let threeDsService: IAcquiringThreeDsService
+    private let threeDsService: IAcquiringThreeDSService
     private let paymentFactory: IPaymentFactory
-    private var threeDSHandler: IThreeDSWebViewHandler
+    private let threeDSHandler: IThreeDSWebViewHandler
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
     // App based threeDS
-    private(set) var tdsController: ITDSController
+    private let tdsController: ITDSController
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -123,7 +121,7 @@ public final class PaymentController {
     // MARK: - Init
 
     init(
-        threeDsService: IAcquiringThreeDsService,
+        threeDsService: IAcquiringThreeDSService,
         paymentFactory: IPaymentFactory,
         threeDSHandler: IThreeDSWebViewHandler,
         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
@@ -168,7 +166,7 @@ public final class PaymentController {
     }
 
     public func performFinishPayment(
-        paymentId: PaymentId,
+        paymentId: String,
         paymentSource: PaymentSourceData,
         customerOptions: CustomerOptions
     ) {
@@ -424,7 +422,7 @@ extension PaymentController: PaymentProcessDelegate {
 
         let customerKey: String?
         let paymentOptions: PaymentOptions?
-        let parentPaymentId: PaymentId?
+        let parentPaymentId: String?
 
         switch paymentProcess.paymentFlow {
         case let .full(processPaymentOptions):
@@ -477,7 +475,7 @@ extension PaymentController: PaymentProcessDelegate {
         sourceViewController: UIViewController,
         viewConfiguration: AcquiringViewConfiguration,
         customerKey: String,
-        parentPaymentId: PaymentId,
+        parentPaymentId: String,
         failedPaymentId: String?
     ) {
         let newOrderOptions = OrderOptions(

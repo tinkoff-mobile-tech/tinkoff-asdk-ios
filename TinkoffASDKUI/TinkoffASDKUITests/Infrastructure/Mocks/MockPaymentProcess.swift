@@ -10,7 +10,7 @@ import TinkoffASDKCore
 
 final class MockPaymentProcess: PaymentProcess {
 
-    var paymentId: PaymentId?
+    var paymentId: String?
 
     var paymentFlow: PaymentFlow
 
@@ -19,7 +19,7 @@ final class MockPaymentProcess: PaymentProcess {
     // MARK: - Init
 
     init(
-        paymentId: PaymentId? = nil,
+        paymentId: String? = nil,
         paymentFlow: PaymentFlow,
         paymentSource: PaymentSourceData
     ) {

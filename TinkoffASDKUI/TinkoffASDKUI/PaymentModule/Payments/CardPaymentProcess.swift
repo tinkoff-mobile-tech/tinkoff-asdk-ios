@@ -22,14 +22,14 @@ import TinkoffASDKCore
 final class CardPaymentProcess: PaymentProcess {
 
     private let paymentsService: IAcquiringPaymentsService
-    private let threeDsService: IAcquiringThreeDsService
+    private let threeDsService: IAcquiringThreeDSService
     private let ipProvider: IIPAddressProvider
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
 
     let paymentSource: PaymentSourceData
     let paymentFlow: PaymentFlow
-    private(set) var paymentId: PaymentId?
+    private(set) var paymentId: String?
 
     private weak var delegate: PaymentProcessDelegate?
 
@@ -44,7 +44,7 @@ final class CardPaymentProcess: PaymentProcess {
 
     init(
         paymentsService: IAcquiringPaymentsService,
-        threeDsService: IAcquiringThreeDsService,
+        threeDsService: IAcquiringThreeDSService,
         ipProvider: IIPAddressProvider,
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
@@ -145,7 +145,7 @@ private extension CardPaymentProcess {
         }
     }
 
-    func handleCheck3DSResult(payload: Check3DSVersionPayload, paymentId: PaymentId) {
+    func handleCheck3DSResult(payload: Check3DSVersionPayload, paymentId: String) {
         guard let paymentId = Int64(paymentId) else { return }
 
         var data = PaymentFinishRequestData(

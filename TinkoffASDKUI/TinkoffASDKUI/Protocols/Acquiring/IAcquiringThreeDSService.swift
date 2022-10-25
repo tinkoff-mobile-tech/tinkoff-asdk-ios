@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
-public protocol IAcquiringThreeDsService {
+protocol IAcquiringThreeDSService {
 
     // MARK: Check 3DS Version
 

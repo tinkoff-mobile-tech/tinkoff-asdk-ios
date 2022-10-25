@@ -21,7 +21,7 @@ import TinkoffASDKCore
 
 public enum PaymentFlow: Equatable {
     case full(paymentOptions: PaymentOptions)
-    case finish(paymentId: PaymentId, customerOptions: CustomerOptions)
+    case finish(paymentId: String, customerOptions: CustomerOptions)
 }
 
 protocol PaymentProcessDelegate: AnyObject {
@@ -66,7 +66,7 @@ protocol PaymentProcessDelegate: AnyObject {
 }
 
 public protocol PaymentProcess: Cancellable {
-    var paymentId: PaymentId? { get }
+    var paymentId: String? { get }
     var paymentFlow: PaymentFlow { get }
     var paymentSource: PaymentSourceData { get }
     func start()

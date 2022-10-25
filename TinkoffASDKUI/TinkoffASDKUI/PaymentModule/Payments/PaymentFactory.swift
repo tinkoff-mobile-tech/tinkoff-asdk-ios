@@ -30,12 +30,12 @@ protocol IPaymentFactory {
 
 struct PaymentFactory: IPaymentFactory {
     private let paymentsService: IAcquiringPaymentsService
-    private let threeDsService: IAcquiringThreeDsService
+    private let threeDsService: IAcquiringThreeDSService
     private let ipProvider: IIPAddressProvider
 
     init(
         paymentsService: IAcquiringPaymentsService,
-        threeDsService: IAcquiringThreeDsService,
+        threeDsService: IAcquiringThreeDSService,
         ipProvider: IIPAddressProvider
     ) {
         self.paymentsService = paymentsService

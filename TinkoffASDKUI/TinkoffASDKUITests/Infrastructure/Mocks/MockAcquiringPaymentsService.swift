@@ -7,6 +7,7 @@
 
 import Foundation
 @testable import TinkoffASDKCore
+@testable import TinkoffASDKUI
 
 final class MockAcquiringPaymentsService: IAcquiringPaymentsService {
 
