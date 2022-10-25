@@ -25,7 +25,7 @@ public protocol IThreeDSWebViewHandler: AnyObject {
     func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> Payload
+    ) throws -> Payload?
 }
 
 public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHandler {
@@ -51,11 +51,11 @@ public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHan
     public func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> Payload {
+    ) throws -> Payload? {
 
         guard !urlString.hasSuffix("cancel.do") else {
             didCancel?()
-            throw GenericError.cancelled
+            return nil
         }
 
         let confirmation3DSTerminationURLString = urlBuilder
