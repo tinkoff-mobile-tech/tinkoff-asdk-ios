@@ -20,3 +20,10 @@ lane :build_spm do
     sh("set -o pipefail && xcodebuild -scheme #{scheme} -destination generic/platform=iOS | xcpretty", log: true)
   end
 end
+
+lane :tests do  
+  run_tests(
+    workspace: "ASDKSample/ASDKSample.xcworkspace", 
+    scheme: "ASDKSample"
+    )
+end

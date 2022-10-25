@@ -69,3 +69,20 @@
 "error.camera.noSessionFound" = "Не найдена камера.";
 "error.camera.preset" = "Пресет не поддерживается";
 "error.camera.preset.message" = "Пресет камеры не поддерживается. Пожалуйста, попробуйте другой.";
+
+// CredentialsView
+
+"credentials.viewcontroller.title" = "Sdk Credentials";
+"credentials.settings.header" = "ASDK Credentials";
+"credentials.settings.changeCreds" = "Изменить SDK Credentials";
+"credentials.buttons.add" = "Добавить";
+"credentials.buttons.active" = "Active";
+"credentialsView.title.delete" = "Delete";
+"credentialsView.title.edit" = "Edit";
+"credentialsView.title.save" = "Save";
+"credentialsView.title.name" = "Name";
+"credentialsView.title.descriptiom" = "Description";
+"credentialsView.title.terminalKey" = "Terminal Key";
+"credentialsView.title.terminalPassword" = "Terminal Password";
+"credentialsView.title.publicKey" = "Public Key";
+"credentialsView.title.customerKey" = "Customer Key";

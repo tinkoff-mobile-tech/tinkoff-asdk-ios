@@ -69,3 +69,20 @@
 "error.camera.noSessionFound" = "No valid capture session found, I can't take any pictures or videos.";
 "error.camera.preset" = "Preset not supported";
 "error.camera.preset.message" = "Camera preset not supported. Please try another one.";
+
+// CredentialsView
+
+"credentials.viewcontroller.title" = "Sdk Credentials";
+"credentials.settings.header" = "ASDK Credentials";
+"credentials.settings.changeCreds" = "Change SDK Credentials";
+"credentials.buttons.add" = "Add";
+"credentials.buttons.active" = "Активированы";
+"credentialsView.title.delete" = "Delete";
+"credentialsView.title.edit" = "Edit";
+"credentialsView.title.save" = "Save";
+"credentialsView.title.name" = "Name";
+"credentialsView.title.descriptiom" = "Description";
+"credentialsView.title.terminalKey" = "Terminal Key";
+"credentialsView.title.terminalPassword" = "Terminal Password";
+"credentialsView.title.publicKey" = "Public Key";
+"credentialsView.title.customerKey" = "Customer Key";

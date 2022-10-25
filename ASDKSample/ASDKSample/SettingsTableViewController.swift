@@ -20,77 +20,7 @@
 import TinkoffASDKCore
 import UIKit
 
-class AppSetting {
-
-    private let keySBP = "SettingKeySBP"
-    private let keyTinkoffPay = "SettingKeyTinkoffPay"
-    private let keyShowEmailField = "SettingKeyShowEmailField"
-    private let keyKindForAlertView = "KindForAlertView"
-    private let keyAddCardCheckType = "AddCardChekType"
-    private let keyLanguageId = "LanguageId"
-
-    /// Система быстрых платежей
-    var paySBP = false {
-        didSet {
-            UserDefaults.standard.set(paySBP, forKey: keySBP)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    /// TinkoffPay
-    var tinkoffPay = false {
-        didSet {
-            UserDefaults.standard.set(tinkoffPay, forKey: keyTinkoffPay)
-        }
-    }
-
-    /// Показыть на форме оплаты поле для ввода email для отправки чека
-    var showEmailField = false {
-        didSet {
-            UserDefaults.standard.set(showEmailField, forKey: keyShowEmailField)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    var acquiring = false {
-        didSet {
-            UserDefaults.standard.set(acquiring, forKey: keyKindForAlertView)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    var addCardChekType: PaymentCardCheckType = .no {
-        didSet {
-            UserDefaults.standard.set(addCardChekType.rawValue, forKey: keyAddCardCheckType)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    var languageId: String? {
-        didSet {
-            UserDefaults.standard.set(languageId, forKey: keyLanguageId)
-            UserDefaults.standard.synchronize()
-        }
-    }
-
-    static let shared = AppSetting()
-
-    init() {
-        let usd = UserDefaults.standard
-
-        paySBP = usd.bool(forKey: keySBP)
-        tinkoffPay = usd.bool(forKey: keyTinkoffPay)
-        showEmailField = usd.bool(forKey: keyShowEmailField)
-        acquiring = usd.bool(forKey: keyKindForAlertView)
-        if let value = usd.value(forKey: keyAddCardCheckType) as? String {
-            addCardChekType = PaymentCardCheckType(rawValue: value)
-        }
-
-        languageId = usd.string(forKey: keyLanguageId)
-    }
-}
-
-class SettingsTableViewController: UITableViewController {
+final class SettingsTableViewController: UITableViewController {
 
     enum TableViewCellType {
         /// включить оплату с помощью `Системы Быстрых Платежей`
@@ -105,6 +35,8 @@ class SettingsTableViewController: UITableViewController {
         case addCardCheckType
         /// на каком языке показыват форму оплаты
         case language
+        /// изменить sdk credentials
+        case credentials
     }
 
     private var tableViewCells: [TableViewCellType] = []
@@ -117,8 +49,17 @@ class SettingsTableViewController: UITableViewController {
         title = Loc.Title.settings
 
         tableView.registerCells(types: [SwitchTableViewCell.self, SegmentedTabeViewCell.self])
+        tableView.register(ButtonTableCell.self, forCellReuseIdentifier: ButtonTableCell.reusableId)
 
         updateTableViewCells()
+    }
+
+    func pushSdkCredentialsVC() {
+        let editSdkCredentialsViewController = EditSdkCredentialsViewController()
+        navigationController?.pushViewController(
+            editSdkCredentialsViewController,
+            animated: true
+        )
     }
 
     func updateTableViewCells() {
@@ -133,7 +74,7 @@ class SettingsTableViewController: UITableViewController {
         availableLanguage.append("ru")
         availableLanguage.append("en")
 
-        tableViewCells = [.paySBP, .tinkoffPay, .showEmail, .acquiring, .addCardCheckType, .language]
+        tableViewCells = [.credentials, .paySBP, .tinkoffPay, .showEmail, .acquiring, .addCardCheckType, .language]
     }
 
     // MARK: - Table view data source
@@ -146,6 +87,7 @@ class SettingsTableViewController: UITableViewController {
         return 1
     }
 
+    // swiftlint:disable:next function_body_length
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableViewCells[indexPath.section] {
         case .paySBP:
@@ -270,6 +212,26 @@ class SettingsTableViewController: UITableViewController {
 
                 return cell
             }
+
+        case .credentials:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableCell.reusableId)
+                as? ButtonTableCell {
+                cell.configure(
+                    model: JustButton.Model(
+                        id: 0,
+                        title: Loc.Credentials.Settings.changeCreds,
+                        image: Asset.Icons.editing.image
+                            .resizeImageVerticallyIfNeeded(fitSize: CGSize(width: 40, height: 40))
+                            .addInsetsInside(inset: 5),
+                        onTap: { [weak self] in
+                            self?.pushSdkCredentialsVC()
+                        }
+                    )
+                )
+
+                cell.apply(style: JustButton.Style(insets: UIEdgeInsets(side: 10), textColor: .systemBlue))
+                return cell
+            }
         }
 
         return tableView.defaultCell()
@@ -289,6 +251,8 @@ class SettingsTableViewController: UITableViewController {
             return Loc.Title.savingCard
         case .language:
             return Loc.Title.paymentFormLanguage
+        case .credentials:
+            return Loc.Credentials.Settings.header
         }
     }
 
@@ -309,6 +273,8 @@ class SettingsTableViewController: UITableViewController {
 
         case .language:
             return Loc.Text.Language.description
+        case .credentials:
+            return nil
         }
     }
 }

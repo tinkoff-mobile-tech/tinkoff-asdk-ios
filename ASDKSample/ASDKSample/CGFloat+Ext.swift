@@ -1,6 +1,6 @@
 //
 //
-//  Version.swift
+//  CGFloat+Ext.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,9 +17,9 @@
 //  limitations under the License.
 //
 
-import Foundation
+import struct CoreGraphics.CGFloat
 
-/// Текущая версия компонента
-struct Version {
-    static let versionString = "2.11.2"
+extension CGFloat {
+    static let normalInset: CGFloat = 16
+    static let smallInset: CGFloat = 8
 }

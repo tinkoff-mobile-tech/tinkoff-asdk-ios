@@ -1,6 +1,6 @@
 //
 //
-//  Version.swift
+//  ViewProtocols.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,9 +17,34 @@
 //  limitations under the License.
 //
 
-import Foundation
+import UIKit
 
-/// Текущая версия компонента
-struct Version {
-    static let versionString = "2.11.2"
+typealias ConfigurableAndReusable = Configurable & Reusable
+
+// MARK: - ReusableIdentifier
+
+protocol ReusableIdentifier {
+    static var reusableId: String { get }
+}
+
+extension ReusableIdentifier {
+    static var reusableId: String {
+        String(describing: Self.self)
+    }
+}
+
+// MARK: - View Configuration Protocols
+
+protocol Configurable {
+    associatedtype ConfigurableModel
+    func configure(model: ConfigurableModel)
+}
+
+protocol Reusable {
+    func prepareForReuse()
+}
+
+protocol Stylable {
+    associatedtype Style
+    func apply(style: Style)
 }

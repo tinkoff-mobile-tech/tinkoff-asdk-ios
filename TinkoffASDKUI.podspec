@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
 	spec.name = "TinkoffASDKUI"
-	spec.version = '2.11.1'
+	spec.version = '2.11.2'
 	spec.summary = 'Мобильный SDK'
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
@@ -24,6 +24,9 @@ Pod::Spec.new do |spec|
 
   	spec.vendored_frameworks = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
     spec.preserve_paths = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
-
 	spec.dependency 'TinkoffASDKCore'
+
+	spec.test_spec 'Tests' do |test_spec|
+	test_spec.source_files = 'TinkoffASDKUI/TinkoffASDKUITests/**/*'
+	end
 end
