@@ -57,11 +57,3 @@ extension AcquiringRequestStub: Equatable {
             && lhs.decodingStrategy == rhs.decodingStrategy
     }
 }
-
-// MARK: - Dictionary + Utils
-
-private extension Dictionary where Value == Any {
-    func isEqual(to other: [Key: Value]) -> Bool {
-        NSDictionary(dictionary: self).isEqual(to: other)
-    }
-}

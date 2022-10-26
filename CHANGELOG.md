@@ -20,6 +20,7 @@
 * [MIC-6584] Switching terminal now available in ASDKSample app
 * [MIC-6527] NetworkClient unit tests
 * [MIC-6526] AcquiringAPIClient unit tests
+* [MIC-6801] AcquiringRequestAdapter unit tests
 
 ### Fixed
 
