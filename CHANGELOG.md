@@ -19,6 +19,7 @@
 * [MIC-6582] CustomerKey editing now available in ASDKSample app
 * [MIC-6584] Switching terminal now available in ASDKSample app
 * [MIC-6527] NetworkClient unit tests
+* [MIC-6526] AcquiringAPIClient unit tests
 
 ## [2.11.2] - 2022-10-13Z
 
