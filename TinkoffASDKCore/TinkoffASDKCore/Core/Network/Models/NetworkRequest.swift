@@ -29,22 +29,22 @@ struct HTTPMethod: RawRepresentable, Hashable {
     let rawValue: String
 }
 
-enum ContentType {
+enum ParametersEncoding {
     case json
-    case urlEncoded
+    case urlEncodedForm
 }
 
 protocol NetworkRequest {
     var baseURL: URL { get }
     var path: String { get }
     var httpMethod: HTTPMethod { get }
-    var contentType: ContentType { get }
     var headers: HTTPHeaders { get }
     var parameters: HTTPParameters { get }
+    var parametersEncoding: ParametersEncoding { get }
 }
 
 extension NetworkRequest {
     var parameters: HTTPParameters { [:] }
-    var contentType: ContentType { .json }
     var headers: HTTPHeaders { [:] }
+    var parametersEncoding: ParametersEncoding { .json }
 }

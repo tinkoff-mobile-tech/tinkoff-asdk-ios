@@ -23,7 +23,7 @@ struct Submit3DSAuthorizationV2Request: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post
-    let contentType: ContentType = .urlEncoded
+    let parametersEncoding: ParametersEncoding = .urlEncodedForm
     let parameters: HTTPParameters
     let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 

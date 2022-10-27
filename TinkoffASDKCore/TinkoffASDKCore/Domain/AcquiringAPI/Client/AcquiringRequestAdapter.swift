@@ -80,9 +80,9 @@ private struct AdaptedRequest: AcquiringRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod
-    let contentType: ContentType
     let headers: HTTPHeaders
     let parameters: HTTPParameters
+    let parametersEncoding: ParametersEncoding
     let decodingStrategy: AcquiringDecodingStrategy
     let tokenFormationStrategy: TokenFormationStrategy
 }
@@ -103,9 +103,9 @@ private extension AcquiringRequest {
             baseURL: baseURL,
             path: path,
             httpMethod: httpMethod,
-            contentType: contentType,
             headers: headers,
             parameters: parameters.merging(mergingParameters) { $1 },
+            parametersEncoding: parametersEncoding,
             decodingStrategy: decodingStrategy,
             tokenFormationStrategy: tokenFormationStrategy
         )

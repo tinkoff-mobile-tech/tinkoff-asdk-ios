@@ -43,10 +43,10 @@ final class URLRequestBuilder: IURLRequestBuilder {
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
         if !request.parameters.isEmpty, methodsAllowedToContainBody.contains(request.httpMethod) {
-            switch request.contentType {
+            switch request.parametersEncoding {
             case .json:
                 try encodeJSON(with: request.parameters, into: &urlRequest)
-            case .urlEncoded:
+            case .urlEncodedForm:
                 try encodeURLForm(with: request.parameters, into: &urlRequest)
             }
         }
