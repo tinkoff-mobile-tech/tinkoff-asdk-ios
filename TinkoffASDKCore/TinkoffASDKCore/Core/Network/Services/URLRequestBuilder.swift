@@ -28,55 +28,69 @@ final class URLRequestBuilder: IURLRequestBuilder {
 
     enum Error: Swift.Error {
         case failedToBuildPath
-        case encodingFailed(error: Swift.Error)
+        case parametersEncodingFailed(error: Swift.Error)
     }
 
-    private let serializationOptions: JSONSerialization.WritingOptions
-    private let methodsAllowedToContainJSONBody: Set<HTTPMethod> = [.post]
-
-    init(serializationOptions: JSONSerialization.WritingOptions = .sortedKeys) {
-        self.serializationOptions = serializationOptions
-    }
+    private let methodsAllowedToContainBody: Set<HTTPMethod> = [.post]
 
     // MARK: IURLRequestBuilder
 
     func build(request: NetworkRequest) throws -> URLRequest {
-        let fullURL = try URL(string: request.path, relativeTo: request.baseURL)
-            .orThrow(Error.failedToBuildPath)
+        let fullURL = try URL(string: request.path, relativeTo: request.baseURL).orThrow(Error.failedToBuildPath)
 
         var urlRequest = URLRequest(url: fullURL)
         urlRequest.httpMethod = request.httpMethod.rawValue
-
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
-        try encodeJSON(
-            with: request.parameters,
-            method: request.httpMethod,
-            toURLRequest: &urlRequest
-        )
+        if !request.parameters.isEmpty, methodsAllowedToContainBody.contains(request.httpMethod) {
+            switch request.contentType {
+            case .json:
+                try encodeJSON(with: request.parameters, into: &urlRequest)
+            case .urlEncoded:
+                try encodeURLForm(with: request.parameters, into: &urlRequest)
+            }
+        }
 
         return urlRequest
     }
+}
 
-    // MARK: Encoding
+// MARK: - JSON Parameters Encoding
 
-    private func encodeJSON(
-        with parameters: HTTPParameters,
-        method: HTTPMethod,
-        toURLRequest urlRequest: inout URLRequest
-    ) throws {
-        guard !parameters.isEmpty,
-              methodsAllowedToContainJSONBody.contains(method) else {
-            return
+private extension URLRequestBuilder {
+    func encodeJSON(with parameters: HTTPParameters, into urlRequest: inout URLRequest) throws {
+        urlRequest.httpBody = try Result {
+            try JSONSerialization.data(withJSONObject: parameters, options: .sortedKeys)
         }
+        .mapError { Error.parametersEncodingFailed(error: $0) }
+        .get()
 
-        do {
-            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: serializationOptions)
-        } catch {
-            throw Error.encodingFailed(error: error)
+        urlRequest.setContentTypeValueIfNeeded(.applicationJSON)
+    }
+}
+
+// MARK: - URLEncodedForm Parameters Encoding
+
+private extension URLRequestBuilder {
+    enum URLEncodedFormError: Swift.Error {
+        case failedToEncode(string: String)
+    }
+
+    func encodeURLForm(with parameters: HTTPParameters, into urlRequest: inout URLRequest) throws {
+        let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
+
+        let bodyString = parameters.map { key, value in
+            let value = "\(value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? value
+            return "\(key)=\(value)"
+        }.joined(separator: "&")
+
+        urlRequest.httpBody = try Result {
+            try bodyString.data(using: .utf8).orThrow(URLEncodedFormError.failedToEncode(string: bodyString))
         }
+        .mapError { Error.parametersEncodingFailed(error: $0) }
+        .get()
 
-        urlRequest.setValue(.applicationJSON, forHTTPHeaderField: .contentType)
+        urlRequest.setContentTypeValueIfNeeded(.applicationFormUrlEncoded)
     }
 }
 
@@ -85,4 +99,14 @@ final class URLRequestBuilder: IURLRequestBuilder {
 private extension String {
     static let contentType = "Content-Type"
     static let applicationJSON = "application/json"
+    static let applicationFormUrlEncoded = "application/x-www-form-urlencoded"
+}
+
+// MARK: - URLRequest + Utils
+
+private extension URLRequest {
+    mutating func setContentTypeValueIfNeeded(_ contentTypeValue: String) {
+        guard value(forHTTPHeaderField: .contentType) == nil else { return }
+        setValue(contentTypeValue, forHTTPHeaderField: .contentType)
+    }
 }
