@@ -14,7 +14,7 @@ final class URLRequestBuilderTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = URLRequestBuilder(serializationOptions: .sortedKeys)
+        sut = URLRequestBuilder()
     }
 
     override func tearDown() {
@@ -85,5 +85,23 @@ final class URLRequestBuilderTests: XCTestCase {
         // then
         XCTAssert(urlRequest.allHTTPHeaderFields == nil || urlRequest.allHTTPHeaderFields == [:])
         XCTAssertNil(urlRequest.httpBody)
+    }
+
+    func test_build_withURLFormParametersEncoding_shouldReturnURLFormEncodedRequest() throws {
+        // given
+        let request = NetworkRequestStub(
+            httpMethod: .post,
+            parameters: ["param1": 4, "param2": 8, "param3": "test"],
+            parametersEncoding: .urlEncodedForm
+        )
+
+        let expectedBody = try XCTUnwrap("param1=4&param2=8&param3=test".data(using: .utf8))
+
+        // when
+        let urlRequest = try sut.build(request: request)
+
+        // then
+        XCTAssertEqual(urlRequest.httpBody, expectedBody)
+        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/x-www-form-urlencoded")
     }
 }

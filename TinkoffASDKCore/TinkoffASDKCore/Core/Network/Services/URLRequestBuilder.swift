@@ -79,10 +79,12 @@ private extension URLRequestBuilder {
     func encodeURLForm(with parameters: HTTPParameters, into urlRequest: inout URLRequest) throws {
         let allowedCharacters = CharacterSet(charactersIn: " \"#%/:<>?@[\\]^`{|}+=").inverted
 
-        let bodyString = parameters.map { key, value in
-            let value = "\(value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? value
-            return "\(key)=\(value)"
-        }.joined(separator: "&")
+        let bodyString = parameters
+            .sorted { $0.key < $1.key }
+            .map { key, value in
+                let value = "\(value)".addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? value
+                return "\(key)=\(value)"
+            }.joined(separator: "&")
 
         urlRequest.httpBody = try Result {
             try bodyString.data(using: .utf8).orThrow(URLEncodedFormError.failedToEncode(string: bodyString))

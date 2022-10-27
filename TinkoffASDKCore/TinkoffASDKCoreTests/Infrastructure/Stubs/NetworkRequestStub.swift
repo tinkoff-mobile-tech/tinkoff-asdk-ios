@@ -24,15 +24,17 @@ struct NetworkRequestStub: NetworkRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod
-    var headers: HTTPHeaders
-    var parameters: HTTPParameters
+    let headers: HTTPHeaders
+    let parameters: HTTPParameters
+    let parametersEncoding: ParametersEncoding
 
     init(
         baseURL: URL = .doesNotMatter,
         path: String = "doesNotMatter",
         httpMethod: HTTPMethod = .get,
         headers: HTTPHeaders = [:],
-        parameters: HTTPParameters = [:]
+        parameters: HTTPParameters = [:],
+        parametersEncoding: ParametersEncoding = .json
 
     ) {
         self.baseURL = baseURL
@@ -40,5 +42,6 @@ struct NetworkRequestStub: NetworkRequest {
         self.httpMethod = httpMethod
         self.headers = headers
         self.parameters = parameters
+        self.parametersEncoding = parametersEncoding
     }
 }
