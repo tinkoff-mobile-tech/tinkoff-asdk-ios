@@ -1,6 +1,16 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [MIC-6527] NetworkClient unit tests
+* [MIC-6526] AcquiringAPIClient unit tests
+* [MIC-6801] AcquiringRequestAdapter unit tests
+
+### Fixed
+
+* [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
+
 ## [2.12.2] - 2022-10-28Z
 
 ### Changed
@@ -20,13 +30,6 @@
 * [MIC-6513+MIC-6279] Implementation of PaymentController from v3/root is now added master version. PaymentController - let's you have all the logic needed for payments without depening on UI.
 * [MIC-6582] CustomerKey editing now available in ASDKSample app
 * [MIC-6584] Switching terminal now available in ASDKSample app
-* [MIC-6527] NetworkClient unit tests
-* [MIC-6526] AcquiringAPIClient unit tests
-* [MIC-6801] AcquiringRequestAdapter unit tests
-
-### Fixed
-
-* [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
 
 ### Fixed
 
