@@ -36,9 +36,9 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         var request = request
 
         switch request.terminalKeyProvidingStrategy {
-        case .methodDependent:
+        case .always:
             request = request.adapted(withTerminalKey: terminalKeyProvider.value)
-        case .none:
+        case .never:
             break
         }
 

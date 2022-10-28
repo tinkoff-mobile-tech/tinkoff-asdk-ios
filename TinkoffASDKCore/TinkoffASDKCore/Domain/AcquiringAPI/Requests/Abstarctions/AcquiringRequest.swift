@@ -35,21 +35,21 @@ extension TokenFormationStrategy {
     }
 }
 
-/// Определяет необходимость добавления параметра `TerminalKey` к телу запроса
+/// Определяет необходимость добавления параметра `TerminalKey` к параметрам запроса
 enum TerminalKeyProvidingStrategy {
-    /// Добавляет `TerminalKey` к параметрам запроса в зависимости от http-метода
-    case methodDependent
+    /// Всегда добавляет `TerminalKey` к параметрам запроса
+    case always
     /// `TerminalKey` не участвует в формировании запроса
-    case none
+    case never
 }
 
 protocol AcquiringRequest: NetworkRequest {
     var decodingStrategy: AcquiringDecodingStrategy { get }
+    /// Определяет необходимость добавления параметра `TerminalKey` к параметрам запроса
     var terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy { get }
     var tokenFormationStrategy: TokenFormationStrategy { get }
 }
 
 extension AcquiringRequest {
-    var terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy { .methodDependent }
     var decodingStrategy: AcquiringDecodingStrategy { .standard }
 }

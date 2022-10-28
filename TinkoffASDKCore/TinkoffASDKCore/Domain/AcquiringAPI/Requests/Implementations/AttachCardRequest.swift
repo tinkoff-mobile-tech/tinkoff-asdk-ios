@@ -24,6 +24,7 @@ struct AttachCardRequest: AcquiringRequest {
     let path: String = "v2/AttachCard"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always
     let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(

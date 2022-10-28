@@ -26,7 +26,7 @@ struct AcquiringRequestStub: AcquiringRequest {
         headers: HTTPHeaders = [:],
         parameters: HTTPParameters = [:],
         parametersEncoding: ParametersEncoding = .json,
-        terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .methodDependent,
+        terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always,
         tokenFormationStrategy: TokenFormationStrategy = .none,
         decodingStrategy: AcquiringDecodingStrategy = .standard
     ) {

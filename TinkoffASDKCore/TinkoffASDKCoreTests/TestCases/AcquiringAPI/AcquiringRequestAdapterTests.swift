@@ -34,7 +34,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         // given
         let request = AcquiringRequestStub(
             parameters: ["test": "test"],
-            terminalKeyProvidingStrategy: .none,
+            terminalKeyProvidingStrategy: .never,
             tokenFormationStrategy: .none
         )
 
@@ -52,7 +52,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
 
         let request = AcquiringRequestStub(
             parameters: initialParameters,
-            terminalKeyProvidingStrategy: .methodDependent,
+            terminalKeyProvidingStrategy: .always,
             tokenFormationStrategy: .none
         )
 
@@ -75,7 +75,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
 
         let request = AcquiringRequestStub(
             parameters: initialParameters,
-            terminalKeyProvidingStrategy: .none,
+            terminalKeyProvidingStrategy: .never,
             tokenFormationStrategy: .includeAll()
         )
 
