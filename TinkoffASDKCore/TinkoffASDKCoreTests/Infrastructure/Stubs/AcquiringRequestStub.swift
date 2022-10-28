@@ -26,7 +26,7 @@ struct AcquiringRequestStub: AcquiringRequest {
         headers: HTTPHeaders = [:],
         parameters: HTTPParameters = [:],
         parametersEncoding: ParametersEncoding = .json,
-        terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .methodDependent,
+        terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always,
         tokenFormationStrategy: TokenFormationStrategy = .none,
         decodingStrategy: AcquiringDecodingStrategy = .standard
     ) {
@@ -55,13 +55,5 @@ extension AcquiringRequestStub: Equatable {
             && lhs.terminalKeyProvidingStrategy == rhs.terminalKeyProvidingStrategy
             && lhs.tokenFormationStrategy == rhs.tokenFormationStrategy
             && lhs.decodingStrategy == rhs.decodingStrategy
-    }
-}
-
-// MARK: - Dictionary + Utils
-
-private extension Dictionary where Value == Any {
-    func isEqual(to other: [Key: Value]) -> Bool {
-        NSDictionary(dictionary: self).isEqual(to: other)
     }
 }
