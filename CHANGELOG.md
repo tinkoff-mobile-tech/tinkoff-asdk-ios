@@ -24,6 +24,7 @@
 
 * pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
 * [MIC-6735] Response validation by condition `success == true && errorCode == 0`
+* [MIC-6847] Rename objc method for issue #208
 
 ## [2.11.1] - 2022-10-10Z
 
