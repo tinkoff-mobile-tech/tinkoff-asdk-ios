@@ -24,6 +24,9 @@ Pod::Spec.new do |spec|
 
   	spec.vendored_frameworks = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
     spec.preserve_paths = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
-
 	spec.dependency 'TinkoffASDKCore'
+
+	spec.test_spec 'Tests' do |test_spec|
+	test_spec.source_files = 'TinkoffASDKUI/TinkoffASDKUITests/**/*'
+	end
 end

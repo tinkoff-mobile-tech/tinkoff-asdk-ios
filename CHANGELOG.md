@@ -1,10 +1,29 @@
 # Changelog
 ## [Unreleased]
 
+### Changed
+
+* [MIC-6423] Fix ASDKCore architecture after merging versions
+* [MIC-6431] Remove unused entities in ASDKCore
+* [MIC-6432] Dependency inversion in ASDKCore
+* [MIC-6433] File structure in ASDKCore
+* [MIC-6434] Adapt the network layer for different response formats in ASDKCore
+* [MIC-6671] Change host for test environment to rest-api-test.tinkoff.ru
+* [MIC-6671] Change public key in ASDKSample
+
+### Added
+
+* [MIC-6063] Implement token providing logic for ASDK requests
+* [MIC-6184] Implement SampleTokenProvider in ASDKSample
+* [MIC-6582] CustomerKey editing now available in ASDKSample app
+* [MIC-6584] Switching terminal now available in ASDKSample app
+
 ## [2.11.2] - 2022-10-13Z
 
 ### Fixed
+
 * pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
+* [MIC-6735] Response validation by condition `success == true && errorCode == 0`
 
 ## [2.11.1] - 2022-10-10Z
 

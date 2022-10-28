@@ -73,6 +73,9 @@ class RootViewController: UITableViewController {
     private var dataSource: [Product] = []
     private var onScannerResult: ((_ number: String?, _ date: String?) -> Void)?
 
+    // State
+    private weak var buyProductsVieController: BuyProductsViewController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -114,6 +117,17 @@ class RootViewController: UITableViewController {
         }
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        if indexPath.section == 1 {
+            showSpbQrCollector()
+        } else {
+            showBuyProductsViewController(rowIndex: indexPath.row)
+        }
+
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let product = dataSource[indexPath.row]
@@ -138,56 +152,7 @@ class RootViewController: UITableViewController {
         return tableView.defaultCell()
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            let credentional = AcquiringSdkCredential(
-                terminalKey: StageTestData.terminalKey,
-                publicKey: StageTestData.testPublicKey
-            )
-
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
-            acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-
-            if let sdk = try? AcquiringUISDK(configuration: acquiringSDKConfiguration) {
-
-                let viewConfigration = AcquiringViewConfiguration()
-                viewConfigration.viewTitle = Loc.Title.qrcode
-
-                sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
-                tableView.deselectRow(at: indexPath, animated: true)
-            }
-        }
-    }
-
     // MARK: - Navigation
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let viewController = segue.destination as? BuyProductsViewController,
-           let cell = sender as? UITableViewCell,
-           let indexPath = tableView.indexPath(for: cell) {
-            let product = dataSource[indexPath.row]
-
-            let credentional = AcquiringSdkCredential(
-                terminalKey: StageTestData.terminalKey,
-                publicKey: StageTestData.testPublicKey
-            )
-
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
-            acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-            acquiringSDKConfiguration.fpsEnabled = AppSetting.shared.paySBP
-
-            if let sdk = try? AcquiringUISDK(
-                configuration: acquiringSDKConfiguration,
-                style: TinkoffASDKUI.DefaultStyle()
-            ) {
-                viewController.scaner = self
-                viewController.sdk = sdk
-                viewController.customerKey = StageTestData.customerKey
-            }
-
-            viewController.products = [product]
-        }
-    }
 
     private func addCardView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
         sdk.presentAddCardView(on: self, customerKey: customerKey, configuration: cardListViewConfigration) { result in
@@ -217,15 +182,6 @@ class RootViewController: UITableViewController {
     }
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
-        let credentional = AcquiringSdkCredential(
-            terminalKey: StageTestData.terminalKey,
-            publicKey: StageTestData.testPublicKey
-        )
-
-        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
-        acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-
-        let customerKey = StageTestData.customerKey
         let cardListViewConfigration = AcquiringViewConfiguration()
         cardListViewConfigration.viewTitle = Loc.Title.paymentCardList
         cardListViewConfigration.scaner = self
@@ -234,14 +190,9 @@ class RootViewController: UITableViewController {
             cardListViewConfigration.alertViewHelper = self
         }
 
-        cardListViewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
-
-        if let sdk = try? AcquiringUISDK(
-            configuration: acquiringSDKConfiguration,
-            style: TinkoffASDKUI.DefaultStyle()
-        ) {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
             // открыть экран сиска карт
-            addCardListView(sdk, customerKey, cardListViewConfigration)
+            addCardListView(sdk, AppSetting.shared.activeSdkCredentials.customerKey, cardListViewConfigration)
             // или открыть экран добавлени карты
             // addCardView(sdk, customerKey, cardListViewConfigration)
 
@@ -277,5 +228,39 @@ extension RootViewController: AcquiringAlertViewProtocol {
         }))
 
         return alertView
+    }
+}
+
+// MARK: - Private methods only
+
+private extension RootViewController {
+
+    private func showSpbQrCollector() {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            let viewConfigration = AcquiringViewConfiguration()
+            viewConfigration.viewTitle = Loc.Title.qrcode
+
+            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
+        }
+    }
+
+    private func showBuyProductsViewController(rowIndex: Int) {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            let product = dataSource[rowIndex]
+
+            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+            guard let viewController = storyboard.instantiateViewController(
+                withIdentifier: String(describing: BuyProductsViewController.self)
+            ) as? BuyProductsViewController
+            else {
+                return
+            }
+
+            viewController.scaner = self
+            viewController.sdk = sdk
+            viewController.customerKey = AppSetting.shared.activeSdkCredentials.customerKey
+            viewController.products = [product]
+            navigationController?.pushViewController(viewController, animated: true)
+        }
     }
 }

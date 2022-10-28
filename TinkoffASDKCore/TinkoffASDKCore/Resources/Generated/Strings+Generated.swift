@@ -12,33 +12,35 @@ import Foundation
 internal enum Loc {
   internal enum APIError {
     /// Ошибка API экваринга
-    internal static let failureError = Loc.tr("Localizable", "APIError.failureError", fallback: #"Ошибка API экваринга"#)
+    internal static let failureError = Loc.tr("Localizable", "APIError.failureError", fallback: "Ошибка API экваринга")
     /// Некорректный ответ API
-    internal static let invalidResponse = Loc.tr("Localizable", "APIError.invalidResponse", fallback: #"Некорректный ответ API"#)
+    internal static let invalidResponse = Loc.tr("Localizable", "APIError.invalidResponse", fallback: "Некорректный ответ API")
   }
   internal enum NetworkError {
     /// Пустой ответ
-    internal static let emptyBody = Loc.tr("Localizable", "NetworkError.emptyBody", fallback: #"Пустой ответ"#)
+    internal static let emptyResponse = Loc.tr("Localizable", "NetworkError.emptyResponse", fallback: "Пустой ответ")
+    /// Не удалось создать запрос
+    internal static let failedToCreateRequest = Loc.tr("Localizable", "NetworkError.failedToCreateRequest", fallback: "Не удалось создать запрос")
     /// Ошибка сервера
-    internal static let serverError = Loc.tr("Localizable", "NetworkError.serverError", fallback: #"Ошибка сервера"#)
+    internal static let serverError = Loc.tr("Localizable", "NetworkError.serverError", fallback: "Ошибка сервера")
     /// Ошибка сети
-    internal static let transportError = Loc.tr("Localizable", "NetworkError.transportError", fallback: #"Ошибка сети"#)
+    internal static let transportError = Loc.tr("Localizable", "NetworkError.transportError", fallback: "Ошибка сети")
   }
   internal enum TinkoffAcquiring {
     internal enum Request {
       internal enum Error {
         /// Can't create confirmation request
-        internal static let cantCreateConfirmation = Loc.tr("Localizable", "TinkoffAcquiring.request.error.cantCreateConfirmation", fallback: #"Can't create confirmation request"#)
+        internal static let cantCreateConfirmation = Loc.tr("Localizable", "TinkoffAcquiring.request.error.cantCreateConfirmation", fallback: "Can't create confirmation request")
       }
     }
     internal enum Response {
       internal enum Error {
         /// Received error response
-        internal static let errorResponse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.errorResponse", fallback: #"Received error response"#)
+        internal static let errorResponse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.errorResponse", fallback: "Received error response")
         /// Received invalid response
-        internal static let invalidResponse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.invalidResponse", fallback: #"Received invalid response"#)
+        internal static let invalidResponse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.invalidResponse", fallback: "Received invalid response")
         /// Acquiring received error 'Success: false'
-        internal static let statusFalse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.statusFalse", fallback: #"Acquiring received error 'Success: false'"#)
+        internal static let statusFalse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.statusFalse", fallback: "Acquiring received error 'Success: false'")
       }
     }
   }
