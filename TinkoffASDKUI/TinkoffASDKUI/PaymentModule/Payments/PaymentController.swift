@@ -110,6 +110,7 @@ public final class PaymentController {
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
 
+    private var threeDSHandlerDidCancel: () -> Void = {}
     private var threeDSHandlerCompletion: ((Result<GetPaymentStatePayload, Error>) -> Void)?
 
     // MARK: - Temporary until refactor PaymentView!
@@ -209,11 +210,12 @@ private extension PaymentController {
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
 
-        threeDSHandler.didCancel = {
+        threeDSHandlerDidCancel = {
             paymentProcess.cancel()
             confirmationCancelled()
         }
 
+        threeDSHandler.onUserTapCloseButton = threeDSHandlerDidCancel
         threeDSHandlerCompletion = completion
 
         DispatchQueue.main.async {
@@ -226,6 +228,7 @@ private extension PaymentController {
             let threeDSViewController = ThreeDSViewController<GetPaymentStatePayload>(
                 urlRequest: urlRequest,
                 handler: self.threeDSHandler,
+                onHandleCancelled: self.threeDSHandlerDidCancel,
                 didHandle: self.threeDSHandlerCompletion
             )
             let navigationController = UINavigationController(rootViewController: threeDSViewController)

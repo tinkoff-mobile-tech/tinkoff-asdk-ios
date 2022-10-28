@@ -27,15 +27,18 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
 
     lazy var webView = WKWebView()
 
+    private var onHandleCancelled: (() -> Void)?
     private var didHandle: ((Result<Payload, Error>) -> Void)?
 
     init(
         urlRequest: URLRequest,
         handler: IThreeDSWebViewHandler,
+        onHandleCancelled: (() -> Void)?,
         didHandle: ((Result<Payload, Error>) -> Void)?
     ) {
         self.urlRequest = urlRequest
         self.handler = handler
+        self.onHandleCancelled = onHandleCancelled
         self.didHandle = didHandle
         super.init(nibName: nil, bundle: nil)
     }
@@ -73,14 +76,17 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
                     return
                 }
 
-                let result: Result<Payload?, Error> = Result {
+                let result: Result<ThreeDSHandleResult<Payload>, Error> = Result {
                     try self.handler.handle(urlString: uri, responseData: responseData)
                 }
 
                 switch result {
-                case let .success(payload):
-                    if let payload = payload {
+                case let .success(payloadResult):
+                    switch payloadResult {
+                    case let .success(payload):
                         self.didHandle?(.success(payload))
+                    case .cancelled:
+                        self.onHandleCancelled?()
                     }
                 case let .failure(error):
                     self.didHandle?(.failure(error))
@@ -109,6 +115,6 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
 
     @objc func didTapCloseButton() {
-        handler.didCancel?()
+        handler.onUserTapCloseButton?()
     }
 }

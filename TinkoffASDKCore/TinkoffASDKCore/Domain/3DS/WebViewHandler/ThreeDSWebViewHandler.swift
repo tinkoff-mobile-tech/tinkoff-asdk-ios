@@ -20,22 +20,26 @@
 import Foundation
 
 public protocol IThreeDSWebViewHandler: AnyObject {
-    var didCancel: (() -> Void)? { get set }
+    var onUserTapCloseButton: (() -> Void)? { get set }
 
     func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> Payload?
+    ) throws -> ThreeDSHandleResult<Payload>
+}
+
+public enum ThreeDSHandleResult<Payload: Decodable> {
+    case success(payload: Payload)
+    case cancelled
 }
 
 public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHandler {
 
-    public enum GenericError: Swift.Error {
-        case genericError
-        case cancelled
+    public enum ThreeDSError: Swift.Error {
+        case hasNoConfirmationUrlSuffix
     }
 
-    public var didCancel: (() -> Void)?
+    public var onUserTapCloseButton: (() -> Void)?
 
     private let urlBuilder: IThreeDSURLBuilder
     private let decoder: IAcquiringDecoder
@@ -51,11 +55,10 @@ public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHan
     public func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> Payload? {
+    ) throws -> ThreeDSHandleResult<Payload> {
 
         guard !urlString.hasSuffix("cancel.do") else {
-            didCancel?()
-            return nil
+            return .cancelled
         }
 
         let confirmation3DSTerminationURLString = urlBuilder
@@ -67,9 +70,10 @@ public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHan
             .absoluteString
 
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
-            throw GenericError.genericError
+            throw ThreeDSError.hasNoConfirmationUrlSuffix
         }
 
-        return try decoder.decode(Payload.self, from: data, with: .standard)
+        let payload = try decoder.decode(Payload.self, from: data, with: .standard)
+        return ThreeDSHandleResult.success(payload: payload)
     }
 }

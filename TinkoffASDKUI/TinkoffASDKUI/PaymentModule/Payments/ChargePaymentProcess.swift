@@ -90,20 +90,17 @@ private extension ChargePaymentProcess {
             return
         }
 
-        let data = PaymentChargeRequestData(
-            paymentId: paymentId,
-            parentPaymentId: parentPaymentId
+        performCharge(
+            data: ChargeData(
+                paymentId: String(paymentId),
+                rebillId: String(parentPaymentId)
+            )
         )
-        performCharge(data: data)
     }
 
-    func performCharge(data: PaymentChargeRequestData) {
-        let newData = ChargeData(
-            paymentId: String(data.paymentId),
-            rebillId: String(data.parentPaymentId)
-        )
+    func performCharge(data: ChargeData) {
 
-        let request = paymentsService.charge(data: newData) { [weak self] result in
+        let request = paymentsService.charge(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -124,12 +121,13 @@ private extension ChargePaymentProcess {
             return
         }
 
-        let data = PaymentChargeRequestData(
-            paymentId: paymentId,
-            parentPaymentId: parentPaymentId
-        )
         self.paymentId = payload.paymentId
-        performCharge(data: data)
+        performCharge(
+            data: ChargeData(
+                paymentId: String(paymentId),
+                rebillId: String(parentPaymentId)
+            )
+        )
     }
 
     func handleChargeResult(payload: ChargePayload) {

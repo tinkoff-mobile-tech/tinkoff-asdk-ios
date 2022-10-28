@@ -10,7 +10,7 @@ import Foundation
 
 final class MockThreeDSWebViewHandler: IThreeDSWebViewHandler {
 
-    var didCancel: (() -> Void)?
+    var onUserTapCloseButton: (() -> Void)?
 
     // MARK: - Handle
 
@@ -21,18 +21,20 @@ final class MockThreeDSWebViewHandler: IThreeDSWebViewHandler {
 
     var handleCallCounter = 0
     var handlePassedArguments: HandlePassedArguments?
-    var handleReturnStubValue: Result<Decodable, Error> = .failure(TestsError.noValue)
+    var handleReturnStubValue: (HandlePassedArguments) -> Result<Decodable, Error> = { _ in .failure(TestsError.noValue) }
 
     func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> Payload? {
+    ) throws -> ThreeDSHandleResult<Payload> {
         handleCallCounter += 1
-        handlePassedArguments = HandlePassedArguments(
+        let args = HandlePassedArguments(
             urlString: urlString,
             responseData: data
         )
+        handlePassedArguments = args
+        let payload = try handleReturnStubValue(args).get()
 
-        return try (handleReturnStubValue as! Result<Payload, Error>).get()
+        return .success(payload: payload as! Payload)
     }
 }
