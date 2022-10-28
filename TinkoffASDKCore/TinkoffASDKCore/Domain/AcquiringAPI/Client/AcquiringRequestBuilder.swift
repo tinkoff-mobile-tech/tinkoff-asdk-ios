@@ -78,7 +78,7 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
     }
 
     func submit3DSAuthorizationV2(data: CresData) -> AcquiringRequest {
-        ThreeDSV2AuthorizationRequest(data: data, baseURL: baseURLProvider.url)
+        Submit3DSAuthorizationV2Request(data: data, baseURL: baseURLProvider.url)
     }
 
     func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest {

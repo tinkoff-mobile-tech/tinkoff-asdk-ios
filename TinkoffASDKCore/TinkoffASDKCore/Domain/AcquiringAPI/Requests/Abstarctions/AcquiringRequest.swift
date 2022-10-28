@@ -25,8 +25,8 @@ enum AcquiringDecodingStrategy {
 }
 
 enum TokenFormationStrategy: Equatable {
-    case none
     case includeAll(exceptParameters: Set<String>)
+    case none
 }
 
 extension TokenFormationStrategy {
@@ -35,11 +35,21 @@ extension TokenFormationStrategy {
     }
 }
 
+/// Определяет необходимость добавления параметра `TerminalKey` к телу запроса
+enum TerminalKeyProvidingStrategy {
+    /// Добавляет `TerminalKey` к параметрам запроса в зависимости от http-метода
+    case methodDependent
+    /// `TerminalKey` не участвует в формировании запроса
+    case none
+}
+
 protocol AcquiringRequest: NetworkRequest {
     var decodingStrategy: AcquiringDecodingStrategy { get }
+    var terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy { get }
     var tokenFormationStrategy: TokenFormationStrategy { get }
 }
 
 extension AcquiringRequest {
+    var terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy { .methodDependent }
     var decodingStrategy: AcquiringDecodingStrategy { .standard }
 }

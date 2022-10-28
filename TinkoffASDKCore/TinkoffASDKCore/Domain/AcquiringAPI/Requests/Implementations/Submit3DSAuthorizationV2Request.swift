@@ -1,6 +1,6 @@
 //
 //
-//  ThreeDSV2AuthorizationRequest.swift
+//  Submit3DSAuthorizationV2Request.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,12 +19,14 @@
 
 import Foundation
 
-struct ThreeDSV2AuthorizationRequest: AcquiringRequest {
+struct Submit3DSAuthorizationV2Request: AcquiringRequest {
     let baseURL: URL
     let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post
+    let parametersEncoding: ParametersEncoding = .urlEncodedForm
     let parameters: HTTPParameters
-    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .none
+    let tokenFormationStrategy: TokenFormationStrategy = .none
 
     init(data: CresData, baseURL: URL) {
         self.baseURL = baseURL
