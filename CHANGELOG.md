@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.12.0] - 2022-10-28Z
+
 ### Changed
 
 * [MIC-6423] Fix ASDKCore architecture after merging versions
