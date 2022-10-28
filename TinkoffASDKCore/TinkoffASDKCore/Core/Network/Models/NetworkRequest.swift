@@ -29,6 +29,12 @@ struct HTTPMethod: RawRepresentable, Hashable {
     let rawValue: String
 }
 
+extension HTTPMethod {
+    var isAllowedToContainBody: Bool {
+        self == .post
+    }
+}
+
 enum ParametersEncoding {
     case json
     case urlEncodedForm

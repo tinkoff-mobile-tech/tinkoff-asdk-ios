@@ -31,8 +31,6 @@ final class URLRequestBuilder: IURLRequestBuilder {
         case parametersEncodingFailed(error: Swift.Error)
     }
 
-    private let methodsAllowedToContainBody: Set<HTTPMethod> = [.post]
-
     // MARK: IURLRequestBuilder
 
     func build(request: NetworkRequest) throws -> URLRequest {
@@ -42,7 +40,7 @@ final class URLRequestBuilder: IURLRequestBuilder {
         urlRequest.httpMethod = request.httpMethod.rawValue
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
-        if !request.parameters.isEmpty, methodsAllowedToContainBody.contains(request.httpMethod) {
+        if request.httpMethod.isAllowedToContainBody, !request.parameters.isEmpty {
             switch request.parametersEncoding {
             case .json:
                 try encodeJSON(with: request.parameters, into: &urlRequest)

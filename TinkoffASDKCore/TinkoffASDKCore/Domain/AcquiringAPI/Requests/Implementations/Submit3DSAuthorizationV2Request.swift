@@ -25,7 +25,8 @@ struct Submit3DSAuthorizationV2Request: AcquiringRequest {
     let httpMethod: HTTPMethod = .post
     let parametersEncoding: ParametersEncoding = .urlEncodedForm
     let parameters: HTTPParameters
-    let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .none
+    let tokenFormationStrategy: TokenFormationStrategy = .none
 
     init(data: CresData, baseURL: URL) {
         self.baseURL = baseURL
