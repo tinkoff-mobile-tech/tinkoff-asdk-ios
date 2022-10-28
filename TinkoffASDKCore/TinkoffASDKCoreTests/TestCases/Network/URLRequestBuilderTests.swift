@@ -60,7 +60,7 @@ final class URLRequestBuilderTests: XCTestCase {
         )
 
         let expectedParamsData = try JSONSerialization.data(withJSONObject: request.parameters, options: .sortedKeys)
-        let expectedHeaders = request.headers.merging(["Content-Type": "application/json"]) { $1 }
+        let expectedHeaders = request.headers.merging([.contentType: .applicationJSON]) { $1 }
 
         // when
         let urlRequest = try sut.build(request: request)
@@ -102,6 +102,30 @@ final class URLRequestBuilderTests: XCTestCase {
 
         // then
         XCTAssertEqual(urlRequest.httpBody, expectedBody)
-        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/x-www-form-urlencoded")
+        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: .contentType), .applicationURLEncodedForm)
     }
+
+    func test_build_withEmptyParameters_shouldReturnURLRequestWithoutBodyAndContentType() throws {
+        // given
+        let request = NetworkRequestStub(
+            httpMethod: .post,
+            headers: ["header": "value"],
+            parameters: [:]
+        )
+
+        // when
+        let urlRequest = try sut.build(request: request)
+
+        // then
+        XCTAssertNil(urlRequest.httpBody)
+        XCTAssertNil(urlRequest.value(forHTTPHeaderField: .contentType))
+    }
+}
+
+// MARK: - String + Constants
+
+private extension String {
+    static let contentType = "Content-Type"
+    static let applicationJSON = "application/json"
+    static let applicationURLEncodedForm = "application/x-www-form-urlencoded"
 }

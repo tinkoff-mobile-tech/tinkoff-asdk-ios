@@ -15,6 +15,7 @@ struct AcquiringRequestStub: AcquiringRequest {
     let headers: HTTPHeaders
     let parameters: HTTPParameters
     let parametersEncoding: ParametersEncoding
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy
     let tokenFormationStrategy: TokenFormationStrategy
     let decodingStrategy: AcquiringDecodingStrategy
 
@@ -25,6 +26,7 @@ struct AcquiringRequestStub: AcquiringRequest {
         headers: HTTPHeaders = [:],
         parameters: HTTPParameters = [:],
         parametersEncoding: ParametersEncoding = .json,
+        terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .methodDependent,
         tokenFormationStrategy: TokenFormationStrategy = .none,
         decodingStrategy: AcquiringDecodingStrategy = .standard
     ) {
@@ -34,6 +36,7 @@ struct AcquiringRequestStub: AcquiringRequest {
         self.headers = headers
         self.parameters = parameters
         self.parametersEncoding = parametersEncoding
+        self.terminalKeyProvidingStrategy = terminalKeyProvidingStrategy
         self.tokenFormationStrategy = tokenFormationStrategy
         self.decodingStrategy = decodingStrategy
     }
@@ -49,6 +52,7 @@ extension AcquiringRequestStub: Equatable {
             && lhs.headers == rhs.headers
             && lhs.parameters.isEqual(to: rhs.parameters)
             && lhs.parametersEncoding == rhs.parametersEncoding
+            && lhs.terminalKeyProvidingStrategy == rhs.terminalKeyProvidingStrategy
             && lhs.tokenFormationStrategy == rhs.tokenFormationStrategy
             && lhs.decodingStrategy == rhs.decodingStrategy
     }
