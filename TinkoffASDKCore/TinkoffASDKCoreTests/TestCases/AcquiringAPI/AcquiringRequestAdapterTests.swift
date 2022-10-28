@@ -30,9 +30,13 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         sut = nil
     }
 
-    func test_adapt_withEmptyParameters_shouldCallbackSameRequest() throws {
+    func test_adapt_withoutAnyAdaptingStrategies_shouldCallbackSameRequest() throws {
         // given
-        let request = AcquiringRequestStub(parameters: [:])
+        let request = AcquiringRequestStub(
+            parameters: ["test": "test"],
+            terminalKeyProvidingStrategy: .none,
+            tokenFormationStrategy: .none
+        )
 
         // when
         let result = adaptWaiting(request: request)
@@ -42,10 +46,16 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         XCTAssertEqual(adaptedRequest, request)
     }
 
-    func test_adapt_withNonEmptyParametersAndNoneTokenFormationStrategy_shouldCallbackRequestWithTerminalKey() throws {
+    func test_adapt_withMethodDependantTerminalKeyStrategy_shouldCallbackRequestWithTerminalKey() throws {
         // given
         let initialParameters = ["one": "two"]
-        let request = AcquiringRequestStub(parameters: initialParameters, tokenFormationStrategy: .none)
+
+        let request = AcquiringRequestStub(
+            parameters: initialParameters,
+            terminalKeyProvidingStrategy: .methodDependent,
+            tokenFormationStrategy: .none
+        )
+
         let stubbedTerminalKey = "testKey"
         terminalKeyProvider.stubbedValue = stubbedTerminalKey
 
@@ -56,11 +66,33 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         let adaptedRequest = try result.get()
         let expectedParameters = initialParameters.merging([Constants.Keys.terminalKey: stubbedTerminalKey]) { $1 }
 
-        XCTAssertFalse(adaptedRequest is AcquiringRequestStub)
         XCTAssert(adaptedRequest.parameters.isEqual(to: expectedParameters))
     }
 
-    func test_adapt_withNonEmptyParametersAndTokenFormationStrategy_shouldCallbackRequestWithTerminalKeyAndToken() throws {
+    func test_adapt_withTokenFormationStrategy_shouldCallbackRequestWithToken() throws {
+        // given
+        let initialParameters = ["one": "two"]
+
+        let request = AcquiringRequestStub(
+            parameters: initialParameters,
+            terminalKeyProvidingStrategy: .none,
+            tokenFormationStrategy: .includeAll()
+        )
+
+        let stubbedToken = "testToken"
+        tokenProvider.provideTokenMethodStub = { _, completion in completion(.success(stubbedToken)) }
+
+        // when
+        let result = adaptWaiting(request: request)
+
+        // then
+        let adaptedRequest = try result.get()
+        let expectedParameters = initialParameters.merging([Constants.Keys.token: stubbedToken]) { $1 }
+
+        XCTAssert(adaptedRequest.parameters.isEqual(to: expectedParameters))
+    }
+
+    func test_adapt_withMethodDependantTerminalKeyAndTokenStrategies_shouldCallbackRequestWithTerminalKeyAndToken() throws {
         // given
         let initialParameters = [
             "one": "two",

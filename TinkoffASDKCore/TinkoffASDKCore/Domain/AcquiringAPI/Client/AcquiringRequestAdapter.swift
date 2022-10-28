@@ -33,10 +33,6 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         request: AcquiringRequest,
         completion: @escaping (Result<AcquiringRequest, Error>) -> Void
     ) {
-        guard request.httpMethod.isAllowedToContainBody else {
-            return completion(.success(request))
-        }
-
         var request = request
 
         switch request.terminalKeyProvidingStrategy {
