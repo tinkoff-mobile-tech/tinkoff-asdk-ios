@@ -108,6 +108,7 @@ private extension NetworkSession {
         let urlSessionConfiguration = URLSessionConfiguration.default
         urlSessionConfiguration.timeoutIntervalForRequest = requestsTimeout
         urlSessionConfiguration.timeoutIntervalForResource = requestsTimeout
+        urlSessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
         let urlSession = URLSession(configuration: urlSessionConfiguration)
         return NetworkSession(urlSession: urlSession)
     }

@@ -24,8 +24,9 @@ struct GetCardListRequest: AcquiringRequest {
     let path: String = "v2/GetCardList"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
-    let decodingStrategy: AcquiringDecodingStrategy = .clipped
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always
     let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
+    let decodingStrategy: AcquiringDecodingStrategy = .clipped
 
     init(getCardListData: GetCardListData, baseURL: URL) {
         self.baseURL = baseURL

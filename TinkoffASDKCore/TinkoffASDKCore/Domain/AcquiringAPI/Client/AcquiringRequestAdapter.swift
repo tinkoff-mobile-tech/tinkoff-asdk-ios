@@ -33,21 +33,24 @@ final class AcquiringRequestAdapter: IAcquiringRequestAdapter {
         request: AcquiringRequest,
         completion: @escaping (Result<AcquiringRequest, Error>) -> Void
     ) {
-        guard !request.parameters.isEmpty else {
-            return completion(.success(request))
+        var request = request
+
+        switch request.terminalKeyProvidingStrategy {
+        case .always:
+            request = request.adapted(withTerminalKey: terminalKeyProvider.value)
+        case .never:
+            break
         }
 
-        let requestWithTerminalKey = request.adapted(withTerminalKey: terminalKeyProvider.value)
-
         switch request.tokenFormationStrategy {
-        case .none:
-            completion(.success(requestWithTerminalKey))
         case let .includeAll(excludingParams):
             adaptWithToken(
-                request: requestWithTerminalKey,
+                request: request,
                 excludingParameters: excludingParams,
                 completion: completion
             )
+        case .none:
+            completion(.success(request))
         }
     }
 
@@ -80,9 +83,11 @@ private struct AdaptedRequest: AcquiringRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod
-    let parameters: HTTPParameters
     let headers: HTTPHeaders
+    let parameters: HTTPParameters
+    let parametersEncoding: ParametersEncoding
     let decodingStrategy: AcquiringDecodingStrategy
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy
     let tokenFormationStrategy: TokenFormationStrategy
 }
 
@@ -102,9 +107,11 @@ private extension AcquiringRequest {
             baseURL: baseURL,
             path: path,
             httpMethod: httpMethod,
-            parameters: parameters.merging(mergingParameters) { $1 },
             headers: headers,
+            parameters: parameters.merging(mergingParameters) { $1 },
+            parametersEncoding: parametersEncoding,
             decodingStrategy: decodingStrategy,
+            terminalKeyProvidingStrategy: terminalKeyProvidingStrategy,
             tokenFormationStrategy: tokenFormationStrategy
         )
     }
