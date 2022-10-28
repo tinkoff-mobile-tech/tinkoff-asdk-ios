@@ -84,16 +84,10 @@ private extension ChargePaymentProcess {
     }
 
     func finishPayment(paymentId: String) {
-        guard let paymentId = Int64(paymentId),
-              let parentPaymentId = Int64(getRebillId())
-        else {
-            return
-        }
-
         performCharge(
             data: ChargeData(
-                paymentId: String(paymentId),
-                rebillId: String(parentPaymentId)
+                paymentId: paymentId,
+                rebillId: getRebillId()
             )
         )
     }
@@ -115,17 +109,11 @@ private extension ChargePaymentProcess {
     }
 
     func handleInitResult(payload: InitPayload) {
-        guard let paymentId = Int64(payload.paymentId),
-              let parentPaymentId = Int64(getRebillId())
-        else {
-            return
-        }
-
-        self.paymentId = payload.paymentId
+        paymentId = payload.paymentId
         performCharge(
             data: ChargeData(
-                paymentId: String(paymentId),
-                rebillId: String(parentPaymentId)
+                paymentId: payload.paymentId,
+                rebillId: getRebillId()
             )
         )
     }

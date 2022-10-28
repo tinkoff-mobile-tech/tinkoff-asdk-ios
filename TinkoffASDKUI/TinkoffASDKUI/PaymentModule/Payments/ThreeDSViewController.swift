@@ -83,7 +83,7 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
                 switch result {
                 case let .success(payloadResult):
                     switch payloadResult {
-                    case let .success(payload):
+                    case let .finished(payload):
                         self.didHandle?(.success(payload))
                     case .cancelled:
                         self.onHandleCancelled?()

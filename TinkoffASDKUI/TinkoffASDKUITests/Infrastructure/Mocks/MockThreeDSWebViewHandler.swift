@@ -35,6 +35,6 @@ final class MockThreeDSWebViewHandler: IThreeDSWebViewHandler {
         handlePassedArguments = args
         let payload = try handleReturnStubValue(args).get()
 
-        return .success(payload: payload as! Payload)
+        return .finished(payload: payload as! Payload)
     }
 }

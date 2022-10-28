@@ -29,13 +29,13 @@ public protocol IThreeDSWebViewHandler: AnyObject {
 }
 
 public enum ThreeDSHandleResult<Payload: Decodable> {
-    case success(payload: Payload)
+    case finished(payload: Payload)
     case cancelled
 }
 
 public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHandler {
 
-    public enum ThreeDSError: Swift.Error {
+    enum ThreeDSError: Swift.Error {
         case hasNoConfirmationUrlSuffix
     }
 
@@ -74,6 +74,6 @@ public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHan
         }
 
         let payload = try decoder.decode(Payload.self, from: data, with: .standard)
-        return ThreeDSHandleResult.success(payload: payload)
+        return ThreeDSHandleResult.finished(payload: payload)
     }
 }
