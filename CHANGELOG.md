@@ -21,6 +21,10 @@
 * [MIC-6527] NetworkClient unit tests
 * [MIC-6526] AcquiringAPIClient unit tests
 
+### Fixed
+
+* [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
+
 ## [2.11.2] - 2022-10-13Z
 
 ### Fixed
