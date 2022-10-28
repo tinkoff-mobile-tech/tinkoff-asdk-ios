@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.12.2] - 2022-10-28Z
+
 ### Changed
 
 * [MIC-6423] Fix ASDKCore architecture after merging versions
@@ -25,6 +27,11 @@
 ### Fixed
 
 * [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
+
+### Fixed
+
+* [MIC-6735] Response validation by condition `success == true && errorCode == 0`
+* [MIC-6847] Rename objc method for issue #208
 
 ## [2.11.2] - 2022-10-13Z
 
