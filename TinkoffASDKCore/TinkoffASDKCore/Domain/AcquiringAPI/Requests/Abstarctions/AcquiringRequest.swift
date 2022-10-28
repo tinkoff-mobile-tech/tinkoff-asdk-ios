@@ -19,19 +19,27 @@
 
 import Foundation
 
+/// Определяет логику декодирования ответов API эквайринга
 enum AcquiringDecodingStrategy {
+    /// Декодирование, учитывающая параметры в JSON: `Success`, `ErrorCode`, `ErrorMessage` и тд
+    /// Используется для большинства ответов API эквайринга
     case standard
+    /// Декодирование, игнорирующая дополнительные параметры в JSON.
+    /// Используется для нестандартных ответов, например в методе `GetCardList`
     case clipped
 }
 
+/// Определяет логику формирования токена для запроса
 enum TokenFormationStrategy: Equatable {
+    /// Токен формируется на основе всех параметров, за исключением набора `exceptParameters`
     case includeAll(exceptParameters: Set<String>)
+    /// Токен не формируется
     case none
-}
 
-extension TokenFormationStrategy {
-    static func includeAll(except parameters: String...) -> TokenFormationStrategy {
-        .includeAll(exceptParameters: Set(parameters))
+    /// Токен формируется на основе всех параметров, за исключением набора `exceptParameters`
+    /// - Parameter exceptParameters: Набор параметров, которое будут игнорироваться при формировании токена
+    static func includeAll(except exceptParameters: String...) -> TokenFormationStrategy {
+        .includeAll(exceptParameters: Set(exceptParameters))
     }
 }
 
@@ -44,9 +52,11 @@ enum TerminalKeyProvidingStrategy {
 }
 
 protocol AcquiringRequest: NetworkRequest {
+    /// Определяет логику декодирования ответов API эквайринга
     var decodingStrategy: AcquiringDecodingStrategy { get }
     /// Определяет необходимость добавления параметра `TerminalKey` к параметрам запроса
     var terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy { get }
+    /// Определяет логику формирования токена для запроса
     var tokenFormationStrategy: TokenFormationStrategy { get }
 }
 
