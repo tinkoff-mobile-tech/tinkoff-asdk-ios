@@ -35,7 +35,6 @@ struct NetworkRequestStub: NetworkRequest {
         headers: HTTPHeaders = [:],
         parameters: HTTPParameters = [:],
         parametersEncoding: ParametersEncoding = .json
-
     ) {
         self.baseURL = baseURL
         self.path = path
