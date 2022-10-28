@@ -10,18 +10,6 @@ import TinkoffASDKUI
 
 final class UIASDKTestsAssembly {
 
-    static func makeAcquiringSDK() -> AcquiringSdk {
-        let configuration = AcquiringSdkConfiguration(
-            credential: AcquiringSdkCredential(
-                terminalKey: UnitTestStageTestData.terminalKey,
-                publicKey: UnitTestStageTestData.testPublicKey
-            ),
-            tinkoffPayStatusCacheLifeTime: 300
-        )
-
-        return try! AcquiringSdk(configuration: configuration)
-    }
-
     static func makePaymentOptions() -> PaymentOptions {
         return PaymentOptions(
             orderOptions: OrderOptions(
