@@ -1,7 +1,7 @@
 # Changelog
 ## [Unreleased]
 
-## [2.12.0] - 2022-10-28Z
+## [2.12.2] - 2022-10-28Z
 
 ### Changed
 
@@ -20,13 +20,16 @@
 * [MIC-6582] CustomerKey editing now available in ASDKSample app
 * [MIC-6584] Switching terminal now available in ASDKSample app
 
+### Fixed
+
+* [MIC-6735] Response validation by condition `success == true && errorCode == 0`
+* [MIC-6847] Rename objc method for issue #208
+
 ## [2.11.2] - 2022-10-13Z
 
 ### Fixed
 
 * pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
-* [MIC-6735] Response validation by condition `success == true && errorCode == 0`
-* [MIC-6847] Rename objc method for issue #208
 
 ## [2.11.1] - 2022-10-10Z
 
