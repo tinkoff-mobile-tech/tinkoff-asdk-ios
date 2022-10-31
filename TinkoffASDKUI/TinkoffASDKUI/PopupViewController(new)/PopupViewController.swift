@@ -7,69 +7,10 @@
 
 import UIKit
 
-// MARK: - Inner Types
-
-extension PopupViewController {
-
-    struct PopUpStyle {
-        var backgroundColor: UIColor = .white
-        var cornerRadius: CGFloat = 13
-        var topBarHeight: CGFloat = 24
-        var iconImageWidth: CGFloat = 32
-        var limit = Limit()
-    }
-
-    struct Limit {
-        var shouldLimitToSafeArea = true
-        var topInset: CGFloat = 0
-    }
-
-    struct Data {
-        let contentView: UIView
-        var panBarIndicatorImage: UIImage? = Asset.Icons.popupBar.image
-        var contentHeight: CGFloat = 100
-        /// between 0 and 1
-        var thresholdPercentage: CGFloat = 0.6
-        var onBackingViewTap: () -> Void = {}
-    }
-
-    struct Model {
-        let id = UUID().uuidString
-        var style = PopUpStyle()
-        let data: Data
-
-        static func getEmpty() -> Model {
-            Model(data: PopupViewController.Data(contentView: UIView(), contentHeight: 100))
-        }
-    }
-
-    enum DragDirection {
-        case up
-        case down
-    }
-}
-
-extension PopupViewController.Data {
-
-    init(
-        contentViewController: UIViewController,
-        panBarIndicatorImage: UIImage?,
-        contentHeight: CGFloat,
-        thresholdPercentage: CGFloat
-    ) {
-        self.init(
-            contentView: contentViewController.view,
-            panBarIndicatorImage: panBarIndicatorImage,
-            contentHeight: contentHeight,
-            thresholdPercentage: thresholdPercentage
-        )
-    }
-}
-
 // MARK: - PopupViewController
 
 /// Позволяет показывать контент внутри вью которая может быть закрыта
-final class PopupViewController: UIViewController {
+public final class PopupViewController: UIViewController {
 
     weak var delegate: PopupDelegate?
 
@@ -79,12 +20,12 @@ final class PopupViewController: UIViewController {
     private let panBackingView = UIView()
     private let panImageView = UIImageView()
 
-    private weak var contentView: UIView? {
+    private var childViewController = UIViewController()
+
+    private var contentView = UIView() {
         didSet {
-            contentView?.removeFromSuperview()
-            if let contentView = contentView {
-                popupView.addSubview(contentView)
-            }
+            contentView.removeFromSuperview()
+            popupView.addSubview(contentView)
         }
     }
 
@@ -96,16 +37,27 @@ final class PopupViewController: UIViewController {
 
     private var currentModel: Model = .getEmpty()
 
+    private var didCallViewDidLoad = false
+
     // MARK: - Methods
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
+        didCallViewDidLoad = true
         super.viewDidLoad()
         setupViews()
     }
 
     // MARK: - Public
 
-    func configure(model: Model) {
+    public func configure(model: Model) {
+        if !didCallViewDidLoad {
+            viewDidLoad()
+        }
+
+        removeChildViewController()
+        setChildViewController(model: model)
+        addChildViewController()
+
         currentModel = model
         panImageView.image = model.data.panBarIndicatorImage
 
@@ -115,6 +67,31 @@ final class PopupViewController: UIViewController {
     }
 
     // MARK: - Private
+
+    private func removeChildViewController() {
+        childViewController.willMove(toParent: nil)
+        childViewController.removeFromParent()
+        childViewController.view.removeFromSuperview()
+    }
+
+    private func setChildViewController(model: Model) {
+        if let contentViewController = model.data.contentViewController {
+            childViewController = contentViewController
+            contentView = contentViewController.view
+        } else {
+            childViewController = UIViewController()
+            contentView = model.data.contentView
+            childViewController.view.addSubview(model.data.contentView)
+            model.data.contentView.frame = childViewController.view.frame
+        }
+    }
+
+    private func addChildViewController() {
+        popupView.addSubview(childViewController.view)
+        childViewController.view.frame = popupView.frame
+        addChild(childViewController)
+        childViewController.didMove(toParent: self)
+    }
 
     @objc private func panAction(panGR: UIPanGestureRecognizer) {
         switch panGR.state {
@@ -215,6 +192,7 @@ final class PopupViewController: UIViewController {
             case .down:
                 // folding popupview
                 delegate?.willFold()
+
                 UIView.animate(
                     withDuration: 0.3,
                     animations: {
@@ -222,7 +200,12 @@ final class PopupViewController: UIViewController {
                         self.calculateFractionComplete()
                     },
                     completion: { [weak self] _ in
-                        self?.delegate?.didFold()
+                        guard let self = self else { return }
+                        if self.currentModel.data.shouldDismissOnFolding {
+                            self.dismiss(animated: true)
+                        }
+
+                        self.delegate?.didFold()
                     }
                 )
             }
@@ -233,6 +216,9 @@ final class PopupViewController: UIViewController {
         let tapLocationY = tapGR.location(in: view).y
         guard tapLocationY < popupView.frame.origin.y else { return }
         currentModel.data.onBackingViewTap()
+        if currentModel.data.shouldDismissOnBackViewTap {
+            dismiss(animated: true)
+        }
     }
 
     private func setupViews() {
@@ -240,7 +226,7 @@ final class PopupViewController: UIViewController {
         popupView.addSubview(panBackingView)
         panBackingView.addSubview(panImageView)
 
-        view.backgroundColor = nil
+        view.backgroundColor = .brown // nil
         view.addGestureRecognizer(dismissTapGR)
         popupView.addGestureRecognizer(panGR)
         panGR.maximumNumberOfTouches = 1
@@ -252,24 +238,24 @@ final class PopupViewController: UIViewController {
 
         let iconImageWidth: CGFloat = model.style.iconImageWidth
 
-        panBackingView.makeConstraints { make in
+        panBackingView.makeConstraints { view in
             [
-                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
-                make.centerXAnchor.constraint(equalTo: popupView.centerXAnchor),
+                view.topAnchor.constraint(equalTo: view.forcedSuperview.topAnchor),
+                view.centerXAnchor.constraint(equalTo: popupView.centerXAnchor),
             ]
-                + make.size(CGSize(width: iconImageWidth * 2, height: model.style.topBarHeight))
+                + view.size(CGSize(width: iconImageWidth * 2, height: model.style.topBarHeight))
         }
 
         panImageView.contentMode = .scaleAspectFit
         panImageView.clipsToBounds = true
 
-        panImageView.makeConstraints { make in
+        panImageView.makeConstraints { view in
             [
-                make.centerXAnchor.constraint(equalTo: panBackingView.centerXAnchor),
-                make.centerYAnchor.constraint(equalTo: panBackingView.centerYAnchor),
+                view.centerXAnchor.constraint(equalTo: panBackingView.centerXAnchor),
+                view.centerYAnchor.constraint(equalTo: panBackingView.centerYAnchor),
             ]
 
-                + make.size(CGSize(width: iconImageWidth, height: model.style.topBarHeight))
+                + view.size(CGSize(width: iconImageWidth, height: model.style.topBarHeight))
         }
     }
 
@@ -314,15 +300,132 @@ final class PopupViewController: UIViewController {
             )
         )
         originalPopupOriginY = popupView.frame.origin.y
-        contentView = data.contentView
 
-        data.contentView.makeConstraints { make in
+        childViewController.view.makeConstraints { view in
             [
-                make.topAnchor.constraint(equalTo: popupView.topAnchor, constant: model.style.topBarHeight),
-                make.leftAnchor.constraint(equalTo: popupView.leftAnchor),
-                make.rightAnchor.constraint(equalTo: popupView.rightAnchor),
-                make.height(constant: popupView.frame.height),
+                view.topAnchor.constraint(equalTo: popupView.topAnchor, constant: model.style.topBarHeight),
+                view.leftAnchor.constraint(equalTo: popupView.leftAnchor),
+                view.rightAnchor.constraint(equalTo: popupView.rightAnchor),
+                view.height(constant: popupView.frame.height),
             ]
         }
+    }
+}
+
+// MARK: - Inner Types
+
+public extension PopupViewController {
+
+    struct PopUpStyle {
+        var backgroundColor: UIColor = .white
+        var cornerRadius: CGFloat = 13
+        var topBarHeight: CGFloat = 24
+        var iconImageWidth: CGFloat = 32
+        var limit = Limit()
+
+        public init(
+            backgroundColor: UIColor = .white,
+            cornerRadius: CGFloat = 13,
+            topBarHeight: CGFloat = 24,
+            iconImageWidth: CGFloat = 32,
+            limit: PopupViewController.Limit = Limit()
+        ) {
+            self.backgroundColor = backgroundColor
+            self.cornerRadius = cornerRadius
+            self.topBarHeight = topBarHeight
+            self.iconImageWidth = iconImageWidth
+            self.limit = limit
+        }
+    }
+
+    struct Limit {
+        var shouldLimitToSafeArea = true
+        var topInset: CGFloat = 0
+
+        public init(
+            shouldLimitToSafeArea: Bool = true,
+            topInset: CGFloat = 0
+        ) {
+            self.shouldLimitToSafeArea = shouldLimitToSafeArea
+            self.topInset = topInset
+        }
+    }
+
+    struct Data {
+        let contentView: UIView
+        var contentViewController: UIViewController?
+        var panBarIndicatorImage: UIImage? = Asset.Icons.popupBar.image
+        var contentHeight: CGFloat = 100
+        /// between 0 and 1
+        var thresholdPercentage: CGFloat = 0.6
+        var shouldDismissOnBackViewTap = true
+        var shouldDismissOnFolding = true
+        var onBackingViewTap: () -> Void = {}
+
+        public static var popupBarImage: UIImage { Asset.Icons.popupBar.image }
+    }
+
+    struct Model {
+        let id = UUID().uuidString
+        var style = PopUpStyle()
+        let data: Data
+
+        static func getEmpty() -> Model {
+            Model(data: PopupViewController.Data(contentView: UIView(), contentHeight: 100))
+        }
+
+        public init(
+            style: PopupViewController.PopUpStyle = PopUpStyle(),
+            data: PopupViewController.Data
+        ) {
+            self.style = style
+            self.data = data
+        }
+    }
+
+    enum DragDirection {
+        case up
+        case down
+    }
+}
+
+public extension PopupViewController.Data {
+
+    init(
+        contentView: UIView,
+        panBarIndicatorImage: UIImage? = Self.popupBarImage,
+        contentHeight: CGFloat = 100,
+        thresholdPercentage: CGFloat = 0.6,
+        shouldDismissOnBackViewTap: Bool = true,
+        shouldDismissOnFolding: Bool = true,
+        onBackingViewTap: @escaping () -> Void = {}
+    ) {
+        self.contentView = contentView
+        contentViewController = nil
+        self.panBarIndicatorImage = panBarIndicatorImage
+        self.contentHeight = contentHeight
+        self.thresholdPercentage = thresholdPercentage
+        self.shouldDismissOnBackViewTap = shouldDismissOnBackViewTap
+        self.shouldDismissOnFolding = shouldDismissOnFolding
+        self.onBackingViewTap = onBackingViewTap
+    }
+
+    init(
+        contentViewController: UIViewController,
+        panBarIndicatorImage: UIImage? = Self.popupBarImage,
+        contentHeight: CGFloat = 100,
+        thresholdPercentage: CGFloat = 0.6,
+        shouldDismissOnBackViewTap: Bool = true,
+        shouldDismissOnFolding: Bool = true,
+        onBackingViewTap: @escaping () -> Void = {}
+    ) {
+        contentView = contentViewController.view
+        self.contentViewController = contentViewController
+        self.panBarIndicatorImage = panBarIndicatorImage
+        self.contentHeight = contentHeight
+        self.thresholdPercentage = thresholdPercentage
+        self.shouldDismissOnBackViewTap = shouldDismissOnBackViewTap
+        self.shouldDismissOnFolding = shouldDismissOnFolding
+        self.onBackingViewTap = onBackingViewTap
     }
 }

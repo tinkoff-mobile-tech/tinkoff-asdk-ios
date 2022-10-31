@@ -95,7 +95,7 @@ extension UIView {
         ]
     }
 
-    func makeConstraints(_ closure: (_ make: UIView) -> [NSLayoutConstraint]) {
+    func makeConstraints(_ closure: (_ view: UIView) -> [NSLayoutConstraint]) {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(closure(self))
     }

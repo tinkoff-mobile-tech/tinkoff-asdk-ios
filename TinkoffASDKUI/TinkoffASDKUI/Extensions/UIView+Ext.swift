@@ -7,30 +7,6 @@
 
 import UIKit
 
-// MARK: - UIView + Debug
-
-extension UIView {
-
-    func debug() {
-        let colors: [UIColor] = [.red, .systemGreen, .blue]
-        layer.borderWidth = 1
-        layer.borderColor = (colors.randomElement() ?? .blue).cgColor
-    }
-
-    func debugRecursevly(view: UIView) {
-        view.debug()
-
-        for subview in view.subviews {
-            subview.debug()
-            debugRecursevly(view: subview)
-        }
-    }
-
-    func debugRecursevly() {
-        debugRecursevly(view: self)
-    }
-}
-
 // MARK: - UIView + Constraints
 
 extension UIView {
@@ -83,7 +59,7 @@ extension UIView {
         ]
     }
 
-    func makeConstraints(_ closure: (_ make: UIView) -> [NSLayoutConstraint]) {
+    func makeConstraints(_ closure: (_ view: UIView) -> [NSLayoutConstraint]) {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(closure(self))
     }
