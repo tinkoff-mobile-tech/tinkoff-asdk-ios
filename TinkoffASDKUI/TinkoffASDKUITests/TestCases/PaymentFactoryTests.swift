@@ -120,12 +120,10 @@ extension PaymentFactoryTests {
         let ipProviderMock: MockIPAddressProvider
         let paymentsServiceMock: MockAcquiringPaymentsService
         let threeDsServiceMock: MockAcquiringThreeDsService
-        let coreSDK: AcquiringSdk
         let sut: PaymentFactory
     }
 
     static func makeDependencies() -> Dependecies {
-        let coreSDK = UIASDKTestsAssembly.makeAcquiringSDK()
         let ipProviderMock = MockIPAddressProvider()
         let paymentDelegateMock = MockPaymentProcessDelegate()
         let paymentsServiceMock = MockAcquiringPaymentsService()
@@ -142,7 +140,6 @@ extension PaymentFactoryTests {
             ipProviderMock: ipProviderMock,
             paymentsServiceMock: paymentsServiceMock,
             threeDsServiceMock: threeDsServiceMock,
-            coreSDK: coreSDK,
             sut: sut
         )
     }

@@ -115,6 +115,6 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
 
     @objc private func closeButtonTapped() {
-        handler.didCancel?()
+        handler.onUserTapCloseButton?()
     }
 }
