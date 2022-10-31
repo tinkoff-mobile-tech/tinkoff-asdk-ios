@@ -98,13 +98,6 @@ class RootViewController: UITableViewController {
         }
 
         tableView.reloadData()
-
-        let contentViewController = UIViewController()
-        contentViewController.view.backgroundColor = .orange
-        let popupViewController = PopupViewController()
-        let model = PopupViewController.Model(data: PopupViewController.Data(contentViewController: contentViewController, contentHeight: 500))
-        present(popupViewController, animated: true)
-        popupViewController.configure(model: model)
     }
 
     // MARK: UITableViewDataSource
