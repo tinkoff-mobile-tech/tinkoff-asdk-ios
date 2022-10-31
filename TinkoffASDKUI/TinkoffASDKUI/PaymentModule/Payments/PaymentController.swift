@@ -141,8 +141,7 @@ public final class PaymentController {
 
     // MARK: - Payments
 
-    // TODO: MIC-6513 Make it public
-    func performInitPayment(
+    public func performInitPayment(
         paymentOptions: PaymentOptions,
         paymentSource: PaymentSourceData
     ) {
@@ -162,8 +161,7 @@ public final class PaymentController {
         }
     }
 
-    // TODO: MIC-6513 Make it public
-    func performFinishPayment(
+    public func performFinishPayment(
         paymentId: PaymentId,
         paymentSource: PaymentSourceData,
         customerOptions: CustomerOptions

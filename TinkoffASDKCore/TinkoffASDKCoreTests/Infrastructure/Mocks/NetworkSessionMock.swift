@@ -13,7 +13,7 @@ final class NetworkSessionMock: INetworkSession {
     var invokedDataTaskCount = 0
     var invokedDataTaskParameters: (request: URLRequest, Void)?
     var invokedDataTaskParametersList = [(request: URLRequest, Void)]()
-    var stubbedDataTaskCompletionResult: (Data?, URLResponse?, Error?)?
+    var stubbedDataTaskCompletionResult: (Data?, URLResponse?, Error?) = (Data(), HTTPURLResponse(), nil)
     var stubbedDataTaskResult = NetworkDataTaskMock()
 
     func dataTask(
@@ -24,9 +24,15 @@ final class NetworkSessionMock: INetworkSession {
         invokedDataTaskCount += 1
         invokedDataTaskParameters = (request, ())
         invokedDataTaskParametersList.append((request, ()))
-        if let result = stubbedDataTaskCompletionResult {
-            completion(result.0, result.1, result.2)
+
+        DispatchQueue.global().async { [stubbedDataTaskCompletionResult] in
+            completion(
+                stubbedDataTaskCompletionResult.0,
+                stubbedDataTaskCompletionResult.1,
+                stubbedDataTaskCompletionResult.2
+            )
         }
+
         return stubbedDataTaskResult
     }
 }

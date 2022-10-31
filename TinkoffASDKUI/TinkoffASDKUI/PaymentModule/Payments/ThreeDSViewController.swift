@@ -80,20 +80,20 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
             cancelButton = UIBarButtonItem(
                 barButtonSystemItem: .close,
                 target: self,
-                action: #selector(didTapCloseButton)
+                action: #selector(closeButtonTapped)
             )
         } else {
             cancelButton = UIBarButtonItem(
                 title: Loc.TinkoffAcquiring.Button.close,
                 style: .done,
                 target: self,
-                action: #selector(didTapCloseButton)
+                action: #selector(closeButtonTapped)
             )
         }
         navigationItem.setRightBarButton(cancelButton, animated: true)
     }
 
-    @objc func didTapCloseButton() {
+    @objc private func closeButtonTapped() {
         handler.didCancel?()
     }
 }

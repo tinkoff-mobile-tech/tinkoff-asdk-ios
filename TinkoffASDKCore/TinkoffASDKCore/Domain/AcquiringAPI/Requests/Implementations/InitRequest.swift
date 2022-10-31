@@ -24,6 +24,7 @@ struct InitRequest: AcquiringRequest {
     let path: String = "v2/Init"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always
     let tokenFormationStrategy: TokenFormationStrategy = .includeAll(
         except:
         Constants.Keys.data,
