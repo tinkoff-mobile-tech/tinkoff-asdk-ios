@@ -183,6 +183,7 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let uiAssembly: UIAssembly
+    private var getSubmitAuthorizationRequestData: (() -> Submit3DSAuthorizationV2Data)?
 
     public init(
         configuration: AcquiringSdkConfiguration,
@@ -1326,6 +1327,13 @@ public class AcquiringUISDK: NSObject {
         _ = acquiringSdk.paymentFinish(data: requestData, completionHandler: { response in
             switch response {
             case let .success(finishResult):
+                self.getSubmitAuthorizationRequestData = {
+                    Submit3DSAuthorizationV2Data(
+                        cres: "",
+                        paymentId: String(requestData.paymentId)
+                    )
+                }
+
                 switch finishResult.responseStatus {
                 case let .needConfirmation3DS(confirmation3DSData):
                     DispatchQueue.main.async {
@@ -2000,10 +2008,50 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
         paymentController.dataSource = dataSource
         return paymentController
     }
+
+    private func handleSubmitRedirectFromWebView(request: URLRequest) {
+        if let body = request.httpBody,
+           let bodyAsString = String(data: body, encoding: .utf8) {
+            let cresValue = bodyAsString.replacingOccurrences(of: "cres" + "=", with: "")
+
+            let data = Submit3DSAuthorizationV2Data(
+                cres: cresValue,
+                paymentId: getSubmitAuthorizationRequestData?().paymentId ?? ""
+            )
+
+            getSubmitAuthorizationRequestData = nil
+
+            acquiringSdk.submit3DSAuthorizationV2(data: data) { result in
+                DispatchQueue.main.async {
+                    self.webViewController?.dismiss(animated: true) {
+                        if self.on3DSCheckingCompletionHandler != nil {
+                            self.on3DSCheckingCompletionHandler?(result)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension AcquiringUISDK: WKNavigationDelegate {
     // MARK: WKNavigationDelegate
+
+    public func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+        let isSubmitUrl = navigationAction.request.url?.absoluteString
+            .hasSuffix(Submit3DSAuthorizationV2Request.path)
+
+        if isSubmitUrl ?? false {
+            handleSubmitRedirectFromWebView(request: navigationAction.request)
+            decisionHandler(.cancel)
+        } else {
+            decisionHandler(.allow)
+        }
+    }
 
     public func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { [weak self] value, error in

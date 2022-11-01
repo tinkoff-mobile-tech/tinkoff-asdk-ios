@@ -6,6 +6,7 @@
 * [MIC-6527] NetworkClient unit tests
 * [MIC-6526] AcquiringAPIClient unit tests
 * [MIC-6801] AcquiringRequestAdapter unit tests
+* [MIC-6784] Add parameters into Submit3dsAuthorizationV2 for payment 3ds
 
 ### Fixed
 

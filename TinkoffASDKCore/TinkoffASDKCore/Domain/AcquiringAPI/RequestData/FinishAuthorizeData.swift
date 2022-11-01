@@ -68,7 +68,7 @@ public struct FinishAuthorizeData {
 
 public struct PaymentFinishRequestData {
     /// Номер платежа, полученного после инициализации платежа
-    var paymentId: Int64
+    public var paymentId: Int64
     var paymentSource: PaymentSourceData
 
     var sendEmail: Bool?
