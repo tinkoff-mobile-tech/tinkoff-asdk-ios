@@ -19,7 +19,7 @@
 
 import TinkoffASDKCore
 
-public struct OrderOptions {
+public struct OrderOptions: Equatable {
     let orderId: String
     let amount: Int64
     let description: String?

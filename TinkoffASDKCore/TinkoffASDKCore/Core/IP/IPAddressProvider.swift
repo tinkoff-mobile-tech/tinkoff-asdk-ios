@@ -19,9 +19,13 @@
 
 import Foundation
 
+public protocol IIPAddressProvider {
+    var ipAddress: IPAddress? { get }
+}
+
 /// Позволяет получить текущий ip-адресс девайса
-public struct IPAddressProvider {
-    var ipAddress: IPAddress? {
+public struct IPAddressProvider: IIPAddressProvider {
+    public var ipAddress: IPAddress? {
         return getDeviceIPAddresses().first
     }
 

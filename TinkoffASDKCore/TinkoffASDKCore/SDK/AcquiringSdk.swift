@@ -37,11 +37,12 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Dependencies
 
+    public let ipAddressProvider: IIPAddressProvider
+
     private let acquiringAPI: IAcquiringAPIClient
     private let acquiringRequests: IAcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestBuilder
-    private let ipAddressProvider: IPAddressProvider
     private let threeDSFacade: IThreeDSFacade
     private let languageProvider: ILanguageProvider
 
@@ -52,7 +53,7 @@ public final class AcquiringSdk: NSObject {
         acquiringRequests: IAcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
         externalRequests: IExternalRequestBuilder,
-        ipAddressProvider: IPAddressProvider,
+        ipAddressProvider: IIPAddressProvider,
         threeDSFacade: IThreeDSFacade,
         languageProvider: ILanguageProvider
     ) {
@@ -660,7 +661,7 @@ public final class AcquiringSdk: NSObject {
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
     ///
     /// - Parameters:
-    ///   - paymentId: `PaymentId` - идентификтор платежа
+    ///   - paymentId: `String` - идентификтор платежа
     ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
     ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
     /// - Returns: `Cancellable`

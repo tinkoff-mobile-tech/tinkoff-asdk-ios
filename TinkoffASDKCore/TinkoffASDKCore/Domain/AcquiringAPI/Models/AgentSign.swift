@@ -8,7 +8,7 @@
 import Foundation
 
 /// Признак агента
-public enum AgentSign: String {
+public enum AgentSign: String, Equatable {
     /// Банковский платежный агент
     case bankPayingAgent = "bank_paying_agent"
     /// Банковский платежный субагент

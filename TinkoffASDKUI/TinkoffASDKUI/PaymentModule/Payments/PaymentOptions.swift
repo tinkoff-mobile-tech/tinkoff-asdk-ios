@@ -19,10 +19,10 @@
 
 import TinkoffASDKCore
 
-public struct PaymentOptions {
+public struct PaymentOptions: Equatable {
     let orderOptions: OrderOptions
     let customerOptions: CustomerOptions
-    let failedPaymentId: PaymentId?
+    let failedPaymentId: String?
     let paymentData: [String: String]?
 
     public init(
@@ -39,7 +39,7 @@ public struct PaymentOptions {
     init(
         orderOptions: OrderOptions,
         customerOptions: CustomerOptions,
-        failedPaymentId: PaymentId?,
+        failedPaymentId: String?,
         paymentData: [String: String]? = nil
     ) {
         self.orderOptions = orderOptions
