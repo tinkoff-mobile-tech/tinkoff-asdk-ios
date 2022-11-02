@@ -19,11 +19,28 @@
 
 import TinkoffASDKCore
 
-struct PaymentFactory {
-    private let acquiringSDK: AcquiringSdk
+protocol IPaymentFactory {
 
-    init(acquiringSDK: AcquiringSdk) {
-        self.acquiringSDK = acquiringSDK
+    func createPayment(
+        paymentSource: PaymentSourceData,
+        paymentFlow: PaymentFlow,
+        paymentDelegate: PaymentProcessDelegate
+    ) -> PaymentProcess?
+}
+
+struct PaymentFactory: IPaymentFactory {
+    private let paymentsService: IAcquiringPaymentsService
+    private let threeDsService: IAcquiringThreeDSService
+    private let ipProvider: IIPAddressProvider
+
+    init(
+        paymentsService: IAcquiringPaymentsService,
+        threeDsService: IAcquiringThreeDSService,
+        ipProvider: IIPAddressProvider
+    ) {
+        self.paymentsService = paymentsService
+        self.threeDsService = threeDsService
+        self.ipProvider = ipProvider
     }
 
     func createPayment(
@@ -34,14 +51,16 @@ struct PaymentFactory {
         switch paymentSource {
         case .cardNumber, .savedCard, .paymentData:
             return CardPaymentProcess(
-                acquiringSDK: acquiringSDK,
+                paymentsService: paymentsService,
+                threeDsService: threeDsService,
+                ipProvider: ipProvider,
                 paymentSource: paymentSource,
                 paymentFlow: paymentFlow,
                 delegate: paymentDelegate
             )
         case .parentPayment:
             return ChargePaymentProcess(
-                acquiringSDK: acquiringSDK,
+                paymentsService: paymentsService,
                 paymentSource: paymentSource,
                 paymentFlow: paymentFlow,
                 delegate: paymentDelegate

@@ -25,11 +25,15 @@ struct UIAssembly {
 
     func paymentController(
         acquiringSDK: AcquiringSdk,
-        acquiringUISDK: AcquiringUISDK
+        acquiringUISDK: AcquiringUISDK,
+        ipProvider: IIPAddressProvider
     ) -> PaymentController {
         return PaymentController(
-            acquiringSDK: acquiringSDK,
-            paymentFactory: paymentFactory(acquiringSDK: acquiringSDK),
+            threeDsService: acquiringSDK,
+            paymentFactory: paymentFactory(
+                acquiringSDK: acquiringSDK,
+                ipProvider: ipProvider
+            ),
             threeDSHandler: acquiringSDK.payment3DSHandler(),
             threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()),
             tdsController: acquiringUISDK.tdsController,
@@ -39,8 +43,12 @@ struct UIAssembly {
 }
 
 private extension UIAssembly {
-    func paymentFactory(acquiringSDK: AcquiringSdk) -> PaymentFactory {
-        return PaymentFactory(acquiringSDK: acquiringSDK)
+    func paymentFactory(acquiringSDK: AcquiringSdk, ipProvider: IIPAddressProvider) -> PaymentFactory {
+        return PaymentFactory(
+            paymentsService: acquiringSDK,
+            threeDsService: acquiringSDK,
+            ipProvider: ipProvider
+        )
     }
 
     func screenSize() -> CGSize {

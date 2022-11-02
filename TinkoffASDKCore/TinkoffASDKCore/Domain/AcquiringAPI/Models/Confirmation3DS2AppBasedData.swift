@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Confirmation3DS2AppBasedData: Codable {
+public struct Confirmation3DS2AppBasedData: Codable, Equatable {
     private enum CodingKeys: CodingKey {
         case acsSignedContent
         case acsTransId

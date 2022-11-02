@@ -8,7 +8,7 @@
 import Foundation
 
 /// Данные поставщика платежного агента
-public struct SupplierInfo: Codable {
+public struct SupplierInfo: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case phones = "Phones"
         case name = "Name"

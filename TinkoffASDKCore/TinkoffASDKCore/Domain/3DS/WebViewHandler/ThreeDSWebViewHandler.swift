@@ -19,9 +19,27 @@
 
 import Foundation
 
-public final class ThreeDSWebViewHandler<Payload: Decodable> {
-    public var didCancel: (() -> Void)?
-    public var didFinish: ((Result<Payload, Error>) -> Void)?
+public protocol IThreeDSWebViewHandler: AnyObject {
+    var onUserTapCloseButton: (() -> Void)? { get set }
+
+    func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) throws -> ThreeDSHandleResult<Payload>
+}
+
+public enum ThreeDSHandleResult<Payload: Decodable> {
+    case finished(payload: Payload)
+    case cancelled
+}
+
+public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHandler {
+
+    enum ThreeDSError: Swift.Error {
+        case hasNoConfirmationUrlSuffix
+    }
+
+    public var onUserTapCloseButton: (() -> Void)?
 
     private let urlBuilder: IThreeDSURLBuilder
     private let decoder: IAcquiringDecoder
@@ -34,10 +52,13 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
         self.decoder = decoder
     }
 
-    public func handle(urlString: String, responseData data: Data) {
+    public func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) throws -> ThreeDSHandleResult<Payload> {
+
         guard !urlString.hasSuffix("cancel.do") else {
-            didCancel?()
-            return
+            return .cancelled
         }
 
         let confirmation3DSTerminationURLString = urlBuilder
@@ -49,13 +70,10 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
             .absoluteString
 
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
-            return
+            throw ThreeDSError.hasNoConfirmationUrlSuffix
         }
 
-        let result = Result {
-            try decoder.decode(Payload.self, from: data, with: .standard)
-        }
-
-        didFinish?(result)
+        let payload = try decoder.decode(Payload.self, from: data, with: .standard)
+        return ThreeDSHandleResult.finished(payload: payload)
     }
 }

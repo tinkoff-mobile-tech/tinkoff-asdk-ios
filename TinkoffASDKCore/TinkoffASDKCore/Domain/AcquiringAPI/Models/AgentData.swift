@@ -8,7 +8,7 @@
 import Foundation
 
 /// Данные агента
-public struct AgentData: Codable {
+public struct AgentData: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case agentSign = "AgentSign"
         case operationName = "OperationName"

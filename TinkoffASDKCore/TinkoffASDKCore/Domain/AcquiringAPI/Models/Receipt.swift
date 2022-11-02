@@ -92,3 +92,18 @@ public class Receipt: Codable {
         if customerInn != nil { try? container.encode(customerInn, forKey: .customerInn) }
     }
 }
+
+extension Receipt: Equatable {
+    public static func == (lhs: Receipt, rhs: Receipt) -> Bool {
+        return
+            lhs.shopCode == rhs.shopCode &&
+            lhs.email == rhs.email &&
+            lhs.phone == rhs.phone &&
+            lhs.taxation == rhs.taxation &&
+            lhs.items == rhs.items &&
+            lhs.agentData == rhs.agentData &&
+            lhs.supplierInfo == rhs.supplierInfo &&
+            lhs.customer == rhs.customer &&
+            lhs.customerInn == rhs.customerInn
+    }
+}

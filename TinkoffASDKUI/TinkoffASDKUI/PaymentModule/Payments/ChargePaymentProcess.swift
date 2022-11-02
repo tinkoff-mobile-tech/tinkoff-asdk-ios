@@ -20,13 +20,13 @@
 import TinkoffASDKCore
 
 final class ChargePaymentProcess: PaymentProcess {
-    private let acquiringSDK: AcquiringSdk
+    private let paymentsService: IAcquiringPaymentsService
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
 
     let paymentSource: PaymentSourceData
     let paymentFlow: PaymentFlow
-    private(set) var paymentId: PaymentId?
+    private(set) var paymentId: String?
 
     private weak var delegate: PaymentProcessDelegate?
 
@@ -40,12 +40,12 @@ final class ChargePaymentProcess: PaymentProcess {
     }
 
     init(
-        acquiringSDK: AcquiringSdk,
+        paymentsService: IAcquiringPaymentsService,
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
         delegate: PaymentProcessDelegate
     ) {
-        self.acquiringSDK = acquiringSDK
+        self.paymentsService = paymentsService
         self.paymentSource = paymentSource
         self.paymentFlow = paymentFlow
         self.delegate = delegate
@@ -69,7 +69,7 @@ final class ChargePaymentProcess: PaymentProcess {
 
 private extension ChargePaymentProcess {
     func initPayment(data: PaymentInitData) {
-        let request = acquiringSDK.initPayment(data: data) { [weak self] result in
+        let request = paymentsService.initPayment(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -83,27 +83,18 @@ private extension ChargePaymentProcess {
         currentRequest?.store(newValue: request)
     }
 
-    func finishPayment(paymentId: PaymentId) {
-        guard let paymentId = Int64(paymentId),
-              let parentPaymentId = Int64(getRebillId())
-        else {
-            return
-        }
-
-        let data = PaymentChargeRequestData(
-            paymentId: paymentId,
-            parentPaymentId: parentPaymentId
+    func finishPayment(paymentId: String) {
+        performCharge(
+            data: ChargeData(
+                paymentId: paymentId,
+                rebillId: getRebillId()
+            )
         )
-        performCharge(data: data)
     }
 
-    func performCharge(data: PaymentChargeRequestData) {
-        let newData = ChargeData(
-            paymentId: String(data.paymentId),
-            rebillId: String(data.parentPaymentId)
-        )
+    func performCharge(data: ChargeData) {
 
-        let request = acquiringSDK.charge(data: newData) { [weak self] result in
+        let request = paymentsService.charge(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -118,18 +109,13 @@ private extension ChargePaymentProcess {
     }
 
     func handleInitResult(payload: InitPayload) {
-        guard let paymentId = Int64(payload.paymentId),
-              let parentPaymentId = Int64(getRebillId())
-        else {
-            return
-        }
-
-        let data = PaymentChargeRequestData(
-            paymentId: paymentId,
-            parentPaymentId: parentPaymentId
+        paymentId = payload.paymentId
+        performCharge(
+            data: ChargeData(
+                paymentId: payload.paymentId,
+                rebillId: getRebillId()
+            )
         )
-        self.paymentId = payload.paymentId
-        performCharge(data: data)
     }
 
     func handleChargeResult(payload: ChargePayload) {

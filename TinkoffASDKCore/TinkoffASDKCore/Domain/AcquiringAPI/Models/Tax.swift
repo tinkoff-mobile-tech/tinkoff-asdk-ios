@@ -8,7 +8,7 @@
 import Foundation
 
 /// Ставка налога
-public enum Tax: String {
+public enum Tax: String, Equatable {
     /// НДС по ставке 0%
     case vat0
     /// НДС чека по ставке 10%

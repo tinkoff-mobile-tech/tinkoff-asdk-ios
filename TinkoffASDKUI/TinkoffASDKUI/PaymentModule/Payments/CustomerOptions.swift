@@ -19,8 +19,8 @@
 
 import TinkoffASDKCore
 
-public struct CustomerOptions {
-    public enum Customer {
+public struct CustomerOptions: Equatable {
+    public enum Customer: Equatable {
         case none
         case customer(key: String, checkType: PaymentCardCheckType)
     }

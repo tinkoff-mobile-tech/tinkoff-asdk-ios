@@ -8,7 +8,7 @@
 import Foundation
 
 /// Информация о товаре
-public struct Item: Codable {
+public struct Item: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case price = "Price"
         case quantity = "Quantity"
