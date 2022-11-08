@@ -25,8 +25,10 @@ public struct InitAddCardResponse: ResponseOperation {
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
+    public let paymentId: Int
     //
     var requestKey: String
+    let paymentUrl: String
 
     private enum CodingKeys: CodingKey {
         case success
@@ -35,6 +37,8 @@ public struct InitAddCardResponse: ResponseOperation {
         case errorDetails
         case terminalKey
         case requestKey
+        case paymentId
+        case paymentUrl
 
         var stringValue: String {
             switch self {
@@ -44,6 +48,8 @@ public struct InitAddCardResponse: ResponseOperation {
             case .errorDetails: return Constants.Keys.errorDetails
             case .terminalKey: return Constants.Keys.terminalKey
             case .requestKey: return Constants.Keys.requestKey
+            case .paymentId: return Constants.Keys.paymentId
+            case .paymentUrl: return Constants.Keys.paymentUrl
             }
         }
     }
@@ -56,5 +62,7 @@ public struct InitAddCardResponse: ResponseOperation {
         errorDetails = try? container.decode(String.self, forKey: .errorDetails)
         terminalKey = try? container.decode(String.self, forKey: .terminalKey)
         requestKey = try container.decode(String.self, forKey: .requestKey)
+        paymentId = try container.decode(Int.self, forKey: .paymentId)
+        paymentUrl = try container.decode(String.self, forKey: .paymentUrl)
     }
 }

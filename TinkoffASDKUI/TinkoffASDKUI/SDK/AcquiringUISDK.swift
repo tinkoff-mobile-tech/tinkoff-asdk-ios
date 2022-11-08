@@ -1328,8 +1328,7 @@ public class AcquiringUISDK: NSObject {
             switch response {
             case let .success(finishResult):
                 self.getSubmitAuthorizationRequestData = {
-                    Submit3DSAuthorizationV2Data(
-                        cres: "",
+                    Submit3DSAuthorizationV2Data.assembleForPaymentFlow(
                         paymentId: String(requestData.paymentId)
                     )
                 }
@@ -1703,10 +1702,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
             expDate: expDate,
             cvc: cvc,
             checkType: checkType,
-            confirmationHandler: { confirmationResponse, confirmationComplete in
+            confirmationHandler: { confirmationResponse, threeDSVersion, confirmationComplete in
                 DispatchQueue.main.async { [weak self] in
                     self?.checkConfirmAddCard(
                         confirmationResponse,
+                        threeDSVersion: threeDSVersion,
                         presenter: addCardViewPresenter,
                         alertViewHelper: alertViewHelper,
                         confirmationComplete
@@ -1821,6 +1821,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
     private func checkConfirmAddCard(
         _ confirmationResponse: FinishAddCardResponse,
+        threeDSVersion: String?,
         presenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
         _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void
@@ -1840,7 +1841,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 confirmationComplete(response)
             }
 
-            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
+            present3DSCheckingACS(
+                with: confirmation3DSDataACS,
+                messageVersion: threeDSVersion ?? "",
+                presenter: presenter
+            ) { [weak self] in
                 self?.cancelAddCard()
             }
 
@@ -1885,10 +1890,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 expDate: expDate,
                 cvc: cvc,
                 checkType: checkType.rawValue,
-                confirmationHandler: { [weak self] confirmationResponse, confirmationComplete in
+                confirmationHandler: { [weak self] confirmationResponse, threeDSVersion, confirmationComplete in
                     DispatchQueue.main.async {
                         self?.checkConfirmAddCard(
                             confirmationResponse,
+                            threeDSVersion: threeDSVersion,
                             presenter: addCardViewPresenter,
                             alertViewHelper: alertViewHelper,
                             confirmationComplete
@@ -2015,19 +2021,49 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
            let bodyAsString = String(data: body, encoding: .utf8) {
             let cresValue = bodyAsString.replacingOccurrences(of: "cres" + "=", with: "")
 
-            let data = Submit3DSAuthorizationV2Data(
-                cres: cresValue,
-                paymentId: getSubmitAuthorizationRequestData?().paymentId ?? ""
-            )
+            var flow: Submit3DSAuthorizationV2Flow = .attachCard
+            let isPaymentFlow = on3DSCheckingCompletionHandler != nil
+            let isAttachCardFlow = on3DSCheckingAddCardCompletionHandler != nil
 
-            getSubmitAuthorizationRequestData = nil
+            if isPaymentFlow { flow = .payment }
+            if isAttachCardFlow { flow = .attachCard }
 
-            acquiringSdk.submit3DSAuthorizationV2(data: data) { result in
-                DispatchQueue.main.async {
-                    self.webViewController?.dismiss(animated: true) {
-                        if self.on3DSCheckingCompletionHandler != nil {
-                            self.on3DSCheckingCompletionHandler?(result)
-                        }
+            switch flow {
+            case .payment:
+                let data = Submit3DSAuthorizationV2Data.assembleForPaymentFlow(
+                    paymentId: getSubmitAuthorizationRequestData?().paymentId ?? ""
+                )
+                getSubmitAuthorizationRequestData = nil
+                startSubmitRequestForPaymentFlow(data: data)
+            case .attachCard:
+                let data = Submit3DSAuthorizationV2Data.assembleForAttachCardFlow(cres: cresValue)
+                startSubmitRequestForAttachCardFlow(data: data)
+            }
+        }
+    }
+
+    private func startSubmitRequestForPaymentFlow(data: Submit3DSAuthorizationV2Data) {
+        acquiringSdk.submit3DSAuthorizationV2(data: data) { result in
+            DispatchQueue.main.async {
+                self.webViewController?.dismiss(animated: true) {
+                    // payment completion
+                    if self.on3DSCheckingCompletionHandler != nil {
+                        self.on3DSCheckingCompletionHandler?(result)
+                        self.on3DSCheckingCompletionHandler = nil
+                    }
+                }
+            }
+        }
+    }
+
+    private func startSubmitRequestForAttachCardFlow(data: Submit3DSAuthorizationV2Data) {
+        acquiringSdk.submit3DSAuthorizationV2AttachCard(data: data) { result in
+            DispatchQueue.main.async {
+                self.webViewController?.dismiss(animated: true) {
+                    // attach card completion
+                    if self.on3DSCheckingAddCardCompletionHandler != nil {
+                        self.on3DSCheckingAddCardCompletionHandler?(result)
+                        self.on3DSCheckingAddCardCompletionHandler = nil
                     }
                 }
             }

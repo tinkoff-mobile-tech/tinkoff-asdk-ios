@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import class UIKit.UIScreen
 
 /// Состояние для сервисов и объектов которые загружаем с севера
 public enum FetchStatus<ObjectType> {
@@ -118,27 +119,158 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         confirmationHandler: @escaping (
             (
                 _ result: FinishAddCardResponse,
+                _ threeDSVersion: String?,
                 _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
             ) -> Void
         ),
         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
     ) {
+
+        let checkType: PaymentCardCheckType = .check3DS
+
         // Step 1 init
-        let initAddCardData = AddCardData(with: checkType, customerKey: customerKey)
+        let initAddCardData = AddCardData(with: PaymentCardCheckType.check3DS.rawValue, customerKey: customerKey)
         queryStatus = coreSDK?.cardListAddCardInit(data: initAddCardData, completion: { [weak self] responseInit in
+
             switch responseInit {
             case let .failure(error):
                 DispatchQueue.main.async { completeHandler(.failure(error)) }
             case let .success(initAddCardResponse):
                 // Step 2 finish
-                let finishData = AttachCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
-                self?.queryStatus = self?.coreSDK?.cardListAddCardFinish(data: finishData, responseDelegate: nil, completion: { responseFinish in
+
+                switch checkType {
+                case .check3DS, .hold3DS:
+                    let requestData = Check3DSVersionData(
+                        paymentId: String(initAddCardResponse.paymentId),
+                        paymentSource: .cardNumber(number: number, expDate: expDate, cvv: cvc)
+                    )
+
+                    self?.coreSDK?.check3DSVersion(
+                        data: requestData,
+                        completion: { [weak self] result in
+                            switch result {
+                            case let .success(response):
+                                let threeDSVersion = response.version
+                                // three ds version 2
+                                if threeDSVersion.hasPrefix("2.") {
+                                    self?.attachCardFor3DSVersion2(
+                                        cardNumber: number,
+                                        expDate: expDate,
+                                        cvc: cvc,
+                                        requestKey: initAddCardResponse.requestKey,
+                                        threeDSVersion: threeDSVersion,
+                                        confirmationHandler: confirmationHandler,
+                                        completeHandler: completeHandler
+                                    )
+                                } else {
+                                    let finishData = AttachCardData(
+                                        cardNumber: number,
+                                        expDate: expDate,
+                                        cvv: cvc,
+                                        requestKey: initAddCardResponse.requestKey,
+                                        data: nil
+                                    )
+
+                                    self?.startAttachCardRequest(
+                                        cardData: finishData,
+                                        threeDSVersion: threeDSVersion,
+                                        confirmationHandler: confirmationHandler,
+                                        completeHandler: completeHandler
+                                    )
+                                }
+
+                            case let .failure(error):
+                                completeHandler(.failure(error))
+                            }
+                        }
+                    )
+
+                    return
+                default:
+
+                    let attachCardData = AttachCardData(
+                        cardNumber: number,
+                        expDate: expDate,
+                        cvv: cvc,
+                        requestKey: initAddCardResponse.requestKey,
+                        data: nil
+                    )
+
+                    self?.startAttachCardRequest(
+                        cardData: attachCardData,
+                        threeDSVersion: nil,
+                        confirmationHandler: confirmationHandler,
+                        completeHandler: completeHandler
+                    )
+                }
+            }
+        }) // сardListAddCardInit
+    }
+
+    private func attachCardFor3DSVersion2(
+        cardNumber: String,
+        expDate: String,
+        cvc: String,
+        requestKey: String,
+        threeDSVersion: String,
+        confirmationHandler: @escaping (
+            (
+                _ result: FinishAddCardResponse,
+                _ threeDSVersion: String?,
+                _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
+            ) -> Void
+        ),
+        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
+    ) {
+        let webData = Data3DSVersion2WebFlowData(
+            threeDSCompInd: "Y",
+            language: Locale.preferredLanguages[0],
+            timezone: String(Date().getTimezoneOffset()),
+            screenHeight: "\(Int(UIScreen.main.bounds.height))",
+            screenWidth: "\(Int(UIScreen.main.bounds.width))",
+            cresCallbackUrl: coreSDK?.confirmation3DSTerminationV2URL().absoluteString ?? ""
+        )
+
+        let finishData = AttachCardData(
+            cardNumber: cardNumber,
+            expDate: expDate,
+            cvv: cvc,
+            requestKey: requestKey,
+            data: webData
+        )
+
+        startAttachCardRequest(
+            cardData: finishData,
+            threeDSVersion: threeDSVersion,
+            confirmationHandler: confirmationHandler,
+            completeHandler: completeHandler
+        )
+    }
+
+    private func startAttachCardRequest(
+        cardData: AttachCardData,
+        threeDSVersion: String?,
+        confirmationHandler: @escaping (
+            (
+                _ result: FinishAddCardResponse,
+                _ threeDSVersion: String?,
+                _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
+            ) -> Void
+        ),
+        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
+    ) {
+        let finishData = cardData
+        queryStatus = coreSDK?
+            .cardListAddCardFinish(
+                data: finishData,
+                responseDelegate: nil,
+                completion: { [weak self] responseFinish in
                     switch responseFinish {
                     case let .failure(error):
                         DispatchQueue.main.async { completeHandler(.failure(error)) }
                     case let .success(finishAddCardResponse):
                         // Step 3 complete
-                        confirmationHandler(finishAddCardResponse) { completionResponse in
+                        confirmationHandler(finishAddCardResponse, threeDSVersion) { completionResponse in
                             switch completionResponse {
                             case let .failure(error):
                                 completeHandler(.failure(error))
@@ -156,9 +288,8 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                             }
                         } // confirmationHandler
                     }
-                }) // сardListAddCardFinish
-            }
-        }) // сardListAddCardInit
+                }
+            )
     }
 
     public func deactivateCard(cardId: String, startHandler: (() -> Void)?, completeHandler: @escaping (PaymentCard?) -> Void) {

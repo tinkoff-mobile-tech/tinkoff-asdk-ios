@@ -251,8 +251,17 @@ public final class AcquiringSdk: NSObject {
         data: Submit3DSAuthorizationV2Data,
         completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submit3DSAuthorizationV2(data: data)
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: data, flow: .payment)
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
+    }
+
+    @discardableResult
+    public func submit3DSAuthorizationV2AttachCard(
+        data: Submit3DSAuthorizationV2Data,
+        completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void
+    ) -> Cancellable {
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: data, flow: .attachCard)
+        return acquiringAPI.performRequest(request, completion: completion)
     }
 
     // MARK: Get Payment State

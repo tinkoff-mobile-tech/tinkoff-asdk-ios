@@ -28,11 +28,21 @@ public struct AttachCardData {
     let cvv: String
     let requestKey: String
 
-    public init(cardNumber: String, expDate: String, cvv: String, requestKey: String) {
+    // only for three ds version 2 request [web flow]
+    let data: Data3DSVersion2WebFlowData?
+
+    public init(
+        cardNumber: String,
+        expDate: String,
+        cvv: String,
+        requestKey: String,
+        data: Data3DSVersion2WebFlowData?
+    ) {
         self.cardNumber = cardNumber
         self.expDate = expDate
         self.cvv = cvv
         self.requestKey = requestKey
+        self.data = data
     }
 
     func cardData() -> String {

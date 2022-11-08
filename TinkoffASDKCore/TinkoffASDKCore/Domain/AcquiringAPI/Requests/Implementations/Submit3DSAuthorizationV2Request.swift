@@ -30,32 +30,46 @@ public struct Submit3DSAuthorizationV2Request: AcquiringRequest {
     let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy
     let tokenFormationStrategy: TokenFormationStrategy
 
-    init(data: Submit3DSAuthorizationV2Data, baseURL: URL) {
-        if data.paymentId != nil {
+    private let flow: Submit3DSAuthorizationV2Flow
+
+    init(data: Submit3DSAuthorizationV2Data, baseURL: URL, for flow: Submit3DSAuthorizationV2Flow) {
+        switch flow {
+        case .payment:
             terminalKeyProvidingStrategy = .always
             tokenFormationStrategy = .includeAll(except: Constants.Keys.cres)
-        } else {
+        case .attachCard:
             terminalKeyProvidingStrategy = .never
             tokenFormationStrategy = .none
         }
 
+        self.flow = flow
         self.baseURL = baseURL
-        let dict = Self.formParamsDictionary(from: data)
+        let dict = Self.formParamsDictionary(from: data, flow: flow)
         parameters = (try? dict.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }
 
 extension Submit3DSAuthorizationV2Request {
 
-    static func formParamsDictionary(from data: Submit3DSAuthorizationV2Data) -> [String: String] {
-        if let paymentId = data.paymentId {
-            return [Constants.Keys.paymentId: paymentId]
-        }
+    private static func formParamsDictionary(
+        from data: Submit3DSAuthorizationV2Data,
+        flow: Submit3DSAuthorizationV2Flow
+    ) -> [String: String] {
 
-        if let cres = data.cres {
-            return [Constants.Keys.cres: cres]
-        }
+        var result = [String: String]()
+        switch flow {
+        case .payment:
+            if let paymentId = data.paymentId {
+                result[Constants.Keys.paymentId] = paymentId
+            }
 
-        return [:]
+            return result
+        case .attachCard:
+            if let cres = data.cres {
+                result[Constants.Keys.cres] = cres
+            }
+
+            return result
+        }
     }
 }

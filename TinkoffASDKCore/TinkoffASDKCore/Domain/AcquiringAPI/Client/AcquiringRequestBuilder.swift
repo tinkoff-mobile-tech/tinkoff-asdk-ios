@@ -11,7 +11,7 @@ protocol IAcquiringRequestBuilder {
     func initRequest(data: PaymentInitData) -> AcquiringRequest
     func finishAuthorize(data: FinishAuthorizeData) -> AcquiringRequest
     func check3DSVersion(data: Check3DSVersionData) -> AcquiringRequest
-    func submit3DSAuthorizationV2(data: Submit3DSAuthorizationV2Data) -> AcquiringRequest
+    func submit3DSAuthorizationV2(data: Submit3DSAuthorizationV2Data, flow: Submit3DSAuthorizationV2Flow) -> AcquiringRequest
     func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest
     func charge(data: ChargeData) -> AcquiringRequest
     func getCardList(data: GetCardListData) -> AcquiringRequest
@@ -77,8 +77,8 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
         )
     }
 
-    func submit3DSAuthorizationV2(data: Submit3DSAuthorizationV2Data) -> AcquiringRequest {
-        Submit3DSAuthorizationV2Request(data: data, baseURL: baseURLProvider.url)
+    func submit3DSAuthorizationV2(data: Submit3DSAuthorizationV2Data, flow: Submit3DSAuthorizationV2Flow) -> AcquiringRequest {
+        Submit3DSAuthorizationV2Request(data: data, baseURL: baseURLProvider.url, for: flow)
     }
 
     func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest {
