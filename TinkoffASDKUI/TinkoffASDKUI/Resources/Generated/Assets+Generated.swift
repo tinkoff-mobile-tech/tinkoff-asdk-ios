@@ -39,6 +39,9 @@ internal enum Asset {
     internal static let visaLogo = ImageAsset(name: "visa_logo")
   }
   internal static let done = ImageAsset(name: "done")
+  internal enum Icons {
+    internal static let popupBar = ImageAsset(name: "popup-bar")
+  }
   internal enum Illustrations {
     internal static let illustrationsCommonLightCard = ImageAsset(name: "illustrations-common-light-card")
   }
