@@ -37,11 +37,12 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Dependencies
 
+    public let ipAddressProvider: IIPAddressProvider
+
     private let acquiringAPI: IAcquiringAPIClient
     private let acquiringRequests: IAcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestBuilder
-    private let ipAddressProvider: IPAddressProvider
     private let threeDSFacade: IThreeDSFacade
     private let languageProvider: ILanguageProvider
 
@@ -52,7 +53,7 @@ public final class AcquiringSdk: NSObject {
         acquiringRequests: IAcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
         externalRequests: IExternalRequestBuilder,
-        ipAddressProvider: IPAddressProvider,
+        ipAddressProvider: IIPAddressProvider,
         threeDSFacade: IThreeDSFacade,
         languageProvider: ILanguageProvider
     ) {
@@ -247,10 +248,10 @@ public final class AcquiringSdk: NSObject {
 
     @discardableResult
     public func submit3DSAuthorizationV2(
-        cres: String,
+        data: Submit3DSAuthorizationV2Data,
         completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submit3DSAuthorizationV2(data: CresData(cres: cres))
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: data)
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
@@ -660,7 +661,7 @@ public final class AcquiringSdk: NSObject {
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
     ///
     /// - Parameters:
-    ///   - paymentId: `PaymentId` - идентификтор платежа
+    ///   - paymentId: `String` - идентификтор платежа
     ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
     ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
     /// - Returns: `Cancellable`

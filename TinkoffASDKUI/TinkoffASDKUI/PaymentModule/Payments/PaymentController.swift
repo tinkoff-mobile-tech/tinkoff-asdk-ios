@@ -20,8 +20,6 @@
 import TinkoffASDKCore
 import WebKit
 
-public typealias PaymentId = String
-
 /// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа
 public protocol PaymentControllerUIProvider: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
@@ -96,12 +94,12 @@ public final class PaymentController {
 
     // MARK: - Dependencies
 
-    private let acquiringSDK: AcquiringSdk
-    private let paymentFactory: PaymentFactory
-    private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
+    private let threeDsService: IAcquiringThreeDSService
+    private let paymentFactory: IPaymentFactory
+    private let threeDSHandler: IThreeDSWebViewHandler
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
     // App based threeDS
-    private let tdsController: TDSController
+    private let tdsController: ITDSController
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -112,26 +110,33 @@ public final class PaymentController {
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
 
+    private var threeDSHandlerDidCancel: () -> Void = {}
+    private var threeDSHandlerCompletion: ((Result<GetPaymentStatePayload, Error>) -> Void)?
+
     // MARK: - Temporary until refactor PaymentView!
 
     private let acquiringUISDK: AcquiringUISDK
 
+    private var paymentDelegate: PaymentProcessDelegate!
+
     // MARK: - Init
 
     init(
-        acquiringSDK: AcquiringSdk,
-        paymentFactory: PaymentFactory,
-        threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
+        threeDsService: IAcquiringThreeDSService,
+        paymentFactory: IPaymentFactory,
+        threeDSHandler: IThreeDSWebViewHandler,
         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
-        tdsController: TDSController,
-        acquiringUISDK: AcquiringUISDK /* temporary*/
+        tdsController: ITDSController,
+        acquiringUISDK: AcquiringUISDK /* temporary*/,
+        paymentDelegate: PaymentProcessDelegate? = nil
     ) {
-        self.acquiringSDK = acquiringSDK
+        self.threeDsService = threeDsService
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
         self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
         self.tdsController = tdsController
         self.acquiringUISDK = acquiringUISDK
+        self.paymentDelegate = paymentDelegate ?? self
     }
 
     deinit {
@@ -150,7 +155,7 @@ public final class PaymentController {
             let paymentProcess = self.paymentFactory.createPayment(
                 paymentSource: paymentSource,
                 paymentFlow: .full(paymentOptions: paymentOptions),
-                paymentDelegate: self
+                paymentDelegate: self.paymentDelegate
             )
 
             guard let paymentProcess = paymentProcess else {
@@ -162,7 +167,7 @@ public final class PaymentController {
     }
 
     public func performFinishPayment(
-        paymentId: PaymentId,
+        paymentId: String,
         paymentSource: PaymentSourceData,
         customerOptions: CustomerOptions
     ) {
@@ -174,7 +179,7 @@ public final class PaymentController {
                     paymentId: paymentId,
                     customerOptions: customerOptions
                 ),
-                paymentDelegate: self
+                paymentDelegate: self.paymentDelegate
             )
 
             guard let paymentProcess = paymentProcess else {
@@ -205,14 +210,13 @@ private extension PaymentController {
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
 
-        threeDSHandler.didCancel = {
+        threeDSHandlerDidCancel = {
             paymentProcess.cancel()
             confirmationCancelled()
         }
 
-        threeDSHandler.didFinish = { result in
-            completion(result)
-        }
+        threeDSHandler.onUserTapCloseButton = threeDSHandlerDidCancel
+        threeDSHandlerCompletion = completion
 
         DispatchQueue.main.async {
             self.presentThreeDSViewController(urlRequest: request)
@@ -221,9 +225,11 @@ private extension PaymentController {
 
     func presentThreeDSViewController(urlRequest: URLRequest, completion: (() -> Void)? = nil) {
         dismissThreeDSViewControllerIfNeeded {
-            let threeDSViewController = ThreeDSViewController(
+            let threeDSViewController = ThreeDSViewController<GetPaymentStatePayload>(
                 urlRequest: urlRequest,
-                handler: self.threeDSHandler
+                handler: self.threeDSHandler,
+                onHandleCancelled: self.threeDSHandlerDidCancel,
+                didHandle: self.threeDSHandlerCompletion
             )
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
             if #available(iOS 13.0, *) {
@@ -324,7 +330,7 @@ extension PaymentController: PaymentProcessDelegate {
     ) {
         DispatchQueue.main.async {
             guard let webView = self.uiProvider?.hiddenWebViewToCollect3DSData(),
-                  let request = try? self.acquiringSDK.createChecking3DSURL(data: checking3DSURLData) else {
+                  let request = try? self.threeDsService.createChecking3DSURL(data: checking3DSURLData) else {
                 return
             }
 
@@ -340,7 +346,7 @@ extension PaymentController: PaymentProcessDelegate {
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
         do {
-            let request = try acquiringSDK.createConfirmation3DSRequest(data: data)
+            let request = try threeDsService.createConfirmation3DSRequest(data: data)
             startThreeDSConfirmation(
                 for: paymentProcess,
                 request: request,
@@ -360,7 +366,7 @@ extension PaymentController: PaymentProcessDelegate {
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
         do {
-            let request = try acquiringSDK.createConfirmation3DSRequestACS(
+            let request = try threeDsService.createConfirmation3DSRequestACS(
                 data: data,
                 messageVersion: version
             )
@@ -419,7 +425,7 @@ extension PaymentController: PaymentProcessDelegate {
 
         let customerKey: String?
         let paymentOptions: PaymentOptions?
-        let parentPaymentId: PaymentId?
+        let parentPaymentId: String?
 
         switch paymentProcess.paymentFlow {
         case let .full(processPaymentOptions):
@@ -472,7 +478,7 @@ extension PaymentController: PaymentProcessDelegate {
         sourceViewController: UIViewController,
         viewConfiguration: AcquiringViewConfiguration,
         customerKey: String,
-        parentPaymentId: PaymentId,
+        parentPaymentId: String,
         failedPaymentId: String?
     ) {
         let newOrderOptions = OrderOptions(

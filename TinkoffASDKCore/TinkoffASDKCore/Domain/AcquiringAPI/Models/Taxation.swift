@@ -8,7 +8,7 @@
 import Foundation
 
 /// Система налогообложения.
-public enum Taxation: String {
+public enum Taxation: String, Equatable {
     /// Общая
     case osn
     /// Упрощенная (доходы)

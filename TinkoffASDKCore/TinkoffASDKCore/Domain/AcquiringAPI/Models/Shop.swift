@@ -13,7 +13,7 @@ import Foundation
 /// - 2. Fee не может быть больше Amount.
 /// - 3. В запросе Cancel хотя бы один ShopCode должен был уже быть на Confirm.При этом сумма всех Amount в рамках ShopCode на Cancel не должна быть больше суммы всех Amount в рамках ShopCode на Confirm.
 /// - 4. Amount в Shops на Confirm должен быть равен или меньше Amount в Shops на Init.
-public struct Shop: Codable {
+public struct Shop: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case shopCode = "ShopCode"
         case name = "Name"

@@ -20,7 +20,23 @@
 import ThreeDSWrapper
 import TinkoffASDKCore
 
-final class TDSController {
+protocol ITDSController: AnyObject {
+    var completionHandler: PaymentCompletionHandler? { get set }
+    var cancelHandler: (() -> Void)? { get set }
+
+    /// Получает необходимые параметры для проведения 3дс
+    func enrichRequestDataWithAuthParams(
+        with paymentSystem: String,
+        messageVersion: String,
+        finishRequestData: PaymentFinishRequestData,
+        completion: @escaping (Result<PaymentFinishRequestData, Error>) -> Void
+    )
+
+    /// Начинает испытание на стороне 3дс-сдк
+    func doChallenge(with appBasedData: Confirmation3DS2AppBasedData)
+}
+
+final class TDSController: ITDSController {
 
     // Dependencies
 
@@ -200,8 +216,9 @@ extension TDSController: ChallengeStatusReceiver {
         finishTransaction()
         do {
             let cresValue = try buildCresValue(with: completionEvent.getTransactionStatus())
+            let data = Submit3DSAuthorizationV2Data(cres: cresValue, paymentId: nil)
 
-            acquiringSdk.submit3DSAuthorizationV2(cres: cresValue) { [weak self] result in
+            acquiringSdk.submit3DSAuthorizationV2(data: data) { [weak self] result in
                 self?.completionHandler?(result)
                 self?.clear()
             }

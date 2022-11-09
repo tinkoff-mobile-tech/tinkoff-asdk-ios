@@ -83,6 +83,7 @@ enum Constants {
         static let redirectUrl = "RedirectUrl"
         static let isAllowed = "Allowed"
         static let language = "Language"
+        static let cres = "cres"
     }
 
     enum Values {

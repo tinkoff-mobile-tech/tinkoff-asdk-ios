@@ -20,7 +20,7 @@
 import Foundation
 
 /// Инициализация платежа, подробнее: [Init - создание заказа на оплату](https://oplata.tinkoff.ru/develop/api/payments/init-request/)
-public struct PaymentInitData: Encodable {
+public struct PaymentInitData: Encodable, Equatable {
     private enum CodingKeys: CodingKey {
         case amount
         case orderId

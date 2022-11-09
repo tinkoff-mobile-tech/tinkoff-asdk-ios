@@ -8,7 +8,7 @@
 import Foundation
 
 /// Источник оплаты
-public enum PaymentSourceData: Codable {
+public enum PaymentSourceData: Codable, Equatable {
     // MARK: CodingKeys
 
     private enum CodingKeys: CodingKey {
