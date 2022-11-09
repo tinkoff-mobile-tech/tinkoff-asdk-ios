@@ -71,7 +71,7 @@ class SingleSlideSkeleton {
         gradientLayer.frame = gradientView.bounds
         var observer: NSKeyValueObservation? = gradientView.observe(
             \.center,
-            changeHandler: { view, change in
+            changeHandler: { view, _ in
                 gradientLayer.frame = view.bounds
                 skeletonsContainerView.frame = view.bounds
             }

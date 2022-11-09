@@ -51,9 +51,9 @@ extension SkeletonGradientDirection {
         case .bottomTop:
             return AnimationPoint(from: CGPoint(x: 0.5, y: 2), to: CGPoint(x: 0.5, y: 0))
         case .topLeftBottomRight:
-            return AnimationPoint(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 2, y: 2))
+            return AnimationPoint(from: .zero, to: CGPoint(x: 2, y: 2))
         case .bottomRightTopLeft:
-            return AnimationPoint(from: CGPoint(x: 2, y: 2), to: CGPoint(x: 0, y: 0))
+            return AnimationPoint(from: CGPoint(x: 2, y: 2), to: .zero)
         }
     }
 }
