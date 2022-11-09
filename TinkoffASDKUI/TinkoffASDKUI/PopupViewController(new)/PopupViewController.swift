@@ -38,6 +38,7 @@ public final class PopupViewController: UIViewController {
     private var currentModel: Model = .getEmpty()
 
     private var didCallViewDidLoad = false
+    private var currentFractionComplete: CGFloat = 0
 
     // MARK: - Methods
 
@@ -64,6 +65,9 @@ public final class PopupViewController: UIViewController {
         makeConstraints(model: model)
         setupPopupView(style: model.style)
         setupPopupView(model: model)
+        view.backgroundColor = model.style.dimsBackground
+            ? .black.withAlphaComponent(transformFractionCompleteLimitToOne(fractionComplete: currentFractionComplete) / 2)
+            : nil
     }
 
     // MARK: - Private
@@ -126,7 +130,18 @@ public final class PopupViewController: UIViewController {
             fractionComplete = -1
         }
 
+        currentFractionComplete = fractionComplete
+        handleFractionCompleteChange(fractionComplete: fractionComplete)
         delegate?.updatedFractionComplete(value: fractionComplete)
+    }
+
+    private func transformFractionCompleteLimitToOne(fractionComplete: CGFloat) -> CGFloat {
+        (1 + fractionComplete) / 2
+    }
+
+    private func handleFractionCompleteChange(fractionComplete: CGFloat) {
+        let fractionComplete = transformFractionCompleteLimitToOne(fractionComplete: fractionComplete) / 2
+        view.backgroundColor = currentModel.style.dimsBackground ? .black.withAlphaComponent(fractionComplete) : nil
     }
 
     private func panGestureChanged(panGR: UIPanGestureRecognizer) {
@@ -226,7 +241,7 @@ public final class PopupViewController: UIViewController {
         popupView.addSubview(panBackingView)
         panBackingView.addSubview(panImageView)
 
-        view.backgroundColor = .brown // nil
+        view.backgroundColor = nil
         view.addGestureRecognizer(dismissTapGR)
         popupView.addGestureRecognizer(panGR)
         panGR.maximumNumberOfTouches = 1
@@ -317,11 +332,12 @@ public final class PopupViewController: UIViewController {
 public extension PopupViewController {
 
     struct PopUpStyle {
-        var backgroundColor: UIColor = .white
-        var cornerRadius: CGFloat = 13
-        var topBarHeight: CGFloat = 24
-        var iconImageWidth: CGFloat = 32
-        var limit = Limit()
+        public var backgroundColor: UIColor = .white
+        public var cornerRadius: CGFloat = 13
+        public var topBarHeight: CGFloat = 24
+        public var iconImageWidth: CGFloat = 32
+        public var dimsBackground = true
+        public var limit = Limit()
 
         public init(
             backgroundColor: UIColor = .white,
@@ -339,8 +355,8 @@ public extension PopupViewController {
     }
 
     struct Limit {
-        var shouldLimitToSafeArea = true
-        var topInset: CGFloat = 0
+        public var shouldLimitToSafeArea = true
+        public var topInset: CGFloat = 0
 
         public init(
             shouldLimitToSafeArea: Bool = true,
@@ -352,23 +368,23 @@ public extension PopupViewController {
     }
 
     struct Data {
-        let contentView: UIView
-        var contentViewController: UIViewController?
-        var panBarIndicatorImage: UIImage? = Asset.Icons.popupBar.image
-        var contentHeight: CGFloat = 100
+        public let contentView: UIView
+        public var contentViewController: UIViewController?
+        public var panBarIndicatorImage: UIImage? = Asset.Icons.popupBar.image
+        public var contentHeight: CGFloat = 100
         /// between 0 and 1
-        var thresholdPercentage: CGFloat = 0.6
-        var shouldDismissOnBackViewTap = true
-        var shouldDismissOnFolding = true
-        var onBackingViewTap: () -> Void = {}
+        public var thresholdPercentage: CGFloat = 0.6
+        public var shouldDismissOnBackViewTap = true
+        public var shouldDismissOnFolding = true
+        public var onBackingViewTap: () -> Void = {}
 
         public static var popupBarImage: UIImage { Asset.Icons.popupBar.image }
     }
 
     struct Model {
         let id = UUID().uuidString
-        var style = PopUpStyle()
-        let data: Data
+        public var style = PopUpStyle()
+        public var data: Data
 
         static func getEmpty() -> Model {
             Model(data: PopupViewController.Data(contentView: UIView(), contentHeight: 100))
