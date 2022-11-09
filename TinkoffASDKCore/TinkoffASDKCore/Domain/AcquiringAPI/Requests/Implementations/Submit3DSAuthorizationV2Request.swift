@@ -19,17 +19,43 @@
 
 import Foundation
 
-struct Submit3DSAuthorizationV2Request: AcquiringRequest {
+public struct Submit3DSAuthorizationV2Request: AcquiringRequest {
+    public static let path: String = "v2/Submit3DSAuthorizationV2"
+    var path: String { Self.path }
+
     let baseURL: URL
-    let path: String = "v2/Submit3DSAuthorizationV2"
     let httpMethod: HTTPMethod = .post
     let parametersEncoding: ParametersEncoding = .urlEncodedForm
     let parameters: HTTPParameters
-    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .never
-    let tokenFormationStrategy: TokenFormationStrategy = .none
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy
+    let tokenFormationStrategy: TokenFormationStrategy
 
-    init(data: CresData, baseURL: URL) {
+    init(data: Submit3DSAuthorizationV2Data, baseURL: URL) {
+        if data.paymentId != nil {
+            terminalKeyProvidingStrategy = .always
+            tokenFormationStrategy = .includeAll(except: Constants.Keys.cres)
+        } else {
+            terminalKeyProvidingStrategy = .never
+            tokenFormationStrategy = .none
+        }
+
         self.baseURL = baseURL
-        parameters = (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        let dict = Self.formParamsDictionary(from: data)
+        parameters = (try? dict.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+    }
+}
+
+extension Submit3DSAuthorizationV2Request {
+
+    static func formParamsDictionary(from data: Submit3DSAuthorizationV2Data) -> [String: String] {
+        if let paymentId = data.paymentId {
+            return [Constants.Keys.paymentId: paymentId]
+        }
+
+        if let cres = data.cres {
+            return [Constants.Keys.cres: cres]
+        }
+
+        return [:]
     }
 }
