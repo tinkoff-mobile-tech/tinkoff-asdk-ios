@@ -38,6 +38,16 @@ internal enum Asset {
     internal static let mirLogo = ImageAsset(name: "mir_logo")
     internal static let visaLogo = ImageAsset(name: "visa_logo")
   }
+  internal enum Cards {
+    internal static let cardAlpha = ImageAsset(name: "card-alpha")
+    internal static let cardGazprom = ImageAsset(name: "card-gazprom")
+    internal static let cardOther = ImageAsset(name: "card-other")
+    internal static let cardOzon = ImageAsset(name: "card-ozon")
+    internal static let cardRaiffaisen = ImageAsset(name: "card-raiffaisen")
+    internal static let cardSber = ImageAsset(name: "card-sber")
+    internal static let cardTinkoff = ImageAsset(name: "card-tinkoff")
+    internal static let cardVtb = ImageAsset(name: "card-vtb")
+  }
   internal static let done = ImageAsset(name: "done")
   internal enum Icons {
     internal static let popupBar = ImageAsset(name: "popup-bar")
@@ -48,6 +58,15 @@ internal enum Asset {
   internal static let logoPs = ImageAsset(name: "logo_ps")
   internal static let next = ImageAsset(name: "next")
   internal static let nexta = ImageAsset(name: "nexta")
+  internal enum PaymentSystem {
+    internal static let paymentSystemMaestro = ImageAsset(name: "payment-system-maestro")
+    internal static let paymentSystemMastercard = ImageAsset(name: "payment-system-mastercard")
+    internal static let paymentSystemMirWhite = ImageAsset(name: "payment-system-mir-white")
+    internal static let paymentSystemMir = ImageAsset(name: "payment-system-mir")
+    internal static let paymentSystemUnionpay = ImageAsset(name: "payment-system-unionpay")
+    internal static let paymentSystemVisaWhite = ImageAsset(name: "payment-system-visa-white")
+    internal static let paymentSystemVisa = ImageAsset(name: "payment-system-visa")
+  }
   internal static let scan = ImageAsset(name: "scan")
   internal static let share = ImageAsset(name: "share")
   internal static let tick24 = ImageAsset(name: "tick_24")

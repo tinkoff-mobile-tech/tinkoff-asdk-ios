@@ -82,91 +82,110 @@ extension ASDKColors {
     }
 
     struct Dynamic {
-        public struct Background {
-            public var base: UIColor {
-                return UIColor.dynamicColor(
-                    light: UIColor.asdk.n14,
-                    dark: UIColor.asdk.n15
-                )
-            }
 
-            public var elevation1: UIColor {
-                return UIColor.dynamicColor(
-                    light: UIColor.asdk.n14,
-                    dark: UIColor.asdk.n16
-                )
-            }
-
-            public var elevation2: UIColor {
-                return UIColor.dynamicColor(
-                    light: UIColor.asdk.n14,
-                    dark: UIColor.asdk.n18
-                )
-            }
-
-            public var separator: UIColor {
-                return UIColor.dynamicColor(
-                    light: UIColor.asdk.darkGray,
-                    dark: UIColor.asdk.black
-                )
-            }
-
-            var highlight: UIColor {
-                .dynamicColor(
-                    light: UIColor(hex: "#00000014") ?? .clear,
-                    dark: UIColor(hex: "#FFFFFF1A") ?? .clear
-                )
-            }
-        }
-
-        public struct Text {
-            public var primary: UIColor {
-                return UIColor.dynamicColor(
-                    light: UIColor.asdk.textPrimary,
-                    dark: UIColor.asdk.n7
-                )
-            }
-
-            var tertiary: UIColor {
-                .dynamicColor(
-                    light: UIColor(hex: "#00102438") ?? .clear,
-                    dark: UIColor(hex: "#FFFFFF4D") ?? .clear
-                )
-            }
-        }
-
-        public struct Button {
-            public struct Sbp {
-                public var background: UIColor {
-                    return UIColor.dynamicColor(
-                        light: .black,
-                        dark: .white
-                    )
-                }
-
-                public var tint: UIColor {
-                    return UIColor.dynamicColor(
-                        light: .white,
-                        dark: .black
-                    )
-                }
-            }
-
-            public var sbp: Sbp {
-                return Sbp()
-            }
-        }
-
-        public var background: Background {
+        var background: Background {
             return Background()
         }
 
-        public var text: Text {
+        var text: Text {
             return Text()
         }
 
-        public var button: Button {
+        var button: Button {
             return Button()
+        }
+    }
+}
+
+// MARK: - Pallete
+
+extension ASDKColors.Dynamic {
+
+    // MARK: - Background
+
+    struct Background {
+        var base: UIColor {
+            return UIColor.dynamicColor(
+                light: UIColor.asdk.n14,
+                dark: UIColor.asdk.n15
+            )
+        }
+
+        var neutral2: UIColor {
+            UIColor.dynamicColor(
+                light: UIColor(hex: "#001024")!.withAlphaComponent(0.06),
+                dark: .white.withAlphaComponent(0.15)
+            )
+        }
+
+        var elevation1: UIColor {
+            return UIColor.dynamicColor(
+                light: UIColor.asdk.n14,
+                dark: UIColor.asdk.n16
+            )
+        }
+
+        var elevation2: UIColor {
+            return UIColor.dynamicColor(
+                light: UIColor.asdk.n14,
+                dark: UIColor.asdk.n18
+            )
+        }
+
+        var separator: UIColor {
+            return UIColor.dynamicColor(
+                light: UIColor.asdk.darkGray,
+                dark: UIColor.asdk.black
+            )
+        }
+
+        var highlight: UIColor {
+            .dynamicColor(
+                light: UIColor(hex: "#00000014") ?? .clear,
+                dark: UIColor(hex: "#FFFFFF1A") ?? .clear
+            )
+        }
+    }
+
+    // MARK: - Text
+
+    struct Text {
+        var primary: UIColor {
+            return UIColor.dynamicColor(
+                light: UIColor.asdk.textPrimary,
+                dark: UIColor.asdk.n7
+            )
+        }
+
+        var tertiary: UIColor {
+            .dynamicColor(
+                light: UIColor(hex: "#00102438") ?? .clear,
+                dark: UIColor(hex: "#FFFFFF4D") ?? .clear
+            )
+        }
+    }
+
+    // MARK: - Button
+
+    struct Button {
+        struct Sbp {
+            var background: UIColor {
+                return UIColor.dynamicColor(
+                    light: .black,
+                    dark: .white
+                )
+            }
+
+            var tint: UIColor {
+                return UIColor.dynamicColor(
+                    light: .white,
+                    dark: .black
+                )
+            }
+        }
+
+        var sbp: Sbp {
+            return Sbp()
         }
     }
 }
