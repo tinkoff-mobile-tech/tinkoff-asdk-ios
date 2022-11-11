@@ -7,51 +7,6 @@
 
 import UIKit
 
-extension UIColor {
-
-    struct Dynamic {
-        let light: UIColor
-        let dark: UIColor
-
-        func getColor() -> UIColor {
-            UIColor.dynamicColor(dynamic: self)
-        }
-
-        func getOppositeColor() -> UIColor {
-            UIColor.getOppositeColor(dynamic: self)
-        }
-
-        static var basic: Dynamic { Dynamic(light: .black, dark: .white) }
-    }
-
-    static func dynamicColor(dynamic: Dynamic) -> UIColor {
-        if #available(iOS 13.0, *) {
-            return UIColor(dynamicProvider: {
-                $0.userInterfaceStyle == .dark ? dynamic.dark : dynamic.light
-            })
-        }
-        return dynamic.light
-    }
-
-    static func getOppositeColor(dynamic: Dynamic) -> UIColor {
-        if #available(iOS 13.0, *) {
-            return UIColor(dynamicProvider: {
-                $0.userInterfaceStyle == .dark ? dynamic.light : dynamic.dark
-            })
-        }
-        return dynamic.dark
-    }
-}
-
-extension Array where Element == UIView {
-    @discardableResult
-    func wrapInSkeletonView(model: UIView.SkeletonSuperViewModel) -> [SkeletonView] {
-        return map { view in
-            view.wrapInSkeletonView(model: model)
-        }
-    }
-}
-
 extension UIView {
 
     struct SkeletonSuperViewModel {
@@ -141,7 +96,7 @@ final class SkeletonView: UIView {
 
     func configure(model: Model) {
         currentModel = model
-        backgroundColor = model.color.getColor()
+        backgroundColor = model.color.color
         layer.cornerRadius = model.cornerRadius
         gradientLayer.cornerRadius = model.cornerRadius
     }
@@ -216,8 +171,8 @@ final class SkeletonView: UIView {
 
     private func configureGradientLayer(gradientColor: UIColor.Dynamic) {
         gradientLayer.colors = [
-            gradientColor.getColor().cgColor,
-            gradientColor.getOppositeColor().withAlphaComponent(0.3).cgColor,
+            gradientColor.color.cgColor,
+            gradientColor.oppositeColor.withAlphaComponent(0.3).cgColor,
         ]
         gradientLayer.removeFromSuperlayer()
         layer.addSublayer(gradientLayer)
@@ -262,6 +217,15 @@ extension Array where Element == SkeletonView {
     func configure(model: UIView.SkeletonSuperViewModel) {
         forEach { skeletonView in
             skeletonView.configure(model: model)
+        }
+    }
+}
+
+extension Array where Element == UIView {
+    @discardableResult
+    func wrapInSkeletonView(model: UIView.SkeletonSuperViewModel) -> [SkeletonView] {
+        return map { view in
+            view.wrapInSkeletonView(model: model)
         }
     }
 }

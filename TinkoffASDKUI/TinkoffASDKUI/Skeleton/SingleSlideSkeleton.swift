@@ -94,7 +94,7 @@ class SingleSlideSkeleton {
         gradientLayer.startPoint = direction.endPoint.from
         gradientLayer.endPoint = direction.startPoint.to
 
-        let mainColor = color.getColor()
+        let mainColor = color.color
         gradientLayer.colors = [
             mainColor.cgColor,
             mainColor.withAlphaComponent(0.80).cgColor,

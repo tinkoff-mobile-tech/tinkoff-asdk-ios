@@ -100,7 +100,7 @@ private extension CardListView.Style {
         CardListView.Style(
             listItemsAreSelectable: false,
             primaryButtonStyle: primaryButtonStyle,
-            backgroundColor: .asdk.dynamic.background.elevation1
+            backgroundColor: ASDKColors.Background.elevation1.color
         )
     }
 
@@ -108,7 +108,7 @@ private extension CardListView.Style {
         CardListView.Style(
             listItemsAreSelectable: true,
             primaryButtonStyle: primaryButtonStyle,
-            backgroundColor: .asdk.dynamic.background.elevation1
+            backgroundColor: ASDKColors.Background.elevation1.color
         )
     }
 }
