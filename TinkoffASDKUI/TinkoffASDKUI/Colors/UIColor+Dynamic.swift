@@ -20,6 +20,10 @@ extension UIColor {
         var oppositeColor: UIColor {
             UIColor.getOppositeColor(dynamic: self)
         }
+
+        // MARK: - Static
+
+        static let basic = Self(light: .black, dark: .white)
     }
 }
 
