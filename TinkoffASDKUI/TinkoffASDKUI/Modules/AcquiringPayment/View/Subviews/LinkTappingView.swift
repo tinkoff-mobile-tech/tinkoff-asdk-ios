@@ -30,7 +30,7 @@ final class LinkTappingView: UIView {
         let linkButton = UIButton(type: .system)
         linkButton.contentHorizontalAlignment = .leading
         linkButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        linkButton.setTitleColor(.asdk.accent, for: .normal)
+        linkButton.setTitleColor(ASDKColors.accent, for: .normal)
         linkButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         return linkButton
     }()

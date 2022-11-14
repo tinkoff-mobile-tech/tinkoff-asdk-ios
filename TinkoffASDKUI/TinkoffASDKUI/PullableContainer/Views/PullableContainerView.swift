@@ -71,7 +71,7 @@ private extension PullableContainerView {
     }
 
     func setupDragView() {
-        dragView.backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        dragView.backgroundColor = ASDKColors.Background.elevation1.color
         dragView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         dragView.layer.cornerRadius = .cornerRadius
         dragView.layer.masksToBounds = true

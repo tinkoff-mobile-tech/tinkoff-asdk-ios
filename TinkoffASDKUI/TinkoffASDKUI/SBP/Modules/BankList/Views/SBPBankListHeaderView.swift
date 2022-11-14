@@ -42,7 +42,7 @@ private extension SBPBankListHeaderView {
 
         titleLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         subtitleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        subtitleLabel.textColor = UIColor.asdk.n3
+        subtitleLabel.textColor = ASDKColors.n3
 
         titleLabel.numberOfLines = 1
         subtitleLabel.numberOfLines = 0
