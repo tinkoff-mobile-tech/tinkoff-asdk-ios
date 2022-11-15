@@ -104,6 +104,13 @@ extension ASDKColors {
                 dark: UIColor(hex: "#FFFFFF1A") ?? .clear
             )
         }
+
+        static var neutral2: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#001024")!.withAlphaComponent(0.06),
+                dark: .white.withAlphaComponent(0.15)
+            )
+        }
     }
 
     // MARK: - Text
