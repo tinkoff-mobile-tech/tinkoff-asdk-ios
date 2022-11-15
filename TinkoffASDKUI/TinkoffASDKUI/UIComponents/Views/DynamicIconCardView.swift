@@ -167,10 +167,10 @@ extension DynamicIconCardView {
 
         // card
         var cornerRadius: CGFloat = 4
-        var backgroundColor = ASDKColors().dynamic.background.neutral2
+        var backgroundColor = ASDKColors.Background.neutral2.color
         // badge
         var paymentSystemBadgeCornerRadius: CGFloat = 2
-        var paymentSystemBadgeBackgroundColor = ASDKColors().dynamic.background.neutral2
+        var paymentSystemBadgeBackgroundColor = ASDKColors.Background.neutral2.color
     }
 
     enum Icon {}

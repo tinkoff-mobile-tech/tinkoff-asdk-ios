@@ -71,7 +71,7 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
             options: .transitionCrossDissolve
         ) { [self] in
             background.backgroundColor = highlighted
-                ? .asdk.dynamic.background.highlight
+                ? ASDKColors.Background.highlight.color
                 : .clear
         }
     }

@@ -31,14 +31,14 @@ final class PaymentCardView: UIView {
     private lazy var panLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: .fontSize, weight: .regular)
-        label.textColor = .asdk.dynamic.text.primary
+        label.textColor = ASDKColors.Text.primary.color
         return label
     }()
 
     private lazy var validThruLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: .fontSize, weight: .regular)
-        label.textColor = .asdk.dynamic.text.primary
+        label.textColor = ASDKColors.Text.primary.color
         return label
     }()
 
