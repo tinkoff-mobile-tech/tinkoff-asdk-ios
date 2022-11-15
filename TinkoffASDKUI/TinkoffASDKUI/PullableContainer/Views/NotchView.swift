@@ -38,7 +38,7 @@ final class NotchView: UIView {
 
 private extension NotchView {
     func setup() {
-        backgroundColor = UIColor.asdk.darkGray
+        backgroundColor = ASDKColors.darkGray
         layer.masksToBounds = true
     }
 }

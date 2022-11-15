@@ -34,7 +34,7 @@ final class PaymentCardRemovableView: UIView {
             Asset.tuiIcServiceCross24.image.withRenderingMode(.alwaysTemplate),
             for: .normal
         )
-        button.tintColor = .asdk.dynamic.text.tertiary
+        button.tintColor = ASDKColors.Text.tertiary.color
         button.addTarget(self, action: #selector(removeTapped), for: .touchUpInside)
         return button
     }()

@@ -42,7 +42,7 @@ final class PullableContainerHeader: UIView {
 
 private extension PullableContainerHeader {
     func setup() {
-        backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        backgroundColor = ASDKColors.Background.elevation1.color
         addSubview(notchView)
     }
 }

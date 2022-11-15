@@ -10,7 +10,7 @@ import UIKit
 // MARK: - PopupViewController
 
 /// Позволяет показывать контент внутри вью которая может быть закрыта
-public final class PopupViewController: UIViewController {
+final class PopupViewController: UIViewController {
 
     weak var delegate: PopupDelegate?
 
@@ -42,7 +42,7 @@ public final class PopupViewController: UIViewController {
 
     // MARK: - Methods
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         didCallViewDidLoad = true
         super.viewDidLoad()
         setupViews()
@@ -50,7 +50,7 @@ public final class PopupViewController: UIViewController {
 
     // MARK: - Public
 
-    public func configure(model: Model) {
+    func configure(model: Model) {
         if !didCallViewDidLoad {
             viewDidLoad()
         }
@@ -329,17 +329,17 @@ public final class PopupViewController: UIViewController {
 
 // MARK: - Inner Types
 
-public extension PopupViewController {
+extension PopupViewController {
 
     struct PopUpStyle {
-        public var backgroundColor: UIColor = .white
-        public var cornerRadius: CGFloat = 13
-        public var topBarHeight: CGFloat = 24
-        public var iconImageWidth: CGFloat = 32
-        public var dimsBackground = true
-        public var limit = Limit()
+        var backgroundColor: UIColor = .white
+        var cornerRadius: CGFloat = 13
+        var topBarHeight: CGFloat = 24
+        var iconImageWidth: CGFloat = 32
+        var dimsBackground = true
+        var limit = Limit()
 
-        public init(
+        init(
             backgroundColor: UIColor = .white,
             cornerRadius: CGFloat = 13,
             topBarHeight: CGFloat = 24,
@@ -355,10 +355,10 @@ public extension PopupViewController {
     }
 
     struct Limit {
-        public var shouldLimitToSafeArea = true
-        public var topInset: CGFloat = 0
+        var shouldLimitToSafeArea = true
+        var topInset: CGFloat = 0
 
-        public init(
+        init(
             shouldLimitToSafeArea: Bool = true,
             topInset: CGFloat = 0
         ) {
@@ -368,29 +368,29 @@ public extension PopupViewController {
     }
 
     struct Data {
-        public let contentView: UIView
-        public var contentViewController: UIViewController?
-        public var panBarIndicatorImage: UIImage? = Asset.Icons.popupBar.image
-        public var contentHeight: CGFloat = 100
+        let contentView: UIView
+        var contentViewController: UIViewController?
+        var panBarIndicatorImage: UIImage? = Asset.Icons.popupBar.image
+        var contentHeight: CGFloat = 100
         /// between 0 and 1
-        public var thresholdPercentage: CGFloat = 0.6
-        public var shouldDismissOnBackViewTap = true
-        public var shouldDismissOnFolding = true
-        public var onBackingViewTap: () -> Void = {}
+        var thresholdPercentage: CGFloat = 0.6
+        var shouldDismissOnBackViewTap = true
+        var shouldDismissOnFolding = true
+        var onBackingViewTap: () -> Void = {}
 
-        public static var popupBarImage: UIImage { Asset.Icons.popupBar.image }
+        static var popupBarImage: UIImage { Asset.Icons.popupBar.image }
     }
 
     struct Model {
         let id = UUID().uuidString
-        public var style = PopUpStyle()
-        public var data: Data
+        var style = PopUpStyle()
+        var data: Data
 
         static func getEmpty() -> Model {
             Model(data: PopupViewController.Data(contentView: UIView(), contentHeight: 100))
         }
 
-        public init(
+        init(
             style: PopupViewController.PopUpStyle = PopUpStyle(),
             data: PopupViewController.Data
         ) {
@@ -405,7 +405,7 @@ public extension PopupViewController {
     }
 }
 
-public extension PopupViewController.Data {
+extension PopupViewController.Data {
 
     init(
         contentView: UIView,

@@ -61,22 +61,22 @@ public final class TinkoffPayButton: UIButton {
 
         var backgroundColor: UIColor {
             switch color {
-            case .black: return .asdk.n15
-            case .white: return .asdk.n14
+            case .black: return ASDKColors.n15
+            case .white: return ASDKColors.n14
             }
         }
 
         var highlightBackgroundColor: UIColor {
             switch color {
-            case .black: return .asdk.black
-            case .white: return .asdk.n7
+            case .black: return ASDKColors.black
+            case .white: return ASDKColors.n7
             }
         }
 
         var borderColor: UIColor {
             switch color {
-            case .black: return .asdk.n14
-            case .white: return .asdk.n15
+            case .black: return ASDKColors.n14
+            case .white: return ASDKColors.n15
             }
         }
 

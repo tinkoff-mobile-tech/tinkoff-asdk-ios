@@ -48,7 +48,7 @@ final class ASDKButton: UIButton {
 
             init(
                 text: String,
-                color: UIColor = .asdk.textPrimary,
+                color: UIColor = ASDKColors.textPrimary,
                 font: UIFont = .systemFont(ofSize: 15, weight: .regular),
                 transform: CGAffineTransform = .identity
             ) {

@@ -24,7 +24,7 @@ extension ASDKButton.Style {
         ASDKButton.Style(
             title: Title(
                 text: Loc.TinkoffAcquiring.Button.payBy,
-                color: .asdk.dynamic.background.elevation1,
+                color: ASDKColors.Background.elevation1.color,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             icon: Icon(
@@ -33,15 +33,15 @@ extension ASDKButton.Style {
             ),
             border: Border(cornerRadius: 4, width: 1, color: .sbpBorder),
             size: IntrinsicSize(height: 44),
-            backgroundColor: .asdk.dynamic.button.sbp.background,
+            backgroundColor: ASDKColors.Button.Sbp.background.color,
             transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
         )
     }
 
     static func primary(
         title: String,
-        backgroundColor: UIColor = .asdk.yellow,
-        titleColor: UIColor = .asdk.textPrimary
+        backgroundColor: UIColor = ASDKColors.yellow,
+        titleColor: UIColor = ASDKColors.textPrimary
     ) -> ASDKButton.Style {
         ASDKButton.Style(
             title: Title(

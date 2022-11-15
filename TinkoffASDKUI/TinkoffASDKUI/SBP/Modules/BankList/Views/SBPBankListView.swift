@@ -59,7 +59,7 @@ private extension SBPBankListView {
 
         tableView.tableHeaderView = headerView
 
-        backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        backgroundColor = ASDKColors.Background.elevation1.color
 
         continueButton.titleLabel?.font = UIFont.systemFont(ofSize: .buttonFontSize, weight: .regular)
         continueButton.setTitleColor(
@@ -67,12 +67,12 @@ private extension SBPBankListView {
             for: .normal
         )
         continueButton.setTitleColor(
-            UIColor.asdk.darkGray,
+            ASDKColors.darkGray,
             for: .disabled
         )
         continueButton.backgroundColors = [
             .normal: style.continueButtonStyle.backgroundColor,
-            .disabled: UIColor.asdk.lightGray,
+            .disabled: ASDKColors.lightGray,
             .highlighted: style.continueButtonStyle.backgroundColor,
         ]
 
