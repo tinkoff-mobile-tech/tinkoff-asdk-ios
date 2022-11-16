@@ -9,9 +9,8 @@
 import UIKit
 
 protocol ShadowAvailable: AnyObject {
+
     /// Применяет стиль тени к объекту
-    ///
-    /// - Parameter style: Стиль тени
     func dropShadow(with style: ShadowStyle)
 
     /// Удаляет тень
@@ -19,7 +18,6 @@ protocol ShadowAvailable: AnyObject {
 }
 
 /// Структура стиля тени
-
 struct ShadowStyle: Equatable {
     /// Радиус
     var radius: CGFloat
@@ -31,8 +29,8 @@ struct ShadowStyle: Equatable {
     let offsetX: CGFloat
     /// Смещение по оси Y
     let offsetY: CGFloat
-    /// Инициализация
 
+    /// Инициализация
     init(radius: CGFloat, color: UIColor, opacity: Float, offsetX: CGFloat = 0, offsetY: CGFloat = 0) {
         self.color = color
         self.radius = radius
@@ -42,8 +40,7 @@ struct ShadowStyle: Equatable {
     }
 }
 
-/// Расширение для протокола
-
+/// ShadowAvailable + UIView
 extension ShadowAvailable where Self: UIView {
     /// Применяет стиль тени к объекту
     func dropShadow(with style: ShadowStyle) {
