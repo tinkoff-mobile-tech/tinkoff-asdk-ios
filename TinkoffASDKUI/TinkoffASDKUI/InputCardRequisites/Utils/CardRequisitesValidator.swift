@@ -119,7 +119,7 @@ private enum PANLengthValidator {
         switch paymentSystem {
         case .resolved(.visa), .resolved(.masterCard):
             return length == 16
-        case .resolved(.mir):
+        case .resolved(.mir), .resolved(.unionPay):
             return (16 ... 19).contains(length)
         case .resolved(.maestro):
             return (13 ... 19).contains(length)

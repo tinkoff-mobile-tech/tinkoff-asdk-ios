@@ -20,13 +20,6 @@
 import Foundation
 
 enum PaymentSystemDecision {
-    enum PaymentSystem: CaseIterable {
-        case visa
-        case masterCard
-        case maestro
-        case mir
-    }
-
     case resolved(PaymentSystem)
     case ambiguous
     case unrecognized
@@ -37,37 +30,15 @@ protocol IPaymentSystemResolver {
 }
 
 final class PaymentSystemResolver: IPaymentSystemResolver {
-    // MARK: Payment System's Patterns
-
-    enum Pattern: String, CaseIterable {
-        case visa = "^(4[0-9]*)$"
-        case masterCard = "^(5(?!05827|61468)[0-9]*)$"
-        case maestro = "^(6(?!2|76347|76454|76531|71182|76884|76907|77319|77384)[0-9]*)$"
-        case mir = """
-        ^((220[0-4]|356|505827|561468|623446|629129|629157|629244|676347\
-        |676454|676531|671182|676884|676907|677319|677384|8600|9051|9112\
-        (?!00|50|39|99)|9417(?!00|99)|9762|9777|9990(?!01))[0-9]*)$
-        """
-
-        var regex: NSRegularExpression? {
-            try? NSRegularExpression(pattern: rawValue)
-        }
-    }
-
-    // MARK: Constants
-
-    private enum Constants {
-        static let binLength = 6
-    }
 
     // MARK: Payment System's Regex Map
 
-    private let paymentSystemsRegexes: [PaymentSystemDecision.PaymentSystem: NSRegularExpression] = [
-        .visa: Pattern.visa,
-        .masterCard: Pattern.masterCard,
-        .maestro: Pattern.maestro,
-        .mir: Pattern.mir,
-    ].compactMapValues(\.regex)
+    private let paymentSystemsRegexes: [PaymentSystem: NSRegularExpression] = PaymentSystem.allCases
+        .reduce(into: [PaymentSystem: NSRegularExpression]()) { partialResult, paymentSystem in
+            if let regex = paymentSystem.regexPattern.regex {
+                partialResult[paymentSystem] = regex
+            }
+        }
 
     // MARK: IPaymentSystemResolver
 
@@ -99,5 +70,14 @@ private extension String {
     func matches(with regex: NSRegularExpression) -> Bool {
         let range = NSRange(startIndex ..< endIndex, in: self)
         return regex.firstMatch(in: self, range: range) != nil
+    }
+}
+
+extension PaymentSystemResolver {
+
+    // MARK: Constants
+
+    private enum Constants {
+        static let binLength = 6
     }
 }

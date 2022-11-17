@@ -10,6 +10,7 @@
 * [MIC-6784] Add parameters into Submit3dsAuthorizationV2 for payment 3ds
 * [MIC-6700] Added Skeleton Views + Skeleton Animations
 * [MIC-6817] Dynamic Icon Card View (allows to generate a card visuals)
+* [MIC-6848] Bank detection logic based on cardNumber
 
 ### Fixed
 
