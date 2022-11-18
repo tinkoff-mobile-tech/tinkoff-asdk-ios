@@ -86,7 +86,7 @@ extension CardRequisitesMasksResolver: ICardRequisitesMasksResolver {
         switch paymentSystemResolver.resolve(by: pan) {
         case .resolved(.visa), .resolved(.masterCard):
             return Mask.digits16
-        case .resolved(.mir):
+        case .resolved(.mir), .resolved(.unionPay):
             switch length {
             case ...16:
                 return Mask.digits16.appending(Mask.continuousDigits(length: Length.mirSuffixLength(base: length)))
