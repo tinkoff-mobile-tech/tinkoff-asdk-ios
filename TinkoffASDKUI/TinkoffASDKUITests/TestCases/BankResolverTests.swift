@@ -60,7 +60,7 @@ private extension BankResolverTests {
         let expectedResult = BankResult.parsed(bank: .alpha)
 
         // when
-        let results = BankTests.Bin.alpha.map { sut.resolve(cardNumber: $0) }
+        let results = Bank.Bin.alpha.map { sut.resolve(cardNumber: $0) }
         let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
@@ -75,7 +75,7 @@ private extension BankResolverTests {
         let expectedResult = BankResult.parsed(bank: .sber)
 
         // when
-        let results = BankTests.Bin.sber.map { sut.resolve(cardNumber: $0) }
+        let results = Bank.Bin.sber.map { sut.resolve(cardNumber: $0) }
         let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
@@ -90,7 +90,7 @@ private extension BankResolverTests {
         let expectedResult = BankResult.parsed(bank: .vtb)
 
         // when
-        let results = BankTests.Bin.vtb.map { sut.resolve(cardNumber: $0) }
+        let results = Bank.Bin.vtb.map { sut.resolve(cardNumber: $0) }
         let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
@@ -105,7 +105,7 @@ private extension BankResolverTests {
         let expectedResult = BankResult.parsed(bank: .tinkoff)
 
         // when
-        let results = BankTests.Bin.tinkoff.map { sut.resolve(cardNumber: $0) }
+        let results = Bank.Bin.tinkoff.map { sut.resolve(cardNumber: $0) }
         let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
@@ -120,7 +120,7 @@ private extension BankResolverTests {
         let expectedResult = BankResult.parsed(bank: .gazprom)
 
         // when
-        let results = BankTests.Bin.gazprom.map { sut.resolve(cardNumber: $0) }
+        let results = Bank.Bin.gazprom.map { sut.resolve(cardNumber: $0) }
         let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
@@ -135,7 +135,7 @@ private extension BankResolverTests {
         let expectedResult = BankResult.parsed(bank: .raiffaisen)
 
         // when
-        let results = BankTests.Bin.raiffaisen.map { sut.resolve(cardNumber: $0) }
+        let results = Bank.Bin.raiffaisen.map { sut.resolve(cardNumber: $0) }
         let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
