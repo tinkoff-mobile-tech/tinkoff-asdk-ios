@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-6975] Fix readme and add info about payment stages
+
 ## [2.12.2] - 2022-10-28Z
 
 ### Changed
