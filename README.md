@@ -315,7 +315,7 @@ protocol CardRequisitesScanerProtocol: class {
 }
 ```
 
-пример использования:
+Пример использования:
 
 ```swift
 extension RootViewController: AcquiringScanerProtocol {
@@ -333,69 +333,59 @@ extension RootViewController: AcquiringScanerProtocol {
 }
 ```
 
-### Пример работы
-
-Оплата товара по реквизитам карты или с ранее сохраненной карты
+### Оплата товара через Apple Pay
 
 ```swift
-AcquiringUISDK.presentPaymentView(
-	on presentingViewController: UIViewController, 
-	paymentData: PaymentInitData, 
-	configuration: AcquiringViewConfigration,
-	completionHandler: @escaping PaymentCompletionHandler
-)
-```
-
-Оплата товара через Apple Pay
-
-```swift
-AcquiringUISDK.presentPaymentApplePay(
+presentPaymentApplePay(
 	on presentingViewController: UIViewController,
 	paymentData data: PaymentInitData,
 	viewConfiguration: AcquiringViewConfiguration,
 	paymentConfiguration: AcquiringUISDK.ApplePayConfiguration,
 	completionHandler: @escaping PaymentCompletionHandler
 )
-
 ```
 
-Список сохраненных карт
+### Отобразить список сохраненных карт
 
 ```swift
-AcquiringUISDK.presentCardList(on: self, customerKey: customerKey, configuration: cardListViewConfigration)
+public func presentCardList(
+	on presentingViewController: UIViewController,
+	customerKey: String,
+	configuration: AcquiringViewConfiguration
+)
 ```
 
-Пример создания экземпляра sdk:
+### Пример создания экземпляра SDK
+
 ```swift
 // терминал
-let credentional = AcquiringSdkCredential(terminalKey: ASDKStageTestData.terminalKey, publicKey: ASDKStageTestData.testPublicKey)
+let credential = AcquiringSdkCredential(terminalKey: ASDKStageTestData.terminalKey, publicKey: ASDKStageTestData.testPublicKey)
 // конфигурация для старта sdk
-let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)		
+let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credential)
 // включаем логи, результаты работы запросов пишутся в консоль 
 acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
 
 if let sdk = try? AcquiringUISDK.init(configuration: acquiringSDKConfiguration) {
 	// SDK проинициализировалось, можно приступать к работе
-	sdk.present ...
 }
 ```
 
-Пример создание `AcquiringViewConfiguration`:
+### Пример создание `AcquiringViewConfiguration`
 
 ```swift
 let viewConfiguration = AcquiringViewConfiguration()
 // подключаем сканер
-viewConfigration.scaner = scaner
+viewConfiguration.scaner = scaner
 // Формируем поля для экрана оплаты
-viewConfigration.fields = []
+viewConfiguration.fields = []
 // Заголовок в UINavigationBar, для случая когда экран оплаты раскрыт на весь экран
-viewConfigration.viewTitle = NSLocalizedString("title.pay", comment: "Оплата")
+viewConfiguration.viewTitle = NSLocalizedString("title.pay", comment: "Оплата")
 // 1. Заголовок экрана "Оплата на сумму хх.хх руб."
 let title = NSAttributedString(string: NSLocalizedString("title.payment", comment: "Оплата"), attributes: [.font: UIFont.boldSystemFont(ofSize: 22)])
 let amountString = Utils.formatAmount(NSDecimalNumber(floatLiteral: productsAmount()))
 let amountTitle = NSAttributedString(string: "\(NSLocalizedString("text.totalAmount", comment: "на сумму")) \(amountString)", attributes: [.font : UIFont.systemFont(ofSize: 17)])
 // fields.append
-viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.amount(title: title, amount: amountTitle))
+viewConfiguration.fields.append(AcquiringViewConfiguration.InfoFields.amount(title: title, amount: amountTitle))
 
 // 2. Описание товаров которые оплачиваем
 let productsDetails = NSMutableAttributedString()
@@ -406,16 +396,16 @@ let productsDetails = products.map { (product) -> String in
 }.joined(separator: ", ")
 
 productsDetails.append(NSAttributedString(string: productsDetails, attributes: [.font : UIFont.systemFont(ofSize: 13), .foregroundColor: UIColor(red: 0.573, green: 0.6, blue: 0.635, alpha: 1)]))
-viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.detail(title: productsDetails))
+viewConfiguration.fields.append(AcquiringViewConfiguration.InfoFields.detail(title: productsDetails))
 
 // 3. Добавляем поле email 
 if AppSetting.shared.showEmailField {
-  viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.email(value: nil, placeholder: NSLocalizedString("placeholder.email", comment: "Отправить квитанцию по адресу")))
+  viewConfiguration.fields.append(AcquiringViewConfiguration.InfoFields.email(value: nil, placeholder: NSLocalizedString("placeholder.email", comment: "Отправить квитанцию по адресу")))
 }
 
 // 4. Кнопка для оплаты используя Систему Быстрых Платежей
 if AppSetting.shared.paySBP {
-  viewConfigration.fields.append(AcquiringViewConfigration.InfoFields.buttonPaySPB)
+  viewConfiguration.fields.append(AcquiringViewConfiguration.InfoFields.buttonPaySPB)
 }
 ```
 
