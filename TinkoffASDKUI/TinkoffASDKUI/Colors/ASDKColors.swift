@@ -9,7 +9,7 @@ import UIKit
 
 struct ASDKColors {
 
-    static var yellow: UIColor {
+    static var tinkoffYellow: UIColor {
         UIColor(hex: "#FFDD2D") ?? .clear
     }
 
