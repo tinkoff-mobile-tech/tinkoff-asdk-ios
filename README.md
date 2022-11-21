@@ -53,9 +53,7 @@ File -> Add packages -> `https://github.com/Tinkoff/AcquiringSdk_IOS.git`
 
 - **TinkoffASDKUI** - уже включает в себя Core часть. Полное sdk - Core + UI часть.
 
-<p align="center">
-	<img src=Docs/images/spm_products.png>
-</p>
+![spm-products][img-spm-products]
 
 ## Подготовка к работе
 
@@ -446,3 +444,4 @@ let sdk = try AcquiringUISDK(configuration: acquiringSDKConfiguration style: MyA
 [img-attachCard]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/attachCardScreen.png
 [server-api]: https://oplata.tinkoff.ru/develop/api/payments/
 [issues]: https://github.com/TinkoffCreditSystems/tinkoff-asdk-ios/issues
+[img-spm-products]: Docs/images/spm_products.png
