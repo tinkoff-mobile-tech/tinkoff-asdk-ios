@@ -121,28 +121,58 @@ func provideToken(
 В простейшем случае реализация может выглядеть следующим образом:
 
 ```swift
-func provideToken(forRequestParameters parameters: [String: String], completion: @escaping (Result<String, Error>) -> Void) {
+func provideToken(
+	forRequestParameters parameters: [String: String],
+	completion: @escaping (Result<String, Error>) -> Void
+) {
 	let sourceString = parameters
-    	.merging(["Password": password]) { $1 }
-    	.sorted { $0.key < $1.key }
-    	.map(\.value)
-    	.joined()
+		.merging(["Password": password]) { $1 }
+		.sorted { $0.key < $1.key }
+		.map(\.value)
+		.joined()
 
-    let hashingResult = Result {
-    	try SHA256.hash(from: sourceString)
-    }
-    
-    completion(hashingResult)
+	let hashingResult = Result {
+		try SHA256.hash(from: sourceString)
+	}
+
+	completion(hashingResult)
 }
 ```
 
 > :warning: **Реализация выше приведена исключительно в качестве примера**. В целях  безопасности не стоит хранить и как бы то ни было взаимодействовать с паролем от терминала в коде мобильного приложения. Наиболее подходящий сценарий - передавать полученные параметры на бекенд, где будет происходить генерация токена на основе параметров и пароля
 
-### Проведение оплаты
+### Форма оплаты с вводом реквизитов карты и ранее сохраненными картами
 
-#### Инициализация платежа
+Для отображения формы оплаты необходимо вызвать метод `AcquiringUISDK.presentPaymentView`:
 
-Для проведения оплаты нужно сформировать информацию о платеже с помощью структуры  **PaymentInitData**:
+```swift
+public func presentPaymentView(
+	on presentingViewController: UIViewController,
+	customerKey: String? = nil,
+	acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
+	configuration: AcquiringViewConfiguration,
+	tinkoffPayDelegate: TinkoffPayDelegate? = nil,
+	completionHandler: @escaping PaymentCompletionHandler
+)
+```
+
+ По завершении платежа будет вызван `completionHandler` с `Result<PaymentStatusResponse, Error>`, в котором в случае успеха будут содержаться данные:
+
+- **success: Bool** - статус обработки запроса
+- **errorCode: Int** - номер ошибки в случае неуспешной инициализации платежа, по умолчанию 0
+- **errorMessage: String?** - описание ошибки
+- **errorDetails: String?** - детальное описание ошибки
+- **terminalKey: String?** - идентификатор терминала на котором инициализирован платеж
+- **amount: Int64** - сумма платежа в копейках
+- **orderId: String** - номер заказа в системе продавца
+- **paymentId: Int64** - номер для оплаты в системе банка
+- **status: PaymentStatus** - статус платежа. В случае удачной регистрации платежа на форме оплаты показываются список карт, карточка ввода реквизитов новой карты и кнопка Оплатить. Пользователь выбирает карту, либо вводит реквизиты новой нажимает и нажимает Оплатить
+
+В методе выбор стадии платежа осуществляется с помощью `AcquiringPaymentStageConfiguration`. Далее рассмотрим доступные стадии
+
+#### Оплата с инициацией платежа
+
+В этом сценарии ASDK самостоятельно вызывает метод `Init` API эквайринга при совершении оплаты, передавая информацию о платеже, заданных в **PaymentInitData**:
 
 - **amount: Int64** - Сумма в копейках. Например, сумма 3руб. 12коп. это число `312`. Параметр должен быть равен сумме всех товаров в чеке
 - **orderId: String** - Номер заказа в системе Продавца
@@ -158,25 +188,20 @@ func provideToken(forRequestParameters parameters: [String: String], completion:
 - **successURL: String?** - URL на веб-сайте продавца, куда будет переведен покупатель в случае успешной оплаты (настраивается в Личном кабинете). Если параметр передан – используется его значение. Если нет – значение в настройках терминала
 - **failURL: String?** - URL на веб-сайте продавца, куда будет переведен покупатель в случае неуспешной оплаты (настраивается в Личном кабинете). Если параметр передан – используется его значение. Если нет – значение в настройках терминала
 
-#### Начало платежа
+```swift
+let paymentData: PaymentInitData = ...
+let paymentStageConfiguration = AcquiringPaymentStageConfiguration(paymentStage: .`init`(paymentData: paymentData))
+```
 
-Далее вызываем метод **AcquiringUISDK.presentPaymentView**. Перед началом оплаты открывается форма оплаты товара и запускается метод **Init** 
-результатом которого является регистрация и получение информации о платеже для оплаты **PaymentInitResponse**:
+#### Оплата на основе существующего `paymentId`
 
-- **success: Bool** - статус обработки запроса
-- **errorCode: Int** - номер ошибки в случае неуспешной инициализации платежа, по умолчанию 0
-- **errorMessage: String?** - описание ошибки
-- **errorDetails: String?** - детальное описание ошибки
-- **terminalKey: String?** - идентификатор терминала на котором инициализирован платеж
-- **amount: Int64** - сумма платежа в копейках
-- **orderId: String** - номер заказа в системе продавца
-- **paymentId: Int64** - номер для оплаты в системе банка
-- **status: PaymentStatus** - статус платежа. В случае удачной регистрации платежа на форме оплаты показываются список карт, карточка ввода реквизитов новой карты и кнопка Оплатить. Пользователь выбирает карту, либо вводит реквизиты новой нажимает и нажимает Оплатить
+В этом сценарии метод `Init` API эквайринга вызывается вне SDK, например на бекенде клиентского приложения. Затем в SDK эквайринга полученный `paymentId` передается с помощью:
 
-#### Завершение платежа
+```swift
+let paymentId: Int64 = ...
 
-Вызывается метод **FinishAuthorize** с реквизитами карты или **FinishAuthorize** с номером ранее сохраненной карты.
-Во время проведения платежа сервер может запросить подтверждение  в этом случае пользователю показывается форма 3D Secure в зависимости от выбранного источника оплаты, это решение принимается сервером.
+let paymentStageConfiguration = AcquiringPaymentStageConfiguration(paymentStage: .finish(paymentId: paymentId))
+```
 
 #### TinkoffPay
 
