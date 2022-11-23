@@ -589,8 +589,8 @@ public class AcquiringUISDK: NSObject {
                 }
                 let navigationController = UINavigationController(rootViewController: emptyViewController)
                 navigationController.navigationBar.applyStyle(
-                    titleColor: UIColor.asdk.dynamic.text.primary,
-                    backgroundColor: UIColor.asdk.dynamic.background.elevation1
+                    titleColor: ASDKColors.Text.primary.color,
+                    backgroundColor: ASDKColors.Background.elevation1.color
                 )
                 presentingViewController?.present(navigationController, animated: true, completion: nil)
             })

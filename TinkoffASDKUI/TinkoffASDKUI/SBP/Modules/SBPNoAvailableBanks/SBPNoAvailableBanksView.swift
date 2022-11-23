@@ -55,7 +55,7 @@ private extension SBPNoAvailableBanksView {
         addSubview(bottomStackView)
         addSubview(topContainerView)
 
-        backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        backgroundColor = ASDKColors.Background.elevation1.color
 
         topContainerView.addSubview(imageView)
 
@@ -73,7 +73,7 @@ private extension SBPNoAvailableBanksView {
 
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor.asdk.dynamic.text.primary
+        titleLabel.textColor = ASDKColors.Text.primary.color
         titleLabel.font = .systemFont(
             ofSize: .titleFontSize,
             weight: .medium
@@ -85,7 +85,7 @@ private extension SBPNoAvailableBanksView {
             ofSize: .descriptionFontSize,
             weight: .regular
         )
-        descriptionLabel.textColor = UIColor.asdk.n3
+        descriptionLabel.textColor = ASDKColors.n3
 
         confirmButton.titleLabel?.font = .systemFont(ofSize: .buttonTitleFontSize, weight: .regular)
         confirmButton.backgroundColor = style.confirmButtonStyle.backgroundColor
@@ -96,7 +96,7 @@ private extension SBPNoAvailableBanksView {
             weight: .regular
         )
         informationButton.backgroundColor = .clear
-        informationButton.setTitleColor(UIColor.asdk.n8, for: .normal)
+        informationButton.setTitleColor(ASDKColors.n8, for: .normal)
 
         setupConstraints()
     }

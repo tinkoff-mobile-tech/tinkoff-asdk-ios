@@ -45,7 +45,7 @@ final class MessageView: UIView {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.textColor = .asdk.dynamic.text.primary
+        label.textColor = ASDKColors.Text.primary.color
         label.text = style.message
         return label
     }()
