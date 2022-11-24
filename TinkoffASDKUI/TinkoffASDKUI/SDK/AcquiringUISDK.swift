@@ -183,7 +183,7 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let uiAssembly: UIAssembly
-    private var getSubmitAuthorizationRequestData: (() -> Submit3DSAuthorizationV2Data)?
+    private var getSubmitAuthorizationRequestData: (() -> Submit3DSAuthorizationV2Data.PaymentData)?
 
     public init(
         configuration: AcquiringSdkConfiguration,
@@ -1328,7 +1328,7 @@ public class AcquiringUISDK: NSObject {
             switch response {
             case let .success(finishResult):
                 self.getSubmitAuthorizationRequestData = {
-                    Submit3DSAuthorizationV2Data.assembleForPaymentFlow(
+                    Submit3DSAuthorizationV2Data.PaymentData(
                         paymentId: String(requestData.paymentId)
                     )
                 }
@@ -2021,29 +2021,22 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
            let bodyAsString = String(data: body, encoding: .utf8) {
             let cresValue = bodyAsString.replacingOccurrences(of: "cres" + "=", with: "")
 
-            var flow: Submit3DSAuthorizationV2Flow = .attachCard
             let isPaymentFlow = on3DSCheckingCompletionHandler != nil
             let isAttachCardFlow = on3DSCheckingAddCardCompletionHandler != nil
 
-            if isPaymentFlow { flow = .payment }
-            if isAttachCardFlow { flow = .attachCard }
-
-            switch flow {
-            case .payment:
-                let data = Submit3DSAuthorizationV2Data.assembleForPaymentFlow(
-                    paymentId: getSubmitAuthorizationRequestData?().paymentId ?? ""
-                )
+            if isPaymentFlow {
+                guard let paymentFlowData = getSubmitAuthorizationRequestData?() else { return }
                 getSubmitAuthorizationRequestData = nil
-                startSubmitRequestForPaymentFlow(data: data)
-            case .attachCard:
-                let data = Submit3DSAuthorizationV2Data.assembleForAttachCardFlow(cres: cresValue)
+                startSubmitRequestForPaymentFlow(data: paymentFlowData)
+            } else if isAttachCardFlow {
+                let data = Submit3DSAuthorizationV2Data.AttachCardData(cres: cresValue)
                 startSubmitRequestForAttachCardFlow(data: data)
             }
         }
     }
 
-    private func startSubmitRequestForPaymentFlow(data: Submit3DSAuthorizationV2Data) {
-        acquiringSdk.submit3DSAuthorizationV2(data: data) { result in
+    private func startSubmitRequestForPaymentFlow(data: Submit3DSAuthorizationV2Data.PaymentData) {
+        acquiringSdk.submit3DSAuthorizationV2PaymentFlow(data: data) { result in
             DispatchQueue.main.async {
                 self.webViewController?.dismiss(animated: true) {
                     // payment completion
@@ -2056,8 +2049,8 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
         }
     }
 
-    private func startSubmitRequestForAttachCardFlow(data: Submit3DSAuthorizationV2Data) {
-        acquiringSdk.submit3DSAuthorizationV2AttachCard(data: data) { result in
+    private func startSubmitRequestForAttachCardFlow(data: Submit3DSAuthorizationV2Data.AttachCardData) {
+        acquiringSdk.submit3DSAuthorizationV2AttachCardFlow(data: data) { result in
             DispatchQueue.main.async {
                 self.webViewController?.dismiss(animated: true) {
                     // attach card completion

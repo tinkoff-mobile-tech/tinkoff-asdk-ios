@@ -247,20 +247,22 @@ public final class AcquiringSdk: NSObject {
     // TODO: MIC-6303 Переписать метод под новый формат ответа
 
     @discardableResult
-    public func submit3DSAuthorizationV2(
-        data: Submit3DSAuthorizationV2Data,
+    public func submit3DSAuthorizationV2PaymentFlow(
+        data: Submit3DSAuthorizationV2Data.PaymentData,
         completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submit3DSAuthorizationV2(data: data, flow: .payment)
+        let data = Submit3DSAuthorizationV2Data.paymentFlow(data: data)
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: data)
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
     @discardableResult
-    public func submit3DSAuthorizationV2AttachCard(
-        data: Submit3DSAuthorizationV2Data,
+    public func submit3DSAuthorizationV2AttachCardFlow(
+        data: Submit3DSAuthorizationV2Data.AttachCardData,
         completion: @escaping (Result<AddCardStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submit3DSAuthorizationV2(data: data, flow: .attachCard)
+        let data = Submit3DSAuthorizationV2Data.attachCardFlow(data: data)
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
 

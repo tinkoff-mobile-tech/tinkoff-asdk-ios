@@ -29,22 +29,22 @@ public struct Submit3DSAuthorizationV2Request: AcquiringRequest {
     let parameters: HTTPParameters
     let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy
     let tokenFormationStrategy: TokenFormationStrategy
+    let data: Submit3DSAuthorizationV2Data
 
-    private let flow: Submit3DSAuthorizationV2Flow
+    init(data: Submit3DSAuthorizationV2Data, baseURL: URL) {
 
-    init(data: Submit3DSAuthorizationV2Data, baseURL: URL, for flow: Submit3DSAuthorizationV2Flow) {
-        switch flow {
-        case .payment:
-            terminalKeyProvidingStrategy = .always
-            tokenFormationStrategy = .includeAll(except: Constants.Keys.cres)
-        case .attachCard:
+        switch data {
+        case .attachCardFlow:
             terminalKeyProvidingStrategy = .never
             tokenFormationStrategy = .none
+        case .paymentFlow:
+            terminalKeyProvidingStrategy = .always
+            tokenFormationStrategy = .includeAll(except: Constants.Keys.cres)
         }
 
-        self.flow = flow
+        self.data = data
         self.baseURL = baseURL
-        let dict = Self.formParamsDictionary(from: data, flow: flow)
+        let dict = Self.formParamsDictionary(from: data)
         parameters = (try? dict.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }
@@ -52,24 +52,18 @@ public struct Submit3DSAuthorizationV2Request: AcquiringRequest {
 extension Submit3DSAuthorizationV2Request {
 
     private static func formParamsDictionary(
-        from data: Submit3DSAuthorizationV2Data,
-        flow: Submit3DSAuthorizationV2Flow
+        from data: Submit3DSAuthorizationV2Data
     ) -> [String: String] {
 
         var result = [String: String]()
-        switch flow {
-        case .payment:
-            if let paymentId = data.paymentId {
-                result[Constants.Keys.paymentId] = paymentId
-            }
+        switch data {
+        case let .attachCardFlow(data):
+            result[Constants.Keys.cres] = data.cres
 
-            return result
-        case .attachCard:
-            if let cres = data.cres {
-                result[Constants.Keys.cres] = cres
-            }
-
-            return result
+        case let .paymentFlow(data):
+            result[Constants.Keys.paymentId] = data.paymentId
         }
+
+        return result
     }
 }
