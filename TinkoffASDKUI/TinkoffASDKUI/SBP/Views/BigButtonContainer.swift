@@ -67,7 +67,7 @@ final class BigButtonContainer: UIView {
 
 private extension BigButtonContainer {
     func setup() {
-        backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        backgroundColor = ASDKColors.Background.elevation1.color
     }
 }
 
