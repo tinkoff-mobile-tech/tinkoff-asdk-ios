@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 29.11.2022.
 //
 
-import Foundation
+import UIKit
 
 protocol ICardFieldView: AnyObject, Activatable {
     func activateExpirationField()

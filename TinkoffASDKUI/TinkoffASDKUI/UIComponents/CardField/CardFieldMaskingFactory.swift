@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 30.11.2022.
 //
 
-import Foundation
+import UIKit
 
 protocol ICardFieldMaskingFactory {
     typealias DidFillMask = (_ value: String, _ completed: Bool) -> Void

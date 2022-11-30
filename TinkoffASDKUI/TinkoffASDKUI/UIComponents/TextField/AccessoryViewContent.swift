@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 28.11.2022.
 //
 
-import Foundation
+import UIKit
 
 protocol IAccessoryViewContent: AnyObject {
     var delegate: AccessoryContentViewDelegate? { get set }

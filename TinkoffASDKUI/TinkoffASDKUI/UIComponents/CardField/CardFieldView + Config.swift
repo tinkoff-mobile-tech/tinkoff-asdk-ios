@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 25.11.2022.
 //
 
-import Foundation
+import UIKit
 
 extension CardFieldView {
 
