@@ -60,6 +60,10 @@ struct ASDKColors {
     static var accent: UIColor {
         UIColor(hex: "#428BF9") ?? .clear
     }
+
+    static var red: UIColor {
+        UIColor(hex: "#F52222") ?? .clear
+    }
 }
 
 // MARK: - Pallete
@@ -105,6 +109,13 @@ extension ASDKColors {
             )
         }
 
+        static var neutral1: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#001024")!.withAlphaComponent(0.03),
+                dark: .white.withAlphaComponent(0.10)
+            )
+        }
+
         static var neutral2: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: UIColor(hex: "#001024")!.withAlphaComponent(0.06),
@@ -120,6 +131,13 @@ extension ASDKColors {
             UIColor.Dynamic(
                 light: ASDKColors.textPrimary,
                 dark: ASDKColors.n7
+            )
+        }
+
+        static var secondary: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#9299A2")!,
+                dark: UIColor(hex: "#9299A2")!
             )
         }
 

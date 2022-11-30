@@ -23,6 +23,14 @@ enum PaymentSystemDecision {
     case resolved(PaymentSystem)
     case ambiguous
     case unrecognized
+
+    func getPaymentSystem() -> PaymentSystem? {
+        if case let .resolved(paymentSystem) = self {
+            return paymentSystem
+        } else {
+            return nil
+        }
+    }
 }
 
 protocol IPaymentSystemResolver {

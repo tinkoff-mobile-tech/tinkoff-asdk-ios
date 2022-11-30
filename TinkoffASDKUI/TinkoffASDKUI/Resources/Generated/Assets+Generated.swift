@@ -50,6 +50,7 @@ internal enum Asset {
   }
   internal static let done = ImageAsset(name: "done")
   internal enum Icons {
+    internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")
   }
   internal enum Illustrations {

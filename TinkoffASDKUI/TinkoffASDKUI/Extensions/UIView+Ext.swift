@@ -76,6 +76,14 @@ extension UIView {
         }
     }
 
+    func makeCenterEqualToSuperview(xOffset: CGFloat = .zero, yOffset: CGFloat = .zero) -> [NSLayoutConstraint] {
+        assert(superview != nil)
+        return [
+            centerXAnchor.constraint(equalTo: forcedSuperview.centerXAnchor, constant: xOffset),
+            centerYAnchor.constraint(equalTo: forcedSuperview.centerYAnchor, constant: yOffset),
+        ]
+    }
+
     func makeEqualToSuperviewToSafeArea(insets: UIEdgeInsets = .zero) {
         assert(superview != nil)
         makeConstraints { make in

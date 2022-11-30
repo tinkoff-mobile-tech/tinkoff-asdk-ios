@@ -123,11 +123,13 @@ extension Button {
     }
 
     private func configureButton(data: Data) {
-        switch data.text {
-        case let .basic(normalText, higlightedText, disabledText):
-            button.setTitle(normalText, for: .normal)
-            button.setTitle(higlightedText ?? normalText, for: .highlighted)
-            button.setTitle(disabledText ?? normalText, for: .disabled)
+        if let text = data.text {
+            switch text {
+            case let .basic(normalText, higlightedText, disabledText):
+                button.setTitle(normalText, for: .normal)
+                button.setTitle(higlightedText ?? normalText, for: .highlighted)
+                button.setTitle(disabledText ?? normalText, for: .disabled)
+            }
         }
     }
 
@@ -268,7 +270,7 @@ extension Button {
             )
         }
 
-        let text: Text
+        let text: Text?
         let onTapAction: () -> Void
     }
 
