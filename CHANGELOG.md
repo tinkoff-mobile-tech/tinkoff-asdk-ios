@@ -13,6 +13,7 @@
 * [MIC-6828] Added Stylable Button
 * [MIC-6848] Bank detection logic based on cardNumber
 * [MIC-6821] Added Snackbar for presenting snacks
+* [MIC-6827] Implemented CardFieldView
 
 ### Fixed
 
