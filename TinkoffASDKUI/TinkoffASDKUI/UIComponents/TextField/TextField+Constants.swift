@@ -5,6 +5,7 @@
 //  Created by Ivan Glushko on 30.11.2022.
 //
 
+import struct CoreGraphics.CGFloat
 import Foundation
 
 extension TextField {
