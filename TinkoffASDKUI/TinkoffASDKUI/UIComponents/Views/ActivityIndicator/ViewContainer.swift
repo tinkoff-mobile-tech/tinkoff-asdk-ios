@@ -1,36 +1,49 @@
 //
 //  ViewContainer.swift
-//  popup
+//  TinkoffASDKUI
 //
-//  Created by Ivan Glushko on 14.11.2022.
+//  Created by Ivan Glushko on 01.12.2022.
 //
 
-import UIKit
+import Foundation
 
-final class ViewContainer<T: UIView>: UIView {
-    var base: T
+final class ViewContainer: UIView, ConfigurableItem {
 
-    init(base: T) {
-        self.base = base
-        super.init(frame: .zero)
+    private(set) var configuration = Configuration(
+        content: UIView(),
+        layoutStrategy: .makeEqualToSuperview(insets: .zero)
+    )
 
-        setup()
-    }
+    func configure(with configuration: Configuration) {
+        subviews.forEach { $0.removeFromSuperview() }
 
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("Has not been implemented!!!")
-    }
+        self.configuration = configuration
+        backgroundColor = configuration.backgroundColor
+        addSubview(configuration.content)
 
-    private func setup() {
-        backgroundColor = .clear
-        addSubview(base)
-
-        base.makeConstraints { make in
-            [
-                make.centerXAnchor.constraint(equalTo: make.forcedSuperview.centerXAnchor),
-                make.centerYAnchor.constraint(equalTo: make.forcedSuperview.centerYAnchor),
-            ]
+        switch configuration.layoutStrategy {
+        case let .makeEqualToSuperview(insets):
+            configuration.content.makeEqualToSuperview(insets: insets)
+        case let .custom(layout):
+            layout(configuration.content)
         }
+    }
+
+    func updateEdge(insets: UIEdgeInsets) {
+        configuration.content.constraintUpdater.updateEdgeInsets(insets: insets)
+    }
+}
+
+extension ViewContainer {
+
+    struct Configuration {
+        let content: UIView
+        let layoutStrategy: LayoutStrategy
+        var backgroundColor: UIColor = .clear
+    }
+
+    enum LayoutStrategy {
+        case custom((_ view: UIView) -> Void)
+        case makeEqualToSuperview(insets: UIEdgeInsets)
     }
 }

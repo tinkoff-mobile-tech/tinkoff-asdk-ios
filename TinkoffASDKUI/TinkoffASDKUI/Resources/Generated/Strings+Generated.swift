@@ -23,6 +23,24 @@ internal enum Loc {
       /// Срок
       internal static let termTitle = Loc.tr("Localizable", "Acquiring.CardField.TermTitle", fallback: "Срок")
     }
+    internal enum CardList {
+      /// Добавить новую
+      internal static let addCard = Loc.tr("Localizable", "Acquiring.CardList.AddCard", fallback: "Добавить новую")
+    }
+    internal enum Common {
+      /// Альфа Банк
+      internal static let alfaCardTitle = Loc.tr("Localizable", "Acquiring.Common.AlfaCardTitle", fallback: "Альфа Банк")
+      /// Газпром Банк
+      internal static let gazpromCardTitle = Loc.tr("Localizable", "Acquiring.Common.GazpromCardTitle", fallback: "Газпром Банк")
+      /// Райффайзен Банк
+      internal static let raiffeisenCardTitle = Loc.tr("Localizable", "Acquiring.Common.RaiffeisenCardTitle", fallback: "Райффайзен Банк")
+      /// СберБанк
+      internal static let sberCardTitle = Loc.tr("Localizable", "Acquiring.Common.SberCardTitle", fallback: "СберБанк")
+      /// Тинькофф
+      internal static let tcsCardTitle = Loc.tr("Localizable", "Acquiring.Common.TcsCardTitle", fallback: "Тинькофф")
+      /// Банк ВТБ
+      internal static let vtbCardTitle = Loc.tr("Localizable", "Acquiring.Common.VtbCardTitle", fallback: "Банк ВТБ")
+    }
   }
   internal enum AcquiringPayment {
     internal enum Button {

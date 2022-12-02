@@ -40,6 +40,8 @@ extension UILabel {
     enum Content {
         case plain(text: String?, style: UILabel.Style)
         case attributed(string: NSAttributedString?)
+
+        static var empty: Self { Self.attributed(string: nil) }
     }
 
     struct Configuration {

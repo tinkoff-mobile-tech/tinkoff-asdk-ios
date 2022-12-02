@@ -22,7 +22,7 @@ extension ActivityIndicatorDisplayable where Self: UIViewController {
         let activityIndicatorView = ActivityIndicatorView(style: style)
         activityIndicatorView.transform = CGAffineTransform(scaleX: .zero, y: .zero)
 
-        let container = ViewContainer(base: activityIndicatorView)
+        let container = ViewHolder(base: activityIndicatorView)
 
         view.addSubview(container)
 
@@ -36,7 +36,7 @@ extension ActivityIndicatorDisplayable where Self: UIViewController {
 
     /// Скрыть индикатор
     func hideActivityIndicator() {
-        let container = view.subviews.compactMap { $0 as? ViewContainer<ActivityIndicatorView> }.first
+        let container = view.subviews.compactMap { $0 as? ViewHolder<ActivityIndicatorView> }.first
         let indicatorView = container?.base
         UIView.animate(withDuration: .scaleDuration, animations: {
             indicatorView?.alpha = .zero

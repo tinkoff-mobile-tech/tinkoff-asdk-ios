@@ -45,19 +45,26 @@ final class CardListPresenter: ICardListModule {
     weak var view: ICardListViewInput?
     private let imageResolver: IPaymentSystemImageResolver
     private let provider: IPaymentCardsProvider
+    private let bankResolver: IBankResolver
+    private let paymentSystemResolver: IPaymentSystemResolver
 
     // MARK: State
 
     private var activeCardsCache: [PaymentCard] = []
+    private var isEditingCards = true
 
     // MARK: Init
 
     init(
         imageResolver: IPaymentSystemImageResolver,
-        provider: IPaymentCardsProvider
+        provider: IPaymentCardsProvider,
+        bankResolver: IBankResolver,
+        paymentSystemResolver: IPaymentSystemResolver
     ) {
         self.imageResolver = imageResolver
         self.provider = provider
+        self.bankResolver = bankResolver
+        self.paymentSystemResolver = paymentSystemResolver
     }
 
     // MARK: ICardListModule Methods
@@ -80,11 +87,25 @@ final class CardListPresenter: ICardListModule {
 
     private func transform(_ paymentCards: [PaymentCard]) -> [CardList.Card] {
         paymentCards.map { card in
-            CardList.Card(
+            let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
+            let cardModel = DynamicIconCardView.Model(
+                data: DynamicIconCardView.Data(
+                    bank: bank?.icon,
+                    paymentSystem: paymentSystemResolver
+                        .resolve(by: card.pan).getPaymentSystem()?.icon
+                )
+            )
+
+            var bankText = bank?.naming ?? ""
+            bankText = bankText.isEmpty ? bankText : bankText.appending(" ")
+            let finalText = bankText + "· \(card.pan.suffix(4))"
+
+            return CardList.Card(
                 id: card.cardId,
                 pan: .format(pan: card.pan),
-                validThru: .format(validThru: card.expDate),
-                icon: imageResolver.resolve(by: card.pan)
+                cardModel: cardModel,
+                assembledText: finalText,
+                isInEditingMode: isEditingCards
             )
         }
     }

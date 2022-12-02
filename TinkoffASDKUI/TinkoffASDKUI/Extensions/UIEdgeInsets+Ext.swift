@@ -16,4 +16,8 @@ extension UIEdgeInsets {
     init(horizontal: CGFloat) {
         self = Self(top: .zero, left: horizontal, bottom: .zero, right: horizontal)
     }
+
+    init(vertical: CGFloat, horizontal: CGFloat) {
+        self = Self(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
+    }
 }
