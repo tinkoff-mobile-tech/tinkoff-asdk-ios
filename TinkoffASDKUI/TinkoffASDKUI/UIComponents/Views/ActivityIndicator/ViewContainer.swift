@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 01.12.2022.
 //
 
-import Foundation
+import UIKit
 
 final class ViewContainer: UIView, ConfigurableItem {
 
