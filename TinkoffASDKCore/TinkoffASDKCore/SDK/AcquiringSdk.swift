@@ -248,10 +248,10 @@ public final class AcquiringSdk: NSObject {
 
     @discardableResult
     public func submit3DSAuthorizationV2(
-        data: Submit3DSAuthorizationV2Data,
+        cres: String,
         completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submit3DSAuthorizationV2(data: data)
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: CresData(cres: cres))
         return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
     }
 
