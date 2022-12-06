@@ -19,8 +19,13 @@
 
 import Foundation
 
+/// Данные, полученные в методе `AddCard`
 public struct AddCardPayload: Equatable {
+    /// Идентификатор запроса при привязке карты
     public let requestKey: String
+    /// Идентификатор платежа при проверке карты.
+    ///
+    /// Обязателен при переданном параметре `checkType` == `3DS`/`3DSHOLD`/`HOLD`
     public let paymentId: String?
 
     public init(requestKey: String, paymentId: String? = nil) {
