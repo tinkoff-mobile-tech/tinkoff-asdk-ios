@@ -19,20 +19,36 @@
 
 import Foundation
 
-public struct AddCardPayload: Decodable, Equatable {
+public struct AddCardPayload: Equatable {
+    public let requestKey: String
+    public let paymentId: String?
+
+    public init(requestKey: String, paymentId: String? = nil) {
+        self.requestKey = requestKey
+        self.paymentId = paymentId
+    }
+}
+
+// MARK: - AddCardPayload + Decodable
+
+extension AddCardPayload: Decodable {
     private enum CodingKeys: CodingKey {
         case requestKey
+        case paymentId
 
         var stringValue: String {
             switch self {
             case .requestKey: return Constants.Keys.requestKey
+            case .paymentId: return Constants.Keys.paymentId
             }
         }
     }
 
-    public let requestKey: String
-
-    public init(requestKey: String) {
-        self.requestKey = requestKey
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        requestKey = try container.decode(String.self, forKey: .requestKey)
+        paymentId = try container
+            .decodeIfPresent(Int64.self, forKey: .paymentId)
+            .map(String.init)
     }
 }
