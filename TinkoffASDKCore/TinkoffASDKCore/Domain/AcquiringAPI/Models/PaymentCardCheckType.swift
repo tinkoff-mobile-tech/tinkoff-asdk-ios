@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum PaymentCardCheckType: String {
+public enum PaymentCardCheckType: String, Encodable {
     case no = "NO"
     case check3DS = "3DS"
     case hold = "HOLD"

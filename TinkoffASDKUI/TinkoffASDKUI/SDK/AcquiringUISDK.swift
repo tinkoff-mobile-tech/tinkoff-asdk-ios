@@ -162,7 +162,7 @@ public class AcquiringUISDK: NSObject {
     private weak var webViewController: WebViewController?
     private var webView3DSCheckingTerminationUrl: String?
     private var on3DSCheckingCompletionHandler: PaymentCompletionHandler?
-    private var on3DSCheckingAddCardCompletionHandler: AddCardCompletionHandler?
+    private var on3DSCheckingAddCardCompletionHandler: ((Result<Void, Error>) -> Void)?
     // random amount
     private var onRandomAmountCheckingAddCardCompletionHandler: AddCardCompletionHandler?
     //
@@ -1683,33 +1683,29 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         alertViewHelper: AcquiringAlertViewProtocol?,
         completeHandler: @escaping (Result<PaymentCard?, Error>) -> Void
     ) {
-        let checkType: String
-        if let value = addCardNeedSetCheckTypeHandler?() {
-            checkType = value.rawValue
-        } else {
-            checkType = PaymentCardCheckType.no.rawValue
-        }
-
         cardListDataProvider!.addCard(
             number: number,
             expDate: expDate,
             cvc: cvc,
-            checkType: checkType,
-            confirmationHandler: { confirmationResponse, confirmationComplete in
-                DispatchQueue.main.async { [weak self] in
-                    self?.checkConfirmAddCard(
-                        confirmationResponse,
-                        presenter: addCardViewPresenter,
-                        alertViewHelper: alertViewHelper,
-                        confirmationComplete
-                    )
-                }
+            checkType: addCardNeedSetCheckTypeHandler?() ?? .no,
+            complete3DSMethodHandler: { [weak self] tdsServerTransID, threeDSMethodURL in
+                guard let self = self else { return }
+                self.threeDSMethodCheckURL(
+                    tdsServerTransID: tdsServerTransID,
+                    threeDSMethodURL: threeDSMethodURL,
+                    notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString,
+                    presenter: nil
+                )
             },
-            completeHandler: { response in
-                DispatchQueue.main.async {
-                    completeHandler(response)
-                }
-            }
+            submit3DSAuthorizationHandler: { [weak self] confirmationResponse, confirmationComplete in
+                self?.checkConfirmAddCard(
+                    confirmationResponse,
+                    presenter: addCardViewPresenter,
+                    alertViewHelper: alertViewHelper,
+                    confirmationComplete
+                )
+            },
+            completion: completeHandler
         )
     }
 
@@ -1812,16 +1808,14 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 
     private func checkConfirmAddCard(
-        _ confirmationResponse: FinishAddCardResponse,
+        _ attachPayload: AttachCardPayload,
         presenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
-        _ confirmationComplete: @escaping (Result<AddCardStatusResponse, Error>) -> Void
+        _ confirmationComplete: @escaping (Result<Void, Error>) -> Void
     ) {
-        switch confirmationResponse.responseStatus {
+        switch attachPayload.attachCardStatus {
         case let .needConfirmation3DS(confirmation3DSData):
-            on3DSCheckingAddCardCompletionHandler = { response in
-                confirmationComplete(response)
-            }
+            on3DSCheckingAddCardCompletionHandler = confirmationComplete
 
             present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
@@ -1838,24 +1832,15 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         case let .needConfirmationRandomAmount(requestKey):
             onRandomAmountCheckingAddCardCompletionHandler = { response in
-                confirmationComplete(response)
+                confirmationComplete(response.map { _ in () })
             }
 
             presentRandomAmountChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
                 self?.cancelAddCard()
             }
 
-        case let .done(response):
-            confirmationComplete(.success(response))
-
-        case .unknown:
-            let error = NSError(
-                domain: confirmationResponse.errorMessage ?? Loc.TinkoffAcquiring.Unknown.Response.status,
-                code: confirmationResponse.errorCode,
-                userInfo: nil
-            )
-
-            confirmationComplete(.failure(error))
+        case .done:
+            confirmationComplete(.success(()))
         }
     }
 
@@ -1870,28 +1855,30 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         do {
             let cardListDataProvider = try getCardListDataProvider()
-            let checkType: PaymentCardCheckType = addCardNeedSetCheckTypeHandler?() ?? .no
 
             cardListDataProvider.addCard(
                 number: number,
                 expDate: expDate,
                 cvc: cvc,
-                checkType: checkType.rawValue,
-                confirmationHandler: { [weak self] confirmationResponse, confirmationComplete in
-                    DispatchQueue.main.async {
-                        self?.checkConfirmAddCard(
-                            confirmationResponse,
-                            presenter: addCardViewPresenter,
-                            alertViewHelper: alertViewHelper,
-                            confirmationComplete
-                        )
-                    }
+                checkType: addCardNeedSetCheckTypeHandler?() ?? .no,
+                complete3DSMethodHandler: { [weak self] tdsServerTransID, threeDSMethodURL in
+                    guard let self = self else { return }
+                    self.threeDSMethodCheckURL(
+                        tdsServerTransID: tdsServerTransID,
+                        threeDSMethodURL: threeDSMethodURL,
+                        notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString,
+                        presenter: nil
+                    )
                 },
-                completeHandler: { response in
-                    DispatchQueue.main.async {
-                        completeHandler(response)
-                    }
-                }
+                submit3DSAuthorizationHandler: { [weak self] confirmationResponse, confirmationComplete in
+                    self?.checkConfirmAddCard(
+                        confirmationResponse,
+                        presenter: addCardViewPresenter,
+                        alertViewHelper: alertViewHelper,
+                        confirmationComplete
+                    )
+                },
+                completion: completeHandler
             )
         } catch {
             completeHandler(.failure(error))
@@ -2094,7 +2081,7 @@ extension AcquiringUISDK: WKNavigationDelegate {
 
                         //
                         self?.webViewController?.dismiss(animated: true, completion: { [weak self] in
-                            self?.on3DSCheckingAddCardCompletionHandler?(.success(responseObject))
+                            self?.on3DSCheckingAddCardCompletionHandler?(.success(()))
                         })
                     }
                 } // getElementsByTagName('pre')
