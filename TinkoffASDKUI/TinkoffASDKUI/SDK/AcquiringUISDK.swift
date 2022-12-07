@@ -1697,12 +1697,13 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                     presenter: nil
                 )
             },
-            submit3DSAuthorizationHandler: { [weak self] confirmationResponse, confirmationComplete in
+            submit3DSAuthorizationHandler: { [weak self] attachPayload, tdsVersion, completion in
                 self?.checkConfirmAddCard(
-                    confirmationResponse,
+                    attachPayload: attachPayload,
+                    tdsVersion: tdsVersion,
                     presenter: addCardViewPresenter,
                     alertViewHelper: alertViewHelper,
-                    confirmationComplete
+                    completion
                 )
             },
             completion: completeHandler
@@ -1808,7 +1809,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 
     private func checkConfirmAddCard(
-        _ attachPayload: AttachCardPayload,
+        attachPayload: AttachCardPayload,
+        tdsVersion: String,
         presenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
         _ confirmationComplete: @escaping (Result<Void, Error>) -> Void
@@ -1826,7 +1828,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 confirmationComplete(response)
             }
 
-            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: "1.0", presenter: presenter) { [weak self] in
+            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: tdsVersion, presenter: presenter) { [weak self] in
                 self?.cancelAddCard()
             }
 
@@ -1870,9 +1872,10 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                         presenter: nil
                     )
                 },
-                submit3DSAuthorizationHandler: { [weak self] confirmationResponse, confirmationComplete in
+                submit3DSAuthorizationHandler: { [weak self] attachPayload, tdsVersion, confirmationComplete in
                     self?.checkConfirmAddCard(
-                        confirmationResponse,
+                        attachPayload: attachPayload,
+                        tdsVersion: tdsVersion,
                         presenter: addCardViewPresenter,
                         alertViewHelper: alertViewHelper,
                         confirmationComplete
