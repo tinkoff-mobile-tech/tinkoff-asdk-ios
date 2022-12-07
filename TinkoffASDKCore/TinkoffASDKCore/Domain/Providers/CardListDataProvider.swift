@@ -89,8 +89,6 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         }
     }
 
-    var queryStatus: Cancellable?
-
     private let coreSDK: AcquiringSdk
     public let customerKey: String
     private var activeCards: [PaymentCard] = []
@@ -147,14 +145,12 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     }
 
     public func deactivateCard(cardId: String, startHandler: (() -> Void)?, completeHandler: @escaping (PaymentCard?) -> Void) {
-        let initData = RemoveCardData(cardId: cardId, customerKey: customerKey)
-
         startHandler?()
 
-        queryStatus = coreSDK.cardListDeactivateCard(data: initData, completion: { [weak self] response in
+        coreSDK.removeCard(data: RemoveCardData(cardId: cardId, customerKey: customerKey)) { [weak self] result in
             var status: FetchStatus<[PaymentCard]> = .loading
             var deactivatedCard: PaymentCard?
-            switch response {
+            switch result {
             case let .failure(error):
                 status = FetchStatus.error(error)
             case let .success(cardResponse):
@@ -186,7 +182,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                 self?.fetchStatus = status
                 completeHandler(deactivatedCard)
             }
-        })
+        }
     }
 
     // MARK: FetchDataSourceProtocol
@@ -195,20 +191,17 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         fetchStatus = .loading
         DispatchQueue.main.async { startHandler?() }
 
-        let initGetCardListData = GetCardListData(customerKey: customerKey)
-        queryStatus = coreSDK.cardList(data: initGetCardListData, responseDelegate: self, completion: { [weak self] response in
+        coreSDK.getCardList(data: GetCardListData(customerKey: customerKey)) { result in
             var status: FetchStatus<[PaymentCard]> = .loading
             var responseError: Error?
-            switch response {
+            switch result {
             case let .failure(error):
                 responseError = error
                 status = FetchStatus.error(error)
-            case let .success(cardListResponse):
-                self?.dataSource = cardListResponse.cards
-                let activeCards = cardListResponse.cards.filter { card -> Bool in
-                    card.status == .active
-                }
-                self?.activeCards = activeCards
+            case let .success(cards):
+                self.dataSource = cards
+                let activeCards = cards.filter { $0.status == .active }
+                self.activeCards = activeCards
 
                 if activeCards.isEmpty {
                     status = FetchStatus.empty
@@ -218,10 +211,10 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
             }
 
             DispatchQueue.main.async {
-                self?.fetchStatus = status
-                completeHandler(self?.activeCards, responseError)
+                self.fetchStatus = status
+                completeHandler(self.activeCards, responseError)
             }
-        })
+        }
     }
 
     public func count() -> Int {
@@ -250,34 +243,6 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
 
     public func allItems() -> [PaymentCard] {
         return activeCards
-    }
-}
-
-extension CardListDataProvider: NetworkTransportResponseDelegate {
-    public func networkTransport(
-        didCompleteRawTaskForRequest request: URLRequest,
-        withData data: Data,
-        response: URLResponse,
-        error: Error?
-    ) throws -> ResponseOperation {
-        let cardLidt = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-
-        var parameters: [String: Any] = [:]
-        parameters.updateValue(true, forKey: "Success")
-        parameters.updateValue(0, forKey: "ErrorCode")
-
-        if let requestParamsData = request.httpBody,
-           let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
-            if let terminalKey = requestParams["TerminalKey"] {
-                parameters.updateValue(terminalKey, forKey: "TerminalKey")
-            }
-        }
-
-        parameters.updateValue(cardLidt, forKey: "Cards")
-
-        let cardData: Data = try JSONSerialization.data(withJSONObject: parameters, options: [.sortedKeys])
-
-        return try JSONDecoder().decode(CardListResponse.self, from: cardData)
     }
 }
 
@@ -440,17 +405,5 @@ private extension CardListDataProvider {
                 completion(.success(card))
             }
         }
-    }
-}
-
-// MARK: - Serialization Helper
-
-private enum JSONSerializationFormat {
-    static func serialize(value: [String: JSONObject]) throws -> Data {
-        return try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
-    }
-
-    static func deserialize(data: Data) throws -> JSONValue {
-        return try JSONSerialization.jsonObject(with: data, options: [])
     }
 }
