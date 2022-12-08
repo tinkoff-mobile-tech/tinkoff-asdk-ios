@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import class UIKit.UIScreen
 
 /// Состояние для сервисов и объектов которые загружаем с севера
 public enum FetchStatus<ObjectType> {
