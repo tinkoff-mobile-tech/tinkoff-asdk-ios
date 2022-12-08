@@ -1846,48 +1846,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    func cardListAddCard(
-        number: String,
-        expDate: String,
-        cvc: String,
-        addCardViewPresenter: AcquiringView,
-        alertViewHelper: AcquiringAlertViewProtocol?,
-        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
-    ) {
-
-        do {
-            let cardListDataProvider = try getCardListDataProvider()
-
-            cardListDataProvider.addCard(
-                number: number,
-                expDate: expDate,
-                cvc: cvc,
-                checkType: addCardNeedSetCheckTypeHandler?() ?? .no,
-                complete3DSMethodHandler: { [weak self] tdsServerTransID, threeDSMethodURL in
-                    guard let self = self else { return }
-                    self.threeDSMethodCheckURL(
-                        tdsServerTransID: tdsServerTransID,
-                        threeDSMethodURL: threeDSMethodURL,
-                        notificationURL: self.acquiringSdk.confirmation3DSCompleteV2URL().absoluteString,
-                        presenter: nil
-                    )
-                },
-                submit3DSAuthorizationHandler: { [weak self] attachPayload, tdsVersion, confirmationComplete in
-                    self?.checkConfirmAddCard(
-                        attachPayload: attachPayload,
-                        tdsVersion: tdsVersion,
-                        presenter: addCardViewPresenter,
-                        alertViewHelper: alertViewHelper,
-                        confirmationComplete
-                    )
-                },
-                completion: completeHandler
-            )
-        } catch {
-            completeHandler(.failure(error))
-        }
-    }
-
     public func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String,
