@@ -216,9 +216,8 @@ extension TDSController: ChallengeStatusReceiver {
         finishTransaction()
         do {
             let cresValue = try buildCresValue(with: completionEvent.getTransactionStatus())
-            let data = Submit3DSAuthorizationV2Data(cres: cresValue, paymentId: nil)
 
-            acquiringSdk.submit3DSAuthorizationV2(data: data) { [weak self] result in
+            acquiringSdk.submit3DSAuthorizationV2(cres: cresValue) { [weak self] result in
                 self?.completionHandler?(result)
                 self?.clear()
             }
