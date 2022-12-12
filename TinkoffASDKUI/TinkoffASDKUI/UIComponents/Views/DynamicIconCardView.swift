@@ -72,7 +72,7 @@ class DynamicIconCardView: UIView {
 
         cardImageView.contentMode = .scaleAspectFill
         cardImageView.clipsToBounds = true
-        paymentSystemBadgeImageView.contentMode = .scaleAspectFill
+        paymentSystemBadgeImageView.contentMode = .scaleAspectFit
         paymentSystemBadgeImageView.clipsToBounds = true
 
         setupFrames()
@@ -150,11 +150,17 @@ extension DynamicIconCardView {
 
 // MARK: - Other
 
+protocol IDynamicIconCardViewUpdater: AnyObject {
+    func update(config: DynamicIconCardView.Model)
+}
+
 extension DynamicIconCardView {
 
     struct Model {
         var data: Data
         var style = Style()
+
+        weak var updater: IDynamicIconCardViewUpdater?
     }
 
     struct Data {

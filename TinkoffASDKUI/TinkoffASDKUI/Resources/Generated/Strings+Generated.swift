@@ -10,6 +10,20 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
+  internal enum Acquiring {
+    internal enum CardField {
+      /// 123
+      internal static let cvvPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.CVVPlaceholder", fallback: "123")
+      /// Код
+      internal static let cvvTitle = Loc.tr("Localizable", "Acquiring.CardField.CVVTitle", fallback: "Код")
+      /// Номер
+      internal static let panTitle = Loc.tr("Localizable", "Acquiring.CardField.PanTitle", fallback: "Номер")
+      /// 07/30
+      internal static let termPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.TermPlaceholder", fallback: "07/30")
+      /// Срок
+      internal static let termTitle = Loc.tr("Localizable", "Acquiring.CardField.TermTitle", fallback: "Срок")
+    }
+  }
   internal enum AcquiringPayment {
     internal enum Button {
       /// Выбрать другую карту

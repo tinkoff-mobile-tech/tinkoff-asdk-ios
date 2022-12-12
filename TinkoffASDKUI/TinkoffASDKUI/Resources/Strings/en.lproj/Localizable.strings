@@ -107,3 +107,11 @@
 
 // AcquiringPayment
 "AcquiringPayment.button.chooseCard" = "Choose another card";
+
+// CardField
+
+"Acquiring.CardField.PanTitle" = "Number";
+"Acquiring.CardField.TermTitle" = "Expiration";
+"Acquiring.CardField.TermPlaceholder" = "07/30";
+"Acquiring.CardField.CVVTitle" = "CVV";
+"Acquiring.CardField.CVVPlaceholder" = "123";

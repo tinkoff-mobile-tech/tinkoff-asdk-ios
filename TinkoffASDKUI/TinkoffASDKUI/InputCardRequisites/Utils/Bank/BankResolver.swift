@@ -16,6 +16,14 @@ enum BankResult: Equatable {
 
     case parsed(bank: Bank)
     case incorrectInput(error: InputValidationError)
+
+    func getBank() -> Bank? {
+        if case let .parsed(bank) = self {
+            return bank
+        } else {
+            return nil
+        }
+    }
 }
 
 // MARK: - IBankResolver
