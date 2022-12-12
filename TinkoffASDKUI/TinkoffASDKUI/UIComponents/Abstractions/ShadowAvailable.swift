@@ -38,6 +38,13 @@ struct ShadowStyle: Equatable {
         self.offsetX = offsetX
         self.offsetY = offsetY
     }
+
+    /// Позволяет конвертировать значение blur radius с фигмы в ios shadow radius
+    /// - Parameter figmaBlur: Значение blur'а указанное на макете
+    /// - Returns: Shadow radius
+    static func getBlurRadius(figmaBlur: CGFloat) -> CGFloat {
+        figmaBlur / 2
+    }
 }
 
 /// ShadowAvailable + UIView
@@ -54,5 +61,20 @@ extension ShadowAvailable where Self: UIView {
     func removeShadow() {
         layer.shadowOpacity = 0.0
         layer.shadowOffset = .zero
+    }
+}
+
+// MARK: - Styles
+
+extension ShadowStyle {
+
+    static var medium: Self {
+        ShadowStyle(
+            radius: Self.getBlurRadius(figmaBlur: 34),
+            color: .black,
+            opacity: 0.12,
+            offsetX: 0,
+            offsetY: 6
+        )
     }
 }
