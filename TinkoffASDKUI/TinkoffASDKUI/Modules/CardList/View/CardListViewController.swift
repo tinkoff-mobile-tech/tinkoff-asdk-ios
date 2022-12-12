@@ -25,6 +25,8 @@ protocol ICardListViewInput: AnyObject {
     func show(alert: CardList.Alert)
     func showLoader()
     func hideLoader()
+    func showShimmer()
+    func hideShimmer()
 }
 
 final class CardListViewController: UIViewController {
@@ -119,6 +121,14 @@ extension CardListViewController: ICardListViewInput {
 
     func hideLoader() {
         cardListView.hideLoader()
+    }
+
+    func showShimmer() {
+        cardListView.startShimmer(showing: true)
+    }
+
+    func hideShimmer() {
+        cardListView.startShimmer(showing: false)
     }
 }
 

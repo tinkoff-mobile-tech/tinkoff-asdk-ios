@@ -66,6 +66,18 @@ struct ASDKColors {
 
 extension ASDKColors {
 
+    // MARK: - Foreground
+
+    struct Foreground {
+
+        static var skeleton: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: .black.withAlphaComponent(0.03),
+                dark: .white.withAlphaComponent(0.10)
+            )
+        }
+    }
+
     // MARK: - Background
 
     struct Background {

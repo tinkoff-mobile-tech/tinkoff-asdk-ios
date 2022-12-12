@@ -97,7 +97,7 @@
 "TinkoffAcquiring.threeds.error.timeout" = "3DS operation timed out";
 
 // CardList
-"CardList.title" = "Payment cards";
+"CardList.title" = "Your cards";
 "CardList.alert.title.deleteCard" = "Delete this card";
 "CardList.alert.message.deleteCard" = "Are you sure you want to delete the card %@?";
 "CardList.alert.action.cancel" = "Cancel";

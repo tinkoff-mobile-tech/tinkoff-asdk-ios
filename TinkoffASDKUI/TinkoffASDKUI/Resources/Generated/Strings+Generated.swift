@@ -17,8 +17,8 @@ internal enum Loc {
     }
   }
   internal enum CardList {
-    /// Карты для оплаты
-    internal static let title = Loc.tr("Localizable", "CardList.title", fallback: "Карты для оплаты")
+    /// Ваши карты
+    internal static let title = Loc.tr("Localizable", "CardList.title", fallback: "Ваши карты")
     internal enum Alert {
       internal enum Action {
         /// Отмена

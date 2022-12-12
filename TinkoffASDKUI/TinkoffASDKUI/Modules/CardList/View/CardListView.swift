@@ -88,6 +88,8 @@ final class CardListView: UIView {
         return button
     }()
 
+    private lazy var shimmerView = buildShimmerView()
+
     // MARK: State
 
     private var cards: [CardList.Card] = []
@@ -133,13 +135,36 @@ final class CardListView: UIView {
         primaryButton.isEnabled = true
     }
 
+    func startShimmer(showing: Bool) {
+        UIView.animate(withDuration: 1, delay: .zero) {
+            self.shimmerView.alpha = showing ? 1 : 0
+        }
+    }
+
     // MARK: Initial Configuration
 
     private func setupView() {
         backgroundColor = style.backgroundColor
-
         addSubview(collectionView)
-        collectionView.pinEdgesToSuperview()
+        collectionView.makeConstraints { view in
+            [
+                view.topAnchor.constraint(equalTo: view.forcedSuperview.safeAreaLayoutGuide.topAnchor),
+                view.bottomAnchor.constraint(equalTo: view.forcedSuperview.bottomAnchor),
+            ] + view.makeLeftAndRightEqualToSuperView(inset: .zero)
+        }
+
+        collectionView.contentInset.top = 16
+        collectionView.contentInset.bottom = UIWindow.findKeyWindow()?.safeAreaInsets.bottom ?? .zero
+
+        shimmerView.alpha = .zero
+        addSubview(shimmerView)
+        shimmerView.makeConstraints { view in
+            [
+                view.topAnchor.constraint(equalTo: collectionView.topAnchor),
+                view.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor),
+            ]
+                + view.makeLeftAndRightEqualToSuperView(inset: .zero)
+        }
 
         addSubview(noCardsView)
         noCardsView.pinEdgesToSuperview()

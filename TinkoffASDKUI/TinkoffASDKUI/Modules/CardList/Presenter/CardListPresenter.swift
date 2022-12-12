@@ -93,21 +93,26 @@ final class CardListPresenter: ICardListModule {
 // MARK: - ICardListViewOutput
 
 extension CardListPresenter: ICardListViewOutput {
-    func viewDidLoad() {
-        view?.showLoader()
-        provider.fetchActiveCards { [self] result in
-            switch result {
-            case let .success(paymentCards):
-                activeCardsCache = paymentCards
-                view?.reload(cards: transform(paymentCards))
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
-            }
 
-            view?.hideLoader()
+    func viewDidLoad() {
+        performOnMain { [weak self] in
+            self?.view?.showShimmer()
+        }
+        provider.fetchActiveCards { result in
+            performOnMain { [weak self] in
+                guard let self = self else { return }
+                switch result {
+                case let .success(paymentCards):
+                    self.activeCardsCache = paymentCards
+                    self.view?.reload(cards: self.transform(paymentCards))
+                case .failure:
+                    // swiftlint:disable wrong_todo_syntax
+                    // TODO: Add failure handling
+                    // swiftlint:enable wrong_todo_syntax
+                    break
+                }
+                self.view?.hideShimmer()
+            }
         }
     }
 

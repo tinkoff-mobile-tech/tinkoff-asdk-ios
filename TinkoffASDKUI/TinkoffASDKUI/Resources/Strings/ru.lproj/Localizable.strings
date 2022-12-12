@@ -96,7 +96,7 @@
 "TinkoffAcquiring.threeds.error.timeout" = "Превышено маскимальное время прохождения 3DS";
 
 // CardList
-"CardList.title" = "Карты для оплаты";
+"CardList.title" = "Ваши карты";
 "CardList.alert.title.deleteCard" = "Удаление карты";
 "CardList.alert.message.deleteCard" = "Вы уверены, что хотите удалить карту %@?";
 "CardList.alert.action.cancel" = "Отмена";
