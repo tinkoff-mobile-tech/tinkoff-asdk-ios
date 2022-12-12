@@ -24,8 +24,9 @@ struct CardList {
     struct Card {
         let id: String
         let pan: String
-        let validThru: String
-        let icon: UIImage?
+        let cardModel: DynamicIconCardView.Model
+        let assembledText: String
+        let isInEditingMode: Bool
     }
 
     struct Alert {

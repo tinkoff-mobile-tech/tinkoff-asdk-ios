@@ -114,3 +114,14 @@
 "Acquiring.CardField.TermPlaceholder" = "07/30";
 "Acquiring.CardField.CVVTitle" = "Код";
 "Acquiring.CardField.CVVPlaceholder" = "123";
+
+// Common
+"Acquiring.Common.SberCardTitle" = "СберБанк";
+"Acquiring.Common.TcsCardTitle" = "Тинькофф";
+"Acquiring.Common.VtbCardTitle" = "Банк ВТБ";
+"Acquiring.Common.AlfaCardTitle" = "Альфа Банк";
+"Acquiring.Common.GazpromCardTitle" = "Газпром Банк";
+"Acquiring.Common.RaiffeisenCardTitle" = "Райффайзен Банк";
+
+// CardList
+"Acquiring.CardList.AddCard" = "Добавить новую";

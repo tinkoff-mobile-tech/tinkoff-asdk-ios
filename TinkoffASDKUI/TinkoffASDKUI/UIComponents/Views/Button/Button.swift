@@ -228,7 +228,7 @@ private extension Button {
         let activityIndicatorView = ActivityIndicatorView(style: style)
         activityIndicatorView.transform = CGAffineTransform(scaleX: .zero, y: .zero)
 
-        let container = ViewContainer(base: activityIndicatorView)
+        let container = ViewHolder(base: activityIndicatorView)
 
         addSubview(container)
 
@@ -242,7 +242,7 @@ private extension Button {
 
     /// Скрыть индикатор
     func hideActivityIndicator(completion: (() -> Void)?) {
-        let container = subviews.compactMap { $0 as? ViewContainer<ActivityIndicatorView> }.first
+        let container = subviews.compactMap { $0 as? ViewHolder<ActivityIndicatorView> }.first
         let indicatorView = container?.base
         UIView.animate(withDuration: .scaleDuration, animations: {
             indicatorView?.alpha = .zero

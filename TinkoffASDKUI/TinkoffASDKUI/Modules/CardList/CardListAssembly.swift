@@ -79,7 +79,9 @@ final class CardListAssembly: ICardListAssembly {
     ) -> (view: UIViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
             imageResolver: PaymentSystemImageResolver(),
-            provider: provider
+            provider: provider,
+            bankResolver: BankResolver(),
+            paymentSystemResolver: PaymentSystemResolver()
         )
 
         let view = CardListViewController(

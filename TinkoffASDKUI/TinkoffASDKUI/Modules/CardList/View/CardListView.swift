@@ -231,16 +231,19 @@ extension CardListView: UICollectionViewDataSource {
         let card = cards[indexPath.row]
         let cell = collectionView.dequeue(CardCell.self, for: indexPath)
 
-        let configuration = CardCell.Configuration(
-            pan: card.pan,
-            validThru: card.validThru,
-            icon: card.icon,
-            removeHandler: { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.cardListView(self, didTapDeleteOn: card)
-            }
-        )
+        let accesoryItem: PaymentCardRemovableView.AccessoryItem = card.isInEditingMode
+            ? .removeButton(
+                onRemove: { [weak self] in guard let self = self else { return }
+                    self.delegate?.cardListView(self, didTapDeleteOn: card)
+                })
+            : .none
 
+        let configuration = CardCell.Configuration(
+            content: .plain(text: card.assembledText, style: .bodyL()),
+            card: card.cardModel,
+            accessoryItem: accesoryItem,
+            insets: PaymentCardRemovableView.Constants.contentInsets
+        )
         cell.update(with: configuration)
         return cell
     }

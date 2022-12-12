@@ -40,11 +40,6 @@ class DynamicIconCardView: UIView {
         )
     }
 
-    private init(constants: Constants = Constants()) {
-        self.constants = constants
-        super.init(frame: CGRect(origin: .zero, size: constants.card.size))
-    }
-
     // MARK: - Public
 
     func configure(model: Model) {
@@ -61,6 +56,10 @@ class DynamicIconCardView: UIView {
         } else {
             animations()
         }
+    }
+
+    func clear() {
+        configure(model: Model(data: Data()))
     }
 
     // MARK: - Private
@@ -126,6 +125,8 @@ class DynamicIconCardView: UIView {
 // MARK: - Constants
 
 extension DynamicIconCardView {
+
+    static var defaultSize: CGSize { Constants.Card().size }
 
     struct Constants {
         var card = Card()
