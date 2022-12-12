@@ -128,9 +128,9 @@ extension SnackbarViewController {
             body: {
                 snackbarView.frame = self.getHiddenSnackFrame()
             },
-            completion: {
-                self.state = .hidden
-                self.dismiss(animated: false, completion: completion)
+            completion: { [weak self] in
+                self?.state = .hidden
+                self?.view.removeFromSuperview()
             }
         )
 
