@@ -4,6 +4,7 @@
 ### Fixed
 
 * [MIC-6975] Fix readme and add info about payment stages
+* [MIC-6888] Fix 3DS V2 handling for cards attaching
 
 ## [2.12.2] - 2022-10-28Z
 
