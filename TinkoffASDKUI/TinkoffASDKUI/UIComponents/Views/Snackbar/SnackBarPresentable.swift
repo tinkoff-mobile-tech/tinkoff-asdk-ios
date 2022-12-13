@@ -41,7 +41,7 @@ extension ISnackBarPresentable {
         config: SnackbarView.Configuration,
         completion: (() -> Void)?
     ) -> SnackbarViewController {
-        let snackViewController = SnackbarViewController.assemble()
+        let snackViewController = SnackbarViewController()
         assert(viewProvider != nil)
         guard let viewProvider = viewProvider else { return snackViewController }
         let viewSource = viewProvider.viewToAddSnackBarTo()
@@ -70,19 +70,5 @@ extension ISnackBarPresentable {
         )
 
         snackViewController = showSnack(config: config, completion: didShowCompletion)
-    }
-}
-
-// MARK: - UIWindow + Snack
-
-/// Intendent to use as a global view snack presentable
-extension UIWindow: ISnackBarPresentable {
-    var viewProvider: ISnackBarViewProvider? { self }
-}
-
-extension UIWindow: ISnackBarViewProvider {
-
-    func viewToAddSnackBarTo() -> UIView {
-        self
     }
 }

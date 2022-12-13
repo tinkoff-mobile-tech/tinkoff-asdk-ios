@@ -156,5 +156,5 @@ fastlane/README.md
 # Xcode generated workspaces
 ASDKSample/ASDKSample.xcworkspace/**
 
-# Debug files
+# Debug helper files for local development
 TinkoffASDKUI/TinkoffASDKUI/Debug/**
