@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.13.0] - 2022-12-13Z
+
 ### Fixed
 
 * [MIC-6975] Fix readme and add info about payment stages
