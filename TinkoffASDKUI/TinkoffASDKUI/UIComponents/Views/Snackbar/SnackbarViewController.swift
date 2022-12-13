@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// In order to use snacks make sure to conform to ISnackPresentable
 final class SnackbarViewController: UIViewController {
 
     private(set) var state = State.hidden {
@@ -37,15 +38,6 @@ final class SnackbarViewController: UIViewController {
         }
 
         animations = []
-    }
-
-    static func assemble() -> SnackbarViewController {
-        let viewController = SnackbarViewController()
-        viewController.loadView()
-        viewController.view.frame = UIScreen.main.bounds
-        viewController.modalPresentationStyle = .overFullScreen
-        viewController.viewDidLoad()
-        return viewController
     }
 }
 
