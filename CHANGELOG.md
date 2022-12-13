@@ -11,6 +11,7 @@
 * [MIC-6817] Dynamic Icon Card View (allows to generate a card visuals)
 * [MIC-6828] Added Stylable Button
 * [MIC-6848] Bank detection logic based on cardNumber
+* [MIC-6821] Added Snackbar for presenting snacks
 
 ### Fixed
 
