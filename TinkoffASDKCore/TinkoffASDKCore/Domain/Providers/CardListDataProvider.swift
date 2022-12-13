@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import class UIKit.UIScreen
 
 /// Состояние для сервисов и объектов которые загружаем с севера
 public enum FetchStatus<ObjectType> {
@@ -72,6 +73,15 @@ public protocol CardListDataSourceStatusListener: AnyObject {
 }
 
 public final class CardListDataProvider: FetchDataSourceProtocol {
+    public typealias Submit3DSAuthorizationHandler = (
+        _ payload: AttachCardPayload,
+        _ threeDSVersion: String,
+        _ completion: @escaping (_ result: Result<Void, Error>) -> Void
+    ) -> Void
+
+    public typealias Complete3DSMethodHandler = (_ tdsServerTransID: String, _ threeDSMethodURL: String) -> Void
+    public typealias AddCardCompletion = (_ result: Result<PaymentCard?, Error>) -> Void
+
     public typealias ObjectType = [PaymentCard]
 
     public var fetchStatus: FetchStatus<[PaymentCard]> = .unknown {
@@ -80,9 +90,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         }
     }
 
-    var queryStatus: Cancellable?
-
-    private let coreSDK: AcquiringSdk?
+    private let coreSDK: AcquiringSdk
     public let customerKey: String
     private var activeCards: [PaymentCard] = []
     private var dataSource: [PaymentCard] = []
@@ -102,74 +110,48 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         self.customerKey = customerKey
     }
 
-    @available(*, deprecated, message: "Use init(coreSDK:customerKey:) instead")
-    public init(sdk: AcquiringSdk?, customerKey: String) {
-        coreSDK = sdk
-        self.customerKey = customerKey
-    }
-
     // MARK: Card List
 
     public func addCard(
         number: String,
         expDate: String,
         cvc: String,
-        checkType: String,
-        confirmationHandler: @escaping (
-            (
-                _ result: FinishAddCardResponse,
-                _ confirmationComplete: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
-            ) -> Void
-        ),
-        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
+        checkType: PaymentCardCheckType,
+        complete3DSMethodHandler: @escaping Complete3DSMethodHandler,
+        submit3DSAuthorizationHandler: @escaping Submit3DSAuthorizationHandler,
+        completion: @escaping AddCardCompletion
     ) {
-        // Step 1 init
-        let initAddCardData = AddCardData(with: checkType, customerKey: customerKey)
-        queryStatus = coreSDK?.cardListAddCardInit(data: initAddCardData, completion: { [weak self] responseInit in
-            switch responseInit {
-            case let .failure(error):
-                DispatchQueue.main.async { completeHandler(.failure(error)) }
-            case let .success(initAddCardResponse):
-                // Step 2 finish
-                let finishData = AttachCardData(cardNumber: number, expDate: expDate, cvv: cvc, requestKey: initAddCardResponse.requestKey)
-                self?.queryStatus = self?.coreSDK?.cardListAddCardFinish(data: finishData, responseDelegate: nil, completion: { responseFinish in
-                    switch responseFinish {
-                    case let .failure(error):
-                        DispatchQueue.main.async { completeHandler(.failure(error)) }
-                    case let .success(finishAddCardResponse):
-                        // Step 3 complete
-                        confirmationHandler(finishAddCardResponse) { completionResponse in
-                            switch completionResponse {
-                            case let .failure(error):
-                                completeHandler(.failure(error))
-                            case let .success(confirmResponse):
-                                let oldActiveCardIds = (self?.activeCards ?? []).map(\.cardId)
+        let options = AddCardOptions(pan: number, validThru: expDate, cvc: cvc, checkType: checkType)
 
-                                self?.fetch(startHandler: nil, completeHandler: { _, _ in
-                                    if let card = confirmResponse.cardId.flatMap({ self?.item(with: $0) }) {
-                                        completeHandler(.success(card))
-                                    } else {
-                                        let card = self?.activeCards.first { !oldActiveCardIds.contains($0.cardId) }
-                                        completeHandler(.success(card))
-                                    }
-                                }) // fetch catrs list
-                            }
-                        } // confirmationHandler
-                    }
-                }) // сardListAddCardFinish
+        let complete3DSMethodHandlerDecorator: Complete3DSMethodHandler = { tdsServerTransID, threeDSMethodURL in
+            DispatchQueue.main.async { complete3DSMethodHandler(tdsServerTransID, threeDSMethodURL) }
+        }
+
+        let submit3DSAuthorizationHandlerDecorator: Submit3DSAuthorizationHandler = { submitResult, tdsVersion, completion in
+            DispatchQueue.main.async {
+                submit3DSAuthorizationHandler(submitResult, tdsVersion, completion)
             }
-        }) // сardListAddCardInit
+        }
+
+        let completionDecorator: AddCardCompletion = { result in
+            DispatchQueue.main.async { completion(result) }
+        }
+
+        _addCard(
+            options: options,
+            complete3DSMethodHandler: complete3DSMethodHandlerDecorator,
+            submit3DSAuthorizationHandler: submit3DSAuthorizationHandlerDecorator,
+            completion: completionDecorator
+        )
     }
 
     public func deactivateCard(cardId: String, startHandler: (() -> Void)?, completeHandler: @escaping (PaymentCard?) -> Void) {
-        let initData = RemoveCardData(cardId: cardId, customerKey: customerKey)
-
         startHandler?()
 
-        queryStatus = coreSDK?.cardListDeactivateCard(data: initData, completion: { [weak self] response in
+        coreSDK.removeCard(data: RemoveCardData(cardId: cardId, customerKey: customerKey)) { [weak self] result in
             var status: FetchStatus<[PaymentCard]> = .loading
             var deactivatedCard: PaymentCard?
-            switch response {
+            switch result {
             case let .failure(error):
                 status = FetchStatus.error(error)
             case let .success(cardResponse):
@@ -201,7 +183,7 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
                 self?.fetchStatus = status
                 completeHandler(deactivatedCard)
             }
-        })
+        }
     }
 
     // MARK: FetchDataSourceProtocol
@@ -210,20 +192,17 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
         fetchStatus = .loading
         DispatchQueue.main.async { startHandler?() }
 
-        let initGetCardListData = GetCardListData(customerKey: customerKey)
-        queryStatus = coreSDK?.cardList(data: initGetCardListData, responseDelegate: self, completion: { [weak self] response in
+        coreSDK.getCardList(data: GetCardListData(customerKey: customerKey)) { result in
             var status: FetchStatus<[PaymentCard]> = .loading
             var responseError: Error?
-            switch response {
+            switch result {
             case let .failure(error):
                 responseError = error
                 status = FetchStatus.error(error)
-            case let .success(cardListResponse):
-                self?.dataSource = cardListResponse.cards
-                let activeCards = cardListResponse.cards.filter { card -> Bool in
-                    card.status == .active
-                }
-                self?.activeCards = activeCards
+            case let .success(cards):
+                self.dataSource = cards
+                let activeCards = cards.filter { $0.status == .active }
+                self.activeCards = activeCards
 
                 if activeCards.isEmpty {
                     status = FetchStatus.empty
@@ -233,10 +212,10 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
             }
 
             DispatchQueue.main.async {
-                self?.fetchStatus = status
-                completeHandler(self?.activeCards, responseError)
+                self.fetchStatus = status
+                completeHandler(self.activeCards, responseError)
             }
-        })
+        }
     }
 
     public func count() -> Int {
@@ -268,42 +247,164 @@ public final class CardListDataProvider: FetchDataSourceProtocol {
     }
 }
 
-extension CardListDataProvider: NetworkTransportResponseDelegate {
-    public func networkTransport(
-        didCompleteRawTaskForRequest request: URLRequest,
-        withData data: Data,
-        response: URLResponse,
-        error: Error?
-    ) throws -> ResponseOperation {
-        let cardLidt = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+// MARK: - CardListDataProvider + Add Card Flow
 
-        var parameters: [String: Any] = [:]
-        parameters.updateValue(true, forKey: "Success")
-        parameters.updateValue(0, forKey: "ErrorCode")
+private extension CardListDataProvider {
+    struct AddCardOptions {
+        let pan: String
+        let validThru: String
+        let cvc: String
+        let checkType: PaymentCardCheckType
+    }
 
-        if let requestParamsData = request.httpBody,
-           let requestParams = try JSONSerializationFormat.deserialize(data: requestParamsData) as? [String: Any] {
-            if let terminalKey = requestParams["TerminalKey"] {
-                parameters.updateValue(terminalKey, forKey: "TerminalKey")
+    private enum AddCardError: LocalizedError {
+        case missingPaymentId
+
+        var errorDescription: String? {
+            switch self {
+            case .missingPaymentId:
+                return "`paymentId` is required in the `AddCard` response when `checkType` is `3DS`, `3DSHOLD` or `HOLD`"
             }
         }
-
-        parameters.updateValue(cardLidt, forKey: "Cards")
-
-        let cardData: Data = try JSONSerialization.data(withJSONObject: parameters, options: [.sortedKeys])
-
-        return try JSONDecoder().decode(CardListResponse.self, from: cardData)
-    }
-}
-
-// MARK: - Serialization Helper
-
-private enum JSONSerializationFormat {
-    static func serialize(value: [String: JSONObject]) throws -> Data {
-        return try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
     }
 
-    static func deserialize(data: Data) throws -> JSONValue {
-        return try JSONSerialization.jsonObject(with: data, options: [])
+    func _addCard(
+        options: AddCardOptions,
+        complete3DSMethodHandler: @escaping Complete3DSMethodHandler,
+        submit3DSAuthorizationHandler: @escaping Submit3DSAuthorizationHandler,
+        completion: @escaping AddCardCompletion
+    ) {
+        coreSDK.addCard(data: AddCardData(with: options.checkType, customerKey: customerKey)) { result in
+            switch result {
+            case let .success(payload):
+                self.check3DSVersionIfNeededAndAttachCard(
+                    options: options,
+                    addCardPayload: payload,
+                    complete3DSMethodHandler: complete3DSMethodHandler,
+                    submit3DSAuthorizationHandler: submit3DSAuthorizationHandler,
+                    completion: completion
+                )
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func check3DSVersionIfNeededAndAttachCard(
+        options: AddCardOptions,
+        addCardPayload: AddCardPayload,
+        complete3DSMethodHandler: @escaping Complete3DSMethodHandler,
+        submit3DSAuthorizationHandler: @escaping Submit3DSAuthorizationHandler,
+        completion: @escaping (Result<PaymentCard?, Error>) -> Void
+    ) {
+        switch options.checkType {
+        case .check3DS, .hold3DS:
+            guard let paymentId = addCardPayload.paymentId else {
+                return completion(.failure(AddCardError.missingPaymentId))
+            }
+
+            let check3DSVersionData = Check3DSVersionData(
+                paymentId: paymentId,
+                paymentSource: .cardNumber(number: options.pan, expDate: options.validThru, cvv: options.cvc)
+            )
+
+            coreSDK.check3DSVersion(data: check3DSVersionData) { check3DSResult in
+                switch check3DSResult {
+                case let .success(check3DSPayload):
+                    var deviceData: DeviceInfoParams?
+
+                    if let tdsServerTransID = check3DSPayload.tdsServerTransID,
+                       let threeDSMethodURL = check3DSPayload.threeDSMethodURL {
+                        complete3DSMethodHandler(tdsServerTransID, threeDSMethodURL)
+                        deviceData = self.coreSDK.threeDSDeviceParamsProvider(screenSize: UIScreen.main.bounds.size).deviceInfoParams
+                    }
+
+                    self.attachCard(
+                        options: options,
+                        addCardPayload: addCardPayload,
+                        tdsVersion: check3DSPayload.version,
+                        deviceData: deviceData,
+                        submit3DSAuthorizationHandler: submit3DSAuthorizationHandler,
+                        completion: completion
+                    )
+                case let .failure(error):
+                    completion(.failure(error))
+                }
+            }
+        case .no, .hold:
+            attachCard(
+                options: options,
+                addCardPayload: addCardPayload,
+                tdsVersion: "1.0.0",
+                deviceData: nil,
+                submit3DSAuthorizationHandler: submit3DSAuthorizationHandler,
+                completion: completion
+            )
+        }
+    }
+
+    private func attachCard(
+        options: AddCardOptions,
+        addCardPayload: AddCardPayload,
+        tdsVersion: String,
+        deviceData: DeviceInfoParams?,
+        submit3DSAuthorizationHandler: @escaping Submit3DSAuthorizationHandler,
+        completion: @escaping AddCardCompletion
+    ) {
+        let attachData = AttachCardData(
+            cardNumber: options.pan,
+            expDate: options.validThru,
+            cvv: options.cvc,
+            requestKey: addCardPayload.requestKey,
+            deviceData: deviceData
+        )
+
+        coreSDK.attachCard(data: attachData) { result in
+            switch result {
+            case let .success(attachPayload):
+                self.submit3DSAuthorization(
+                    attachPayload: attachPayload,
+                    tdsVersion: tdsVersion,
+                    submit3DSAuthorizationHandler: submit3DSAuthorizationHandler,
+                    completion: completion
+                )
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func submit3DSAuthorization(
+        attachPayload: AttachCardPayload,
+        tdsVersion: String,
+        submit3DSAuthorizationHandler: @escaping Submit3DSAuthorizationHandler,
+        completion: @escaping AddCardCompletion
+    ) {
+
+        submit3DSAuthorizationHandler(attachPayload, tdsVersion) { submitResult in
+            switch submitResult {
+            case .success:
+                self.resolveAddedCard(withCardId: attachPayload.cardId, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func resolveAddedCard(withCardId cardId: String?, completion: @escaping AddCardCompletion) {
+        let oldActiveCardIds = activeCards.map(\.cardId)
+
+        fetch(startHandler: nil) { _, error in
+            if let error = error {
+                return completion(.failure(error))
+            }
+
+            if let card = cardId.flatMap({ self.item(with: $0) }) {
+                completion(.success(card))
+            } else {
+                let card = self.activeCards.first { !oldActiveCardIds.contains($0.cardId) }
+                completion(.success(card))
+            }
+        }
     }
 }

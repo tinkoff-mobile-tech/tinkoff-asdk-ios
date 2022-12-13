@@ -17,6 +17,13 @@
 
 * [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
 
+## [2.13.1] - 2022-12-13Z
+
+### Fixed
+
+* [MIC-6975] Fix readme and add info about payment stages
+* [MIC-6888] Fix 3DS V2 handling for cards attaching
+
 ## [2.12.2] - 2022-10-28Z
 
 ### Changed

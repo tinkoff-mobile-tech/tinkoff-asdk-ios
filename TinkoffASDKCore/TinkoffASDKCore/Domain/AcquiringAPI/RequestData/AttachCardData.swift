@@ -27,12 +27,20 @@ public struct AttachCardData {
     let expDate: String
     let cvv: String
     let requestKey: String
+    let deviceData: DeviceInfoParams?
 
-    public init(cardNumber: String, expDate: String, cvv: String, requestKey: String) {
+    public init(
+        cardNumber: String,
+        expDate: String,
+        cvv: String,
+        requestKey: String,
+        deviceData: DeviceInfoParams? = nil
+    ) {
         self.cardNumber = cardNumber
         self.expDate = expDate
         self.cvv = cvv
         self.requestKey = requestKey
+        self.deviceData = deviceData
     }
 
     func cardData() -> String {

@@ -19,42 +19,23 @@
 
 import Foundation
 
-public struct DeviceInfoParams: Codable {
-    var threeDSCompInd: String
-    var javaEnabled: String
-    var colorDepth: Int
-    var language: String
-    var timezone: Int
-    var screenHeight: Int
-    var screenWidth: Int
-    var cresCallbackUrl: String
-    var sdkAppID: String?
-    var sdkEphemPubKey: String?
-    var sdkReferenceNumber: String?
-    var sdkTransID: String?
-    var sdkMaxTimeout: String?
-    var sdkEncData: String?
-    var sdkInterface: String
-    var sdkUiType: String
-
-    enum CodingKeys: String, CodingKey {
-        case threeDSCompInd
-        case javaEnabled
-        case colorDepth
-        case language
-        case timezone
-        case screenHeight = "screen_height"
-        case screenWidth = "screen_width"
-        case cresCallbackUrl
-        case sdkAppID
-        case sdkEphemPubKey
-        case sdkReferenceNumber
-        case sdkTransID
-        case sdkMaxTimeout
-        case sdkEncData
-        case sdkInterface
-        case sdkUiType
-    }
+public struct DeviceInfoParams {
+    let threeDSCompInd: String
+    let javaEnabled: String
+    let colorDepth: Int
+    let language: String
+    let timezone: Int
+    let screenHeight: Int
+    let screenWidth: Int
+    let cresCallbackUrl: String
+    let sdkAppID: String?
+    let sdkEphemPubKey: String?
+    let sdkReferenceNumber: String?
+    let sdkTransID: String?
+    let sdkMaxTimeout: String?
+    let sdkEncData: String?
+    let sdkInterface: String
+    let sdkUiType: String
 
     public init(
         cresCallbackUrl: String,
@@ -85,5 +66,28 @@ public struct DeviceInfoParams: Codable {
         self.sdkEncData = sdkEncData
         sdkInterface = "03"
         sdkUiType = "01,02,03,04,05"
+    }
+}
+
+// MARK: - DeviceInfoParams + Encodable
+
+extension DeviceInfoParams: Encodable {
+    private enum CodingKeys: String, CodingKey {
+        case threeDSCompInd
+        case javaEnabled
+        case colorDepth
+        case language
+        case timezone
+        case screenHeight = "screen_height"
+        case screenWidth = "screen_width"
+        case cresCallbackUrl
+        case sdkAppID
+        case sdkEphemPubKey
+        case sdkReferenceNumber
+        case sdkTransID
+        case sdkMaxTimeout
+        case sdkEncData
+        case sdkInterface
+        case sdkUiType
     }
 }
