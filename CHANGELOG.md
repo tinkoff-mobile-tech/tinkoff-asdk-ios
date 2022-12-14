@@ -12,6 +12,7 @@
 * [MIC-6828] Added Stylable Button
 * [MIC-6848] Bank detection logic based on cardNumber
 * [MIC-6821] Added Snackbar for presenting snacks
+* [MIC-7349] Add ability to provide dismissing behavior to PullableContainer
 
 ### Fixed
 
