@@ -20,11 +20,11 @@
 import UIKit
 
 final class LoadingViewController: UIViewController, PullableContainerContent {
-    var contentHeight: CGFloat {
+    var pullableContainerContentHeight: CGFloat {
         return 100
     }
 
-    var contentHeightDidChange: ((PullableContainerContent) -> Void)?
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     private let activityIndicator = UIActivityIndicatorView()
     private let statusLabel = UILabel()
@@ -37,7 +37,7 @@ final class LoadingViewController: UIViewController, PullableContainerContent {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        contentHeightDidChange?(self)
+        pullableContainerContentHeightDidChange?(self)
     }
 
     func startActivity() {
