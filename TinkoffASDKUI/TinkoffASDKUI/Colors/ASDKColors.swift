@@ -123,6 +123,10 @@ extension ASDKColors {
             )
         }
 
+        static var secondary: UIColor {
+            UIColor(hex: "#9299A2") ?? .clear
+        }
+
         static var tertiary: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: UIColor(hex: "#00102438") ?? .clear,

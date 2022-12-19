@@ -107,3 +107,14 @@
 
 // AcquiringPayment
 "AcquiringPayment.button.chooseCard" = "Choose another card";
+
+// CommonSheet
+"CommonSheet.Processing.Title" = "Processing the payment";
+"CommonSheet.Processing.Description" = "It will take some time";
+"CommonSheet.Paid.Title" = "Paid";
+"CommonSheet.Paid.PrimaryButton" = "Clear";
+
+// YandexSheet
+"YandexSheet.Failed.Title" = "Payment error";
+"YandexSheet.Failed.Description" = "Use a different payment method";
+"YandexSheet.Failed.PrimaryButton" = "Clear";
