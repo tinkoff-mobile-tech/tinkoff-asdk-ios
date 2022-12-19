@@ -134,6 +134,7 @@
 // CardList
 "Acquiring.CardList.AddCard" = "Добавить новую";
 "Acquiring.CardList.DeleteSnackBar" = "Удаляем карту";
+"Acquiring.CardList.AddSnackBar" = "Карта %@ добавлена";
 
 // Заглушки
 "CommonStub.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";

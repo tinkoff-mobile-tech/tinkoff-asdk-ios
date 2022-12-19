@@ -117,7 +117,13 @@ extension IconTitleView {
         let title: UILabel.Configuration
         let iconSize: CGSize
         let spacing: CGFloat
-        let contentInsets: UIEdgeInsets
+        var contentInsets: UIEdgeInsets
+
+        func set(contentInsets: UIEdgeInsets) -> Self {
+            var shadowCopy = self
+            shadowCopy.contentInsets = contentInsets
+            return shadowCopy
+        }
 
         static func buildAddCardButton(icon: UIImage?, text: String?) -> Self {
             Self(

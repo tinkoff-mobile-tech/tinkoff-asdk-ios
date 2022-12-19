@@ -26,6 +26,10 @@ internal enum Loc {
     internal enum CardList {
       /// Добавить новую
       internal static let addCard = Loc.tr("Localizable", "Acquiring.CardList.AddCard", fallback: "Добавить новую")
+      /// Карта %@ добавлена
+      internal static func addSnackBar(_ p1: Any) -> String {
+        return Loc.tr("Localizable", "Acquiring.CardList.AddSnackBar", String(describing: p1), fallback: "Карта %@ добавлена")
+      }
       /// Изменить
       internal static let buttonChange = Loc.tr("Localizable", "Acquiring.CardList.ButtonChange", fallback: "Изменить")
       /// Готово

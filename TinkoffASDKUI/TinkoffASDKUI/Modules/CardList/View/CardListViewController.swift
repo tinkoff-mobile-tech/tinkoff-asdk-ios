@@ -37,6 +37,7 @@ protocol ICardListViewInput: AnyObject {
     func dismissAlert()
     func showLoadingSnackbar(text: String?)
     func hideLoadingSnackbar()
+    func showAddedCardSnackbar(cardMaskedPan: String)
 }
 
 final class CardListViewController: UIViewController {
@@ -245,6 +246,23 @@ extension CardListViewController: ICardListViewInput {
                 self?.presenter.viewDidHideLoadingSnackbar()
                 self?.snackBarViewController = nil
             }
+        )
+    }
+
+    func showAddedCardSnackbar(cardMaskedPan: String) {
+        let config = SnackbarView.Configuration(
+            content: .iconTitle(
+                icon: Asset.Icons.addedCard.image,
+                text: Loc.Acquiring.CardList.addSnackBar(cardMaskedPan)
+            ),
+            style: .base
+        )
+
+        showSnackFor(
+            seconds: 1,
+            config: config,
+            didShowCompletion: nil,
+            didHideCompletion: nil
         )
     }
 }
