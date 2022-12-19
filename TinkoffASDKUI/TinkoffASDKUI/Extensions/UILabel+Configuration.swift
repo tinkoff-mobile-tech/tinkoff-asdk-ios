@@ -46,6 +46,8 @@ extension UILabel {
 
     struct Configuration {
         let content: Content
+
+        static var empty: Self { Self(content: .empty) }
     }
 
     struct Style {
@@ -97,6 +99,15 @@ extension UILabel.Style {
         Self(
             textColor: ASDKColors.Text.primary.color,
             font: .systemFont(ofSize: 17, weight: .regular),
+            alignment: .left,
+            numberOfLines: 0
+        )
+    }
+
+    static func headingS() -> Self {
+        Self(
+            textColor: ASDKColors.Text.primary.color,
+            font: .systemFont(ofSize: 17, weight: .semibold),
             alignment: .left,
             numberOfLines: 0
         )

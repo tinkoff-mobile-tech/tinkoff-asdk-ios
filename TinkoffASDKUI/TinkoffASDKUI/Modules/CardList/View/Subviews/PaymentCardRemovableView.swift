@@ -93,7 +93,7 @@ final class PaymentCardRemovableView: UIView {
             [
                 view.topAnchor.constraint(equalTo: view.forcedSuperview.topAnchor, constant: .cardViewTopInset),
                 view.leftAnchor.constraint(equalTo: view.forcedSuperview.leftAnchor),
-                view.bottomAnchor.constraint(lessThanOrEqualTo: view.forcedSuperview.bottomAnchor),
+                view.bottomAnchor.constraint(lessThanOrEqualTo: view.forcedSuperview.bottomAnchor, constant: -.cardViewTopInset),
             ] + view.size(DynamicIconCardView.defaultSize)
         }
 
@@ -176,7 +176,6 @@ extension PaymentCardRemovableView.Configuration {
 
 extension PaymentCardRemovableView: Reusable {
     func prepareForReuse() {
-        cardView.clear()
         removeHandler = nil
         textLabel.prepareForReuse()
     }

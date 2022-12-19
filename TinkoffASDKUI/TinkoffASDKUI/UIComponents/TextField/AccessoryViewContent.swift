@@ -52,6 +52,7 @@ final class DeleteButtonContent: IAccessoryViewContent {
                 ),
                 cornerRadius: 0,
                 loaderStyle: .standart,
+                contentEdgeInsets: .zero,
                 basicTextStyle: nil
             )
         )

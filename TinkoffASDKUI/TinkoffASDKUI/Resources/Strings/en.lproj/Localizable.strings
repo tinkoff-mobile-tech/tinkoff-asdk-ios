@@ -97,7 +97,9 @@
 "TinkoffAcquiring.threeds.error.timeout" = "3DS operation timed out";
 
 // CardList
-"CardList.title" = "Your cards";
+"Acquiring.CardList.ScreenTitle" = "Your cards";
+"Acquiring.CardList.ButtonChange" = "Edit";
+"Acquiring.CardList.ButtonDone" = "Done";
 "CardList.alert.title.deleteCard" = "Delete this card";
 "CardList.alert.message.deleteCard" = "Are you sure you want to delete the card %@?";
 "CardList.alert.action.cancel" = "Cancel";
@@ -125,5 +127,20 @@
 "Acquiring.Common.GazpromCardTitle" = "Gazprom Bank";
 "Acquiring.Common.RaiffeisenCardTitle" = "Raiffeisen Bank";
 
+// Alerts
+"CommonAlert.DeleteCard.Title" = "Couldn't delete the card";
+"CommonAlert.Button" = "OK";
+
 // CardList
 "Acquiring.CardList.AddCard" = "Add new card";
+"Acquiring.CardList.DeleteSnackBar" = "Deleting the card";
+
+// Заглушки
+"CommonStub.SomeProblem.Title" = "We have a problem, we are already solving it";
+"CommonStub.NoNetwork.Title" = "It didn't load";
+"CommonStub.SomeProblem.Description" = "Try again in a couple of minutes";
+"CommonStub.NoNetwork.Description" = "Check your internet access and try again";
+"CommonStub.NoCards.Description" = "There will be your cards";
+"CommonStub.SomeProblem.Button" = "Ok";
+"CommonStub.NoNetwork.Button" = "Refresh";
+"CommonStub.NoCards.Button" = "Add";

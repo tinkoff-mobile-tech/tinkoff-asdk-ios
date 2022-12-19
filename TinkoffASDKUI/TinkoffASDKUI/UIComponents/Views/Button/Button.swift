@@ -9,6 +9,8 @@ import UIKit
 
 final class Button: UIView {
 
+    override var intrinsicContentSize: CGSize { button.intrinsicContentSize }
+
     private let button = UIButton()
 
     // MARK: - State
@@ -134,6 +136,7 @@ extension Button {
     }
 
     private func configureButton(style: Style) {
+        button.contentEdgeInsets = style.contentEdgeInsets
         button.layer.cornerRadius = style.cornerRadius
 
         switch style.background {
@@ -209,6 +212,7 @@ extension Button {
         resetTitle()
         // Style
         button.backgroundColor = nil
+        button.contentEdgeInsets = .zero
         // background image
         button.setBackgroundImage(nil, for: .normal)
         button.setBackgroundImage(nil, for: .highlighted)
@@ -277,6 +281,10 @@ extension Button {
     struct Configuration {
         let data: Data
         let style: Style
+
+        static var empty: Self {
+            Self(data: Button.Data(text: nil, onTapAction: {}), style: .destructive)
+        }
     }
 
     enum State {

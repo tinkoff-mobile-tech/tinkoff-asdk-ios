@@ -16,21 +16,64 @@ extension Button {
         }
 
         let background: Background
-        let cornerRadius: CGFloat
+        var cornerRadius: CGFloat
         let loaderStyle: ActivityIndicatorView.Style
+        var contentEdgeInsets: UIEdgeInsets
 
-        let basicTextStyle: Data.Text.Style?
+        var basicTextStyle: Data.Text.Style?
+
+        func set(contentEdgeInsets: UIEdgeInsets) -> Self {
+            var shadowCopy = self
+            shadowCopy.contentEdgeInsets = contentEdgeInsets
+            return shadowCopy
+        }
+
+        func set(font: UIFont) -> Self {
+            var shadowCopy = self
+            shadowCopy.basicTextStyle?.font = font
+            return shadowCopy
+        }
+
+        func set(cornerRadius: CGFloat) -> Self {
+            var shadowCopy = self
+            shadowCopy.cornerRadius = cornerRadius
+            return shadowCopy
+        }
     }
 }
 
 extension Button.Data.Text {
 
     struct Style {
-        let normal: UIColor?
-        let highlighted: UIColor?
-        let disabled: UIColor?
+        var normal: UIColor?
+        var highlighted: UIColor?
+        var disabled: UIColor?
 
         var font: UIFont? = .systemFont(ofSize: 16)
+
+        func setFont(_ font: UIFont) -> Self {
+            var shadowCopy = self
+            shadowCopy.font = font
+            return shadowCopy
+        }
+
+        func setNormal(textColor: UIColor) -> Self {
+            var shadowCopy = self
+            shadowCopy.normal = textColor
+            return shadowCopy
+        }
+
+        func setHighlighted(textColor: UIColor) -> Self {
+            var shadowCopy = self
+            shadowCopy.highlighted = textColor
+            return shadowCopy
+        }
+
+        func setDisable(textColor: UIColor) -> Self {
+            var shadowCopy = self
+            shadowCopy.disabled = textColor
+            return shadowCopy
+        }
     }
 }
 
@@ -51,6 +94,7 @@ extension Button.Style {
             loaderStyle: ActivityIndicatorView.Style(
                 lineColor: UIColor(hex: "#333334") ?? .black
             ),
+            contentEdgeInsets: UIEdgeInsets(vertical: 8, horizontal: 16),
             basicTextStyle: Button.Data.Text.Style(
                 normal: UIColor(hex: "#333334"),
                 highlighted: nil,
@@ -64,7 +108,7 @@ extension Button.Style {
     static var secondary: Self {
         Self(
             background: .color(
-                normal: UIColor(hex: "#F7F8F9"),
+                normal: ASDKColors.Background.neutral1.color,
                 highlighted: UIColor(hex: "#EFF0F2"),
                 disabled: nil
             ),
@@ -72,6 +116,7 @@ extension Button.Style {
             loaderStyle: ActivityIndicatorView.Style(
                 lineColor: UIColor(hex: "#428BFA") ?? .black
             ),
+            contentEdgeInsets: UIEdgeInsets(vertical: 8, horizontal: 16),
             basicTextStyle: Button.Data.Text.Style(
                 normal: UIColor(hex: "#428BFA"),
                 highlighted: nil,
@@ -85,7 +130,7 @@ extension Button.Style {
     static var destructive: Self {
         Self(
             background: .color(
-                normal: UIColor(hex: "#F7F8F9"),
+                normal: ASDKColors.Background.neutral1.color,
                 highlighted: UIColor(hex: "#EFF0F2"),
                 disabled: nil
             ),
@@ -93,6 +138,7 @@ extension Button.Style {
             loaderStyle: ActivityIndicatorView.Style(
                 lineColor: UIColor(hex: "#F52323") ?? .black
             ),
+            contentEdgeInsets: UIEdgeInsets(vertical: 8, horizontal: 16),
             basicTextStyle: Button.Data.Text.Style(
                 normal: UIColor(hex: "#F52323"),
                 highlighted: nil,

@@ -50,11 +50,15 @@ internal enum Asset {
   }
   internal static let done = ImageAsset(name: "done")
   internal enum Icons {
+    internal static let addCard = ImageAsset(name: "add-card")
     internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")
   }
   internal enum Illustrations {
+    internal static let alarm = ImageAsset(name: "alarm")
+    internal static let cardCross = ImageAsset(name: "card-cross")
     internal static let illustrationsCommonLightCard = ImageAsset(name: "illustrations-common-light-card")
+    internal static let wiFiOff = ImageAsset(name: "wi-fi-off")
   }
   internal static let logoPs = ImageAsset(name: "logo_ps")
   internal static let next = ImageAsset(name: "next")

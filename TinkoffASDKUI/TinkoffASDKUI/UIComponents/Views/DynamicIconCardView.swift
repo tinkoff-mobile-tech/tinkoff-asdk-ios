@@ -111,6 +111,7 @@ class DynamicIconCardView: UIView {
     }
 
     private func configureBank(icon: Icon.Bank?) {
+        guard cardImageView.image != icon?.image else { return }
         cardImageView.alpha = icon == nil ? 0 as CGFloat : 1 as CGFloat
         cardImageView.image = icon?.image
     }

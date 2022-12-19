@@ -34,6 +34,11 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
     private lazy var content = Content()
     private lazy var background = UIView()
 
+    // MARK: Layout
+
+    private var didLayoutContent = false
+    var customAutolayoutForContent: ((UIView) -> Void)?
+
     // MARK: Init
 
     override init(frame: CGRect) {
@@ -57,9 +62,8 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
 
     private func setupView() {
         contentView.addSubview(background)
-        background.pinEdgesToSuperview()
         contentView.addSubview(content)
-        content.pinEdgesToSuperview()
+        background.pinEdgesToSuperview()
     }
 
     // MARK: State Updating
@@ -75,6 +79,16 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
                 : .clear
         }
     }
+
+    private func setConstraints() {
+        guard !didLayoutContent else { return }
+        if customAutolayoutForContent == nil {
+            content.pinEdgesToSuperview()
+        } else {
+            customAutolayoutForContent?(content)
+        }
+        didLayoutContent = true
+    }
 }
 
 // MARK: - Configurable
@@ -83,6 +97,7 @@ extension CollectionCell: Configurable {
     typealias Configuration = Content.Configuration
 
     func update(with configuration: Configuration) {
+        setConstraints()
         content.update(with: configuration)
     }
 }

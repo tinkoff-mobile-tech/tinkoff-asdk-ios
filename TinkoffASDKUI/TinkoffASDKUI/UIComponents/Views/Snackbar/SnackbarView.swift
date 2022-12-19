@@ -49,7 +49,7 @@ extension SnackbarView {
     func configure(with config: Configuration) {
         prepareForReuse()
         configureSnack(style: config.style)
-        configureSnack(data: config.data)
+        configureSnack(data: config.content)
         config.onDidConfigure?()
     }
 
@@ -64,7 +64,7 @@ extension SnackbarView {
         }
     }
 
-    private func configureSnack(data: Data) {
+    private func configureSnack(data: Content) {
         switch data {
         case let .view(subContentView, insets):
             contentView.addSubview(subContentView)
@@ -105,22 +105,28 @@ extension SnackbarView {
 extension SnackbarView {
 
     struct Configuration {
-        let data: Data
+        let content: Content
         let style: Style
 
         var onDidConfigure: (() -> Void)?
     }
 
-    enum Data {
+    enum Content {
         case view(contentView: UIView, insets: UIEdgeInsets = .zero)
         case loader(configuration: LoaderTitleView.Configuration)
         case none
     }
 
     struct Style {
-        let backgroundColor: UIColor?
+        var backgroundColor: UIColor?
         let cornerRadius: CGFloat
         let shadow: ShadowStyle?
+
+        func set(backgroundColor: UIColor?) -> Self {
+            var shadowCopy = self
+            shadowCopy.backgroundColor = backgroundColor
+            return shadowCopy
+        }
 
         static var base: Self {
             Self(

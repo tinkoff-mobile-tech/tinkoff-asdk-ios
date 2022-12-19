@@ -52,10 +52,30 @@ extension UIView {
         ]
     }
 
+    func edgesEqualToSuperview(insets: UIEdgeInsets = .zero) -> [NSLayoutConstraint] {
+        assert(superview != nil)
+        return [
+            topAnchor.constraint(equalTo: forcedSuperview.topAnchor, constant: insets.top),
+            leftAnchor.constraint(equalTo: forcedSuperview.leftAnchor, constant: insets.left),
+            rightAnchor.constraint(equalTo: forcedSuperview.rightAnchor, constant: -insets.right),
+            bottomAnchor.constraint(equalTo: forcedSuperview.bottomAnchor, constant: -insets.bottom),
+        ]
+    }
+
+    func pinLeftTop(size: CGSize) {
+        assert(superview != nil)
+        makeConstraints { view in
+            [
+                view.topAnchor.constraint(equalTo: view.forcedSuperview.topAnchor),
+                view.leftAnchor.constraint(equalTo: view.forcedSuperview.leftAnchor),
+            ] + view.size(size)
+        }
+    }
+
     func makeLeftAndRightEqualToSuperView(inset: CGFloat) -> [NSLayoutConstraint] {
         return [
             leftAnchor.constraint(equalTo: forcedSuperview.leftAnchor, constant: inset),
-            rightAnchor.constraint(equalTo: forcedSuperview.rightAnchor, constant: inset),
+            rightAnchor.constraint(equalTo: forcedSuperview.rightAnchor, constant: -inset),
         ]
     }
 
@@ -63,7 +83,7 @@ extension UIView {
         assert(superview != nil)
         return [
             topAnchor.constraint(equalTo: forcedSuperview.topAnchor, constant: inset),
-            bottomAnchor.constraint(equalTo: forcedSuperview.bottomAnchor, constant: inset),
+            bottomAnchor.constraint(equalTo: forcedSuperview.bottomAnchor, constant: -inset),
         ]
     }
 
@@ -75,13 +95,8 @@ extension UIView {
 
     func makeEqualToSuperview(insets: UIEdgeInsets = .zero) {
         assert(superview != nil)
-        makeConstraints { make in
-            [
-                make.topAnchor.constraint(equalTo: forcedSuperview.topAnchor, constant: insets.top),
-                make.leftAnchor.constraint(equalTo: forcedSuperview.leftAnchor, constant: insets.left),
-                make.rightAnchor.constraint(equalTo: forcedSuperview.rightAnchor, constant: -insets.right),
-                make.bottomAnchor.constraint(equalTo: forcedSuperview.bottomAnchor, constant: -insets.bottom),
-            ]
+        makeConstraints { _ in
+            edgesEqualToSuperview(insets: insets)
         }
     }
 
@@ -153,7 +168,6 @@ extension UIView {
             assert(hasConstraints(kinds: [.top, .bottom, .left, .right]))
 
             view.parsedConstraints.forEach { item in
-                print(item)
                 switch item.kind {
                 case .top:
                     item.constraint.constant = insets.top

@@ -14,6 +14,7 @@
 * [MIC-6821] Added Snackbar for presenting snacks
 * [MIC-6827] Implemented CardFieldView
 * [MIC-6824] Redesigned Card List Cell
+* [MIC-6824] [MIC-6843] [MIC-6837] [MIC-6841] Redesigned Card List Screen
 
 ### Fixed
 

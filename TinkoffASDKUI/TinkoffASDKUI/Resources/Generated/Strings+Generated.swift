@@ -26,6 +26,14 @@ internal enum Loc {
     internal enum CardList {
       /// Добавить новую
       internal static let addCard = Loc.tr("Localizable", "Acquiring.CardList.AddCard", fallback: "Добавить новую")
+      /// Изменить
+      internal static let buttonChange = Loc.tr("Localizable", "Acquiring.CardList.ButtonChange", fallback: "Изменить")
+      /// Готово
+      internal static let buttonDone = Loc.tr("Localizable", "Acquiring.CardList.ButtonDone", fallback: "Готово")
+      /// Удаляем карту
+      internal static let deleteSnackBar = Loc.tr("Localizable", "Acquiring.CardList.DeleteSnackBar", fallback: "Удаляем карту")
+      /// Ваши карты
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.CardList.ScreenTitle", fallback: "Ваши карты")
     }
     internal enum Common {
       /// Альфа Банк
@@ -49,8 +57,6 @@ internal enum Loc {
     }
   }
   internal enum CardList {
-    /// Ваши карты
-    internal static let title = Loc.tr("Localizable", "CardList.title", fallback: "Ваши карты")
     internal enum Alert {
       internal enum Action {
         /// Отмена
@@ -76,6 +82,38 @@ internal enum Loc {
     internal enum Status {
       /// У вас нет сохраненных карт
       internal static let noCards = Loc.tr("Localizable", "CardList.status.noCards", fallback: "У вас нет сохраненных карт")
+    }
+  }
+  internal enum CommonAlert {
+    /// Понятно
+    internal static let button = Loc.tr("Localizable", "CommonAlert.Button", fallback: "Понятно")
+    internal enum DeleteCard {
+      /// Не получилось удалить карту
+      internal static let title = Loc.tr("Localizable", "CommonAlert.DeleteCard.Title", fallback: "Не получилось удалить карту")
+    }
+  }
+  internal enum CommonStub {
+    internal enum NoCards {
+      /// Добавить
+      internal static let button = Loc.tr("Localizable", "CommonStub.NoCards.Button", fallback: "Добавить")
+      /// Здесь будут ваши карты
+      internal static let description = Loc.tr("Localizable", "CommonStub.NoCards.Description", fallback: "Здесь будут ваши карты")
+    }
+    internal enum NoNetwork {
+      /// Обновить
+      internal static let button = Loc.tr("Localizable", "CommonStub.NoNetwork.Button", fallback: "Обновить")
+      /// Проверьте доступ к интернету и попробуйте еще раз
+      internal static let description = Loc.tr("Localizable", "CommonStub.NoNetwork.Description", fallback: "Проверьте доступ к интернету и попробуйте еще раз")
+      /// Не загрузилось
+      internal static let title = Loc.tr("Localizable", "CommonStub.NoNetwork.Title", fallback: "Не загрузилось")
+    }
+    internal enum SomeProblem {
+      /// Понятно
+      internal static let button = Loc.tr("Localizable", "CommonStub.SomeProblem.Button", fallback: "Понятно")
+      /// Попробуйте снова через пару минут
+      internal static let description = Loc.tr("Localizable", "CommonStub.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
+      /// У нас проблема, мы уже решаем ее
+      internal static let title = Loc.tr("Localizable", "CommonStub.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
     }
   }
   internal enum Sbp {

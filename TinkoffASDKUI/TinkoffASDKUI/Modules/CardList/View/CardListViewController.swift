@@ -23,34 +23,49 @@ protocol ICardListViewInput: AnyObject {
     func reload(cards: [CardList.Card])
     func remove(card: CardList.Card)
     func show(alert: CardList.Alert)
-    func showLoader()
-    func hideLoader()
+    func disableViewUserInteraction()
+    func enableViewUserInteraction()
     func showShimmer()
     func hideShimmer()
+    func showStub(mode: StubMode)
+    func hideStub()
+    func addCard()
+    func dismiss()
+    func showDoneEditingButton()
+    func showEditButton()
+    func showNativeAlert(title: String?, message: String?, buttonTitle: String?)
+    func dismissAlert()
+    func showLoadingSnackbar(text: String?)
+    func hideLoadingSnackbar()
 }
 
 final class CardListViewController: UIViewController {
     // MARK: Dependencies
 
-    private let style: CardListView.Style
     private let presenter: ICardListViewOutput
     private weak var externalAlertsFactory: AcquiringAlertViewProtocol?
 
     // MARK: Views
 
-    private lazy var cardListView = CardListView(style: style, delegate: self)
+    private let cardListView: CardListView
+
+    // MARK: State
+
+    private var snackBarViewController: SnackbarViewController?
 
     // MARK: Init
 
     init(
         style: CardListView.Style,
         presenter: ICardListViewOutput,
-        externalAlertsFactory: AcquiringAlertViewProtocol?
+        externalAlertsFactory: AcquiringAlertViewProtocol?,
+        stubBuilder: IStubViewBuilder
     ) {
-        self.style = style
         self.presenter = presenter
         self.externalAlertsFactory = externalAlertsFactory
+        cardListView = CardListView(style: style, stubBuilder: stubBuilder)
         super.init(nibName: nil, bundle: nil)
+        cardListView.delegate = self
     }
 
     @available(*, unavailable)
@@ -73,7 +88,7 @@ final class CardListViewController: UIViewController {
     // MARK: Initial Configuration
 
     private func setupNavigationItem() {
-        title = Loc.CardList.title
+        title = Loc.Acquiring.CardList.screenTitle
         navigationItem.largeTitleDisplayMode = .never
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
@@ -82,12 +97,40 @@ final class CardListViewController: UIViewController {
             target: self,
             action: #selector(closeButtonTapped)
         )
+
+        navigationItem.rightBarButtonItem = buildEditBarButton()
+    }
+
+    private func buildEditBarButton() -> UIBarButtonItem {
+        UIBarButtonItem(
+            title: Loc.Acquiring.CardList.buttonChange,
+            style: .plain,
+            target: self,
+            action: #selector(editButtonTapped)
+        )
+    }
+
+    private func buildDoneEditingBarButton() -> UIBarButtonItem {
+        UIBarButtonItem(
+            title: Loc.Acquiring.CardList.buttonDone,
+            style: .plain,
+            target: self,
+            action: #selector(doneEditingButtonTapped)
+        )
     }
 
     // MARK: Actions
 
     @objc private func closeButtonTapped() {
         dismiss(animated: true)
+    }
+
+    @objc private func editButtonTapped() {
+        presenter.viewDidTapEditButton()
+    }
+
+    @objc private func doneEditingButtonTapped() {
+        presenter.viewDidTapDoneEditingButton()
     }
 }
 
@@ -115,71 +158,163 @@ extension CardListViewController: ICardListViewInput {
         }
     }
 
-    func showLoader() {
-        cardListView.showLoader()
+    func disableViewUserInteraction() {
+        cardListView.disableUserInteraction()
     }
 
-    func hideLoader() {
-        cardListView.hideLoader()
+    func enableViewUserInteraction() {
+        cardListView.enableUserInteraction()
     }
 
     func showShimmer() {
-        cardListView.startShimmer(showing: true)
+        cardListView.startShimmer(showing: true, completion: {})
     }
 
     func hideShimmer() {
-        cardListView.startShimmer(showing: false)
-    }
-}
-
-// MARK: - CardListViewDelegate
-
-extension CardListViewController: CardListViewDelegate {
-    func cardListView(_ view: CardListView, didSelectCard item: CardList.Card) {
-        presenter.view(didSelect: item)
+        cardListView.startShimmer(
+            showing: false,
+            completion: { [weak presenter] in
+                presenter?.viewDidHideShimmer()
+            }
+        )
     }
 
-    func cardListView(_ view: CardListView, didTapDeleteOn card: CardList.Card) {
-        let alert = UIAlertController.deleteConfirmation(
-            withPAN: card.pan,
-            onConfirm: { [presenter] in
-                presenter.view(didTapDeleteOn: card)
+    func showStub(mode: StubMode) {
+        cardListView.showStub(mode: mode)
+    }
+
+    func hideStub() {
+        cardListView.hideStub()
+    }
+
+    func addCard() {
+        cardListView.addCard()
+    }
+
+    func dismiss() {
+        dismiss(animated: true)
+    }
+
+    func showDoneEditingButton() {
+        navigationItem.rightBarButtonItem = buildDoneEditingBarButton()
+    }
+
+    func showEditButton() {
+        navigationItem.rightBarButtonItem = buildEditBarButton()
+    }
+
+    func showNativeAlert(
+        title: String?,
+        message: String?,
+        buttonTitle: String?
+    ) {
+        let alert = UIAlertController.okAlert(
+            title: title,
+            message: message,
+            buttonTitle: buttonTitle,
+            onTap: { [weak presenter] in
+                presenter?.viewNativeAlertDidTapButton()
             }
         )
 
         present(alert, animated: true)
     }
 
+    func dismissAlert() {
+        presentedViewController?.dismiss(animated: true)
+    }
+
+    func showLoadingSnackbar(text: String?) {
+        let config = SnackbarView.Configuration(
+            content: .loader(
+                configuration: LoaderTitleView.Configuration(
+                    title: UILabel.Configuration(
+                        content: .plain(text: text, style: .bodyM())
+                    )
+                )
+            ),
+            style: .base
+        )
+        snackBarViewController = showSnack(config: config, completion: nil)
+    }
+
+    func hideLoadingSnackbar() {
+        snackBarViewController?.hideSnackView(
+            animated: true,
+            completion: { [weak self] in
+                self?.presenter.viewDidHideLoadingSnackbar()
+                self?.snackBarViewController = nil
+            }
+        )
+    }
+}
+
+// MARK: - CardListViewDelegate
+
+extension CardListViewController: CardListViewDelegate {
+
+    func didSelectCell(section: CardListSection, indexItem: Int) {
+        switch section {
+        case .cards:
+            presenter.viewDidTapCard(cardIndex: indexItem)
+        case .addCard:
+            presenter.viewDidTapAddCardCell()
+        }
+    }
+
+    func cardListView(_ view: CardListView, didTapDeleteOn card: CardList.Card) {
+        presenter.view(didTapDeleteOn: card)
+    }
+
     func cardListViewDidTapPrimaryButton(_ view: CardListView) {
         presenter.viewDidTapPrimaryButton()
+    }
+
+    func getNumberOfSections() -> Int {
+        presenter.viewNumberOfSections()
+    }
+
+    func getNumberOfItems(forSection: Int) -> Int {
+        assert(CardListSection(rawValue: forSection) != nil)
+        guard let section = CardListSection(rawValue: forSection) else { return .zero }
+        return presenter.viewNumberOfItems(forSection: section)
+    }
+
+    func getCellModel<Model>(section: CardListSection, itemIndex: Int) -> Model? {
+        presenter.viewCellModel(section: section, itemIndex: itemIndex)
     }
 }
 
 // MARK: - UIAlertController + Delete Confirmation
 
 private extension UIAlertController {
-    static func deleteConfirmation(
-        withPAN pan: String,
-        onConfirm: @escaping () -> Void
+
+    static func okAlert(
+        title: String?,
+        message: String?,
+        buttonTitle: String?,
+        onTap: @escaping () -> Void
     ) -> UIAlertController {
+
         let alert = UIAlertController(
-            title: Loc.CardList.Alert.Title.deleteCard,
-            message: Loc.CardList.Alert.Message.deleteCard(pan),
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
 
-        let cancel = UIAlertAction(
-            title: Loc.CardList.Alert.Action.cancel,
-            style: .cancel
+        let ok = UIAlertAction(
+            title: buttonTitle,
+            style: .default,
+            handler: { _ in }
         )
 
-        let delete = UIAlertAction(
-            title: Loc.CardList.Alert.Action.delete,
-            style: .destructive,
-            handler: { _ in onConfirm() }
-        )
-
-        [cancel, delete].forEach(alert.addAction)
+        alert.addAction(ok)
         return alert
     }
+}
+
+extension CardListViewController: ISnackBarPresentable, ISnackBarViewProvider {
+
+    var viewProvider: ISnackBarViewProvider? { self }
+    func viewToAddSnackBarTo() -> UIView { view }
 }

@@ -96,7 +96,9 @@
 "TinkoffAcquiring.threeds.error.timeout" = "Превышено маскимальное время прохождения 3DS";
 
 // CardList
-"CardList.title" = "Ваши карты";
+"Acquiring.CardList.ScreenTitle" = "Ваши карты";
+"Acquiring.CardList.ButtonChange" = "Изменить";
+"Acquiring.CardList.ButtonDone" = "Готово";
 "CardList.alert.title.deleteCard" = "Удаление карты";
 "CardList.alert.message.deleteCard" = "Вы уверены, что хотите удалить карту %@?";
 "CardList.alert.action.cancel" = "Отмена";
@@ -123,5 +125,22 @@
 "Acquiring.Common.GazpromCardTitle" = "Газпром Банк";
 "Acquiring.Common.RaiffeisenCardTitle" = "Райффайзен Банк";
 
+
+
+// Alerts
+"CommonAlert.DeleteCard.Title" = "Не получилось удалить карту";
+"CommonAlert.Button" = "Понятно";
+
 // CardList
 "Acquiring.CardList.AddCard" = "Добавить новую";
+"Acquiring.CardList.DeleteSnackBar" = "Удаляем карту";
+
+// Заглушки
+"CommonStub.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";
+"CommonStub.NoNetwork.Title" = "Не загрузилось";
+"CommonStub.SomeProblem.Description" = "Попробуйте снова через пару минут";
+"CommonStub.NoNetwork.Description" = "Проверьте доступ к интернету и попробуйте еще раз";
+"CommonStub.NoCards.Description" = "Здесь будут ваши карты";
+"CommonStub.SomeProblem.Button" = "Понятно";
+"CommonStub.NoNetwork.Button" = "Обновить";
+"CommonStub.NoCards.Button" = "Добавить";
