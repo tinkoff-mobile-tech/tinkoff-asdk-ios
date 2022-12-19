@@ -20,6 +20,7 @@
 import PassKit
 import TinkoffASDKCore
 import TinkoffASDKUI
+import TinkoffASDKYandexPay
 import UIKit
 
 // swiftlint:disable file_length
@@ -41,9 +42,9 @@ class BuyProductsViewController: UIViewController {
         /// оплатить с помощью `Системы Быстрых Платежей`
         /// сгенерировать url для оплаты
         case paySbpUrl
+        /// Оплатить с помощью встроенной кнопки `YandexPay`
+        case yandexPay
     }
-
-    private var tableViewCells: [TableViewCellType] = []
 
     var products: [Product] = []
     var sdk: AcquiringUISDK!
@@ -55,10 +56,20 @@ class BuyProductsViewController: UIViewController {
     var paymentCardId: PaymentCard?
     var paymentCardParentPaymentId: PaymentCard?
 
-    private var rebuidIdCards: [PaymentCard]?
-
     @IBOutlet var tableView: UITableView!
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
+    private lazy var yandexPayButtonContainerView = YPButtonContainerView()
+
+    private var rebuidIdCards: [PaymentCard]?
+    private var tableViewCells: [TableViewCellType] = [
+        .products,
+        .pay,
+        .payAndSaveAsParent,
+        .payRequrent,
+        .payApplePay,
+        .paySbpQrCode,
+        .paySbpUrl,
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,6 +77,7 @@ class BuyProductsViewController: UIViewController {
         title = Loc.Title.paymentSource
 
         tableView.registerCells(types: [ButtonTableViewCell.self])
+        tableView.register(ContainerTableViewCell.self, forCellReuseIdentifier: ContainerTableViewCell.reusableId)
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -80,26 +92,34 @@ class BuyProductsViewController: UIViewController {
             buttonAddToCart.title = nil
         }
 
-        updateTableViewCells()
+        setupYandexPayButton()
+    }
+
+    private func setupYandexPayButton() {
+        let configuration = YandexPaySDKConfiguration(environment: .sandbox, locale: .system)
+
+        sdk.yandexPayButtonContainerFactory(with: configuration) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case let .success(factory):
+                let button = factory.createButtonContainer(
+                    with: YandexPayButtonContainerConfiguration(theme: YandexPayButtonContainerTheme(appearance: .dark), cornerRadius: 8),
+                    delegate: self
+                )
+                self.yandexPayButtonContainerView.set(button: button)
+                self.tableViewCells.append(.yandexPay)
+                self.tableView.reloadData()
+            case .failure:
+                break
+            }
+        }
     }
 
     @IBAction func addToCart(_ sender: Any) {
         if let product = products.first {
             CartDataProvider.shared.addProduct(product)
         }
-    }
-
-    func updateTableViewCells() {
-        tableViewCells = [
-            .products,
-            .pay,
-            .payAndSaveAsParent,
-            .payRequrent,
-        ]
-
-        tableViewCells.append(.payApplePay)
-        tableViewCells.append(.paySbpQrCode)
-        tableViewCells.append(.paySbpUrl)
     }
 
     private func selectRebuildCard() {
@@ -379,7 +399,6 @@ extension BuyProductsViewController: CardListDataSourceStatusListener {
             break
         }
 
-        updateTableViewCells()
         tableView.reloadData()
     }
 }
@@ -531,6 +550,12 @@ extension BuyProductsViewController: UITableViewDataSource {
 
                 return cell
             }
+        case .yandexPay:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ContainerTableViewCell.reusableId) as? ContainerTableViewCell else {
+                fatalError()
+            }
+            cell.setContent(yandexPayButtonContainerView)
+            return cell
         }
 
         return tableView.defaultCell()
@@ -555,6 +580,8 @@ extension BuyProductsViewController: UITableViewDataSource {
 
         case .paySbpUrl, .paySbpQrCode:
             return Loc.Title.payBySBP
+        case .yandexPay:
+            return Loc.Title.yandexPay
         }
     }
 
@@ -604,6 +631,8 @@ extension BuyProductsViewController: UITableViewDataSource {
             }
 
             return "оплата недоступна"
+        case .yandexPay:
+            return nil
         }
     }
 }
@@ -650,5 +679,56 @@ extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegat
                 completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
             }
         }
+    }
+}
+
+// MARK: - IYandexPayButtonContainerDelegate
+
+extension BuyProductsViewController: YandexPayButtonContainerDelegate {
+    func yandexPayButtonContainer(
+        _ container: IYandexPayButtonContainer,
+        didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
+    ) {
+        let data = createPaymentData()
+
+        let orderOptions = OrderOptions(
+            orderId: data.orderId,
+            amount: data.amount,
+            description: data.description,
+            receipt: data.receipt,
+            shops: data.shops,
+            receipts: data.receipts,
+            savingAsParentPayment: data.savingAsParentPayment ?? false
+        )
+
+        let customerOptions = data.customerKey.map {
+            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoffASDK.ru")
+        }
+
+        let paymentOptions = PaymentOptions(
+            orderOptions: orderOptions,
+            customerOptions: customerOptions,
+            paymentData: ["testPaymentDataFromASDKSample": "SomeValue"]
+        )
+
+        let paymentSheet = YandexPayPaymentSheet(paymentOptions: paymentOptions)
+
+        completion(paymentSheet)
+    }
+
+    func yandexPayButtonContainerDidRequestViewControllerForPresentation(
+        _ container: IYandexPayButtonContainer
+    ) -> UIViewController? {
+        self
+    }
+
+    func yandexPayButtonContainer(
+        _ container: IYandexPayButtonContainer,
+        didCompletePaymentWithResult result: YandexPayPaymentResult
+    ) {
+        let alert = UIAlertController(title: "Оплата с YandexPay", message: "\(result)", preferredStyle: .alert)
+        let action = UIAlertAction(title: "ok", style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }

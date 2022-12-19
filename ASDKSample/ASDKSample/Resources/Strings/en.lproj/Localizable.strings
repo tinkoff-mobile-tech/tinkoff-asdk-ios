@@ -18,6 +18,8 @@
 "title.payBySBP" = "Pay By SBP";
 "title.payAndSaveAsParent" = "Pay and save as parent payment";
 "title.Acquiring" = "Alert View Type";
+"title.YandexPay" = "Pay By Yandex Pay";
+
 
 //  names
 "name.tinkoffPay" = "TinkoffPay";

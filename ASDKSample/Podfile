@@ -5,6 +5,7 @@ target 'ASDKSample' do
 
 	pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
 	pod 'TinkoffASDKUI', :path => "../", :testspecs => ['Tests']
+  pod 'TinkoffASDKYandexPay', :path => '../'
 
 	# Linting and Formatting
 

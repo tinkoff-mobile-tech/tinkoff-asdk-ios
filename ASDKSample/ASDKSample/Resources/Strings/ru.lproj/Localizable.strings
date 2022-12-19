@@ -18,6 +18,7 @@
 "title.payBySBP" = "Оплатить с помощью Системы Быстрых Платежей";
 "title.payAndSaveAsParent" = "Оплатить, начать регулярный платеж";
 "title.Acquiring" = "Уведомления, алерты";
+"title.YandexPay" = "Оплатить с помощью Yandex Pay";
 
 //  names
 "name.tinkoffPay" = "TinkoffPay";

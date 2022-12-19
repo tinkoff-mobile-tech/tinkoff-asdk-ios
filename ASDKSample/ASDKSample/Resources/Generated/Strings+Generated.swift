@@ -206,6 +206,8 @@ internal enum Loc {
     internal static let settings = Loc.tr("Localizable", "title.settings", fallback: "Настройки")
     /// Поле ввода email
     internal static let showEmailField = Loc.tr("Localizable", "title.showEmailField", fallback: "Поле ввода email")
+    /// Оплатить с помощью Yandex Pay
+    internal static let yandexPay = Loc.tr("Localizable", "title.YandexPay", fallback: "Оплатить с помощью Yandex Pay")
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

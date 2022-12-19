@@ -17,29 +17,40 @@
 //  limitations under the License.
 //
 
+import TinkoffASDKYandexPay
 import UIKit
+import YandexPaySDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     var window: UIWindow?
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        // Override point for customization after application launch.
         return true
     }
 
-    // MARK: UISceneSession Lifecycle
-
-    @available(iOS 13.0, *)
     func application(
         _ application: UIApplication,
-        configurationForConnecting connectingSceneSession: UISceneSession,
-        options: UIScene.ConnectionOptions
-    ) -> UISceneConfiguration {
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        YandexPayApplicationEventsReceiver.applicationDidReceiveUserActivity(userActivity)
+        return true
+    }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        YandexPayApplicationEventsReceiver.applicationDidReceiveOpen(url, sourceApplication: options[.sourceApplication] as? String)
+        return true
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        YandexPayApplicationEventsReceiver.applicationWillEnterForeground()
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        YandexPayApplicationEventsReceiver.applicationDidBecomeActive()
     }
 }
