@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 13.12.2022.
 //
 
-import Foundation
+import UIKit
 
 protocol IStubViewBuilder {
     /// Builds a properly configured Info Cover View

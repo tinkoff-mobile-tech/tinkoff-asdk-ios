@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 12.12.2022.
 //
 
-import Foundation
+import UIKit
 
 private typealias CardCell = (icon: SkeletonView, number: SkeletonView)
 

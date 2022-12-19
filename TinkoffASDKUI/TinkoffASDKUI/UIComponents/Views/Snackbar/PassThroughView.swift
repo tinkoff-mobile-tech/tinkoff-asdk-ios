@@ -5,7 +5,7 @@
 //  Created by Ivan Glushko on 13.12.2022.
 //
 
-import Foundation
+import UIKit
 
 /// Propagates touch events down the view hierarchy
 class PassThroughView: UIView {

@@ -8,7 +8,7 @@
 @testable import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-import Foundation
+import UIKit
 
 final class MockPaymentSystemImageResolver: IPaymentSystemImageResolver {
 
