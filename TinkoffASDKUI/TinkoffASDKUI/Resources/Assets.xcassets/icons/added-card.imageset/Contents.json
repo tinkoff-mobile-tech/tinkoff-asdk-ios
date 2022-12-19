@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "added-card-icon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

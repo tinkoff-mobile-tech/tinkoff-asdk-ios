@@ -48,7 +48,6 @@ protocol ICardListModule: AnyObject {
 
 enum CardListScreenState {
     case initial
-    case loading
     case showingCards
     case editingCards
     case showingStub
@@ -100,7 +99,7 @@ final class CardListPresenter: ICardListModule {
             if let card = card {
                 activeCardsCache.append(card)
                 showCards(cards: activeCardsCache)
-                view?.show(alert: .cardAdded(card: card))
+                view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
             }
         case let .failure(error):
             view?.show(alert: .cardAddingFailed(with: error))
@@ -180,12 +179,14 @@ extension CardListPresenter: ICardListViewOutput {
 
     func viewDidTapEditButton() {
         guard screenState == .showingCards, !isLoading else { return }
+        screenState = .editingCards
         view?.showDoneEditingButton()
-        showCards(cards: activeCardsCache, screenState: .editingCards)
+        showCards(cards: activeCardsCache)
     }
 
     func viewDidTapDoneEditingButton() {
         guard !isLoading else { return }
+        screenState = .showingCards
         view?.showEditButton()
         showCards(cards: activeCardsCache)
     }
@@ -272,7 +273,6 @@ extension CardListPresenter {
     // MARK: - Private
 
     private func fetchActiveCards() {
-        screenState = .loading
         isLoading = true
         provider.fetchActiveCards { result in
             performOnMain { [weak self] in
@@ -293,6 +293,9 @@ extension CardListPresenter {
                 showCards(cards: [])
                 showNoCardsStub()
             } else {
+                if screenState != .editingCards {
+                    screenState = .showingCards
+                }
                 showCards(cards: activeCardsCache)
             }
 
@@ -341,10 +344,8 @@ extension CardListPresenter {
     }
 
     private func showCards(
-        cards: [PaymentCard],
-        screenState: CardListScreenState = .showingCards
+        cards: [PaymentCard]
     ) {
-        self.screenState = screenState
         view?.hideStub()
         view?.reload(cards: transform(cards))
     }

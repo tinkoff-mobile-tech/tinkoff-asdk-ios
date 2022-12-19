@@ -107,6 +107,13 @@ extension ASDKColors {
             )
         }
 
+        static var elevation3: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: .white,
+                dark: ASDKColors.black
+            )
+        }
+
         static var separator: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: ASDKColors.darkGray,

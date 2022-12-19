@@ -73,6 +73,13 @@ extension SnackbarView {
             let loaderView = LoaderTitleView()
             configureSnack(data: .view(contentView: loaderView, insets: Constants.insets))
             loaderView.configure(config)
+        case let .iconTitle(icon, text):
+            let view = IconTitleView()
+            configureSnack(data: .view(contentView: view, insets: Constants.insets))
+            view.configure(
+                with: .buildAddCardButton(icon: icon, text: text)
+                    .set(contentInsets: .zero)
+            )
         case .none:
             break
         }
@@ -114,6 +121,7 @@ extension SnackbarView {
     enum Content {
         case view(contentView: UIView, insets: UIEdgeInsets = .zero)
         case loader(configuration: LoaderTitleView.Configuration)
+        case iconTitle(icon: UIImage?, text: String?)
         case none
     }
 
@@ -130,9 +138,7 @@ extension SnackbarView {
 
         static var base: Self {
             Self(
-                backgroundColor: UIColor.dynamicColor(
-                    dynamic: UIColor.Dynamic(light: .white, dark: .lightGray)
-                ),
+                backgroundColor: ASDKColors.Background.elevation3.color,
                 cornerRadius: 20,
                 shadow: .medium
             )
