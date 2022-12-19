@@ -108,4 +108,10 @@ final class MockCardListViewInput: ICardListViewInput {
     func hideShimmer() {
         hideShimmerCallCounter += 1
     }
+
+    var showAddedCardSnackbarCallCounter = 0
+    var showAddedCardSnackbarStub: (String) -> Void = { _ in }
+    func showAddedCardSnackbar(cardMaskedPan: String) {
+        showAddedCardSnackbarCallCounter += 1
+    }
 }
