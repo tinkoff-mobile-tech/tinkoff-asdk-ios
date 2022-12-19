@@ -19,23 +19,7 @@
 
 import Foundation
 
-public struct Check3DSVersionPayload: Decodable, Equatable {
-    private enum CodingKeys: CodingKey {
-        case version
-        case tdsServerTransID
-        case threeDSMethodURL
-        case paymentSystem
-
-        var stringValue: String {
-            switch self {
-            case .version: return Constants.Keys.version
-            case .tdsServerTransID: return Constants.Keys.tdsServerTransID
-            case .threeDSMethodURL: return Constants.Keys.threeDSMethodURL
-            case .paymentSystem: return Constants.Keys.paymentSystem
-            }
-        }
-    }
-
+public struct Check3DSVersionPayload: Equatable {
     public let version: String
     public let tdsServerTransID: String?
     public let threeDSMethodURL: String?
@@ -51,6 +35,26 @@ public struct Check3DSVersionPayload: Decodable, Equatable {
         self.tdsServerTransID = tdsServerTransID
         self.threeDSMethodURL = threeDSMethodURL
         self.paymentSystem = paymentSystem
+    }
+}
+
+// MARK: - Check3DSVersionPayload + Decodable
+
+extension Check3DSVersionPayload: Decodable {
+    private enum CodingKeys: CodingKey {
+        case version
+        case tdsServerTransID
+        case threeDSMethodURL
+        case paymentSystem
+
+        var stringValue: String {
+            switch self {
+            case .version: return Constants.Keys.version
+            case .tdsServerTransID: return Constants.Keys.tdsServerTransID
+            case .threeDSMethodURL: return Constants.Keys.threeDSMethodURL
+            case .paymentSystem: return Constants.Keys.paymentSystem
+            }
+        }
     }
 
     public init(from decoder: Decoder) throws {

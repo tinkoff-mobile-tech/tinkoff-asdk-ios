@@ -19,7 +19,21 @@
 
 import Foundation
 
-public struct AddCardData: Codable {
+public struct AddCardData {
+    /// Метод проверки при привязке карты
+    public let checkType: PaymentCardCheckType
+    /// Идентификатор клиента в системе продавца
+    public let customerKey: String
+
+    public init(with checkType: PaymentCardCheckType, customerKey: String) {
+        self.checkType = checkType
+        self.customerKey = customerKey
+    }
+}
+
+// MARK: - AddCardData + Encodable
+
+extension AddCardData: Encodable {
     private enum CodingKeys: CodingKey {
         case checkType
         case customerKey
@@ -30,13 +44,5 @@ public struct AddCardData: Codable {
             case .customerKey: return Constants.Keys.customerKey
             }
         }
-    }
-
-    public let checkType: String
-    public let customerKey: String
-
-    public init(with checkType: String, customerKey: String) {
-        self.checkType = checkType
-        self.customerKey = customerKey
     }
 }

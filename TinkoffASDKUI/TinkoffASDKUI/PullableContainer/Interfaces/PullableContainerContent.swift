@@ -19,19 +19,25 @@
 
 import UIKit
 
-public protocol PullableContainerContent: AnyObject {
+protocol PullableContainerContent: AnyObject {
     var view: UIView! { get }
-    var contentHeight: CGFloat { get }
-    var contentHeightDidChange: ((PullableContainerContent) -> Void)? { get set }
-    func willBeClosed()
-    func wasClosed()
+    var pullableContainerContentHeight: CGFloat { get }
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)? { get set }
+    func pullableContainerWillBeClosed()
+    func pullableContainerWasClosed()
+    func pullableContainerShouldDismissOnDownDragging() -> Bool
+    func pullableContainerShouldDismissOnDimmingViewTap() -> Bool
 }
+
+protocol PullableContainerScrollableContent: PullableContainerContent {
+    var scrollView: UIScrollView { get }
+}
+
+// MARK: - PullableContainerContent + Default Implementation
 
 extension PullableContainerContent {
-    func willBeClosed() {}
-    func wasClosed() {}
-}
-
-public protocol PullableContainerScrollableContent: PullableContainerContent {
-    var scrollView: UIScrollView { get }
+    func pullableContainerWillBeClosed() {}
+    func pullableContainerWasClosed() {}
+    func pullableContainerShouldDismissOnDownDragging() -> Bool { true }
+    func pullableContainerShouldDismissOnDimmingViewTap() -> Bool { true }
 }

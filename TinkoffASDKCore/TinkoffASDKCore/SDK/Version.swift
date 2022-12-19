@@ -21,5 +21,5 @@ import Foundation
 
 /// Текущая версия компонента
 struct Version {
-    static let versionString = "2.12.2"
+    static let versionString = "2.13.1"
 }

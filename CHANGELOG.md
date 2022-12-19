@@ -12,6 +12,7 @@
 * [MIC-6828] Added Stylable Button
 * [MIC-6848] Bank detection logic based on cardNumber
 * [MIC-6821] Added Snackbar for presenting snacks
+* [MIC-7349] Add ability to provide dismissing behavior to PullableContainer
 * [MIC-6827] Implemented CardFieldView
 * [MIC-6824] Redesigned Card List Cell
 * [MIC-6824] [MIC-6843] [MIC-6837] [MIC-6841] Redesigned Card List Screen
@@ -19,6 +20,13 @@
 ### Fixed
 
 * [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
+
+## [2.13.1] - 2022-12-13Z
+
+### Fixed
+
+* [MIC-6975] Fix readme and add info about payment stages
+* [MIC-6888] Fix 3DS V2 handling for cards attaching
 
 ## [2.12.2] - 2022-10-28Z
 

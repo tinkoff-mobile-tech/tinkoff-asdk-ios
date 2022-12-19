@@ -38,20 +38,20 @@ final class Button: UIView {
         setupViews()
 
         stateObservations.append(
-            button.observe(\.isHighlighted) { button, _ in
-                self.controlState = button.state
+            button.observe(\.isHighlighted) { [weak self] button, _ in
+                self?.controlState = button.state
             }
         )
 
         stateObservations.append(
-            button.observe(\.isEnabled) { button, _ in
-                self.controlState = button.state
+            button.observe(\.isEnabled) { [weak self] button, _ in
+                self?.controlState = button.state
             }
         )
 
         stateObservations.append(
-            button.observe(\.isSelected) { button, _ in
-                self.controlState = button.state
+            button.observe(\.isSelected) { [weak self] button, _ in
+                self?.controlState = button.state
             }
         )
     }

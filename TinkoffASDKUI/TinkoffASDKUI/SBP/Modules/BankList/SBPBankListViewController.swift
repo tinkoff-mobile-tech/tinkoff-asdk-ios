@@ -40,11 +40,11 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
         customView.tableView
     }
 
-    var contentHeight: CGFloat {
+    var pullableContainerContentHeight: CGFloat {
         customView.tableView.contentSize.height + customView.continueButtonContainer.bounds.height
     }
 
-    var contentHeightDidChange: ((PullableContainerContent) -> Void)?
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     var banks: [SBPBank] {
         get {
@@ -115,7 +115,7 @@ final class SBPBankListViewController: UIViewController, PaymentPollingContent, 
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        contentHeightDidChange?(self)
+        pullableContainerContentHeightDidChange?(self)
     }
 }
 

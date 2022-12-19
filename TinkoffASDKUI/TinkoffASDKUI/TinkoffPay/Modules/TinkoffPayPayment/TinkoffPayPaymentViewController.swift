@@ -18,9 +18,9 @@ final class TinkoffPayPaymentViewController: UIViewController, PaymentPollingCon
 
     var scrollView: UIScrollView { UIScrollView() }
 
-    var contentHeight: CGFloat { 0 }
+    var pullableContainerContentHeight: CGFloat { 0 }
 
-    var contentHeightDidChange: ((PullableContainerContent) -> Void)?
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     private let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
     private let paymentService: PaymentService
