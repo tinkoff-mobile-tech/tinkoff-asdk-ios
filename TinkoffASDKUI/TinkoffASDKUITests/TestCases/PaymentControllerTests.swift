@@ -104,7 +104,7 @@ extension PaymentControllerTests {
 
         // Other
         let configuration: AcquiringSdkConfiguration
-        let deviceInfoProvider: DefaultThreeDSDeviceParamsProvider
+        let deviceInfoProvider: ThreeDSDeviceInfoProvider
         let uiSDK: AcquiringUISDK
         let coreSDK: AcquiringSdk
 
@@ -129,7 +129,7 @@ extension PaymentControllerTests {
         let threeDSServiceMock = MockAcquiringThreeDsService()
         let paymentControllerDelegateMock = MockPaymentControllerDelegate()
 
-        let deviceInfoProvider = DefaultThreeDSDeviceParamsProvider(
+        let deviceInfoProvider = ThreeDSDeviceInfoProvider(
             screenSize: UIScreen.main.bounds.size,
             languageProvider: LanguageProvider(language: .ru),
             urlBuilder: ThreeDSURLBuilder(

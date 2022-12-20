@@ -1,6 +1,6 @@
 //
 //
-//  DeviceInfoParams.swift
+//  ThreeDSDeviceInfo.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,10 @@
 
 import Foundation
 
-public struct DeviceInfoParams {
+@available(*, deprecated, renamed: "ThreeDSDeviceInfo")
+public typealias DeviceInfoParams = ThreeDSDeviceInfo
+
+public struct ThreeDSDeviceInfo {
     let threeDSCompInd: String
     let javaEnabled: String
     let colorDepth: Int
@@ -38,6 +41,7 @@ public struct DeviceInfoParams {
     let sdkUiType: String
 
     public init(
+        threeDSCompInd: String = "Y",
         cresCallbackUrl: String,
         languageId: String = "ru",
         screenWidth: Int,
@@ -50,7 +54,7 @@ public struct DeviceInfoParams {
         sdkMaxTimeout: String? = nil,
         sdkEncData: String? = nil
     ) {
-        threeDSCompInd = "Y"
+        self.threeDSCompInd = threeDSCompInd
         javaEnabled = "true"
         self.colorDepth = colorDepth
         language = languageId
@@ -69,9 +73,9 @@ public struct DeviceInfoParams {
     }
 }
 
-// MARK: - DeviceInfoParams + Encodable
+// MARK: - ThreeDSDeviceInfo + Encodable
 
-extension DeviceInfoParams: Encodable {
+extension ThreeDSDeviceInfo: Encodable {
     private enum CodingKeys: String, CodingKey {
         case threeDSCompInd
         case javaEnabled

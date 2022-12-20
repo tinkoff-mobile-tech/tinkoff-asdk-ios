@@ -1,6 +1,6 @@
 //
 //
-//  DefaultThreeDSDeviceParamsProvider.swift
+//  ThreeDSDeviceInfoProvider.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,34 +17,38 @@
 //  limitations under the License.
 //
 
-import struct CoreGraphics.CGSize
 import Foundation
+import class UIKit.UIScreen
 
-public protocol ThreeDSDeviceParamsProvider {
-    var deviceInfoParams: DeviceInfoParams { get }
+public protocol IThreeDSDeviceInfoProvider {
+    func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo
 }
 
-final class DefaultThreeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider {
-    var deviceInfoParams: DeviceInfoParams {
-        DeviceInfoParams(
-            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString,
-            languageId: (languageProvider.language ?? .ru).rawValue,
-            screenWidth: Int(screenSize.width),
-            screenHeight: Int(screenSize.height)
-        )
+public extension IThreeDSDeviceInfoProvider {
+    var deviceInfo: ThreeDSDeviceInfo {
+        createDeviceInfo(threeDSCompInd: "Y")
     }
+}
 
-    private let screenSize: CGSize
+final class ThreeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider {
     private let languageProvider: ILanguageProvider
     private let urlBuilder: IThreeDSURLBuilder
 
     init(
-        screenSize: CGSize,
         languageProvider: ILanguageProvider,
         urlBuilder: IThreeDSURLBuilder
     ) {
-        self.screenSize = screenSize
         self.languageProvider = languageProvider
         self.urlBuilder = urlBuilder
+    }
+
+    func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo {
+        ThreeDSDeviceInfo(
+            threeDSCompInd: threeDSCompInd,
+            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString,
+            languageId: (languageProvider.language ?? .ru).rawValue,
+            screenWidth: Int(UIScreen.main.bounds.width * UIScreen.main.scale),
+            screenHeight: Int(UIScreen.main.bounds.height * UIScreen.main.scale)
+        )
     }
 }

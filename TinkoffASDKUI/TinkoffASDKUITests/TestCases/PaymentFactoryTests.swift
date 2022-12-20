@@ -75,7 +75,7 @@ final class PaymentFactoryTests: XCTestCase {
         let dependencies = Self.makeDependencies()
         let sut = dependencies.sut
 
-        let paymentSourceData = PaymentSourceData.paymentData("234234")
+        let paymentSourceData = PaymentSourceData.applePay("234234")
         let paymentFlow: PaymentFlow = .full(paymentOptions: UIASDKTestsAssembly.makePaymentOptions())
 
         // when

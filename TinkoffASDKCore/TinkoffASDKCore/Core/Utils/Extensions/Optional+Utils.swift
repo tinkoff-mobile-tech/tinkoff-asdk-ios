@@ -20,11 +20,18 @@
 import Foundation
 
 extension Optional {
+    /// Разворачивает опциональное значение или выбрасывает заданный `Error`
     func orThrow<E: Error>(_ error: @autoclosure () -> E) throws -> Wrapped {
         guard let self = self else {
             throw error()
         }
 
         return self
+    }
+
+    /// Разворачивает опциональное значение или возвращает заданное значение по умолчанию.
+    /// Более удобный аналог оператора `??` для цепочек вызовов функций
+    func or(_ defaultValue: @autoclosure () -> Wrapped) -> Wrapped {
+        self ?? defaultValue()
     }
 }

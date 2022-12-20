@@ -9,7 +9,7 @@ import Foundation
 import struct UIKit.CGSize
 
 protocol IThreeDSDeviceParamsProviderBuilder {
-    func deviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider
+    func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider
 }
 
 final class ThreeDSDeviceParamsProviderBuilder: IThreeDSDeviceParamsProviderBuilder {
@@ -21,9 +21,8 @@ final class ThreeDSDeviceParamsProviderBuilder: IThreeDSDeviceParamsProviderBuil
         self.urlBuilder = urlBuilder
     }
 
-    func deviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        DefaultThreeDSDeviceParamsProvider(
-            screenSize: screenSize,
+    func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
+        ThreeDSDeviceInfoProvider(
             languageProvider: languageProvider,
             urlBuilder: urlBuilder
         )

@@ -64,7 +64,7 @@ extension ThreeDSFacade: IThreeDSWebViewHandlerBuilder {
 // MARK: - IThreeDSDeviceParamsProviderBuilder
 
 extension ThreeDSFacade: IThreeDSDeviceParamsProviderBuilder {
-    func deviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        deviceParamsProviderBuilder.deviceParamsProvider(screenSize: screenSize)
+    func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
+        deviceParamsProviderBuilder.threeDSDeviceInfoProvider()
     }
 }

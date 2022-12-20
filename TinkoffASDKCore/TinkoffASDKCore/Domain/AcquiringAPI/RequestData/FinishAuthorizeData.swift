@@ -25,8 +25,7 @@ public struct FinishAuthorizeData {
     let paymentSource: PaymentSourceData
     let infoEmail: String?
     let sendEmail: Bool?
-    let deviceInfo: DeviceInfoParams?
-    let ipAddress: String?
+    let deviceInfo: ThreeDSDeviceInfo?
     let threeDSVersion: String?
     let source: String?
     let route: String?
@@ -35,8 +34,7 @@ public struct FinishAuthorizeData {
         paymentId: String,
         paymentSource: PaymentSourceData,
         infoEmail: String? = nil,
-        deviceInfo: DeviceInfoParams? = nil,
-        ipAddress: String? = nil,
+        deviceInfo: ThreeDSDeviceInfo? = nil,
         threeDSVersion: String? = nil,
         source: String? = nil,
         route: String? = nil
@@ -46,26 +44,13 @@ public struct FinishAuthorizeData {
         self.infoEmail = infoEmail
         sendEmail = infoEmail != nil
         self.deviceInfo = deviceInfo
-        self.ipAddress = ipAddress
         self.threeDSVersion = threeDSVersion
         self.source = source
         self.route = route
     }
-
-    public init(from request: PaymentFinishRequestData) {
-        self = Self(
-            paymentId: String(request.paymentId),
-            paymentSource: request.paymentSource,
-            infoEmail: request.infoEmail,
-            deviceInfo: request.deviceInfo,
-            ipAddress: request.ipAddress,
-            threeDSVersion: request.threeDSVersion,
-            source: request.source,
-            route: request.route
-        )
-    }
 }
 
+@available(*, deprecated, message: "Use `FinishAuthorizeData` instead")
 public struct PaymentFinishRequestData {
     /// Номер платежа, полученного после инициализации платежа
     var paymentId: Int64
@@ -73,14 +58,14 @@ public struct PaymentFinishRequestData {
 
     var sendEmail: Bool?
     var infoEmail: String?
-    var deviceInfo: DeviceInfoParams?
+    var deviceInfo: ThreeDSDeviceInfo?
     var ipAddress: String?
     var threeDSVersion: String?
 
     var source: String?
     var route: String?
 
-    public mutating func setDeviceInfo(info: DeviceInfoParams?) {
+    public mutating func setDeviceInfo(info: ThreeDSDeviceInfo?) {
         deviceInfo = info
     }
 

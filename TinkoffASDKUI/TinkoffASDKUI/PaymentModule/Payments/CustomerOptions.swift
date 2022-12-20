@@ -20,19 +20,13 @@
 import TinkoffASDKCore
 
 public struct CustomerOptions: Equatable {
-    public enum Customer: Equatable {
-        case none
-        case customer(key: String, checkType: PaymentCardCheckType)
-    }
+    /// Идентификатор покупателя в системе продавца
+    public let customerKey: String
+    /// Email покупателя
+    public let email: String?
 
-    let customer: Customer
-    let email: String?
-
-    public init(
-        customer: Customer = .none,
-        email: String? = nil
-    ) {
-        self.customer = customer
+    public init(customerKey: String, email: String?) {
+        self.customerKey = customerKey
         self.email = email
     }
 }
