@@ -183,6 +183,7 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
 
     // MARK: Init
 
@@ -216,6 +217,15 @@ public class AcquiringUISDK: NSObject {
 
         logger = configuration.logger
         cardListAssembly = CardListAssembly(primaryButtonStyle: style.bigButtonStyle)
+
+        yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
+            flowAssembly: YandexPayPaymentFlowAssembly(
+                yandexPayActivityAssebmly: YandexPayPaymentActivityAssembly(
+                    paymentControllerAssembly: paymentControllerAssembly
+                )
+            ),
+            methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
+        )
     }
 
     /// Вызывается кода пользователь привязывает карту.
@@ -2054,4 +2064,18 @@ extension AcquiringUISDK: WKNavigationDelegate {
             } // termURL.hasSuffix confirmation3DSTerminationURL
         } // document.baseURI
     } // func webView didFinish
+}
+
+public extension AcquiringUISDK {
+    func yandexPayButtonContainerFactory(
+        with configuration: YandexPaySDKConfiguration,
+        initializer: IYandexPayButtonContainerFactoryInitializer,
+        completion: @escaping (Result<IYandexPayButtonContainerFactory, Error>) -> Void
+    ) {
+        yandexPayButtonContainerFactoryProvider.yandexPayButtonContainerFactory(
+            with: configuration,
+            initializer: initializer,
+            completion: completion
+        )
+    }
 }

@@ -12,13 +12,13 @@ final class YandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFa
     // MARK: Dependencies
 
     private let flowAssembly: IYandexPayPaymentFlowAssembly
-    private let methodLoader: IYandexPayMethodProvider
+    private let methodProvider: IYandexPayMethodProvider
 
     // MARK: Init
 
-    init(flowAssembly: IYandexPayPaymentFlowAssembly, methodLoader: IYandexPayMethodProvider) {
+    init(flowAssembly: IYandexPayPaymentFlowAssembly, methodProvider: IYandexPayMethodProvider) {
         self.flowAssembly = flowAssembly
-        self.methodLoader = methodLoader
+        self.methodProvider = methodProvider
     }
 
     // MARK: IYandexPayButtonContainerFactoryProvider
@@ -28,7 +28,7 @@ final class YandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFa
         initializer: IYandexPayButtonContainerFactoryInitializer,
         completion: @escaping (Result<IYandexPayButtonContainerFactory, Error>) -> Void
     ) {
-        methodLoader.provideMethod { [flowAssembly] result in
+        methodProvider.provideMethod { [flowAssembly] result in
             DispatchQueue.performOnMain {
                 let factoryResult = result.tryMap { method in
                     try initializer.initializeButtonFactory(
