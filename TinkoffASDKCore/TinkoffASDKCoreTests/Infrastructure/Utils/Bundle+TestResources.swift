@@ -11,10 +11,6 @@ extension Bundle {
     private final class Token {}
 
     static var testResources: Bundle {
-        #if SWIFT_PACKAGE
-            .module
-        #else
-            Bundle(for: Token.self)
-        #endif
+        Bundle(for: Token.self)
     }
 }

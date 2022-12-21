@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum PaymentActivityViewState: Equatable {
     struct Processed: Equatable {

@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 14.12.2022.
 //
 
-import Foundation
+import UIKit
 
 final class PaymentActivityProcessingView: UIView {
     // MARK: Subviews

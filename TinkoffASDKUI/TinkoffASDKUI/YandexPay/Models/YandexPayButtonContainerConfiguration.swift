@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Цвет кнопки `YandexPay`
 public enum YandexPayButtonContainerAppearance {
