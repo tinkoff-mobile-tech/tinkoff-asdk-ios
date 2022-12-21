@@ -59,7 +59,7 @@ final class PaymentControllerTests: XCTestCase {
         let dependecies = try Self.makeDependencies()
 
         let paymentId = "324234"
-        let customerOptions = CustomerOptions()
+        let customerOptions = CustomerOptions(customerKey: "someKey", email: "email")
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
 
         let mockPaymentProccess = MockPaymentProcess(
@@ -129,8 +129,7 @@ extension PaymentControllerTests {
         let threeDSServiceMock = MockAcquiringThreeDsService()
         let paymentControllerDelegateMock = MockPaymentControllerDelegate()
 
-        let deviceInfoProvider = ThreeDSDeviceInfoProvider(
-            screenSize: UIScreen.main.bounds.size,
+        let threeDSDeviceInfoProvider = ThreeDSDeviceInfoProvider(
             languageProvider: LanguageProvider(language: .ru),
             urlBuilder: ThreeDSURLBuilder(
                 baseURLProvider: URLProvider(host: "no")!
@@ -144,7 +143,7 @@ extension PaymentControllerTests {
             threeDsService: threeDSServiceMock,
             paymentFactory: paymentFactoryMock,
             threeDSHandler: tdsHandlerMock,
-            threeDSDeviceParamsProvider: deviceInfoProvider,
+            threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
             tdsController: tdsControllerMock,
             acquiringUISDK: uiSDK,
             paymentDelegate: paymentProcessDelegateMock
@@ -164,7 +163,7 @@ extension PaymentControllerTests {
             paymentOptions: UIASDKTestsAssembly.makePaymentOptions(),
             paymentSource: UIASDKTestsAssembly.makePaymentSourceData_cardNumber(),
             configuration: configuration,
-            deviceInfoProvider: deviceInfoProvider,
+            deviceInfoProvider: threeDSDeviceInfoProvider,
             uiSDK: uiSDK,
             coreSDK: coreSDK,
             paymentController: paymentController

@@ -17,11 +17,7 @@ final class UIASDKTestsAssembly {
                 amount: 324
             ),
             customerOptions: CustomerOptions(
-                customer: .customer(
-                    key: "me1",
-                    checkType: .check3DS
-                ),
-
+                customerKey: "me1",
                 email: "some@mail.com"
             )
         )

@@ -140,7 +140,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_paymentFlow_finish_Charge_success() {
         let dependencies = Self.makeDependencies(
-            paymentFlow: .finish(paymentId: "23423", customerOptions: CustomerOptions())
+            paymentFlow: .finish(paymentId: "23423", customerOptions: CustomerOptions(customerKey: "someKey", email: "some"))
         )
 
         let paymentState = GetPaymentStatePayload(
@@ -173,17 +173,8 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_paymentFlow_finish_Charge_failure() {
         let dependencies = Self.makeDependencies(
-            paymentFlow: .finish(paymentId: "23423", customerOptions: CustomerOptions())
+            paymentFlow: .finish(paymentId: "23423", customerOptions: CustomerOptions(customerKey: "someKey", email: "some"))
         )
-
-        let paymentState = GetPaymentStatePayload(
-            paymentId: "324234",
-            amount: 234,
-            orderId: "23423",
-            status: .authorized
-        )
-
-        let chargePayload = ChargePayload(status: .authorized, paymentState: paymentState)
 
         dependencies.paymentsServiceMock.chargeStubReturn = { passedArgs in
             passedArgs.completion(.failure(TestsError.basic))
