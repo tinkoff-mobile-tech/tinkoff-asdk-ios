@@ -44,13 +44,8 @@ final class PaymentActivityViewController: UIViewController, PullableContainerCo
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
         presenter.viewDidLoad()
     }
-
-    // MARK: Initial Configuration
-
-    private func setupView() {}
 }
 
 // MARK: - IPaymentActivityViewInput

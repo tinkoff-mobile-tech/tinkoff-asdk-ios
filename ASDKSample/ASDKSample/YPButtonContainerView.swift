@@ -51,10 +51,17 @@ final class YPButtonContainerView: UIView {
         NSLayoutConstraint.activate([
             contentView.centerXAnchor.constraint(equalTo: centerXAnchor),
             contentView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16),
-            contentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
-            contentView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
-            contentView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8),
+            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: .horizontalInsets),
+            contentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -.horizontalInsets),
+            contentView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: .verticalInsets),
+            contentView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -.verticalInsets),
         ])
     }
+}
+
+// MARK: - Constants
+
+private extension CGFloat {
+    static let horizontalInsets: CGFloat = 16
+    static let verticalInsets: CGFloat = 8
 }

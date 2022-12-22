@@ -35,6 +35,7 @@
 "text.paymentStatusAmount" = "Покупка на сумму";
 "text.paymentStatusCancel" = "отменена";
 "text.paymentStatusSuccess" = "прошла успешно.";
+"text.payment" = "Покупка";
 
 // plaseholder
 "plaseholder.email" = "Отправить квитанцию по адресу";

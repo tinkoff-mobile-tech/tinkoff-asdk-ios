@@ -60,7 +60,7 @@ class BuyProductsViewController: UIViewController {
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
     private lazy var yandexPayButtonContainerView = YPButtonContainerView()
 
-    private var rebuidIdCards: [PaymentCard]?
+    private var cardRebillIds: [PaymentCard]?
     private var tableViewCells: [TableViewCellType] = [
         .products,
         .pay,
@@ -125,7 +125,7 @@ class BuyProductsViewController: UIViewController {
     private func selectRebuildCard() {
         guard let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
             .instantiateViewController(withIdentifier: "SelectRebuildCardViewController") as? SelectRebuildCardViewController,
-            let cards: [PaymentCard] = rebuidIdCards,
+            let cards: [PaymentCard] = cardRebillIds,
             !cards.isEmpty else {
             return
         }
@@ -385,7 +385,7 @@ extension BuyProductsViewController: CardListDataSourceStatusListener {
                 paymentCardId = cards.first
             }
 
-            rebuidIdCards = cards.filter { card -> Bool in
+            cardRebillIds = cards.filter { card -> Bool in
                 card.parentPaymentId != nil
             }
 
@@ -423,7 +423,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             result = products.count
 
         case .payRequrent:
-            if rebuidIdCards?.count ?? 0 > 0 {
+            if cardRebillIds?.count ?? 0 > 0 {
                 result = 2
             }
 
@@ -726,8 +726,24 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         _ container: IYandexPayButtonContainer,
         didCompletePaymentWithResult result: YandexPayPaymentResult
     ) {
-        let alert = UIAlertController(title: "Оплата с YandexPay", message: "\(result)", preferredStyle: .alert)
-        let action = UIAlertAction(title: "ok", style: .default)
+        let message: String = {
+            switch result {
+            case .cancelled:
+                return "\(Loc.Text.payment) \(Loc.Text.paymentStatusCancel)"
+            case let .succeeded(info):
+                return "\(Loc.Text.paymentStatusAmount) \(info.paymentOptions.orderOptions.amount) \(Loc.Text.paymentStatusSuccess)"
+            case let .failed(error):
+                return "\(error)"
+            }
+        }()
+
+        let alert = UIAlertController(
+            title: "YandexPay",
+            message: message,
+            preferredStyle: .alert
+        )
+
+        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
         alert.addAction(action)
         present(alert, animated: true)
     }

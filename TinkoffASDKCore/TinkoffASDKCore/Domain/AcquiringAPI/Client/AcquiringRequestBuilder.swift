@@ -147,6 +147,6 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
     }
 
     func getTerminalPayMethods() -> AcquiringRequest {
-        GetTerminalPayMethods(baseURL: baseURLProvider.url, terminalKey: terminalKeyProvider.value)
+        GetTerminalPayMethodsRequest(baseURL: baseURLProvider.url, terminalKey: terminalKeyProvider.value)
     }
 }

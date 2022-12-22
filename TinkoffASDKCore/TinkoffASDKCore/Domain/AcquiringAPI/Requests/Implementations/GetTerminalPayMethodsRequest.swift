@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GetTerminalPayMethods: AcquiringRequest {
+struct GetTerminalPayMethodsRequest: AcquiringRequest {
     let baseURL: URL
     let path: String
     let httpMethod: HTTPMethod = .get

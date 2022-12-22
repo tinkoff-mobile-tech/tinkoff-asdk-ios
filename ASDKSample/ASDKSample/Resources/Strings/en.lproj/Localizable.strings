@@ -36,6 +36,7 @@
 "text.paymentStatusAmount" = "The purchase in the amount";
 "text.paymentStatusCancel" = "is cancelled";
 "text.paymentStatusSuccess" = "is succeed";
+"text.payment" = "The purchase";
 
 // plaseholder
 "plaseholder.email" = "Send receipt to email";

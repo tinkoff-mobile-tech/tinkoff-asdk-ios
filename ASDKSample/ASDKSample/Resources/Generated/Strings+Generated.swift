@@ -135,6 +135,8 @@ internal enum Loc {
   internal enum Text {
     /// Родительский платеж
     internal static let parentPayment = Loc.tr("Localizable", "text.parentPayment", fallback: "Родительский платеж")
+    /// Покупка
+    internal static let payment = Loc.tr("Localizable", "text.payment", fallback: "Покупка")
     /// Покупка на сумму
     internal static let paymentStatusAmount = Loc.tr("Localizable", "text.paymentStatusAmount", fallback: "Покупка на сумму")
     /// отменена

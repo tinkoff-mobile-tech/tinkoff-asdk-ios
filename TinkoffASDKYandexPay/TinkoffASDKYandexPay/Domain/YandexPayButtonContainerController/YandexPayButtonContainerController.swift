@@ -107,15 +107,3 @@ extension YandexPayButtonContainerController: IYandexPayPaymentFlowOutput {
         delegate?.yandexPayController(self, didCompleteWithResult: result)
     }
 }
-
-// MARK: - DispatchQueue + Perform On Main
-
-private extension DispatchQueue {
-    static func performOnMain(_ block: @escaping () -> Void) {
-        if Thread.isMainThread {
-            block()
-        } else {
-            DispatchQueue.main.async(execute: block)
-        }
-    }
-}

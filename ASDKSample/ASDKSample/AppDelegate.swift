@@ -19,7 +19,6 @@
 
 import TinkoffASDKYandexPay
 import UIKit
-import YandexPaySDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
