@@ -153,6 +153,13 @@ extension ASDKColors {
             )
         }
 
+        static var primaryOnTinkoff: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: ASDKColors.textPrimary,
+                dark: ASDKColors.textPrimary
+            )
+        }
+
         static var secondary: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: UIColor(hex: "#9299A2")!,
@@ -162,8 +169,8 @@ extension ASDKColors {
 
         static var tertiary: UIColor.Dynamic {
             UIColor.Dynamic(
-                light: UIColor(hex: "#00102438") ?? .clear,
-                dark: UIColor(hex: "#FFFFFF4D") ?? .clear
+                light: UIColor(hex: "#001024")!.withAlphaComponent(0.22),
+                dark: UIColor.white.withAlphaComponent(0.3)
             )
         }
     }

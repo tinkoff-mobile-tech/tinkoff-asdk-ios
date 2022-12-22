@@ -44,7 +44,6 @@ protocol AcquiringCardListDataSourceDelegate: AnyObject {
         number: String,
         expDate: String,
         cvc: String,
-        addCardViewPresenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
     )

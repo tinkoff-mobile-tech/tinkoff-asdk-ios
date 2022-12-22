@@ -37,13 +37,13 @@ protocol ICardListViewOutput: AnyObject {
     func viewNumberOfSections() -> Int
     func viewNumberOfItems(forSection: CardListSection) -> Int
     func viewCellModel<Model>(section: CardListSection, itemIndex: Int) -> Model?
+
+    func viewNeedsAddNewCardOutput() -> IAddNewCardOutput
 }
 
 protocol ICardListModule: AnyObject {
     var onSelectCard: ((PaymentCard) -> Void)? { get set }
     var onAddNewCardTap: (() -> Void)? { get set }
-
-    func addingNewCard(completedWith result: Result<PaymentCard?, Error>)
 }
 
 enum CardListScreenState {
@@ -92,20 +92,6 @@ final class CardListPresenter: ICardListModule {
 
     // MARK: ICardListModule Methods
 
-    func addingNewCard(completedWith result: Result<PaymentCard?, Error>) {
-        switch result {
-        case let .success(card):
-            // card == nil - добавление карты отменено пользователем
-            if let card = card {
-                activeCardsCache.append(card)
-                showCards(cards: activeCardsCache)
-                view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
-            }
-        case let .failure(error):
-            view?.show(alert: .cardAddingFailed(with: error))
-        }
-    }
-
     // MARK: Helpers
 
     private func transform(_ paymentCards: [PaymentCard]) -> [CardList.Card] {
@@ -139,9 +125,7 @@ final class CardListPresenter: ICardListModule {
 extension CardListPresenter: ICardListViewOutput {
 
     func viewDidLoad() {
-        performOnMain { [weak self] in
-            self?.view?.showShimmer()
-        }
+        view?.showShimmer()
         fetchActiveCards()
     }
 
@@ -248,6 +232,23 @@ extension CardListPresenter: ICardListViewOutput {
             return configuration as? Model
         }
     }
+
+    func viewNeedsAddNewCardOutput() -> IAddNewCardOutput {
+        self
+    }
+}
+
+extension CardListPresenter: IAddNewCardOutput {
+
+    func addNewCardDidTapCloseButton() {
+        view?.closeScreen()
+    }
+
+    func addNewCardDidAddCard(paymentCard card: PaymentCard) {
+        activeCardsCache.append(card)
+        showCards(cards: activeCardsCache)
+        view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+    }
 }
 
 extension CardListPresenter {
@@ -275,7 +276,7 @@ extension CardListPresenter {
     private func fetchActiveCards() {
         isLoading = true
         provider.fetchActiveCards { result in
-            performOnMain { [weak self] in
+            DispatchQueue.performOnMain { [weak self] in
                 self?.fetchActiveCardsResult = result
                 self?.view?.hideShimmer()
             }

@@ -242,6 +242,21 @@ public class AcquiringUISDK: NSObject {
         return provider
     }
 
+    private func assembleAddNewCardViewController(
+        customerKey: String,
+        configuration: AcquiringViewConfiguration,
+        output: IAddNewCardOutput
+    ) -> UIViewController {
+        acquiringViewConfiguration = configuration
+        setupCardListDataProvider(for: customerKey)
+
+        // create
+        let addNewCardViewController = AddNewCardAssembly()
+            .assemble(addNewCardOutput: output, networking: self)
+
+        return addNewCardViewController
+    }
+
     public func presentAddCardView(
         on presentingViewController: UIViewController,
         customerKey: String,
@@ -254,35 +269,25 @@ public class AcquiringUISDK: NSObject {
         setupCardListDataProvider(for: customerKey)
 
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-        modalViewController.cardListDataSourceDelegate = self
-        modalViewController.scanerDataSource = configuration.scaner
-        modalViewController.alertViewHelper = configuration.alertViewHelper
-        modalViewController.popupStyle = configuration.popupStyle
-        modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
-
-        modalViewController.completeHandler = { result in
-            completeHandler(result)
-        }
-
-        modalViewController.cancelCompletion = {
-            completeHandler(.success(nil))
-        }
+        let addNewCardViewController = UIViewController()
+//        let addNewCardViewController = assembleAddNewCardViewController(
+//            customerKey: customerKey,
+//            configuration: configuration,
+//            output: <#T##AddNewCardOutput#>
+//            completeHandler: completeHandler
+//        )
 
         // present
         let presentationController = PullUpPresentationController(
-            presentedViewController: modalViewController,
+            presentedViewController: addNewCardViewController,
             presenting: presentingViewController
         )
         presentationController.cancelCompletion = {
             completeHandler(.success(nil))
         }
 
-        modalViewController.transitioningDelegate = presentationController
-        presentingViewController.present(modalViewController, animated: true, completion: {
+        addNewCardViewController.transitioningDelegate = presentationController
+        presentingViewController.present(addNewCardViewController, animated: true, completion: {
             _ = presentationController
         })
     }
@@ -1333,7 +1338,7 @@ public class AcquiringUISDK: NSObject {
                             completionHandler(response)
                         }
 
-                        self.present3DSChecking(with: confirmation3DSData, presenter: self.acquiringView) { [weak self] in
+                        self.present3DSChecking(with: confirmation3DSData) { [weak self] in
                             self?.cancelPayment()
                         }
                     }
@@ -1346,8 +1351,7 @@ public class AcquiringUISDK: NSObject {
 
                         self.present3DSCheckingACS(
                             with: confirmation3DSDataACS,
-                            messageVersion: treeDSmessageVersion,
-                            presenter: self.acquiringView
+                            messageVersion: treeDSmessageVersion
                         ) { [weak self] in
                             self?.cancelPayment()
                         }
@@ -1518,7 +1522,7 @@ public class AcquiringUISDK: NSObject {
         onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse(success: false, errorCode: 0)))
     }
 
-    fileprivate func presentWebView(on _: AcquiringView?, load request: URLRequest, onCancel: @escaping (() -> Void)) {
+    fileprivate func presentWebView(load request: URLRequest, onCancel: @escaping (() -> Void)) {
         let viewController = WebViewController(nibName: "WebViewController", bundle: .uiResources)
         webViewController = viewController
         viewController.onCancel = { [weak self] in
@@ -1546,30 +1550,28 @@ public class AcquiringUISDK: NSObject {
         )
     }
 
-    private func present3DSChecking(with data: Confirmation3DSData, presenter: AcquiringView?, onCancel: @escaping (() -> Void)) {
+    private func present3DSChecking(with data: Confirmation3DSData, onCancel: @escaping (() -> Void)) {
         guard let request = try? acquiringSdk.createConfirmation3DSRequest(data: data) else {
             return
         }
 
-        presentWebView(on: presenter, load: request, onCancel: onCancel)
+        presentWebView(load: request, onCancel: onCancel)
     }
 
     private func present3DSCheckingACS(
         with data: Confirmation3DSDataACS,
         messageVersion: String,
-        presenter: AcquiringView?,
         onCancel: @escaping (() -> Void)
     ) {
         guard let request = try? acquiringSdk.createConfirmation3DSRequestACS(data: data, messageVersion: messageVersion) else {
             return
         }
 
-        presentWebView(on: presenter, load: request, onCancel: onCancel)
+        presentWebView(load: request, onCancel: onCancel)
     }
 
     private func presentRandomAmountChecking(
         with requestKey: String,
-        presenter _: AcquiringView?,
         alertViewHelper: AcquiringAlertViewProtocol?,
         onCancel: @escaping (() -> Void)
     ) {
@@ -1679,7 +1681,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         number: String,
         expDate: String,
         cvc: String,
-        addCardViewPresenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
         completeHandler: @escaping (Result<PaymentCard?, Error>) -> Void
     ) {
@@ -1701,7 +1702,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 self?.checkConfirmAddCard(
                     attachPayload: attachPayload,
                     tdsVersion: tdsVersion,
-                    presenter: addCardViewPresenter,
                     alertViewHelper: alertViewHelper,
                     completion
                 )
@@ -1723,19 +1723,20 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         setupCardListDataProvider(for: customerKey)
 
         // create
-        let modalViewController = AddNewCardViewController(nibName: "PopUpViewContoller", bundle: .uiResources)
+        let modalViewController = UIViewController()
 
         // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
         // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
         // будет краш из-за того, что там необходим force unwrap
-        modalViewController.cardListDataSourceDelegate = self
-        modalViewController.scanerDataSource = configuration.scaner
-        modalViewController.alertViewHelper = configuration.alertViewHelper
-        modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
 
-        modalViewController.completeHandler = { result in
-            completeHandler(result)
-        }
+//        modalViewController.cardListDataSourceDelegate = self
+//        modalViewController.scanerDataSource = configuration.scaner
+//        modalViewController.alertViewHelper = configuration.alertViewHelper
+//        modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
+//
+//        modalViewController.completeHandler = { result in
+//            completeHandler(result)
+//        }
 
         // present
         let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: presentingViewController)
@@ -1811,7 +1812,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     private func checkConfirmAddCard(
         attachPayload: AttachCardPayload,
         tdsVersion: String,
-        presenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
         _ confirmationComplete: @escaping (Result<Void, Error>) -> Void
     ) {
@@ -1819,7 +1819,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         case let .needConfirmation3DS(confirmation3DSData):
             on3DSCheckingAddCardCompletionHandler = confirmationComplete
 
-            present3DSChecking(with: confirmation3DSData, presenter: presenter) { [weak self] in
+            present3DSChecking(with: confirmation3DSData) { [weak self] in
                 self?.cancelAddCard()
             }
 
@@ -1828,7 +1828,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 confirmationComplete(response)
             }
 
-            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: tdsVersion, presenter: presenter) { [weak self] in
+            present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: tdsVersion) { [weak self] in
                 self?.cancelAddCard()
             }
 
@@ -1837,7 +1837,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 confirmationComplete(response.map { _ in () })
             }
 
-            presentRandomAmountChecking(with: requestKey, presenter: presenter, alertViewHelper: alertViewHelper) { [weak self] in
+            presentRandomAmountChecking(with: requestKey, alertViewHelper: alertViewHelper) { [weak self] in
                 self?.cancelAddCard()
             }
 
@@ -1862,23 +1862,26 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
 
-        let (view, module) = cardListAssembly.cardsPresentingModule(
+        let (cardListViewController, module) = cardListAssembly.cardsPresentingModule(
             cardListProvider: cardListProvider,
             configuration: configuration
         )
 
-        module.onAddNewCardTap = { [weak view, weak module] in
-            guard let view = view else { return }
-
-            self.presentAddCardView(
-                on: view,
+        module.onAddNewCardTap = { [weak cardListViewController] in
+            guard let cardListViewController = cardListViewController else { return }
+            let addCardViewController = self.assembleAddNewCardViewController(
                 customerKey: customerKey,
                 configuration: configuration,
-                completeHandler: { module?.addingNewCard(completedWith: $0) }
+                output: cardListViewController.getAddNewCardOutput()
+            )
+
+            cardListViewController.navigationController?.pushViewController(
+                addCardViewController,
+                animated: true
             )
         }
 
-        let navigationController = UINavigationController(rootViewController: view)
+        let navigationController = UINavigationController(rootViewController: cardListViewController)
         presentingViewController.present(navigationController, animated: true)
     }
 }
@@ -2049,4 +2052,38 @@ extension AcquiringUISDK: WKNavigationDelegate {
             } // termURL.hasSuffix confirmation3DSTerminationURL
         } // document.baseURI
     } // func webView didFinish
+}
+
+public enum AcquiringUiSdkError: Error {
+    case userCancelledCardAdding
+}
+
+extension AcquiringUISDK: IAddNewCardNetworking {
+
+    func addCard(
+        number: String,
+        expiration: String,
+        cvc: String,
+        resultCompletion: @escaping (Result<PaymentCard, Error>) -> Void
+    ) {
+        cardListToAddCard(
+            number: number,
+            expDate: expiration,
+            cvc: cvc,
+            alertViewHelper: nil,
+            completeHandler: { result in
+                switch result {
+                case let .success(card):
+                    resultCompletion(
+                        card == nil
+                            ? .failure(AcquiringUiSdkError.userCancelledCardAdding)
+                            : .success(card!)
+                    )
+
+                case let .failure(error):
+                    resultCompletion(.failure(error))
+                }
+            }
+        )
+    }
 }

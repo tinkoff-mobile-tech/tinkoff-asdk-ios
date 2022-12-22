@@ -9,11 +9,17 @@ import UIKit
 
 final class Button: UIView {
 
+    static var defaultHeight: CGFloat { 56 }
     override var intrinsicContentSize: CGSize { button.intrinsicContentSize }
 
     private let button = UIButton()
 
     // MARK: - State
+
+    var isEnabled: Bool {
+        get { button.isEnabled }
+        set { button.isEnabled = newValue }
+    }
 
     private(set) var configuration: Configuration?
 
@@ -25,6 +31,7 @@ final class Button: UIView {
 
     private(set) lazy var controlState: UIControl.State = button.state {
         didSet {
+            guard controlState != oldValue else { return }
             controlStateDidChange(controlState: controlState)
         }
     }

@@ -130,11 +130,19 @@
 // Alerts
 "CommonAlert.DeleteCard.Title" = "Couldn't delete the card";
 "CommonAlert.Button" = "OK";
+"CommonAlert.AddCard.Title" = "The card has already been added";
+"CommonAlert.SomeProblem.Title" = "We have a problem, we are already solving it";
+"CommonAlert.SomeProblem.Description" = "Try again in a couple of minutes";
 
 // CardList
 "Acquiring.CardList.AddCard" = "Add new card";
 "Acquiring.CardList.DeleteSnackBar" = "Deleting the card";
 "Acquiring.CardList.AddSnackBar" = "The card %@ was added";
+
+// Add New Card
+"Acquiring.AddNewCard.ScreenTitle" = "New Card";
+"Acquiring.AddNewCard.ButtonClose" = "Close";
+"Acquiring.AddNewCard.AddButton" = "Add";
 
 // Заглушки
 "CommonStub.SomeProblem.Title" = "We have a problem, we are already solving it";

@@ -20,202 +20,326 @@
 import TinkoffASDKCore
 import UIKit
 
-enum AddCardTableViewCells {
-    case title
-    case requisites
-    case secureLogos
-    case button
+enum AddNewCardSection {
+    case cardField(configs: [CardFieldView.Configuration])
 }
 
-class AddNewCardViewController: PopUpViewContoller {
-    // MARK: AcquiringView
+// MARK: - AddNewCardOutput
 
-    var onTouchButtonShowCardList: (() -> Void)?
-    var onTouchButtonPay: (() -> Void)?
-    var onTouchButtonSBP: ((UIViewController) -> Void)?
-    var onCancelPayment: (() -> Void)?
+protocol IAddNewCardOutput: AnyObject {
+    func addNewCardDidTapCloseButton()
+    func addNewCardDidAddCard(paymentCard: PaymentCard)
+}
 
-    //
-    private var tableViewCells: [AddCardTableViewCells]!
-    private var inputCardRequisitesController: InputCardRequisitesDataSource!
-    weak var cardListDataSourceDelegate: AcquiringCardListDataSourceDelegate?
-    var completeHandler: ((_ result: Result<PaymentCard?, Error>) -> Void)?
-    weak var scanerDataSource: AcquiringScanerProtocol?
-    weak var alertViewHelper: AcquiringAlertViewProtocol?
+// MARK: - AddNewCardView
 
-    // MARK: - Style
+protocol IAddNewCardView: AnyObject {
+    func reloadCollection(sections: [AddNewCardSection])
+    func showLoadingState()
+    func hideLoadingState()
+    func notifyAdded(card: PaymentCard)
+    func closeScreen()
+    func closeNativeAlert()
+    func showAlreadySuchCardErrorNativeAlert()
+    func showGenericErrorNativeAlert()
+    func disableAddButton()
+    func enableAddButton()
+}
 
-    struct Style {
-        let addCardButtonStyle: ButtonStyle
+// MARK: - AddNewCardViewController
+
+final class AddNewCardViewController: UIViewController {
+
+    private weak var output: IAddNewCardOutput?
+    private let presenter: IAddNewCardPresenter
+
+    private let keyboardService = KeyboardService()
+
+    // UI
+
+    private lazy var collectionView: UICollectionView = prepareCollectionView()
+    private let addButton = Button()
+    private let blockingView = UIView()
+
+    // Local State
+
+    private var sections: [AddNewCardSection] = []
+
+    init(
+        output: IAddNewCardOutput,
+        presenter: IAddNewCardPresenter
+    ) {
+        self.output = output
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
     }
 
-    var style: Style?
-
-    // MARK: - View Life Cycle
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViews()
+        presenter.viewDidLoad()
+    }
 
-        tableViewCells = [.title, .requisites, .secureLogos]
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard addButton.frame.size == .zero else { return }
+        setupAddButton()
+    }
+}
 
-        inputCardRequisitesController = InputCardRequisitesController()
+// MARK: - IAddNewCardView
 
-        tableView.register(
-            UINib(nibName: "InputCardRequisitesTableViewCell", bundle: .uiResources),
-            forCellReuseIdentifier: "InputCardRequisitesTableViewCell"
+extension AddNewCardViewController: IAddNewCardView {
+
+    func reloadCollection(sections: [AddNewCardSection]) {
+        self.sections = sections
+        collectionView.reloadData()
+    }
+
+    func showLoadingState() {
+        UIView.addPopingAnimation {
+            self.blockingView.alpha = 0.5
+        }
+
+        view.endEditing(true)
+        addButton.startLoading()
+    }
+
+    func hideLoadingState() {
+        UIView.addPopingAnimation {
+            self.blockingView.alpha = .zero
+        }
+
+        addButton.stopLoading()
+    }
+
+    func notifyAdded(card: PaymentCard) {
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + 0.3,
+            execute: {
+                self.output?.addNewCardDidAddCard(paymentCard: card)
+            }
         )
-        tableView.register(UINib(nibName: "AmountTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "AmountTableViewCell")
-        tableView.register(UINib(nibName: "PSLogoTableViewCell", bundle: .uiResources), forCellReuseIdentifier: "PSLogoTableViewCell")
-
-        tableView.dataSource = self
     }
 
-    private func onButtonAddTouch() {
-        let requisites = inputCardRequisitesController.requisies()
-        if let number = requisites.number, let expDate = requisites.expDate, let cvc = requisites.cvc {
-            let cardRequisitesValidator: ICardRequisitesValidator = CardRequisitesValidator()
-            if cardRequisitesValidator.validate(inputPAN: number),
-               cardRequisitesValidator.validate(inputValidThru: expDate),
-               cardRequisitesValidator.validate(inputCVC: cvc) {
-                viewWaiting.isHidden = false
-                cardListDataSourceDelegate?.cardListToAddCard(
-                    number: number,
-                    expDate: expDate,
-                    cvc: cvc,
-                    addCardViewPresenter: self,
-                    alertViewHelper: alertViewHelper,
-                    completeHandler: { [weak self] response in
-                        self?.closeViewController {
-                            self?.completeHandler?(response)
-                        }
-                    }
-                )
-            } // validate card requisites
-        }
-    } // onButtonAddTouch
+    func closeScreen() {
+        navigationController?.popViewController(animated: true)
+    }
+
+    func showGenericErrorNativeAlert() {
+        let alertViewController = UIAlertController.okAlert(
+            title: Loc.CommonAlert.SomeProblem.title,
+            message: Loc.CommonAlert.SomeProblem.description,
+            buttonTitle: Loc.CommonAlert.button,
+            onTap: { [weak presenter] in
+                presenter?.viewDidTapOkGenericErrorAlert()
+            }
+        )
+
+        present(alertViewController, animated: true)
+    }
+
+    func showAlreadySuchCardErrorNativeAlert() {
+        let alertViewController = UIAlertController.okAlert(
+            title: Loc.CommonAlert.AddCard.title,
+            message: nil,
+            buttonTitle: Loc.CommonAlert.button,
+            onTap: { [weak presenter] in
+                presenter?.viewDidTapHasSuchCardErrorAlert()
+            }
+        )
+
+        present(alertViewController, animated: true)
+    }
+
+    func disableAddButton() {
+        addButton.isEnabled = false
+    }
+
+    func enableAddButton() {
+        addButton.isEnabled = true
+    }
+
+    func closeNativeAlert() {
+        presentedViewController?.dismiss(animated: true)
+    }
 }
 
-extension AddNewCardViewController: UITableViewDataSource {
-    // MARK: UITableViewDataSource
+extension AddNewCardViewController {
 
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return tableViewCells.count
-    }
+    private func setupViews() {
+        keyboardService.onHeightDidChangeBlock = { [weak self] height in
+            self?.collectionView.contentInset.bottom = height + UIWindow.globalSafeAreaInsets.bottom
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch tableViewCells[indexPath.row] {
-        case .title:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "AmountTableViewCell") as? AmountTableViewCell {
-                cell.labelTitle.text = Loc.TinkoffAcquiring.Text.addNewCard
-                cell.labelTitle.font = UIFont.boldSystemFont(ofSize: 22.0)
-
-                return cell
-            }
-
-        case .requisites:
-            if let cell = tableView.dequeueReusableCell(
-                withIdentifier: "InputCardRequisitesTableViewCell"
-            ) as? InputCardRequisitesTableViewCell {
-                let accessoryView = Bundle.uiResources.loadNibNamed(
-                    "ButtonInputAccessoryView",
-                    owner: nil,
-                    options: nil
-                )?.first as? ButtonInputAccessoryView
-                if let style = style {
-                    accessoryView?.buttonAction.backgroundColor = style.addCardButtonStyle.backgroundColor
-                    accessoryView?.buttonAction.tintColor = style.addCardButtonStyle.titleColor
-                } else {
-                    assertionFailure("must inject style via property")
-                }
-
-                inputCardRequisitesController.setup(
-                    responderListener: self,
-                    inputView: cell,
-                    inputAccessoryView: accessoryView,
-                    scaner: scanerDataSource != nil ? self : nil
-                )
-                inputCardRequisitesController.onButtonInputAccessoryTouch = { [weak self] in
-                    self?.onButtonAddTouch()
-                }
-
-                return cell
-            }
-
-        case .secureLogos:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "PSLogoTableViewCell") as? PSLogoTableViewCell {
-                return cell
-            }
-
-        case .button:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "") {
-                return cell
+            UIView.animate(
+                withDuration: KeyboardService.animationDuration,
+                delay: .zero
+            ) {
+                self?.addButton.frame.origin.y = self?.calculateAddButtonYPoint(keyboardHeight: height) ?? .zero
             }
         }
 
-        return tableView.defaultCell()
-    }
-}
+        view.backgroundColor = ASDKColors.Background.base.color
+        setupNavigationItem()
 
-extension AddNewCardViewController: BecomeFirstResponderListener {
-    func textFieldShouldBecomeFirstResponder(_: UITextField) -> Bool {
-        return true
-    }
-}
+        view.addSubview(collectionView)
+        view.addSubview(blockingView)
+        view.addSubview(addButton)
 
-extension AddNewCardViewController: ICardRequisitesScanner {
-    func startScanner(completion: @escaping (String?, Int?, Int?) -> Void) {
-        if let scanerView = scanerDataSource?.presentScanner(completion: { numbers, mm, yy in
-            completion(numbers, mm, yy)
-        }) {
-            present(scanerView, animated: true, completion: nil)
-        }
-    }
-}
-
-extension AddNewCardViewController: AcquiringView {
-    // MARK: AcquiringView
-
-    func changedStatus(_: AcquiringViewStatus) {}
-
-    func cardsListUpdated(_: FetchStatus<[PaymentCard]>) {}
-
-    func setViewHeight(_ height: CGFloat) {
-        modalMinHeight = height
-        preferredContentSize = CGSize(width: preferredContentSize.width, height: height)
+        collectionView.pinEdgesToSuperview()
+        blockingView.pinEdgesToSuperview()
+        blockingView.backgroundColor = view.backgroundColor
+        blockingView.alpha = .zero
     }
 
-    func closeVC(animated _: Bool, completion: (() -> Void)?) {
-        if let presetingVC = presentingViewController {
-            presetingVC.dismiss(animated: true) {
-                completion?()
+    private func setupAddButton() {
+        let yOrigin = calculateAddButtonYPoint(keyboardHeight: .zero)
+        addButton.frame = CGRect(
+            x: Constants.AddButton.horizontalInset,
+            y: yOrigin,
+            width: view.frame.width - (Constants.AddButton.horizontalInset * 2),
+            height: Button.defaultHeight
+        )
+
+        addButton.configure(
+            Constants.AddButton.getConfiguration { [weak presenter] in
+                presenter?.viewAddCardTapped()
             }
+        )
+    }
+
+    private func calculateAddButtonYPoint(keyboardHeight: CGFloat) -> CGFloat {
+        if keyboardHeight > .zero {
+            return view.frame.maxY - (Button.defaultHeight + Constants.AddButton.bottomInset + keyboardHeight)
         } else {
-            if let nav = navigationController {
-                nav.popViewController(animated: true)
-                completion?()
-            } else {
-                dismiss(animated: true) {
-                    completion?()
-                }
-            }
+            return view.frame.maxY - (Button.defaultHeight + Constants.AddButton.bottomInsetWithSafeArea + keyboardHeight)
         }
     }
 
-    func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?) {
-        present(viewControllerToPresent, animated: flag, completion: completion)
+    private func prepareCollectionView() -> UICollectionView {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.contentInset.top = Constants.CollectionView.topInset
+        collectionView.contentInset.bottom = UIWindow.globalSafeAreaInsets.bottom
+        collectionView.register(cellClasses: UICollectionViewCell.self, CardFieldView.Cell.self)
+        return collectionView
     }
 
-    // MARK: Setup View
-
-    func setCells(_: [AcquiringViewTableViewCells]) {}
-
-    func checkDeviceFor3DSData(with _: URLRequest) {}
-
-    func cardRequisites() -> PaymentSourceData? {
-        return nil
+    private func setupNavigationItem() {
+        navigationItem.title = Loc.Acquiring.AddNewCard.screenTitle
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: Loc.Acquiring.AddNewCard.buttonClose,
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonTapped)
+        )
     }
 
-    func infoEmail() -> String? {
-        return nil
+    @objc private func closeButtonTapped() {
+        output?.addNewCardDidTapCloseButton()
+    }
+}
+
+extension AddNewCardViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        sections.count
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        var numberOfItems = Int.zero
+
+        sections.forEach { section in
+            switch section {
+            case let .cardField(configs):
+                numberOfItems = configs.count
+            }
+        }
+
+        return numberOfItems
+    }
+}
+
+extension AddNewCardViewController: UICollectionViewDelegate {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard sections.indices.contains(indexPath.section)
+        else { return UICollectionViewCell() }
+
+        switch sections[indexPath.section] {
+        case let .cardField(configs):
+            let config = configs[indexPath.item]
+            return prepareCardFieldCell(indexPath: indexPath, config: config)
+        }
+    }
+
+    private func prepareCardFieldCell(indexPath: IndexPath, config: CardFieldView.Configuration) -> UICollectionViewCell {
+        let cell = collectionView.dequeue(CardFieldView.Cell.self, for: indexPath)
+        cell.shouldHighlight = false
+        cell.customAutolayoutForContent = { cardFielView in
+            let insets = Constants.CollectionView.horizontalInsets
+            let width = self.collectionView.frame.width - insets.horizontal
+            let cardFieldHeight = cardFielView.systemLayoutSizeFitting(.zero).height
+            let cardFieldSize = CGSize(width: width, height: cardFieldHeight)
+            cardFielView.frame = CGRect(origin: .zero, size: cardFieldSize)
+
+            cardFielView.makeConstraints { view in
+                cardFielView.edgesEqualToSuperview(insets: insets) + [
+                    view.width(constant: self.collectionView.frame.width - insets.horizontal),
+                ]
+            }
+        }
+
+        cell.update(with: config)
+        presenter.viewDidReceiveCardFieldView(cardFieldView: cell.content)
+        return cell
+    }
+}
+
+extension AddNewCardViewController {
+
+    struct Constants {
+        struct CollectionView {
+            static var horizontalInsets: UIEdgeInsets { UIEdgeInsets(horizontal: 16) }
+            static var topInset: CGFloat { 20 }
+        }
+
+        struct AddButton {
+            static var horizontalInset: CGFloat { 16 }
+            static var bottomInset: CGFloat { 24 }
+
+            static var bottomInsetWithSafeArea: CGFloat {
+                UIWindow.globalSafeAreaInsets.bottom + Self.bottomInset
+            }
+
+            static func getConfiguration(action: @escaping () -> Void) -> Button.Configuration {
+
+                return Button.Configuration(
+                    data: Button.Data(
+                        text: .basic(
+                            normal: Loc.Acquiring.AddNewCard.addButton,
+                            highlighted: nil,
+                            disabled: nil
+                        ),
+                        onTapAction: action
+                    ),
+                    style: .primary
+                )
+            }
+        }
     }
 }

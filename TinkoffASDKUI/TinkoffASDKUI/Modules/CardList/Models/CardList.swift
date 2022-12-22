@@ -35,16 +35,3 @@ struct CardList {
         let icon: AcquiringAlertIconType
     }
 }
-
-// MARK: - Alerts Factory Methods
-
-extension CardList.Alert {
-
-    static func cardAddingFailed(with error: Error) -> CardList.Alert {
-        CardList.Alert(
-            title: Loc.TinkoffAcquiring.Alert.Title.error,
-            message: error.localizedDescription,
-            icon: .error
-        )
-    }
-}

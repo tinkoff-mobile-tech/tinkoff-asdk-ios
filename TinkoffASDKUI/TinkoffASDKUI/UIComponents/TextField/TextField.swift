@@ -265,10 +265,11 @@ extension TextField: ConfigurableItem {
         configuration = config
         apply(textFieldConfig: config.textField)
 
-        textField.setNeedsLayout()
-        textField.layoutIfNeeded()
+        setNeedsLayout()
+        layoutIfNeeded()
 
         let headerLabelHeight = textField.font?.lineHeight ?? 0
+        headerLabel.configure(config.headerLabel)
         headerLabel.frame = CGRect(
             x: 0,
             y: (intrinsicContentSize.height / 2) - (headerLabelHeight / 2),
@@ -276,7 +277,6 @@ extension TextField: ConfigurableItem {
             height: headerLabelHeight
         )
 
-        headerLabel.configure(config.headerLabel)
         showTitle(hasContentOrActive: hasContentOrActive, animated: false)
     }
 

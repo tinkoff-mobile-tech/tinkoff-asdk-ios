@@ -10,7 +10,21 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
+  /// The card has already been added
+  internal static let theCardHasAlreadyBeenAdded = Loc.tr("Localizable", "The card has already been added", fallback: "The card has already been added")
+  /// Try again in a couple of minutes
+  internal static let tryAgainInACoupleOfMinutes = Loc.tr("Localizable", "Try again in a couple of minutes", fallback: "Try again in a couple of minutes")
+  /// We have a problem, we are already solving it
+  internal static let weHaveAProblemWeAreAlreadySolvingIt = Loc.tr("Localizable", "We have a problem, we are already solving it", fallback: "We have a problem, we are already solving it")
   internal enum Acquiring {
+    internal enum AddNewCard {
+      /// Добавить
+      internal static let addButton = Loc.tr("Localizable", "Acquiring.AddNewCard.AddButton", fallback: "Добавить")
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.AddNewCard.ButtonClose", fallback: "Закрыть")
+      /// Новая карта
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.AddNewCard.ScreenTitle", fallback: "Новая карта")
+    }
     internal enum CardField {
       /// 123
       internal static let cvvPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.CVVPlaceholder", fallback: "123")
@@ -91,9 +105,19 @@ internal enum Loc {
   internal enum CommonAlert {
     /// Понятно
     internal static let button = Loc.tr("Localizable", "CommonAlert.Button", fallback: "Понятно")
+    internal enum AddCard {
+      /// Карта уже добавлена
+      internal static let title = Loc.tr("Localizable", "CommonAlert.AddCard.Title", fallback: "Карта уже добавлена")
+    }
     internal enum DeleteCard {
       /// Не получилось удалить карту
       internal static let title = Loc.tr("Localizable", "CommonAlert.DeleteCard.Title", fallback: "Не получилось удалить карту")
+    }
+    internal enum SomeProblem {
+      /// Попробуйте снова через пару минут
+      internal static let description = Loc.tr("Localizable", "CommonAlert.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
+      /// У нас проблема, мы уже решаем ее
+      internal static let title = Loc.tr("Localizable", "CommonAlert.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
     }
   }
   internal enum CommonStub {

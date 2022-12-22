@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+import TinkoffASDKCore
 import UIKit
 
 protocol ICardListViewInput: AnyObject {
@@ -38,6 +39,7 @@ protocol ICardListViewInput: AnyObject {
     func showLoadingSnackbar(text: String?)
     func hideLoadingSnackbar()
     func showAddedCardSnackbar(cardMaskedPan: String)
+    func closeScreen()
 }
 
 final class CardListViewController: UIViewController {
@@ -100,6 +102,7 @@ final class CardListViewController: UIViewController {
         )
 
         navigationItem.rightBarButtonItem = buildEditBarButton()
+        navigationItem.backButtonTitle = ""
     }
 
     private func buildEditBarButton() -> UIBarButtonItem {
@@ -265,6 +268,10 @@ extension CardListViewController: ICardListViewInput {
             didHideCompletion: nil
         )
     }
+
+    func closeScreen() {
+        closeButtonTapped()
+    }
 }
 
 // MARK: - CardListViewDelegate
@@ -303,36 +310,15 @@ extension CardListViewController: CardListViewDelegate {
     }
 }
 
-// MARK: - UIAlertController + Delete Confirmation
-
-private extension UIAlertController {
-
-    static func okAlert(
-        title: String?,
-        message: String?,
-        buttonTitle: String?,
-        onTap: @escaping () -> Void
-    ) -> UIAlertController {
-
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        let ok = UIAlertAction(
-            title: buttonTitle,
-            style: .default,
-            handler: { _ in }
-        )
-
-        alert.addAction(ok)
-        return alert
-    }
-}
-
 extension CardListViewController: ISnackBarPresentable, ISnackBarViewProvider {
 
     var viewProvider: ISnackBarViewProvider? { self }
     func viewToAddSnackBarTo() -> UIView { view }
+}
+
+extension CardListViewController {
+
+    func getAddNewCardOutput() -> IAddNewCardOutput {
+        presenter.viewNeedsAddNewCardOutput()
+    }
 }

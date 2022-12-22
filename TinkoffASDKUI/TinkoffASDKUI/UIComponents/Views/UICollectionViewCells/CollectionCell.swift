@@ -25,19 +25,24 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
 
     override var isHighlighted: Bool {
         didSet {
+            guard shouldHighlight else { return }
             apply(highlighted: isHighlighted)
         }
     }
 
     // MARK: Subviews
 
-    private lazy var content = Content()
+    lazy var content = Content()
     private lazy var background = UIView()
+
+    // MARK: Settable
+
+    var shouldHighlight = true
+    var customAutolayoutForContent: ((UIView) -> Void)?
 
     // MARK: Layout
 
     private var didLayoutContent = false
-    var customAutolayoutForContent: ((UIView) -> Void)?
 
     // MARK: Init
 

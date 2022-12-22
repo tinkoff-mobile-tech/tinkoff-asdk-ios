@@ -28,7 +28,7 @@ protocol ICardListAssembly {
     func cardsPresentingModule(
         cardListProvider: CardListDataProvider,
         configuration: AcquiringViewConfiguration
-    ) -> (view: UIViewController, module: ICardListModule)
+    ) -> (view: CardListViewController, module: ICardListModule)
 
     /// Отображение списка карт, вызываемого с платежной формы
     ///
@@ -36,7 +36,7 @@ protocol ICardListAssembly {
     func cardSelectionModule(
         cardListProvider: CardListDataProvider,
         configuration: AcquiringViewConfiguration
-    ) -> (view: UIViewController, module: ICardListModule)
+    ) -> (view: CardListViewController, module: ICardListModule)
 }
 
 final class CardListAssembly: ICardListAssembly {
@@ -46,7 +46,7 @@ final class CardListAssembly: ICardListAssembly {
     func cardsPresentingModule(
         cardListProvider: CardListDataProvider,
         configuration: AcquiringViewConfiguration
-    ) -> (view: UIViewController, module: ICardListModule) {
+    ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
             style: .presenting(),
@@ -57,7 +57,7 @@ final class CardListAssembly: ICardListAssembly {
     func cardSelectionModule(
         cardListProvider: CardListDataProvider,
         configuration: AcquiringViewConfiguration
-    ) -> (view: UIViewController, module: ICardListModule) {
+    ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
             style: .selection(),
@@ -71,7 +71,7 @@ final class CardListAssembly: ICardListAssembly {
         provider: IPaymentCardsProvider,
         style: CardListView.Style,
         configuration: AcquiringViewConfiguration
-    ) -> (view: UIViewController, module: ICardListModule) {
+    ) -> (view: CardListViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
             imageResolver: PaymentSystemImageResolver(),
             provider: provider,

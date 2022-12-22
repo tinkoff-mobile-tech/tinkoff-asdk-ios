@@ -10,7 +10,6 @@ import UIKit
 extension CardFieldView {
 
     final class Config {
-        let data: Data
         let style: Style
         var dynamicCardIcon: DynamicIconCardView.Model
 
@@ -21,14 +20,12 @@ extension CardFieldView {
         var onDidConfigure: (() -> Void)?
 
         init(
-            data: Data,
             style: Style,
             dynamicCardIcon: DynamicIconCardView.Model,
             expirationTextFieldConfig: TextField.Configuration,
             cardNumberTextFieldConfig: TextField.Configuration,
             cvcTextFieldConfig: TextField.Configuration
         ) {
-            self.data = data
             self.style = style
             self.dynamicCardIcon = dynamicCardIcon
             self.expirationTextFieldConfig = expirationTextFieldConfig
@@ -36,8 +33,6 @@ extension CardFieldView {
             self.cvcTextFieldConfig = cvcTextFieldConfig
         }
     }
-
-    struct Data {}
 
     struct Style {
         let card: Card
