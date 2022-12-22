@@ -1,6 +1,6 @@
 //
 //
-//  URLSession+URLRequestPerformer.swift
+//  DefaultURLSessionAuthChallengeService.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,10 +20,12 @@
 
 import Foundation
 
-extension URLSession: URLRequestPerformer {
-    func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
-        let urlSessionDataTask: URLSessionDataTask = dataTask(with: request, completionHandler: completionHandler)
-        return urlSessionDataTask
+final class DefaultURLSessionAuthChallengeService: IURLSessionAuthChallengeService {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        completionHandler(.performDefaultHandling, nil)
     }
 }
-

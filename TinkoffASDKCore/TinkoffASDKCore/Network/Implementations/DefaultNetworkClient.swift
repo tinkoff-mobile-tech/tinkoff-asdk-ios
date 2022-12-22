@@ -21,7 +21,7 @@
 import Foundation
 
 final class DefaultNetworkClient: NetworkClient {
-    private let urlRequestPerfomer: URLRequestPerformer
+    private let networkSession: INetworkSession
     private let hostProvider: HTTPHostProvider
     private let requestBuilder: NetworkClientRequestBuilder
     private let responseValidator: HTTPURLResponseValidator
@@ -30,11 +30,11 @@ final class DefaultNetworkClient: NetworkClient {
     
     // MARK: - Init
     
-    init(urlRequestPerfomer: URLRequestPerformer,
+    init(networkSession: INetworkSession,
          hostProvider: HTTPHostProvider,
          requestBuilder: NetworkClientRequestBuilder,
          responseValidator: HTTPURLResponseValidator) {
-        self.urlRequestPerfomer = urlRequestPerfomer
+        self.networkSession = networkSession
         self.hostProvider = hostProvider
         self.requestBuilder = requestBuilder
         self.responseValidator = responseValidator
@@ -49,7 +49,7 @@ final class DefaultNetworkClient: NetworkClient {
                                                                 request: request,
                                                                 requestAdapter: requestAdapter)
             
-            let dataTask = urlRequestPerfomer.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
+            let dataTask = networkSession.createDataTask(with: urlRequest) { [responseValidator] data, response, error in
                 let result: Result<Data, Error>
                 
                 defer {
