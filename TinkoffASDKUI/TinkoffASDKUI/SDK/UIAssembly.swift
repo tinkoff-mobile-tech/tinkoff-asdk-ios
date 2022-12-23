@@ -29,11 +29,14 @@ struct UIAssembly {
     
     func paymentController(acquiringSDK: AcquiringSdk,
                            acquiringUISDK: AcquiringUISDK /* temporary*/) -> PaymentController {
-        return PaymentController(acquiringSDK: acquiringSDK,
-                                 paymentFactory: paymentFactory(acquiringSDK: acquiringSDK),
-                                 threeDSHandler: acquiringSDK.payment3DSHandler(),
-                                 threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()),
-                                 acquiringUISDK: acquiringUISDK)
+        return PaymentController(
+            acquiringSDK: acquiringSDK,
+            paymentFactory: paymentFactory(acquiringSDK: acquiringSDK),
+            threeDSHandler: acquiringSDK.payment3DSHandler(),
+            threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()),
+            webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
+            acquiringUISDK: acquiringUISDK
+        )
     }
 }
 

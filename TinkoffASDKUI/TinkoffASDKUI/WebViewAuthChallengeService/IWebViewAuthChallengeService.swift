@@ -1,6 +1,6 @@
 //
 //
-//  AcquiringUIConfiguration.swift
+//  IWebViewAuthChallengeService.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,17 +19,12 @@
 
 
 import Foundation
+import WebKit
 
-public struct AcquiringUISDKConfiguration {
-    let fpsEnabled: Bool
-    let webViewAuthChallengeService: IWebViewAuthChallengeService?
-    
-    
-    public init(
-        fpsEnabled: Bool,
-        webViewAuthChallengeService: IWebViewAuthChallengeService? = nil
-    ) {
-        self.fpsEnabled = fpsEnabled
-        self.webViewAuthChallengeService = webViewAuthChallengeService
-    }
+public protocol IWebViewAuthChallengeService {
+    func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    )
 }
