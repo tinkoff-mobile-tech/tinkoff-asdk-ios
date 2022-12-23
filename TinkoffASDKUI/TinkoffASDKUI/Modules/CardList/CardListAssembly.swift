@@ -82,7 +82,6 @@ final class CardListAssembly: ICardListAssembly {
         let view = CardListViewController(
             style: style,
             presenter: presenter,
-            externalAlertsFactory: configuration.alertViewHelper,
             stubBuilder: BaseStubViewBuilder()
         )
 

@@ -14,16 +14,21 @@ final class CardFieldFactory {
     private var cardFieldPresenter: ICardFieldPresenter!
 
     /// Собирает конфиг и настраивает логические связи / обработку событий
+    /// - Parameters:
+    ///   - view: CardFieldView (
+    /// - Returns: Конфиг для CardFieldView
     func assembleCardFieldConfig(view: ICardFieldView) -> CardFieldView.Configuration {
         let cardViewModel = DynamicIconCardView.Model(
             data: DynamicIconCardView.Data()
         )
 
+        var listenerStorage: [NSObject] = []
+
         let expData = CardFieldView.DataDependecies.TextFieldData(
             delegate: maskingFactory.buildForExpiration(didFillMask: { [weak self] text, completed in
                 guard let self = self else { return }
                 self.cardFieldPresenter.didFillExpiration(text: text, filled: completed)
-            }),
+            }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.termPlaceholder,
             headerText: Texts.termTitle
@@ -33,7 +38,7 @@ final class CardFieldFactory {
             delegate: maskingFactory.buildForCardNumber(didFillMask: { [weak self] text, completed in
                 guard let self = self else { return }
                 self.cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
-            }),
+            }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: nil,
             headerText: Texts.panTitle
@@ -43,7 +48,7 @@ final class CardFieldFactory {
             delegate: maskingFactory.buildForCvc(didFillMask: { [weak self] text, completed in
                 guard let self = self else { return }
                 self.cardFieldPresenter.didFillCvc(text: text, filled: completed)
-            }),
+            }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.cvvPlaceholder,
             headerText: Texts.cvvTitle
@@ -59,7 +64,7 @@ final class CardFieldFactory {
             )
         )
 
-        cardFieldPresenter = CardFieldPresenter(view: view, config: config)
+        cardFieldPresenter = CardFieldPresenter(view: view, listenerStorage: listenerStorage, config: config)
         return config
     }
 }

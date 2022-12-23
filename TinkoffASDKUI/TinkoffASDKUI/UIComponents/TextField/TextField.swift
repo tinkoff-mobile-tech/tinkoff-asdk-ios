@@ -28,10 +28,9 @@ final class TextField: UIView, Editable {
 
     private let headerLabel = UILabel()
     private let textField = UITextField()
-
     private let accessoryViewContainer = UIView()
 
-    private var accessoryWidthConstraint = NSLayoutConstraint()
+    private lazy var accessoryWidthConstraint = accessoryViewContainer.width(constant: .zero)
 
     // MARK: - Init
 
@@ -72,8 +71,6 @@ final class TextField: UIView, Editable {
         addSubview(accessoryViewContainer)
 
         accessoryViewContainer.makeConstraints { make in
-            accessoryWidthConstraint = make.width(constant: .zero)
-
             let result = make.makeTopAndBottomEqualToSuperView(inset: .zero)
                 + [
                     accessoryWidthConstraint,

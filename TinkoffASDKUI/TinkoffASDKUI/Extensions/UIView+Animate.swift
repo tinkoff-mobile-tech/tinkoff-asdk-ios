@@ -11,14 +11,14 @@ extension UIView {
 
     static func addPopingAnimation(
         animations: @escaping () -> Void,
-        completion: (() -> Void)? = nil
+        completion: ((Bool) -> Void)? = nil
     ) {
         Self.animate(
             withDuration: 0.2,
             delay: .zero,
             options: .transitionCrossDissolve,
             animations: animations,
-            completion: { _ in completion?() }
+            completion: { didFinish in completion?(didFinish) }
         )
     }
 

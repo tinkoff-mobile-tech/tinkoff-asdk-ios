@@ -15,7 +15,10 @@
 * [MIC-7349] Add ability to provide dismissing behavior to PullableContainer
 * [MIC-6827] Implemented CardFieldView
 * [MIC-6824] Redesigned Card List Cell
-* [MIC-6824] [MIC-6843] [MIC-6837] [MIC-6841] Redesigned Card List Screen
+* [MIC-6825] Card List Screen Redesign
+* [MIC-6843] Card List Screen Redesign - Cards Removal
+* [MIC-6837] Card List Screen Redesign - Integration
+* [MIC-6841] Card List Screen Redesign - Tests
 
 ### Fixed
 

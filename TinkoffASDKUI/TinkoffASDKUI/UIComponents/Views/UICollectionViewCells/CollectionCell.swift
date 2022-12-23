@@ -29,6 +29,8 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
         }
     }
 
+    var shouldHighlight = true
+
     // MARK: Subviews
 
     private lazy var content = Content()

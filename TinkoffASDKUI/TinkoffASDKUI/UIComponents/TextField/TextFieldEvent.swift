@@ -7,7 +7,7 @@
 
 import Foundation
 
-@frozen public enum TextFieldEvent {
+enum TextFieldEvent {
     case didBeginEditing
     case textDidChange
     case didEndEditing

@@ -19,12 +19,12 @@ final class StubView: UIView {
     private let subtitleLabel = UILabel()
     private let button = Button()
 
-    private var layoutProvider: LayoutProvider?
+    private var layout: Layout?
 
     // MARK: - Init
 
-    init(layoutProvider: LayoutProvider, availableWidth: CGFloat = UIScreen.main.bounds.width) {
-        self.layoutProvider = layoutProvider
+    init(layout: Layout, availableWidth: CGFloat = UIScreen.main.bounds.width) {
+        self.layout = layout
         super.init(frame: CGRect(x: 0, y: 0, width: availableWidth, height: 0))
         setupViews()
         setupConstraints()
@@ -52,8 +52,8 @@ final class StubView: UIView {
     }
 
     private func setupConstraints() {
-        assert(layoutProvider != nil)
-        guard let layoutProvider = layoutProvider else { return }
+        assert(layout != nil)
+        guard let layoutProvider = layout else { return }
 
         iconImageView.makeConstraints { view in
             [
@@ -133,7 +133,7 @@ extension StubView: ConfigurableItem {
 }
 
 extension StubView {
-    struct LayoutProvider {
+    struct Layout {
         var icon = Icon()
         var title = Title()
         var subtitle = Subtitle()
