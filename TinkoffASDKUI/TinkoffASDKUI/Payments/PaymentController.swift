@@ -83,6 +83,7 @@ public final class PaymentController {
     private let paymentFactory: PaymentFactory
     private let threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
     
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -103,11 +104,13 @@ public final class PaymentController {
          paymentFactory: PaymentFactory,
          threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
          threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
+         webViewAuthChallengeService: IWebViewAuthChallengeService,
          acquiringUISDK: AcquiringUISDK /* temporary*/) {
         self.acquiringSDK = acquiringSDK
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
         self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
+        self.webViewAuthChallengeService = webViewAuthChallengeService
         self.acquiringUISDK = acquiringUISDK
     }
     
@@ -177,8 +180,12 @@ private extension PaymentController {
     
     func presentThreeDSViewController(urlRequest: URLRequest, completion: (() -> Void)? = nil) {
         dismissThreeDSViewControllerIfNeeded {
-            let threeDSViewController = ThreeDSViewController(urlRequest: urlRequest,
-                                                              handler: self.threeDSHandler)
+            let threeDSViewController = ThreeDSViewController(
+                urlRequest: urlRequest,
+                handler: self.threeDSHandler,
+                webViewAuthChallengeService: self.webViewAuthChallengeService
+            )
+
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
             if #available(iOS 13.0, *) {
                 navigationController.isModalInPresentation = true

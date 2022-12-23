@@ -71,18 +71,24 @@ struct CoreAssembly {
 
 private extension CoreAssembly {
     func buildNetworkClient(requestAdapter: NetworkRequestAdapter) -> NetworkClient {
-        let networkClient = DefaultNetworkClient(urlRequestPerfomer: buildURLSession(),
-                                                 hostProvider: buildAPIHostProvider(),
-                                                 requestBuilder: buildRequestBuilder(),
-                                                 responseValidator: buildResponseValidator())
+        let networkClient = DefaultNetworkClient(
+            networkSession: buildNetworkSession(),
+            hostProvider: buildAPIHostProvider(),
+            requestBuilder: buildRequestBuilder(),
+            responseValidator: buildResponseValidator()
+        )
         networkClient.requestAdapter = requestAdapter
         return networkClient
     }
-    
-    func buildURLSession() -> URLSession {
-        return URLSession(configuration: buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval))
+
+    func buildNetworkSession() -> INetworkSession {
+        let authService = configuration.urlSessionAuthChallengeService ?? DefaultURLSessionAuthChallengeService()
+        let sessionDelegate = URLSessionDelegateImpl(authService: authService)
+        let sessionConfiguration = buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval)
+        let session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
+        return NetworkSession(urlSession: session, sessionDelegate: sessionDelegate)
     }
-    
+
     func buildURLSessionConfiguration(requestsTimeoutInterval: TimeInterval) -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = requestsTimeoutInterval

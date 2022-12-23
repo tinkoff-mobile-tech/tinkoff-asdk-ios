@@ -141,6 +141,7 @@ public class AcquiringUISDK: NSObject {
     private var checkPaymentStatus: PaymentStatusServiceProvider?
     
     private let assembly: UIAssembly
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
 
     public init(acquiringSdkConfiguration: AcquiringSdkConfiguration,
                 uiSDKConfiguration: AcquiringUISDKConfiguration) throws {
@@ -148,6 +149,7 @@ public class AcquiringUISDK: NSObject {
         assembly = UIAssembly(uiSDKConfiguration: uiSDKConfiguration)
         self.uiSDKConfiguration = uiSDKConfiguration
         AcqLoc.instance.setup(lang: nil, table: nil, bundle: nil)
+        self.webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
     }
 
     /// Вызывается кода пользователь привязывается карту.
@@ -1430,6 +1432,18 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
 extension AcquiringUISDK: WKNavigationDelegate {
     // MARK: WKNavigationDelegate
+
+    public func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        webViewAuthChallengeService.webView(
+            webView,
+            didReceive: challenge,
+            completionHandler: completionHandler
+        )
+    }
 
     public func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { [weak self] value, error in

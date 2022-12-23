@@ -1,6 +1,6 @@
 //
 //
-//  AcquiringUIConfiguration.swift
+//  DefaultURLSessionAuthChallengeService.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,16 +20,12 @@
 
 import Foundation
 
-public struct AcquiringUISDKConfiguration {
-    let fpsEnabled: Bool
-    let webViewAuthChallengeService: IWebViewAuthChallengeService?
-    
-    
-    public init(
-        fpsEnabled: Bool,
-        webViewAuthChallengeService: IWebViewAuthChallengeService? = nil
+final class DefaultURLSessionAuthChallengeService: IURLSessionAuthChallengeService {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        self.fpsEnabled = fpsEnabled
-        self.webViewAuthChallengeService = webViewAuthChallengeService
+        completionHandler(.performDefaultHandling, nil)
     }
 }

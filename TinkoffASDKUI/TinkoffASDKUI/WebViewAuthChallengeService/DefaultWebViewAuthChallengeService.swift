@@ -1,6 +1,6 @@
 //
 //
-//  URLSession+URLRequestPerformer.swift
+//  DefaultWebViewAuthChallengeService.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,11 +19,14 @@
 
 
 import Foundation
+import WebKit
 
-extension URLSession: URLRequestPerformer {
-    func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> NetworkDataTask {
-        let urlSessionDataTask: URLSessionDataTask = dataTask(with: request, completionHandler: completionHandler)
-        return urlSessionDataTask
+final class DefaultWebViewAuthChallengeService: IWebViewAuthChallengeService {
+    func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        completionHandler(.performDefaultHandling, nil)
     }
 }
-

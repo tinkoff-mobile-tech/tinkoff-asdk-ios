@@ -25,13 +25,18 @@ import TinkoffASDKCore
 final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavigationDelegate {
     private let urlRequest: URLRequest
     private let handler: ThreeDSWebViewHandler<Payload>
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
     
     lazy var webView = WKWebView()
     
-    init(urlRequest: URLRequest,
-         handler: ThreeDSWebViewHandler<Payload>) {
+    init(
+        urlRequest: URLRequest,
+        handler: ThreeDSWebViewHandler<Payload>,
+        webViewAuthChallengeService: IWebViewAuthChallengeService
+    ) {
         self.urlRequest = urlRequest
         self.handler = handler
+        self.webViewAuthChallengeService = webViewAuthChallengeService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -55,7 +60,19 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
     
     // MARK: - WKNavigationDelegate
-    
+
+    func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        webViewAuthChallengeService.webView(
+            webView,
+            didReceive: challenge,
+            completionHandler: completionHandler
+        )
+    }
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { value, error in
             guard error == nil, let uri = value as? String else {

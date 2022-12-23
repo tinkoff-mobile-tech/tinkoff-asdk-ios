@@ -67,6 +67,8 @@ public class AcquiringSdkConfiguration: NSObject {
 
     /// Показывать ошибки после выполнения запроса
     public var showErrorAlert: Bool = true
+
+    let urlSessionAuthChallengeService: IURLSessionAuthChallengeService?
     
     ///
     /// - Parameters:
@@ -74,22 +76,15 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, по-умолчанию значени 40 секунд(40000 милисекунд)
     /// - Returns: AcquiringSdkConfiguration
-    public init(credential: AcquiringSdkCredential,
-                server: AcquiringSdkEnvironment = .test,
-                requestsTimeoutInterval: TimeInterval) {
+    public init(
+        credential: AcquiringSdkCredential,
+        server: AcquiringSdkEnvironment = .test,
+        requestsTimeoutInterval: TimeInterval = 40,
+        urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
+    ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.serverEnvironment = server
+        self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
     }
-    
-    public convenience init(credential: AcquiringSdkCredential,
-                            server: AcquiringSdkEnvironment = .test) {
-        self.init(credential: credential,
-                  server: server,
-                  requestsTimeoutInterval: .defaultRequestsTimeoutInterval)
-    }
-}
-
-private extension TimeInterval {
-    static let defaultRequestsTimeoutInterval: TimeInterval = 40
 }
