@@ -29,6 +29,8 @@ protocol INetworkSession {
 
 final class NetworkSession: INetworkSession {
     private let urlSession: URLSession
+    /// Реализует протокол делегата `URLSession`. 
+    /// Удерживается данным классом, поскольку `URLSession` хранит слабую ссылку на свой делегат 
     private let sessionDelegate: URLSessionDelegate
 
     init(urlSession: URLSession, sessionDelegate: URLSessionDelegate) {
