@@ -82,7 +82,7 @@ private extension CoreAssembly {
     }
 
     func buildNetworkSession() -> INetworkSession {
-        let authService = configuration.authChallengeService ?? DefaultURLSessionAuthChallengeService()
+        let authService = configuration.urlSessionAuthChallengeService ?? DefaultURLSessionAuthChallengeService()
         let sessionDelegate = URLSessionDelegateImpl(authService: authService)
         let sessionConfiguration = buildURLSessionConfiguration(requestsTimeoutInterval: configuration.requestsTimeoutInterval)
         let session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)

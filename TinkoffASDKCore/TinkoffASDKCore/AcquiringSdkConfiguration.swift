@@ -68,7 +68,7 @@ public class AcquiringSdkConfiguration: NSObject {
     /// Показывать ошибки после выполнения запроса
     public var showErrorAlert: Bool = true
 
-    let authChallengeService: IURLSessionAuthChallengeService?
+    let urlSessionAuthChallengeService: IURLSessionAuthChallengeService?
     
     ///
     /// - Parameters:
@@ -80,11 +80,11 @@ public class AcquiringSdkConfiguration: NSObject {
         credential: AcquiringSdkCredential,
         server: AcquiringSdkEnvironment = .test,
         requestsTimeoutInterval: TimeInterval = 40,
-        authChallengeService: IURLSessionAuthChallengeService? = nil
+        urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         self.serverEnvironment = server
-        self.authChallengeService = authChallengeService
+        self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
     }
 }
