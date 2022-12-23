@@ -55,8 +55,8 @@ internal enum Loc {
       internal enum Header {
         /// Мы откроем приложение этого банка для подтверждения оплаты
         internal static let subtitle = Loc.tr("Localizable", "SBP.BanksList.Header.Subtitle", fallback: "Мы откроем приложение этого банка для подтверждения оплаты")
-        /// Выберите банк
-        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Header.Title", fallback: "Выберите банк")
+        /// Выбор банка
+        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Header.Title", fallback: "Выбор банка")
       }
     }
     internal enum EmptyBanks {
