@@ -630,15 +630,13 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Load SBP Banks
 
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
     ///
     /// - Parameters:
-    ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
-    public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
-        let loader = DefaultSBPBankLoader()
-        loader.loadBanks(completion: completion)
+    ///   - completion: результат запроса. `GetSBPBanksPayload` в случае успешного запроса и  `Error` - ошибка.
+    @discardableResult
+    public func loadSBPBanks(completion: @escaping (Result<GetSBPBanksPayload, Error>) -> Void) -> Cancellable {
+        externalAPI.perform(externalRequests.getSBPBanks(), completion: completion)
     }
 
     // MARK: Get TinkoffPay Status
