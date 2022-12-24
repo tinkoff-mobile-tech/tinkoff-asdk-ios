@@ -22,6 +22,11 @@ import TinkoffASDKCore
 import class UIKit.UIScreen
 
 struct UIAssembly {
+    private let uiSDKConfiguration: UISDKConfiguration
+
+    init(uiSDKConfiguration: UISDKConfiguration) {
+        self.uiSDKConfiguration = uiSDKConfiguration
+    }
 
     func paymentController(
         acquiringSDK: AcquiringSdk,
@@ -33,6 +38,7 @@ struct UIAssembly {
             threeDSHandler: acquiringSDK.payment3DSHandler(),
             threeDSDeviceParamsProvider: acquiringSDK.threeDSDeviceParamsProvider(screenSize: screenSize()),
             tdsController: acquiringUISDK.tdsController,
+            webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
             acquiringUISDK: acquiringUISDK
         )
     }

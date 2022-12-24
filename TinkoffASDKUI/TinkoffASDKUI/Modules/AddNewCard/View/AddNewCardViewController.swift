@@ -19,6 +19,7 @@
 
 import TinkoffASDKCore
 import UIKit
+import WebKit
 
 enum AddCardTableViewCells {
     case title
@@ -209,7 +210,7 @@ extension AddNewCardViewController: AcquiringView {
 
     func setCells(_: [AcquiringViewTableViewCells]) {}
 
-    func checkDeviceFor3DSData(with _: URLRequest) {}
+    func checkDeviceFor3DSData(with request: URLRequest, navigationDelegate: WKNavigationDelegate) {}
 
     func cardRequisites() -> PaymentSourceData? {
         return nil
