@@ -40,7 +40,7 @@ final class BankResolverTests: XCTestCase {
             case .gazprom:
                 try resolve_should_return_parsed_gazprom()
             case .raiffaisen:
-                try resolve_should_return_parsed_gazprom()
+                try resolve_should_return_parsed_raifaissen()
             case .alpha:
                 try resolve_should_return_parsed_alpha()
             case .other:
