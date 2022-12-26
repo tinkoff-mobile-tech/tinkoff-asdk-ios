@@ -12,8 +12,7 @@ extension UIAlertController {
     static func okAlert(
         title: String?,
         message: String?,
-        buttonTitle: String?,
-        onTap: @escaping () -> Void
+        buttonTitle: String?
     ) -> UIAlertController {
 
         let alert = UIAlertController(
@@ -24,8 +23,7 @@ extension UIAlertController {
 
         let ok = UIAlertAction(
             title: buttonTitle,
-            style: .default,
-            handler: { _ in onTap() }
+            style: .default
         )
 
         alert.addAction(ok)

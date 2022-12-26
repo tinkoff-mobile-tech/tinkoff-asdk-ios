@@ -242,56 +242,6 @@ public class AcquiringUISDK: NSObject {
         return provider
     }
 
-    private func assembleAddNewCardViewController(
-        customerKey: String,
-        configuration: AcquiringViewConfiguration,
-        output: IAddNewCardOutput
-    ) -> UIViewController {
-        acquiringViewConfiguration = configuration
-        setupCardListDataProvider(for: customerKey)
-
-        // create
-        let addNewCardViewController = AddNewCardAssembly()
-            .assemble(addNewCardOutput: output, networking: self)
-
-        return addNewCardViewController
-    }
-
-    public func presentAddCardView(
-        on presentingViewController: UIViewController,
-        customerKey: String,
-        configuration: AcquiringViewConfiguration,
-        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
-    ) {
-        self.presentingViewController = presentingViewController
-        acquiringViewConfiguration = configuration
-
-        setupCardListDataProvider(for: customerKey)
-
-        // create
-        let addNewCardViewController = UIViewController()
-//        let addNewCardViewController = assembleAddNewCardViewController(
-//            customerKey: customerKey,
-//            configuration: configuration,
-//            output: <#T##AddNewCardOutput#>
-//            completeHandler: completeHandler
-//        )
-
-        // present
-        let presentationController = PullUpPresentationController(
-            presentedViewController: addNewCardViewController,
-            presenting: presentingViewController
-        )
-        presentationController.cancelCompletion = {
-            completeHandler(.success(nil))
-        }
-
-        addNewCardViewController.transitioningDelegate = presentationController
-        presentingViewController.present(addNewCardViewController, animated: true, completion: {
-            _ = presentationController
-        })
-    }
-
     @available(*, deprecated, message: """
     Use presentPaymentView(
         on presentingViewController: UIViewController,
@@ -1027,8 +977,7 @@ public class AcquiringUISDK: NSObject {
             else { return }
 
             let (cardsView, module) = self.cardListAssembly.cardSelectionModule(
-                cardListProvider: cardListProvider,
-                configuration: configuration
+                cardListProvider: cardListProvider
             )
 
             module.onSelectCard = { [weak cardsView, weak modalViewController] selectedCard in
@@ -1710,40 +1659,27 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         )
     }
 
-    func presentAddCard(
+    /// Презентует экран Добавления карты
+    /// - Parameters:
+    ///   - presentingViewController: контроллер на который будет совершен модальный презент
+    ///   - customerKey: ключ клиента
+    ///   - output: объект который будет обрабатывать события из экрана Добавления карты
+    public func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
-        configuration: AcquiringViewConfiguration,
-        completeHandler: @escaping (Result<PaymentCard?, Error>) -> Void
+        output: IAddNewCardOutput?
     ) {
-
         self.presentingViewController = presentingViewController
-        acquiringViewConfiguration = configuration
-
         setupCardListDataProvider(for: customerKey)
 
-        // create
-        let modalViewController = UIViewController()
-
-        // вызов setupCardListDataProvider ранее гарантирует, что cardListDataProvider будет не nil, поэтому мы можем
-        // передать AcquiringUISDK как cardListDataSourceDelegate, иначе при вызове методов протокола AcquiringCardListDataSourceDelegate
-        // будет краш из-за того, что там необходим force unwrap
-
-//        modalViewController.cardListDataSourceDelegate = self
-//        modalViewController.scanerDataSource = configuration.scaner
-//        modalViewController.alertViewHelper = configuration.alertViewHelper
-//        modalViewController.style = AddNewCardViewController.Style(addCardButtonStyle: style.bigButtonStyle)
-//
-//        modalViewController.completeHandler = { result in
-//            completeHandler(result)
-//        }
-
-        // present
-        let presentationController = PullUpPresentationController(presentedViewController: modalViewController, presenting: presentingViewController)
-        modalViewController.transitioningDelegate = presentationController
-        presentingViewController.present(modalViewController, animated: true, completion: {
-            _ = presentationController
-        })
+        let flow: IAddCardFlow = AddCardListFlow(assembly: AddNewCardAssembly(), networking: self)
+        flow.start(
+            context: AddCardListFlowContext(
+                presentingViewController: presentingViewController,
+                customerKey: customerKey,
+                output: output
+            )
+        )
     }
 
     // MARK: AcquiringPaymentCardLidtDataSourceDelegate
@@ -1846,6 +1782,11 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
+    /// Презентует список карт
+    /// - Parameters:
+    ///   - presentingViewController: Вью контроллер на котором будет презентован экран
+    ///   - customerKey: ключ клиента сдк
+    ///   - configuration: конфигурация сдк
     public func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String,
@@ -1862,27 +1803,19 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
 
-        let (cardListViewController, module) = cardListAssembly.cardsPresentingModule(
-            cardListProvider: cardListProvider,
-            configuration: configuration
+        let flow = CardListFlow(
+            cardListAssembly: CardListAssembly(),
+            cardListDataProvider: cardListProvider,
+            addCardAssembly: AddNewCardAssembly(),
+            addCardNetworking: self
         )
 
-        module.onAddNewCardTap = { [weak cardListViewController] in
-            guard let cardListViewController = cardListViewController else { return }
-            let addCardViewController = self.assembleAddNewCardViewController(
-                customerKey: customerKey,
-                configuration: configuration,
-                output: cardListViewController.getAddNewCardOutput()
+        flow.start(
+            context: CardListContext(
+                presentingViewController: presentingViewController,
+                customerKey: customerKey
             )
-
-            cardListViewController.navigationController?.pushViewController(
-                addCardViewController,
-                animated: true
-            )
-        }
-
-        let navigationController = UINavigationController(rootViewController: cardListViewController)
-        presentingViewController.present(navigationController, animated: true)
+        )
     }
 }
 

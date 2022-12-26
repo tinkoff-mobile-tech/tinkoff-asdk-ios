@@ -17,6 +17,8 @@ final class SnackbarView: UIView, ShadowAvailable {
 
     private let contentView = UIView()
 
+    private var shadowStyle: ShadowStyle?
+
     // MARK: - Inits
 
     override init(frame: CGRect) {
@@ -27,6 +29,10 @@ final class SnackbarView: UIView, ShadowAvailable {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - Public
@@ -59,9 +65,34 @@ extension SnackbarView {
         contentView.layer.cornerRadius = style.cornerRadius
         contentView.backgroundColor = style.backgroundColor
 
-        if let shadow = style.shadow {
-            dropShadow(with: shadow)
+        NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(userInterfaceThemeDidChange),
+            name: .userInterfaceStyleDidChange,
+            object: nil
+        )
+
+        shadowStyle = style.shadow
+        applyShadow(for: UIScreen.main.traitCollection.userInterfaceStyle)
+    }
+
+    private func applyShadow(for style: UIUserInterfaceStyle?) {
+        guard let style = style else { return }
+        switch style {
+        case .dark:
+            removeShadow()
+        default:
+            if let shadowStyle = shadowStyle {
+                dropShadow(with: shadowStyle)
+            }
         }
+    }
+
+    @objc private func userInterfaceThemeDidChange(notification: NSNotification) {
+        guard let style = notification.userInfo?[Notification.Keys.value] as? UIUserInterfaceStyle
+        else { return }
+        applyShadow(for: style)
     }
 
     private func configureSnack(data: Content) {

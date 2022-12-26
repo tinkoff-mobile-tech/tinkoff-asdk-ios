@@ -13,8 +13,6 @@ protocol IAddNewCardPresenter: AnyObject {
     func viewDidLoad()
     func viewAddCardTapped()
     func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView)
-    func viewDidTapOkGenericErrorAlert()
-    func viewDidTapHasSuchCardErrorAlert()
 }
 
 // MARK: - Presenter
@@ -55,14 +53,6 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 
     func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView) {
         self.cardFieldView = cardFieldView
-    }
-
-    func viewDidTapOkGenericErrorAlert() {
-        view?.closeNativeAlert()
-    }
-
-    func viewDidTapHasSuchCardErrorAlert() {
-        view?.closeNativeAlert()
     }
 }
 

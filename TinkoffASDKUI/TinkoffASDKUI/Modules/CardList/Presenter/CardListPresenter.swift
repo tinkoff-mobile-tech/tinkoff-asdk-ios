@@ -20,7 +20,7 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewOutput: AnyObject {
+protocol ICardListViewOutput: AnyObject, IAddNewCardOutput {
     func viewDidLoad()
     func view(didTapDeleteOn card: CardList.Card)
     func viewDidTapEditButton()
@@ -32,6 +32,7 @@ protocol ICardListViewOutput: AnyObject {
     func viewDidTapNoCardsStubButton()
     func viewDidTapNoNetworkStubButton()
     func viewDidTapServerErrorStubButton()
+    func viewDidShowAddedCardSnackbar()
 }
 
 protocol ICardListModule: AnyObject {
@@ -147,6 +148,10 @@ extension CardListPresenter: ICardListViewOutput {
         view?.dismiss()
     }
 
+    func viewDidShowAddedCardSnackbar() {
+        reloadCollection()
+    }
+
     func view(didTapDeleteOn card: CardList.Card) {
         isLoading = true
         view?.disableViewUserInteraction()
@@ -166,14 +171,14 @@ extension CardListPresenter: ICardListViewOutput {
         guard screenState == .showingCards, !isLoading else { return }
         screenState = .editingCards
         view?.showDoneEditingButton()
-        reloadCardsSection()
+        reloadCollection()
     }
 
     func viewDidTapDoneEditingButton() {
         guard !isLoading else { return }
         screenState = .showingCards
         view?.showEditButton()
-        reloadCardsSection()
+        reloadCollection()
     }
 
     func viewDidHideLoadingSnackbar() {
@@ -191,6 +196,18 @@ extension CardListPresenter: ICardListViewOutput {
         }
 
         view?.enableViewUserInteraction()
+    }
+}
+
+extension CardListPresenter: IAddNewCardOutput {
+
+    func addNewCardDidTapCloseButton() {
+        view?.closeScreen()
+    }
+
+    func addNewCardDidAddCard(paymentCard card: PaymentCard) {
+        activeCardsCache.append(card)
+        view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
     }
 }
 
@@ -215,13 +232,13 @@ extension CardListPresenter {
             activeCardsCache = paymentCards
             if paymentCards.isEmpty {
                 viewDidTapDoneEditingButton()
-                reloadCardsSection()
+                reloadCollection()
                 showNoCardsStub()
             } else {
                 if screenState != .editingCards {
                     screenState = .showingCards
                 }
-                reloadCardsSection()
+                reloadCollection()
             }
 
         case let .failure(error):
@@ -234,27 +251,37 @@ extension CardListPresenter {
         }
     }
 
-    private func showServerErrorStub() {
+    private func prepareViewForShowingStub() {
         screenState = .showingStub
         view?.hideStub()
+        view?.hideRightBarButton()
+    }
+
+    private func showServerErrorStub() {
+        prepareViewForShowingStub()
         view?.showServerErrorStub()
     }
 
     private func showNoNetworkStub() {
-        screenState = .showingStub
-        view?.hideStub()
+        prepareViewForShowingStub()
         view?.showNoNetworkStub()
     }
 
     private func showNoCardsStub() {
-        screenState = .showingStub
-        view?.hideStub()
+        prepareViewForShowingStub()
         view?.showNoCardsStub()
     }
 
-    private func reloadCardsSection() {
+    private func reloadCollection() {
+        showBarButton()
         view?.hideStub()
         view?.reload(sections: sections)
+    }
+
+    private func showBarButton() {
+        screenState == .editingCards
+            ? view?.showDoneEditingButton()
+            : view?.showEditButton()
     }
 
     private func showRemoveCardErrorAlert() {

@@ -10,6 +10,7 @@ import TinkoffASDKCore
 protocol IAddNewCardNetworking {
 
     /// Метод добавления карты
+    /// Должен вернуть resultCompletion на main потоке!
     func addCard(
         number: String,
         expiration: String,

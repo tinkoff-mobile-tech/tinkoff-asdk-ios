@@ -34,6 +34,7 @@ protocol ICardListViewInput: AnyObject {
     func dismiss()
     func showDoneEditingButton()
     func showEditButton()
+    func hideRightBarButton()
     func showNativeAlert(title: String?, message: String?, buttonTitle: String?)
     func showLoadingSnackbar(text: String?)
     func hideLoadingSnackbar()
@@ -95,6 +96,7 @@ final class CardListViewController: UIViewController {
     private func setupNavigationItem() {
         title = Loc.Acquiring.CardList.screenTitle
         navigationItem.largeTitleDisplayMode = .never
+        navigationItem.backButtonTitle = ""
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: Loc.TinkoffAcquiring.Button.close,
@@ -102,9 +104,6 @@ final class CardListViewController: UIViewController {
             target: self,
             action: #selector(closeButtonTapped)
         )
-
-        navigationItem.rightBarButtonItem = buildEditBarButton()
-        navigationItem.backButtonTitle = ""
     }
 
     private func buildEditBarButton() -> UIBarButtonItem {
@@ -208,6 +207,10 @@ extension CardListViewController: ICardListViewInput {
         navigationItem.rightBarButtonItem = buildEditBarButton()
     }
 
+    func hideRightBarButton() {
+        navigationItem.rightBarButtonItem = nil
+    }
+
     func showNativeAlert(
         title: String?,
         message: String?,
@@ -259,7 +262,9 @@ extension CardListViewController: ICardListViewInput {
             seconds: 1,
             config: config,
             didShowCompletion: nil,
-            didHideCompletion: nil
+            didHideCompletion: { [weak presenter] in
+                presenter?.viewDidShowAddedCardSnackbar()
+            }
         )
     }
 
@@ -295,6 +300,6 @@ extension CardListViewController: ISnackBarPresentable, ISnackBarViewProvider {
 extension CardListViewController {
 
     func getAddNewCardOutput() -> IAddNewCardOutput {
-        presenter.viewNeedsAddNewCardOutput()
+        presenter
     }
 }

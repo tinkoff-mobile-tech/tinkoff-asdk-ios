@@ -10,7 +10,7 @@ import Foundation
 protocol IAddNewCardAssembly {
 
     func assemble(
-        addNewCardOutput: IAddNewCardOutput,
+        addNewCardOutput: IAddNewCardOutput?,
         networking: IAddNewCardNetworking
     ) -> AddNewCardViewController
 }
@@ -18,7 +18,7 @@ protocol IAddNewCardAssembly {
 final class AddNewCardAssembly: IAddNewCardAssembly {
 
     func assemble(
-        addNewCardOutput: IAddNewCardOutput,
+        addNewCardOutput: IAddNewCardOutput?,
         networking: IAddNewCardNetworking
     ) -> AddNewCardViewController {
 

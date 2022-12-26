@@ -32,12 +32,9 @@ final class CardFieldFactory: ICardFieldFactory {
             data: DynamicIconCardView.Data()
         )
 
-        var listenerStorage: [NSObject] = []
-
         let expData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForExpiration(didFillMask: { [weak self] text, completed in
-                guard let self = self else { return }
-                self.cardFieldPresenter.didFillExpiration(text: text, filled: completed)
+            delegate: maskingFactory.buildForExpiration(didFillMask: { text, completed in
+                cardFieldPresenter.didFillExpiration(text: text, filled: completed)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.termPlaceholder,
@@ -45,9 +42,8 @@ final class CardFieldFactory: ICardFieldFactory {
         )
 
         let cardNumberData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForCardNumber(didFillMask: { [weak self] text, completed in
-                guard let self = self else { return }
-                self.cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
+            delegate: maskingFactory.buildForCardNumber(didFillMask: { text, completed in
+                cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: nil,
@@ -55,9 +51,8 @@ final class CardFieldFactory: ICardFieldFactory {
         )
 
         let cvcData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForCvc(didFillMask: { [weak self] text, completed in
-                guard let self = self else { return }
-                self.cardFieldPresenter.didFillCvc(text: text, filled: completed)
+            delegate: maskingFactory.buildForCvc(didFillMask: { text, completed in
+                cardFieldPresenter.didFillCvc(text: text, filled: completed)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.cvvPlaceholder,
@@ -75,6 +70,7 @@ final class CardFieldFactory: ICardFieldFactory {
 
         cardFieldPresenter = CardFieldPresenter(
             getCardFieldView: getCardFieldView,
+            listenerStorage: listenerStorage,
             config: config
         )
         return FactoryResult(configuration: config, presenter: cardFieldPresenter)

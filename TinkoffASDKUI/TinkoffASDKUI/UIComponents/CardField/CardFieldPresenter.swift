@@ -76,8 +76,8 @@ final class CardFieldPresenter: ICardFieldPresenter {
     func didFillCardNumber(text: String, filled: Bool) {
         cardNumber = text
         validate()
-        let textFieldConfig = config?.cardNumberTextFieldConfig.textField
 
+        let textFieldConfig = config?.cardNumberTextFieldConfig.textField
         (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
             .didChangeText(hasText: !text.isEmpty)
 
@@ -102,12 +102,22 @@ final class CardFieldPresenter: ICardFieldPresenter {
     func didFillExpiration(text: String, filled: Bool) {
         expiration = text
         validate()
+
+        let textFieldConfig = config?.expirationTextFieldConfig.textField
+        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
+            .didChangeText(hasText: !text.isEmpty)
+
         if filled { getCardFieldView()?.activateCvcField() }
     }
 
     func didFillCvc(text: String, filled: Bool) {
         cvc = text
         validate()
+
+        let textFieldConfig = config?.cvcTextFieldConfig.textField
+        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
+            .didChangeText(hasText: !text.isEmpty)
+
         if filled { getCardFieldView()?.deactivate() }
     }
 

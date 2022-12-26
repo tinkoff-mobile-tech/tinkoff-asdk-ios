@@ -26,16 +26,14 @@ protocol ICardListAssembly {
     ///
     /// Доступные операции: добавление, удаление
     func cardsPresentingModule(
-        cardListProvider: CardListDataProvider,
-        configuration: AcquiringViewConfiguration
+        cardListProvider: CardListDataProvider
     ) -> (view: CardListViewController, module: ICardListModule)
 
     /// Отображение списка карт, вызываемого с платежной формы
     ///
     /// Доступные операции: добавление, удаление, выбор карты
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
-        configuration: AcquiringViewConfiguration
+        cardListProvider: CardListDataProvider
     ) -> (view: CardListViewController, module: ICardListModule)
 }
 
@@ -44,24 +42,20 @@ final class CardListAssembly: ICardListAssembly {
     // MARK: ICardListAssembly
 
     func cardsPresentingModule(
-        cardListProvider: CardListDataProvider,
-        configuration: AcquiringViewConfiguration
+        cardListProvider: CardListDataProvider
     ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
-            style: .presenting(),
-            configuration: configuration
+            style: .presenting()
         )
     }
 
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
-        configuration: AcquiringViewConfiguration
+        cardListProvider: CardListDataProvider
     ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
-            style: .selection(),
-            configuration: configuration
+            style: .selection()
         )
     }
 
@@ -69,8 +63,7 @@ final class CardListAssembly: ICardListAssembly {
 
     private func buildModule(
         provider: IPaymentCardsProvider,
-        style: CardListView.Style,
-        configuration: AcquiringViewConfiguration
+        style: CardListView.Style
     ) -> (view: CardListViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
             imageResolver: PaymentSystemImageResolver(),

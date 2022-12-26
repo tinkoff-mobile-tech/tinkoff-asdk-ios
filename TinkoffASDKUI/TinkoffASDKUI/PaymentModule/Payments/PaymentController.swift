@@ -224,7 +224,7 @@ private extension PaymentController {
     }
 
     func presentThreeDSViewController(urlRequest: URLRequest, completion: (() -> Void)? = nil) {
-        dismissThreeDSViewControllerIfNeeded {
+        dismissThreeDSViewControllerIfNeeded { [unowned self] in
             let threeDSViewController = ThreeDSViewController<GetPaymentStatePayload>(
                 urlRequest: urlRequest,
                 handler: self.threeDSHandler,

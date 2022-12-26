@@ -19,6 +19,10 @@
 * [MIC-6843] Card List Screen Redesign - Cards Removal
 * [MIC-6837] Card List Screen Redesign - Integration
 * [MIC-6841] Card List Screen Redesign - Tests
+* [MIC-6833] Add New Card Screen Redisign - General Redisign
+* [MIC-6834] Add New Card Screen Redisign - Card List Integration
+* [MIC-6835] Add New Card Screen Redisign - Present Add Card Only Integration
+* [MIC-6836] Add New Card Screen Redisign - Sample add shortcut button for presenting Add Card
 
 ### Fixed
 

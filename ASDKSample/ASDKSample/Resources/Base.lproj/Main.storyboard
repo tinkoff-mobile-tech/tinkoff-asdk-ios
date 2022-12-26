@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21223" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xIG-Ic-7Of">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xIG-Ic-7Of">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21204"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -149,6 +149,7 @@
                             <outlet property="delegate" destination="Rca-Mn-CYf" id="115-jQ-qOt"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="Bu1-Ra-SbR">
                         <leftBarButtonItems>
                             <barButtonItem title="🛒" id="Jbf-p3-Grt">
@@ -159,6 +160,11 @@
                             <barButtonItem title="💳" id="dv3-jX-hAG">
                                 <connections>
                                     <action selector="openCardList:" destination="Rca-Mn-CYf" id="Fdd-Hw-mnc"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="➕" style="plain" id="9xq-F6-Rsv" userLabel="Button Add Card">
+                                <connections>
+                                    <action selector="openAddCard:" destination="Rca-Mn-CYf" id="yHl-g0-jSs"/>
                                 </connections>
                             </barButtonItem>
                         </leftBarButtonItems>
@@ -175,6 +181,7 @@
                             </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="buttonAbount" destination="5mO-uF-WBB" id="3VQ-ZL-blO"/>
                         <outlet property="buttonCart" destination="Jbf-p3-Grt" id="VL1-fK-W4e"/>
@@ -189,7 +196,6 @@
         <!--Buy Products View Controller-->
         <scene sceneID="c1o-YL-YuY">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="0qd-3n-aJk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="BuyProductsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0sO-m4-wR3" customClass="BuyProductsViewController" customModule="ASDKSample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="NSH-NB-qPP">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -222,6 +228,7 @@
                         <outlet property="tableView" destination="0P1-si-cRv" id="Udo-LS-eNc"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0qd-3n-aJk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1798.5507246376812" y="293.97321428571428"/>
         </scene>

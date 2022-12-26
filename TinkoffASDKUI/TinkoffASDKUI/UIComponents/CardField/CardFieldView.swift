@@ -207,7 +207,6 @@ extension CardFieldView: ConfigurableItem {
     func configure(with config: Config?) {
         prepareForReuse()
         guard let config = config else { return }
-        apply(data: config.data)
         apply(style: config.style)
 
         config.dynamicCardIcon.updater = self
@@ -219,8 +218,6 @@ extension CardFieldView: ConfigurableItem {
     }
 
     // MARK: - Private
-
-    private func apply(data: Data) {}
 
     private func apply(style: Style) {
         cardNumberView.layer.cornerRadius = style.card.cornerRadius
