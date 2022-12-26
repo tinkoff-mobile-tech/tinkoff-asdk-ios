@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [MIC-7301] AuthChallengeService injection ability for URLSessionSession and WKWebView
+
 ## [2.13.1] - 2022-12-13Z
 
 ### Fixed
