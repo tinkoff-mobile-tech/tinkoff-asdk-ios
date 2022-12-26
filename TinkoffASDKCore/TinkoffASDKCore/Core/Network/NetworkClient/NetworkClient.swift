@@ -25,6 +25,12 @@ protocol INetworkClient: AnyObject {
         _ request: NetworkRequest,
         completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
     ) -> Cancellable
+
+    @discardableResult
+    func performRequest(
+        _ urlRequest: URLRequest,
+        completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
+    ) -> Cancellable
 }
 
 final class NetworkClient: INetworkClient {
@@ -62,18 +68,15 @@ final class NetworkClient: INetworkClient {
             return EmptyCancellable()
         }
 
-        let networkTask = createNetworkTask(with: urlRequest, completion: completion)
-        networkTask.resume()
-        return networkTask
+        return performRequest(urlRequest, completion: completion)
     }
 
-    // MARK: NetworkTask Creation
-
-    private func createNetworkTask(
-        with urlRequest: URLRequest,
+    @discardableResult
+    func performRequest(
+        _ urlRequest: URLRequest,
         completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
-    ) -> INetworkDataTask {
-        session.dataTask(with: urlRequest) { [statusCodeValidator] data, response, error in
+    ) -> Cancellable {
+        let networkTask = session.dataTask(with: urlRequest) { [statusCodeValidator] data, response, error in
             let result: Result<NetworkResponse, NetworkError>
             defer { completion(result) }
 
@@ -105,5 +108,8 @@ final class NetworkClient: INetworkClient {
 
             result = .success(networkResponse)
         }
+
+        networkTask.resume()
+        return networkTask
     }
 }

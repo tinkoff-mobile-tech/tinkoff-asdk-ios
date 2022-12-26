@@ -41,6 +41,7 @@ public extension AcquiringSdk {
         let deviceInfoProvider = DeviceInfoProvider()
         let acquiringDecoder = AcquiringDecoder()
         let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
+        let urlDataLoader = URLDataLoader(networkClient: networkClient)
 
         let acquiringClient = AcquiringAPIClient.build(
             terminalKeyProvider: terminalKeyProvider,
@@ -71,7 +72,8 @@ public extension AcquiringSdk {
             externalRequests: externalRequests,
             ipAddressProvider: ipAddressProvider,
             threeDSFacade: threeDSFacade,
-            languageProvider: languageProvider
+            languageProvider: languageProvider,
+            urlDataLoader: urlDataLoader
         )
     }
 }
