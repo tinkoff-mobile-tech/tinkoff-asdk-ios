@@ -21,6 +21,8 @@ import UIKit
 
 final class PaymentCardRemovableView: UIView {
 
+    typealias Cell = CollectionCell<PaymentCardRemovableView>
+
     override var intrinsicContentSize: CGSize { frame.size }
 
     // MARK: Action Handlers
@@ -191,10 +193,5 @@ private extension CGFloat {
 }
 
 extension PaymentCardRemovableView {
-
-    struct Constants {
-        static var contentInsets: UIEdgeInsets {
-            UIEdgeInsets(vertical: 8, horizontal: 16)
-        }
-    }
+    static var contentInsets: UIEdgeInsets { UIEdgeInsets(vertical: 8, horizontal: 16) }
 }

@@ -83,6 +83,7 @@ extension CardFieldPresenterTests {
 
         let presenter = CardFieldPresenter(
             view: viewMock,
+            listenerStorage: [],
             config: assembleConfig(),
             validator: validatorMock,
             paymentSystemResolver: paymentSystemResolverMock,

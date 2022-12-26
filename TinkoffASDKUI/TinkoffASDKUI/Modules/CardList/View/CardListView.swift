@@ -19,22 +19,15 @@
 
 import UIKit
 
-enum CardListSection: Int, CaseIterable {
-    case cards
-    case addCard
+enum CardListSection {
+    case cards(data: [CardList.Card])
+    case addCard(data: [(icon: ImageAsset, title: String)])
 }
 
 protocol CardListViewDelegate: AnyObject {
     func cardListView(_ view: CardListView, didTapDeleteOn card: CardList.Card)
-    func cardListViewDidTapPrimaryButton(_ view: CardListView)
-
-    // collection data source
-    func getNumberOfSections() -> Int
-    func getNumberOfItems(forSection: Int) -> Int
-    func getCellModel<Model>(section: CardListSection, itemIndex: Int) -> Model?
-
     // collection delegate
-    func didSelectCell(section: CardListSection, indexItem: Int)
+    func didSelectCell(at: IndexPath)
 }
 
 final class CardListView: UIView {
@@ -45,10 +38,6 @@ final class CardListView: UIView {
         let listItemsAreSelectable: Bool
         let backgroundColor: UIColor
     }
-
-    // MARK: Private Types
-
-    private typealias CardCell = CollectionCell<PaymentCardRemovableView>
 
     // MARK: Dependencies
 
@@ -65,7 +54,7 @@ final class CardListView: UIView {
         )
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(cellClasses: CardCell.self, IconTitleView.Cell.self, UICollectionViewCell.self)
+        collectionView.register(cellClasses: PaymentCardRemovableView.Cell.self, IconTitleView.Cell.self, UICollectionViewCell.self)
         collectionView.backgroundColor = style.backgroundColor
         collectionView.allowsSelection = style.listItemsAreSelectable
         return collectionView
@@ -84,12 +73,11 @@ final class CardListView: UIView {
 
     // MARK: State
 
-    private var cards: [CardList.Card] = []
-    private var addCardButtonModel: Any?
+    private var sections: [CardListSection] = []
 
     // MARK: Init
 
-    init(style: Style, delegate: CardListViewDelegate? = nil, stubBuilder: IStubViewBuilder) {
+    init(style: Style, stubBuilder: IStubViewBuilder, delegate: CardListViewDelegate? = nil) {
         self.style = style
         self.delegate = delegate
         self.stubBuilder = stubBuilder
@@ -104,17 +92,13 @@ final class CardListView: UIView {
 
     // MARK: View Updating
 
-    func reload(cards: [CardList.Card]) {
-        self.cards = cards
+    func reload(sections: [CardListSection]) {
+        self.sections = sections
         collectionView.reloadData()
     }
 
-    func remove(card: CardList.Card) {
-        guard let removingIndex = cards.firstIndex(where: { $0.id == card.id }) else {
-            return
-        }
-        cards.remove(at: removingIndex)
-        collectionView.deleteItems(at: [IndexPath(item: removingIndex, section: .zero)])
+    func deleteItems(at indexes: [IndexPath]) {
+        collectionView.deleteItems(at: indexes)
     }
 
     func disableUserInteraction() {
@@ -130,7 +114,7 @@ final class CardListView: UIView {
     func enableUserInteraction() {
         UIView.addPopingAnimation(animations: {
             self.blockingView.alpha = 0
-        }, completion: { [weak self] in
+        }, completion: { [weak self] _ in
             self?.blockingView.removeFromSuperview()
         })
     }
@@ -165,16 +149,12 @@ final class CardListView: UIView {
                     animations: {
                         subview.alpha = .zero
                     },
-                    completion: {
+                    completion: { _ in
                         subview.removeFromSuperview()
                     }
                 )
             }
         }
-    }
-
-    func addCard() {
-        primaryButtonTapped()
     }
 
     // MARK: Initial Configuration
@@ -204,12 +184,6 @@ final class CardListView: UIView {
 
         blockingView.backgroundColor = style.backgroundColor
     }
-
-    // MARK: Actions
-
-    @objc private func primaryButtonTapped() {
-        delegate?.cardListViewDidTapPrimaryButton(self)
-    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -217,72 +191,75 @@ final class CardListView: UIView {
 extension CardListView: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return delegate?.getNumberOfSections() ?? .zero
+        return sections.count
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return delegate?.getNumberOfItems(forSection: section) ?? .zero
+        let section = sections[section]
+        switch section {
+        case let .cards(configs):
+            return configs.count
+        case let .addCard(configs):
+            return configs.count
+        }
+
+        return .zero
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        assert(CardListSection.allCases.map(\.rawValue).contains(indexPath.section))
-        let defaultCell = collectionView.dequeue(UICollectionViewCell.self, for: indexPath)
-
-        guard let delegate = delegate
-        else { return defaultCell }
-
-        guard let section = CardListSection(rawValue: indexPath.section)
-        else { return defaultCell }
-
-        let itemIndex = indexPath.row
+        let section = sections[indexPath.section]
 
         switch section {
-        case .cards:
-            let cardModel: CardList.Card? = delegate.getCellModel(section: section, itemIndex: itemIndex)
-            return prepareCardCell(cardModel: cardModel!, indexPath: indexPath)
-        case .addCard:
-            let addCardModel: IconTitleView.Configuration? = delegate.getCellModel(section: section, itemIndex: itemIndex)
+        case let .cards(data):
+            let model = data[indexPath.item]
+            let accesoryItem: PaymentCardRemovableView.AccessoryItem = model.isInEditingMode
+                ? .removeButton(onRemove: { [weak self] in
+                    guard let self = self else { return }
+                    self.delegate?.cardListView(self, didTapDeleteOn: model)
+                })
+                : .none
+
+            let configuration = PaymentCardRemovableView.Cell.Configuration(
+                content: .plain(text: model.assembledText, style: .bodyL()),
+                card: model.cardModel,
+                accessoryItem: accesoryItem,
+                insets: PaymentCardRemovableView.contentInsets
+            )
+
+            let cell = collectionView
+                .dequeue(PaymentCardRemovableView.Cell.self, for: indexPath)
+            cell.shouldHighlight = false
+
+            cell.customAutolayoutForContent = {
+                $0.makeConstraints { view in
+                    view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
+                }
+            }
+            cell.update(with: configuration)
+            return cell
+
+        case let .addCard(data):
+            let model = data[indexPath.item]
             let cell = collectionView.dequeue(IconTitleView.Cell.self, for: indexPath)
             cell.customAutolayoutForContent = {
                 $0.makeConstraints { view in
                     view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
                 }
             }
-            cell.update(with: addCardModel!)
+            let config = IconTitleView.Configuration.buildAddCardButton(
+                icon: model.icon.image,
+                text: model.title
+            )
+
+            cell.update(with: config)
             return cell
         }
-    }
-
-    private func prepareCardCell(cardModel: CardList.Card, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeue(CardCell.self, for: indexPath)
-
-        let accesoryItem: PaymentCardRemovableView.AccessoryItem = cardModel.isInEditingMode
-            ? .removeButton(onRemove: { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.cardListView(self, didTapDeleteOn: cardModel)
-            })
-            : .none
-
-        let configuration = CardCell.Configuration(
-            content: .plain(text: cardModel.assembledText, style: .bodyL()),
-            card: cardModel.cardModel,
-            accessoryItem: accesoryItem,
-            insets: PaymentCardRemovableView.Constants.contentInsets
-        )
-
-        cell.customAutolayoutForContent = {
-            $0.makeConstraints { view in
-                view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
-            }
-        }
-        cell.update(with: configuration)
-        return cell
     }
 }
 
@@ -314,24 +291,11 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
         .zero
     }
 
-    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        guard let section = CardListSection(rawValue: indexPath.section)
-        else { return false }
-        switch section {
-        case .cards:
-            self.collectionView(collectionView, didSelectItemAt: indexPath)
-            return false
-        case .addCard:
-            return true
-        }
-    }
-
     func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        guard let section = CardListSection(rawValue: indexPath.section) else { return }
-        delegate?.didSelectCell(section: section, indexItem: indexPath.row)
+        delegate?.didSelectCell(at: indexPath)
     }
 }
 

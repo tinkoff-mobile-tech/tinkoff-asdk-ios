@@ -10,9 +10,26 @@ import UIKit
 protocol ICardFieldMaskingFactory {
     typealias DidFillMask = (_ value: String, _ completed: Bool) -> Void
 
-    func buildForCardNumber(didFillMask: DidFillMask?) -> MaskedTextFieldDelegate
-    func buildForExpiration(didFillMask: DidFillMask?) -> MaskedTextFieldDelegate
-    func buildForCvc(didFillMask: DidFillMask?) -> MaskedTextFieldDelegate
+    /// Готовит делегат текстфилда для поля - номер карты
+    /// - Parameters:
+    ///   - didFillMask: Событие редактирования поля
+    ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
+    /// - Returns: Делегат маскированного текст филда
+    func buildForCardNumber(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
+
+    /// Готовит делегат текстфилда для поля - срок
+    /// - Parameters:
+    ///   - didFillMask: Событие редактирования поля
+    ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
+    /// - Returns: Делегат маскированного текст филда
+    func buildForExpiration(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
+
+    /// Готовит делегат текстфилда для поля - cvc
+    /// - Parameters:
+    ///   - didFillMask: Событие редактирования поля
+    ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
+    /// - Returns: Делегат маскированного текст филда
+    func buildForCvc(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
 }
 
 final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
@@ -20,15 +37,11 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
     private let inputMaskResolver: ICardRequisitesMasksResolver
     private let paymentSystemResolver: IPaymentSystemResolver
 
-    private var listenerStorage: [NSObject] = []
-
     // MARK: - Inits
 
     init() {
-        let paymentSystemResolver = PaymentSystemResolver()
-        inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver
-        )
-        self.paymentSystemResolver = paymentSystemResolver
+        paymentSystemResolver = PaymentSystemResolver()
+        inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
     }
 
     init(
@@ -41,15 +54,14 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
 
     // MARK: - ICardFieldMaskingFactory
 
-    func buildForCardNumber(didFillMask: DidFillMask?) -> MaskedTextFieldDelegate {
+    func buildForCardNumber(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
         let listener = CardNumberListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.panMask(for: nil))
         listenerStorage.append(listener)
         delegate.listener = listener
-        listener.didFill = { [weak self] text, completed, textField in
-            guard let self = self else { return }
+        listener.didFill = { [inputMaskResolver] text, completed, textField in
             let updated = delegate.update(
-                maskFormat: self.inputMaskResolver.panMask(for: text),
+                maskFormat: inputMaskResolver.panMask(for: text),
                 using: textField
             )
 
@@ -62,7 +74,7 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
         return delegate
     }
 
-    func buildForExpiration(didFillMask: DidFillMask?) -> MaskedTextFieldDelegate {
+    func buildForExpiration(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
         let listener = ExpirationListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.validThruMask)
         listenerStorage.append(listener)
@@ -71,7 +83,7 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
         return delegate
     }
 
-    func buildForCvc(didFillMask: DidFillMask?) -> MaskedTextFieldDelegate {
+    func buildForCvc(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
         let listener = CvcListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.cvcMask)
         listenerStorage.append(listener)

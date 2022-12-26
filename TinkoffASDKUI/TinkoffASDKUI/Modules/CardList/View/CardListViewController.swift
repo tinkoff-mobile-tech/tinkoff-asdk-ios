@@ -21,21 +21,20 @@ import TinkoffASDKCore
 import UIKit
 
 protocol ICardListViewInput: AnyObject {
-    func reload(cards: [CardList.Card])
-    func remove(card: CardList.Card)
-    func show(alert: CardList.Alert)
+    func reload(sections: [CardListSection])
+    func deleteItems(at: [IndexPath])
     func disableViewUserInteraction()
     func enableViewUserInteraction()
     func showShimmer()
-    func hideShimmer()
-    func showStub(mode: StubMode)
+    func hideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
     func hideStub()
-    func addCard()
+    func showNoCardsStub()
+    func showNoNetworkStub()
+    func showServerErrorStub()
     func dismiss()
     func showDoneEditingButton()
     func showEditButton()
     func showNativeAlert(title: String?, message: String?, buttonTitle: String?)
-    func dismissAlert()
     func showLoadingSnackbar(text: String?)
     func hideLoadingSnackbar()
     func showAddedCardSnackbar(cardMaskedPan: String)
@@ -46,29 +45,31 @@ final class CardListViewController: UIViewController {
     // MARK: Dependencies
 
     private let presenter: ICardListViewOutput
-    private weak var externalAlertsFactory: AcquiringAlertViewProtocol?
+
+    private let style: CardListView.Style
+    private let stubBuilder: IStubViewBuilder
 
     // MARK: Views
 
-    private let cardListView: CardListView
+    private lazy var cardListView = CardListView(style: style, stubBuilder: stubBuilder)
 
     // MARK: State
 
     private var snackBarViewController: SnackbarViewController?
+
+    private var sections: [CardListSection] = []
 
     // MARK: Init
 
     init(
         style: CardListView.Style,
         presenter: ICardListViewOutput,
-        externalAlertsFactory: AcquiringAlertViewProtocol?,
         stubBuilder: IStubViewBuilder
     ) {
         self.presenter = presenter
-        self.externalAlertsFactory = externalAlertsFactory
-        cardListView = CardListView(style: style, stubBuilder: stubBuilder)
+        self.stubBuilder = stubBuilder
+        self.style = style
         super.init(nibName: nil, bundle: nil)
-        cardListView.delegate = self
     }
 
     @available(*, unavailable)
@@ -80,6 +81,7 @@ final class CardListViewController: UIViewController {
 
     override func loadView() {
         view = cardListView
+        cardListView.delegate = self
     }
 
     override func viewDidLoad() {
@@ -141,25 +143,14 @@ final class CardListViewController: UIViewController {
 // MARK: - ICardListViewController
 
 extension CardListViewController: ICardListViewInput {
-    func reload(cards: [CardList.Card]) {
-        cardListView.reload(cards: cards)
+
+    func reload(sections: [CardListSection]) {
+        self.sections = sections
+        cardListView.reload(sections: sections)
     }
 
-    func remove(card: CardList.Card) {
-        cardListView.remove(card: card)
-    }
-
-    func show(alert: CardList.Alert) {
-        if let alertView = externalAlertsFactory?.presentAlertView(
-            alert.title,
-            message: alert.message,
-            dismissCompletion: nil
-        ) {
-            present(alertView, animated: true)
-        } else {
-            let alertView = AcquiringAlertViewController.create()
-            alertView.present(on: self, title: alert.title, icon: alert.icon)
-        }
+    func deleteItems(at array: [IndexPath]) {
+        cardListView.deleteItems(at: array)
     }
 
     func disableViewUserInteraction() {
@@ -174,25 +165,35 @@ extension CardListViewController: ICardListViewInput {
         cardListView.startShimmer(showing: true, completion: {})
     }
 
-    func hideShimmer() {
+    func hideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
         cardListView.startShimmer(
             showing: false,
             completion: { [weak presenter] in
-                presenter?.viewDidHideShimmer()
+                presenter?.viewDidHideShimmer(fetchCardsResult: fetchCardsResult)
             }
         )
-    }
-
-    func showStub(mode: StubMode) {
-        cardListView.showStub(mode: mode)
     }
 
     func hideStub() {
         cardListView.hideStub()
     }
 
-    func addCard() {
-        cardListView.addCard()
+    func showNoCardsStub() {
+        cardListView.showStub(mode: .noCards { [weak presenter] in
+            presenter?.viewDidTapEditButton()
+        })
+    }
+
+    func showNoNetworkStub() {
+        cardListView.showStub(mode: .noNetwork { [weak presenter] in
+            presenter?.viewDidTapNoNetworkStubButton()
+        })
+    }
+
+    func showServerErrorStub() {
+        cardListView.showStub(mode: .serverError { [weak presenter] in
+            presenter?.viewDidTapServerErrorStubButton()
+        })
     }
 
     func dismiss() {
@@ -215,17 +216,10 @@ extension CardListViewController: ICardListViewInput {
         let alert = UIAlertController.okAlert(
             title: title,
             message: message,
-            buttonTitle: buttonTitle,
-            onTap: { [weak presenter] in
-                presenter?.viewNativeAlertDidTapButton()
-            }
+            buttonTitle: buttonTitle
         )
 
         present(alert, animated: true)
-    }
-
-    func dismissAlert() {
-        presentedViewController?.dismiss(animated: true)
     }
 
     func showLoadingSnackbar(text: String?) {
@@ -278,10 +272,10 @@ extension CardListViewController: ICardListViewInput {
 
 extension CardListViewController: CardListViewDelegate {
 
-    func didSelectCell(section: CardListSection, indexItem: Int) {
-        switch section {
+    func didSelectCell(at indexPath: IndexPath) {
+        switch sections[indexPath.section] {
         case .cards:
-            presenter.viewDidTapCard(cardIndex: indexItem)
+            presenter.viewDidTapCard(cardIndex: indexPath.item)
         case .addCard:
             presenter.viewDidTapAddCardCell()
         }
@@ -289,24 +283,6 @@ extension CardListViewController: CardListViewDelegate {
 
     func cardListView(_ view: CardListView, didTapDeleteOn card: CardList.Card) {
         presenter.view(didTapDeleteOn: card)
-    }
-
-    func cardListViewDidTapPrimaryButton(_ view: CardListView) {
-        presenter.viewDidTapPrimaryButton()
-    }
-
-    func getNumberOfSections() -> Int {
-        presenter.viewNumberOfSections()
-    }
-
-    func getNumberOfItems(forSection: Int) -> Int {
-        assert(CardListSection(rawValue: forSection) != nil)
-        guard let section = CardListSection(rawValue: forSection) else { return .zero }
-        return presenter.viewNumberOfItems(forSection: section)
-    }
-
-    func getCellModel<Model>(section: CardListSection, itemIndex: Int) -> Model? {
-        presenter.viewCellModel(section: section, itemIndex: itemIndex)
     }
 }
 

@@ -13,10 +13,32 @@ import Foundation
 final class MockCardListViewInput: ICardListViewInput {
 
     var reloadCallCounter = 0
-    var reloadStub: ([CardList.Card]) -> Void = { _ in }
-    func reload(cards: [CardList.Card]) {
+    var reloadStub: ([CardListSection]) -> Void = { _ in }
+    func reload(sections: [CardListSection]) {
         reloadCallCounter += 1
-        reloadStub(cards)
+        reloadStub(sections)
+    }
+
+    var deleteItemsCallCounter = 0
+    var deleteItemsStub: ([IndexPath]) -> Void = { _ in }
+    func deleteItems(at: [IndexPath]) {
+        deleteItemsCallCounter += 1
+        deleteItemsStub(at)
+    }
+
+    var showNoCardsStubCallCounter = 0
+    func showNoCardsStub() {
+        showNoCardsStubCallCounter += 1
+    }
+
+    var showNoNetworkStubCallCounter = 0
+    func showNoNetworkStub() {
+        showNoNetworkStubCallCounter += 1
+    }
+
+    var showServerErrorStubCallCounter = 0
+    func showServerErrorStub() {
+        showServerErrorStubCallCounter += 1
     }
 
     var removeCallCounter = 0
@@ -60,11 +82,6 @@ final class MockCardListViewInput: ICardListViewInput {
         hideStubCallCounter += 1
     }
 
-    var addCardCallCounter = 0
-    func addCard() {
-        addCardCallCounter += 1
-    }
-
     var dismissCallCounter = 0
     func dismiss() {
         dismissCallCounter += 1
@@ -87,11 +104,6 @@ final class MockCardListViewInput: ICardListViewInput {
         showNativeAlertStub(title, message, buttonTitle)
     }
 
-    var dismissAlertCallCounter = 0
-    func dismissAlert() {
-        dismissAlertCallCounter += 1
-    }
-
     var showLoadingSnackbarCallCounter = 0
     var showLoadingSnackbarStub: (String?) -> Void = { _ in }
     func showLoadingSnackbar(text: String?) {
@@ -105,8 +117,10 @@ final class MockCardListViewInput: ICardListViewInput {
     }
 
     var hideShimmerCallCounter = 0
-    func hideShimmer() {
+    var hideShimmerStub: (Result<[PaymentCard], Error>) -> Void = { _ in }
+    func hideShimmer(fetchCardsResult: Result<[TinkoffASDKCore.PaymentCard], Error>) {
         hideShimmerCallCounter += 1
+        hideShimmerStub(fetchCardsResult)
     }
 
     var showAddedCardSnackbarCallCounter = 0

@@ -19,7 +19,7 @@ final class BaseStubViewBuilder: IStubViewBuilder {
 
     func buildStubView(input: InputData) -> StubView {
         let config = buildConfig(inputData: input)
-        let infoView = StubView(layoutProvider: StubView.LayoutProvider())
+        let infoView = StubView(layout: StubView.Layout())
         infoView.configure(with: config)
         infoView.getContentHeight()
         return infoView

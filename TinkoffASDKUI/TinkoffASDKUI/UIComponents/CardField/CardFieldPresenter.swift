@@ -51,15 +51,19 @@ final class CardFieldPresenter: ICardFieldPresenter {
     private let paymentSystemResolver: IPaymentSystemResolver
     private let bankResolver: IBankResolver
 
+    // Хранит listener-ы для masked text field delegate
+    private var listenerStorage: [NSObject]
+
     init(
         getCardFieldView: @escaping () -> ICardFieldView?,
+        listenerStorage: [NSObject],
         config: CardFieldView.Config? = nil,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver()
-
     ) {
         self.getCardFieldView = getCardFieldView
+        self.listenerStorage = listenerStorage
         self.config = config
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver

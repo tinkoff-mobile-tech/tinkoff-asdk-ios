@@ -23,22 +23,15 @@ import UIKit
 protocol ICardListViewOutput: AnyObject {
     func viewDidLoad()
     func view(didTapDeleteOn card: CardList.Card)
-    func viewDidTapPrimaryButton()
     func viewDidTapEditButton()
     func viewDidTapDoneEditingButton()
-    func viewNativeAlertDidTapButton()
     func viewDidHideLoadingSnackbar()
     func viewDidTapCard(cardIndex: Int)
     func viewDidTapAddCardCell()
-    func viewDidHideShimmer()
-
-    // collection data source
-
-    func viewNumberOfSections() -> Int
-    func viewNumberOfItems(forSection: CardListSection) -> Int
-    func viewCellModel<Model>(section: CardListSection, itemIndex: Int) -> Model?
-
-    func viewNeedsAddNewCardOutput() -> IAddNewCardOutput
+    func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
+    func viewDidTapNoCardsStubButton()
+    func viewDidTapNoNetworkStubButton()
+    func viewDidTapServerErrorStubButton()
 }
 
 protocol ICardListModule: AnyObject {
@@ -75,6 +68,7 @@ final class CardListPresenter: ICardListModule {
     private var screenState = CardListScreenState.initial
     private var fetchActiveCardsResult: Result<[PaymentCard], Error>?
     private var deactivateCardResult: (() -> Result<Void, Error>)?
+    private var sections: [CardListSection] { getSections() }
 
     // MARK: Init
 
@@ -137,9 +131,20 @@ extension CardListPresenter: ICardListViewOutput {
         onAddNewCardTap?()
     }
 
-    func viewDidHideShimmer() {
-        guard let result = fetchActiveCardsResult else { return }
-        handleFetchedActiveCard(result: result)
+    func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
+        handleFetchedActiveCard(result: fetchCardsResult)
+    }
+
+    func viewDidTapNoCardsStubButton() {
+        onAddNewCardTap?()
+    }
+
+    func viewDidTapNoNetworkStubButton() {
+        viewDidLoad()
+    }
+
+    func viewDidTapServerErrorStubButton() {
+        view?.dismiss()
     }
 
     func view(didTapDeleteOn card: CardList.Card) {
@@ -157,26 +162,18 @@ extension CardListPresenter: ICardListViewOutput {
         }
     }
 
-    func viewDidTapPrimaryButton() {
-        onAddNewCardTap?()
-    }
-
     func viewDidTapEditButton() {
         guard screenState == .showingCards, !isLoading else { return }
         screenState = .editingCards
         view?.showDoneEditingButton()
-        showCards(cards: activeCardsCache)
+        reloadCardsSection()
     }
 
     func viewDidTapDoneEditingButton() {
         guard !isLoading else { return }
         screenState = .showingCards
         view?.showEditButton()
-        showCards(cards: activeCardsCache)
-    }
-
-    func viewNativeAlertDidTapButton() {
-        view?.dismissAlert()
+        reloadCardsSection()
     }
 
     func viewDidHideLoadingSnackbar() {
@@ -195,91 +192,18 @@ extension CardListPresenter: ICardListViewOutput {
 
         view?.enableViewUserInteraction()
     }
-
-    // collection data source
-
-    func viewNumberOfSections() -> Int {
-        switch screenState {
-        case .showingCards:
-            return CardListSection.allCases.count
-        case .editingCards:
-            return CardListSection.allCases.count - 1
-        default:
-            return .zero
-        }
-    }
-
-    func viewNumberOfItems(forSection: CardListSection) -> Int {
-        switch forSection {
-        case .cards:
-            return activeCardsCache.count
-        case .addCard:
-            return 1
-        }
-    }
-
-    func viewCellModel<Model>(section: CardListSection, itemIndex: Int) -> Model? {
-        switch section {
-        case .cards:
-            return transform(activeCardsCache)[itemIndex] as? Model
-
-        case .addCard:
-            let configuration = IconTitleView.Configuration.buildAddCardButton(
-                icon: Asset.Icons.addCard.image,
-                text: Loc.Acquiring.CardList.addCard
-            )
-
-            return configuration as? Model
-        }
-    }
-
-    func viewNeedsAddNewCardOutput() -> IAddNewCardOutput {
-        self
-    }
-}
-
-extension CardListPresenter: IAddNewCardOutput {
-
-    func addNewCardDidTapCloseButton() {
-        view?.closeScreen()
-    }
-
-    func addNewCardDidAddCard(paymentCard card: PaymentCard) {
-        activeCardsCache.append(card)
-        showCards(cards: activeCardsCache)
-        view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
-    }
 }
 
 extension CardListPresenter {
-
-    // MARK: - For testing only funcs
-
-    func setScreenState(_ state: CardListScreenState) {
-        screenState = state
-    }
-
-    func setActiveCardsCache(_ cards: [PaymentCard]) {
-        activeCardsCache = cards
-    }
-
-    func setFetchedActiveCardsResult(_ result: Result<[PaymentCard], Error>?) {
-        fetchActiveCardsResult = result
-    }
-
-    func setDeactivateCardResult(_ result: Result<Void, Error>) {
-        deactivateCardResult = { result }
-    }
 
     // MARK: - Private
 
     private func fetchActiveCards() {
         isLoading = true
-        provider.fetchActiveCards { result in
-            DispatchQueue.performOnMain { [weak self] in
-                self?.fetchActiveCardsResult = result
-                self?.view?.hideShimmer()
-            }
+        provider.fetchActiveCards { [weak self] result in
+            self?.isLoading = false
+            self?.fetchActiveCardsResult = result
+            self?.view?.hideShimmer(fetchCardsResult: result)
         }
     }
 
@@ -291,13 +215,13 @@ extension CardListPresenter {
             activeCardsCache = paymentCards
             if paymentCards.isEmpty {
                 viewDidTapDoneEditingButton()
-                showCards(cards: [])
+                reloadCardsSection()
                 showNoCardsStub()
             } else {
                 if screenState != .editingCards {
                     screenState = .showingCards
                 }
-                showCards(cards: activeCardsCache)
+                reloadCardsSection()
             }
 
         case let .failure(error):
@@ -310,45 +234,27 @@ extension CardListPresenter {
         }
     }
 
-    private func showStub(mode: StubMode) {
+    private func showServerErrorStub() {
         screenState = .showingStub
         view?.hideStub()
-        view?.showStub(mode: mode)
-    }
-
-    private func showServerErrorStub() {
-        let mode = StubMode.serverError { [weak self] in self?.didTapServerErrorStubButton() }
-        showStub(mode: mode)
+        view?.showServerErrorStub()
     }
 
     private func showNoNetworkStub() {
-        let mode = StubMode.noNetwork { [weak self] in self?.didTapNoNetworkStubButton() }
-        showStub(mode: mode)
+        screenState = .showingStub
+        view?.hideStub()
+        view?.showNoNetworkStub()
     }
 
     private func showNoCardsStub() {
-        let mode = StubMode.noCards { [weak self] in self?.didTapNoCardsStubButton() }
-        showStub(mode: mode)
-    }
-
-    private func didTapServerErrorStubButton() {
-        view?.dismiss()
-    }
-
-    private func didTapNoCardsStubButton() {
-        view?.addCard()
-    }
-
-    private func didTapNoNetworkStubButton() {
+        screenState = .showingStub
         view?.hideStub()
-        viewDidLoad()
+        view?.showNoCardsStub()
     }
 
-    private func showCards(
-        cards: [PaymentCard]
-    ) {
+    private func reloadCardsSection() {
         view?.hideStub()
-        view?.reload(cards: transform(cards))
+        view?.reload(sections: sections)
     }
 
     private func showRemoveCardErrorAlert() {
@@ -357,6 +263,23 @@ extension CardListPresenter {
             message: nil,
             buttonTitle: Loc.CommonAlert.button
         )
+    }
+
+    private func getSections() -> [CardListSection] {
+        var result: [CardListSection] = [
+            .cards(data: transform(activeCardsCache)),
+        ]
+
+        if screenState != .editingCards {
+            result.append(.addCard(data: prepareAddCardConfigs()))
+        }
+        return result
+    }
+
+    private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
+        return [
+            (icon: Asset.Icons.addCard, title: Loc.Acquiring.CardList.addCard),
+        ]
     }
 }
 
