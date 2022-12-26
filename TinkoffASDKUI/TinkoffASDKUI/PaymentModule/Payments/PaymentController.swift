@@ -102,6 +102,7 @@ public final class PaymentController {
     private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
     // App based threeDS
     private let tdsController: TDSController
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -124,6 +125,7 @@ public final class PaymentController {
         threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
         threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
         tdsController: TDSController,
+        webViewAuthChallengeService: IWebViewAuthChallengeService,
         acquiringUISDK: AcquiringUISDK /* temporary*/
     ) {
         self.acquiringSDK = acquiringSDK
@@ -131,6 +133,7 @@ public final class PaymentController {
         self.threeDSHandler = threeDSHandler
         self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
         self.tdsController = tdsController
+        self.webViewAuthChallengeService = webViewAuthChallengeService
         self.acquiringUISDK = acquiringUISDK
     }
 
@@ -225,7 +228,8 @@ private extension PaymentController {
         dismissThreeDSViewControllerIfNeeded {
             let threeDSViewController = ThreeDSViewController(
                 urlRequest: urlRequest,
-                handler: self.threeDSHandler
+                handler: self.threeDSHandler,
+                authChallengeService: self.webViewAuthChallengeService
             )
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
             if #available(iOS 13.0, *) {

@@ -28,7 +28,12 @@ public extension AcquiringSdk {
 
         let terminalKeyProvider = StringProvider(value: configuration.credential.terminalKey)
         let languageProvider = LanguageProvider(language: configuration.language)
-        let networkSession = NetworkSession.build(requestsTimeout: configuration.requestsTimeoutInterval)
+
+        let networkSession = NetworkSession.build(
+            requestsTimeout: configuration.requestsTimeoutInterval,
+            authChallengeService: configuration.urlSessionAuthChallengeService
+        )
+
         let networkClient = NetworkClient.build(session: networkSession)
         let externalClient = ExternalAPIClient(networkClient: networkClient)
         let externalRequests = ExternalRequestBuilder(appBasedConfigURLProvider: appBasedConfigURLProvider)
@@ -36,6 +41,7 @@ public extension AcquiringSdk {
         let deviceInfoProvider = DeviceInfoProvider()
         let acquiringDecoder = AcquiringDecoder()
         let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
+        let urlDataLoader = URLDataLoader(networkClient: networkClient)
 
         let acquiringClient = AcquiringAPIClient.build(
             terminalKeyProvider: terminalKeyProvider,
@@ -66,7 +72,8 @@ public extension AcquiringSdk {
             externalRequests: externalRequests,
             ipAddressProvider: ipAddressProvider,
             threeDSFacade: threeDSFacade,
-            languageProvider: languageProvider
+            languageProvider: languageProvider,
+            urlDataLoader: urlDataLoader
         )
     }
 }
@@ -104,12 +111,23 @@ private extension NetworkClient {
 // MARK: - NetworkSession
 
 private extension NetworkSession {
-    static func build(requestsTimeout: TimeInterval) -> NetworkSession {
+    static func build(
+        requestsTimeout: TimeInterval,
+        authChallengeService: IURLSessionAuthChallengeService?
+    ) -> NetworkSession {
         let urlSessionConfiguration = URLSessionConfiguration.default
         urlSessionConfiguration.timeoutIntervalForRequest = requestsTimeout
         urlSessionConfiguration.timeoutIntervalForResource = requestsTimeout
-        let urlSession = URLSession(configuration: urlSessionConfiguration)
-        return NetworkSession(urlSession: urlSession)
+        let authChallengeService = authChallengeService ?? DefaultURLSessionAuthChallengeService()
+        let urlSessionDelegate = URLSessionDelegateImpl(authChallengeService: authChallengeService)
+
+        let urlSession = URLSession(
+            configuration: urlSessionConfiguration,
+            delegate: urlSessionDelegate,
+            delegateQueue: nil
+        )
+
+        return NetworkSession(urlSession: urlSession, urlSessionDelegate: urlSessionDelegate)
     }
 }
 

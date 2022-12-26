@@ -22,17 +22,26 @@ import UIKit
 import WebKit
 
 final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavigationDelegate {
+    // MARK: Dependencies
+
     private let urlRequest: URLRequest
     private let handler: ThreeDSWebViewHandler<Payload>
+    private let authChallengeService: IWebViewAuthChallengeService
 
-    lazy var webView = WKWebView()
+    // MARK: Subviews
+
+    private lazy var webView = WKWebView()
+
+    // MARK: Init
 
     init(
         urlRequest: URLRequest,
-        handler: ThreeDSWebViewHandler<Payload>
+        handler: ThreeDSWebViewHandler<Payload>,
+        authChallengeService: IWebViewAuthChallengeService
     ) {
         self.urlRequest = urlRequest
         self.handler = handler
+        self.authChallengeService = authChallengeService
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -40,6 +49,8 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Life Cycle
 
     override func loadView() {
         view = webView
@@ -56,7 +67,19 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
         webView.load(urlRequest)
     }
 
-    // MARK: - WKNavigationDelegate
+    // MARK: WKNavigationDelegate
+
+    func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        authChallengeService.webView(
+            webView,
+            didReceive: challenge,
+            completionHandler: completionHandler
+        )
+    }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { value, error in
@@ -73,6 +96,8 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
             }
         }
     }
+
+    // MARK: Helpers
 
     private func setupCloseButton() {
         let cancelButton: UIBarButtonItem

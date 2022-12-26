@@ -1,6 +1,6 @@
 //
 //
-//  SBPBankResponse.swift
+//  GetSBPBanksPayload.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,10 @@
 
 import Foundation
 
-public struct SBPBankResponse: Decodable {
+@available(*, deprecated, renamed: "GetSBPBanksPayload")
+public typealias SBPBankResponse = GetSBPBanksPayload
+
+public struct GetSBPBanksPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case banks = "dictionary"
     }
