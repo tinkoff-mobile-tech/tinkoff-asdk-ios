@@ -7,6 +7,7 @@
 Для работы `TinkoffASDKYandexPay` необходимо:
 
 - Поддержка iOS 12.3 и выше
+- Подключение через Сocoapods (Swift Package Manager для данного модуля на данный момент недоступен)
 
 ## Подключение
 
@@ -43,7 +44,7 @@ pod 'TinkoffASDKYandexPay'
         <string>YandexLoginSDK</string>
         <key>CFBundleURLSchemes</key>
         <array>
-            <string>yx<Client id of you application></string>
+            <string>yx<Client id of your application></string>
         </array>
     </dict>
 </array>
@@ -140,7 +141,7 @@ func setupView(with factory: IYandexPayButtonContainerFactory) {
     
     // Привяжите кнопку к view необходимым образом и при желании задайте размеры.
     // Кнопка умеет растягиваться/сжиматься, адаптируя свой внутренний контент под заданные размеры.
-    // Без указания размеров кнопка будем иметь стандартную высоту/ширину
+    // Без указания размеров кнопка будет иметь стандартную высоту/ширину
     NSLayoutConstraint.activate([
         button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
