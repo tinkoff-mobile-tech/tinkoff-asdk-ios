@@ -25,9 +25,9 @@ final class MockPaymentControllerUIProvider: PaymentControllerUIProvider {
     // MARK: - sourceViewControllerToPresent
 
     var sourceViewControllerToPresentCallCounter = 0
-    var sourceViewControllerToPresentReturnStub: () -> UIViewController = { UIViewController() }
+    var sourceViewControllerToPresentReturnStub: () -> UIViewController? = { UIViewController() }
 
-    func sourceViewControllerToPresent() -> UIViewController {
+    func sourceViewControllerToPresent() -> UIViewController? {
         sourceViewControllerToPresentCallCounter += 1
         return sourceViewControllerToPresentReturnStub()
     }

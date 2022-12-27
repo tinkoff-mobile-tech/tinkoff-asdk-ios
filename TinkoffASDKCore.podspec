@@ -25,5 +25,6 @@ Pod::Spec.new do |spec|
   spec.test_spec 'Tests' do |test_spec|
   test_spec.source_files = 'TinkoffASDKCore/TinkoffASDKCoreTests/**/*.swift'
   test_spec.exclude_files = 'TinkoffASDKCore/TinkoffASDKCoreTests/IntegrationTests.swift', 'TinkoffASDKCore/TinkoffASDKCoreTests/FinishResponseTests.swift', 'TinkoffASDKCore/TinkoffASDKCoreTests/CoreTests.swift'
+  test_spec.resources = 'TinkoffASDKCore/TinkoffASDKCoreTests/**/*.{json}'
   end 
 end

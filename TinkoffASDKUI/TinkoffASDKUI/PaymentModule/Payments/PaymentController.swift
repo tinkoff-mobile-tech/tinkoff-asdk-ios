@@ -20,12 +20,16 @@
 import TinkoffASDKCore
 import WebKit
 
+protocol IPaymentController {
+    func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData)
+}
+
 /// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа
 public protocol PaymentControllerUIProvider: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
     func hiddenWebViewToCollect3DSData() -> WKWebView
     /// viewController для модального показа экранов, необходимость в которых может возникнуть в процессе оплаты
-    func sourceViewControllerToPresent() -> UIViewController
+    func sourceViewControllerToPresent() -> UIViewController?
 }
 
 /// Делегат событий для `PaymentController`
@@ -90,14 +94,14 @@ public extension ChargePaymentControllerDataSource {
 }
 
 /// Контроллер с помощью которого можно совершать оплату
-public final class PaymentController {
+public final class PaymentController: IPaymentController {
 
     // MARK: - Dependencies
 
     private let threeDsService: IAcquiringThreeDSService
     private let paymentFactory: IPaymentFactory
     private let threeDSHandler: IThreeDSWebViewHandler
-    private let threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider
+    private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     // App based threeDS
     private let tdsController: ITDSController
 
@@ -125,7 +129,7 @@ public final class PaymentController {
         threeDsService: IAcquiringThreeDSService,
         paymentFactory: IPaymentFactory,
         threeDSHandler: IThreeDSWebViewHandler,
-        threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
+        threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         tdsController: ITDSController,
         acquiringUISDK: AcquiringUISDK /* temporary*/,
         paymentDelegate: PaymentProcessDelegate? = nil
@@ -133,7 +137,7 @@ public final class PaymentController {
         self.threeDsService = threeDsService
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
-        self.threeDSDeviceParamsProvider = threeDSDeviceParamsProvider
+        self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.tdsController = tdsController
         self.acquiringUISDK = acquiringUISDK
         self.paymentDelegate = paymentDelegate ?? self
@@ -232,11 +236,9 @@ private extension PaymentController {
                 didHandle: self.threeDSHandlerCompletion
             )
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
-            if #available(iOS 13.0, *) {
-                navigationController.isModalInPresentation = true
-            }
+            navigationController.modalPresentationStyle = .overFullScreen
 
-            self.uiProvider?.sourceViewControllerToPresent().present(
+            self.uiProvider?.sourceViewControllerToPresent()?.present(
                 navigationController,
                 animated: true,
                 completion: completion
@@ -326,7 +328,7 @@ extension PaymentController: PaymentProcessDelegate {
     func payment(
         _ paymentProcess: PaymentProcess,
         needToCollect3DSData checking3DSURLData: Checking3DSURLData,
-        completion: @escaping (DeviceInfoParams) -> Void
+        completion: @escaping (ThreeDSDeviceInfo) -> Void
     ) {
         DispatchQueue.main.async {
             guard let webView = self.uiProvider?.hiddenWebViewToCollect3DSData(),
@@ -335,7 +337,7 @@ extension PaymentController: PaymentProcessDelegate {
             }
 
             webView.load(request)
-            completion(self.threeDSDeviceParamsProvider.deviceInfoParams)
+            completion(self.threeDSDeviceInfoProvider.deviceInfo)
         }
     }
 
@@ -460,9 +462,9 @@ extension PaymentController: PaymentProcessDelegate {
         return true
     }
 
-    func getCustomerKey(for paymentProcess: PaymentProcess, customerOptions: CustomerOptions) -> String? {
+    func getCustomerKey(for paymentProcess: PaymentProcess, customerOptions: CustomerOptions?) -> String? {
         let customerKey: String?
-        if case let .customer(key, _) = customerOptions.customer {
+        if let key = customerOptions?.customerKey {
             customerKey = key
         } else if let dataSourceKey = (dataSource as? ChargePaymentControllerDataSource)?
             .paymentController(self, customerKeyToRetry: paymentProcess) {

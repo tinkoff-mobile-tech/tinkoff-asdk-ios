@@ -35,7 +35,11 @@ public extension AcquiringSdk {
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
         let deviceInfoProvider = DeviceInfoProvider()
         let acquiringDecoder = AcquiringDecoder()
-        let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
+
+        let environmentParametersProvider = EnvironmentParametersProvider(
+            deviceInfoProvider: deviceInfoProvider,
+            language: configuration.language
+        )
 
         let acquiringClient = AcquiringAPIClient.build(
             terminalKeyProvider: terminalKeyProvider,
@@ -54,9 +58,10 @@ public extension AcquiringSdk {
             baseURLProvider: acquiringURLProvider,
             publicKeyProvider: publicKeyProvider,
             terminalKeyProvider: terminalKeyProvider,
-            initParamsEnricher: initEnricher,
             cardDataFormatter: CardDataFormatter(),
-            rsaEncryptor: encryptor
+            rsaEncryptor: encryptor,
+            ipAddressProvider: ipAddressProvider,
+            environmentParametersProvider: environmentParametersProvider
         )
 
         self.init(

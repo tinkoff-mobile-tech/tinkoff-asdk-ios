@@ -46,7 +46,8 @@ struct APIResponse<Model: Decodable>: Decodable {
         success = try container.decode(Bool.self, forKey: .success)
         let errorCodeString = try container.decode(String.self, forKey: .errorCode)
         errorCode = Int(errorCodeString) ?? 0
-        result = errorCode == 0
+
+        result = (success && errorCode == 0)
             ? .success(try Model(from: decoder))
             : .failure(try APIFailureError(from: decoder))
     }

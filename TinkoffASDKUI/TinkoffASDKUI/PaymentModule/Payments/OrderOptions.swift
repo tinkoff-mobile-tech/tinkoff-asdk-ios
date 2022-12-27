@@ -19,14 +19,22 @@
 
 import TinkoffASDKCore
 
+/// Параметры заказа
 public struct OrderOptions: Equatable {
-    let orderId: String
-    let amount: Int64
-    let description: String?
-    let receipt: Receipt?
-    let shops: [Shop]?
-    let receipts: [Receipt]?
-    let savingAsParentPayment: Bool
+    /// Идентификатор заказа в системе продавца
+    public let orderId: String
+    /// Полная сумма заказа в копейках
+    public let amount: Int64
+    /// Краткое описание
+    public let description: String?
+    /// Данные чека
+    public let receipt: Receipt?
+    /// Данные маркетплейса. Используется для разбивки платежа по партнерам
+    public let shops: [Shop]?
+    /// Чеки для каждого объекта `Shop`. В каждом чеке необходимо указывать `Receipt.shopCode` == `Shop.shopCode`
+    public let receipts: [Receipt]?
+    /// Сохранить платеж в качестве родительского
+    public let savingAsParentPayment: Bool
 
     public init(
         orderId: String,

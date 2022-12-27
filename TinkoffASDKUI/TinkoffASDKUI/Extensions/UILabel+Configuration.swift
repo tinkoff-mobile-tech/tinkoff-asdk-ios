@@ -8,6 +8,10 @@
 import UIKit
 
 extension UILabel {
+    convenience init(style: Style) {
+        self.init(frame: .zero)
+        apply(style: style)
+    }
 
     func configure(_ configuration: Configuration) {
         prepareForReuse()
@@ -51,12 +55,37 @@ extension UILabel {
         var font: UIFont? = .systemFont(ofSize: 16, weight: .regular)
         var alignment: NSTextAlignment = .left
         var numberOfLines = 0 // no limit
+
+        func set(alignment: NSTextAlignment) -> Style {
+            var style = self
+            style.alignment = alignment
+            return style
+        }
+
+        func set(textColor: UIColor?) -> Style {
+            var style = self
+            style.textColor = textColor
+            return style
+        }
     }
 }
 
 // MARK: - Styles
 
 extension UILabel.Style {
+    static var headingM: Self {
+        Self(
+            textColor: ASDKColors.Text.primary.color,
+            font: .systemFont(ofSize: 20, weight: .bold)
+        )
+    }
+
+    static var bodyL: Self {
+        Self(
+            textColor: ASDKColors.Text.primary.color,
+            font: .systemFont(ofSize: 17, weight: .regular)
+        )
+    }
 
     static let bodyM = Self(
         textColor: ASDKColors.Text.primary.color,

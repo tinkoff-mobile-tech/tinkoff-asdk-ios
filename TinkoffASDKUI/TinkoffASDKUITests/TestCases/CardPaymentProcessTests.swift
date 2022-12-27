@@ -46,7 +46,7 @@ final class CardPaymentProcessTests: XCTestCase {
         XCTAssertTrue(paymentsServiceMock.initPaymentCallCounter == 1)
         XCTAssertEqual(
             paymentsServiceMock.initPaymentPassedArguments?.data,
-            paymentOptions.convertToPaymentInitData()
+            .data(with: paymentOptions)
         )
 
         XCTAssertTrue(dependencies.paymentDelegateMock.paymentDidFailedCallCounter == 1)
@@ -315,7 +315,7 @@ extension CardPaymentProcessTests {
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
         let paymentFlow = PaymentFlow.finish(
             paymentId: "32423",
-            customerOptions: CustomerOptions()
+            customerOptions: CustomerOptions(customerKey: "somekey", email: "someemail")
         )
 
         let dependencies = Self.makeDependecies(
@@ -368,6 +368,7 @@ extension CardPaymentProcessTests {
         let sut = CardPaymentProcess(
             paymentsService: paymentsServiceMock,
             threeDsService: threeDsServiceMock,
+            threeDSDeviceInfoProvider: ThreeDSDeviceInfoProviderMock(),
             ipProvider: ipProviderMock,
             paymentSource: paymentSource,
             paymentFlow: paymentFlow,

@@ -23,6 +23,7 @@ final class CardPaymentProcess: PaymentProcess {
 
     private let paymentsService: IAcquiringPaymentsService
     private let threeDsService: IAcquiringThreeDSService
+    private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     private let ipProvider: IIPAddressProvider
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?
@@ -36,15 +37,16 @@ final class CardPaymentProcess: PaymentProcess {
     private var customerEmail: String? {
         switch paymentFlow {
         case let .full(paymentOptions):
-            return paymentOptions.customerOptions.email
+            return paymentOptions.customerOptions?.email
         case let .finish(_, customerOptions):
-            return customerOptions.email
+            return customerOptions?.email
         }
     }
 
     init(
         paymentsService: IAcquiringPaymentsService,
         threeDsService: IAcquiringThreeDSService,
+        threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         ipProvider: IIPAddressProvider,
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
@@ -53,6 +55,7 @@ final class CardPaymentProcess: PaymentProcess {
 
         self.paymentsService = paymentsService
         self.threeDsService = threeDsService
+        self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.ipProvider = ipProvider
         self.paymentSource = paymentSource
         self.paymentFlow = paymentFlow
@@ -62,7 +65,7 @@ final class CardPaymentProcess: PaymentProcess {
     func start() {
         switch paymentFlow {
         case let .full(paymentOptions):
-            initPayment(data: paymentOptions.convertToPaymentInitData())
+            initPayment(data: .data(with: paymentOptions))
         case let .finish(paymentId, _):
             self.paymentId = paymentId
             check3DSVersion(data: Check3DSVersionData(paymentId: paymentId, paymentSource: paymentSource))
@@ -108,9 +111,8 @@ private extension CardPaymentProcess {
         currentRequest?.store(newValue: request)
     }
 
-    func finishPayment(data: PaymentFinishRequestData, threeDSVersion: String? = nil) {
-        let finishRequestData = FinishAuthorizeData(from: data)
-        let request = paymentsService.finishAuthorize(data: finishRequestData) { [weak self] result in
+    func finishAuthorize(data: FinishAuthorizeData, threeDSVersion: String? = nil) {
+        let request = paymentsService.finishAuthorize(data: data) { [weak self] result in
             guard let self = self else { return }
             guard !self.isCancelled.wrappedValue else { return }
 
@@ -131,55 +133,47 @@ private extension CardPaymentProcess {
         switch paymentSource {
         case .cardNumber, .savedCard:
             check3DSVersion(data: Check3DSVersionData(paymentId: payload.paymentId, paymentSource: paymentSource))
-        case .paymentData:
-            guard let paymentId = Int64(payload.paymentId) else { return }
-            var data = PaymentFinishRequestData(
-                paymentId: paymentId,
-                paymentSource: paymentSource
+        case .applePay:
+            let data = FinishAuthorizeData(
+                paymentId: payload.paymentId,
+                paymentSource: paymentSource,
+                infoEmail: customerEmail
             )
-            data.setInfoEmail(customerEmail)
-            finishPayment(data: data)
-        default:
+            finishAuthorize(data: data)
+        case .parentPayment, .yandexPay:
             // Log error
-            assertionFailure("Only cardNumber, savedCard or paymentData PaymentSourceData available")
+            assertionFailure("Only cardNumber, savedCard or applePay PaymentSourceData available")
         }
     }
 
     func handleCheck3DSResult(payload: Check3DSVersionPayload, paymentId: String) {
-        guard let paymentId = Int64(paymentId) else { return }
-
-        var data = PaymentFinishRequestData(
-            paymentId: paymentId,
-            paymentSource: paymentSource
-        )
-        data.setInfoEmail(customerEmail)
-
-        let performPaymentFinish: (PaymentFinishRequestData) -> Void = {
-            self.finishPayment(data: $0, threeDSVersion: payload.version)
-        }
-
         if let tdsServerTransID = payload.tdsServerTransID,
            let threeDSMethodURL = payload.threeDSMethodURL {
             let check3DSData = Checking3DSURLData(
                 tdsServerTransID: tdsServerTransID,
                 threeDSMethodURL: threeDSMethodURL,
-                notificationURL: threeDsService
-                    .confirmation3DSCompleteV2URL()
-                    .absoluteString
+                notificationURL: threeDsService.confirmation3DSCompleteV2URL().absoluteString
             )
-            delegate?.payment(
-                self,
-                needToCollect3DSData: check3DSData,
-                completion: { [weak self] deviceInfo in
-                    guard let self = self else { return }
-                    data.setDeviceInfo(info: deviceInfo)
-                    data.setIpAddress(self.ipProvider.ipAddress?.fullStringValue)
-                    data.setThreeDSVersion(payload.version)
-                    performPaymentFinish(data)
-                }
-            )
+
+            delegate?.payment(self, needToCollect3DSData: check3DSData) { [weak self] deviceInfo in
+                guard let self = self else { return }
+
+                let data = FinishAuthorizeData(
+                    paymentId: paymentId,
+                    paymentSource: self.paymentSource,
+                    infoEmail: self.customerEmail,
+                    deviceInfo: deviceInfo,
+                    threeDSVersion: payload.version
+                )
+                self.finishAuthorize(data: data, threeDSVersion: payload.version)
+            }
         } else {
-            performPaymentFinish(data)
+            let data = FinishAuthorizeData(
+                paymentId: paymentId,
+                paymentSource: paymentSource,
+                infoEmail: customerEmail
+            )
+            finishAuthorize(data: data, threeDSVersion: payload.version)
         }
     }
 

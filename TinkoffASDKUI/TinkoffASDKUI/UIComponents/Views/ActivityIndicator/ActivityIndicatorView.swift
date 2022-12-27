@@ -195,8 +195,6 @@ final class ActivityIndicatorView: UIView, Stylable, ShadowAvailable {
         let shadow: ShadowStyle?
         let lineCap: CAShapeLayerLineCap
 
-        static let standart = Self()
-
         init(
             backgroundColor: UIColor = .clear,
             lineColor: UIColor = .black,
@@ -218,6 +216,24 @@ final class ActivityIndicatorView: UIView, Stylable, ShadowAvailable {
         }
     }
 }
+
+// MARK: - Default Styles
+
+extension ActivityIndicatorView.Style {
+    static var standart: ActivityIndicatorView.Style {
+        ActivityIndicatorView.Style()
+    }
+
+    static var xlYellow: ActivityIndicatorView.Style {
+        ActivityIndicatorView.Style(
+            lineColor: ASDKColors.tinkoffYellow,
+            diameter: 72,
+            width: 4
+        )
+    }
+}
+
+// MARK: - Constants
 
 private enum Constants {
     /// Константы для анимации
