@@ -37,7 +37,7 @@ extension AddCardListFlow: IAddCardFlow {
         let navigationController = UINavigationController(rootViewController: addCardViewController)
         // Fixes flickering of nav bar when using pushing transitioning animation
         navigationController.navigationBar.isTranslucent = false
-        navigationController.navigationBar.backgroundColor = ASDKColors.Background.base.color
+        navigationController.navigationBar.backgroundColor = ASDKColors.Background.elevation1.color
         addCardViewController.extendedLayoutIncludesOpaqueBars = true
         context.presentingViewController.present(navigationController, animated: true)
     }

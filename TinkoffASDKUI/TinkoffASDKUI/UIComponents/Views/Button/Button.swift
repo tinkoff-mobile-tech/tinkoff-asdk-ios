@@ -18,7 +18,11 @@ final class Button: UIView {
 
     var isEnabled: Bool {
         get { button.isEnabled }
-        set { button.isEnabled = newValue }
+        set {
+            button.isEnabled = newValue
+            controlState = .disabled
+            controlStateDidChange(controlState: controlState)
+        }
     }
 
     private(set) var configuration: Configuration?

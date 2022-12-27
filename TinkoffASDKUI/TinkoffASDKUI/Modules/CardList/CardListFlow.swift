@@ -59,12 +59,20 @@ extension CardListFlow: ICardListFlow {
         }
 
         let navigationController = UINavigationController(rootViewController: cardListViewController)
-        // Fixes flickering of nav bar when using pushing transitioning animation
-        navigationController.navigationBar.isTranslucent = false
-        navigationController.navigationBar.backgroundColor = ASDKColors.Background.base.color
         cardListViewController.extendedLayoutIncludesOpaqueBars = true
-
-        context.presentingViewController.navigationItem.backButtonTitle = ""
+        handleAppearanceOf(navigationController: navigationController)
         context.presentingViewController.present(navigationController, animated: true)
+    }
+
+    private func handleAppearanceOf(navigationController: UINavigationController) {
+        if #available(iOS 13.0, *) {
+            // Fixes flickering of nav bar when using pushing transitioning animation
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithTransparentBackground()
+            navBarAppearance.backgroundColor = ASDKColors.Background.elevation1.color
+            navigationController.navigationBar.standardAppearance = navBarAppearance
+            navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
+            navigationController.navigationBar.compactAppearance = navBarAppearance
+        }
     }
 }

@@ -56,6 +56,8 @@ final class AddNewCardViewController: UIViewController {
 
     // Local State
 
+    private weak var cardFieldView: ICardFieldView?
+
     // MARK: - Inits
 
     init(
@@ -82,6 +84,11 @@ final class AddNewCardViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationItem()
         presenter.viewDidLoad()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        cardFieldView?.activate()
     }
 }
 
@@ -171,6 +178,7 @@ extension AddNewCardViewController: AddNewCardViewDelegate {
     }
 
     func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView) {
+        self.cardFieldView = cardFieldView
         presenter.viewDidReceiveCardFieldView(cardFieldView: cardFieldView)
     }
 }

@@ -103,7 +103,7 @@ extension AddNewCardView {
             }
         }
 
-        backgroundColor = ASDKColors.Background.base.color
+        backgroundColor = ASDKColors.Background.elevation1.color
 
         addSubview(collectionView)
         addSubview(blockingView)
@@ -124,6 +124,7 @@ extension AddNewCardView {
             ] + view.makeLeftAndRightEqualToSuperView(inset: Constants.AddButton.horizontalInset)
         }
 
+        addButton.isEnabled = false
         addButton.configure(
             Constants.AddButton.getConfiguration { [weak delegate] in
                 delegate?.viewAddCardTapped()
