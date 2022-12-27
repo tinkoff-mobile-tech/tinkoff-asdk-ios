@@ -52,6 +52,7 @@ final class SBPBankCellNew: UITableViewCell {
 extension SBPBankCellNew {
     func set(viewModel: SBPBankCellNewViewModel) {
         nameLabel.text = viewModel.nameLabelText
+        logoImageView.image = Asset.Sbp.sbpLogo.image
 
         if let url = viewModel.logoURL {
             logoImageView.loadImage(at: url, type: .roundAndSize(.logoImageSize))

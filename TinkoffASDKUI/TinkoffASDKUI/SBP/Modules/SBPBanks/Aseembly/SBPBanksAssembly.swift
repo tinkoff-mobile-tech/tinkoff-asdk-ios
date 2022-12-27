@@ -7,6 +7,8 @@
 
 import TinkoffASDKCore
 
+typealias SBPBanksModule = Module<ISBPBanksModuleInput>
+
 final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // Dependencies
@@ -20,12 +22,21 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // MARK: - ISBPBanksAssembly
 
-    func build() -> UIViewController {
+    func build() -> SBPBanksModule {
+        let router = SBPBanksRouter(sbpBanksAssembly: self)
+
         let banksService = SBPBanksServiceNew(acquiringSdk: acquiringSdk)
-        let presenter = SBPBanksPresenter(banksService: banksService)
+        let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
+
+        let presenter = SBPBanksPresenter(
+            router: router,
+            banksService: banksService,
+            bankAppChecker: bankAppChecker
+        )
 
         let view = SBPBanksViewController(presenter: presenter)
         presenter.view = view
-        return view
+        router.transitionHandler = view
+        return Module(view: view, input: presenter)
     }
 }

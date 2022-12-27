@@ -12,6 +12,7 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController {
 
     // Properties
     private let tableView = UITableView()
+    private let searchController = UISearchController(searchResultsController: nil)
 
     // MARK: - Initialization
 
@@ -32,6 +33,7 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController {
         setupView()
         setupNavigationBar()
         setupTableView()
+        setupSerachController()
 
         presenter.viewDidLoad()
     }
@@ -40,6 +42,26 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController {
 // MARK: - ISBPBanksViewController
 
 extension SBPBanksViewController {
+    func setupNavigationWithCloseButton() {
+        let leftItem = UIBarButtonItem(
+            title: Loc.Acquiring.SBPBanks.buttonClose,
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonAction(_:))
+        )
+
+        navigationItem.leftBarButtonItem = leftItem
+    }
+
+    func setupNavigationWithBackButton() {
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
+    }
+
+    func hideSearchBar() {
+        tableView.tableHeaderView = nil
+    }
+
     func reloadTableView() {
         tableView.reloadData()
     }
@@ -48,9 +70,8 @@ extension SBPBanksViewController {
 // MARK: - Actions
 
 extension SBPBanksViewController {
-
     @objc private func closeButtonAction(_ sender: UIBarButtonItem) {
-        dismiss(animated: true)
+        presenter.closeButtonPressed()
     }
 }
 
@@ -76,6 +97,23 @@ extension SBPBanksViewController: UITableViewDataSource {
 extension SBPBanksViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        presenter.didSelectRow(at: indexPath.row)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension SBPBanksViewController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        searchController.searchBar.resignFirstResponder()
+    }
+}
+
+// MARK: - UISearchResultsUpdating
+
+extension SBPBanksViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        presenter.searchTextDidChange(to: searchController.searchBar.text ?? "")
     }
 }
 
@@ -87,14 +125,7 @@ extension SBPBanksViewController {
     }
 
     private func setupNavigationBar() {
-        let leftItem = UIBarButtonItem(
-            title: Loc.TinkoffAcquiring.Button.close,
-            style: .plain,
-            target: self,
-            action: #selector(closeButtonAction(_:))
-        )
-        navigationItem.leftBarButtonItem = leftItem
-        navigationItem.title = Loc.Sbp.BanksList.Header.title
+        navigationItem.title = Loc.Acquiring.Sbp.screenTitle
     }
 
     private func setupTableView() {
@@ -112,5 +143,18 @@ extension SBPBanksViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
+    }
+
+    private func setupSerachController() {
+        searchController.searchResultsUpdater = self
+
+        searchController.searchBar.sizeToFit()
+        tableView.tableHeaderView = searchController.searchBar
+
+        definesPresentationContext = true
+
+        searchController.searchBar.backgroundColor = .white
+        searchController.searchBar.searchBarStyle = .minimal
+        searchController.searchBar.placeholder = Loc.Acquiring.SBPAllBanks.searchPlaceholder
     }
 }

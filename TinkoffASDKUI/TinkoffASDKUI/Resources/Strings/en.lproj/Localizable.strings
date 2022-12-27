@@ -77,6 +77,12 @@
 "SBP.OpenApplication.Error" = "Failed to open application";
 "SBP.LoadingStatus.Title" = "Payment confirmation awaiting";
 
+// Acquiring
+"Acquiring.SBP.ScreenTitle" = "Bank selection";
+"Acquiring.SBPBanks.ButtonClose" = "Close";
+"Acquiring.SBPBanks.AnotherBank" = "Another bank";
+"Acquiring.SBPAllBanks.SearchPlaceholder" = "Name";
+
 // Tinkoff Pay
 "TP.Error.Title" = "Error occured during transaction";
 "TP.Error.Description" = "Try again";

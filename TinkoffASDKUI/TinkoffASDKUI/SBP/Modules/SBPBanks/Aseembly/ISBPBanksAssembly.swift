@@ -6,5 +6,5 @@
 //
 
 protocol ISBPBanksAssembly {
-    func build() -> UIViewController
+    func build() -> SBPBanksModule
 }

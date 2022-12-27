@@ -10,6 +10,22 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
+  internal enum Acquiring {
+    internal enum Sbp {
+      /// Выбор банка
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.SBP.ScreenTitle", fallback: "Выбор банка")
+    }
+    internal enum SBPAllBanks {
+      /// Название
+      internal static let searchPlaceholder = Loc.tr("Localizable", "Acquiring.SBPAllBanks.SearchPlaceholder", fallback: "Название")
+    }
+    internal enum SBPBanks {
+      /// Другой банк
+      internal static let anotherBank = Loc.tr("Localizable", "Acquiring.SBPBanks.AnotherBank", fallback: "Другой банк")
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.SBPBanks.ButtonClose", fallback: "Закрыть")
+    }
+  }
   internal enum AcquiringPayment {
     internal enum Button {
       /// Выбрать другую карту

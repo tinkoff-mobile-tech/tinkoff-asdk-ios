@@ -8,6 +8,12 @@
 protocol ISBPBanksPresenter {
     func viewDidLoad()
 
+    func closeButtonPressed()
+
     func numberOfRows() -> Int
     func viewModel(for row: Int) -> SBPBankCellNewViewModel
+
+    func searchTextDidChange(to text: String)
+
+    func didSelectRow(at index: Int)
 }

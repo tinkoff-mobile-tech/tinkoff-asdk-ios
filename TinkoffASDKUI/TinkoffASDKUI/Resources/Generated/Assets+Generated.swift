@@ -24,6 +24,7 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 internal enum Asset {
   internal enum Sbp {
     internal static let emptyBanks = ImageAsset(name: "empty_banks")
+    internal static let sbpLogo = ImageAsset(name: "sbp_logo")
   }
   internal enum TinkoffPay {
     internal static let tinkoffPayLogoBlack = ImageAsset(name: "tinkoff_pay_logo_black")

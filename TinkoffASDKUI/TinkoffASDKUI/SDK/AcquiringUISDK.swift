@@ -400,8 +400,8 @@ public class AcquiringUISDK: NSObject {
 //                    })
 //                }
 //            )
-            let sbpVC = self.sbpBanksAssembly.build()
-            let navVC = UINavigationController(rootViewController: sbpVC)
+            let sbpModule = self.sbpBanksAssembly.build()
+            let navVC = UINavigationController(rootViewController: sbpModule.view)
             paymentViewController.present(navVC, animated: true, completion: nil)
         }
     }

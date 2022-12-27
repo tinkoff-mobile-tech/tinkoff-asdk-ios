@@ -6,5 +6,10 @@
 //
 
 protocol ISBPBanksViewController: AnyObject {
+    func setupNavigationWithCloseButton()
+    func setupNavigationWithBackButton()
+
+    func hideSearchBar()
+
     func reloadTableView()
 }
