@@ -27,6 +27,8 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private var allBanksViewModels = [SBPBankCellNewViewModel]()
     private var filteredBanksViewModels = [SBPBankCellNewViewModel]()
 
+    private var lastSearchedText = ""
+
     // MARK: - Initialization
 
     init(
@@ -54,6 +56,8 @@ extension SBPBanksPresenter {
 extension SBPBanksPresenter {
     func viewDidLoad() {
         if screenType == .startEmpty {
+            view?.hideSearchBar()
+            prepareAndShowSkeletonModels()
             loadBanks()
             view?.setupNavigationWithCloseButton()
         } else {
@@ -75,13 +79,21 @@ extension SBPBanksPresenter {
     }
 
     func searchTextDidChange(to text: String) {
-        let lowecasedText = text.lowercased()
-        if lowecasedText.isEmpty {
-            filteredBanksViewModels = allBanksViewModels
-        } else {
-            filteredBanksViewModels = allBanksViewModels.filter { $0.nameLabelText.lowercased().contains(lowecasedText) }
+        let lowercasedText = text.lowercased()
+
+        guard lastSearchedText != lowercasedText else { return }
+        lastSearchedText = lowercasedText
+
+        DispatchQueue.main.asyncDeduped(target: self, after: 0.3) { [weak self] in
+            guard let self = self else { return }
+
+            if lowercasedText.isEmpty {
+                self.filteredBanksViewModels = self.allBanksViewModels
+            } else {
+                self.filteredBanksViewModels = self.allBanksViewModels.filter { $0.nameLabelText.lowercased().contains(lowercasedText) }
+            }
+            self.view?.reloadTableView()
         }
-        view?.reloadTableView()
     }
 
     func didSelectRow(at index: Int) {
@@ -99,6 +111,12 @@ extension SBPBanksPresenter {
 // MARK: - Private methods
 
 extension SBPBanksPresenter {
+    private func prepareAndShowSkeletonModels() {
+        allBanksViewModels = [SBPBankCellNewViewModel](repeatElement(SBPBankCellNewViewModel.skeletonModel, count: 7))
+        filteredBanksViewModels = allBanksViewModels
+        view?.reloadTableView()
+    }
+
     private func loadBanks() {
         banksService.loadBanks { [weak self] result in
             guard let self = self else { return }
@@ -119,11 +137,10 @@ extension SBPBanksPresenter {
 
         let preferredBanks = getPreferredBanks()
         if preferredBanks.isEmpty {
+            view?.showSearchBar()
             allBanksViewModels = createViewModels(from: allBanks)
         } else {
-            view?.hideSearchBar()
-
-            let otherBankViewModel = SBPBankCellNewViewModel(nameLabelText: Loc.Acquiring.SBPBanks.anotherBank, logoURL: nil)
+            let otherBankViewModel = SBPBankCellNewViewModel(nameLabelText: Loc.Acquiring.SBPBanks.anotherBank, imageAsset: Asset.Sbp.sbpLogo)
             allBanksViewModels = createViewModels(from: preferredBanks)
             allBanksViewModels.append(otherBankViewModel)
         }
@@ -139,7 +156,7 @@ extension SBPBanksPresenter {
     }
 
     private func createViewModels(from banks: [SBPBank]) -> [SBPBankCellNewViewModel] {
-        banks.map { SBPBankCellNewViewModel(nameLabelText: $0.name, logoURL: $0.logoURL) }
+        banks.map { SBPBankCellNewViewModel(nameLabelText: $0.name, logoURL: $0.logoURL, schema: $0.schema) }
     }
 
     private func getPreferredBanks() -> [SBPBank] {

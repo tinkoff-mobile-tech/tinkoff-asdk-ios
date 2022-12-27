@@ -58,12 +58,16 @@ extension SBPBanksViewController {
         navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
     }
 
+    func showSearchBar() {
+        tableView.tableHeaderView = searchController.searchBar
+    }
+
     func hideSearchBar() {
         tableView.tableHeaderView = nil
     }
 
     func reloadTableView() {
-        tableView.reloadData()
+        tableView.reloadSections(IndexSet(integer: 0), with: .fade)
     }
 }
 
