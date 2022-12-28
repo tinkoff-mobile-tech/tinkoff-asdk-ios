@@ -5,8 +5,8 @@
 //  Created by Ivan Glushko on 27.12.2022.
 //
 
-import Foundation
 import TinkoffASDKCore
+import UIKit
 
 protocol IAddCardFlow {
     func start(context: AddCardListFlowContext)
