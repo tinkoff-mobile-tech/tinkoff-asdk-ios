@@ -37,15 +37,11 @@ public struct YandexPayButtonContainerTheme {
 public struct YandexPayButtonContainerConfiguration {
     /// Тема для кнопки `YandexPay`
     public var theme: YandexPayButtonContainerTheme
-    /// Радиус скругления кнопки. При `nil` используется значение по умолчанию
-    public var cornerRadius: CGFloat?
 
     /// Создание конфигурации контейнера кнопки `YandexPay`
     /// - Parameters:
     ///   - theme: Тема для кнопки `YandexPay`
-    ///   - cornerRadius: Радиус скругления кнопки. При `nil` используется значение по умолчанию
-    public init(theme: YandexPayButtonContainerTheme, cornerRadius: CGFloat? = nil) {
+    public init(theme: YandexPayButtonContainerTheme) {
         self.theme = theme
-        self.cornerRadius = cornerRadius
     }
 }

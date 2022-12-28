@@ -21,7 +21,11 @@ pod 'TinkoffASDKYandexPay'
 
 ## Подготовка к работе
 
-`TinkoffASDKYandexPay` работает на базе библиотеки `YandexPaySDK`. Ее необходимо настроить по следующим образом:
+`TinkoffASDKYandexPay` работает на базе библиотеки `YandexPaySDK`. В этой секции по шагам расписан алгоритм ее настройки.
+
+> :warning: **Важно выполнить все шаги, в противном случае вас ждет runtime crash при инициализации `YandexPaySDK`**
+
+> :warning: **Не рекомендуется использовать `TinkoffASDKYandexPay` и `YandexPaySDK` или иные библиотеки зависящие от `YandexPaySDK` в рамках одного приложения так как могут возникнуть непредвиденные ошибки**
 
 ### Шаг 1. Зарегистрируйте приложение
 
@@ -48,6 +52,15 @@ pod 'TinkoffASDKYandexPay'
         </array>
     </dict>
 </array>
+```
+
+В приведенном выше примере необходимо прописать `ClientId` своего приложения. В тестовом приложении ASDKSample это выглядит следующим образом:
+
+```xml
+<key>CFBundleURLSchemes</key>
+    <array>
+        <string>yx9dc6814e39204c638222dede9561ea6f</string>
+    </array>
 ```
 
 ### Шаг 3. Настройте Entitlements
@@ -136,6 +149,9 @@ func setupView(with factory: IYandexPayButtonContainerFactory) {
         delegate: self
     )
     
+    // Стандартный cornerRadius кнопки - 8. При необходимости его можно изменить 
+    button.layer.cornerRadius = 15
+
     view.addSubview(button)
     button.translatesAutoresizingMaskIntoConstraints = false
     
