@@ -20,7 +20,7 @@ final class Button: UIView {
         get { button.isEnabled }
         set {
             button.isEnabled = newValue
-            controlState = .disabled
+            controlState = newValue ? .normal : .disabled
             controlStateDidChange(controlState: controlState)
         }
     }

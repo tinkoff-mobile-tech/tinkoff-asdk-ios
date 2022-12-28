@@ -128,4 +128,14 @@ final class MockCardListViewInput: ICardListViewInput {
     func showAddedCardSnackbar(cardMaskedPan: String) {
         showAddedCardSnackbarCallCounter += 1
     }
+
+    var hideRightBarButtonCalCounter = 0
+    func hideRightBarButton() {
+        hideStubCallCounter += 1
+    }
+
+    var closeScreenCounter = 0
+    func closeScreen() {
+        closeScreenCounter += 1
+    }
 }
