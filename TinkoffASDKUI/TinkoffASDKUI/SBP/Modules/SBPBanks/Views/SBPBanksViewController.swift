@@ -5,6 +5,19 @@
 //  Created by Aleksandr Pravosudov on 21.12.2022.
 //
 
+/// Экран доступен в нескольких состояниях:
+///  1) Экран открыт через  present и список банковских приложений установленных у пользователя не пустой
+///    2) Экран открыт через present и список банковских приложений установленных у пользователя пуст
+///    3) Экран открыт через push со списком всех банков отличных от тех что есть у пользователя
+///
+///    В таком случае будет следующая конфигурация экрана:
+///    1) В navigationBar слева кнопка закрыть, searchBar отсутствует, показывается список банков установленных у пользователя,
+///     появляется доп ячейка "Другие банки" которая push(ит) этот же экран с оставшимся списком банков
+///    2) В navigationBar слева кнопка закрыть, searchBar показан, отображется полный список всех банков
+///    3) В navigationBar слева кнопка назад, searchBar показан, отображется полный список всех банков за исключением тех что были на первом экране
+///
+///    P.S. Все это описание должно упростить работу с модулем и дать понимание зачем нужны различные методы, такие как:
+///     setupNavigationWithCloseButton, setupNavigationWithBackButton, showSearchBar, hideSearchBar
 final class SBPBanksViewController: UIViewController, ISBPBanksViewController {
 
     // Dependencies
@@ -147,6 +160,12 @@ extension SBPBanksViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
+
+        // Когда скролишь таблицу с searchBar и упираешься в bounce таблицы, то без этой вьюхи 'backgroundView'
+        // цвет под searchBar будет отличаться от основного цвета, будет дефолтным серым
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = .white
+        tableView.backgroundView = backgroundView
     }
 
     private func setupSerachController() {

@@ -55,12 +55,13 @@ extension SBPBanksPresenter {
 
 extension SBPBanksPresenter {
     func viewDidLoad() {
-        if screenType == .startEmpty {
+        switch screenType {
+        case .startEmpty:
             view?.hideSearchBar()
             prepareAndShowSkeletonModels()
             loadBanks()
             view?.setupNavigationWithCloseButton()
-        } else {
+        case .startWithData:
             setupScreen(with: allBanks)
             view?.setupNavigationWithBackButton()
         }
