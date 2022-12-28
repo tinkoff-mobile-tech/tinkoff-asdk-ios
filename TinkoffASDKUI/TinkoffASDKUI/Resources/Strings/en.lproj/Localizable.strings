@@ -117,4 +117,4 @@
 // YandexSheet
 "YandexSheet.Failed.Title" = "Payment error";
 "YandexSheet.Failed.Description" = "Use a different payment method";
-"YandexSheet.Failed.PrimaryButton" = "Clear";
+"YandexSheet.Failed.PrimaryButton" = "Ok";

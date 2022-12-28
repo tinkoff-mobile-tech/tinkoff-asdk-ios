@@ -114,6 +114,6 @@
 "CommonSheet.Paid.PrimaryButton" = "Понятно";
 
 // YandexSheet
-"YandexSheet.Failed.Title" = "Ошибка при оплате";
+"YandexSheet.Failed.Title" = "Не получилось оплатить";
 "YandexSheet.Failed.Description" = "Воспользуйтесь другим способом оплаты";
 "YandexSheet.Failed.PrimaryButton" = "Понятно";
