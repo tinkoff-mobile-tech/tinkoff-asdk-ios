@@ -267,8 +267,8 @@ internal enum Loc {
       internal static let description = Loc.tr("Localizable", "YandexSheet.Failed.Description", fallback: "Воспользуйтесь другим способом оплаты")
       /// Понятно
       internal static let primaryButton = Loc.tr("Localizable", "YandexSheet.Failed.PrimaryButton", fallback: "Понятно")
-      /// Ошибка при оплате
-      internal static let title = Loc.tr("Localizable", "YandexSheet.Failed.Title", fallback: "Ошибка при оплате")
+      /// Не получилось оплатить
+      internal static let title = Loc.tr("Localizable", "YandexSheet.Failed.Title", fallback: "Не получилось оплатить")
     }
   }
 }
