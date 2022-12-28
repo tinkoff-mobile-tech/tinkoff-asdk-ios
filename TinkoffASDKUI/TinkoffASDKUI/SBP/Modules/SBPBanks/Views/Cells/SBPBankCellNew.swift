@@ -27,7 +27,7 @@ private extension CGSize {
 final class SBPBankCellNew: UITableViewCell {
 
     // Properties
-    private let nameLabel = UILabel()
+    private let nameLabel = FadingLabel()
     private let logoImageView = UIImageView()
 
     private let nameSkeletonView = SkeletonView()
@@ -102,6 +102,7 @@ extension SBPBankCellNew {
         contentView.addSubview(logoImageView)
 
         nameLabel.numberOfLines = 1
+        nameLabel.lineBreakMode = .byClipping
         nameLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         nameLabel.textColor = ASDKColors.Text.primary.color
     }
