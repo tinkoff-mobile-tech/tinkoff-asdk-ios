@@ -56,7 +56,7 @@ extension ThreeDSFacade: IThreeDSURLRequestBuilder {
 // MARK: - IThreeDSWebViewHandlerBuilder
 
 extension ThreeDSFacade: IThreeDSWebViewHandlerBuilder {
-    func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
+    func threeDSWebViewHandler() -> IThreeDSWebViewHandler {
         webViewHandlerBuilder.threeDSWebViewHandler()
     }
 }

@@ -25,8 +25,9 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     // MARK: Dependencies
 
     private let urlRequest: URLRequest
-    private let handler: ThreeDSWebViewHandler<Payload>
+    private let handler: IThreeDSWebViewHandler
     private let authChallengeService: IWebViewAuthChallengeService
+    private var onResultReceived: ((ThreeDSWebViewHandlingResult<Payload>) -> Void)?
 
     // MARK: Subviews
 
@@ -36,12 +37,14 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
 
     init(
         urlRequest: URLRequest,
-        handler: ThreeDSWebViewHandler<Payload>,
-        authChallengeService: IWebViewAuthChallengeService
+        handler: IThreeDSWebViewHandler,
+        authChallengeService: IWebViewAuthChallengeService,
+        onResultReceived: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         self.urlRequest = urlRequest
         self.handler = handler
         self.authChallengeService = authChallengeService
+        self.onResultReceived = onResultReceived
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -82,17 +85,25 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.evaluateJavaScript("document.baseURI") { value, error in
+        webView.evaluateJavaScript("document.baseURI") { [weak self] value, error in
             guard error == nil, let uri = value as? String else {
                 return
             }
 
-            webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { [weak self] value, _ in
-                guard let response = value as? String, let responseData = response.data(using: .utf8) else {
-                    return
-                }
+            webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { value, _ in
+                guard let response = value as? String,
+                      let responseData = response.data(using: .utf8),
+                      let self = self
+                else { return }
 
-                self?.handler.handle(urlString: uri, responseData: responseData)
+                let handlingResult: ThreeDSWebViewHandlingResult<Payload>? = self.handler.handle(
+                    urlString: uri,
+                    responseData: responseData
+                )
+
+                if let handlingResult = handlingResult {
+                    self.callbackResult(handlingResult)
+                }
             }
         }
     }
@@ -119,6 +130,11 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
 
     @objc private func closeButtonTapped() {
-        handler.didCancel?()
+        callbackResult(.cancelled)
+    }
+
+    private func callbackResult(_ result: ThreeDSWebViewHandlingResult<Payload>) {
+        onResultReceived?(.cancelled)
+        onResultReceived = nil
     }
 }

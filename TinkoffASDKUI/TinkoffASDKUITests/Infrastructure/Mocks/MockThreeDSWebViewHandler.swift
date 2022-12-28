@@ -26,7 +26,7 @@ final class MockThreeDSWebViewHandler: IThreeDSWebViewHandler {
     func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> ThreeDSHandleResult<Payload> {
+    ) throws -> ThreeDSWebViewHandlingResult<Payload> {
         handleCallCounter += 1
         let args = HandlePassedArguments(
             urlString: urlString,

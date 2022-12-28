@@ -194,14 +194,30 @@ public class AcquiringUISDK: NSObject {
         style: Style = DefaultStyle()
     ) throws {
         let coreSDK = try AcquiringSdk(configuration: configuration)
-        self.init(coreSDK: coreSDK, configuration: configuration, style: style)
+
+        self.init(
+            coreSDK: coreSDK,
+            configuration: configuration,
+            uiSDKConfiguration: uiSDKConfiguration,
+            style: style
+        )
     }
 
-    init(coreSDK: AcquiringSdk, configuration: AcquiringSdkConfiguration, style: Style = DefaultStyle()) {
+    init(
+        coreSDK: AcquiringSdk,
+        configuration: AcquiringSdkConfiguration,
+        uiSDKConfiguration: UISDKConfiguration,
+        style: Style = DefaultStyle()
+    ) {
         acquiringSdk = coreSDK
         self.style = style
 
-        paymentControllerAssembly = PaymentControllerAssembly(coreSDK: coreSDK, sdkConfiguration: configuration)
+        paymentControllerAssembly = PaymentControllerAssembly(
+            coreSDK: coreSDK,
+            sdkConfiguration: configuration,
+            uiSDKConfiguration: uiSDKConfiguration
+        )
+
         sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         tinkoffPayAssembly = TinkoffPayAssembly(
             coreSDK: acquiringSdk,
@@ -945,7 +961,7 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: Create and Setup AcquiringViewController
 
-    private func presentAcquiringPaymentView(
+    func presentAcquiringPaymentView(
         presentingViewController: UIViewController,
         customerKey: String?,
         configuration: AcquiringViewConfiguration,

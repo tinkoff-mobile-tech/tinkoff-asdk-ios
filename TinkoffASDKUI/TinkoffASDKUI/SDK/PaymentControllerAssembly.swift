@@ -26,21 +26,32 @@ protocol IPaymentControllerAssembly {
 final class PaymentControllerAssembly: IPaymentControllerAssembly {
     private let coreSDK: AcquiringSdk
     private let sdkConfiguration: AcquiringSdkConfiguration
+    private let uiSDKConfiguration: UISDKConfiguration
 
-    init(coreSDK: AcquiringSdk, sdkConfiguration: AcquiringSdkConfiguration) {
+    init(
+        coreSDK: AcquiringSdk,
+        sdkConfiguration: AcquiringSdkConfiguration,
+        uiSDKConfiguration: UISDKConfiguration
+    ) {
         self.coreSDK = coreSDK
         self.sdkConfiguration = sdkConfiguration
+        self.uiSDKConfiguration = uiSDKConfiguration
     }
 
     func paymentController() -> PaymentController {
-        let uiSDK = AcquiringUISDK(coreSDK: coreSDK, configuration: sdkConfiguration)
+        let uiSDK = AcquiringUISDK(
+            coreSDK: coreSDK,
+            configuration: sdkConfiguration,
+            uiSDKConfiguration: uiSDKConfiguration
+        )
 
         return PaymentController(
-            threeDsService: coreSDK,
             paymentFactory: paymentFactory(acquiringSDK: coreSDK),
-            threeDSHandler: coreSDK.payment3DSHandler(),
+            threeDSService: coreSDK,
+            threeDSHandler: coreSDK.threeDSWebViewSHandler(),
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             tdsController: uiSDK.tdsController,
+            webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
             acquiringUISDK: uiSDK
         )
     }

@@ -19,13 +19,21 @@
 
 import TinkoffASDKCore
 
+/// Параметры покупателя
 public struct CustomerOptions: Equatable {
     /// Идентификатор покупателя в системе продавца
     public let customerKey: String
     /// Email покупателя
     public let email: String?
 
-    public init(customerKey: String, email: String?) {
+    /// Инициализация опций
+    /// - Parameters:
+    ///   - customerKey: Идентификатор покупателя в системе продавца
+    ///   - email: Email покупателя
+    public init(
+        customerKey: String,
+        email: String?
+    ) {
         self.customerKey = customerKey
         self.email = email
     }

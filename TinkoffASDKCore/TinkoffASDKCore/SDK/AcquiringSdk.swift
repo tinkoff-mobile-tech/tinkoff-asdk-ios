@@ -127,11 +127,7 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: 3DS Handling
 
-    public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
-        threeDSFacade.threeDSWebViewHandler()
-    }
-
-    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
+    public func threeDSWebViewSHandler() -> IThreeDSWebViewHandler {
         threeDSFacade.threeDSWebViewHandler()
     }
 
