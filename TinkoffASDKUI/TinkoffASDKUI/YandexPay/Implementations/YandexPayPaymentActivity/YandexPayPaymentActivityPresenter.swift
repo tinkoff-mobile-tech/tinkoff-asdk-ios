@@ -72,8 +72,7 @@ extension YandexPayPaymentActivityPresenter: PaymentControllerDelegate {
     ) {
         let paymentInfo = YandexPayPaymentResult.PaymentInfo(
             paymentOptions: paymentOptions,
-            paymentId: state.paymentId,
-            rebillId: rebillId
+            paymentId: state.paymentId
         )
         paymentResult = .succeeded(paymentInfo)
         view?.update(with: .paid, animated: true)

@@ -134,7 +134,7 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
 
     private func callbackResult(_ result: ThreeDSWebViewHandlingResult<Payload>) {
-        onResultReceived?(.cancelled)
+        onResultReceived?(result)
         onResultReceived = nil
     }
 }

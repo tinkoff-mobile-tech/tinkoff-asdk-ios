@@ -2099,6 +2099,13 @@ extension AcquiringUISDK: WKNavigationDelegate {
 }
 
 public extension AcquiringUISDK {
+    /// Асинхронное создание фабрики `IYandexPayButtonContainerFactory`
+    ///
+    /// Ссылку на полученный таким образом объект можно хранить переиспользовать множество раз в различных точках приложения.
+    /// - Parameters:
+    ///   - configuration: Общаяя конфигурация `YandexPay`
+    ///   - initializer: Абстракция для инициализации фабрики. Используется для связывания модулей `TinkoffASDKUI` и `TinkoffASDKYandexPay`
+    ///   - completion: Callback с результатом создания фабрики. Вернет `Error` при сетевых ошибках или если способ оплаты через `YandexPay` недоступен для данного терминала.
     func yandexPayButtonContainerFactory(
         with configuration: YandexPaySDKConfiguration,
         initializer: IYandexPayButtonContainerFactoryInitializer,

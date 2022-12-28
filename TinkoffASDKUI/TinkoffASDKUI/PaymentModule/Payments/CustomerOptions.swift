@@ -26,7 +26,7 @@ public struct CustomerOptions: Equatable {
     /// Email покупателя
     public let email: String?
 
-    /// Инициализация опций
+    /// Инициализация параметров покупателя
     /// - Parameters:
     ///   - customerKey: Идентификатор покупателя в системе продавца
     ///   - email: Email покупателя

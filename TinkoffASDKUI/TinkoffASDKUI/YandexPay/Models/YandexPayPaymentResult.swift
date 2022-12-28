@@ -15,23 +15,17 @@ public enum YandexPayPaymentResult {
         public let paymentOptions: PaymentOptions
         /// Идентификатор платежа
         public let paymentId: String
-        /// Идентификатор родительского платежа, на основе которого можно совершить повторный платеж.
-        /// Будет располагаться в `PaymentInfo`, если в `PaymentOptions` был передан `savingAsParentPayment: true`
-        public let rebillId: String?
 
         /// Инициализация параметров
         /// - Parameters:
         ///   - paymentOptions: Параметры, на основе которых была проведена оплата
         ///   - paymentId: Идентификатор платежа
-        ///   - rebillId: Идентификатор родительского платежа, на основе которого можно совершить повторный платеж
         public init(
             paymentOptions: PaymentOptions,
-            paymentId: String,
-            rebillId: String?
+            paymentId: String
         ) {
             self.paymentOptions = paymentOptions
             self.paymentId = paymentId
-            self.rebillId = rebillId
         }
     }
 
