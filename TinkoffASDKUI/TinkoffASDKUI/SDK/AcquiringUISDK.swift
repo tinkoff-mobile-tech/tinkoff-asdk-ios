@@ -184,11 +184,13 @@ public class AcquiringUISDK: NSObject {
     private weak var logger: LoggerDelegate?
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
 
     // MARK: Init
 
     public convenience init(
         configuration: AcquiringSdkConfiguration,
+        uiSDKConfiguration: UISDKConfiguration = UISDKConfiguration(),
         style: Style = DefaultStyle()
     ) throws {
         let coreSDK = try AcquiringSdk(configuration: configuration)
@@ -226,6 +228,7 @@ public class AcquiringUISDK: NSObject {
             ),
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
+        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
     }
 
     /// Вызывается кода пользователь привязывает карту.
@@ -1499,9 +1502,10 @@ public class AcquiringUISDK: NSObject {
 
         DispatchQueue.main.async {
             if presenter != nil {
-                presenter?.checkDeviceFor3DSData(with: request)
+                presenter?.checkDeviceFor3DSData(with: request, navigationDelegate: self)
             } else {
                 self.webViewFor3DSChecking = WKWebView()
+                self.webViewFor3DSChecking?.navigationDelegate = self
                 self.webViewFor3DSChecking?.load(request)
             }
         }
@@ -1966,8 +1970,20 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     }
 }
 
+// MARK: WKNavigationDelegate
+
 extension AcquiringUISDK: WKNavigationDelegate {
-    // MARK: WKNavigationDelegate
+    public func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        webViewAuthChallengeService.webView(
+            webView,
+            didReceive: challenge,
+            completionHandler: completionHandler
+        )
+    }
 
     public func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { [weak self] value, error in

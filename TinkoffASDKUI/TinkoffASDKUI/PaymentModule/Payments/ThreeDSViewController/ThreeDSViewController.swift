@@ -22,24 +22,26 @@ import UIKit
 import WebKit
 
 final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavigationDelegate {
+    // MARK: Dependencies
+
     private let urlRequest: URLRequest
-    private let handler: IThreeDSWebViewHandler
+    private let handler: ThreeDSWebViewHandler<Payload>
+    private let authChallengeService: IWebViewAuthChallengeService
 
-    lazy var webView = WKWebView()
+    // MARK: Subviews
 
-    private var onHandleCancelled: (() -> Void)?
-    private var didHandle: ((Result<Payload, Error>) -> Void)?
+    private lazy var webView = WKWebView()
+
+    // MARK: Init
 
     init(
         urlRequest: URLRequest,
-        handler: IThreeDSWebViewHandler,
-        onHandleCancelled: (() -> Void)?,
-        didHandle: ((Result<Payload, Error>) -> Void)?
+        handler: ThreeDSWebViewHandler<Payload>,
+        authChallengeService: IWebViewAuthChallengeService
     ) {
         self.urlRequest = urlRequest
         self.handler = handler
-        self.onHandleCancelled = onHandleCancelled
-        self.didHandle = didHandle
+        self.authChallengeService = authChallengeService
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -47,6 +49,8 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Life Cycle
 
     override func loadView() {
         view = webView
@@ -63,7 +67,19 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
         webView.load(urlRequest)
     }
 
-    // MARK: - WKNavigationDelegate
+    // MARK: WKNavigationDelegate
+
+    func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        authChallengeService.webView(
+            webView,
+            didReceive: challenge,
+            completionHandler: completionHandler
+        )
+    }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { value, error in
@@ -72,28 +88,16 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
             }
 
             webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { [weak self] value, _ in
-                guard let self = self, let response = value as? String, let responseData = response.data(using: .utf8) else {
+                guard let response = value as? String, let responseData = response.data(using: .utf8) else {
                     return
                 }
 
-                let result: Result<ThreeDSHandleResult<Payload>, Error> = Result {
-                    try self.handler.handle(urlString: uri, responseData: responseData)
-                }
-
-                switch result {
-                case let .success(payloadResult):
-                    switch payloadResult {
-                    case let .finished(payload):
-                        self.didHandle?(.success(payload))
-                    case .cancelled:
-                        self.onHandleCancelled?()
-                    }
-                case let .failure(error):
-                    self.didHandle?(.failure(error))
-                }
+                self?.handler.handle(urlString: uri, responseData: responseData)
             }
         }
     }
+
+    // MARK: Helpers
 
     private func setupCloseButton() {
         let cancelButton: UIBarButtonItem
@@ -115,6 +119,6 @@ final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavig
     }
 
     @objc private func closeButtonTapped() {
-        handler.onUserTapCloseButton?()
+        handler.didCancel?()
     }
 }

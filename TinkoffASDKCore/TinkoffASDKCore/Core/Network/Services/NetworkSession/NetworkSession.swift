@@ -19,10 +19,6 @@
 
 import Foundation
 
-protocol INetworkDataTask: Cancellable {
-    func resume()
-}
-
 protocol INetworkSession {
     func dataTask(
         with request: URLRequest,
@@ -52,11 +48,20 @@ final class NetworkSession: INetworkSession {
     // MARK: Dependencies
 
     private let urlSession: URLSession
+    /// Реализует протокол делегата `URLSession`.
+    /// Удерживается данным классом, поскольку `URLSession` хранит слабую ссылку на свой делегат
+    private let urlSessionDelegate: URLSessionDelegate
 
     // MARK: Init
 
-    init(urlSession: URLSession) {
+    /// Инициализирует `NetworkSession`
+    /// - Parameters:
+    ///   - urlSession: `URLSession`
+    ///   - urlSessionDelegate: Делегат `URLSession`, который должен быть установлен до инициализации `NetworkSession`.
+    ///   Удерживается данным классом, поскольку `URLSession` хранит слабую ссылку на свой делегат
+    init(urlSession: URLSession, urlSessionDelegate: URLSessionDelegate) {
         self.urlSession = urlSession
+        self.urlSessionDelegate = urlSessionDelegate
     }
 
     // MARK: INetworkSession

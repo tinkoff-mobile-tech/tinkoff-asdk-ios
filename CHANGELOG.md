@@ -19,6 +19,12 @@
 
 * [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
 
+## [2.14.1] - 2022-12-26Z
+
+### Added
+
+* [MIC-7301] AuthChallengeService injection ability for URLSession and WKWebView
+
 ## [2.13.1] - 2022-12-13Z
 
 ### Fixed

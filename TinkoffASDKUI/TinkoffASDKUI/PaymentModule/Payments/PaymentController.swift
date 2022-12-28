@@ -103,7 +103,8 @@ public final class PaymentController: IPaymentController {
     private let threeDSHandler: IThreeDSWebViewHandler
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     // App based threeDS
-    private let tdsController: ITDSController
+    private let tdsController: TDSController
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -114,33 +115,28 @@ public final class PaymentController: IPaymentController {
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
 
-    private var threeDSHandlerDidCancel: () -> Void = {}
-    private var threeDSHandlerCompletion: ((Result<GetPaymentStatePayload, Error>) -> Void)?
-
     // MARK: - Temporary until refactor PaymentView!
 
     private let acquiringUISDK: AcquiringUISDK
 
-    private var paymentDelegate: PaymentProcessDelegate!
-
     // MARK: - Init
 
     init(
-        threeDsService: IAcquiringThreeDSService,
-        paymentFactory: IPaymentFactory,
-        threeDSHandler: IThreeDSWebViewHandler,
-        threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
-        tdsController: ITDSController,
-        acquiringUISDK: AcquiringUISDK /* temporary*/,
-        paymentDelegate: PaymentProcessDelegate? = nil
+        acquiringSDK: AcquiringSdk,
+        paymentFactory: PaymentFactory,
+        threeDSHandler: ThreeDSWebViewHandler<GetPaymentStatePayload>,
+        threeDSDeviceParamsProvider: ThreeDSDeviceParamsProvider,
+        tdsController: TDSController,
+        webViewAuthChallengeService: IWebViewAuthChallengeService,
+        acquiringUISDK: AcquiringUISDK /* temporary*/
     ) {
-        self.threeDsService = threeDsService
+        threeDsService = threeDsService
         self.paymentFactory = paymentFactory
         self.threeDSHandler = threeDSHandler
-        self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
+        threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.tdsController = tdsController
+        self.webViewAuthChallengeService = webViewAuthChallengeService
         self.acquiringUISDK = acquiringUISDK
-        self.paymentDelegate = paymentDelegate ?? self
     }
 
     deinit {
@@ -232,8 +228,7 @@ private extension PaymentController {
             let threeDSViewController = ThreeDSViewController<GetPaymentStatePayload>(
                 urlRequest: urlRequest,
                 handler: self.threeDSHandler,
-                onHandleCancelled: self.threeDSHandlerDidCancel,
-                didHandle: self.threeDSHandlerCompletion
+                authChallengeService: self.webViewAuthChallengeService
             )
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
             navigationController.modalPresentationStyle = .overFullScreen
