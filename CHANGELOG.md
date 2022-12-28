@@ -23,6 +23,7 @@
 * [MIC-6834] Add New Card Screen Redisign - Card List Integration
 * [MIC-6835] Add New Card Screen Redisign - Present Add Card Only Integration
 * [MIC-6836] Add New Card Screen Redisign - Sample add shortcut button for presenting Add Card
+* [MIC-6842] Add New Card Screen Redisign - Unit Tests
 
 ### Fixed
 

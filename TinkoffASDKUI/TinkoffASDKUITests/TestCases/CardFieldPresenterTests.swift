@@ -42,6 +42,15 @@ final class CardFieldPresenterTests: XCTestCase {
         // then
         XCTAssertEqual(dependencies.viewMock.deactivateCallCounter, 1)
     }
+
+    func test_validateWholeForm_initialState() throws {
+        // given
+        let dependencies = buildDependencies()
+        // when
+        let validationResult = dependencies.sutAsProtocol.validateWholeForm()
+        // then
+        XCTAssertEqual(validationResult.isValid, false)
+    }
 }
 
 extension CardFieldPresenterTests {

@@ -92,4 +92,26 @@ public struct APIFailureError: LocalizedError, Decodable, CustomNSError {
         paymentId = try container.decodeIfPresent(String.self, forKey: .paymentId)
         amount = try container.decodeIfPresent(Int.self, forKey: .amount)
     }
+
+    // MARK: - Init
+
+    internal init(
+        errorCode: Int,
+        errorMessage: String? = nil,
+        errorDetails: String? = nil,
+        terminalKey: String? = nil,
+        status: String? = nil,
+        orderId: String? = nil,
+        paymentId: String? = nil,
+        amount: Int? = nil
+    ) {
+        self.errorCode = errorCode
+        self.errorMessage = errorMessage
+        self.errorDetails = errorDetails
+        self.terminalKey = terminalKey
+        self.status = status
+        self.orderId = orderId
+        self.paymentId = paymentId
+        self.amount = amount
+    }
 }

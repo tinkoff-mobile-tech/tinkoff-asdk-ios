@@ -306,3 +306,10 @@ extension CardFieldPresenter {
         case cvc
     }
 }
+
+extension CardFieldPresenter.ValidationResult {
+
+    static func initWithAllFieldsValid() -> Self {
+        Self(cardNumberIsValid: true, expirationIsValid: true, cvcIsValid: true)
+    }
+}
