@@ -5,7 +5,7 @@
 //  Created by Aleksandr Pravosudov on 28.12.2022.
 //
 
-public extension UILabel {
+extension UILabel {
     func isTextFitsBounds() -> Bool {
         attributedText?.fitsIn(size: rectForText().size, font: minimumAdjustedFont, numberOfLines: numberOfLines) ?? true
     }
@@ -18,7 +18,7 @@ public extension UILabel {
         return font.withSize(font.pointSize * minimumScaleFactor)
     }
 
-    internal func rectForText() -> CGRect {
+    func rectForText() -> CGRect {
         textRect(forBounds: bounds, limitedToNumberOfLines: numberOfLines)
     }
 }

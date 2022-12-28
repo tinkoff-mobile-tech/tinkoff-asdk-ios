@@ -5,35 +5,35 @@
 //  Created by Aleksandr Pravosudov on 28.12.2022.
 //
 
-open class FadingLabel: UILabel {
+class FadingLabel: UILabel {
 
     private let fadingMask = FadingTextLayer()
 
-    override open var text: String? {
+    override var text: String? {
         didSet {
             updateFadingMask()
         }
     }
 
-    override open var attributedText: NSAttributedString? {
+    override var attributedText: NSAttributedString? {
         didSet {
             updateFadingMask()
         }
     }
 
-    override open var numberOfLines: Int {
+    override var numberOfLines: Int {
         didSet {
             updateFadingMask()
         }
     }
 
-    override open var font: UIFont! {
+    override var font: UIFont! {
         didSet {
             updateFadingMask()
         }
     }
 
-    override open func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         updateFadingMask()
     }

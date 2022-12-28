@@ -5,17 +5,17 @@
 //  Created by Aleksandr Pravosudov on 28.12.2022.
 //
 
-public final class FadingTextLayer: CALayer {
+final class FadingTextLayer: CALayer {
 
     private let gradientMaskLayer = CAGradientLayer()
     private let fullLinesMaskLayer = CALayer()
 
-    override public init() {
+    override init() {
         super.init()
         commonInit()
     }
 
-    override public init(layer: Any) {
+    override init(layer: Any) {
         super.init(layer: layer)
         commonInit()
     }
@@ -25,20 +25,7 @@ public final class FadingTextLayer: CALayer {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func commonInit() {
-        gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0)
-        gradientMaskLayer.colors = [
-            UIColor(white: 0, alpha: 1).cgColor,
-            UIColor(white: 0, alpha: 0).cgColor,
-        ]
-        addSublayer(gradientMaskLayer)
-
-        fullLinesMaskLayer.backgroundColor = UIColor.black.cgColor
-        fullLinesMaskLayer.isHidden = true
-        addSublayer(fullLinesMaskLayer)
-    }
-
-    public func update(fontLineHight: CGFloat, numberOfLines: Int) {
+    func update(fontLineHight: CGFloat, numberOfLines: Int) {
         CATransaction.begin()
         CATransaction.setAnimationDuration(0)
 
@@ -55,6 +42,19 @@ public final class FadingTextLayer: CALayer {
         }
 
         CATransaction.commit()
+    }
+
+    private func commonInit() {
+        gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0)
+        gradientMaskLayer.colors = [
+            UIColor(white: 0, alpha: 1).cgColor,
+            UIColor(white: 0, alpha: 0).cgColor,
+        ]
+        addSublayer(gradientMaskLayer)
+
+        fullLinesMaskLayer.backgroundColor = UIColor.black.cgColor
+        fullLinesMaskLayer.isHidden = true
+        addSublayer(fullLinesMaskLayer)
     }
 }
 
