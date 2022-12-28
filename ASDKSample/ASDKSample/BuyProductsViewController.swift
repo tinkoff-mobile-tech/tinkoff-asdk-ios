@@ -104,9 +104,10 @@ class BuyProductsViewController: UIViewController {
             switch result {
             case let .success(factory):
                 let button = factory.createButtonContainer(
-                    with: YandexPayButtonContainerConfiguration(theme: YandexPayButtonContainerTheme(appearance: .dark), cornerRadius: 8),
+                    with: YandexPayButtonContainerConfiguration(theme: YandexPayButtonContainerTheme(appearance: .dark)),
                     delegate: self
                 )
+
                 self.yandexPayButtonContainerView.set(button: button)
                 self.tableViewCells.append(.yandexPay)
                 self.tableView.reloadData()

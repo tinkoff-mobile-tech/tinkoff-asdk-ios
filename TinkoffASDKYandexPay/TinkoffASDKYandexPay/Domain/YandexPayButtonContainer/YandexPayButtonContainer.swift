@@ -60,9 +60,12 @@ final class YandexPayButtonContainer: UIView {
             yandexPayButton.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        if let cornerRadius = configuration.cornerRadius {
-            yandexPayButton.layer.cornerRadius = cornerRadius
-        }
+        // У оригинальной кнопки `YandexPay` есть дефолтное скругление.
+        // Здесь устанавливается дефолтное скругление для контейнера и обнуляется у кнопки.
+        // Таким образом можно будет управлять стилем контейнера из клиентского кода
+        clipsToBounds = true
+        layer.cornerRadius = yandexPayButton.layer.cornerRadius
+        yandexPayButton.layer.cornerRadius = .zero
     }
 }
 
