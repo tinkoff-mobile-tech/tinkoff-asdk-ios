@@ -16,6 +16,34 @@ extension TimeInterval {
 
 final class PaymentControllerPaymentProcessDelegateTests: XCTestCase {
 
+    // Dependencies
+    var sutAsProtocol: ICardRequisitesValidator { sut }
+    var sut: CardRequisitesValidator!
+    var paymentSystemResolverMock: MockPaymentSystemResolver!
+
+    // MARK: - Setup
+
+    override func setUp() {
+        super.setUp()
+
+        let paymentSystemResolverMock = MockPaymentSystemResolver()
+        let validator = CardRequisitesValidator(
+            paymentSystemResolver: paymentSystemResolverMock,
+            options: .disableExpiryDateValidation
+        )
+
+        sut = validator
+        self.paymentSystemResolverMock = paymentSystemResolverMock
+    }
+
+    override func tearDown() {
+        sut = nil
+        paymentSystemResolverMock = nil
+        super.tearDown()
+    }
+
+    // MARK: - Tests
+
     // MARK: - func paymentDidFinish()
 
     func test_paymentDidFinish_getPaymentStateStatus_cancelled() throws {

@@ -13,195 +13,196 @@ import XCTest
 
 final class AddNewCardPresenterTests: XCTestCase {
 
+    // MARK: - Dependencies
+
+    var sut: AddNewCardPresenter!
+    var cardFieldFactoryMock: MockCardFieldFactory!
+    var networkingMock: MockAddNewCardNetworking!
+    var viewMock: MockIAddNewCardView!
+    var cardFieldPresenterMock: MockCardFieldPresenter!
+    var sutAsProtocol: IAddNewCardPresenter { sut }
+
+    // MARK: - Setup
+
+    override func setUp() {
+        super.setUp()
+
+        let networkingMock = MockAddNewCardNetworking()
+        let cardFieldFactoryMock = MockCardFieldFactory()
+        let mockView = MockIAddNewCardView()
+        let cardFieldPresenterMock = MockCardFieldPresenter()
+
+        let presenter = AddNewCardPresenter(
+            cardFieldFactory: cardFieldFactoryMock,
+            networking: networkingMock
+        )
+
+        presenter.view = mockView
+
+        sut = presenter
+        self.cardFieldFactoryMock = cardFieldFactoryMock
+        self.networkingMock = networkingMock
+        viewMock = mockView
+        self.cardFieldPresenterMock = cardFieldPresenterMock
+
+        // setup
+
+        cardFieldFactoryMock.assembleCardFieldConfigStub = { input in
+            .init(configuration: nil, presenter: cardFieldPresenterMock)
+        }
+    }
+
+    override func tearDown() {
+        sut = nil
+        cardFieldFactoryMock = nil
+        networkingMock = nil
+        viewMock = nil
+        cardFieldPresenterMock = nil
+
+        super.tearDown()
+    }
+
+    // MARK: - Tests
+
     func test_viewDidLoad() throws {
-        // given
-        let dependencies = buildDependecies()
         // when
-        dependencies.sutAsProtocol.viewDidLoad()
+        sutAsProtocol.viewDidLoad()
 
         // then
-        XCTAssertEqual(dependencies.viewMock.reloadCollectionCallCounter, 1)
-        XCTAssertEqual(dependencies.viewMock.disableAddButtonCallCounter, 1)
+        XCTAssertEqual(viewMock.reloadCollectionCallCounter, 1)
+        XCTAssertEqual(viewMock.disableAddButtonCallCounter, 1)
     }
 
     func test_viewAddCardTapped_addCard_success() throws {
         // given
-        let dependencies = buildDependecies()
-        let networking = dependencies.networkingMock
         let paymentCard = buildPaymentCard()
         let addCardExpectation = expectation(description: #function + "addCard")
         let notifyAddedCardExpectation = expectation(description: #function + "notifyAddedCard")
-        let cardFieldPresenterMock = dependencies.cardFieldPresenterMock
 
         cardFieldPresenterMock.validateWholeFormStub = {
             CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
         }
 
-        networking.addCardStub = { input in
+        networkingMock.addCardStub = { input in
             input.resultCompletion(.success(paymentCard))
             addCardExpectation.fulfill()
         }
 
-        dependencies.viewMock.notifyAddedStub = { card in
+        viewMock.notifyAddedStub = { card in
             XCTAssertEqual(card, paymentCard)
             notifyAddedCardExpectation.fulfill()
         }
 
         // triggers setting inner cardfield factory result
-        dependencies.sutAsProtocol.viewDidLoad()
+        sutAsProtocol.viewDidLoad()
 
         // when
-        dependencies.sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped()
         wait(for: [addCardExpectation, notifyAddedCardExpectation], timeout: .testTimeout)
 
         // then
-        XCTAssertEqual(dependencies.viewMock.showLoadingStateCallCounter, 1)
-        XCTAssertEqual(dependencies.networkingMock.addCardCallCounter, 1)
-        XCTAssertEqual(dependencies.viewMock.hideLoadingStateCallCounter, 1)
+        XCTAssertEqual(viewMock.showLoadingStateCallCounter, 1)
+        XCTAssertEqual(networkingMock.addCardCallCounter, 1)
+        XCTAssertEqual(viewMock.hideLoadingStateCallCounter, 1)
 
         // success flow
-        XCTAssertEqual(dependencies.viewMock.closeScreenCallCounter, 1)
-        XCTAssertEqual(dependencies.viewMock.notifyAddedCallCounter, 1)
+        XCTAssertEqual(viewMock.closeScreenCallCounter, 1)
+        XCTAssertEqual(viewMock.notifyAddedCallCounter, 1)
     }
 
     // MARK: - addCard() failure flows
 
     func test_viewAddCardTapped_addCard_failure_genericError() throws {
         // given
-        let dependencies = buildDependecies()
-        let networking = dependencies.networkingMock
         let addCardExpectation = expectation(description: #function + "addCard")
-        let cardFieldPresenterMock = dependencies.cardFieldPresenterMock
 
         cardFieldPresenterMock.validateWholeFormStub = {
             CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
         }
 
-        networking.addCardStub = { input in
+        networkingMock.addCardStub = { input in
             input.resultCompletion(.failure(TestsError.basic))
             addCardExpectation.fulfill()
         }
 
         // triggers setting inner cardfield factory result
-        dependencies.sutAsProtocol.viewDidLoad()
+        sutAsProtocol.viewDidLoad()
 
         // when
-        dependencies.sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped()
         wait(for: [addCardExpectation], timeout: .testTimeout)
 
         // then
-        XCTAssertEqual(dependencies.viewMock.showLoadingStateCallCounter, 1)
-        XCTAssertEqual(dependencies.networkingMock.addCardCallCounter, 1)
-        XCTAssertEqual(dependencies.viewMock.hideLoadingStateCallCounter, 1)
+        XCTAssertEqual(viewMock.showLoadingStateCallCounter, 1)
+        XCTAssertEqual(networkingMock.addCardCallCounter, 1)
+        XCTAssertEqual(viewMock.hideLoadingStateCallCounter, 1)
 
         // failure flow
-        XCTAssertEqual(dependencies.viewMock.showGenericErrorNativeAlertCallCounter, 1)
+        XCTAssertEqual(viewMock.showGenericErrorNativeAlertCallCounter, 1)
     }
 
     func test_viewAddCardTapped_addCard_failure_userCancelledCardAddingError() throws {
         // given
-        let dependencies = buildDependecies()
-        let networking = dependencies.networkingMock
         let addCardExpectation = expectation(description: #function + "addCard")
-        let cardFieldPresenterMock = dependencies.cardFieldPresenterMock
 
         cardFieldPresenterMock.validateWholeFormStub = {
             CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
         }
 
-        networking.addCardStub = { input in
+        networkingMock.addCardStub = { input in
             input.resultCompletion(.failure(AcquiringUiSdkError.userCancelledCardAdding))
             addCardExpectation.fulfill()
         }
 
         // triggers setting inner cardfield factory result
-        dependencies.sutAsProtocol.viewDidLoad()
+        sutAsProtocol.viewDidLoad()
 
         // when
-        dependencies.sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped()
         wait(for: [addCardExpectation], timeout: .testTimeout)
 
         // then
-        XCTAssertEqual(dependencies.viewMock.showLoadingStateCallCounter, 1)
-        XCTAssertEqual(dependencies.networkingMock.addCardCallCounter, 1)
-        XCTAssertEqual(dependencies.viewMock.hideLoadingStateCallCounter, 1)
+        XCTAssertEqual(viewMock.showLoadingStateCallCounter, 1)
+        XCTAssertEqual(networkingMock.addCardCallCounter, 1)
+        XCTAssertEqual(viewMock.hideLoadingStateCallCounter, 1)
 
         // failure flow
-        XCTAssertEqual(dependencies.viewMock.closeScreenCallCounter, 1)
+        XCTAssertEqual(viewMock.closeScreenCallCounter, 1)
     }
 
     func test_viewAddCardTapped_addCard_failure_alreadyHasSuchCardError() throws {
         // given
-        let dependencies = buildDependecies()
-        let networking = dependencies.networkingMock
         let addCardExpectation = expectation(description: #function + "addCard")
         let alreadyHasSuchCardErrorCode = 510
-        let cardFieldPresenterMock = dependencies.cardFieldPresenterMock
 
         cardFieldPresenterMock.validateWholeFormStub = {
             CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
         }
 
-        networking.addCardStub = { input in
+        networkingMock.addCardStub = { input in
             let error = APIError.failure(APIFailureError(errorCode: alreadyHasSuchCardErrorCode))
             input.resultCompletion(.failure(error))
             addCardExpectation.fulfill()
         }
 
         // triggers setting inner cardfield factory result
-        dependencies.sutAsProtocol.viewDidLoad()
+        sutAsProtocol.viewDidLoad()
 
         // when
-        dependencies.sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped()
         wait(for: [addCardExpectation], timeout: .testTimeout)
 
         // then
-        XCTAssertEqual(dependencies.viewMock.showLoadingStateCallCounter, 1)
-        XCTAssertEqual(dependencies.networkingMock.addCardCallCounter, 1)
-        XCTAssertEqual(dependencies.viewMock.hideLoadingStateCallCounter, 1)
+        XCTAssertEqual(viewMock.showLoadingStateCallCounter, 1)
+        XCTAssertEqual(networkingMock.addCardCallCounter, 1)
+        XCTAssertEqual(viewMock.hideLoadingStateCallCounter, 1)
 
         // failure flow
-        XCTAssertEqual(dependencies.viewMock.showAlreadySuchCardErrorNativeAlertCallCounter, 1)
+        XCTAssertEqual(viewMock.showAlreadySuchCardErrorNativeAlertCallCounter, 1)
     }
 }
 
 extension AddNewCardPresenterTests {
-
-    struct Dependencies {
-        let sut: AddNewCardPresenter
-        let cardFieldFactoryMock: MockCardFieldFactory
-        let networkingMock: MockAddNewCardNetworking
-        let viewMock: MockIAddNewCardView
-        let cardFieldPresenterMock: MockCardFieldPresenter
-
-        var sutAsProtocol: IAddNewCardPresenter { sut }
-    }
-
-    func buildDependecies() -> Dependencies {
-        let mockFactory = MockCardFieldFactory()
-        let mockNetworking = MockAddNewCardNetworking()
-        let mockView = MockIAddNewCardView()
-        let cardFieldPresenterMock = MockCardFieldPresenter()
-
-        mockFactory.assembleCardFieldConfigStub = { input in
-            .init(configuration: nil, presenter: cardFieldPresenterMock)
-        }
-
-        let presenter = AddNewCardPresenter(
-            cardFieldFactory: mockFactory,
-            networking: mockNetworking
-        )
-
-        presenter.view = mockView
-
-        return Dependencies(
-            sut: presenter,
-            cardFieldFactoryMock: mockFactory,
-            networkingMock: mockNetworking,
-            viewMock: mockView,
-            cardFieldPresenterMock: cardFieldPresenterMock
-        )
-    }
 
     func buildPaymentCard() -> PaymentCard {
         PaymentCard(
