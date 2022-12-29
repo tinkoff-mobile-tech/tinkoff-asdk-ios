@@ -37,11 +37,12 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Dependencies
 
+    public let ipAddressProvider: IIPAddressProvider
+
     private let acquiringAPI: IAcquiringAPIClient
     private let acquiringRequests: IAcquiringRequestBuilder
     private let externalAPI: IExternalAPIClient
     private let externalRequests: IExternalRequestBuilder
-    private let ipAddressProvider: IPAddressProvider
     private let threeDSFacade: IThreeDSFacade
     private let languageProvider: ILanguageProvider
     private let urlDataLoader: IURLDataLoader
@@ -53,7 +54,7 @@ public final class AcquiringSdk: NSObject {
         acquiringRequests: IAcquiringRequestBuilder,
         externalAPI: IExternalAPIClient,
         externalRequests: IExternalRequestBuilder,
-        ipAddressProvider: IPAddressProvider,
+        ipAddressProvider: IIPAddressProvider,
         threeDSFacade: IThreeDSFacade,
         languageProvider: ILanguageProvider,
         urlDataLoader: IURLDataLoader
@@ -126,16 +127,12 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: 3DS Handling
 
-    public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
+    public func threeDSWebViewSHandler() -> IThreeDSWebViewHandler {
         threeDSFacade.threeDSWebViewHandler()
     }
 
-    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
-        threeDSFacade.threeDSWebViewHandler()
-    }
-
-    public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        threeDSFacade.deviceParamsProvider(screenSize: screenSize)
+    public func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
+        threeDSFacade.threeDSDeviceInfoProvider()
     }
 
     // MARK: Init Payment
@@ -203,7 +200,6 @@ public final class AcquiringSdk: NSObject {
             paymentSource: data.paymentSource,
             infoEmail: data.infoEmail,
             deviceInfo: data.deviceInfo,
-            ipAddress: data.ipAddress,
             threeDSVersion: data.threeDSVersion,
             source: data.source,
             route: data.route
@@ -661,7 +657,7 @@ public final class AcquiringSdk: NSObject {
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
     ///
     /// - Parameters:
-    ///   - paymentId: `PaymentId` - идентификтор платежа
+    ///   - paymentId: `String` - идентификтор платежа
     ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
     ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
     /// - Returns: `Cancellable`
@@ -693,7 +689,19 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    // MARK: - Get Certs Config
+    // MARK: Get Terminal Pay Methods
+
+    /// Получить информацию о доступных методах оплаты и настройках терминала
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `GetTerminalPayMethodsPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
+    @discardableResult
+    public func getTerminalPayMethods(completion: @escaping (Result<GetTerminalPayMethodsPayload, Error>) -> Void) -> Cancellable {
+        let request = acquiringRequests.getTerminalPayMethods()
+        return acquiringAPI.performRequest(request, completion: completion)
+    }
+
+    // MARK: Get Certs Config
 
     /// Получить конфигурацию для работы с сертификатами 3DS AppBased
     ///

@@ -28,11 +28,11 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
 
     var scrollView: UIScrollView { contentViewController.scrollView }
 
-    var contentHeight: CGFloat {
-        isLoading ? loadingViewController.contentHeight : contentViewController.contentHeight
+    var pullableContainerContentHeight: CGFloat {
+        isLoading ? loadingViewController.pullableContainerContentHeight : contentViewController.pullableContainerContentHeight
     }
 
-    var contentHeightDidChange: ((PullableContainerContent) -> Void)?
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     typealias CustomView = PaymentPollingView
 
@@ -46,7 +46,7 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
     private var isLoading = false {
         didSet {
             isLoading ? customView.showLoading() : customView.hideLoading()
-            contentHeightDidChange?(self)
+            pullableContainerContentHeightDidChange?(self)
         }
     }
 
@@ -89,7 +89,7 @@ final class PaymentPollingViewController<ContentViewController: PaymentPollingCo
         setup()
     }
 
-    func wasClosed() {
+    func pullableContainerWasClosed() {
         isPollingPaymentStatus = false
         completion?(.success(cancelledResponse))
     }

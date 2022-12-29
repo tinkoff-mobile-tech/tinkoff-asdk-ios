@@ -19,7 +19,7 @@
 
 import UIKit
 
-public final class PullableContainerViewController: UIViewController {
+final class PullableContainerViewController: UIViewController {
 
     private var customView: PullableContainerView {
         return (view as? PullableContainerView) ?? PullableContainerView()
@@ -32,21 +32,20 @@ public final class PullableContainerViewController: UIViewController {
 
     private var cachedViewHeight: CGFloat = 0
 
-    override public var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+    override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         get { dimmingTransitioningDelegate }
         set {}
     }
 
-    override public var modalPresentationStyle: UIModalPresentationStyle {
+    override var modalPresentationStyle: UIModalPresentationStyle {
         get { .custom }
         set {}
     }
 
-    // swiftlint:disable weak_delegate
+    // swiftlint:disable:next weak_delegate
     private lazy var dimmingTransitioningDelegate = DimmingTransitioningDelegate(dimmingPresentationControllerDelegate: self)
-    // swiftlint:enable weak_delegate
 
-    public init(content: PullableContainerContent & UIViewController) {
+    init(content: PullableContainerContent & UIViewController) {
         self.content = content
         super.init(nibName: nil, bundle: nil)
     }
@@ -58,26 +57,26 @@ public final class PullableContainerViewController: UIViewController {
 
     // MARK: - View Life Cycle
 
-    override public func loadView() {
+    override func loadView() {
         view = PullableContainerView()
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
 
-    override public func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if cachedViewHeight != view.bounds.height {
             cachedViewHeight = view.bounds.height
             customView.layoutIfNeeded()
             dragController?.insets.top = customView.headerView.bounds.height
-            updateContainerHeight(contentHeight: content.contentHeight)
+            updateContainerHeight(contentHeight: content.pullableContainerContentHeight)
         }
     }
 
-    override public func viewSafeAreaInsetsDidChange() {
+    override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         dragController?.insets.bottom = view.safeAreaInsets.bottom
     }
@@ -95,9 +94,9 @@ private extension PullableContainerViewController {
         customView.addContent(content)
         content.didMove(toParent: self)
 
-        content.contentHeightDidChange = { [weak self] content in
+        content.pullableContainerContentHeightDidChange = { [weak self] content in
             self?.dragHandlers.forEach { $0.cancel() }
-            self?.updateContainerHeight(contentHeight: content.contentHeight)
+            self?.updateContainerHeight(contentHeight: content.pullableContainerContentHeight)
         }
     }
 
@@ -133,7 +132,7 @@ private extension PullableContainerViewController {
         customView.scrollView.isScrollEnabled = targetContentHeight >= maximumContentHeight
 
         UIView.animate(
-            withDuration: 0.3,
+            withDuration: 0.5,
             delay: 0,
             usingSpringWithDamping: 0.8,
             initialSpringVelocity: 2,
@@ -151,10 +150,12 @@ private extension PullableContainerViewController {
     }
 }
 
+// MARK: - PullableContainerDragControllerDelegate
+
 extension PullableContainerViewController: PullableContainerDragControllerDelegate {
     func pullableContainerDragControllerDidEndDragging(_ controller: PullableContainerDragController) {
         UIView.animate(
-            withDuration: 0.3,
+            withDuration: 0.5,
             delay: 0,
             usingSpringWithDamping: 0.8,
             initialSpringVelocity: 2,
@@ -166,22 +167,32 @@ extension PullableContainerViewController: PullableContainerDragControllerDelega
 
     func pullableContainerDragControllerDidCloseContainer(_ controller: PullableContainerDragController) {
         dismiss(animated: true)
-        content.willBeClosed()
+        content.pullableContainerWillBeClosed()
         transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
-            self?.content.wasClosed()
+            self?.content.pullableContainerWasClosed()
         })
     }
 
-    func pullableContainerDragControllerMaximumContentHeight(_ controller: PullableContainerDragController) -> CGFloat {
+    func pullableContainerDragControllerDidRequestMaxContentHeight(_ controller: PullableContainerDragController) -> CGFloat {
         calculateMaximumContentHeight()
+    }
+
+    func pullableContainerDragControllerShouldDismissOnDownDragging(_ controller: PullableContainerDragController) -> Bool {
+        content.pullableContainerShouldDismissOnDownDragging()
     }
 }
 
+// MARK: - DimmingPresentationControllerDelegate
+
 extension PullableContainerViewController: DimmingPresentationControllerDelegate {
-    func didDismissByDimmingViewTap(dimmingPresentationController: DimmingPresentationController) {
-        content.willBeClosed()
+    func dimmingPresentationControllerDidDismissByDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController) {
+        content.pullableContainerWillBeClosed()
         transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
-            self?.content.wasClosed()
+            self?.content.pullableContainerWasClosed()
         })
+    }
+
+    func dimmingPresentationControllerShouldDismissOnDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController) -> Bool {
+        content.pullableContainerShouldDismissOnDimmingViewTap()
     }
 }

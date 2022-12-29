@@ -1,6 +1,24 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [MIC-6527] NetworkClient unit tests
+* [MIC-6526] AcquiringAPIClient unit tests
+* [MIC-6801] AcquiringRequestAdapter unit tests
+* [MIC-6627] Added Tests for PaymentController
+* [MIC-6700] Added Skeleton Views + Skeleton Animations
+* [MIC-6817] Dynamic Icon Card View (allows to generate a card visuals)
+* [MIC-6828] Added Stylable Button
+* [MIC-6848] Bank detection logic based on cardNumber
+* [MIC-6821] Added Snackbar for presenting snacks
+* [MIC-7349] Ability to provide dismissing behavior to PullableContainer
+* [MIC-4762] YandexPayButton integration
+
+### Fixed
+
+* [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
+
 ## [2.14.1] - 2022-12-26Z
 
 ### Added
@@ -30,6 +48,7 @@
 
 * [MIC-6063] Implement token providing logic for ASDK requests
 * [MIC-6184] Implement SampleTokenProvider in ASDKSample
+* [MIC-6513+MIC-6279] Implementation of PaymentController from v3/root is now added master version. PaymentController - let's you have all the logic needed for payments without depening on UI.
 * [MIC-6582] CustomerKey editing now available in ASDKSample app
 * [MIC-6584] Switching terminal now available in ASDKSample app
 
@@ -43,6 +62,7 @@
 ### Fixed
 
 * pull/198 modalViewController.popupStyle now uses configuration popupStyle (bug fix)
+* [MIC-6735] Response validation by condition `success == true && errorCode == 0`
 
 ## [2.11.1] - 2022-10-10Z
 

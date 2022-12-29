@@ -26,35 +26,42 @@ protocol IAcquiringRequestBuilder {
         paymentId: String,
         version: GetTinkoffPayStatusResponse.Status.Version
     ) -> AcquiringRequest
+    func getTerminalPayMethods() -> AcquiringRequest
 }
 
 final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
     private let baseURLProvider: IURLProvider
     private let publicKeyProvider: IPublicKeyProvider
     private let terminalKeyProvider: IStringProvider
-    private let initParamsEnricher: IPaymentInitDataParamsEnricher
     private let cardDataFormatter: CardDataFormatter
     private let rsaEncryptor: IRSAEncryptor
+    private let ipAddressProvider: IIPAddressProvider
+    private let environmentParametersProvider: IEnvironmentParametersProvider
 
     init(
         baseURLProvider: IURLProvider,
         publicKeyProvider: IPublicKeyProvider,
         terminalKeyProvider: IStringProvider,
-        initParamsEnricher: IPaymentInitDataParamsEnricher,
         cardDataFormatter: CardDataFormatter,
-        rsaEncryptor: IRSAEncryptor
+        rsaEncryptor: IRSAEncryptor,
+        ipAddressProvider: IIPAddressProvider,
+        environmentParametersProvider: IEnvironmentParametersProvider
     ) {
         self.baseURLProvider = baseURLProvider
         self.publicKeyProvider = publicKeyProvider
         self.terminalKeyProvider = terminalKeyProvider
-        self.initParamsEnricher = initParamsEnricher
         self.cardDataFormatter = cardDataFormatter
         self.rsaEncryptor = rsaEncryptor
+        self.ipAddressProvider = ipAddressProvider
+        self.environmentParametersProvider = environmentParametersProvider
     }
 
     func initRequest(data: PaymentInitData) -> AcquiringRequest {
-        let enrichedData = initParamsEnricher.enrich(data)
-        return InitRequest(paymentInitData: enrichedData, baseURL: baseURLProvider.url)
+        InitRequest(
+            paymentInitData: data,
+            environmentParametersProvider: environmentParametersProvider,
+            baseURL: baseURLProvider.url
+        )
     }
 
     func finishAuthorize(data: FinishAuthorizeData) -> AcquiringRequest {
@@ -62,6 +69,8 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
             requestData: data,
             encryptor: rsaEncryptor,
             cardDataFormatter: cardDataFormatter,
+            ipAddressProvider: ipAddressProvider,
+            environmentParametersProvider: environmentParametersProvider,
             publicKey: publicKeyProvider.publicKey,
             baseURL: baseURLProvider.url
         )
@@ -78,7 +87,7 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
     }
 
     func submit3DSAuthorizationV2(data: CresData) -> AcquiringRequest {
-        ThreeDSV2AuthorizationRequest(data: data, baseURL: baseURLProvider.url)
+        Submit3DSAuthorizationV2Request(data: data, baseURL: baseURLProvider.url)
     }
 
     func getPaymentState(data: GetPaymentStateData) -> AcquiringRequest {
@@ -135,5 +144,9 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
         version: GetTinkoffPayStatusResponse.Status.Version
     ) -> AcquiringRequest {
         GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURLProvider.url)
+    }
+
+    func getTerminalPayMethods() -> AcquiringRequest {
+        GetTerminalPayMethodsRequest(baseURL: baseURLProvider.url, terminalKey: terminalKeyProvider.value)
     }
 }

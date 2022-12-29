@@ -19,11 +19,30 @@
 
 import TinkoffASDKCore
 
-struct PaymentFactory {
-    private let acquiringSDK: AcquiringSdk
+protocol IPaymentFactory {
+    func createPayment(
+        paymentSource: PaymentSourceData,
+        paymentFlow: PaymentFlow,
+        paymentDelegate: PaymentProcessDelegate
+    ) -> PaymentProcess?
+}
 
-    init(acquiringSDK: AcquiringSdk) {
-        self.acquiringSDK = acquiringSDK
+struct PaymentFactory: IPaymentFactory {
+    private let paymentsService: IAcquiringPaymentsService
+    private let threeDsService: IAcquiringThreeDSService
+    private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
+    private let ipProvider: IIPAddressProvider
+
+    init(
+        paymentsService: IAcquiringPaymentsService,
+        threeDsService: IAcquiringThreeDSService,
+        threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
+        ipProvider: IIPAddressProvider
+    ) {
+        self.paymentsService = paymentsService
+        self.threeDsService = threeDsService
+        self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
+        self.ipProvider = ipProvider
     }
 
     func createPayment(
@@ -32,22 +51,37 @@ struct PaymentFactory {
         paymentDelegate: PaymentProcessDelegate
     ) -> PaymentProcess? {
         switch paymentSource {
-        case .cardNumber, .savedCard, .paymentData:
+        case .cardNumber, .savedCard, .applePay:
             return CardPaymentProcess(
-                acquiringSDK: acquiringSDK,
+                paymentsService: paymentsService,
+                threeDsService: threeDsService,
+                threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
+                ipProvider: ipProvider,
                 paymentSource: paymentSource,
                 paymentFlow: paymentFlow,
                 delegate: paymentDelegate
             )
+        case let .yandexPay(base64Token):
+            switch paymentFlow {
+            case let .full(paymentOptions):
+                return YandexPayPaymentProcess(
+                    paymentOptions: paymentOptions,
+                    base64Token: base64Token,
+                    paymentService: paymentsService,
+                    threeDSService: threeDsService,
+                    threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
+                    delegate: paymentDelegate
+                )
+            case .finish:
+                return nil
+            }
         case .parentPayment:
             return ChargePaymentProcess(
-                acquiringSDK: acquiringSDK,
+                paymentsService: paymentsService,
                 paymentSource: paymentSource,
                 paymentFlow: paymentFlow,
                 delegate: paymentDelegate
             )
-        case .unknown:
-            return nil
         }
     }
 }

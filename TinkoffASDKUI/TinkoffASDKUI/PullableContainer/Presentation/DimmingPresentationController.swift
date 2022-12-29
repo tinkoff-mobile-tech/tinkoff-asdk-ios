@@ -20,14 +20,15 @@
 import UIKit
 
 protocol DimmingPresentationControllerDelegate: AnyObject {
-    func didDismissByDimmingViewTap(dimmingPresentationController: DimmingPresentationController)
+    func dimmingPresentationControllerShouldDismissOnDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController) -> Bool
+    func dimmingPresentationControllerDidDismissByDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController)
 }
 
 final class DimmingPresentationController: UIPresentationController {
-
     weak var dimmingPresentationControllerDelegate: DimmingPresentationControllerDelegate?
-
     private let dimmingView = DimmingView()
+
+    // MARK: Init
 
     override init(
         presentedViewController: UIViewController,
@@ -38,6 +39,8 @@ final class DimmingPresentationController: UIPresentationController {
             presenting: presentingViewController
         )
     }
+
+    // MARK: Parent's methods
 
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
@@ -66,10 +69,10 @@ final class DimmingPresentationController: UIPresentationController {
         dimmingView.frame = containerView?.bounds ?? .zero
         presentedView?.frame = containerView?.bounds ?? .zero
     }
-}
 
-private extension DimmingPresentationController {
-    func setupTapDismissGesture() {
+    // MARK: Helpers
+
+    private func setupTapDismissGesture() {
         let tapGesture = UITapGestureRecognizer(
             target: self,
             action: #selector(dismissTapGestureAction(_:))
@@ -77,12 +80,28 @@ private extension DimmingPresentationController {
         dimmingView.addGestureRecognizer(tapGesture)
     }
 
-    func setupDimmingView() {
+    private func setupDimmingView() {
         containerView?.addSubview(dimmingView)
     }
 
-    @objc func dismissTapGestureAction(_ recognizer: UITapGestureRecognizer) {
+    @objc private func dismissTapGestureAction(_ recognizer: UITapGestureRecognizer) {
+        guard shouldDismissOnDimmingViewTap() else { return }
+
         presentedViewController.presentingViewController?.dismiss(animated: true, completion: nil)
-        dimmingPresentationControllerDelegate?.didDismissByDimmingViewTap(dimmingPresentationController: self)
+        dimmingPresentationControllerDelegate?.dimmingPresentationControllerDidDismissByDimmingViewTap(self)
     }
+
+    private func shouldDismissOnDimmingViewTap() -> Bool {
+        guard let delegate = dimmingPresentationControllerDelegate else {
+            return .defaultShouldDismissOnDimmingViewTap
+        }
+
+        return delegate.dimmingPresentationControllerShouldDismissOnDimmingViewTap(self)
+    }
+}
+
+// MARK: - Constants
+
+private extension Bool {
+    static let defaultShouldDismissOnDimmingViewTap = true
 }

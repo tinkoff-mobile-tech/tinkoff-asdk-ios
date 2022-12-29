@@ -20,11 +20,11 @@
 import UIKit
 
 final class LoadingViewController: UIViewController, PullableContainerContent {
-    var contentHeight: CGFloat {
+    var pullableContainerContentHeight: CGFloat {
         return 100
     }
 
-    var contentHeightDidChange: ((PullableContainerContent) -> Void)?
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     private let activityIndicator = UIActivityIndicatorView()
     private let statusLabel = UILabel()
@@ -37,7 +37,7 @@ final class LoadingViewController: UIViewController, PullableContainerContent {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        contentHeightDidChange?(self)
+        pullableContainerContentHeightDidChange?(self)
     }
 
     func startActivity() {
@@ -60,11 +60,11 @@ final class LoadingViewController: UIViewController, PullableContainerContent {
 
 private extension LoadingViewController {
     func setup() {
-        view.backgroundColor = UIColor.asdk.dynamic.background.elevation1
+        view.backgroundColor = ASDKColors.Background.elevation1.color
         view.addSubview(activityIndicator)
         view.addSubview(statusLabel)
 
-        statusLabel.textColor = UIColor.asdk.n3
+        statusLabel.textColor = ASDKColors.n3
         statusLabel.font = .boldSystemFont(ofSize: .statusLabelFontSize)
 
         activityIndicator.style = .gray

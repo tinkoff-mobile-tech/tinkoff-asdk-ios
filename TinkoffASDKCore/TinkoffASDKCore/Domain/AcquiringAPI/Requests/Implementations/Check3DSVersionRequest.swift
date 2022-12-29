@@ -24,6 +24,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
     let path: String = "v2/Check3dsVersion"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always
     let tokenFormationStrategy: TokenFormationStrategy = .includeAll()
 
     init(
@@ -67,7 +68,7 @@ private extension HTTPParameters {
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[Constants.Keys.cardData] = encryptedCardData
             }
-        case let .paymentData(data):
+        case let .applePay(data):
             parameters[Constants.Keys.encryptedPaymentData] = data
             parameters[Constants.Keys.route] = Constants.Values.acq
             parameters[Constants.Keys.source] = Constants.Values.applePaySource

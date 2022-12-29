@@ -40,8 +40,12 @@ public extension AcquiringSdk {
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
         let deviceInfoProvider = DeviceInfoProvider()
         let acquiringDecoder = AcquiringDecoder()
-        let initEnricher = PaymentInitDataParamsEnricher(deviceInfoProvider: deviceInfoProvider, language: configuration.language)
         let urlDataLoader = URLDataLoader(networkClient: networkClient)
+
+        let environmentParametersProvider = EnvironmentParametersProvider(
+            deviceInfoProvider: deviceInfoProvider,
+            language: configuration.language
+        )
 
         let acquiringClient = AcquiringAPIClient.build(
             terminalKeyProvider: terminalKeyProvider,
@@ -60,9 +64,10 @@ public extension AcquiringSdk {
             baseURLProvider: acquiringURLProvider,
             publicKeyProvider: publicKeyProvider,
             terminalKeyProvider: terminalKeyProvider,
-            initParamsEnricher: initEnricher,
             cardDataFormatter: CardDataFormatter(),
-            rsaEncryptor: encryptor
+            rsaEncryptor: encryptor,
+            ipAddressProvider: ipAddressProvider,
+            environmentParametersProvider: environmentParametersProvider
         )
 
         self.init(
@@ -118,6 +123,7 @@ private extension NetworkSession {
         let urlSessionConfiguration = URLSessionConfiguration.default
         urlSessionConfiguration.timeoutIntervalForRequest = requestsTimeout
         urlSessionConfiguration.timeoutIntervalForResource = requestsTimeout
+        urlSessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
         let authChallengeService = authChallengeService ?? DefaultURLSessionAuthChallengeService()
         let urlSessionDelegate = URLSessionDelegateImpl(authChallengeService: authChallengeService)
 

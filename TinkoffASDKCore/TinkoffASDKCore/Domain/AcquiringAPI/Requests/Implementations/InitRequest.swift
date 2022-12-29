@@ -24,6 +24,7 @@ struct InitRequest: AcquiringRequest {
     let path: String = "v2/Init"
     let httpMethod: HTTPMethod = .post
     let parameters: HTTPParameters
+    let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .always
     let tokenFormationStrategy: TokenFormationStrategy = .includeAll(
         except:
         Constants.Keys.data,
@@ -32,8 +33,14 @@ struct InitRequest: AcquiringRequest {
         Constants.Keys.receipts
     )
 
-    init(paymentInitData: PaymentInitData, baseURL: URL) {
+    init(
+        paymentInitData: PaymentInitData,
+        environmentParametersProvider: IEnvironmentParametersProvider,
+        baseURL: URL
+    ) {
         self.baseURL = baseURL
-        parameters = (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        var initData = paymentInitData
+        initData.addPaymentData(environmentParametersProvider.environmentParameters)
+        parameters = (try? initData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }

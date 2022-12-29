@@ -85,7 +85,7 @@ playground.xcworkspace
  Package.resolved
 .build/
 # Add this line if you want to avoid checking in Xcode SPM integration.
- .swiftpm/xcode
+.swiftpm/xcode
 
 # CocoaPods
 # We recommend against adding the Pods directory to your .gitignore. However
@@ -155,3 +155,6 @@ fastlane/README.md
 
 # Xcode generated workspaces
 ASDKSample/ASDKSample.xcworkspace/**
+
+# Debug helper files for local development
+TinkoffASDKUI/TinkoffASDKUI/Debug/**

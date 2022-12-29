@@ -19,15 +19,25 @@
 
 import TinkoffASDKCore
 
-public struct PaymentOptions {
-    let orderOptions: OrderOptions
-    let customerOptions: CustomerOptions
-    let failedPaymentId: PaymentId?
-    let paymentData: [String: String]?
+/// Параметры платежа
+public struct PaymentOptions: Equatable {
+    /// Параметры заказа
+    public let orderOptions: OrderOptions
+    /// Параметры покупателя
+    public let customerOptions: CustomerOptions?
+    /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
+    ///
+    /// `Key: String` – 20 знаков,
+    /// `Value: String` – 100 знаков.
+    /// - Warning: Максимальное количество пар параметров не может превышать 20.
+    /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
+    public let paymentData: [String: String]?
+
+    let failedPaymentId: String?
 
     public init(
         orderOptions: OrderOptions,
-        customerOptions: CustomerOptions,
+        customerOptions: CustomerOptions? = nil,
         paymentData: [String: String]? = nil
     ) {
         self.orderOptions = orderOptions
@@ -38,36 +48,13 @@ public struct PaymentOptions {
 
     init(
         orderOptions: OrderOptions,
-        customerOptions: CustomerOptions,
-        failedPaymentId: PaymentId?,
+        customerOptions: CustomerOptions?,
+        failedPaymentId: String?,
         paymentData: [String: String]? = nil
     ) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
         self.failedPaymentId = failedPaymentId
         self.paymentData = paymentData
-    }
-
-    func convertToPaymentInitData() -> PaymentInitData {
-        let options = self
-        let customer = options.customerOptions.customer
-        var customerKey: String?
-
-        switch customer {
-        case .none:
-            break
-        case let .customer(key, _):
-            customerKey = key
-        }
-
-        return PaymentInitData(
-            amount: options.orderOptions.amount,
-            orderId: options.orderOptions.orderId,
-            customerKey: customerKey,
-            redirectDueDate: nil,
-            payType: nil,
-            successURL: nil,
-            failURL: nil
-        )
     }
 }

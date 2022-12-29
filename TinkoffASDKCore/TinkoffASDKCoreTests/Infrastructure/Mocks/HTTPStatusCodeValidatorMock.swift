@@ -13,7 +13,7 @@ final class HTTPStatusCodeValidatorMock: IHTTPStatusCodeValidator {
     var invokedValidateCount = 0
     var invokedValidateParameters: (statusCode: Int, Void)?
     var invokedValidateParametersList = [(statusCode: Int, Void)]()
-    var stubbedValidateResult: Bool! = false
+    var stubbedValidateResult = true
 
     func validate(statusCode: Int) -> Bool {
         invokedValidate = true

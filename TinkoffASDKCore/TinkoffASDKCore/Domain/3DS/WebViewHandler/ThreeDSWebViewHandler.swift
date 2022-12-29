@@ -19,12 +19,25 @@
 
 import Foundation
 
-public final class ThreeDSWebViewHandler<Payload: Decodable> {
-    public var didCancel: (() -> Void)?
-    public var didFinish: ((Result<Payload, Error>) -> Void)?
+public enum ThreeDSWebViewHandlingResult<Payload: Decodable> {
+    case finished(payload: Result<Payload, Error>)
+    case cancelled
+}
+
+public protocol IThreeDSWebViewHandler: AnyObject {
+    func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) -> ThreeDSWebViewHandlingResult<Payload>?
+}
+
+public final class ThreeDSWebViewHandler: IThreeDSWebViewHandler {
+    // MARK: Dependencies
 
     private let urlBuilder: IThreeDSURLBuilder
     private let decoder: IAcquiringDecoder
+
+    // MARK: Init
 
     init(
         urlBuilder: IThreeDSURLBuilder,
@@ -34,10 +47,15 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
         self.decoder = decoder
     }
 
-    public func handle(urlString: String, responseData data: Data) {
+    // MARK: IThreeDSWebViewHandler
+
+    public func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) -> ThreeDSWebViewHandlingResult<Payload>? {
+
         guard !urlString.hasSuffix("cancel.do") else {
-            didCancel?()
-            return
+            return .cancelled
         }
 
         let confirmation3DSTerminationURLString = urlBuilder
@@ -49,13 +67,13 @@ public final class ThreeDSWebViewHandler<Payload: Decodable> {
             .absoluteString
 
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
-            return
+            return nil
         }
 
-        let result = Result {
+        let payloadResult = Result {
             try decoder.decode(Payload.self, from: data, with: .standard)
         }
 
-        didFinish?(result)
+        return ThreeDSWebViewHandlingResult.finished(payload: payloadResult)
     }
 }

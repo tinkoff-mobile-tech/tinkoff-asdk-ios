@@ -1,0 +1,9 @@
+{
+    "Success": true,
+    "ErrorCode": "0",
+    "TerminalInfo": {
+        "AddCardScheme": true,
+        "TokenRequired": false,
+        "InitTokenRequired": false
+    }
+}
