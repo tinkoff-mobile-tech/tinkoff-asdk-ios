@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.15.0] - 2022-12-29Z
+
 ### Added
 
 * [MIC-6527] NetworkClient unit tests
