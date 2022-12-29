@@ -47,13 +47,6 @@ enum CardListScreenState {
     case showingStub
 }
 
-enum CardListScreenState {
-    case initial
-    case showingCards
-    case editingCards
-    case showingStub
-}
-
 final class CardListPresenter: ICardListModule {
     // MARK: ICardListModule Event Handlers
 
@@ -188,7 +181,7 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidHideLoadingSnackbar() {
-        if let result = deactivateCardResult?() {
+        if let result = deactivateCardResult {
             deactivateCardResult = nil
 
             switch result {
@@ -225,7 +218,6 @@ extension CardListPresenter {
         isLoading = true
         provider.fetchActiveCards { [weak self] result in
             self?.isLoading = false
-            self?.fetchActiveCardsResult = result
             self?.view?.hideShimmer(fetchCardsResult: result)
         }
     }
@@ -258,7 +250,6 @@ extension CardListPresenter {
 
         view?.enableViewUserInteraction()
     }
-}
 
     private func prepareViewForShowingStub() {
         screenState = .showingStub

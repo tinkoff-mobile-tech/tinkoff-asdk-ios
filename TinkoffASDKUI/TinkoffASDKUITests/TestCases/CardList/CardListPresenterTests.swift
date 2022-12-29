@@ -158,7 +158,7 @@ final class CardListPresenterTests: XCTestCase {
         dependencies.sutAsProtocol.viewDidHideLoadingSnackbar()
 
         // then
-        XCTAssertEqual(view.enableViewUserInteractionCallCounter, 1)
+        XCTAssertEqual(view.enableViewUserInteractionCallCounter, 2)
         XCTAssertEqual(view.showNativeAlertCallCounter, 1)
     }
 

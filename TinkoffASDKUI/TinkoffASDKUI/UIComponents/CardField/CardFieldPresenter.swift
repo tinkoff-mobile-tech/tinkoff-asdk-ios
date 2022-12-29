@@ -163,19 +163,19 @@ final class CardFieldPresenter: ICardFieldPresenter {
         ):
             if !result.cardNumberIsValid {
                 cardNumberHeaderLabelConfig = UILabel.Configuration(
-                    content: .plain(text: cardText, style: cardStyle.set(textColor: ASDKColors.red))
+                    content: .plain(text: cardText, style: cardStyle.set(textColor: ASDKColors.Foreground.negativeAccent))
                 )
             }
 
             if !result.expirationIsValid {
                 expirationHeaderLabelConfig = UILabel.Configuration(
-                    content: .plain(text: expText, style: expStyle.set(textColor: ASDKColors.red))
+                    content: .plain(text: expText, style: expStyle.set(textColor: ASDKColors.Foreground.negativeAccent))
                 )
             }
 
             if !result.cvcIsValid {
                 cvcHeaderLabelConfig = UILabel.Configuration(
-                    content: .plain(text: cvcText, style: cvcStyle.set(textColor: ASDKColors.red))
+                    content: .plain(text: cvcText, style: cvcStyle.set(textColor: ASDKColors.Foreground.negativeAccent))
                 )
             }
 

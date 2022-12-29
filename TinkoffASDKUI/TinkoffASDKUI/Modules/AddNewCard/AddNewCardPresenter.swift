@@ -88,20 +88,18 @@ extension AddNewCardPresenter {
             number: cardfieldPresenter.cardNumber,
             expiration: cardfieldPresenter.expiration,
             cvc: cardfieldPresenter.cvc,
-            resultCompletion: { result in
-                DispatchQueue.performOnMain { [weak self] in
-                    guard let self = self
-                    else { return }
+            resultCompletion: { [weak self] result in
+                guard let self = self
+                else { return }
 
-                    self.view?.hideLoadingState()
+                self.view?.hideLoadingState()
 
-                    switch result {
-                    case let .success(card):
-                        self.view?.closeScreen()
-                        self.view?.notifyAdded(card: card)
-                    case let .failure(error):
-                        self.handleAddCard(error: error)
-                    }
+                switch result {
+                case let .success(card):
+                    self.view?.closeScreen()
+                    self.view?.notifyAdded(card: card)
+                case let .failure(error):
+                    self.handleAddCard(error: error)
                 }
             }
         )

@@ -126,24 +126,6 @@ final class CardListViewController: UIViewController {
         )
     }
 
-    private func buildEditBarButton() -> UIBarButtonItem {
-        UIBarButtonItem(
-            title: Loc.Acquiring.CardList.buttonChange,
-            style: .plain,
-            target: self,
-            action: #selector(editButtonTapped)
-        )
-    }
-
-    private func buildDoneEditingBarButton() -> UIBarButtonItem {
-        UIBarButtonItem(
-            title: Loc.Acquiring.CardList.buttonDone,
-            style: .plain,
-            target: self,
-            action: #selector(doneEditingButtonTapped)
-        )
-    }
-
     // MARK: Actions
 
     @objc private func closeButtonTapped() {
@@ -322,10 +304,4 @@ extension CardListViewController {
     func getAddNewCardOutput() -> IAddNewCardOutput {
         presenter
     }
-}
-
-extension CardListViewController: ISnackBarPresentable, ISnackBarViewProvider {
-
-    var viewProvider: ISnackBarViewProvider? { self }
-    func viewToAddSnackBarTo() -> UIView { view }
 }
