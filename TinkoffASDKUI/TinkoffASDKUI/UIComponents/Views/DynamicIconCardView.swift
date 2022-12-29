@@ -40,11 +40,6 @@ class DynamicIconCardView: UIView {
         )
     }
 
-    private init(constants: Constants = Constants()) {
-        self.constants = constants
-        super.init(frame: CGRect(origin: .zero, size: constants.card.size))
-    }
-
     // MARK: - Public
 
     func configure(model: Model) {
@@ -63,6 +58,10 @@ class DynamicIconCardView: UIView {
         }
     }
 
+    func clear() {
+        configure(model: Model(data: Data()))
+    }
+
     // MARK: - Private
 
     private func setupViews() {
@@ -72,7 +71,7 @@ class DynamicIconCardView: UIView {
 
         cardImageView.contentMode = .scaleAspectFill
         cardImageView.clipsToBounds = true
-        paymentSystemBadgeImageView.contentMode = .scaleAspectFill
+        paymentSystemBadgeImageView.contentMode = .scaleAspectFit
         paymentSystemBadgeImageView.clipsToBounds = true
 
         setupFrames()
@@ -112,6 +111,7 @@ class DynamicIconCardView: UIView {
     }
 
     private func configureBank(icon: Icon.Bank?) {
+        guard cardImageView.image != icon?.image else { return }
         cardImageView.alpha = icon == nil ? 0 as CGFloat : 1 as CGFloat
         cardImageView.image = icon?.image
     }
@@ -126,6 +126,8 @@ class DynamicIconCardView: UIView {
 // MARK: - Constants
 
 extension DynamicIconCardView {
+
+    static var defaultSize: CGSize { Constants.Card().size }
 
     struct Constants {
         var card = Card()
@@ -150,11 +152,17 @@ extension DynamicIconCardView {
 
 // MARK: - Other
 
+protocol IDynamicIconCardViewUpdater: AnyObject {
+    func update(config: DynamicIconCardView.Model)
+}
+
 extension DynamicIconCardView {
 
     struct Model {
         var data: Data
         var style = Style()
+
+        weak var updater: IDynamicIconCardViewUpdater?
     }
 
     struct Data {

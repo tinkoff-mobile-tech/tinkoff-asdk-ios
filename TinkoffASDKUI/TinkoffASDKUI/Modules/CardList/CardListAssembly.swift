@@ -40,11 +40,6 @@ protocol ICardListAssembly {
 }
 
 final class CardListAssembly: ICardListAssembly {
-    private let primaryButtonStyle: ButtonStyle?
-
-    init(primaryButtonStyle: ButtonStyle?) {
-        self.primaryButtonStyle = primaryButtonStyle
-    }
 
     // MARK: ICardListAssembly
 
@@ -54,7 +49,7 @@ final class CardListAssembly: ICardListAssembly {
     ) -> (view: UIViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
-            style: .presenting(primaryButtonStyle: primaryButtonStyle),
+            style: .presenting(),
             configuration: configuration
         )
     }
@@ -65,7 +60,7 @@ final class CardListAssembly: ICardListAssembly {
     ) -> (view: UIViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
-            style: .selection(primaryButtonStyle: primaryButtonStyle),
+            style: .selection(),
             configuration: configuration
         )
     }
@@ -79,13 +74,15 @@ final class CardListAssembly: ICardListAssembly {
     ) -> (view: UIViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
             imageResolver: PaymentSystemImageResolver(),
-            provider: provider
+            provider: provider,
+            bankResolver: BankResolver(),
+            paymentSystemResolver: PaymentSystemResolver()
         )
 
         let view = CardListViewController(
             style: style,
             presenter: presenter,
-            externalAlertsFactory: configuration.alertViewHelper
+            stubBuilder: BaseStubViewBuilder()
         )
 
         presenter.view = view
@@ -96,18 +93,16 @@ final class CardListAssembly: ICardListAssembly {
 // MARK: - CardListViewController + Styles
 
 private extension CardListView.Style {
-    static func presenting(primaryButtonStyle: ButtonStyle?) -> CardListView.Style {
+    static func presenting() -> CardListView.Style {
         CardListView.Style(
-            listItemsAreSelectable: false,
-            primaryButtonStyle: primaryButtonStyle,
+            listItemsAreSelectable: true,
             backgroundColor: ASDKColors.Background.elevation1.color
         )
     }
 
-    static func selection(primaryButtonStyle: ButtonStyle?) -> CardListView.Style {
+    static func selection() -> CardListView.Style {
         CardListView.Style(
             listItemsAreSelectable: true,
-            primaryButtonStyle: primaryButtonStyle,
             backgroundColor: ASDKColors.Background.elevation1.color
         )
     }

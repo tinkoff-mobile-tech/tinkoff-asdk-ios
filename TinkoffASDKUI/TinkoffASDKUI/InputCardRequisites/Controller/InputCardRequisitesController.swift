@@ -420,7 +420,7 @@ extension InputCardRequisitesController: InputCardRequisitesDataSource {
 
 // MARK: - MaskedTextFieldDelegate + Mask Updating
 
-private extension MaskedTextFieldDelegate {
+extension MaskedTextFieldDelegate {
     /// Вспомогательный метод для обновления маски
     ///
     /// По-умолчанию `MaskedTextFieldDelegate` не пересчитывает расположение символов

@@ -75,7 +75,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         customization.setLabelCustomization(labelCustomization)
 
         let buttonCustomization = ThreeDSWrapper.ButtonCustomization()
-        buttonCustomization.setBackgroundColor(ASDKColors.tinkoffYellow.hex)
+        buttonCustomization.setBackgroundColor(ASDKColors.Foreground.brandTinkoffAccent.hex)
         buttonCustomization.setCornerRadius(.buttonCornerRadius)
         buttonCustomization.setTextColor(ASDKColors.Text.primary.color.hex)
         buttonCustomization.setTextFontSize(Int(regularFont.pointSize))
@@ -83,7 +83,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         customization.setButtonCustomization(buttonCustomization: buttonCustomization, buttonType: .SUBMIT)
 
         let buttonCustomizationResend = ThreeDSWrapper.ButtonCustomization()
-        buttonCustomizationResend.setBackgroundColor(ASDKColors.tinkoffYellow.hex)
+        buttonCustomizationResend.setBackgroundColor(ASDKColors.Foreground.brandTinkoffAccent.hex)
         buttonCustomizationResend.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationResend.setTextColor(ASDKColors.Text.primary.color.hex)
         buttonCustomizationResend.setTextFontSize(Int(regularFont.pointSize))
@@ -91,7 +91,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationResend, buttonType: .RESEND)
 
         let buttonCustomizationVerify = ThreeDSWrapper.ButtonCustomization()
-        buttonCustomizationVerify.setBackgroundColor(ASDKColors.tinkoffYellow.hex)
+        buttonCustomizationVerify.setBackgroundColor(ASDKColors.Foreground.brandTinkoffAccent.hex)
         buttonCustomizationVerify.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationVerify.setTextColor(ASDKColors.Text.primary.color.hex)
         buttonCustomizationVerify.setTextFontSize(Int(regularFont.pointSize))
@@ -99,7 +99,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationVerify, buttonType: .VERIFY)
 
         let buttonCustomizationContinue = ThreeDSWrapper.ButtonCustomization()
-        buttonCustomizationContinue.setBackgroundColor(ASDKColors.tinkoffYellow.hex)
+        buttonCustomizationContinue.setBackgroundColor(ASDKColors.Foreground.brandTinkoffAccent.hex)
         buttonCustomizationContinue.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationContinue.setTextColor(ASDKColors.Text.primary.color.hex)
         buttonCustomizationContinue.setTextFontSize(Int(regularFont.pointSize))
@@ -107,7 +107,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationContinue, buttonType: .CONTINUE)
 
         let buttonCustomizationNext = ThreeDSWrapper.ButtonCustomization()
-        buttonCustomizationNext.setBackgroundColor(ASDKColors.tinkoffYellow.hex)
+        buttonCustomizationNext.setBackgroundColor(ASDKColors.Foreground.brandTinkoffAccent.hex)
         buttonCustomizationNext.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationNext.setTextColor(ASDKColors.Text.primary.color.hex)
         buttonCustomizationNext.setTextFontSize(Int(regularFont.pointSize))
@@ -115,7 +115,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         customization.setButtonCustomization(buttonCustomization: buttonCustomizationNext, buttonType: .NEXT)
 
         let buttonCustomizationCancel = ThreeDSWrapper.ButtonCustomization()
-        buttonCustomizationCancel.setBackgroundColor(ASDKColors.tinkoffYellow.hex)
+        buttonCustomizationCancel.setBackgroundColor(ASDKColors.Foreground.brandTinkoffAccent.hex)
         buttonCustomizationCancel.setCornerRadius(.buttonCornerRadius)
         buttonCustomizationCancel.setTextColor(ASDKColors.Text.primary.color.hex)
         buttonCustomizationCancel.setTextFontSize(Int(regularFont.pointSize))

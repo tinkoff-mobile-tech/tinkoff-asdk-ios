@@ -24,8 +24,9 @@ struct CardList {
     struct Card {
         let id: String
         let pan: String
-        let validThru: String
-        let icon: UIImage?
+        let cardModel: DynamicIconCardView.Model
+        let assembledText: String
+        let isInEditingMode: Bool
     }
 
     struct Alert {
@@ -38,13 +39,6 @@ struct CardList {
 // MARK: - Alerts Factory Methods
 
 extension CardList.Alert {
-    static func cardAdded(card: PaymentCard) -> CardList.Alert {
-        CardList.Alert(
-            title: Loc.TinkoffAcquiring.Alert.Title.cardSuccessAdded,
-            message: "card id = \(card.cardId),\n\(card.pan) \(card.expDateFormat() ?? "")",
-            icon: .success
-        )
-    }
 
     static func cardAddingFailed(with error: Error) -> CardList.Alert {
         CardList.Alert(

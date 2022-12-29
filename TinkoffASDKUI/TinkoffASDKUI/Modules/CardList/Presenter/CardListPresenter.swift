@@ -22,9 +22,16 @@ import UIKit
 
 protocol ICardListViewOutput: AnyObject {
     func viewDidLoad()
-    func view(didSelect card: CardList.Card)
     func view(didTapDeleteOn card: CardList.Card)
-    func viewDidTapPrimaryButton()
+    func viewDidTapEditButton()
+    func viewDidTapDoneEditingButton()
+    func viewDidHideLoadingSnackbar()
+    func viewDidTapCard(cardIndex: Int)
+    func viewDidTapAddCardCell()
+    func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
+    func viewDidTapNoCardsStubButton()
+    func viewDidTapNoNetworkStubButton()
+    func viewDidTapServerErrorStubButton()
 }
 
 protocol ICardListModule: AnyObject {
@@ -32,6 +39,13 @@ protocol ICardListModule: AnyObject {
     var onAddNewCardTap: (() -> Void)? { get set }
 
     func addingNewCard(completedWith result: Result<PaymentCard?, Error>)
+}
+
+enum CardListScreenState {
+    case initial
+    case showingCards
+    case editingCards
+    case showingStub
 }
 
 final class CardListPresenter: ICardListModule {
@@ -45,19 +59,30 @@ final class CardListPresenter: ICardListModule {
     weak var view: ICardListViewInput?
     private let imageResolver: IPaymentSystemImageResolver
     private let provider: IPaymentCardsProvider
+    private let bankResolver: IBankResolver
+    private let paymentSystemResolver: IPaymentSystemResolver
 
     // MARK: State
 
     private var activeCardsCache: [PaymentCard] = []
+    private var isLoading = false
+    private var hasVisualContent: Bool { !activeCardsCache.isEmpty }
+    private var screenState = CardListScreenState.initial
+    private var deactivateCardResult: Result<Void, Error>?
+    private var sections: [CardListSection] { getSections() }
 
     // MARK: Init
 
     init(
         imageResolver: IPaymentSystemImageResolver,
-        provider: IPaymentCardsProvider
+        provider: IPaymentCardsProvider,
+        bankResolver: IBankResolver,
+        paymentSystemResolver: IPaymentSystemResolver
     ) {
         self.imageResolver = imageResolver
         self.provider = provider
+        self.bankResolver = bankResolver
+        self.paymentSystemResolver = paymentSystemResolver
     }
 
     // MARK: ICardListModule Methods
@@ -68,11 +93,13 @@ final class CardListPresenter: ICardListModule {
             // card == nil - добавление карты отменено пользователем
             if let card = card {
                 activeCardsCache.append(card)
-                view?.reload(cards: transform(activeCardsCache))
-                view?.show(alert: .cardAdded(card: card))
+                reloadCardsSection()
+                view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
             }
         case let .failure(error):
-            view?.show(alert: .cardAddingFailed(with: error))
+            break
+            // Will be fixed in add card flow
+            // view?.show(alert: .cardAddingFailed(with: error))
         }
     }
 
@@ -80,11 +107,25 @@ final class CardListPresenter: ICardListModule {
 
     private func transform(_ paymentCards: [PaymentCard]) -> [CardList.Card] {
         paymentCards.map { card in
-            CardList.Card(
+            let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
+            let cardModel = DynamicIconCardView.Model(
+                data: DynamicIconCardView.Data(
+                    bank: bank?.icon,
+                    paymentSystem: paymentSystemResolver
+                        .resolve(by: card.pan).getPaymentSystem()?.icon
+                )
+            )
+
+            var bankText = bank?.naming ?? ""
+            bankText = bankText.isEmpty ? bankText : bankText.appending(" ")
+            let finalText = bankText + "· \(card.pan.suffix(4))"
+
+            return CardList.Card(
                 id: card.cardId,
                 pan: .format(pan: card.pan),
-                validThru: .format(validThru: card.expDate),
-                icon: imageResolver.resolve(by: card.pan)
+                cardModel: cardModel,
+                assembledText: finalText,
+                isInEditingMode: screenState == .editingCards
             )
         }
     }
@@ -93,51 +134,168 @@ final class CardListPresenter: ICardListModule {
 // MARK: - ICardListViewOutput
 
 extension CardListPresenter: ICardListViewOutput {
-    func viewDidLoad() {
-        view?.showLoader()
-        provider.fetchActiveCards { [self] result in
-            switch result {
-            case let .success(paymentCards):
-                activeCardsCache = paymentCards
-                view?.reload(cards: transform(paymentCards))
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
-            }
 
-            view?.hideLoader()
-        }
+    func viewDidLoad() {
+        view?.showShimmer()
+        fetchActiveCards()
     }
 
-    func view(didSelect card: CardList.Card) {
-        guard let paymentCard = activeCardsCache.first(where: { $0.cardId == card.id }) else {
-            return
-        }
-        onSelectCard?(paymentCard)
+    func viewDidTapCard(cardIndex: Int) {
+        onSelectCard?(activeCardsCache[cardIndex])
+    }
+
+    func viewDidTapAddCardCell() {
+        onAddNewCardTap?()
+    }
+
+    func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
+        handleFetchedActiveCard(result: fetchCardsResult)
+    }
+
+    func viewDidTapNoCardsStubButton() {
+        onAddNewCardTap?()
+    }
+
+    func viewDidTapNoNetworkStubButton() {
+        viewDidLoad()
+    }
+
+    func viewDidTapServerErrorStubButton() {
+        view?.dismiss()
     }
 
     func view(didTapDeleteOn card: CardList.Card) {
-        view?.showLoader()
+        isLoading = true
+        view?.disableViewUserInteraction()
+        view?.showLoadingSnackbar(
+            text: Loc.Acquiring.CardList.deleteSnackBar + " " + card.pan
+        )
 
-        provider.deactivateCard(cardId: card.id) { [self] result in
-            switch result {
-            case .success:
-                activeCardsCache.removeAll { $0.cardId == card.id }
-                view?.remove(card: card)
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
-            }
-            view?.hideLoader()
+        provider.deactivateCard(cardId: card.id) { [weak self] result in
+            guard let self = self else { return }
+            self.isLoading = false
+            self.deactivateCardResult = result
+            self.view?.hideLoadingSnackbar()
         }
     }
 
-    func viewDidTapPrimaryButton() {
-        onAddNewCardTap?()
+    func viewDidTapEditButton() {
+        guard screenState == .showingCards, !isLoading else { return }
+        screenState = .editingCards
+        view?.showDoneEditingButton()
+        reloadCardsSection()
+    }
+
+    func viewDidTapDoneEditingButton() {
+        guard !isLoading else { return }
+        screenState = .showingCards
+        view?.showEditButton()
+        reloadCardsSection()
+    }
+
+    func viewDidHideLoadingSnackbar() {
+        if let result = deactivateCardResult {
+            deactivateCardResult = nil
+
+            switch result {
+            case .success:
+                fetchActiveCards()
+            case .failure:
+                if hasVisualContent {
+                    showRemoveCardErrorAlert()
+                }
+            }
+        }
+
+        view?.enableViewUserInteraction()
+    }
+}
+
+extension CardListPresenter {
+
+    // MARK: - Private
+
+    private func fetchActiveCards() {
+        isLoading = true
+        provider.fetchActiveCards { [weak self] result in
+            self?.isLoading = false
+            self?.view?.hideShimmer(fetchCardsResult: result)
+        }
+    }
+
+    private func handleFetchedActiveCard(result: Result<[PaymentCard], Error>) {
+        isLoading = false
+
+        switch result {
+        case let .success(paymentCards):
+            activeCardsCache = paymentCards
+            if paymentCards.isEmpty {
+                viewDidTapDoneEditingButton()
+                reloadCardsSection()
+                showNoCardsStub()
+            } else {
+                if screenState != .editingCards {
+                    screenState = .showingCards
+                }
+                reloadCardsSection()
+            }
+
+        case let .failure(error):
+            switch (error as NSError).code {
+            case NSURLErrorNotConnectedToInternet:
+                showNoNetworkStub()
+            default:
+                showServerErrorStub()
+            }
+        }
+    }
+
+    private func showServerErrorStub() {
+        screenState = .showingStub
+        view?.hideStub()
+        view?.showServerErrorStub()
+    }
+
+    private func showNoNetworkStub() {
+        screenState = .showingStub
+        view?.hideStub()
+        view?.showNoNetworkStub()
+    }
+
+    private func showNoCardsStub() {
+        screenState = .showingStub
+        view?.hideStub()
+        view?.showNoCardsStub()
+    }
+
+    private func reloadCardsSection() {
+        view?.hideStub()
+        view?.reload(sections: sections)
+    }
+
+    private func showRemoveCardErrorAlert() {
+        view?.showNativeAlert(
+            title: Loc.CommonAlert.DeleteCard.title,
+            message: nil,
+            buttonTitle: Loc.CommonAlert.button
+        )
+    }
+
+    private func getSections() -> [CardListSection] {
+        var result: [CardListSection] = [
+            .cards(data: transform(activeCardsCache)),
+        ]
+
+        if screenState != .editingCards {
+            result.append(.addCard(data: prepareAddCardConfigs()))
+        }
+        return result
+    }
+
+    private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
+        return [
+            (icon: Asset.Icons.addCard, title: Loc.Acquiring.CardList.addCard),
+        ]
     }
 }
 
@@ -145,7 +303,7 @@ extension CardListPresenter: ICardListViewOutput {
 
 private extension String {
     static func format(pan: String) -> String {
-        "*" + pan.suffix(4)
+        "•" + pan.suffix(4)
     }
 
     static func format(validThru: String?) -> String {

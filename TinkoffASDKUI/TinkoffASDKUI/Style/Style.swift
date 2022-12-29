@@ -25,7 +25,7 @@ public protocol Style {
 
 public struct DefaultStyle: Style {
     public let bigButtonStyle = ButtonStyle(
-        backgroundColor: ASDKColors.tinkoffYellow,
+        backgroundColor: ASDKColors.Foreground.brandTinkoffAccent,
         titleColor: ASDKColors.black
     )
     public init() {}

@@ -16,7 +16,7 @@ final class SnackbarViewController: UIViewController {
         }
     }
 
-    private var actions: [() -> Void] = []
+    private var didSetStateToShownActions: [String: () -> Void] = [:]
     private var animations: [() -> Void] = []
     private var hasPendingHidingAnimation = false
 
@@ -24,6 +24,10 @@ final class SnackbarViewController: UIViewController {
     private var showedAtTime: DispatchTime?
 
     private var snackbarView: SnackbarView?
+
+    override func loadView() {
+        view = PassthroughView()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,14 +110,23 @@ extension SnackbarViewController {
 
     /// Убрать снек (с анимацией или без)
     func hideSnackView(animated: Bool = true, completion: (() -> Void)? = nil) {
+        if state == .showing {
+            didSetStateToShownActions[#function] = { [weak self] in
+                self?.hideSnackView(animated: animated, completion: completion)
+            }
+        }
+
+        guard state == .shown else { return }
+
         let hasPassedShowingTimeTreshold = hasPassedShowingTimeTreshold(
+            timeTreshold: 0.5,
             hideAnimationBlock: {
                 self.hideSnackView(animated: animated, completion: completion)
             }
         )
 
         guard hasPassedShowingTimeTreshold else { return }
-        guard let snackbarView = snackbarView, state != .hiding || state != .hidden else { return }
+        guard let snackbarView = snackbarView else { return }
         state = .hiding
 
         let animation = Animation(
@@ -123,6 +136,7 @@ extension SnackbarViewController {
             completion: { [weak self] in
                 self?.state = .hidden
                 self?.view.removeFromSuperview()
+                completion?()
             }
         )
 
@@ -182,11 +196,15 @@ extension SnackbarViewController {
             break
         case .shown:
             showedAtTime = .now()
+            didSetStateToShownActions.values.forEach { closure in closure() }
         }
     }
 
-    private func hasPassedShowingTimeTreshold(hideAnimationBlock: @escaping () -> Void) -> Bool {
-        let timeTreshold = 0.5
+    private func hasPassedShowingTimeTreshold(
+        timeTreshold: Double,
+        hideAnimationBlock: @escaping () -> Void
+    ) -> Bool {
+
         var passedShowingTimeTreshold = true
         guard !hasPendingHidingAnimation else { return false }
 
