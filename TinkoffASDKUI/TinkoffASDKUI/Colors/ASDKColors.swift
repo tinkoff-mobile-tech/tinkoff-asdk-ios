@@ -9,10 +9,6 @@ import UIKit
 
 struct ASDKColors {
 
-    static var tinkoffYellow: UIColor {
-        UIColor(hex: "#FFDD2D") ?? .clear
-    }
-
     static var black: UIColor {
         UIColor(hex: "#333333") ?? .clear
     }
@@ -60,10 +56,6 @@ struct ASDKColors {
     static var accent: UIColor {
         UIColor(hex: "#428BF9") ?? .clear
     }
-
-    static var red: UIColor {
-        UIColor(hex: "#F52222") ?? .clear
-    }
 }
 
 // MARK: - Pallete
@@ -73,6 +65,13 @@ extension ASDKColors {
     // MARK: - Foreground
 
     struct Foreground {
+
+        // Static
+
+        static var brandTinkoffAccent: UIColor { UIColor(hex: "#FFDD2D") ?? .clear }
+        static var negativeAccent: UIColor { UIColor(hex: "#F52222") ?? .clear }
+
+        // Dynamic
 
         static var skeleton: UIColor.Dynamic {
             UIColor.Dynamic(

@@ -68,8 +68,7 @@ final class CardListPresenter: ICardListModule {
     private var isLoading = false
     private var hasVisualContent: Bool { !activeCardsCache.isEmpty }
     private var screenState = CardListScreenState.initial
-    private var fetchActiveCardsResult: Result<[PaymentCard], Error>?
-    private var deactivateCardResult: (() -> Result<Void, Error>)?
+    private var deactivateCardResult: Result<Void, Error>?
     private var sections: [CardListSection] { getSections() }
 
     // MARK: Init
@@ -175,7 +174,7 @@ extension CardListPresenter: ICardListViewOutput {
         provider.deactivateCard(cardId: card.id) { [weak self] result in
             guard let self = self else { return }
             self.isLoading = false
-            self.deactivateCardResult = { result }
+            self.deactivateCardResult = result
             self.view?.hideLoadingSnackbar()
         }
     }
@@ -195,7 +194,7 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidHideLoadingSnackbar() {
-        if let result = deactivateCardResult?() {
+        if let result = deactivateCardResult {
             deactivateCardResult = nil
 
             switch result {
@@ -220,7 +219,6 @@ extension CardListPresenter {
         isLoading = true
         provider.fetchActiveCards { [weak self] result in
             self?.isLoading = false
-            self?.fetchActiveCardsResult = result
             self?.view?.hideShimmer(fetchCardsResult: result)
         }
     }
