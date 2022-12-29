@@ -11,26 +11,21 @@ import Foundation
 public enum YandexPayPaymentResult {
     /// Информация о проведенном платеже
     public struct PaymentInfo {
+        /// Параметры, на основе которых была проведена оплата
+        public let paymentOptions: PaymentOptions
         /// Идентификатор платежа
         public let paymentId: String
-        /// Идентификатор заказа в системе продавца
-        public let orderId: String
-        /// Сумма заказа в копейках
-        public let amount: Int64
 
         /// Инициализация параметров
         /// - Parameters:
+        ///   - paymentOptions: Параметры, на основе которых была проведена оплата
         ///   - paymentId: Идентификатор платежа
-        ///   - orderId: Идентификатор заказа в системе продавца
-        ///   - amount: Сумма заказа в копейках
-        init(
-            paymentId: String,
-            orderId: String,
-            amount: Int64
+        public init(
+            paymentOptions: PaymentOptions,
+            paymentId: String
         ) {
+            self.paymentOptions = paymentOptions
             self.paymentId = paymentId
-            self.orderId = orderId
-            self.amount = amount
         }
     }
 

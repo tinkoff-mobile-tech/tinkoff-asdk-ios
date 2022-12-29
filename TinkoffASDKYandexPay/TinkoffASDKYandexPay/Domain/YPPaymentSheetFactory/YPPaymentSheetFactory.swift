@@ -30,8 +30,8 @@ final class YPPaymentSheetFactory: IYPPaymentSheetFactory {
         )
 
         let order = YPOrder(
-            id: method.merchantId + paymentSheet.order.orderId,
-            amount: .rublesString(fromPennies: paymentSheet.order.amount)
+            id: method.merchantId + paymentSheet.paymentOptions.orderOptions.orderId,
+            amount: .rublesString(fromPennies: paymentSheet.paymentOptions.orderOptions.amount)
         )
 
         let yandexPaySDKPaymentSheet = YPPaymentSheet(

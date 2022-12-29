@@ -34,6 +34,15 @@ final class CardPaymentProcess: PaymentProcess {
 
     private weak var delegate: PaymentProcessDelegate?
 
+    private var customerEmail: String? {
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            return paymentOptions.customerOptions?.email
+        case let .finish(_, customerOptions):
+            return customerOptions?.email
+        }
+    }
+
     init(
         paymentsService: IAcquiringPaymentsService,
         threeDsService: IAcquiringThreeDSService,
@@ -128,7 +137,7 @@ private extension CardPaymentProcess {
             let data = FinishAuthorizeData(
                 paymentId: payload.paymentId,
                 paymentSource: paymentSource,
-                infoEmail: paymentFlow.customerOptions?.email
+                infoEmail: customerEmail
             )
             finishAuthorize(data: data)
         case .parentPayment, .yandexPay:
@@ -152,7 +161,7 @@ private extension CardPaymentProcess {
                 let data = FinishAuthorizeData(
                     paymentId: paymentId,
                     paymentSource: self.paymentSource,
-                    infoEmail: self.paymentFlow.customerOptions?.email,
+                    infoEmail: self.customerEmail,
                     deviceInfo: deviceInfo,
                     threeDSVersion: payload.version
                 )
@@ -162,7 +171,7 @@ private extension CardPaymentProcess {
             let data = FinishAuthorizeData(
                 paymentId: paymentId,
                 paymentSource: paymentSource,
-                infoEmail: paymentFlow.customerOptions?.email
+                infoEmail: customerEmail
             )
             finishAuthorize(data: data, threeDSVersion: payload.version)
         }

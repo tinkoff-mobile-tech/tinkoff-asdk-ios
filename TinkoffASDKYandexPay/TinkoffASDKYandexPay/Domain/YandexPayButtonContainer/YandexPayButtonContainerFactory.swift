@@ -12,17 +12,14 @@ import YandexPaySDK
 
 final class YandexPayButtonContainerFactory: IYandexPayButtonContainerFactory {
     private let sdkButtonFactory: IYandexPaySDKButtonFactory
-    private let yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly
-    private let method: YandexPayMethod
+    private let controllerFactory: IYandexPayButtonContainerControllerFactory
 
     init(
         sdkButtonFactory: IYandexPaySDKButtonFactory,
-        yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly,
-        method: YandexPayMethod
+        controllerFactory: IYandexPayButtonContainerControllerFactory
     ) {
         self.sdkButtonFactory = sdkButtonFactory
-        self.yandexPayPaymentFlowAssembly = yandexPayPaymentFlowAssembly
-        self.method = method
+        self.controllerFactory = controllerFactory
     }
 
     func createButtonContainer(
@@ -32,8 +29,7 @@ final class YandexPayButtonContainerFactory: IYandexPayButtonContainerFactory {
         YandexPayButtonContainer(
             configuration: configuration,
             sdkButtonFactory: sdkButtonFactory,
-            paymentSheetFactory: YPPaymentSheetFactory(method: method),
-            yandexPayPaymentFlowAssembly: yandexPayPaymentFlowAssembly,
+            controllerFactory: controllerFactory,
             delegate: delegate
         )
     }

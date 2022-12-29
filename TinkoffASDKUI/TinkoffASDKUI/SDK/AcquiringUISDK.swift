@@ -126,9 +126,9 @@ public typealias AddCardCompletionHandler = (_ result: Result<AddCardStatusRespo
 public protocol AcquiringScanerProtocol: AnyObject {
     ///
     /// - Parameters:
-    ///   - completion: результат сканирования, номер карты `number`, месяц `month`, год `year`
+    ///   - completion: результат сканирования, номер карты `number`, год `yy`, месяц `mm`
     /// - Returns: сканер UIViewController
-    func presentScanner(completion: @escaping (_ number: String?, _ month: Int?, _ year: Int?) -> Void) -> UIViewController?
+    func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController?
 }
 
 /// Отображение не стандартного AlertView если в приложении используется не UIAlertController
@@ -238,7 +238,7 @@ public class AcquiringUISDK: NSObject {
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
-                yandexPayPaymentSheetAssembly: YandexPayPaymentSheetAssembly(
+                yandexPayActivityAssebmly: YandexPayPaymentActivityAssembly(
                     paymentControllerAssembly: paymentControllerAssembly
                 )
             ),

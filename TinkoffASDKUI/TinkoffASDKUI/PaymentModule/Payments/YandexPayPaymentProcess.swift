@@ -8,23 +8,11 @@
 import Foundation
 import TinkoffASDKCore
 
-final class YandexPayPaymentProcess: PaymentProcess {
-    // MARK: PaymentProcess properties
-
-    let paymentFlow: PaymentFlow
-    let paymentSource: PaymentSourceData
-
-    var paymentId: String? {
-        switch paymentFlow {
-        case .full:
-            return _paymentId.wrappedValue
-        case let .finish(paymentId, _):
-            return paymentId
-        }
-    }
-
+final class YandexPayPaymentProcess {
     // MARK: Dependencies
 
+    private let paymentOptions: PaymentOptions
+    private let base64Token: String
     private let paymentService: IAcquiringPaymentsService
     private let threeDSService: IAcquiringThreeDSService
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
@@ -39,30 +27,39 @@ final class YandexPayPaymentProcess: PaymentProcess {
     // MARK: Init
 
     init(
-        paymentFlow: PaymentFlow,
-        paymentSource: PaymentSourceData,
+        paymentOptions: PaymentOptions,
+        base64Token: String,
         paymentService: IAcquiringPaymentsService,
         threeDSService: IAcquiringThreeDSService,
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         delegate: PaymentProcessDelegate
     ) {
-        self.paymentFlow = paymentFlow
-        self.paymentSource = paymentSource
+        self.paymentOptions = paymentOptions
+        self.base64Token = base64Token
         self.paymentService = paymentService
         self.threeDSService = threeDSService
         self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.delegate = delegate
     }
+}
 
-    // MARK: PaymentProcess
+// MARK: - PaymentProcess
+
+extension YandexPayPaymentProcess: PaymentProcess {
+    var paymentId: String? {
+        _paymentId.wrappedValue
+    }
+
+    var paymentFlow: PaymentFlow {
+        .full(paymentOptions: paymentOptions)
+    }
+
+    var paymentSource: TinkoffASDKCore.PaymentSourceData {
+        .yandexPay(base64Token: base64Token)
+    }
 
     func start() {
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            initPayment(data: .data(with: paymentOptions))
-        case let .finish(paymentId, _):
-            finishAuthorize(data: createFinishAuthorizeData(paymentId: paymentId))
-        }
+        initPayment(data: .data(with: paymentOptions))
     }
 
     func cancel() {
@@ -74,14 +71,14 @@ final class YandexPayPaymentProcess: PaymentProcess {
 // MARK: - Helpers
 
 private extension YandexPayPaymentProcess {
-    private func initPayment(data: PaymentInitData) {
+    func initPayment(data: PaymentInitData) {
         let request = paymentService.initPayment(data: data) { [weak self] result in
             guard let self = self, !self.isCancelled.wrappedValue else { return }
 
             switch result {
             case let .success(initPayload):
                 self._paymentId.store(newValue: initPayload.paymentId)
-                self.finishAuthorize(data: self.createFinishAuthorizeData(paymentId: initPayload.paymentId))
+                self.finishAuthorize(initPayload: initPayload)
             case let .failure(error):
                 self.delegate?.paymentDidFailed(self, with: error, cardId: nil, rebillId: nil)
             }
@@ -90,8 +87,15 @@ private extension YandexPayPaymentProcess {
         currentRequest.store(newValue: request)
     }
 
-    private func finishAuthorize(data: FinishAuthorizeData) {
-        let request = paymentService.finishAuthorize(data: data) { [weak self] result in
+    private func finishAuthorize(initPayload: InitPayload) {
+        let finishData = FinishAuthorizeData(
+            paymentId: initPayload.paymentId,
+            paymentSource: paymentSource,
+            infoEmail: paymentOptions.customerOptions?.email,
+            deviceInfo: threeDSDeviceInfoProvider.createDeviceInfo(threeDSCompInd: .threeDSCompInd)
+        )
+
+        let request = paymentService.finishAuthorize(data: finishData) { [weak self] result in
             guard let self = self, !self.isCancelled.wrappedValue else { return }
 
             switch result {
@@ -103,15 +107,6 @@ private extension YandexPayPaymentProcess {
         }
 
         currentRequest.store(newValue: request)
-    }
-
-    private func createFinishAuthorizeData(paymentId: String) -> FinishAuthorizeData {
-        FinishAuthorizeData(
-            paymentId: paymentId,
-            paymentSource: paymentSource,
-            infoEmail: paymentFlow.customerOptions?.email,
-            deviceInfo: threeDSDeviceInfoProvider.createDeviceInfo(threeDSCompInd: .threeDSCompInd)
-        )
     }
 
     private func handleFinishAuthorize(payload: FinishAuthorizePayload) {

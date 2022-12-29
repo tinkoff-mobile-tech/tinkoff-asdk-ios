@@ -176,47 +176,18 @@ extension MyViewController: YandexPayButtonContainerDelegate {
          _ container: IYandexPayButtonContainer,
          didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
     ) {
-        // значения этих параметров должны совпадать с данными в `OrderOptions`
-        let order = YandexPayPaymentSheet.Order(
-            orderId: orderId,
-            amount: amount
-        )
-
-        let paymentSheet = YandexPayPaymentSheet(order: order)
-        
-        // Может быть вызван синхронно или асинхронно из любого потока
-         completion(paymentSheet)
-    }
-
-    func yandexPayButtonContainer(
-        _ container: IYandexPayButtonContainer,
-        didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
-    ) {
-        // Создайте параметры заказа
-        let orderOptions = OrderOptions(
-            orderId: orderId,
-            amount: amount,
-            description: "example description",
-            receipt: getReceipt(),
-            shops: getShops(),
-            receipts: getReceipts(),
-            savingAsParentPayment: false
-        )
-
-        // Опционально добавьте параметры покупателя,
-        // которые могут использоваться для сохранения карт, отправки квитанции и тд 
-        let customerOptions = CustomerOptions(
-            customerKey: "exampleCustomerKey", 
-            email: "exampleEmail@tinkoff.ru"
-        )
+        let orderOption: OrderOptions = ...
+        let customerOptions: CustomerOptions = ...
 
         let paymentOptions = PaymentOptions(
             orderOptions: orderOptions,
             customerOptions: customerOptions
         )
 
+        let paymentSheet = YandexPayPaymentSheet(paymentOptions: paymentOptions)
+
         // Может быть вызван синхронно или асинхронно из любого потока
-        completion(.full(paymentOptions: paymentOptions))
+         completion(paymentSheet)
     }
 
     func yandexPayButtonContainerDidRequestViewControllerForPresentation(
@@ -234,30 +205,10 @@ extension MyViewController: YandexPayButtonContainerDelegate {
         case .cancelled:
             print("Payment is cancelled by user")
         case let .succeeded(info):
-            print("Payment completed successfully with amount \(info.amount)")
+            print("Payment completed successfully with amount \(info.paymentOptions.orderOptions.amount)")
         case let .failed(error):
             print("Payment completed with error \(error)")
         }
     }
 }
-```
-
-#### Проведение оплаты на основе уже сформированного `paymentId`
-
-Чтобы обработать ситуацию, когда `paymentId` формируется на бекенде продавца, достаточно передать `PaymentFlow.finish`
-в методе `YandexPayButtonContainerDelegate.yandexPayButtonContainer(_:didRequestPaymentFlow:)`:
-
-```swift
-func yandexPayButtonContainer(
-    _ container: IYandexPayButtonContainer,
-    didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
-) {
-    paymentService.fetchPaymentId { paymentId in
-        let customerOptions = CustomerOptions(
-            customerKey: "exampleCustomerKey", 
-            email: "exampleEmail@tinkoff.ru"
-        )
-
-        completion(.finish(paymentId: paymentId, customerOptions: customerOptions))
-    }
 ```

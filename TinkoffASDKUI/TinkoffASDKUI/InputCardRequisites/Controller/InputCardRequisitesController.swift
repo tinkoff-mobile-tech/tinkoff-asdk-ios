@@ -104,24 +104,20 @@ class InputCardRequisitesController: NSObject {
     }
 
     private func onScanerResult(_ number: String?, _ mm: Int?, _ yy: Int?) {
-        if let numberValue = number?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: " ", with: ""),
-            requisitesInputValidator.validate(inputPAN: numberValue) {
+        if let valueNumber = number, requisitesInputValidator.validate(inputPAN: number) {
             if let textField = inputView?.textFieldCardNumber {
                 maskedTextFieldCardNumberDelegate.maskFormat = inputMaskResolver.panMask(for: nil)
-                maskedTextFieldCardNumberDelegate.put(text: numberValue, into: textField)
+                maskedTextFieldCardNumberDelegate.put(text: valueNumber, into: textField)
 
                 inputView?.buttonRight.isHidden = true
                 inputView?.buttonRight.setImage(nil, for: .normal)
                 inputView?.onButtonRightTouch = nil
-                inputView?.labelShortCardNumber.text = "*" + numberValue.suffix(4)
+                inputView?.labelShortCardNumber.text = "*" + valueNumber.suffix(4)
             }
 
-            if let monthValue = mm, let yearValue = yy, requisitesInputValidator.validate(validThruYear: yearValue, month: monthValue) {
+            if let valueMM = mm, let valueYY = yy, requisitesInputValidator.validate(validThruYear: valueYY, month: valueMM) {
                 if let textField = inputView?.textFieldCardExpDate {
-                    let validThruText = String(format: "%02d", monthValue) + String(format: "%02d", yearValue)
-                    maskedTextFieldCardExpDateDelegate.put(text: validThruText, into: textField)
+                    maskedTextFieldCardExpDateDelegate.put(text: "\(valueMM)/\(valueYY)", into: textField)
                 }
                 activateStep(.inputCardCVC)
             } else {

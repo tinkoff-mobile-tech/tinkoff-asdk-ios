@@ -15,8 +15,7 @@ final class YandexPayButtonContainer: UIView {
 
     private var configuration: YandexPayButtonContainerConfiguration
     private let sdkButtonFactory: IYandexPaySDKButtonFactory
-    private let paymentSheetFactory: IYPPaymentSheetFactory
-    private let yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly
+    private let controllerFactory: IYandexPayButtonContainerControllerFactory
     private weak var delegate: YandexPayButtonContainerDelegate?
 
     // MARK: Lazy Dependencies
@@ -26,21 +25,19 @@ final class YandexPayButtonContainer: UIView {
         asyncDelegate: self
     )
 
-    private lazy var yandexPayPaymentFlow = yandexPayPaymentFlowAssembly.yandexPayPaymentFlow(delegate: self)
+    private lazy var controller: IYandexPayButtonContainerController = controllerFactory.create(with: self)
 
     // MARK: Init
 
     init(
         configuration: YandexPayButtonContainerConfiguration,
         sdkButtonFactory: IYandexPaySDKButtonFactory,
-        paymentSheetFactory: IYPPaymentSheetFactory,
-        yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly,
+        controllerFactory: IYandexPayButtonContainerControllerFactory,
         delegate: YandexPayButtonContainerDelegate
     ) {
         self.configuration = configuration
         self.sdkButtonFactory = sdkButtonFactory
-        self.paymentSheetFactory = paymentSheetFactory
-        self.yandexPayPaymentFlowAssembly = yandexPayPaymentFlowAssembly
+        self.controllerFactory = controllerFactory
         self.delegate = delegate
         super.init(frame: .zero)
         setupView()
@@ -65,7 +62,7 @@ final class YandexPayButtonContainer: UIView {
 
         // У оригинальной кнопки `YandexPay` есть дефолтное скругление.
         // Здесь устанавливается дефолтное скругление для контейнера и обнуляется у кнопки.
-        // Таким образом можно будет управлять layer-ом контейнера из клиентского кода
+        // Таким образом можно будет управлять стилем контейнера из клиентского кода
         clipsToBounds = true
         layer.cornerRadius = yandexPayButton.layer.cornerRadius
         yandexPayButton.layer.cornerRadius = .zero
@@ -96,51 +93,45 @@ extension YandexPayButtonContainer: IYandexPayButtonContainer {
 // MARK: - YandexPayButtonAsyncDelegate
 
 extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
-    private enum Failure: Error {
-        case unknown
-    }
-
     func yandexPayButtonDidRequestViewControllerForPresentation(_ button: YandexPayButton) -> UIViewController? {
         delegate?.yandexPayButtonContainerDidRequestViewControllerForPresentation(self)
     }
 
-    func yandexPayButtonDidRequestPaymentSheet(_ button: YandexPayButton, completion: @escaping (YPPaymentSheet?) -> Void) {
-        let completion = { [paymentSheetFactory] (paymentSheet: YandexPayPaymentSheet?) in
-            let yandexPayPaymentSheet = paymentSheet.map(paymentSheetFactory.create(with:))
-            completion(yandexPayPaymentSheet)
-        }
-
-        delegate?.yandexPayButtonContainer(self, didRequestPaymentSheet: completion)
+    func yandexPayButtonDidRequestPaymentSheet(
+        _ button: YandexPayButton,
+        completion: @escaping (YPPaymentSheet?) -> Void
+    ) {
+        controller.requestPaymentSheet(completion: completion)
     }
 
-    func yandexPayButton(_ button: YandexPayButton, didCompletePaymentWithResult result: YPPaymentResult) {
-        switch result {
-        case let .succeeded(paymentInfo):
-            let completion = { [weak self] (flow: PaymentFlow?) in
-                guard let self = self, let flow = flow else { return }
-                DispatchQueue.performOnMain {
-                    self.yandexPayPaymentFlow.start(with: flow, base64Token: paymentInfo.paymentToken)
-                }
-            }
-            delegate?.yandexPayButtonContainer(self, didRequestPaymentFlow: completion)
-        case .cancelled:
-            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .cancelled)
-        case let .failed(error):
-            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .failed(error))
-        @unknown default:
-            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .failed(Failure.unknown))
-        }
+    func yandexPayButton(
+        _ button: YandexPayButton,
+        didCompletePaymentWithResult result: YPPaymentResult
+    ) {
+        controller.handlePaymentResult(result)
     }
 }
 
-// MARK: - YandexPayPaymentFlowDelegate
+// MARK: - YandexPayButtonContainerControllerDelegate
 
-extension YandexPayButtonContainer: YandexPayPaymentFlowDelegate {
-    func yandexPayPaymentFlowDidRequestViewControllerForPresentation(_ flow: IYandexPayPaymentFlow) -> UIViewController? {
+extension YandexPayButtonContainer: YandexPayButtonContainerControllerDelegate {
+    func yandexPayController(
+        _ controller: IYandexPayButtonContainerController,
+        didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
+    ) {
+        delegate?.yandexPayButtonContainer(self, didRequestPaymentSheet: completion)
+    }
+
+    func yandexPayControllerDidRequestViewControllerForPresentation(
+        _ controller: IYandexPayButtonContainerController
+    ) -> UIViewController? {
         delegate?.yandexPayButtonContainerDidRequestViewControllerForPresentation(self)
     }
 
-    func yandexPayPaymentFlow(_ flow: IYandexPayPaymentFlow, didCompleteWith result: YandexPayPaymentResult) {
+    func yandexPayController(
+        _ controller: YandexPayButtonContainerController,
+        didCompleteWithResult result: YandexPayPaymentResult
+    ) {
         delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: result)
     }
 }

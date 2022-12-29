@@ -120,8 +120,8 @@ class CartTableViewController: UITableViewController {
                 return
             }
 
-            if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-                viewController.uiSDK = sdk
+            if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+                viewController.sdk = sdk
                 viewController.customerKey = AppSetting.shared.activeSdkCredentials.customerKey
             }
 

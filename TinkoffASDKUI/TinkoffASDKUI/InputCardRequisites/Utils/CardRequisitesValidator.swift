@@ -67,7 +67,7 @@ final class CardRequisitesValidator: ICardRequisitesValidator {
 
     func validate(validThruYear year: Int, month: Int) -> Bool {
         guard (0 ... 99).contains(year),
-              (1 ... 12).contains(month)
+              (0 ... 12).contains(month)
         else { return false }
 
         guard !options.contains(.disableExpiryDateValidation) else { return true }

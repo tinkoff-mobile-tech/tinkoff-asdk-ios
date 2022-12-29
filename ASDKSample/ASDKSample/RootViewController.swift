@@ -73,6 +73,9 @@ class RootViewController: UITableViewController {
     private var dataSource: [Product] = []
     private var onScannerResult: ((_ number: String?, _ date: String?) -> Void)?
 
+    // State
+    private weak var buyProductsVieController: BuyProductsViewController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -187,21 +190,12 @@ class RootViewController: UITableViewController {
             cardListViewConfigration.alertViewHelper = self
         }
 
-        if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            // открыть экран сиска карт
+            addCardListView(sdk, AppSetting.shared.activeSdkCredentials.customerKey, cardListViewConfigration)
+            // или открыть экран добавлени карты
+            // addCardView(sdk, customerKey, cardListViewConfigration)
 
-            sdk.presentCardList(
-                on: self,
-                customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
-                configuration: cardListViewConfigration
-            )
-        }
-    }
-
-    @IBAction func openAddCard(_ sender: UIBarButtonItem) {
-        if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
             sdk.addCardNeedSetCheckTypeHandler = {
                 AppSetting.shared.addCardChekType
             }
@@ -212,7 +206,16 @@ class RootViewController: UITableViewController {
 extension RootViewController: AcquiringScanerProtocol {
 
     func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController? {
-        UIAlertController.cardScannerMock(confirmationHandler: completion)
+        if let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
+            .instantiateViewController(withIdentifier: "CardScanerViewController") as? CardScanerViewController {
+            viewController.onScannerResult = { numbres in
+                completion(numbres, nil, nil)
+            }
+
+            return viewController
+        }
+
+        return nil
     }
 }
 
@@ -233,7 +236,7 @@ extension RootViewController: AcquiringAlertViewProtocol {
 private extension RootViewController {
 
     private func showSpbQrCollector() {
-        if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
             let viewConfigration = AcquiringViewConfiguration()
             viewConfigration.viewTitle = Loc.Title.qrcode
 
@@ -242,29 +245,22 @@ private extension RootViewController {
     }
 
     private func showBuyProductsViewController(rowIndex: Int) {
-        let credential = AppSetting.shared.activeSdkCredentials
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            let product = dataSource[rowIndex]
 
-        guard let coreSDK = try? SdkAssembly.assembleCoreSDK(credential: credential),
-              let uiSDK = try? SdkAssembly.assembleUISDK(credential: credential) else {
-            fatalError("Could not assemble SDK")
+            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+            guard let viewController = storyboard.instantiateViewController(
+                withIdentifier: String(describing: BuyProductsViewController.self)
+            ) as? BuyProductsViewController
+            else {
+                return
+            }
+
+            viewController.scaner = self
+            viewController.sdk = sdk
+            viewController.customerKey = AppSetting.shared.activeSdkCredentials.customerKey
+            viewController.products = [product]
+            navigationController?.pushViewController(viewController, animated: true)
         }
-
-        let product = dataSource[rowIndex]
-
-        let storyboard = UIStoryboard(name: "Main", bundle: .main)
-
-        guard let viewController = storyboard.instantiateViewController(
-            withIdentifier: String(describing: BuyProductsViewController.self)
-        ) as? BuyProductsViewController
-        else {
-            fatalError("Could not instantiate BuyProductsViewController")
-        }
-
-        viewController.scaner = self
-        viewController.coreSDK = coreSDK
-        viewController.uiSDK = uiSDK
-        viewController.customerKey = credential.customerKey
-        viewController.products = [product]
-        navigationController?.pushViewController(viewController, animated: true)
     }
 }

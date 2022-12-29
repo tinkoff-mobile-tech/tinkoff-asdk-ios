@@ -8,21 +8,21 @@
 import Foundation
 
 final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
-    private let yandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly
-    private weak var delegate: YandexPayPaymentFlowDelegate?
+    weak var output: IYandexPayPaymentFlowOutput?
+    weak var presentingViewControllerProvider: IPresentingViewControllerProvider?
+    private let paymentActivityAssembly: IYandexPayPaymentActivityAssembly
 
-    init(yandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly, delegate: YandexPayPaymentFlowDelegate) {
-        self.yandexPayPaymentSheetAssembly = yandexPayPaymentSheetAssembly
-        self.delegate = delegate
+    init(paymentActivityAssembly: IYandexPayPaymentActivityAssembly) {
+        self.paymentActivityAssembly = paymentActivityAssembly
     }
 
-    func start(with paymentFlow: PaymentFlow, base64Token: String) {
-        guard let presentingViewController = delegate?.yandexPayPaymentFlowDidRequestViewControllerForPresentation(self) else {
+    func start(with paymentOption: PaymentOptions, base64Token: String) {
+        guard let presentingViewController = presentingViewControllerProvider?.viewControllerForPresentation() else {
             return
         }
 
-        let paymentActivityViewController = yandexPayPaymentSheetAssembly.yandexPayPaymentSheet(
-            paymentFlow: paymentFlow,
+        let paymentActivityViewController = paymentActivityAssembly.yandexPayActivity(
+            paymentOptions: paymentOption,
             base64Token: base64Token,
             output: self
         )
@@ -31,10 +31,10 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
     }
 }
 
-// MARK: - IYandexPayPaymentSheetOutput
+// MARK: - IYandexPayPaymentActivityOutput
 
-extension YandexPayPaymentFlow: IYandexPayPaymentSheetOutput {
+extension YandexPayPaymentFlow: IYandexPayPaymentActivityOutput {
     func yandexPayPaymentActivity(completedWith result: YandexPayPaymentResult) {
-        delegate?.yandexPayPaymentFlow(self, didCompleteWith: result)
+        output?.yandexPayPaymentFlow(self, didCompleteWith: result)
     }
 }

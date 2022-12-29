@@ -1,5 +1,5 @@
 //
-//  IYandexPayPaymentSheetOutput.swift
+//  IYandexPayPaymentActivityOutput.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 18.12.2022.
@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol IYandexPayPaymentSheetOutput: AnyObject {
+protocol IYandexPayPaymentActivityOutput: AnyObject {
     func yandexPayPaymentActivity(completedWith result: YandexPayPaymentResult)
 }
