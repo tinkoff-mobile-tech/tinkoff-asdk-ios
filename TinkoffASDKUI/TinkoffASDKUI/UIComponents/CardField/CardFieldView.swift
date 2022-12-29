@@ -110,7 +110,6 @@ extension CardFieldView {
                 make.height(constant: Constants.Card.height),
                 make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
                 make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
-//                make.rightAnchor.constraint(lessThanOrEqualTo: make.forcedSuperview.rightAnchor),
             ]
         }
 

@@ -18,7 +18,7 @@ extension UIView {
             delay: .zero,
             options: .transitionCrossDissolve,
             animations: animations,
-            completion: { didFinish in completion?(didFinish) }
+            completion: completion
         )
     }
 

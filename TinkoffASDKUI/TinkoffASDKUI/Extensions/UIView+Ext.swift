@@ -108,7 +108,7 @@ extension UIView {
         ]
     }
 
-    func pinEdgesToSafeArea(insets: UIEdgeInsets = .zero) {
+    func makeEqualToSuperviewToSafeArea(insets: UIEdgeInsets = .zero) {
         assert(superview != nil)
         makeConstraints { make in
             [

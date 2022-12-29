@@ -47,6 +47,13 @@ enum CardListScreenState {
     case showingStub
 }
 
+enum CardListScreenState {
+    case initial
+    case showingCards
+    case editingCards
+    case showingStub
+}
+
 final class CardListPresenter: ICardListModule {
     // MARK: ICardListModule Event Handlers
 
@@ -67,8 +74,7 @@ final class CardListPresenter: ICardListModule {
     private var isLoading = false
     private var hasVisualContent: Bool { !activeCardsCache.isEmpty }
     private var screenState = CardListScreenState.initial
-    private var fetchActiveCardsResult: Result<[PaymentCard], Error>?
-    private var deactivateCardResult: (() -> Result<Void, Error>)?
+    private var deactivateCardResult: Result<Void, Error>?
     private var sections: [CardListSection] { getSections() }
 
     // MARK: Init
@@ -162,7 +168,7 @@ extension CardListPresenter: ICardListViewOutput {
         provider.deactivateCard(cardId: card.id) { [weak self] result in
             guard let self = self else { return }
             self.isLoading = false
-            self.deactivateCardResult = { result }
+            self.deactivateCardResult = result
             self.view?.hideLoadingSnackbar()
         }
     }
@@ -249,7 +255,10 @@ extension CardListPresenter {
                 showServerErrorStub()
             }
         }
+
+        view?.enableViewUserInteraction()
     }
+}
 
     private func prepareViewForShowingStub() {
         screenState = .showingStub
