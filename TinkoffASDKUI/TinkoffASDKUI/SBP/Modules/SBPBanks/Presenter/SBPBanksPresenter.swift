@@ -20,12 +20,14 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
 
     private let banksService: ISBPBanksService
     private let bankAppChecker: ISBPBankAppChecker
+    private let cellImageLoader: ICellImageLoader
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
     private var allBanks = [SBPBank]()
     private var allBanksViewModels = [SBPBankCellNewViewModel]()
     private var filteredBanksViewModels = [SBPBankCellNewViewModel]()
+    private var prefetchedUUIDs = [Int: UUID]()
 
     private var lastSearchedText = ""
 
@@ -34,11 +36,13 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     init(
         router: ISBPBanksRouter,
         banksService: ISBPBanksService,
-        bankAppChecker: ISBPBankAppChecker
+        bankAppChecker: ISBPBankAppChecker,
+        cellImageLoader: ICellImageLoader
     ) {
         self.router = router
         self.banksService = banksService
         self.bankAppChecker = bankAppChecker
+        self.cellImageLoader = cellImageLoader
     }
 }
 
@@ -71,12 +75,31 @@ extension SBPBanksPresenter {
         router.closeScreen()
     }
 
+    func prefetch(for rows: [Int]) {
+        rows.forEach { row in
+            guard let logoURL = viewModel(for: row).logoURL else { return }
+
+            if let uuid = cellImageLoader.loadRemoteImageJustForCache(url: logoURL) {
+                prefetchedUUIDs[row] = uuid
+            }
+        }
+    }
+
+    func cancelPrefetching(for rows: [Int]) {
+        rows.forEach { row in
+            if let uuid = prefetchedUUIDs[row] {
+                cellImageLoader.cancelLoad(uuid: uuid)
+                prefetchedUUIDs[row] = nil
+            }
+        }
+    }
+
     func numberOfRows() -> Int {
         filteredBanksViewModels.count
     }
 
     func viewModel(for row: Int) -> SBPBankCellNewViewModel {
-        filteredBanksViewModels[row]
+        return filteredBanksViewModels[row]
     }
 
     func searchTextDidChange(to text: String) {

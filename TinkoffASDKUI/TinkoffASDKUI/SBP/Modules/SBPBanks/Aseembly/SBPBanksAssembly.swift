@@ -27,11 +27,13 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
         let banksService = SBPBanksServiceNew(acquiringSdk: acquiringSdk)
         let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
+        let cellImageLoader = CellImageLoader.loader
 
         let presenter = SBPBanksPresenter(
             router: router,
             banksService: banksService,
-            bankAppChecker: bankAppChecker
+            bankAppChecker: bankAppChecker,
+            cellImageLoader: cellImageLoader
         )
 
         let view = SBPBanksViewController(presenter: presenter)

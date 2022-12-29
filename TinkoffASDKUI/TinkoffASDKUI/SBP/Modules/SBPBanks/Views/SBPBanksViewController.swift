@@ -92,6 +92,18 @@ extension SBPBanksViewController {
     }
 }
 
+// MARK: - UITableViewDataSourcePrefetching
+
+extension SBPBanksViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        presenter.prefetch(for: indexPaths.map { $0.row })
+    }
+
+    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        presenter.cancelPrefetching(for: indexPaths.map { $0.row })
+    }
+}
+
 // MARK: - UITableViewDataSource
 
 extension SBPBanksViewController: UITableViewDataSource {
@@ -157,6 +169,7 @@ extension SBPBanksViewController {
         ])
 
         tableView.register(cellType: SBPBankCellNew.self)
+        tableView.prefetchDataSource = self
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none

@@ -6,9 +6,9 @@
 //
 
 extension UIImageView {
-    func loadImage(at url: URL, type: CellImageLoaderType = .default) {
+    func loadImage(at url: URL, type: CellImageLoaderType = .default, onFailureImage: UIImage? = nil) {
         CellImageLoader.loader.set(type: type)
-        CellImageLoader.loader.loadRemoteImage(url: url, imageView: self)
+        CellImageLoader.loader.loadRemoteImage(url: url, imageView: self, onFailureImage: onFailureImage)
     }
 
     func cancelImageLoad() {

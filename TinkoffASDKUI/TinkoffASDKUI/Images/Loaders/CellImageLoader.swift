@@ -28,9 +28,12 @@ enum CellImageLoaderType: Equatable {
 
 protocol ICellImageLoader {
     @discardableResult
-    func loadRemoteImage(url: URL, imageView: UIImageView) -> UUID?
-
+    func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID?
     func cancelLoadIfNeeded(imageView: UIImageView)
+
+    @discardableResult
+    func loadRemoteImageJustForCache(url: URL) -> UUID?
+    func cancelLoad(uuid: UUID)
 
     func set(type: CellImageLoaderType)
 }
@@ -84,7 +87,7 @@ final class CellImageLoader: ICellImageLoader {
 
 extension CellImageLoader {
     @discardableResult
-    func loadRemoteImage(url: URL, imageView: UIImageView) -> UUID? {
+    func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage? = nil) -> UUID? {
         cancelLoadIfNeeded(imageView: imageView)
 
         let uuid = imageLoader.loadImage(url: url) { [weak self] image in
@@ -98,7 +101,7 @@ extension CellImageLoader {
                 case let .success(image):
                     imageView.image = image
                 case .failure:
-                    break
+                    imageView.image = onFailureImage
                 }
 
                 self?.requests.removeValue(forKey: imageView)
@@ -115,6 +118,20 @@ extension CellImageLoader {
             imageLoader.cancelImageLoad(uuid: uuid)
             requests.removeValue(forKey: imageView)
         }
+    }
+
+    @discardableResult
+    func loadRemoteImageJustForCache(url: URL) -> UUID? {
+        return imageLoader.loadImage(url: url) { [weak self] image in
+            guard let self = self else { return image }
+            return self.imageProcessors.reduce(image) { image, processor -> UIImage in
+                processor.processImage(image)
+            }
+        } completion: { _ in }
+    }
+
+    func cancelLoad(uuid: UUID) {
+        imageLoader.cancelImageLoad(uuid: uuid)
     }
 }
 

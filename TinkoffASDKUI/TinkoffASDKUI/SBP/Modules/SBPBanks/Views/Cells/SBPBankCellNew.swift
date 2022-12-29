@@ -78,7 +78,7 @@ extension SBPBankCellNew {
             if let image = viewModel.imageAsset?.image {
                 logoImageView.image = image
             } else if let url = viewModel.logoURL {
-                logoImageView.loadImage(at: url, type: .roundAndSize(.logoImageSize))
+                logoImageView.loadImage(at: url, type: .roundAndSize(.logoImageSize), onFailureImage: Asset.Sbp.sbpNoImage.image)
             }
         }
     }

@@ -10,6 +10,9 @@ protocol ISBPBanksPresenter {
 
     func closeButtonPressed()
 
+    func prefetch(for rows: [Int])
+    func cancelPrefetching(for rows: [Int])
+
     func numberOfRows() -> Int
     func viewModel(for row: Int) -> SBPBankCellNewViewModel
 
