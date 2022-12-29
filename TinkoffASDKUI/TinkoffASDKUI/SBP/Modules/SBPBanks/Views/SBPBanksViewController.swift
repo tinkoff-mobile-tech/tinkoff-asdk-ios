@@ -98,10 +98,6 @@ extension SBPBanksViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         presenter.prefetch(for: indexPaths.map { $0.row })
     }
-
-    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        presenter.cancelPrefetching(for: indexPaths.map { $0.row })
-    }
 }
 
 // MARK: - UITableViewDataSource
@@ -112,10 +108,10 @@ extension SBPBanksViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = presenter.viewModel(for: indexPath.row)
+        let cellPresenter = presenter.cellPresenter(for: indexPath.row)
 
         let bankCell = tableView.dequeue(cellType: SBPBankCellNew.self)
-        bankCell.set(viewModel: viewModel)
+        bankCell.presenter = cellPresenter
 
         return bankCell
     }
@@ -168,11 +164,15 @@ extension SBPBanksViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
+        tableView.layoutIfNeeded()
+
         tableView.register(cellType: SBPBankCellNew.self)
         tableView.prefetchDataSource = self
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 56
 
         // Когда скролишь таблицу с searchBar и упираешься в bounce таблицы, то без этой вьюхи 'backgroundView'
         // цвет под searchBar будет отличаться от основного цвета, будет дефолтным серым

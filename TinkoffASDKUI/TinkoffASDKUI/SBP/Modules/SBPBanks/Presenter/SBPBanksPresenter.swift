@@ -20,14 +20,13 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
 
     private let banksService: ISBPBanksService
     private let bankAppChecker: ISBPBankAppChecker
-    private let cellImageLoader: ICellImageLoader
+    private let cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
     private var allBanks = [SBPBank]()
-    private var allBanksViewModels = [SBPBankCellNewViewModel]()
-    private var filteredBanksViewModels = [SBPBankCellNewViewModel]()
-    private var prefetchedUUIDs = [Int: UUID]()
+    private var allBanksCellPresenters = [ISBPBankCellNewPresenter]()
+    private var filteredBanksCellPresenters = [ISBPBankCellNewPresenter]()
 
     private var lastSearchedText = ""
 
@@ -37,12 +36,12 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         router: ISBPBanksRouter,
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
-        cellImageLoader: ICellImageLoader
+        cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
     ) {
         self.router = router
         self.banksService = banksService
         self.bankAppChecker = bankAppChecker
-        self.cellImageLoader = cellImageLoader
+        self.cellPresentersAssembly = cellPresentersAssembly
     }
 }
 
@@ -76,30 +75,15 @@ extension SBPBanksPresenter {
     }
 
     func prefetch(for rows: [Int]) {
-        rows.forEach { row in
-            guard let logoURL = viewModel(for: row).logoURL else { return }
-
-            if let uuid = cellImageLoader.loadRemoteImageJustForCache(url: logoURL) {
-                prefetchedUUIDs[row] = uuid
-            }
-        }
-    }
-
-    func cancelPrefetching(for rows: [Int]) {
-        rows.forEach { row in
-            if let uuid = prefetchedUUIDs[row] {
-                cellImageLoader.cancelLoad(uuid: uuid)
-                prefetchedUUIDs[row] = nil
-            }
-        }
+        rows.forEach { cellPresenter(for: $0).startLoadingCellImageIfNeeded() }
     }
 
     func numberOfRows() -> Int {
-        filteredBanksViewModels.count
+        filteredBanksCellPresenters.count
     }
 
-    func viewModel(for row: Int) -> SBPBankCellNewViewModel {
-        return filteredBanksViewModels[row]
+    func cellPresenter(for row: Int) -> ISBPBankCellNewPresenter {
+        return filteredBanksCellPresenters[row]
     }
 
     func searchTextDidChange(to text: String) {
@@ -112,23 +96,16 @@ extension SBPBanksPresenter {
             guard let self = self else { return }
 
             if lowercasedText.isEmpty {
-                self.filteredBanksViewModels = self.allBanksViewModels
+                self.filteredBanksCellPresenters = self.allBanksCellPresenters
             } else {
-                self.filteredBanksViewModels = self.allBanksViewModels.filter { $0.nameLabelText.lowercased().contains(lowercasedText) }
+                self.filteredBanksCellPresenters = self.allBanksCellPresenters.filter { $0.bankName.lowercased().contains(lowercasedText) }
             }
             self.view?.reloadTableView()
         }
     }
 
     func didSelectRow(at index: Int) {
-        let lastIndex = filteredBanksViewModels.count - 1
-        let isLastAnotherBankViewModel = filteredBanksViewModels.last?.nameLabelText == Loc.Acquiring.SBPBanks.anotherBank
-        if screenType == .startEmpty, index == lastIndex, isLastAnotherBankViewModel {
-            let otherBanks = getNotPreferredBanks()
-            router.show(banks: otherBanks)
-        } else {
-//            bankAppChecker.openBankApp(someBank)
-        }
+        cellPresenter(for: index).action()
     }
 }
 
@@ -136,8 +113,8 @@ extension SBPBanksPresenter {
 
 extension SBPBanksPresenter {
     private func prepareAndShowSkeletonModels() {
-        allBanksViewModels = [SBPBankCellNewViewModel](repeatElement(SBPBankCellNewViewModel.skeletonModel, count: 7))
-        filteredBanksViewModels = allBanksViewModels
+        allBanksCellPresenters = [SBPBankCellNewPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: 7))
+        filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
 
@@ -162,25 +139,38 @@ extension SBPBanksPresenter {
         let preferredBanks = getPreferredBanks()
         if preferredBanks.isEmpty {
             view?.showSearchBar()
-            allBanksViewModels = createViewModels(from: allBanks)
+            allBanksCellPresenters = createCellPresenters(from: allBanks)
         } else {
-            let otherBankViewModel = SBPBankCellNewViewModel(nameLabelText: Loc.Acquiring.SBPBanks.anotherBank, imageAsset: Asset.Sbp.sbpLogo)
-            allBanksViewModels = createViewModels(from: preferredBanks)
-            allBanksViewModels.append(otherBankViewModel)
+            let bankButtonCellType: SBPBankCellNewType = .bankButton(
+                imageAsset: Asset.Sbp.sbpLogo,
+                name: Loc.Acquiring.SBPBanks.anotherBank
+            )
+            let otherBankCellPresenter = cellPresentersAssembly.build(cellType: bankButtonCellType, action: { [weak self] in
+                guard let self = self else { return }
+
+                let otherBanks = self.getNotPreferredBanks()
+                self.router.show(banks: otherBanks)
+            })
+            allBanksCellPresenters = createCellPresenters(from: preferredBanks)
+            allBanksCellPresenters.append(otherBankCellPresenter)
         }
 
-        filteredBanksViewModels = allBanksViewModels
+        filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
 
     private func setupScreen(with banks: [SBPBank]) {
-        allBanksViewModels = createViewModels(from: banks)
-        filteredBanksViewModels = allBanksViewModels
+        allBanksCellPresenters = createCellPresenters(from: banks)
+        filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
 
-    private func createViewModels(from banks: [SBPBank]) -> [SBPBankCellNewViewModel] {
-        banks.map { SBPBankCellNewViewModel(nameLabelText: $0.name, logoURL: $0.logoURL, schema: $0.schema) }
+    private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellNewPresenter] {
+        banks.map { bank in
+            cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
+                self?.bankAppChecker.openBankApp(bank)
+            })
+        }
     }
 
     private func getPreferredBanks() -> [SBPBank] {

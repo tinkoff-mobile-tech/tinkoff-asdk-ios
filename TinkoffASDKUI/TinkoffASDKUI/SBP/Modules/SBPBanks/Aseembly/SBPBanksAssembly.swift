@@ -9,6 +9,10 @@ import TinkoffASDKCore
 
 typealias SBPBanksModule = Module<ISBPBanksModuleInput>
 
+private extension CGSize {
+    static let logoImageSize = CGSize(width: 40, height: 40)
+}
+
 final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // Dependencies
@@ -27,13 +31,16 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
         let banksService = SBPBanksServiceNew(acquiringSdk: acquiringSdk)
         let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
+
         let cellImageLoader = CellImageLoader.loader
+        cellImageLoader.set(type: .roundAndSize(.logoImageSize))
+        let cellPresentersAssembly = SBPBankCellPresenterNewAssembly(cellImageLoader: cellImageLoader)
 
         let presenter = SBPBanksPresenter(
             router: router,
             banksService: banksService,
             bankAppChecker: bankAppChecker,
-            cellImageLoader: cellImageLoader
+            cellPresentersAssembly: cellPresentersAssembly
         )
 
         let view = SBPBanksViewController(presenter: presenter)

@@ -20,11 +20,15 @@ private extension Double {
     static let waterfallDelay: Double = 0.2
 }
 
-private extension CGSize {
-    static let logoImageSize = CGSize(width: .logoImageSide, height: .logoImageSide)
-}
+final class SBPBankCellNew: UITableViewCell, ISBPBankCellNew {
 
-final class SBPBankCellNew: UITableViewCell {
+    // Dependencies
+    var presenter: ISBPBankCellNewPresenter? {
+        didSet {
+            if oldValue?.cell === self { oldValue?.cell = nil }
+            presenter?.cell = self
+        }
+    }
 
     // Properties
     private let nameLabel = FadingLabel()
@@ -37,6 +41,7 @@ final class SBPBankCellNew: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupCell()
         setupSkeletonViews()
         setupSkeletonViewsConstraints()
         setupViews()
@@ -53,43 +58,53 @@ final class SBPBankCellNew: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
+        selectionStyle = .default
+
         nameLabel.text = ""
         logoImageView.image = nil
-        logoImageView.cancelImageLoad()
 
+        nameSkeletonView.isHidden = true
+        logoImageSkeletonView.isHidden = true
         nameSkeletonView.stopSkeletonAnimations()
         logoImageSkeletonView.stopSkeletonAnimations()
     }
 }
 
-// MARK: - Public
+// MARK: - ISBPBankCellNew
 
 extension SBPBankCellNew {
-    func set(viewModel: SBPBankCellNewViewModel) {
-        nameSkeletonView.isHidden = !viewModel.isSkeleton
-        logoImageSkeletonView.isHidden = !viewModel.isSkeleton
+    func showSkeletonViews() {
+        selectionStyle = .none
 
-        if viewModel.isSkeleton {
-            nameSkeletonView.startAnimating(animationType: .waterfall(index: 0, delay: .waterfallDelay))
-            logoImageSkeletonView.startAnimating(animationType: .waterfall(index: 1, delay: .waterfallDelay))
-        } else {
-            nameLabel.text = viewModel.nameLabelText
+        nameSkeletonView.isHidden = false
+        logoImageSkeletonView.isHidden = false
 
-            if let image = viewModel.imageAsset?.image {
-                logoImageView.image = image
-            } else if let url = viewModel.logoURL {
-                logoImageView.loadImage(at: url, type: .roundAndSize(.logoImageSize), onFailureImage: Asset.Sbp.sbpNoImage.image)
-            }
-        }
+        nameSkeletonView.startAnimating(animationType: .waterfall(index: 0, delay: .waterfallDelay))
+        logoImageSkeletonView.startAnimating(animationType: .waterfall(index: 1, delay: .waterfallDelay))
+    }
+
+    func setNameLabel(text: String) {
+        nameLabel.text = text
+    }
+
+    func setLogo(image: UIImage) {
+        logoImageView.image = image
     }
 }
 
 // MARK: - Private
 
 extension SBPBankCellNew {
+    private func setupCell() {
+        selectionStyle = .default
+    }
+
     private func setupSkeletonViews() {
         contentView.addSubview(nameSkeletonView)
         contentView.addSubview(logoImageSkeletonView)
+
+        nameSkeletonView.isHidden = true
+        logoImageSkeletonView.isHidden = true
 
         let nameSkeletonModel = SkeletonView.Model(color: ASDKColors.Foreground.skeleton, cornerRadius: .nameSkeletonRadius)
         let logoImageSkeletonModel = SkeletonView.Model(color: ASDKColors.Foreground.skeleton, cornerRadius: .logoImageSide / 2)
@@ -114,14 +129,13 @@ extension SBPBankCellNew {
         NSLayoutConstraint.activate([
             logoImageView.widthAnchor.constraint(equalToConstant: .logoImageSide),
             logoImageView.heightAnchor.constraint(equalToConstant: .logoImageSide),
-            logoImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             logoImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: .logoImageLeftOffset),
             logoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: .logoImageVerticalOffset),
             logoImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -.logoImageVerticalOffset),
 
-            nameLabel.centerYAnchor.constraint(equalTo: logoImageView.centerYAnchor),
+            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             nameLabel.leftAnchor.constraint(equalTo: logoImageView.rightAnchor, constant: .nameLeftInset),
-            nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -.nameRightInset),
+            nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -.nameRightInset),
         ])
     }
 
@@ -132,14 +146,13 @@ extension SBPBankCellNew {
         NSLayoutConstraint.activate([
             logoImageSkeletonView.widthAnchor.constraint(equalToConstant: .logoImageSide),
             logoImageSkeletonView.heightAnchor.constraint(equalToConstant: .logoImageSide),
-            logoImageSkeletonView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             logoImageSkeletonView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: .logoImageLeftOffset),
             logoImageSkeletonView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: .logoImageVerticalOffset),
             logoImageSkeletonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -.logoImageVerticalOffset),
 
             nameSkeletonView.widthAnchor.constraint(equalToConstant: .nameSkeletonWidth),
             nameSkeletonView.heightAnchor.constraint(equalToConstant: .nameSkeletonHeight),
-            nameSkeletonView.centerYAnchor.constraint(equalTo: logoImageSkeletonView.centerYAnchor),
+            nameSkeletonView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             nameSkeletonView.leftAnchor.constraint(equalTo: logoImageSkeletonView.rightAnchor, constant: .nameLeftInset),
         ])
     }

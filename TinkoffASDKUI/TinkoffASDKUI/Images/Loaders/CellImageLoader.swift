@@ -27,6 +27,8 @@ enum CellImageLoaderType: Equatable {
 }
 
 protocol ICellImageLoader {
+    func loadImage(url: URL, completion: @escaping (Result<UIImage, Swift.Error>) -> Void)
+
     @discardableResult
     func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID?
     func cancelLoadIfNeeded(imageView: UIImageView)
@@ -86,6 +88,19 @@ final class CellImageLoader: ICellImageLoader {
 // MARK: - ICellImageLoader
 
 extension CellImageLoader {
+    func loadImage(url: URL, completion: @escaping (Result<UIImage, Swift.Error>) -> Void) {
+        imageLoader.loadImage(url: url) { [weak self] image in
+            guard let self = self else { return image }
+            return self.imageProcessors.reduce(image) { image, processor -> UIImage in
+                processor.processImage(image)
+            }
+        } completion: { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+
     @discardableResult
     func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage? = nil) -> UUID? {
         cancelLoadIfNeeded(imageView: imageView)

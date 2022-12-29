@@ -28,6 +28,7 @@ final class ImageLoader {
     private let cache = NSCache<NSURL, UIImage>()
     private var requests = [UUID: URLSessionDataTask]()
 
+    @discardableResult
     func loadImage(
         url: URL,
         preCacheClosure: @escaping (UIImage) -> UIImage,
