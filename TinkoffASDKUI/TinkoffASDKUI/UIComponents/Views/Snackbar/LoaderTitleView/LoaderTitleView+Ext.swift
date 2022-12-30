@@ -14,7 +14,7 @@ extension LoaderTitleView: ActivityIndicatorDisplayable {
         let activityIndicatorView = ActivityIndicatorView(style: style)
         activityIndicatorView.transform = CGAffineTransform(scaleX: .zero, y: .zero)
 
-        let container = ViewContainer(base: activityIndicatorView)
+        let container = ViewHolder(base: activityIndicatorView)
 
         loaderHolderView.addSubview(container)
         container.makeEqualToSuperview()
@@ -28,7 +28,7 @@ extension LoaderTitleView: ActivityIndicatorDisplayable {
 
     /// Скрыть индикатор
     func hideActivityIndicator() {
-        let container = loaderHolderView.subviews.compactMap { $0 as? ViewContainer<ActivityIndicatorView> }.first
+        let container = loaderHolderView.subviews.compactMap { $0 as? ViewHolder<ActivityIndicatorView> }.first
         let indicatorView = container?.base
         UIView.animate(withDuration: .scaleDuration, animations: {
             indicatorView?.alpha = .zero
@@ -88,7 +88,7 @@ private extension ActivityIndicatorView.Style {
 
     static var tinkoffYellow: Self {
         ActivityIndicatorView.Style(
-            lineColor: ASDKColors.tinkoffYellow,
+            lineColor: ASDKColors.Foreground.brandTinkoffAccent,
             diameter: 30
         )
     }

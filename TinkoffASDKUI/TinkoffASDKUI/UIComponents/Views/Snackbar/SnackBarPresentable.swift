@@ -49,7 +49,7 @@ extension ISnackBarPresentable {
         viewSource.addSubview(snackViewController.view)
         snackViewController.viewDidLoad()
         snackViewController.viewWillAppear(true)
-        snackViewController.viewDidAppear(true)
+        snackViewController.beginAppearanceTransition(true, animated: true)
         snackViewController.showSnackView(config: config, completion: completion)
         return snackViewController
     }

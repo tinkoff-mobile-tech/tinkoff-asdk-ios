@@ -23,7 +23,7 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
     }
 
     // MARK: - ISBPBankAppChecker
-    
+
     /// Принимает список банков из которых происходит выборка по следующей логике:
     /// Смотрит в Info.plist мерча и осталяет только те банки которые указанны в этом Info.plist (это те банки которые мерч считает наиболее предпочтительными для совершения оплаты)
     /// Далее из желаемого мерчом списка удалются все те, которые не установленны на устройстве пользователя
@@ -39,7 +39,7 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
             return []
         }
     }
-    
+
     func openBankApp(_ bank: SBPBank, completion: @escaping SBPBankAppCheckerOpenBankAppCompletion) {
         guard let url = URL(string: "\(bank.schema)://") else { return }
         application.open(url, options: [:], completionHandler: completion)

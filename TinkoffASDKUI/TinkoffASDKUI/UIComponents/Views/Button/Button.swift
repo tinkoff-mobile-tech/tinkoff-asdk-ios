@@ -9,6 +9,8 @@ import UIKit
 
 final class Button: UIView {
 
+    override var intrinsicContentSize: CGSize { button.intrinsicContentSize }
+
     private let button = UIButton()
 
     // MARK: - State
@@ -123,15 +125,18 @@ extension Button {
     }
 
     private func configureButton(data: Data) {
-        switch data.text {
-        case let .basic(normalText, higlightedText, disabledText):
-            button.setTitle(normalText, for: .normal)
-            button.setTitle(higlightedText ?? normalText, for: .highlighted)
-            button.setTitle(disabledText ?? normalText, for: .disabled)
+        if let text = data.text {
+            switch text {
+            case let .basic(normalText, higlightedText, disabledText):
+                button.setTitle(normalText, for: .normal)
+                button.setTitle(higlightedText ?? normalText, for: .highlighted)
+                button.setTitle(disabledText ?? normalText, for: .disabled)
+            }
         }
     }
 
     private func configureButton(style: Style) {
+        button.contentEdgeInsets = style.contentEdgeInsets
         button.layer.cornerRadius = style.cornerRadius
 
         switch style.background {
@@ -207,6 +212,7 @@ extension Button {
         resetTitle()
         // Style
         button.backgroundColor = nil
+        button.contentEdgeInsets = .zero
         // background image
         button.setBackgroundImage(nil, for: .normal)
         button.setBackgroundImage(nil, for: .highlighted)
@@ -226,7 +232,7 @@ private extension Button {
         let activityIndicatorView = ActivityIndicatorView(style: style)
         activityIndicatorView.transform = CGAffineTransform(scaleX: .zero, y: .zero)
 
-        let container = ViewContainer(base: activityIndicatorView)
+        let container = ViewHolder(base: activityIndicatorView)
 
         addSubview(container)
 
@@ -240,7 +246,7 @@ private extension Button {
 
     /// Скрыть индикатор
     func hideActivityIndicator(completion: (() -> Void)?) {
-        let container = subviews.compactMap { $0 as? ViewContainer<ActivityIndicatorView> }.first
+        let container = subviews.compactMap { $0 as? ViewHolder<ActivityIndicatorView> }.first
         let indicatorView = container?.base
         UIView.animate(withDuration: .scaleDuration, animations: {
             indicatorView?.alpha = .zero
@@ -268,13 +274,17 @@ extension Button {
             )
         }
 
-        let text: Text
+        let text: Text?
         let onTapAction: () -> Void
     }
 
     struct Configuration {
         let data: Data
         let style: Style
+
+        static var empty: Self {
+            Self(data: Button.Data(text: nil, onTapAction: {}), style: .destructive)
+        }
     }
 
     enum State {

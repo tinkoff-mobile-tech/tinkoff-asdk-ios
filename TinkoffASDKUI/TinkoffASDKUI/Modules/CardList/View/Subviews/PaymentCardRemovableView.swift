@@ -20,13 +20,22 @@
 import UIKit
 
 final class PaymentCardRemovableView: UIView {
+
+    typealias Cell = CollectionCell<PaymentCardRemovableView>
+
+    override var intrinsicContentSize: CGSize { frame.size }
+
     // MARK: Action Handlers
 
     private var removeHandler: (() -> Void)?
 
     // MARK: Subviews
 
-    private lazy var paymentCardView = PaymentCardView()
+    private let contentView = UIView()
+
+    private lazy var cardView = DynamicIconCardView()
+    private lazy var textLabel = UILabel()
+    private let buttonContainer = ViewContainer()
 
     private lazy var removeButton: UIButton = {
         let button = UIButton(type: .system)
@@ -34,16 +43,20 @@ final class PaymentCardRemovableView: UIView {
             Asset.tuiIcServiceCross24.image.withRenderingMode(.alwaysTemplate),
             for: .normal
         )
-        button.tintColor = ASDKColors.Text.tertiary.color
+        button.tintColor = ASDKColors.Text.secondary.color
         button.addTarget(self, action: #selector(removeTapped), for: .touchUpInside)
         return button
     }()
+
+    //
+
+    private(set) var configuration: Configuration = .empty
 
     // MARK: Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView()
+        setupViews()
     }
 
     @available(*, unavailable)
@@ -53,19 +66,55 @@ final class PaymentCardRemovableView: UIView {
 
     // MARK: Initial Configuration
 
-    private func setupView() {
-        let stack = UIStackView(arrangedSubviews: [paymentCardView, removeButton])
-        stack.axis = .horizontal
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stack)
+    private func setupViews() {
+        addSubview(contentView)
 
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: topAnchor),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .leadingInset),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
-            removeButton.widthAnchor.constraint(equalToConstant: .removeButtonWidth),
-        ])
+        contentView.addSubview(cardView)
+        contentView.addSubview(textLabel)
+        contentView.addSubview(buttonContainer)
+
+        buttonContainer.clipsToBounds = true
+
+        buttonContainer.configure(
+            with: ViewContainer.Configuration(
+                content: removeButton,
+                layoutStrategy: .custom { view in
+                    view.makeConstraints { view in
+                        [
+                            view.centerYAnchor.constraint(equalTo: view.forcedSuperview.centerYAnchor),
+                            view.rightAnchor.constraint(equalTo: view.forcedSuperview.rightAnchor),
+                        ]
+                    }
+                }
+            )
+        )
+
+        contentView.makeEqualToSuperview(insets: .zero)
+
+        cardView.makeConstraints { view in
+            [
+                view.topAnchor.constraint(equalTo: view.forcedSuperview.topAnchor, constant: .cardViewTopInset),
+                view.leftAnchor.constraint(equalTo: view.forcedSuperview.leftAnchor),
+                view.bottomAnchor.constraint(lessThanOrEqualTo: view.forcedSuperview.bottomAnchor, constant: -.cardViewTopInset),
+            ] + view.size(DynamicIconCardView.defaultSize)
+        }
+
+        textLabel.makeConstraints { view in
+            [
+                view.leftAnchor.constraint(equalTo: cardView.rightAnchor, constant: .normalInset),
+                view.rightAnchor.constraint(equalTo: buttonContainer.leftAnchor),
+                view.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
+            ]
+        }
+
+        buttonContainer.makeConstraints { view in
+            [
+                view.width(constant: .zero),
+                view.topAnchor.constraint(equalTo: view.forcedSuperview.topAnchor),
+                view.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
+                view.rightAnchor.constraint(equalTo: view.forcedSuperview.rightAnchor),
+            ]
+        }
     }
 
     // MARK: Actions
@@ -77,17 +126,51 @@ final class PaymentCardRemovableView: UIView {
 
 // MARK: - Configurable
 
-extension PaymentCardRemovableView: Configurable {
+extension PaymentCardRemovableView: ConfigurableItem, Configurable {
+
+    enum AccessoryItem {
+        case none
+        case removeButton(onRemove: () -> Void)
+    }
+
     struct Configuration {
-        let pan: String
-        let validThru: String
-        let icon: UIImage?
-        let removeHandler: () -> Void
+        let content: UILabel.Content
+        let card: DynamicIconCardView.Model
+        let accessoryItem: AccessoryItem
+        let insets: UIEdgeInsets
+    }
+
+    func configure(with configuration: Configuration) {
+        self.configuration = configuration
+        cardView.configure(model: configuration.card)
+        textLabel.configure(UILabel.Configuration(content: configuration.content))
+        contentView.constraintUpdater.updateEdgeInsets(insets: configuration.insets)
+
+        switch configuration.accessoryItem {
+        case .none:
+            buttonContainer.isHidden = true
+            buttonContainer.constraintUpdater.updateWidth(to: .zero)
+        case let .removeButton(onRemove):
+            buttonContainer.isHidden = false
+            buttonContainer.constraintUpdater.updateWidth(to: .accessoryContainerWidth)
+            removeHandler = onRemove
+        }
     }
 
     func update(with configuration: Configuration) {
-        removeHandler = configuration.removeHandler
-        paymentCardView.update(with: configuration.paymentCardConfiguration)
+        configure(with: configuration)
+    }
+}
+
+extension PaymentCardRemovableView.Configuration {
+
+    static var empty: Self {
+        Self(
+            content: .empty,
+            card: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
+            accessoryItem: .none,
+            insets: .zero
+        )
     }
 }
 
@@ -96,25 +179,19 @@ extension PaymentCardRemovableView: Configurable {
 extension PaymentCardRemovableView: Reusable {
     func prepareForReuse() {
         removeHandler = nil
-        paymentCardView.prepareForReuse()
+        textLabel.prepareForReuse()
     }
 }
 
 // MARK: - Constants
 
 private extension CGFloat {
-    static let leadingInset: CGFloat = 16
     static let removeButtonWidth: CGFloat = 48
+    static let normalInset: CGFloat = 16
+    static let cardViewTopInset: CGFloat = 7
+    static let accessoryContainerWidth: CGFloat = 32
 }
 
-// MARK: - Configuration Mapping
-
-private extension PaymentCardRemovableView.Configuration {
-    var paymentCardConfiguration: PaymentCardView.Configuration {
-        PaymentCardView.Configuration(
-            pan: pan,
-            validThru: validThru,
-            icon: icon
-        )
-    }
+extension PaymentCardRemovableView {
+    static var contentInsets: UIEdgeInsets { UIEdgeInsets(vertical: 8, horizontal: 16) }
 }

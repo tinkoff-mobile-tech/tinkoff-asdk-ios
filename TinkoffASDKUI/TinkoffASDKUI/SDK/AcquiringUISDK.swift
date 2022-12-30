@@ -208,7 +208,7 @@ public class AcquiringUISDK: NSObject {
             tdsTimeoutResolver: tdsTimeoutResolver
         )
         logger = configuration.logger
-        cardListAssembly = CardListAssembly(primaryButtonStyle: style.bigButtonStyle)
+        cardListAssembly = CardListAssembly()
     }
 
     /// Вызывается кода пользователь привязывает карту.

@@ -53,4 +53,23 @@ enum Bank: CaseIterable, Equatable {
             return .other
         }
     }
+
+    var naming: String {
+        switch self {
+        case .sber:
+            return Loc.Acquiring.Common.sberCardTitle
+        case .tinkoff:
+            return Loc.Acquiring.Common.tcsCardTitle
+        case .vtb:
+            return Loc.Acquiring.Common.vtbCardTitle
+        case .gazprom:
+            return Loc.Acquiring.Common.gazpromCardTitle
+        case .raiffaisen:
+            return Loc.Acquiring.Common.raiffeisenCardTitle
+        case .alpha:
+            return Loc.Acquiring.Common.alfaCardTitle
+        case .other:
+            return ""
+        }
+    }
 }
