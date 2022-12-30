@@ -260,14 +260,13 @@ extension CardListViewController: ICardListViewInput {
             style: .base
         )
 
+        presenter.viewDidShowAddedCardSnackbar()
         showSnackFor(
             seconds: 1,
             animated: false,
             config: config,
             didShowCompletion: nil,
-            didHideCompletion: { [weak presenter] _ in
-                presenter?.viewDidShowAddedCardSnackbar()
-            }
+            didHideCompletion: nil
         )
     }
 
