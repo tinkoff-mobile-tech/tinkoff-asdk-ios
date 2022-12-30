@@ -10,5 +10,5 @@ protocol ISBPBankCellNew: NSObject {
 
     func showSkeletonViews()
     func setNameLabel(text: String)
-    func setLogo(image: UIImage)
+    func setLogo(image: UIImage, animated: Bool)
 }

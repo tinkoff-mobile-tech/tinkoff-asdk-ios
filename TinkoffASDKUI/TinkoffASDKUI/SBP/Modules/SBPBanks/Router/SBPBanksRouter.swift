@@ -33,4 +33,15 @@ extension SBPBanksRouter {
         sbpModule.input.set(banks: banks)
         transitionHandler?.navigationController?.pushViewController(sbpModule.view, animated: true)
     }
+
+    func showDidNotFindBankAppAlert() {
+        let title = Loc.CommonAlert.SBPNoBank.title
+        let message = Loc.CommonAlert.SBPNoBank.description
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        let actionTitle = Loc.CommonAlert.button
+        let alertAction = UIAlertAction(title: actionTitle, style: .default)
+        alertVC.addAction(alertAction)
+        transitionHandler?.present(alertVC, animated: true)
+    }
 }

@@ -10,4 +10,5 @@ import TinkoffASDKCore
 protocol ISBPBanksRouter {
     func closeScreen()
     func show(banks: [SBPBank])
+    func showDidNotFindBankAppAlert()
 }

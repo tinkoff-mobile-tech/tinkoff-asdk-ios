@@ -83,6 +83,11 @@
 "Acquiring.SBPBanks.AnotherBank" = "Другой банк";
 "Acquiring.SBPAllBanks.SearchPlaceholder" = "Название";
 
+// CommonAlert
+"CommonAlert.SBPNoBank.Title" = "Не получилось найти приложение этого банка";
+"CommonAlert.SBPNoBank.Description" = "Установите его или выберите другой банк";
+"CommonAlert.Button" = "Понятно";
+
 // Tinkoff Pay
 "TP.Error.Title" = "Не удалось выполнить оплату через Tinkoff Pay";
 "TP.Error.Description" = "Попробуйте еще раз";

@@ -168,7 +168,9 @@ extension SBPBanksPresenter {
     private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellNewPresenter] {
         banks.map { bank in
             cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
-                self?.bankAppChecker.openBankApp(bank)
+                self?.bankAppChecker.openBankApp(bank, completion: { isOpen in
+                    isOpen ? () : self?.router.showDidNotFindBankAppAlert()
+                })
             })
         }
     }

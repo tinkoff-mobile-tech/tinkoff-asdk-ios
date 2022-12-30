@@ -62,6 +62,16 @@ internal enum Loc {
       internal static let noCards = Loc.tr("Localizable", "CardList.status.noCards", fallback: "У вас нет сохраненных карт")
     }
   }
+  internal enum CommonAlert {
+    /// Понятно
+    internal static let button = Loc.tr("Localizable", "CommonAlert.Button", fallback: "Понятно")
+    internal enum SBPNoBank {
+      /// Установите его или выберите другой банк
+      internal static let description = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Description", fallback: "Установите его или выберите другой банк")
+      /// Не получилось найти приложение этого банка
+      internal static let title = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Title", fallback: "Не получилось найти приложение этого банка")
+    }
+  }
   internal enum Sbp {
     internal enum BanksList {
       internal enum Button {

@@ -65,10 +65,10 @@ extension SBPBankCellNewPresenter {
         case .loadingInProcess:
             break
         case .failedPreviousTime:
-            cellSetPlaceholderLogoImage()
+            cellSetPlaceholderLogoImage(animated: false)
             loadCellImage()
         case let .loaded(image):
-            cell?.setLogo(image: image)
+            cell?.setLogo(image: image, animated: false)
         }
     }
 }
@@ -82,7 +82,7 @@ extension SBPBankCellNewPresenter {
             cell?.setNameLabel(text: bank.name)
             startLoadingCellImageIfNeeded()
         case let .bankButton(imageAsset, name):
-            cell?.setLogo(image: imageAsset.image)
+            cell?.setLogo(image: imageAsset.image, animated: false)
             cell?.setNameLabel(text: name)
         case .skeleton:
             cell?.showSkeletonViews()
@@ -100,15 +100,15 @@ extension SBPBankCellNewPresenter {
             switch result {
             case let .success(image):
                 self.imageLoadingStatus = .loaded(image)
-                self.cell?.setLogo(image: image)
+                self.cell?.setLogo(image: image, animated: true)
             case .failure:
                 self.imageLoadingStatus = .failedPreviousTime
-                self.cellSetPlaceholderLogoImage()
+                self.cellSetPlaceholderLogoImage(animated: true)
             }
         })
     }
 
-    private func cellSetPlaceholderLogoImage() {
-        cell?.setLogo(image: Asset.Sbp.sbpNoImage.image)
+    private func cellSetPlaceholderLogoImage(animated: Bool) {
+        cell?.setLogo(image: Asset.Sbp.sbpNoImage.image, animated: animated)
     }
 }

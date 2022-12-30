@@ -87,8 +87,17 @@ extension SBPBankCellNew {
         nameLabel.text = text
     }
 
-    func setLogo(image: UIImage) {
-        logoImageView.image = image
+    func setLogo(image: UIImage, animated: Bool) {
+        let duration: TimeInterval = animated ? .defaultAnimationDuration : 0
+
+        UIView.transition(
+            with: logoImageView,
+            duration: duration,
+            options: .transitionCrossDissolve,
+            animations: {
+                self.logoImageView.image = image
+            }
+        )
     }
 }
 

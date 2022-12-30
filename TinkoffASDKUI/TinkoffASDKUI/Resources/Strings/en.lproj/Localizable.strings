@@ -83,6 +83,11 @@
 "Acquiring.SBPBanks.AnotherBank" = "Another bank";
 "Acquiring.SBPAllBanks.SearchPlaceholder" = "Name";
 
+// CommonAlert
+"CommonAlert.SBPNoBank.Title" = "I couldn't find the application of this bank";
+"CommonAlert.SBPNoBank.Description" = "Install it or choose another bank";
+"CommonAlert.Button" = "Ok";
+
 // Tinkoff Pay
 "TP.Error.Title" = "Error occured during transaction";
 "TP.Error.Description" = "Try again";
