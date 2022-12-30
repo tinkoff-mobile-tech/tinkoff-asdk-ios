@@ -69,7 +69,7 @@ extension SnackbarViewController {
             snackbarView.frame = shownFrame
         }
 
-        let localCompletion: (Bool) -> Void? = { [weak self] didComplete in
+        let localCompletion: ((Bool) -> Void)? = { [weak self] didComplete in
             self?.state = .shown
             completion?(didComplete)
         }
@@ -78,7 +78,7 @@ extension SnackbarViewController {
             let transformations = {
                 firstStepAnimations()
                 secondStepAnimations()
-                localCompletion(true)
+                localCompletion?(true)
             }
 
             // run without animation
@@ -115,7 +115,7 @@ extension SnackbarViewController {
                     animationItem.body()
                 },
                 completion: { didComplete in
-                    animationItem.completion(didComplete)
+                    animationItem.completion?(didComplete)
                 }
             )
         }
@@ -166,12 +166,12 @@ extension SnackbarViewController {
                 animations: {
                     animation.body()
                 }, completion: { didComplete in
-                    animation.completion(didComplete)
+                    animation.completion?(didComplete)
                 }
             )
         } else {
             animation.body()
-            animation.completion(true)
+            animation.completion?(true)
         }
     }
 }
@@ -260,7 +260,7 @@ extension SnackbarViewController {
 
     struct Animation {
         let body: () -> Void
-        let completion: (Bool) -> Void?
+        let completion: ((Bool) -> Void)?
     }
 
     struct Constants {
