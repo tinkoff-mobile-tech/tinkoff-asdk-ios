@@ -238,13 +238,13 @@ extension CardListViewController: ICardListViewInput {
             ),
             style: .base
         )
-        snackBarViewController = showSnack(config: config, completion: nil)
+        snackBarViewController = showSnack(animated: true, config: config, completion: nil)
     }
 
     func hideLoadingSnackbar() {
         snackBarViewController?.hideSnackView(
             animated: true,
-            completion: { [weak self] in
+            completion: { [weak self] _ in
                 self?.presenter.viewDidHideLoadingSnackbar()
                 self?.snackBarViewController = nil
             }
@@ -262,9 +262,10 @@ extension CardListViewController: ICardListViewInput {
 
         showSnackFor(
             seconds: 1,
+            animated: false,
             config: config,
             didShowCompletion: nil,
-            didHideCompletion: { [weak presenter] in
+            didHideCompletion: { [weak presenter] _ in
                 presenter?.viewDidShowAddedCardSnackbar()
             }
         )

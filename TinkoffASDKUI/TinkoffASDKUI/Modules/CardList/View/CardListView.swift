@@ -103,17 +103,20 @@ final class CardListView: UIView {
 
     func disableUserInteraction() {
         guard blockingView.superview == nil else { return }
-        blockingView.alpha = 0
+        blockingView.alpha = 1
         addSubview(blockingView)
         blockingView.pinEdgesToSuperview()
+
         UIView.addPopingAnimation {
-            self.blockingView.alpha = 0.5
+            self.collectionView.alpha = 0.5
         }
     }
 
     func enableUserInteraction() {
+        blockingView.alpha = 0
+
         UIView.addPopingAnimation(animations: {
-            self.blockingView.alpha = 0
+            self.collectionView.alpha = 1
         }, completion: { [weak self] _ in
             self?.blockingView.removeFromSuperview()
         })
@@ -182,7 +185,7 @@ final class CardListView: UIView {
                 + view.makeLeftAndRightEqualToSuperView(inset: .zero)
         }
 
-        blockingView.backgroundColor = style.backgroundColor
+        blockingView.backgroundColor = .clear
     }
 }
 

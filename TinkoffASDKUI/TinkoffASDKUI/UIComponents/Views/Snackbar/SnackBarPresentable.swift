@@ -19,16 +19,18 @@ protocol ISnackBarPresentable {
     /// для самостоятельной обработки (хайдинг снека контроллера)
     @discardableResult
     func showSnack(
+        animated: Bool,
         config: SnackbarView.Configuration,
-        completion: (() -> Void)?
+        completion: ((Bool) -> Void)?
     ) -> SnackbarViewController
 
     /// Показывает 1 снек на определенное кол-во времени
     func showSnackFor(
         seconds: Double,
+        animated: Bool,
         config: SnackbarView.Configuration,
-        didShowCompletion: (() -> Void)?,
-        didHideCompletion: (() -> Void)?
+        didShowCompletion: ((Bool) -> Void)?,
+        didHideCompletion: ((Bool) -> Void)?
     )
 }
 
@@ -38,27 +40,28 @@ extension ISnackBarPresentable {
 
     @discardableResult
     func showSnack(
+        animated: Bool,
         config: SnackbarView.Configuration,
-        completion: (() -> Void)?
+        completion: ((Bool) -> Void)?
     ) -> SnackbarViewController {
         let snackViewController = SnackbarViewController()
         assert(viewProvider != nil)
         guard let viewProvider = viewProvider else { return snackViewController }
+        snackViewController.beginAppearanceTransition(true, animated: false)
         let viewSource = viewProvider.viewToAddSnackBarTo()
         snackViewController.view.frame = viewSource.frame
         viewSource.addSubview(snackViewController.view)
-        snackViewController.viewDidLoad()
-        snackViewController.viewWillAppear(true)
-        snackViewController.beginAppearanceTransition(true, animated: true)
-        snackViewController.showSnackView(config: config, completion: completion)
+        snackViewController.endAppearanceTransition()
+        snackViewController.showSnackView(config: config, animated: animated, completion: completion)
         return snackViewController
     }
 
     func showSnackFor(
         seconds: Double,
+        animated: Bool,
         config: SnackbarView.Configuration,
-        didShowCompletion: (() -> Void)?,
-        didHideCompletion: (() -> Void)?
+        didShowCompletion: ((Bool) -> Void)?,
+        didHideCompletion: ((Bool) -> Void)?
     ) {
         assert(seconds > 0)
         var snackViewController: SnackbarViewController?
@@ -69,6 +72,6 @@ extension ISnackBarPresentable {
             }
         )
 
-        snackViewController = showSnack(config: config, completion: didShowCompletion)
+        snackViewController = showSnack(animated: animated, config: config, completion: didShowCompletion)
     }
 }

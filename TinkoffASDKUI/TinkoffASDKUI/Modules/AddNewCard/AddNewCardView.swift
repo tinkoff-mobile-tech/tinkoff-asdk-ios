@@ -61,8 +61,9 @@ extension AddNewCardView {
     }
 
     func showLoadingState() {
+        blockingView.alpha = 1
         UIView.addPopingAnimation {
-            self.blockingView.alpha = 0.5
+            self.collectionView.alpha = 0.5
         }
 
         endEditing(true)
@@ -70,8 +71,10 @@ extension AddNewCardView {
     }
 
     func hideLoadingState() {
+        blockingView.alpha = 0
+
         UIView.addPopingAnimation {
-            self.blockingView.alpha = .zero
+            self.collectionView.alpha = 1
         }
 
         addButton.stopLoading()
@@ -112,7 +115,7 @@ extension AddNewCardView {
         setupAddButton()
         collectionView.pinEdgesToSuperview()
         blockingView.pinEdgesToSuperview()
-        blockingView.backgroundColor = backgroundColor
+        blockingView.backgroundColor = .clear
         blockingView.alpha = .zero
     }
 

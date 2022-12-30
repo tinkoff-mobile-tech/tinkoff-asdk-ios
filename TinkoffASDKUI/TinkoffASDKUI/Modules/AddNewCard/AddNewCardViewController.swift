@@ -109,12 +109,7 @@ extension AddNewCardViewController: IAddNewCardView {
     }
 
     func notifyAdded(card: PaymentCard) {
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + 0.3,
-            execute: {
-                self.output?.addNewCardDidAddCard(paymentCard: card)
-            }
-        )
+        output?.addNewCardDidAddCard(paymentCard: card)
     }
 
     func closeScreen() {
