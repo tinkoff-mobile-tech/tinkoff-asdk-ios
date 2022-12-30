@@ -19,6 +19,7 @@
 * [MIC-6843] Card List Screen Redesign - Cards Removal
 * [MIC-6837] Card List Screen Redesign - Integration
 * [MIC-6841] Card List Screen Redesign - Tests
+* [MIC-7538] Add New Tinkoff Bins
 
 ### Fixed
 
