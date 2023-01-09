@@ -11,10 +11,25 @@ final class PaymentActivityProcessingView: UIView {
     // MARK: Subviews
 
     private lazy var activityIndicator = ActivityIndicatorView(style: .xlYellow)
-    private lazy var titleLabel = UILabel(style: .headingM.set(alignment: .center))
-    private lazy var descriptionLabel = UILabel(
-        style: .bodyL.set(alignment: .center).set(textColor: ASDKColors.Text.secondary)
-    )
+
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = ASDKColors.Text.primary.color
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private lazy var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = ASDKColors.Text.secondary.color
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }()
+
     private lazy var primaryButton = Button()
 
     // MARK: Init
