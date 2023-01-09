@@ -93,6 +93,7 @@ final class CardRequisitesValidator: ICardRequisitesValidator {
 extension ICardRequisitesValidator {
     func validate(inputValidThru: String?) -> Bool {
         guard let inputValidThru = inputValidThru,
+              inputValidThru.count >= 4,
               let month = Int(inputValidThru.prefix(2)),
               let year = Int(inputValidThru.suffix(2))
         else {
