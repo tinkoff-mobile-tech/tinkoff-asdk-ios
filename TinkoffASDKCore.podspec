@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
 	spec.name = 'TinkoffASDKCore'
-	spec.version = '2.13.1'
+	spec.version = '2.15.0'
 	spec.summary = 'Мобильный SDK'
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
@@ -25,5 +25,6 @@ Pod::Spec.new do |spec|
   spec.test_spec 'Tests' do |test_spec|
   test_spec.source_files = 'TinkoffASDKCore/TinkoffASDKCoreTests/**/*.swift'
   test_spec.exclude_files = 'TinkoffASDKCore/TinkoffASDKCoreTests/IntegrationTests.swift', 'TinkoffASDKCore/TinkoffASDKCoreTests/FinishResponseTests.swift', 'TinkoffASDKCore/TinkoffASDKCoreTests/CoreTests.swift'
+  test_spec.resources = 'TinkoffASDKCore/TinkoffASDKCoreTests/**/*.{json}'
   end 
 end

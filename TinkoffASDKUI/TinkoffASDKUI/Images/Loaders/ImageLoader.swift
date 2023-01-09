@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+import TinkoffASDKCore
 import UIKit
 
 final class ImageLoader {
@@ -25,8 +26,13 @@ final class ImageLoader {
         case failedToLoadImage
     }
 
+    private let urlDataLoader: AcquiringSdk
     private let cache = NSCache<NSURL, UIImage>()
-    private var requests = [UUID: URLSessionDataTask]()
+    private var requests = [UUID: Cancellable]()
+
+    init(urlDataLoader: AcquiringSdk) {
+        self.urlDataLoader = urlDataLoader
+    }
 
     func loadImage(
         url: URL,
@@ -40,24 +46,25 @@ final class ImageLoader {
 
         let uuid = UUID()
 
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+        let task = urlDataLoader.loadData(with: url) { [weak self] result in
             guard let self = self else { return }
-            guard error == nil else {
-                self.handleError(error!, completion: completion)
-                return
-            }
 
-            guard let data = data, var image = UIImage(data: data) else {
-                completion(.failure(Error.failedToLoadImage))
-                return
-            }
+            switch result {
+            case let .success(data):
+                guard var image = UIImage(data: data) else {
+                    return completion(.failure(Error.failedToLoadImage))
+                }
 
-            image = preCacheClosure(image)
-            self.cache.setObject(image, forKey: url as NSURL)
-            completion(.success(image))
+                image = preCacheClosure(image)
+                self.cache.setObject(image, forKey: url as NSURL)
+                completion(.success(image))
+            case let .failure(error as NSError) where error.code == NSURLErrorCancelled:
+                break
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
 
-        task.resume()
         requests[uuid] = task
 
         return uuid
@@ -66,16 +73,5 @@ final class ImageLoader {
     func cancelImageLoad(uuid: UUID) {
         requests[uuid]?.cancel()
         requests.removeValue(forKey: uuid)
-    }
-}
-
-private extension ImageLoader {
-    func handleError(_ error: Swift.Error, completion: (Result<UIImage, Swift.Error>) -> Void) {
-        switch (error as NSError).code {
-        case NSURLErrorCancelled:
-            break
-        default:
-            completion(.failure(error))
-        }
     }
 }

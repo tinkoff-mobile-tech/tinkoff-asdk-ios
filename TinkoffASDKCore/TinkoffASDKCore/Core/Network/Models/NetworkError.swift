@@ -20,7 +20,7 @@ enum NetworkError: LocalizedError, CustomNSError {
         case let .serverError(statusCode):
             return statusCode
         case .emptyResponse, .failedToCreateRequest:
-            return 0
+            return -1
         }
     }
 

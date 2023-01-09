@@ -33,8 +33,14 @@ struct InitRequest: AcquiringRequest {
         Constants.Keys.receipts
     )
 
-    init(paymentInitData: PaymentInitData, baseURL: URL) {
+    init(
+        paymentInitData: PaymentInitData,
+        environmentParametersProvider: IEnvironmentParametersProvider,
+        baseURL: URL
+    ) {
         self.baseURL = baseURL
-        parameters = (try? paymentInitData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
+        var initData = paymentInitData
+        initData.addPaymentData(environmentParametersProvider.environmentParameters)
+        parameters = (try? initData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
 }

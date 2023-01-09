@@ -9,6 +9,7 @@ import Foundation
 
 protocol IExternalRequestBuilder {
     func get3DSAppBasedConfigRequest() -> NetworkRequest
+    func getSBPBanks() -> NetworkRequest
 }
 
 final class ExternalRequestBuilder: IExternalRequestBuilder {
@@ -20,5 +21,9 @@ final class ExternalRequestBuilder: IExternalRequestBuilder {
 
     func get3DSAppBasedConfigRequest() -> NetworkRequest {
         Get3DSAppBasedCertsConfigRequest(baseURL: appBasedConfigURLProvider.url)
+    }
+
+    func getSBPBanks() -> NetworkRequest {
+        GetSBPBanksRequest()
     }
 }

@@ -311,12 +311,12 @@ private extension CardListDataProvider {
             coreSDK.check3DSVersion(data: check3DSVersionData) { check3DSResult in
                 switch check3DSResult {
                 case let .success(check3DSPayload):
-                    var deviceData: DeviceInfoParams?
+                    var deviceData: ThreeDSDeviceInfo?
 
                     if let tdsServerTransID = check3DSPayload.tdsServerTransID,
                        let threeDSMethodURL = check3DSPayload.threeDSMethodURL {
                         complete3DSMethodHandler(tdsServerTransID, threeDSMethodURL)
-                        deviceData = self.coreSDK.threeDSDeviceParamsProvider(screenSize: UIScreen.main.bounds.size).deviceInfoParams
+                        deviceData = self.coreSDK.threeDSDeviceInfoProvider().deviceInfo
                     }
 
                     self.attachCard(
@@ -347,7 +347,7 @@ private extension CardListDataProvider {
         options: AddCardOptions,
         addCardPayload: AddCardPayload,
         tdsVersion: String,
-        deviceData: DeviceInfoParams?,
+        deviceData: ThreeDSDeviceInfo?,
         submit3DSAuthorizationHandler: @escaping Submit3DSAuthorizationHandler,
         completion: @escaping AddCardCompletion
     ) {

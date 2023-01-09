@@ -89,6 +89,9 @@ public class AcquiringSdkConfiguration: NSObject {
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     let tokenProvider: ITokenProvider?
 
+    /// Запрашивает данные и способ аутентификация для `URLSession`
+    let urlSessionAuthChallengeService: IURLSessionAuthChallengeService?
+
     /// Инициализация конфигурации для `AcquiringSdk`
     ///
     /// - Parameters:
@@ -97,13 +100,16 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, значение по-умолчанию - 40 секунд
     ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     ///   - tokenProvider: Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
+    ///   - urlSessionAuthChallengeService: Запрашивает данные и способ аутентификация для `URLSession`.
+    ///   При nil используется реализация на усмотрение `AcquiringSDK`
     /// - Returns: AcquiringSdkConfiguration
     public init(
         credential: AcquiringSdkCredential,
         server: AcquiringSdkEnvironment = .test,
         requestsTimeoutInterval: TimeInterval = 40,
         tinkoffPayStatusCacheLifeTime: TimeInterval = 300,
-        tokenProvider: ITokenProvider? = nil
+        tokenProvider: ITokenProvider? = nil,
+        urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
@@ -111,5 +117,6 @@ public class AcquiringSdkConfiguration: NSObject {
         serverEnvironment = server
         configEnvironment = server == .test ? .test : .prod
         self.tokenProvider = tokenProvider
+        self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
     }
 }

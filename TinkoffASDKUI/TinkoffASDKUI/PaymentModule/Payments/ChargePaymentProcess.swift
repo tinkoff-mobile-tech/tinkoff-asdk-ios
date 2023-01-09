@@ -33,9 +33,9 @@ final class ChargePaymentProcess: PaymentProcess {
     private var customerEmail: String? {
         switch paymentFlow {
         case let .full(paymentOptions):
-            return paymentOptions.customerOptions.email
+            return paymentOptions.customerOptions?.email
         case let .finish(_, customerOptions):
-            return customerOptions.email
+            return customerOptions?.email
         }
     }
 
