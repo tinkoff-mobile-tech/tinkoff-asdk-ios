@@ -174,7 +174,7 @@ extension SBPBanksViewController: UISearchResultsUpdating {
 
 extension SBPBanksViewController {
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = ASDKColors.Background.elevation1.color
     }
 
     private func setupNavigationBar() {
@@ -205,7 +205,7 @@ extension SBPBanksViewController {
         // Когда скролишь таблицу с searchBar и упираешься в bounce таблицы, то без этой вьюхи 'backgroundView'
         // цвет под searchBar будет отличаться от основного цвета, будет дефолтным серым
         let backgroundView = UIView()
-        backgroundView.backgroundColor = .white
+        backgroundView.backgroundColor = ASDKColors.Background.elevation1.color
         tableView.backgroundView = backgroundView
     }
 
@@ -217,7 +217,7 @@ extension SBPBanksViewController {
 
         definesPresentationContext = true
 
-        searchController.searchBar.backgroundColor = .white
+        searchController.searchBar.backgroundColor = ASDKColors.Background.elevation1.color
         searchController.searchBar.searchBarStyle = .minimal
         searchController.searchBar.placeholder = Loc.Acquiring.SBPAllBanks.searchPlaceholder
     }

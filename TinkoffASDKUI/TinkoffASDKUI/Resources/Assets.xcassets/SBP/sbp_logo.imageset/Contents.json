@@ -3,6 +3,16 @@
     {
       "filename" : "sbp logo.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "sbp logo 1.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
