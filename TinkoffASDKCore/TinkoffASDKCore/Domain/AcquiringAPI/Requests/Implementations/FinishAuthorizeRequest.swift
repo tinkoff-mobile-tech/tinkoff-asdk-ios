@@ -31,31 +31,18 @@ struct FinishAuthorizeRequest: AcquiringRequest {
         requestData: FinishAuthorizeData,
         encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
+        ipAddressProvider: IIPAddressProvider,
+        environmentParametersProvider: IEnvironmentParametersProvider,
         publicKey: SecKey,
         baseURL: URL
     ) {
         self.baseURL = baseURL
         parameters = .parameters(
-            data: requestData,
+            requestData: requestData,
             encryptor: encryptor,
             cardDataFormatter: cardDataFormatter,
-            publicKey: publicKey
-        )
-    }
-
-    @available(*, deprecated, message: "Use init(requestData:encryptor:cardDataFormatter:publicKey:baseURL) instead")
-    init(
-        paymentFinishRequestData: PaymentFinishRequestData,
-        encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
-        publicKey: SecKey,
-        baseURL: URL
-    ) {
-        self.baseURL = baseURL
-        parameters = .parameters(
-            data: paymentFinishRequestData,
-            encryptor: encryptor,
-            cardDataFormatter: cardDataFormatter,
+            ipAddressProvider: ipAddressProvider,
+            environmentParametersProvider: environmentParametersProvider,
             publicKey: publicKey
         )
     }
@@ -65,27 +52,33 @@ struct FinishAuthorizeRequest: AcquiringRequest {
 
 private extension HTTPParameters {
     static func parameters(
-        data: FinishAuthorizeData,
+        requestData: FinishAuthorizeData,
         encryptor: IRSAEncryptor,
         cardDataFormatter: CardDataFormatter,
+        ipAddressProvider: IIPAddressProvider,
+        environmentParametersProvider: IEnvironmentParametersProvider,
         publicKey: SecKey
     ) -> HTTPParameters {
-        var parameters: HTTPParameters = [Constants.Keys.paymentId: data.paymentId]
-        if let sendEmail = data.sendEmail {
+        var parameters: HTTPParameters = [Constants.Keys.paymentId: requestData.paymentId]
+
+        if let sendEmail = requestData.sendEmail {
             parameters[Constants.Keys.sendEmail] = sendEmail
         }
-        if let infoEmail = data.infoEmail {
+
+        if let infoEmail = requestData.infoEmail {
             parameters[Constants.Keys.infoEmail] = infoEmail
         }
-        if let ipAddress = data.ipAddress {
+
+        if let ipAddress = ipAddressProvider.ipAddress?.fullStringValue {
             parameters[Constants.Keys.ipAddress] = ipAddress
         }
-        if let deviceInfo = data.deviceInfo,
-           let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
-            parameters[Constants.Keys.data] = deviceInfoJSON
-        }
 
-        switch data.paymentSource {
+        let deviceInfoParameters = try? requestData.deviceInfo?.encode2JSONObject()
+
+        parameters[Constants.Keys.data] = (deviceInfoParameters ?? [:])
+            .merging(environmentParametersProvider.environmentParameters) { $1 }
+
+        switch requestData.paymentSource {
         case let .cardNumber(number, expDate, cvv):
             let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
@@ -97,54 +90,16 @@ private extension HTTPParameters {
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[Constants.Keys.cardData] = encryptedCardData
             }
-        case let .paymentData(data):
-            parameters[Constants.Keys.encryptedPaymentData] = data
+        case let .applePay(base64Token):
+            parameters[Constants.Keys.encryptedPaymentData] = base64Token
             parameters[Constants.Keys.route] = Constants.Values.acq
             parameters[Constants.Keys.source] = Constants.Values.applePaySource
-        default: break
-        }
-
-        return parameters
-    }
-
-    static func parameters(
-        data: PaymentFinishRequestData,
-        encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
-        publicKey: SecKey
-    ) -> HTTPParameters {
-        var parameters: HTTPParameters = [Constants.Keys.paymentId: String(data.paymentId)]
-        if let sendEmail = data.sendEmail {
-            parameters[Constants.Keys.sendEmail] = sendEmail
-        }
-        if let infoEmail = data.infoEmail {
-            parameters[Constants.Keys.infoEmail] = infoEmail
-        }
-        if let ipAddress = data.ipAddress {
-            parameters[Constants.Keys.ipAddress] = ipAddress
-        }
-        if let deviceInfo = data.deviceInfo,
-           let deviceInfoJSON = try? deviceInfo.encode2JSONObject() {
-            parameters[Constants.Keys.data] = deviceInfoJSON
-        }
-
-        switch data.paymentSource {
-        case let .cardNumber(number, expDate, cvv):
-            let formattedCardData = cardDataFormatter.formatCardData(cardNumber: number, expDate: expDate, cvv: cvv)
-            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[Constants.Keys.cardData] = encryptedCardData
-            }
-        case let .savedCard(cardId, cvv):
-            let formattedCardData = cardDataFormatter.formatCardData(cardId: cardId, cvv: cvv)
-
-            if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
-                parameters[Constants.Keys.cardData] = encryptedCardData
-            }
-        case let .paymentData(data):
-            parameters[Constants.Keys.encryptedPaymentData] = data
+        case let .yandexPay(base64Token):
+            parameters[Constants.Keys.encryptedPaymentData] = base64Token
             parameters[Constants.Keys.route] = Constants.Values.acq
-            parameters[Constants.Keys.source] = Constants.Values.applePaySource
-        default: break
+            parameters[Constants.Keys.source] = Constants.Values.yandexPaySource
+        case .parentPayment:
+            break
         }
 
         return parameters

@@ -132,7 +132,7 @@ private extension PullableContainerViewController {
         customView.scrollView.isScrollEnabled = targetContentHeight >= maximumContentHeight
 
         UIView.animate(
-            withDuration: 0.3,
+            withDuration: 0.5,
             delay: 0,
             usingSpringWithDamping: 0.8,
             initialSpringVelocity: 2,
@@ -155,7 +155,7 @@ private extension PullableContainerViewController {
 extension PullableContainerViewController: PullableContainerDragControllerDelegate {
     func pullableContainerDragControllerDidEndDragging(_ controller: PullableContainerDragController) {
         UIView.animate(
-            withDuration: 0.3,
+            withDuration: 0.5,
             delay: 0,
             usingSpringWithDamping: 0.8,
             initialSpringVelocity: 2,

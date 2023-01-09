@@ -56,7 +56,7 @@ extension ThreeDSFacade: IThreeDSURLRequestBuilder {
 // MARK: - IThreeDSWebViewHandlerBuilder
 
 extension ThreeDSFacade: IThreeDSWebViewHandlerBuilder {
-    func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload> {
+    func threeDSWebViewHandler() -> IThreeDSWebViewHandler {
         webViewHandlerBuilder.threeDSWebViewHandler()
     }
 }
@@ -64,7 +64,7 @@ extension ThreeDSFacade: IThreeDSWebViewHandlerBuilder {
 // MARK: - IThreeDSDeviceParamsProviderBuilder
 
 extension ThreeDSFacade: IThreeDSDeviceParamsProviderBuilder {
-    func deviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        deviceParamsProviderBuilder.deviceParamsProvider(screenSize: screenSize)
+    func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
+        deviceParamsProviderBuilder.threeDSDeviceInfoProvider()
     }
 }

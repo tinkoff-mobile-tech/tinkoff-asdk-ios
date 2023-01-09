@@ -85,6 +85,12 @@ extension UILabel {
 // MARK: - Styles
 
 extension UILabel.Style {
+    static var headingM: Self {
+        Self(
+            textColor: ASDKColors.Text.primary.color,
+            font: .systemFont(ofSize: 20, weight: .bold)
+        )
+    }
 
     static func bodyM() -> Self {
         Self(

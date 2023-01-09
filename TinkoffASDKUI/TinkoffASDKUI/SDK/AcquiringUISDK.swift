@@ -182,15 +182,42 @@ public class AcquiringUISDK: NSObject {
     private let shouldUseAppBasedThreeDSFlow = false
 
     private weak var logger: LoggerDelegate?
-    private let uiAssembly: UIAssembly
+    private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
+    private let webViewAuthChallengeService: IWebViewAuthChallengeService
 
-    public init(
+    // MARK: Init
+
+    public convenience init(
         configuration: AcquiringSdkConfiguration,
+        uiSDKConfiguration: UISDKConfiguration = UISDKConfiguration(),
         style: Style = DefaultStyle()
     ) throws {
-        acquiringSdk = try AcquiringSdk(configuration: configuration)
-        uiAssembly = UIAssembly()
+        let coreSDK = try AcquiringSdk(configuration: configuration)
+
+        self.init(
+            coreSDK: coreSDK,
+            configuration: configuration,
+            uiSDKConfiguration: uiSDKConfiguration,
+            style: style
+        )
+    }
+
+    init(
+        coreSDK: AcquiringSdk,
+        configuration: AcquiringSdkConfiguration,
+        uiSDKConfiguration: UISDKConfiguration,
+        style: Style = DefaultStyle()
+    ) {
+        acquiringSdk = coreSDK
         self.style = style
+
+        paymentControllerAssembly = PaymentControllerAssembly(
+            coreSDK: coreSDK,
+            sdkConfiguration: configuration,
+            uiSDKConfiguration: uiSDKConfiguration
+        )
+
         sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         tinkoffPayAssembly = TinkoffPayAssembly(
             coreSDK: acquiringSdk,
@@ -205,8 +232,19 @@ public class AcquiringUISDK: NSObject {
             tdsCertsManager: tdsCertsManager,
             tdsTimeoutResolver: tdsTimeoutResolver
         )
+
         logger = configuration.logger
         cardListAssembly = CardListAssembly()
+
+        yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
+            flowAssembly: YandexPayPaymentFlowAssembly(
+                yandexPayActivityAssebmly: YandexPayPaymentActivityAssembly(
+                    paymentControllerAssembly: paymentControllerAssembly
+                )
+            ),
+            methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
+        )
+        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
     }
 
     /// Вызывается кода пользователь привязывает карту.
@@ -751,7 +789,7 @@ public class AcquiringUISDK: NSObject {
         paymentId: Int64,
         completionHandler: @escaping PaymentCompletionHandler
     ) {
-        let sourceData = PaymentSourceData.paymentData(paymentToken.paymentData.base64EncodedString())
+        let sourceData = PaymentSourceData.applePay(base64Token: paymentToken.paymentData.base64EncodedString())
         let finishAuthorizeData = PaymentFinishRequestData(
             paymentId: paymentId,
             paymentSource: sourceData,
@@ -923,7 +961,7 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: Create and Setup AcquiringViewController
 
-    private func presentAcquiringPaymentView(
+    func presentAcquiringPaymentView(
         presentingViewController: UIViewController,
         customerKey: String?,
         configuration: AcquiringViewConfiguration,
@@ -1480,9 +1518,10 @@ public class AcquiringUISDK: NSObject {
 
         DispatchQueue.main.async {
             if presenter != nil {
-                presenter?.checkDeviceFor3DSData(with: request)
+                presenter?.checkDeviceFor3DSData(with: request, navigationDelegate: self)
             } else {
                 self.webViewFor3DSChecking = WKWebView()
+                self.webViewFor3DSChecking?.navigationDelegate = self
                 self.webViewFor3DSChecking?.load(request)
             }
         }
@@ -1906,7 +1945,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
         handler completion: @escaping (PKPaymentAuthorizationResult) -> Void
     ) {
         if let paymentId = paymentInitResponseData?.paymentId {
-            let paymentDataSource = PaymentSourceData.paymentData(payment.token.paymentData.base64EncodedString())
+            let paymentDataSource = PaymentSourceData.applePay(base64Token: payment.token.paymentData.base64EncodedString())
             let data = PaymentFinishRequestData(
                 paymentId: paymentId,
                 paymentSource: paymentDataSource,
@@ -1939,11 +1978,7 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
         delegate: PaymentControllerDelegate,
         dataSource: PaymentControllerDataSource? = nil
     ) -> PaymentController {
-        let paymentController = uiAssembly.paymentController(
-            acquiringSDK: acquiringSdk,
-            acquiringUISDK: self,
-            ipProvider: acquiringSdk.ipAddressProvider
-        )
+        let paymentController = paymentControllerAssembly.paymentController()
         paymentController.uiProvider = uiProvider
         paymentController.delegate = delegate
         paymentController.dataSource = dataSource
@@ -1951,8 +1986,20 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     }
 }
 
+// MARK: WKNavigationDelegate
+
 extension AcquiringUISDK: WKNavigationDelegate {
-    // MARK: WKNavigationDelegate
+    public func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        webViewAuthChallengeService.webView(
+            webView,
+            didReceive: challenge,
+            completionHandler: completionHandler
+        )
+    }
 
     public func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         webView.evaluateJavaScript("document.baseURI") { [weak self] value, error in
@@ -2049,4 +2096,25 @@ extension AcquiringUISDK: WKNavigationDelegate {
             } // termURL.hasSuffix confirmation3DSTerminationURL
         } // document.baseURI
     } // func webView didFinish
+}
+
+public extension AcquiringUISDK {
+    /// Асинхронное создание фабрики `IYandexPayButtonContainerFactory`
+    ///
+    /// Ссылку на полученный таким образом объект можно хранить переиспользовать множество раз в различных точках приложения.
+    /// - Parameters:
+    ///   - configuration: Общаяя конфигурация `YandexPay`
+    ///   - initializer: Абстракция для инициализации фабрики. Используется для связывания модулей `TinkoffASDKUI` и `TinkoffASDKYandexPay`
+    ///   - completion: Callback с результатом создания фабрики. Вернет `Error` при сетевых ошибках или если способ оплаты через `YandexPay` недоступен для данного терминала.
+    func yandexPayButtonContainerFactory(
+        with configuration: YandexPaySDKConfiguration,
+        initializer: IYandexPayButtonContainerFactoryInitializer,
+        completion: @escaping (Result<IYandexPayButtonContainerFactory, Error>) -> Void
+    ) {
+        yandexPayButtonContainerFactoryProvider.yandexPayButtonContainerFactory(
+            with: configuration,
+            initializer: initializer,
+            completion: completion
+        )
+    }
 }

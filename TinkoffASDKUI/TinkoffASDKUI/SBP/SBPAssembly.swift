@@ -105,7 +105,7 @@ private extension SBPAssembly {
     }
 
     var cellImageLoader: CellImageLoader {
-        CellImageLoader(imageLoader: ImageLoader())
+        CellImageLoader(imageLoader: ImageLoader(urlDataLoader: coreSDK))
     }
 
     var bundleImageProvider: BundleImageProvider {
