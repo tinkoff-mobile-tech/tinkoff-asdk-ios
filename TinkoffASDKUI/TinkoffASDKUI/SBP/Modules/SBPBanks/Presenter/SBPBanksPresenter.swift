@@ -118,17 +118,28 @@ extension SBPBanksPresenter {
         view?.reloadTableView()
     }
 
+    private func clearCellModels() {
+        allBanksCellPresenters = []
+        filteredBanksCellPresenters = []
+        view?.reloadTableView()
+    }
+
     private func loadBanks() {
         banksService.loadBanks { [weak self] result in
             guard let self = self else { return }
 
-            switch result {
-            case let .success(banks):
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch result {
+                case let .success(banks):
                     self.handleSuccessLoaded(banks: banks)
+                case let .failure(error):
+                    switch (error as NSError).code {
+                    case NSURLErrorNotConnectedToInternet:
+                        self.viewShowNoNetworkStub()
+                    default:
+                        self.viewShowServerErrorStub()
+                    }
                 }
-            case let .failure(error):
-                print(error)
             }
         }
     }
@@ -182,5 +193,23 @@ extension SBPBanksPresenter {
     private func getNotPreferredBanks() -> [SBPBank] {
         let preferredBanks = getPreferredBanks()
         return allBanks.filter { bank in !preferredBanks.contains(where: { $0 == bank }) }
+    }
+
+    private func viewShowNoNetworkStub() {
+        clearCellModels()
+        view?.hideStub()
+        view?.showStub(mode: .noNetwork { [weak self] in
+            self?.view?.hideStub()
+            self?.prepareAndShowSkeletonModels()
+            self?.loadBanks()
+        })
+    }
+
+    private func viewShowServerErrorStub() {
+        clearCellModels()
+        view?.hideStub()
+        view?.showStub(mode: .serverError { [weak self] in
+            self?.router.closeScreen()
+        })
     }
 }

@@ -17,6 +17,7 @@ private enum SBPCellImageLoadingStatus {
     case notLoaded
     case loadingInProcess
     case failedPreviousTime
+    case repeatLoadingInProcess
     case loaded(UIImage)
 }
 
@@ -67,6 +68,8 @@ extension SBPBankCellNewPresenter {
         case .failedPreviousTime:
             cellSetPlaceholderLogoImage(animated: false)
             loadCellImage()
+        case .repeatLoadingInProcess:
+            cellSetPlaceholderLogoImage(animated: false)
         case let .loaded(image):
             cell?.setLogo(image: image, animated: false)
         }
@@ -92,7 +95,10 @@ extension SBPBankCellNewPresenter {
     private func loadCellImage() {
         guard let logoURL = bank?.logoURL else { return }
 
-        imageLoadingStatus = .loadingInProcess
+        switch imageLoadingStatus {
+        case .failedPreviousTime: imageLoadingStatus = .repeatLoadingInProcess
+        default: imageLoadingStatus = .loadingInProcess
+        }
 
         cellImageLoader.loadImage(url: logoURL, completion: { [weak self] result in
             guard let self = self else { return }

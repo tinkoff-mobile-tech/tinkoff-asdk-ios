@@ -13,4 +13,7 @@ protocol ISBPBanksViewController: AnyObject {
     func hideSearchBar()
 
     func reloadTableView()
+
+    func showStub(mode: StubMode)
+    func hideStub()
 }

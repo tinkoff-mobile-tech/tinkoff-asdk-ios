@@ -22,6 +22,7 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController {
 
     // Dependencies
     private let presenter: ISBPBanksPresenter
+    private let stubBuilder: IStubViewBuilder
 
     // Properties
     private let tableView = UITableView()
@@ -29,8 +30,12 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController {
 
     // MARK: - Initialization
 
-    init(presenter: ISBPBanksPresenter) {
+    init(
+        presenter: ISBPBanksPresenter,
+        stubBuilder: IStubViewBuilder
+    ) {
         self.presenter = presenter
+        self.stubBuilder = stubBuilder
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -81,6 +86,29 @@ extension SBPBanksViewController {
 
     func reloadTableView() {
         tableView.reloadSections(IndexSet(integer: 0), with: .fade)
+    }
+
+    func showStub(mode: StubMode) {
+        let stubView = stubBuilder.buildFrom(coverMode: mode)
+        stubView.center = view.center
+        stubView.alpha = .zero
+        view.addSubview(stubView)
+        UIView.addPopingAnimation { stubView.alpha = 1 }
+    }
+
+    func hideStub() {
+        view.subviews.forEach { subview in
+            if subview is StubView {
+                UIView.addPopingAnimation(
+                    animations: {
+                        subview.alpha = .zero
+                    },
+                    completion: { _ in
+                        subview.removeFromSuperview()
+                    }
+                )
+            }
+        }
     }
 }
 
