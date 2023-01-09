@@ -181,7 +181,7 @@ extension CardListViewController: ICardListViewInput {
 
     func showNoCardsStub() {
         cardListView.showStub(mode: .noCards { [weak presenter] in
-            presenter?.viewDidTapEditButton()
+            presenter?.viewDidTapNoCardsStubButton()
         })
     }
 
