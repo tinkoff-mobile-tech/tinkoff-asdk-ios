@@ -138,6 +138,7 @@ final class CardListView: UIView {
     }
 
     func showStub(mode: StubMode) {
+        collectionView.isHidden = true
         let stubView = stubBuilder.buildFrom(coverMode: mode)
         stubView.center = center
         stubView.alpha = .zero
@@ -146,6 +147,7 @@ final class CardListView: UIView {
     }
 
     func hideStub() {
+        collectionView.isHidden = false
         subviews.forEach { subview in
             if subview is StubView {
                 UIView.addPopingAnimation(
