@@ -116,6 +116,20 @@ internal enum Loc {
       internal static let title = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Title", fallback: "Не получилось найти приложение этого банка")
     }
   }
+  internal enum CommonSheet {
+    internal enum Paid {
+      /// Понятно
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.Paid.PrimaryButton", fallback: "Понятно")
+      /// Оплачено
+      internal static let title = Loc.tr("Localizable", "CommonSheet.Paid.Title", fallback: "Оплачено")
+    }
+    internal enum Processing {
+      /// Это займет некоторое время
+      internal static let description = Loc.tr("Localizable", "CommonSheet.Processing.Description", fallback: "Это займет некоторое время")
+      /// Обрабатываем платеж
+      internal static let title = Loc.tr("Localizable", "CommonSheet.Processing.Title", fallback: "Обрабатываем платеж")
+    }
+  }
   internal enum CommonStub {
     internal enum NoCards {
       /// Добавить
@@ -339,6 +353,16 @@ internal enum Loc {
         /// Сохраненные карты
         internal static let savedCards = Loc.tr("Localizable", "TinkoffAcquiring.view.title.savedCards", fallback: "Сохраненные карты")
       }
+    }
+  }
+  internal enum YandexSheet {
+    internal enum Failed {
+      /// Воспользуйтесь другим способом оплаты
+      internal static let description = Loc.tr("Localizable", "YandexSheet.Failed.Description", fallback: "Воспользуйтесь другим способом оплаты")
+      /// Понятно
+      internal static let primaryButton = Loc.tr("Localizable", "YandexSheet.Failed.PrimaryButton", fallback: "Понятно")
+      /// Не получилось оплатить
+      internal static let title = Loc.tr("Localizable", "YandexSheet.Failed.Title", fallback: "Не получилось оплатить")
     }
   }
 }

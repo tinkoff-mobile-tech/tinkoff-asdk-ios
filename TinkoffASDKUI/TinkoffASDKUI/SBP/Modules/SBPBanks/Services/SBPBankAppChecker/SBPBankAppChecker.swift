@@ -39,7 +39,7 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
             return []
         }
     }
-    
+
     /// Пытается открыть приложение конкретного банка
     /// - Parameters:
     ///   - bank: Банк, приложение которого надо открыть

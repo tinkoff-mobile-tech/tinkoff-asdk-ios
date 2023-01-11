@@ -19,30 +19,25 @@
 
 import Foundation
 
-public protocol IThreeDSWebViewHandler: AnyObject {
-    var onUserTapCloseButton: (() -> Void)? { get set }
-
-    func handle<Payload: Decodable>(
-        urlString: String,
-        responseData data: Data
-    ) throws -> ThreeDSHandleResult<Payload>
-}
-
-public enum ThreeDSHandleResult<Payload: Decodable> {
-    case finished(payload: Payload)
+public enum ThreeDSWebViewHandlingResult<Payload: Decodable> {
+    case finished(payload: Result<Payload, Error>)
     case cancelled
 }
 
-public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHandler {
+public protocol IThreeDSWebViewHandler: AnyObject {
+    func handle<Payload: Decodable>(
+        urlString: String,
+        responseData data: Data
+    ) -> ThreeDSWebViewHandlingResult<Payload>?
+}
 
-    enum ThreeDSError: Swift.Error {
-        case hasNoConfirmationUrlSuffix
-    }
-
-    public var onUserTapCloseButton: (() -> Void)?
+public final class ThreeDSWebViewHandler: IThreeDSWebViewHandler {
+    // MARK: Dependencies
 
     private let urlBuilder: IThreeDSURLBuilder
     private let decoder: IAcquiringDecoder
+
+    // MARK: Init
 
     init(
         urlBuilder: IThreeDSURLBuilder,
@@ -52,10 +47,12 @@ public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHan
         self.decoder = decoder
     }
 
+    // MARK: IThreeDSWebViewHandler
+
     public func handle<Payload: Decodable>(
         urlString: String,
         responseData data: Data
-    ) throws -> ThreeDSHandleResult<Payload> {
+    ) -> ThreeDSWebViewHandlingResult<Payload>? {
 
         guard !urlString.hasSuffix("cancel.do") else {
             return .cancelled
@@ -70,10 +67,13 @@ public final class ThreeDSWebViewHandler<Payload: Decodable>: IThreeDSWebViewHan
             .absoluteString
 
         guard urlString.hasSuffix(confirmation3DSTerminationURLString) || urlString.hasSuffix(confirmation3DSTerminationV2URLString) else {
-            throw ThreeDSError.hasNoConfirmationUrlSuffix
+            return nil
         }
 
-        let payload = try decoder.decode(Payload.self, from: data, with: .standard)
-        return ThreeDSHandleResult.finished(payload: payload)
+        let payloadResult = Result {
+            try decoder.decode(Payload.self, from: data, with: .standard)
+        }
+
+        return ThreeDSWebViewHandlingResult.finished(payload: payloadResult)
     }
 }

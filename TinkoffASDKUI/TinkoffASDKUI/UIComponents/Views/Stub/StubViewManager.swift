@@ -20,7 +20,7 @@ final class StubViewManager {
     }
 
     // MARK: - Public methods
-    
+
     /// Если плейсхолдера нет, то создаст его, добавит на супервью и анимированно покажет
     /// Если плейсхолдер уже есть, то просто анимированно покажет его
     /// - Parameters:
@@ -38,7 +38,7 @@ final class StubViewManager {
 
         self.stubView = stubView
     }
-    
+
     /// Удаляет плейсхолдер с супервью
     func removeStubView() {
         stubView?.removeFromSuperview()

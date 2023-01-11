@@ -32,7 +32,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
         let banksService = SBPBanksServiceNew(acquiringSdk: acquiringSdk)
         let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
 
-        let cellImageLoader = CellImageLoader.loader
+        let cellImageLoader = CellImageLoader(imageLoader: ImageLoader(urlDataLoader: acquiringSdk))
         cellImageLoader.set(type: .roundAndSize(.logoImageSize))
         let cellPresentersAssembly = SBPBankCellPresenterNewAssembly(cellImageLoader: cellImageLoader)
 

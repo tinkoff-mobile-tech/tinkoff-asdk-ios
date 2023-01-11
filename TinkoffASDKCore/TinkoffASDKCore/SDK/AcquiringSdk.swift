@@ -45,6 +45,7 @@ public final class AcquiringSdk: NSObject {
     private let externalRequests: IExternalRequestBuilder
     private let threeDSFacade: IThreeDSFacade
     private let languageProvider: ILanguageProvider
+    private let urlDataLoader: IURLDataLoader
 
     // MARK: Init
 
@@ -55,7 +56,8 @@ public final class AcquiringSdk: NSObject {
         externalRequests: IExternalRequestBuilder,
         ipAddressProvider: IIPAddressProvider,
         threeDSFacade: IThreeDSFacade,
-        languageProvider: ILanguageProvider
+        languageProvider: ILanguageProvider,
+        urlDataLoader: IURLDataLoader
     ) {
         self.acquiringAPI = acquiringAPI
         self.acquiringRequests = acquiringRequests
@@ -64,6 +66,7 @@ public final class AcquiringSdk: NSObject {
         self.ipAddressProvider = ipAddressProvider
         self.threeDSFacade = threeDSFacade
         self.languageProvider = languageProvider
+        self.urlDataLoader = urlDataLoader
     }
 
     /// Получить IP адрес
@@ -124,16 +127,12 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: 3DS Handling
 
-    public func payment3DSHandler() -> ThreeDSWebViewHandler<GetPaymentStatePayload> {
+    public func threeDSWebViewSHandler() -> IThreeDSWebViewHandler {
         threeDSFacade.threeDSWebViewHandler()
     }
 
-    public func addCard3DSHandler() -> ThreeDSWebViewHandler<AttachCardPayload> {
-        threeDSFacade.threeDSWebViewHandler()
-    }
-
-    public func threeDSDeviceParamsProvider(screenSize: CGSize) -> ThreeDSDeviceParamsProvider {
-        threeDSFacade.deviceParamsProvider(screenSize: screenSize)
+    public func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
+        threeDSFacade.threeDSDeviceInfoProvider()
     }
 
     // MARK: Init Payment
@@ -201,7 +200,6 @@ public final class AcquiringSdk: NSObject {
             paymentSource: data.paymentSource,
             infoEmail: data.infoEmail,
             deviceInfo: data.deviceInfo,
-            ipAddress: data.ipAddress,
             threeDSVersion: data.threeDSVersion,
             source: data.source,
             route: data.route
@@ -631,15 +629,13 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Load SBP Banks
 
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП
     ///
     /// - Parameters:
-    ///   - completion: результат запроса. `SBPBankResponse` в случае успешного запроса и  `Error` - ошибка.
-    public func loadSBPBanks(completion: @escaping (Result<SBPBankResponse, Error>) -> Void) {
-        let loader = DefaultSBPBankLoader()
-        loader.loadBanks(completion: completion)
+    ///   - completion: результат запроса. `GetSBPBanksPayload` в случае успешного запроса и  `Error` - ошибка.
+    @discardableResult
+    public func loadSBPBanks(completion: @escaping (Result<GetSBPBanksPayload, Error>) -> Void) -> Cancellable {
+        externalAPI.perform(externalRequests.getSBPBanks(), completion: completion)
     }
 
     // MARK: Get TinkoffPay Status
@@ -693,7 +689,19 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    // MARK: - Get Certs Config
+    // MARK: Get Terminal Pay Methods
+
+    /// Получить информацию о доступных методах оплаты и настройках терминала
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `GetTerminalPayMethodsPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
+    @discardableResult
+    public func getTerminalPayMethods(completion: @escaping (Result<GetTerminalPayMethodsPayload, Error>) -> Void) -> Cancellable {
+        let request = acquiringRequests.getTerminalPayMethods()
+        return acquiringAPI.performRequest(request, completion: completion)
+    }
+
+    // MARK: Get Certs Config
 
     /// Получить конфигурацию для работы с сертификатами 3DS AppBased
     ///
@@ -703,5 +711,18 @@ public final class AcquiringSdk: NSObject {
     public func getCertsConfig(completion: @escaping (Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void) -> Cancellable {
         let request = externalRequests.get3DSAppBasedConfigRequest()
         return externalAPI.perform(request, completion: completion)
+    }
+
+    // MARK: - Load Data
+
+    /// Загрузить данные по заданному `URL`
+    ///
+    /// - Parameters:
+    ///   - url: `URL` для `HTTP` запроса
+    ///   - completion: Callback с результатом запроса. `Data` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
+    @discardableResult
+    public func loadData(with url: URL, completion: @escaping (Result<Data, Error>) -> Void) -> Cancellable {
+        urlDataLoader.loadData(with: url, completion: completion)
     }
 }

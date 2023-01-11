@@ -41,7 +41,6 @@ protocol ICellImageLoader {
 }
 
 final class CellImageLoader: ICellImageLoader {
-    static let loader: ICellImageLoader = CellImageLoader(imageLoader: ImageLoader())
 
     private let imageLoader: ImageLoader
     private var imageProcessors = [ImageProcessor]()
