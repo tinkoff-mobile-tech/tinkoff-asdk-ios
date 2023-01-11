@@ -9,12 +9,8 @@ import UIKit
 
 final class KeyboardService {
 
-    // Static
-    static let animationDuration = 0.25
-    private(set) static var currentHeight: CGFloat = .zero
-
     // Local
-    var onHeightDidChangeBlock: (_ keyboardHeight: CGFloat) -> Void = { _ in }
+    var onHeightDidChangeBlock: (_ keyboardHeight: CGFloat, _ animationDuration: Double) -> Void = { _, _ in }
 
     // Init
 
@@ -54,14 +50,21 @@ private extension KeyboardService {
             forKey: UIResponder.keyboardFrameEndUserInfoKey
         ) as? NSValue else { return }
 
+        guard let animationDuration = userInfo.value(
+            forKey: UIResponder.keyboardAnimationDurationUserInfoKey
+        ) as? Double else { return }
+
         let keyboardRectangle = keyboardFrame.cgRectValue
         let keyboardHeight = keyboardRectangle.height
-        Self.currentHeight = keyboardHeight
-        onHeightDidChangeBlock(Self.currentHeight)
+        onHeightDidChangeBlock(keyboardHeight, animationDuration)
     }
 
     @objc func willHide(notification: NSNotification) {
-        Self.currentHeight = .zero
-        onHeightDidChangeBlock(Self.currentHeight)
+        guard let userInfo = notification.userInfo as? NSDictionary else { return }
+        guard let animationDuration = userInfo.value(
+            forKey: UIResponder.keyboardAnimationDurationUserInfoKey
+        ) as? Double else { return }
+
+        onHeightDidChangeBlock(.zero, animationDuration)
     }
 }

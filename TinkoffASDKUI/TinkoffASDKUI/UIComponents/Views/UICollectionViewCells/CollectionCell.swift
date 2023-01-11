@@ -37,12 +37,7 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
 
     // MARK: Settable
 
-    var shouldHighlight = true
-    var customAutolayoutForContent: ((UIView) -> Void)?
-
-    // MARK: Layout
-
-    private var didLayoutContent = false
+    private var shouldHighlight = true
 
     // MARK: Init
 
@@ -69,6 +64,7 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
         contentView.addSubview(background)
         contentView.addSubview(content)
         background.pinEdgesToSuperview()
+        content.makeEqualToSuperview()
     }
 
     // MARK: State Updating
@@ -84,31 +80,33 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
                 : .clear
         }
     }
-
-    private func setConstraints() {
-        guard !didLayoutContent else { return }
-        if customAutolayoutForContent == nil {
-            content.pinEdgesToSuperview()
-        } else {
-            customAutolayoutForContent?(content)
-        }
-        didLayoutContent = true
-    }
 }
 
 // MARK: - Configurable
 
 extension CollectionCell: Configurable {
-    typealias Configuration = Content.Configuration
+    typealias ContentConfiguration = Content.Configuration
+
+    struct Configuration {
+        let contentConfiguration: Content.Configuration
+        var contentInsets: UIEdgeInsets = .zero
+        var contentWidth: CGFloat?
+
+        var shouldHighlight = true
+    }
 
     func update(with configuration: Configuration) {
-        setConstraints()
-        content.update(with: configuration)
+        shouldHighlight = configuration.shouldHighlight
+        content.constraintUpdater.updateEdgeInsets(insets: configuration.contentInsets)
+        if let width = configuration.contentWidth, !(content.parsedConstraints.contains(where: { $0.kind == .width })) {
+            content.addConstraint(content.width(constant: width))
+        }
+        content.update(with: configuration.contentConfiguration)
     }
 }
 
 // MARK: - Constants
 
-private extension TimeInterval {
+extension TimeInterval {
     static let highlightAnimationDuration: TimeInterval = 0.15
 }

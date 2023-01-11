@@ -8,8 +8,8 @@
 import UIKit
 
 protocol AddNewCardViewDelegate: AnyObject {
-    func viewAddCardTapped()
-    func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView)
+    func viewAddCardTapped(cardData: CardData)
+    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult)
 }
 
 final class AddNewCardView: UIView {
@@ -36,12 +36,17 @@ final class AddNewCardView: UIView {
     // Dependencies
 
     private let keyboardService = KeyboardService()
+    private let cardFieldFactory: ICardFieldFactory
+
+    private lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
 
     // MARK: - Init
 
-    init(delegate: AddNewCardViewDelegate) {
+    init(delegate: AddNewCardViewDelegate, cardFieldFactory: ICardFieldFactory) {
         self.delegate = delegate
+        self.cardFieldFactory = cardFieldFactory
         super.init(frame: .zero)
+        cardFieldView.delegate = self
         setupViews()
     }
 
@@ -94,14 +99,13 @@ extension AddNewCardView {
 extension AddNewCardView {
 
     private func setupViews() {
-        keyboardService.onHeightDidChangeBlock = { [weak self] height in
-            self?.collectionView.contentInset.bottom = height + UIWindow.globalSafeAreaInsets.bottom
-            self?.addButtonBottomConstraint.constant = self?.calculateAddButtonBottomInset(keyboardHeight: height) ?? .zero
-
+        keyboardService.onHeightDidChangeBlock = { [weak self] height, animationDuration in
             UIView.animate(
-                withDuration: KeyboardService.animationDuration,
+                withDuration: animationDuration,
                 delay: .zero
             ) {
+                self?.collectionView.contentInset.bottom = height + UIWindow.globalSafeAreaInsets.bottom
+                self?.addButtonBottomConstraint.constant = self?.calculateAddButtonBottomInset(keyboardHeight: height) ?? .zero
                 self?.layoutIfNeeded()
             }
         }
@@ -129,8 +133,14 @@ extension AddNewCardView {
 
         addButton.isEnabled = false
         addButton.configure(
-            Constants.AddButton.getConfiguration { [weak delegate] in
-                delegate?.viewAddCardTapped()
+            Constants.AddButton.getConfiguration { [weak self] in
+                guard let self = self else { return }
+                let validationResult = self.cardFieldView.input.validateWholeForm()
+                guard validationResult.isValid == true else { return }
+                let input = self.cardFieldView.input
+                self.delegate?.viewAddCardTapped(
+                    cardData: CardData(cardNumber: input.cardNumber, expiration: input.expiration, cvc: input.cvc)
+                )
             }
         )
     }
@@ -156,7 +166,7 @@ extension AddNewCardView {
         collectionView.delegate = self
         collectionView.contentInset.top = Constants.CollectionView.topInset
         collectionView.contentInset.bottom = UIWindow.globalSafeAreaInsets.bottom
-        collectionView.register(cellClasses: UICollectionViewCell.self, CardFieldView.Cell.self)
+        collectionView.register(cellClasses: UICollectionViewCell.self, ContainerCollectionCell.self)
         return collectionView
     }
 }
@@ -174,11 +184,9 @@ extension AddNewCardView: UICollectionViewDataSource {
     ) -> Int {
         var numberOfItems = Int.zero
 
-        sections.forEach { section in
-            switch section {
-            case let .cardField(configs):
-                numberOfItems = configs.count
-            }
+        switch sections[section] {
+        case .cardField:
+            numberOfItems = 1
         }
 
         return numberOfItems
@@ -191,36 +199,37 @@ extension AddNewCardView: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard sections.indices.contains(indexPath.section)
-        else { return UICollectionViewCell() }
 
         switch sections[indexPath.section] {
-        case let .cardField(configs):
-            let config = configs[indexPath.item]
-            return prepareCardFieldCell(indexPath: indexPath, config: config)
+        case .cardField:
+            return prepareCardFieldCell(indexPath: indexPath)
         }
     }
 
-    private func prepareCardFieldCell(indexPath: IndexPath, config: CardFieldView.Configuration) -> UICollectionViewCell {
-        let cell = collectionView.dequeue(CardFieldView.Cell.self, for: indexPath)
+    private func prepareCardFieldCell(indexPath: IndexPath) -> UICollectionViewCell {
+        let insets = Constants.CollectionView.horizontalInsets
+        let width = collectionView.frame.width - insets.horizontal
+        let cardFieldHeight = cardFieldView.systemLayoutSizeFitting(.zero).height
+        let cardFieldSize = CGSize(width: width, height: cardFieldHeight)
+        cardFieldView.frame = CGRect(origin: .zero, size: cardFieldSize)
+
+        let cell = collectionView.dequeue(ContainerCollectionCell.self, for: indexPath)
         cell.shouldHighlight = false
-        cell.customAutolayoutForContent = { cardFielView in
-            let insets = Constants.CollectionView.horizontalInsets
-            let width = self.collectionView.frame.width - insets.horizontal
-            let cardFieldHeight = cardFielView.systemLayoutSizeFitting(.zero).height
-            let cardFieldSize = CGSize(width: width, height: cardFieldHeight)
-            cardFielView.frame = CGRect(origin: .zero, size: cardFieldSize)
-
-            cardFielView.makeConstraints { view in
-                cardFielView.edgesEqualToSuperview(insets: insets) + [
-                    view.width(constant: self.collectionView.frame.width - insets.horizontal),
-                ]
-            }
-        }
-
-        cell.update(with: config)
-        delegate?.viewDidReceiveCardFieldView(cardFieldView: cell.content)
+        cell.setContent(view: cardFieldView)
         return cell
+    }
+}
+
+// MARK: - mark
+
+extension AddNewCardView: CardFieldDelegate {
+
+    func sizeDidChange(view: CardFieldView, size: CGSize) {
+        // do nothing
+    }
+
+    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult) {
+        delegate?.cardFieldValidationResultDidChange(result: result)
     }
 }
 

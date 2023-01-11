@@ -230,7 +230,7 @@ extension CardListView: UICollectionViewDataSource {
                 })
                 : .none
 
-            let configuration = PaymentCardRemovableView.Cell.Configuration(
+            let configuration = PaymentCardRemovableView.Cell.ContentConfiguration(
                 content: .plain(text: model.assembledText, style: .bodyL()),
                 card: model.cardModel,
                 accessoryItem: accesoryItem,
@@ -239,30 +239,33 @@ extension CardListView: UICollectionViewDataSource {
 
             let cell = collectionView
                 .dequeue(PaymentCardRemovableView.Cell.self, for: indexPath)
-            cell.shouldHighlight = false
 
-            cell.customAutolayoutForContent = {
-                $0.makeConstraints { view in
-                    view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
-                }
-            }
-            cell.update(with: configuration)
+            cell.update(
+                with: CollectionCell<PaymentCardRemovableView>.Configuration(
+                    contentConfiguration: configuration,
+                    contentWidth: frame.width,
+                    shouldHighlight: false
+                )
+            )
+
             return cell
 
         case let .addCard(data):
             let model = data[indexPath.item]
             let cell = collectionView.dequeue(IconTitleView.Cell.self, for: indexPath)
-            cell.customAutolayoutForContent = {
-                $0.makeConstraints { view in
-                    view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
-                }
-            }
+
             let config = IconTitleView.Configuration.buildAddCardButton(
                 icon: model.icon.image,
                 text: model.title
             )
 
-            cell.update(with: config)
+            cell.update(
+                with:
+                CollectionCell<IconTitleView>.Configuration(
+                    contentConfiguration: config,
+                    contentWidth: frame.width
+                )
+            )
             return cell
         }
     }

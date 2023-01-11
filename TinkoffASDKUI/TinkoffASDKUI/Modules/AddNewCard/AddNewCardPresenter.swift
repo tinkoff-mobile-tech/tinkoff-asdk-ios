@@ -11,8 +11,9 @@ import enum TinkoffASDKCore.APIError
 protocol IAddNewCardPresenter: AnyObject {
 
     func viewDidLoad()
-    func viewAddCardTapped()
-    func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView)
+    func viewAddCardTapped(cardData: CardData)
+    func viewUserClosedTheScreen()
+    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult)
 }
 
 // MARK: - Presenter
@@ -21,38 +22,39 @@ final class AddNewCardPresenter {
 
     weak var view: IAddNewCardView?
 
-    private let cardFieldFactory: ICardFieldFactory
+    private weak var output: IAddNewCardOutput?
     private let networking: IAddNewCardNetworking
 
-    private var cardFieldView: ICardFieldView?
-    private var cardfieldFactoryResult: CardFieldFactory.FactoryResult?
+    private var didAddCard = false
 
-    init(cardFieldFactory: ICardFieldFactory, networking: IAddNewCardNetworking) {
-        self.cardFieldFactory = cardFieldFactory
+    init(networking: IAddNewCardNetworking, output: IAddNewCardOutput?) {
         self.networking = networking
+        self.output = output
     }
 }
 
 extension AddNewCardPresenter: IAddNewCardPresenter {
 
-    func viewAddCardTapped() {
-        let validationResult = cardfieldFactoryResult?.presenter.validateWholeForm()
-        guard validationResult?.cardNumberIsValid == true,
-              validationResult?.expirationIsValid == true,
-              validationResult?.cvcIsValid == true
-        else { return }
-        addCard()
+    func viewAddCardTapped(cardData: CardData) {
+        addCard(cardData: cardData)
     }
 
     func viewDidLoad() {
-        view?.reloadCollection(
-            sections: [.cardField(configs: [getCardFieldConfig().configuration])]
-        )
+        view?.reloadCollection(sections: [.cardField])
         view?.disableAddButton()
     }
 
-    func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView) {
-        self.cardFieldView = cardFieldView
+    func viewUserClosedTheScreen() {
+        // проверка что мы не сами закрываем экран после успешного добавления карты
+        guard !didAddCard else { return }
+    }
+
+    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult) {
+        if result.isValid {
+            view?.enableAddButton()
+        } else {
+            view?.disableAddButton()
+        }
     }
 }
 
@@ -60,34 +62,12 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 
 extension AddNewCardPresenter {
 
-    private func getCardFieldConfig() -> CardFieldFactory.FactoryResult {
-        let result = cardFieldFactory.assembleCardFieldConfig(
-            getCardFieldView: { [weak self] in
-                self?.cardFieldView
-            }
-        )
-
-        cardfieldFactoryResult = result
-        cardfieldFactoryResult?.presenter.validationResultDidChange = { [weak self] validationResult in
-            if validationResult.isValid {
-                self?.view?.enableAddButton()
-            } else {
-                self?.view?.disableAddButton()
-            }
-        }
-        return result
-    }
-
-    private func addCard() {
-        guard canStartAddingCard(),
-              let cardfieldPresenter = cardfieldFactoryResult?.presenter
-        else { return }
-
+    private func addCard(cardData: CardData) {
         view?.showLoadingState()
         networking.addCard(
-            number: cardfieldPresenter.cardNumber,
-            expiration: cardfieldPresenter.expiration,
-            cvc: cardfieldPresenter.cvc,
+            number: cardData.cardNumber,
+            expiration: cardData.expiration,
+            cvc: cardData.cvc,
             resultCompletion: { [weak self] result in
                 guard let self = self
                 else { return }
@@ -97,7 +77,8 @@ extension AddNewCardPresenter {
                 switch result {
                 case let .success(card):
                     self.view?.closeScreen()
-                    self.view?.notifyAdded(card: card)
+                    self.didAddCard = true
+                    self.output?.addingNewCardCompleted(result: .success(card: card))
                 case let .failure(error):
                     self.handleAddCard(error: error)
                 }
@@ -105,22 +86,35 @@ extension AddNewCardPresenter {
         )
     }
 
-    private func canStartAddingCard() -> Bool {
-        guard let cardFieldPresenter = cardfieldFactoryResult?.presenter
-        else { return false }
-        let formIsValid = cardFieldPresenter.validateWholeForm().isValid
-        return formIsValid
-    }
-
     private func handleAddCard(error: Error) {
         let alreadyHasSuchCardErrorCode = 510
 
         if case AcquiringUiSdkError.userCancelledCardAdding = error {
             view?.closeScreen()
-        } else if let apiError = error as? APIError, apiError.errorCode == alreadyHasSuchCardErrorCode {
-            view?.showAlreadySuchCardErrorNativeAlert()
+        } else if (error as NSError).code == alreadyHasSuchCardErrorCode {
+            view?.showOkNativeAlert(data: .alreadyHasSuchCardError)
         } else {
-            view?.showGenericErrorNativeAlert()
+            view?.showOkNativeAlert(data: .genericError)
         }
+
+        output?.addingNewCardCompleted(result: .failure(error: error))
+    }
+}
+
+private extension OkAlertData {
+
+    static var alreadyHasSuchCardError: Self {
+        OkAlertData(
+            title: Loc.CommonAlert.AddCard.title,
+            buttonTitle: Loc.CommonAlert.button
+        )
+    }
+
+    static var genericError: Self {
+        OkAlertData(
+            title: Loc.CommonAlert.SomeProblem.title,
+            message: Loc.CommonAlert.SomeProblem.description,
+            buttonTitle: Loc.CommonAlert.button
+        )
     }
 }

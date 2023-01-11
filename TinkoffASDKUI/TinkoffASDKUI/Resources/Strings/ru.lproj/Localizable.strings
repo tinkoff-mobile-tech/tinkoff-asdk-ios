@@ -130,9 +130,9 @@
 // Alerts
 "CommonAlert.DeleteCard.Title" = "Не получилось удалить карту";
 "CommonAlert.Button" = "Понятно";
-"CommonAlert.AddCard.Title" = "Карта уже добавлена"; "The card has already been added";
-"CommonAlert.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";  "We have a problem, we are already solving it";
-"CommonAlert.SomeProblem.Description" = "Попробуйте снова через пару минут"; "Try again in a couple of minutes";
+"CommonAlert.AddCard.Title" = "Карта уже добавлена";
+"CommonAlert.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";
+"CommonAlert.SomeProblem.Description" = "Попробуйте снова через пару минут";
 
 // CardList
 "Acquiring.CardList.AddCard" = "Добавить новую";

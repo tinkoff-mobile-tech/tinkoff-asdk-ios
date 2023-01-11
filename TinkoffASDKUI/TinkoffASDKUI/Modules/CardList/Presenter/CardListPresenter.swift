@@ -200,13 +200,14 @@ extension CardListPresenter: ICardListViewOutput {
 
 extension CardListPresenter: IAddNewCardOutput {
 
-    func addNewCardDidTapCloseButton() {
-        view?.closeScreen()
-    }
-
-    func addNewCardDidAddCard(paymentCard card: PaymentCard) {
-        activeCardsCache.append(card)
-        view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+    func addingNewCardCompleted(result: AddNewCardResult) {
+        switch result {
+        case .cancelled, .failure:
+            break
+        case let .success(card):
+            activeCardsCache.append(card)
+            view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+        }
     }
 }
 
@@ -286,9 +287,10 @@ extension CardListPresenter {
 
     private func showRemoveCardErrorAlert() {
         view?.showNativeAlert(
-            title: Loc.CommonAlert.DeleteCard.title,
-            message: nil,
-            buttonTitle: Loc.CommonAlert.button
+            data: OkAlertData(
+                title: Loc.CommonAlert.DeleteCard.title,
+                buttonTitle: Loc.CommonAlert.button
+            )
         )
     }
 

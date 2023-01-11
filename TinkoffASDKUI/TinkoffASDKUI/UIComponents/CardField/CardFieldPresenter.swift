@@ -12,17 +12,25 @@ protocol ICardFieldView: AnyObject, Activatable {
     func activateCvcField()
 }
 
-protocol ICardFieldPresenter: AnyObject {
-    var getCardFieldView: () -> ICardFieldView? { get }
-    var config: CardFieldView.Config? { get set }
-    var validationResult: CardFieldPresenter.ValidationResult { get }
-    var validationResultDidChange: ((CardFieldPresenter.ValidationResult) -> Void)? { get set }
+struct CardData {
+    let cardNumber: String
+    let expiration: String
+    let cvc: String
+}
 
+protocol ICardFieldInput: AnyObject {
     var cardNumber: String { get }
     var expiration: String { get }
     var cvc: String { get }
 
+    var validationResult: CardFieldPresenter.ValidationResult { get }
+
     func validateWholeForm() -> CardFieldPresenter.ValidationResult
+}
+
+protocol ICardFieldPresenter: ICardFieldInput {
+    var config: CardFieldView.Config? { get set }
+    var validationResultDidChange: ((CardFieldPresenter.ValidationResult) -> Void)? { get set }
 
     func didFillCardNumber(text: String, filled: Bool)
     func didFillExpiration(text: String, filled: Bool)
@@ -33,7 +41,9 @@ final class CardFieldPresenter: ICardFieldPresenter {
 
     var config: CardFieldView.Config?
     var validationResultDidChange: ((ValidationResult) -> Void)?
-    private(set) var getCardFieldView: () -> ICardFieldView?
+
+    weak var view: ICardFieldView?
+
     private(set) var validationResult: ValidationResult {
         didSet { validationResultDidChange?(validationResult) }
     }
@@ -55,14 +65,12 @@ final class CardFieldPresenter: ICardFieldPresenter {
     private var listenerStorage: [NSObject]
 
     init(
-        getCardFieldView: @escaping () -> ICardFieldView?,
         listenerStorage: [NSObject],
         config: CardFieldView.Config? = nil,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver()
     ) {
-        self.getCardFieldView = getCardFieldView
         self.listenerStorage = listenerStorage
         self.config = config
         self.validator = validator
@@ -96,7 +104,7 @@ final class CardFieldPresenter: ICardFieldPresenter {
             config?.dynamicCardIcon.updater?.update(config: dynamicCardConfig)
         }
 
-        if filled { getCardFieldView()?.activateExpirationField() }
+        if filled { view?.activateExpirationField() }
     }
 
     func didFillExpiration(text: String, filled: Bool) {
@@ -107,7 +115,7 @@ final class CardFieldPresenter: ICardFieldPresenter {
         (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
             .didChangeText(hasText: !text.isEmpty)
 
-        if filled { getCardFieldView()?.activateCvcField() }
+        if filled { view?.activateCvcField() }
     }
 
     func didFillCvc(text: String, filled: Bool) {
@@ -118,7 +126,7 @@ final class CardFieldPresenter: ICardFieldPresenter {
         (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
             .didChangeText(hasText: !text.isEmpty)
 
-        if filled { getCardFieldView()?.deactivate() }
+        if filled { view?.deactivate() }
     }
 
     func validateWholeForm() -> ValidationResult {
@@ -141,7 +149,7 @@ final class CardFieldPresenter: ICardFieldPresenter {
     }
 
     private func didConfigureView() {
-        getCardFieldView()?.activate()
+        view?.activate()
     }
 
     private func updateTextfieldHeaderStyle(validationResult result: ValidationResult, forcedValidation: Bool) {

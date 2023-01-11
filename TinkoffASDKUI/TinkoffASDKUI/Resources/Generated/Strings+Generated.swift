@@ -10,12 +10,6 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
-  /// The card has already been added
-  internal static let theCardHasAlreadyBeenAdded = Loc.tr("Localizable", "The card has already been added", fallback: "The card has already been added")
-  /// Try again in a couple of minutes
-  internal static let tryAgainInACoupleOfMinutes = Loc.tr("Localizable", "Try again in a couple of minutes", fallback: "Try again in a couple of minutes")
-  /// We have a problem, we are already solving it
-  internal static let weHaveAProblemWeAreAlreadySolvingIt = Loc.tr("Localizable", "We have a problem, we are already solving it", fallback: "We have a problem, we are already solving it")
   internal enum Acquiring {
     internal enum AddNewCard {
       /// Добавить

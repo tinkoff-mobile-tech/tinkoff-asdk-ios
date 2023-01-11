@@ -35,7 +35,7 @@ protocol ICardListViewInput: AnyObject {
     func showDoneEditingButton()
     func showEditButton()
     func hideRightBarButton()
-    func showNativeAlert(title: String?, message: String?, buttonTitle: String?)
+    func showNativeAlert(data: OkAlertData)
     func showLoadingSnackbar(text: String?)
     func hideLoadingSnackbar()
     func showAddedCardSnackbar(cardMaskedPan: String)
@@ -213,17 +213,8 @@ extension CardListViewController: ICardListViewInput {
         navigationItem.rightBarButtonItem = nil
     }
 
-    func showNativeAlert(
-        title: String?,
-        message: String?,
-        buttonTitle: String?
-    ) {
-        let alert = UIAlertController.okAlert(
-            title: title,
-            message: message,
-            buttonTitle: buttonTitle
-        )
-
+    func showNativeAlert(data: OkAlertData) {
+        let alert = UIAlertController.okAlert(data: data)
         present(alert, animated: true)
     }
 
