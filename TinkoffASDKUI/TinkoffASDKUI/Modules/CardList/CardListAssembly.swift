@@ -81,8 +81,7 @@ final class CardListAssembly: ICardListAssembly {
 
         let view = CardListViewController(
             style: style,
-            presenter: presenter,
-            stubBuilder: BaseStubViewBuilder()
+            presenter: presenter
         )
 
         presenter.view = view

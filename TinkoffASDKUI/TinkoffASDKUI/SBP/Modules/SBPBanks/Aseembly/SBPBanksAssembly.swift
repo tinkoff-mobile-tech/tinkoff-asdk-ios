@@ -43,9 +43,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
             cellPresentersAssembly: cellPresentersAssembly
         )
 
-        let stubBuilder = BaseStubViewBuilder()
-
-        let view = SBPBanksViewController(presenter: presenter, stubBuilder: stubBuilder)
+        let view = SBPBanksViewController(presenter: presenter)
         presenter.view = view
         router.transitionHandler = view
         return Module(view: view, input: presenter)

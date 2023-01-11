@@ -197,9 +197,8 @@ extension SBPBanksPresenter {
 
     private func viewShowNoNetworkStub() {
         clearCellModels()
-        view?.hideStub()
-        view?.showStub(mode: .noNetwork { [weak self] in
-            self?.view?.hideStub()
+        view?.showStubView(mode: .noNetwork { [weak self] in
+            self?.view?.hideStubView()
             self?.prepareAndShowSkeletonModels()
             self?.loadBanks()
         })
@@ -207,8 +206,7 @@ extension SBPBanksPresenter {
 
     private func viewShowServerErrorStub() {
         clearCellModels()
-        view?.hideStub()
-        view?.showStub(mode: .serverError { [weak self] in
+        view?.showStubView(mode: .serverError { [weak self] in
             self?.router.closeScreen()
         })
     }

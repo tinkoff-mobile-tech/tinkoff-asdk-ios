@@ -39,7 +39,11 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
             return []
         }
     }
-
+    
+    /// Пытается открыть приложение конкретного банка
+    /// - Parameters:
+    ///   - bank: Банк, приложение которого надо открыть
+    ///   - completion: Возвращает true если получилось открыть приложение банка, false если нет
     func openBankApp(_ bank: SBPBank, completion: @escaping SBPBankAppCheckerOpenBankAppCompletion) {
         guard let url = URL(string: "\(bank.schema)://") else { return }
         application.open(url, options: [:], completionHandler: completion)
@@ -49,6 +53,10 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
 // MARK: - Private
 
 extension SBPBankAppChecker {
+    /// Проверяет установленно ли приложение данного банка на девайсе
+    /// Примечание: В тестовой сборке сыпится куча системных логов о том что не может открыть ту или иную ссылку, в релизной сборке логов не будет
+    /// - Parameter bank: банк который проверяем, на наличие установленного приложения
+    /// - Returns: возращает true если приложение этого банка установленно, false если нет
     private func isBankAppInstalled(_ bank: SBPBank) -> Bool {
         guard let url = URL(string: "\(bank.schema)://") else { return false }
         return application.canOpenURL(url)
