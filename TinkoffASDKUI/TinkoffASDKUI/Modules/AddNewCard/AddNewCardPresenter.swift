@@ -47,6 +47,7 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     func viewUserClosedTheScreen() {
         // проверка что мы не сами закрываем экран после успешного добавления карты
         guard !didAddCard else { return }
+        output?.addingNewCardCompleted(result: .cancelled)
     }
 
     func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult) {

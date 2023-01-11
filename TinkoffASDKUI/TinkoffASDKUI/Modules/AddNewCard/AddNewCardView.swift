@@ -214,8 +214,7 @@ extension AddNewCardView: UICollectionViewDelegate {
         cardFieldView.frame = CGRect(origin: .zero, size: cardFieldSize)
 
         let cell = collectionView.dequeue(ContainerCollectionCell.self, for: indexPath)
-        cell.shouldHighlight = false
-        cell.setContent(view: cardFieldView)
+        cell.update(with: ContainerCollectionCell.Configuration(content: cardFieldView, shouldHighlight: false))
         return cell
     }
 }

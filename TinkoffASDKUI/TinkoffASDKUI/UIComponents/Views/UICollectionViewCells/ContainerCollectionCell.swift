@@ -9,8 +9,6 @@ import UIKit
 
 final class ContainerCollectionCell: UICollectionViewCell {
 
-    var shouldHighlight = true
-
     override var isHighlighted: Bool {
         didSet {
             guard shouldHighlight else { return }
@@ -18,6 +16,7 @@ final class ContainerCollectionCell: UICollectionViewCell {
         }
     }
 
+    private var shouldHighlight = true
     private var clientContentView: UIView?
 
     // MARK: - Private
@@ -39,9 +38,9 @@ final class ContainerCollectionCell: UICollectionViewCell {
 
 // MARK: - Public
 
-extension ContainerCollectionCell {
+extension ContainerCollectionCell: Configurable {
 
-    func setContent(view: UIView, insets: UIEdgeInsets = .zero) {
+    private func setContent(view: UIView, insets: UIEdgeInsets = .zero) {
         guard clientContentView !== view else { return }
         contentView.subviews.forEach { $0.removeFromSuperview() }
         contentView.addSubview(view)
@@ -49,11 +48,14 @@ extension ContainerCollectionCell {
         clientContentView = view
     }
 
-    func setContent(view: UIView, customLayout: (UIView) -> Void) {
-        guard clientContentView !== view else { return }
-        contentView.subviews.forEach { $0.removeFromSuperview() }
-        contentView.addSubview(view)
-        customLayout(view)
-        clientContentView = view
+    func update(with configuration: Configuration) {
+        shouldHighlight = configuration.shouldHighlight
+        setContent(view: configuration.content, insets: configuration.insets)
+    }
+
+    struct Configuration {
+        let content: UIView
+        var insets: UIEdgeInsets = .zero
+        var shouldHighlight = true
     }
 }
