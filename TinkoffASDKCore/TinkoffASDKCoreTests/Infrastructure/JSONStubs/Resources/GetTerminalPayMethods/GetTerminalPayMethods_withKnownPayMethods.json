@@ -1,0 +1,22 @@
+{
+    "Success": true,
+    "ErrorCode": "0",
+    "TerminalInfo": {
+        "AddCardScheme": true,
+        "TokenRequired": false,
+        "InitTokenRequired": false,
+        "Paymethods": [
+            {
+                "PayMethod": "YandexPay",
+                "Params": {
+                    "MerchantName": "Calooking",
+                    "ShowcaseId": "bbb9c171-2fab-45e6-b1f8-6212980aa9bb",
+                    "MerchantId": "92",
+                    "MerchantOrigin": "http://calooking.com",
+                    "Person": true
+                }
+            }
+        ]
+    }
+}
+

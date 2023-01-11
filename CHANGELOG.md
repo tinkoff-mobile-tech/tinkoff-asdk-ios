@@ -3,6 +3,18 @@
 
 ### Added
 
+* [MIC-6827] Implemented CardFieldView
+* [MIC-6824] Redesigned Card List Cell
+* [MIC-6825] Card List Screen Redesign
+* [MIC-6843] Card List Screen Redesign - Cards Removal
+* [MIC-6837] Card List Screen Redesign - Integration
+* [MIC-6841] Card List Screen Redesign - Tests
+* [MIC-7538] Add New Tinkoff Bins
+
+## [2.15.0] - 2022-12-29Z
+
+### Added
+
 * [MIC-6527] NetworkClient unit tests
 * [MIC-6526] AcquiringAPIClient unit tests
 * [MIC-6801] AcquiringRequestAdapter unit tests
@@ -12,6 +24,8 @@
 * [MIC-6828] Added Stylable Button
 * [MIC-6848] Bank detection logic based on cardNumber
 * [MIC-6821] Added Snackbar for presenting snacks
+* [MIC-7349] Ability to provide dismissing behavior to PullableContainer
+* [MIC-4762] YandexPayButton integration
 * [MIC-7349] Add ability to provide dismissing behavior to PullableContainer
 * [MIC-6827] Implemented CardFieldView
 * [MIC-6824] Redesigned Card List Cell
@@ -28,6 +42,12 @@
 ### Fixed
 
 * [MIC-6675] Submit3DSAuthorizationV2 request for 3DS App Based Flow
+
+## [2.14.1] - 2022-12-26Z
+
+### Added
+
+* [MIC-7301] AuthChallengeService injection ability for URLSession and WKWebView
 
 ## [2.13.1] - 2022-12-13Z
 

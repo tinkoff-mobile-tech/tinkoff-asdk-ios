@@ -27,14 +27,14 @@ public struct AttachCardData {
     let expDate: String
     let cvv: String
     let requestKey: String
-    let deviceData: DeviceInfoParams?
+    let deviceData: ThreeDSDeviceInfo?
 
     public init(
         cardNumber: String,
         expDate: String,
         cvv: String,
         requestKey: String,
-        deviceData: DeviceInfoParams? = nil
+        deviceData: ThreeDSDeviceInfo? = nil
     ) {
         self.cardNumber = cardNumber
         self.expDate = expDate

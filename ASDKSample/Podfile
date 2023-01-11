@@ -1,13 +1,14 @@
+install! 'cocoapods', share_schemes_for_development_pods: true, preserve_pod_file_structure: true
+
 platform :ios, '12.3'
 
 use_frameworks!
 target 'ASDKSample' do
-
-	pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
-	pod 'TinkoffASDKUI', :path => "../", :testspecs => ['Tests']
+  pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
+  pod 'TinkoffASDKUI', :path => "../", :testspecs => ['Tests']
+  pod 'TinkoffASDKYandexPay', :path => '../'
 
 	# Linting and Formatting
-
   pod 'SwiftFormat/CLI', '0.49.18' # Версия должна совпадать с версией контейнера на CI
   pod 'SwiftLint', '0.47.0' # Версия должна совпадать с версией контейнера на CI
   pod 'SwiftGen', '~> 6.0'

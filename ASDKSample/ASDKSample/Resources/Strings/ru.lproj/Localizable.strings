@@ -18,6 +18,7 @@
 "title.payBySBP" = "Оплатить с помощью Системы Быстрых Платежей";
 "title.payAndSaveAsParent" = "Оплатить, начать регулярный платеж";
 "title.Acquiring" = "Уведомления, алерты";
+"title.YandexPay" = "Оплатить с помощью Yandex Pay";
 
 //  names
 "name.tinkoffPay" = "TinkoffPay";
@@ -34,6 +35,7 @@
 "text.paymentStatusAmount" = "Покупка на сумму";
 "text.paymentStatusCancel" = "отменена";
 "text.paymentStatusSuccess" = "прошла успешно.";
+"text.payment" = "Покупка";
 
 // plaseholder
 "plaseholder.email" = "Отправить квитанцию по адресу";
