@@ -23,13 +23,6 @@ final class SBPBanksServiceNew: ISBPBanksService {
     /// Загружает список банков с NSPK (Национальная система платёжных карт)
     /// - Parameter completion: В случае success выдает массив банков
     func loadBanks(completion: @escaping SBPBanksServiceLoadBanksCompletion) {
-        acquiringSdk.loadSBPBanks(completion: { result in
-            switch result {
-            case let .success(result):
-                completion(.success(result.banks))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        })
+        acquiringSdk.loadSBPBanks { completion($0.map(\.banks)) }
     }
 }
