@@ -26,6 +26,7 @@
 * [MIC-6821] Added Snackbar for presenting snacks
 * [MIC-7349] Ability to provide dismissing behavior to PullableContainer
 * [MIC-4762] YandexPayButton integration
+* [MIC-6875] Payment system validation for Union Pay
 * [MIC-7349] Add ability to provide dismissing behavior to PullableContainer
 * [MIC-6827] Implemented CardFieldView
 * [MIC-6824] Redesigned Card List Cell
