@@ -76,7 +76,9 @@ extension CommonSheetViewController: CommonSheetViewDelegate {
         presenter.primaryButtonTapped()
     }
 
-    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
+    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {
+        presenter.secondaryButtonTapped()
+    }
 }
 
 // MARK: - PullableContainerContent
