@@ -225,7 +225,7 @@ final class CommonSheetView: UIView {
     }
 }
 
-// MARK: - PaymentActivityView + Estimated Height
+// MARK: - CommonSheetView + Estimated Height
 
 extension CommonSheetView {
     var estimatedHeight: CGFloat {
