@@ -57,6 +57,12 @@ final class PaymentSystemResolver: IPaymentSystemResolver {
         // использовать только BIN (первые 6 цифр номера карты)
         let inputBIN = String(inputPAN.prefix(Constants.binLength))
 
+        // Для всех карт, начинающихся с цифры 6
+        // Валидируем платежную систему со второго символа
+        if inputPAN.starts(with: "6"), inputPAN.count < 2 {
+            return .ambiguous
+        }
+
         let matchedPaymentSystems = paymentSystemsRegexes
             .filter { _, regex in inputBIN.matches(with: regex) }
             .map(\.key)
