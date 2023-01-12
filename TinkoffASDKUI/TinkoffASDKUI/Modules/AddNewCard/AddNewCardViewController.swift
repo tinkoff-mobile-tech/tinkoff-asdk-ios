@@ -172,7 +172,7 @@ extension AddNewCardViewController: AddNewCardViewDelegate {
         presenter.viewAddCardTapped(cardData: cardData)
     }
 
-    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult) {
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         presenter.cardFieldValidationResultDidChange(result: result)
     }
 }

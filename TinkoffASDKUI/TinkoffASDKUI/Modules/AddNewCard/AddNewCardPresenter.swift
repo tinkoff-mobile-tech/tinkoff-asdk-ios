@@ -13,7 +13,7 @@ protocol IAddNewCardPresenter: AnyObject {
     func viewDidLoad()
     func viewAddCardTapped(cardData: CardData)
     func viewUserClosedTheScreen()
-    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult)
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
 // MARK: - Presenter
@@ -50,7 +50,7 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
         output?.addingNewCardCompleted(result: .cancelled)
     }
 
-    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult) {
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         if result.isValid {
             view?.enableAddButton()
         } else {

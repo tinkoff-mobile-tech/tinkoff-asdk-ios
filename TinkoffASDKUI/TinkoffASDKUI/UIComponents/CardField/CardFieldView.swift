@@ -2,7 +2,7 @@ import UIKit
 
 protocol CardFieldDelegate: AnyObject {
     func sizeDidChange(view: CardFieldView, size: CGSize)
-    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult)
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
 // MARK: - CardFieldView

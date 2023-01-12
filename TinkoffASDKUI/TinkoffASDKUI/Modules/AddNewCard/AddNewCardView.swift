@@ -9,7 +9,7 @@ import UIKit
 
 protocol AddNewCardViewDelegate: AnyObject {
     func viewAddCardTapped(cardData: CardData)
-    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult)
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
 final class AddNewCardView: UIView {
@@ -227,7 +227,7 @@ extension AddNewCardView: CardFieldDelegate {
         // do nothing
     }
 
-    func cardFieldValidationResultDidChange(result: CardFieldPresenter.ValidationResult) {
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         delegate?.cardFieldValidationResultDidChange(result: result)
     }
 }
