@@ -104,8 +104,6 @@ final class CardListViewController: UIViewController {
             target: self,
             action: #selector(closeButtonTapped)
         )
-
-        navigationItem.rightBarButtonItem = buildEditBarButton()
     }
 
     private func buildEditBarButton() -> UIBarButtonItem {

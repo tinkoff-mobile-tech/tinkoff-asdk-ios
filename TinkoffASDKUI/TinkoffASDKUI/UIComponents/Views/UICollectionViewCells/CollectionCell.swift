@@ -89,18 +89,11 @@ extension CollectionCell: Configurable {
 
     struct Configuration {
         let contentConfiguration: Content.Configuration
-        var contentInsets: UIEdgeInsets = .zero
-        var contentWidth: CGFloat?
-
         var shouldHighlight = true
     }
 
     func update(with configuration: Configuration) {
         shouldHighlight = configuration.shouldHighlight
-        content.constraintUpdater.updateEdgeInsets(insets: configuration.contentInsets)
-        if let width = configuration.contentWidth, !(content.parsedConstraints.contains(where: { $0.kind == .width })) {
-            content.addConstraint(content.width(constant: width))
-        }
         content.update(with: configuration.contentConfiguration)
     }
 }

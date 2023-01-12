@@ -63,7 +63,7 @@ final class CardListView: UIView {
     private lazy var collectionViewLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumLineSpacing = .zero
         return layout
     }()
 
@@ -243,7 +243,6 @@ extension CardListView: UICollectionViewDataSource {
             cell.update(
                 with: CollectionCell<PaymentCardRemovableView>.Configuration(
                     contentConfiguration: configuration,
-                    contentWidth: frame.width,
                     shouldHighlight: false
                 )
             )
@@ -259,13 +258,7 @@ extension CardListView: UICollectionViewDataSource {
                 text: model.title
             )
 
-            cell.update(
-                with:
-                CollectionCell<IconTitleView>.Configuration(
-                    contentConfiguration: config,
-                    contentWidth: frame.width
-                )
-            )
+            cell.update(with: CollectionCell<IconTitleView>.Configuration(contentConfiguration: config))
             return cell
         }
     }
@@ -304,6 +297,14 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
         didSelectItemAt indexPath: IndexPath
     ) {
         delegate?.didSelectCell(at: indexPath)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: frame.width, height: CGFloat.itemHeight)
     }
 }
 

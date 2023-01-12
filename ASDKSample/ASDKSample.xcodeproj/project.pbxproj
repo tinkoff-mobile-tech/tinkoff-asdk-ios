@@ -39,6 +39,7 @@
 		57EEFB9228F544D500809488 /* SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB9128F544D500809488 /* SHA256.swift */; };
 		B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */; };
 		B121157B28EED63D007C6543 /* CGFloat+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157A28EED63D007C6543 /* CGFloat+Ext.swift */; };
+		B13DCE9E29705A140099EF01 /* LookinServer in Frameworks */ = {isa = PBXBuildFile; productRef = B13DCE9D29705A140099EF01 /* LookinServer */; };
 		B1419C5328D46AB2005C61DE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4B28D46AB2005C61DE /* Localizable.strings */; };
 		B1419C5428D46AB2005C61DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4E28D46AB2005C61DE /* Assets.xcassets */; };
 		B1419C5528D46AB2005C61DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4F28D46AB2005C61DE /* LaunchScreen.storyboard */; };
@@ -125,6 +126,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C2F7B8D2451726F008A2415 /* WebKit.framework in Frameworks */,
+				B13DCE9E29705A140099EF01 /* LookinServer in Frameworks */,
 				4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -378,6 +380,7 @@
 			);
 			name = ASDKSample;
 			packageProductDependencies = (
+				B13DCE9D29705A140099EF01 /* LookinServer */,
 			);
 			productName = ASDKSample;
 			productReference = 2C9C7EBB239FBCB200DE4071 /* ASDKSample.app */;
@@ -409,6 +412,7 @@
 			);
 			mainGroup = 2C9C7EB2239FBCB200DE4071;
 			packageReferences = (
+				B13DCE9C29705A140099EF01 /* XCRemoteSwiftPackageReference "LookinServer" */,
 			);
 			productRefGroup = 2C9C7EBC239FBCB200DE4071 /* Products */;
 			projectDirPath = "";
@@ -845,6 +849,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B13DCE9C29705A140099EF01 /* XCRemoteSwiftPackageReference "LookinServer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/QMUI/LookinServer/";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B13DCE9D29705A140099EF01 /* LookinServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B13DCE9C29705A140099EF01 /* XCRemoteSwiftPackageReference "LookinServer" */;
+			productName = LookinServer;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C9C7EB3239FBCB200DE4071 /* Project object */;
 }

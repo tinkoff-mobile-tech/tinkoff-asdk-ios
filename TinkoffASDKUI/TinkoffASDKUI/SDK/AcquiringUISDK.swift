@@ -2055,17 +2055,13 @@ public extension AcquiringUISDK {
     }
 }
 
-public enum AcquiringUiSdkError: Error {
-    case userCancelledCardAdding
-}
-
 extension AcquiringUISDK: IAddNewCardNetworking {
 
     func addCard(
         number: String,
         expiration: String,
         cvc: String,
-        resultCompletion: @escaping (Result<PaymentCard, Error>) -> Void
+        resultCompletion: @escaping (AddNewCardResult) -> Void
     ) {
         cardListToAddCard(
             number: number,
@@ -2075,14 +2071,14 @@ extension AcquiringUISDK: IAddNewCardNetworking {
             completeHandler: { result in
                 switch result {
                 case let .success(card):
-                    resultCompletion(
-                        card == nil
-                            ? .failure(AcquiringUiSdkError.userCancelledCardAdding)
-                            : .success(card!)
-                    )
+                    if let card = card {
+                        resultCompletion(.success(card: card))
+                    } else {
+                        resultCompletion(.cancelled)
+                    }
 
                 case let .failure(error):
-                    resultCompletion(.failure(error))
+                    resultCompletion(.failure(error: error))
                 }
             }
         )

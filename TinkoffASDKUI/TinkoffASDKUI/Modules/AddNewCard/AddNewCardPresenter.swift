@@ -70,9 +70,7 @@ extension AddNewCardPresenter {
             expiration: cardData.expiration,
             cvc: cardData.cvc,
             resultCompletion: { [weak self] result in
-                guard let self = self
-                else { return }
-
+                guard let self = self else { return }
                 self.view?.hideLoadingState()
 
                 switch result {
@@ -82,6 +80,8 @@ extension AddNewCardPresenter {
                     self.output?.addingNewCardCompleted(result: .success(card: card))
                 case let .failure(error):
                     self.handleAddCard(error: error)
+                case .cancelled:
+                    self.view?.closeScreen()
                 }
             }
         )
@@ -90,15 +90,13 @@ extension AddNewCardPresenter {
     private func handleAddCard(error: Error) {
         let alreadyHasSuchCardErrorCode = 510
 
-        if case AcquiringUiSdkError.userCancelledCardAdding = error {
-            view?.closeScreen()
-        } else if (error as NSError).code == alreadyHasSuchCardErrorCode {
+        if (error as NSError).code == alreadyHasSuchCardErrorCode {
             view?.showOkNativeAlert(data: .alreadyHasSuchCardError)
+            output?.addingNewCardCompleted(result: .failure(error: error))
         } else {
             view?.showOkNativeAlert(data: .genericError)
+            output?.addingNewCardCompleted(result: .failure(error: error))
         }
-
-        output?.addingNewCardCompleted(result: .failure(error: error))
     }
 }
 
