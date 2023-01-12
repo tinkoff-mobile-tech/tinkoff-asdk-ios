@@ -166,7 +166,7 @@ extension SBPBanksViewController {
 
         tableView.layoutIfNeeded()
 
-        tableView.register(cellTypes: SBPBankCellNew.self)
+        tableView.register(SBPBankCellNew.self)
         tableView.prefetchDataSource = self
         tableView.dataSource = self
         tableView.delegate = self

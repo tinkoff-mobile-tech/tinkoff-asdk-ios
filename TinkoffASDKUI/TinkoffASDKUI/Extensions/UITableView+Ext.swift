@@ -6,7 +6,7 @@
 //
 
 extension UITableView {
-    func register(cellTypes: UITableViewCell.Type...) {
+    func register(_ cellTypes: UITableViewCell.Type...) {
         cellTypes.forEach { register($0, forCellReuseIdentifier: $0.identifier) }
     }
 
