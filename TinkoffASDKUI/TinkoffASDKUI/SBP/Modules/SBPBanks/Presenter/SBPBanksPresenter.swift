@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 21.12.2022.
 //
 
+import Foundation
 import TinkoffASDKCore
 
 private enum SBPBanksScreenType {

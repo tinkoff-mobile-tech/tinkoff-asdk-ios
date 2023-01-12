@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 23.12.2022.
 //
 
+import Foundation
 import TinkoffASDKCore
 
 final class SBPBankAppChecker: ISBPBankAppChecker {
