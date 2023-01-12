@@ -22,7 +22,7 @@ final class SBPBankCellPresenterNewAssembly: ISBPBankCellPresenterNewAssembly {
         build(cellType: cellType, action: {})
     }
 
-    func build(cellType: SBPBankCellNewType, action: @escaping EmptyBlock) -> SBPBankCellNewPresenter {
+    func build(cellType: SBPBankCellNewType, action: @escaping VoidBlock) -> SBPBankCellNewPresenter {
         return SBPBankCellNewPresenter(cellType: cellType, action: action, cellImageLoader: cellImageLoader)
     }
 }

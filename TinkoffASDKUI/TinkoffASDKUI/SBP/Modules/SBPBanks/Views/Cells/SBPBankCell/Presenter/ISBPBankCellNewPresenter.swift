@@ -12,7 +12,7 @@ protocol ISBPBankCellNewPresenter: AnyObject {
 
     var bankName: String { get }
 
-    var action: EmptyBlock { get }
+    var action: VoidBlock { get }
 
     func startLoadingCellImageIfNeeded()
 }

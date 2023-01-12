@@ -7,5 +7,5 @@
 
 protocol ISBPBankCellPresenterNewAssembly {
     func build(cellType: SBPBankCellNewType) -> SBPBankCellNewPresenter
-    func build(cellType: SBPBankCellNewType, action: @escaping EmptyBlock) -> SBPBankCellNewPresenter
+    func build(cellType: SBPBankCellNewType, action: @escaping VoidBlock) -> SBPBankCellNewPresenter
 }

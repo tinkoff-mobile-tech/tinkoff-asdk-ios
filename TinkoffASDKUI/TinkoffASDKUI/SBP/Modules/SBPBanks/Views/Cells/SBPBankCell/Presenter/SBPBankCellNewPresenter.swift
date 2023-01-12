@@ -34,7 +34,7 @@ final class SBPBankCellNewPresenter: ISBPBankCellNewPresenter {
 
     // Properties
     let cellType: SBPBankCellNewType
-    let action: EmptyBlock
+    let action: VoidBlock
 
     var bankName: String { bank?.name ?? "" }
 
@@ -49,7 +49,7 @@ final class SBPBankCellNewPresenter: ISBPBankCellNewPresenter {
 
     // MARK: - Initialization
 
-    init(cellType: SBPBankCellNewType, action: @escaping EmptyBlock, cellImageLoader: ICellImageLoader) {
+    init(cellType: SBPBankCellNewType, action: @escaping VoidBlock, cellImageLoader: ICellImageLoader) {
         self.cellType = cellType
         self.action = action
         self.cellImageLoader = cellImageLoader
