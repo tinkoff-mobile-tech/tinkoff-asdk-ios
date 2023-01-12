@@ -99,15 +99,16 @@ final class CardListPresenter: ICardListModule {
                 )
             )
 
-            var bankText = bank?.naming ?? ""
-            bankText = bankText.isEmpty ? bankText : bankText.appending(" ")
-            let finalText = bankText + "· \(card.pan.suffix(4))"
+            let bankText = bank?.naming ?? ""
+            var cardNumberText = String.format(pan: card.pan)
+            cardNumberText = bankText.isEmpty ? cardNumberText : (" " + cardNumberText)
 
             return CardList.Card(
                 id: card.cardId,
                 pan: .format(pan: card.pan),
                 cardModel: cardModel,
-                assembledText: finalText,
+                bankNameText: bankText,
+                cardNumberText: cardNumberText,
                 isInEditingMode: screenState == .editingCards
             )
         }
@@ -316,7 +317,7 @@ extension CardListPresenter {
 
 private extension String {
     static func format(pan: String) -> String {
-        "•" + pan.suffix(4)
+        "• " + pan.suffix(4)
     }
 
     static func format(validThru: String?) -> String {

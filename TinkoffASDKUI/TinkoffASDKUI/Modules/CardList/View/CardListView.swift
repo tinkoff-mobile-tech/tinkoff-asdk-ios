@@ -210,8 +210,6 @@ extension CardListView: UICollectionViewDataSource {
         case let .addCard(configs):
             return configs.count
         }
-
-        return .zero
     }
 
     func collectionView(
@@ -230,8 +228,10 @@ extension CardListView: UICollectionViewDataSource {
                 })
                 : .none
 
+            let textStyle = UILabel.Style.bodyL().set(numberOfLines: 1)
             let configuration = PaymentCardRemovableView.Cell.ContentConfiguration(
-                content: .plain(text: model.assembledText, style: .bodyL()),
+                bankNameContent: .plain(text: model.bankNameText, style: textStyle),
+                cardNumberContent: .plain(text: model.cardNumberText, style: textStyle),
                 card: model.cardModel,
                 accessoryItem: accesoryItem,
                 insets: PaymentCardRemovableView.contentInsets
