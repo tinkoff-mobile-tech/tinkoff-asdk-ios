@@ -6,8 +6,8 @@
 //
 
 extension UITableView {
-    func register<T: UITableViewCell>(cellType: T.Type) {
-        register(cellType, forCellReuseIdentifier: cellType.identifier)
+    func register(cellTypes: UITableViewCell.Type...) {
+        cellTypes.forEach { register($0, forCellReuseIdentifier: $0.identifier) }
     }
 
     func dequeue<T: UITableViewCell>(cellType: T.Type, indexPath: IndexPath? = nil) -> T {

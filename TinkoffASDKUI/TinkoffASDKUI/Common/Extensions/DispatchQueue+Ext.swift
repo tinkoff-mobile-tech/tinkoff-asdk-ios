@@ -6,16 +6,16 @@
 //
 
 extension DispatchQueue {
-    
+
     ///  Выполняет работу только один раз для данного target(а), учитывая временное окно. Последняя добавленная кложура, это та,
     ///  которая будет выполнена в конце.
     ///  Примечание. Безопасно вызывать только из  main треда.
     ///  Пример использования:
     /*
-    DispatchQueue.main.asyncDeduped(target: self, after: 1.0) { [weak self] in
-        self?.doTheWork()
-    }
-     */
+     DispatchQueue.main.asyncDeduped(target: self, after: 1.0) { [weak self] in
+         self?.doTheWork()
+     }
+      */
     /// - Parameters:
     ///   - target: Объект, используемый в качестве отслеживаемого, в большинстве случаев self.
     ///   - delay: Время задержки
