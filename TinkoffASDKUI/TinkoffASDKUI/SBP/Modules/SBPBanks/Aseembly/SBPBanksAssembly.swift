@@ -6,6 +6,7 @@
 //
 
 import TinkoffASDKCore
+import UIKit
 
 typealias SBPBanksModule = Module<ISBPBanksModuleInput>
 

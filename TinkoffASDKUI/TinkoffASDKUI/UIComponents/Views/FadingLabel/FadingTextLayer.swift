@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 28.12.2022.
 //
 
+import UIKit
+
 final class FadingTextLayer: CALayer {
 
     private let gradientMaskLayer = CAGradientLayer()

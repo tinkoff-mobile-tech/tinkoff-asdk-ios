@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 29.12.2022.
 //
 
+import UIKit
+
 protocol ISBPBankCellNew: NSObject {
     var presenter: ISBPBankCellNewPresenter? { get set }
 

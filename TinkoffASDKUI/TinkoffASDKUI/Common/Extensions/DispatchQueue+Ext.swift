@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 27.12.2022.
 //
 
+import Foundation
+
 extension DispatchQueue {
 
     ///  Выполняет работу только один раз для данного target(а), учитывая временное окно. Последняя добавленная кложура, это та,

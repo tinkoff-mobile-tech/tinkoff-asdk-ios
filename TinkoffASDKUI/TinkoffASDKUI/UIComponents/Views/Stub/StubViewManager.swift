@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 10.01.2023.
 //
 
+import UIKit
+
 final class StubViewManager {
 
     // MARK: - Property list

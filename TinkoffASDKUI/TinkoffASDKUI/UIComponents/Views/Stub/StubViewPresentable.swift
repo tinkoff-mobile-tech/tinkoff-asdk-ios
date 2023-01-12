@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 10.01.2023.
 //
 
+import UIKit
+
 private var kStubViewManagerAssociatedKey = "kStubViewManagerAssociatedKey"
 
 /// Протокол, подписавшись на который добавляет возможность показывать и скрывать различные экраны заглушки (StubView)

@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 22.12.2022.
 //
 
+import UIKit
+
 extension UITableView {
     func register(_ cellTypes: UITableViewCell.Type...) {
         cellTypes.forEach { register($0, forCellReuseIdentifier: $0.identifier) }

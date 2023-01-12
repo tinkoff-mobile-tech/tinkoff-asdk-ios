@@ -6,6 +6,7 @@
 //
 
 import TinkoffASDKCore
+import UIKit
 
 enum SBPBankCellNewType {
     case bank(SBPBank)
