@@ -5,21 +5,6 @@
 //  Created by Aleksandr Pravosudov on 22.12.2022.
 //
 
-private extension CGFloat {
-    static let logoImageSide: CGFloat = 40
-    static let logoImageVerticalOffset: CGFloat = 8
-    static let logoImageLeftOffset: CGFloat = 16
-    static let nameLeftInset: CGFloat = 16
-    static let nameRightInset: CGFloat = 16
-    static let nameSkeletonWidth: CGFloat = UIScreen.main.bounds.width * 0.4
-    static let nameSkeletonHeight: CGFloat = 14
-    static let nameSkeletonRadius: CGFloat = 4
-}
-
-private extension Double {
-    static let waterfallDelay: Double = 0.2
-}
-
 final class SBPBankCellNew: UITableViewCell, ISBPBankCellNew {
 
     // Dependencies
@@ -165,4 +150,21 @@ extension SBPBankCellNew {
             nameSkeletonView.leftAnchor.constraint(equalTo: logoImageSkeletonView.rightAnchor, constant: .nameLeftInset),
         ])
     }
+}
+
+// MARK: - Constants
+
+private extension CGFloat {
+    static let logoImageSide: CGFloat = 40
+    static let logoImageVerticalOffset: CGFloat = 8
+    static let logoImageLeftOffset: CGFloat = 16
+    static let nameLeftInset: CGFloat = 16
+    static let nameRightInset: CGFloat = 16
+    static let nameSkeletonWidth: CGFloat = UIScreen.main.bounds.width * 0.4
+    static let nameSkeletonHeight: CGFloat = 14
+    static let nameSkeletonRadius: CGFloat = 4
+}
+
+private extension Double {
+    static let waterfallDelay: Double = 0.2
 }

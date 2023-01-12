@@ -9,10 +9,6 @@ import TinkoffASDKCore
 
 typealias SBPBanksModule = Module<ISBPBanksModuleInput>
 
-private extension CGSize {
-    static let logoImageSize = CGSize(width: 40, height: 40)
-}
-
 final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // Dependencies
@@ -48,4 +44,10 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
         router.transitionHandler = view
         return Module(view: view, input: presenter)
     }
+}
+
+// MARK: - Constants
+
+private extension CGSize {
+    static let logoImageSize = CGSize(width: 40, height: 40)
 }

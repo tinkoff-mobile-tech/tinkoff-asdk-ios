@@ -7,10 +7,6 @@
 
 import TinkoffASDKCore
 
-private extension String {
-    static let bankSchemesKey = "LSApplicationQueriesSchemes"
-}
-
 final class SBPBankAppChecker: ISBPBankAppChecker {
 
     // Dependencies
@@ -61,4 +57,10 @@ extension SBPBankAppChecker {
         guard let url = URL(string: "\(bank.schema)://") else { return false }
         return application.canOpenURL(url)
     }
+}
+
+// MARK: - Constants
+
+private extension String {
+    static let bankSchemesKey = "LSApplicationQueriesSchemes"
 }
