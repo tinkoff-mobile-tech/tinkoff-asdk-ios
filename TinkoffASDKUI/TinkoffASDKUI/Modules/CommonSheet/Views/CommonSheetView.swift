@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 10.01.2023.
 //
 
-import Foundation
+import UIKit
 
 protocol CommonSheetViewDelegate: AnyObject {
     func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState)
