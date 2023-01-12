@@ -1,5 +1,5 @@
 //
-//  YandexPayPaymentActivityPresenter.swift
+//  YandexPayPaymentSheetPresenter.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 12.12.2022.
@@ -8,11 +8,11 @@
 import Foundation
 import TinkoffASDKCore
 
-final class YandexPayPaymentActivityPresenter {
+final class YandexPayPaymentSheetPresenter {
     // MARK: Dependencies
 
     weak var view: ICommonSheetViewInput?
-    private weak var output: IYandexPayPaymentActivityOutput?
+    private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
     private let paymentControllerUIProvider: PaymentControllerUIProvider
     private let paymentOptions: PaymentOptions
@@ -29,7 +29,7 @@ final class YandexPayPaymentActivityPresenter {
         paymentControllerUIProvider: PaymentControllerUIProvider,
         paymentOptions: PaymentOptions,
         base64Token: String,
-        output: IYandexPayPaymentActivityOutput
+        output: IYandexPayPaymentSheetOutput
     ) {
         self.paymentController = paymentController
         self.paymentControllerUIProvider = paymentControllerUIProvider
@@ -41,7 +41,7 @@ final class YandexPayPaymentActivityPresenter {
 
 // MARK: - ICommonSheetViewOutput
 
-extension YandexPayPaymentActivityPresenter: ICommonSheetViewOutput {
+extension YandexPayPaymentSheetPresenter: ICommonSheetViewOutput {
     func viewDidLoad() {
         view?.update(state: .processing)
 
@@ -64,7 +64,7 @@ extension YandexPayPaymentActivityPresenter: ICommonSheetViewOutput {
 
 // MARK: - PaymentControllerDelegate
 
-extension YandexPayPaymentActivityPresenter: PaymentControllerDelegate {
+extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     func paymentController(
         _ controller: PaymentController,
         didFinishPayment: PaymentProcess,

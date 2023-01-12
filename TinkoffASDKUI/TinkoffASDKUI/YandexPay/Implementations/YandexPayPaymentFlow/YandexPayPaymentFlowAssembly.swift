@@ -8,9 +8,9 @@
 import Foundation
 
 final class YandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly {
-    private let yandexPayActivityAssebmly: IYandexPayPaymentActivityAssembly
+    private let yandexPayActivityAssebmly: IYandexPayPaymentSheetAssembly
 
-    init(yandexPayActivityAssebmly: IYandexPayPaymentActivityAssembly) {
+    init(yandexPayActivityAssebmly: IYandexPayPaymentSheetAssembly) {
         self.yandexPayActivityAssebmly = yandexPayActivityAssebmly
     }
 
