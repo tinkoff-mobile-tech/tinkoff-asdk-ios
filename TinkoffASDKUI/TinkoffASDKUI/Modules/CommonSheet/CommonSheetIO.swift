@@ -1,5 +1,5 @@
 //
-//  PaymentActivityIO.swift
+//  CommonSheetIO.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 12.12.2022.
@@ -7,13 +7,14 @@
 
 import Foundation
 
-protocol IPaymentActivityViewInput: AnyObject {
-    func update(with state: PaymentActivityViewState, animated: Bool)
+protocol ICommonSheetViewInput: AnyObject {
+    func update(state: CommonSheetState)
     func close()
 }
 
-protocol IPaymentActivityViewOutput {
+protocol ICommonSheetViewOutput {
     func viewDidLoad()
     func primaryButtonTapped()
+    func secondaryButtonTapped()
     func viewWasClosed()
 }

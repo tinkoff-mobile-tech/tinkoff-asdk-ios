@@ -32,7 +32,7 @@ final class YandexPayPaymentActivityAssembly: IYandexPayPaymentActivityAssembly 
             output: output
         )
 
-        let view = PaymentActivityViewController(presenter: presenter)
+        let view = CommonSheetViewController(presenter: presenter)
 
         presenter.view = view
         paymentControllerUIProvider.view = view
