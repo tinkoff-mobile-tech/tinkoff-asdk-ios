@@ -46,7 +46,7 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController, S
         setupView()
         setupNavigationBar()
         setupTableView()
-        setupSerachController()
+        setupSearchController()
 
         presenter.viewDidLoad()
     }
@@ -181,7 +181,7 @@ extension SBPBanksViewController {
         tableView.backgroundView = backgroundView
     }
 
-    private func setupSerachController() {
+    private func setupSearchController() {
         searchController.searchResultsUpdater = self
 
         searchController.searchBar.sizeToFit()
