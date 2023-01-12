@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 22.12.2022.
 //
 
+import UIKit
+
 protocol Identifiable {
     static var identifier: String { get }
 }
