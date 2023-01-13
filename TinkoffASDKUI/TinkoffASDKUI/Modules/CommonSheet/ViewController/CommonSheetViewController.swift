@@ -18,7 +18,7 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 
     // MARK: Dependencies
 
-    private let presenter: ICommonSheetViewOutput
+    private let presenter: ICommonSheetPresenter
 
     // MARK: UI
 
@@ -26,7 +26,7 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 
     // MARK: Init
 
-    init(presenter: ICommonSheetViewOutput) {
+    init(presenter: ICommonSheetPresenter) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
@@ -48,9 +48,9 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
     }
 }
 
-// MARK: - ICommonSheetViewInput
+// MARK: - ICommonSheetView
 
-extension CommonSheetViewController: ICommonSheetViewInput {
+extension CommonSheetViewController: ICommonSheetView {
     func update(state: CommonSheetState) {
         paymentActivityView.update(state: state)
     }

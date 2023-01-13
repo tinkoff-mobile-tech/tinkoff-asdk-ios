@@ -11,7 +11,7 @@ import TinkoffASDKCore
 final class YandexPayPaymentSheetPresenter {
     // MARK: Dependencies
 
-    weak var view: ICommonSheetViewInput?
+    weak var view: ICommonSheetView?
     private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
     private let paymentControllerUIProvider: PaymentControllerUIProvider
@@ -40,9 +40,9 @@ final class YandexPayPaymentSheetPresenter {
     }
 }
 
-// MARK: - ICommonSheetViewOutput
+// MARK: - ICommonSheetPresenter
 
-extension YandexPayPaymentSheetPresenter: ICommonSheetViewOutput {
+extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
         view?.update(state: .processing)
 

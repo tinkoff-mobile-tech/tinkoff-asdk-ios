@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol ICommonSheetViewInput: AnyObject {
+protocol ICommonSheetView: AnyObject {
     func update(state: CommonSheetState)
     func close()
 }
 
-protocol ICommonSheetViewOutput {
+protocol ICommonSheetPresenter {
     func viewDidLoad()
     func primaryButtonTapped()
     func secondaryButtonTapped()
