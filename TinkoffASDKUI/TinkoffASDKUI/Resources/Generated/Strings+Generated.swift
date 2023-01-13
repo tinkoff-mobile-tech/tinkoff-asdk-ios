@@ -126,6 +126,7 @@ internal enum Loc {
       internal static let description = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Description", fallback: "Установите его или выберите другой банк")
       /// Не получилось найти приложение этого банка
       internal static let title = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Title", fallback: "Не получилось найти приложение этого банка")
+    }
     internal enum SomeProblem {
       /// Попробуйте снова через пару минут
       internal static let description = Loc.tr("Localizable", "CommonAlert.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")

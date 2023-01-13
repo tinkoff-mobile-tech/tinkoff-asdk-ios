@@ -239,7 +239,7 @@ extension CardListPresenter {
         view?.enableViewUserInteraction()
     }
 
-    private func prepareViewForShowingStub() {
+    private func showServerErrorStub() {
         screenState = .showingStub
         view?.showStub(mode: .serverError { [weak self] in
             self?.view?.dismiss()
