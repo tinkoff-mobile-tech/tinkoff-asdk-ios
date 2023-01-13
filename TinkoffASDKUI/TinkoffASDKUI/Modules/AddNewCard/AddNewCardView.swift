@@ -38,7 +38,7 @@ final class AddNewCardView: UIView {
     private let keyboardService = KeyboardService()
     private let cardFieldFactory: ICardFieldFactory
 
-    private lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
+    lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
 
     // MARK: - Init
 

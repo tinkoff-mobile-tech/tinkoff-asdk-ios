@@ -383,10 +383,18 @@ extension TextField: DeleteButtonContentDelegate {
     }
 
     func hideAccessoryContentView() {
-        accessoryWidthConstraint.constant = 0
+        startTransition {
+            self.accessoryWidthConstraint.constant = .zero
+        }
     }
 
     func showAccessoryContentView(width: CGFloat) {
-        accessoryWidthConstraint.constant = width
+        startTransition {
+            self.accessoryWidthConstraint.constant = width
+        }
+    }
+
+    private func startTransition(animations: @escaping () -> Void) {
+        UIView.transition(with: self, duration: 0.1, options: .transitionCrossDissolve, animations: animations)
     }
 }

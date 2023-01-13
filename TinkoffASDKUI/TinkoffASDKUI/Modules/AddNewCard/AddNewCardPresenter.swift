@@ -11,6 +11,7 @@ import enum TinkoffASDKCore.APIError
 protocol IAddNewCardPresenter: AnyObject {
 
     func viewDidLoad()
+    func viewDidAppear()
     func viewAddCardTapped(cardData: CardData)
     func viewUserClosedTheScreen()
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
@@ -42,6 +43,10 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     func viewDidLoad() {
         view?.reloadCollection(sections: [.cardField])
         view?.disableAddButton()
+    }
+
+    func viewDidAppear() {
+        view?.activateCardField()
     }
 
     func viewUserClosedTheScreen() {

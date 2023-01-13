@@ -206,6 +206,7 @@ extension CardListPresenter: IAddNewCardOutput {
         case .cancelled, .failure:
             break
         case let .success(card):
+            screenState = .showingCards
             activeCardsCache.append(card)
             view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
         }

@@ -45,6 +45,7 @@ protocol IAddNewCardView: AnyObject {
     func closeScreen()
     func disableAddButton()
     func enableAddButton()
+    func activateCardField()
     func showOkNativeAlert(data: OkAlertData)
 }
 
@@ -58,7 +59,6 @@ final class AddNewCardViewController: UIViewController {
 
     // Local State
 
-    private weak var cardFieldView: ICardFieldView?
     private var didAddCard = false
 
     // Dependecies
@@ -95,7 +95,7 @@ final class AddNewCardViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        cardFieldView?.activate()
+        presenter.viewDidAppear()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -122,6 +122,10 @@ extension AddNewCardViewController: IAddNewCardView {
 
     func hideLoadingState() {
         addCardView.hideLoadingState()
+    }
+
+    func activateCardField() {
+        addCardView.cardFieldView.activate()
     }
 
     func closeScreen() {

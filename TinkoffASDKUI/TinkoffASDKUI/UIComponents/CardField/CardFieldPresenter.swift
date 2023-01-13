@@ -71,7 +71,6 @@ final class CardFieldPresenter: ICardFieldPresenter {
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
         validationResult = CardFieldValidationResult()
-        self.config?.onDidConfigure = { [weak self] in self?.didConfigureView() }
         setupEventHandlers()
     }
 
@@ -140,10 +139,6 @@ final class CardFieldPresenter: ICardFieldPresenter {
         )
         validationResult = result
         return result
-    }
-
-    private func didConfigureView() {
-        view?.activate()
     }
 
     private func updateTextfieldHeaderStyle(validationResult result: CardFieldValidationResult, forcedValidation: Bool) {
