@@ -335,7 +335,8 @@ extension CardListPresenterTests {
             id: "",
             pan: "",
             cardModel: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
-            assembledText: "",
+            bankNameText: "",
+            cardNumberText: "",
             isInEditingMode: true
         )
     }

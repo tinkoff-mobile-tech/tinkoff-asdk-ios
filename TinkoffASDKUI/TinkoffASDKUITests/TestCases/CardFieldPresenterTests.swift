@@ -81,13 +81,14 @@ extension CardFieldPresenterTests {
         let bankSystemResolverMock = MockBankResolver()
 
         let presenter = CardFieldPresenter(
-            getCardFieldView: { viewMock },
             listenerStorage: [],
             config: assembleConfig(),
             validator: validatorMock,
             paymentSystemResolver: paymentSystemResolverMock,
             bankResolver: bankSystemResolverMock
         )
+
+        presenter.view = viewMock
 
         return Dependencies(
             sut: presenter,
