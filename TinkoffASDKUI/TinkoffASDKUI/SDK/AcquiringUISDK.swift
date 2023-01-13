@@ -172,6 +172,7 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
+    private let sbpBanksAssembly: ISBPBanksAssembly
     private let sbpAssembly: SBPAssembly
     private let tinkoffPayAssembly: TinkoffPayAssembly
     private let cardListAssembly: ICardListAssembly
@@ -218,6 +219,7 @@ public class AcquiringUISDK: NSObject {
             uiSDKConfiguration: uiSDKConfiguration
         )
 
+        sbpBanksAssembly = SBPBanksAssembly(acquiringSdk: acquiringSdk)
         sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
         tinkoffPayAssembly = TinkoffPayAssembly(
             coreSDK: acquiringSdk,
@@ -238,7 +240,7 @@ public class AcquiringUISDK: NSObject {
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
-                yandexPayActivityAssebmly: YandexPayPaymentActivityAssembly(
+                yandexPayActivityAssebmly: YandexPayPaymentSheetAssembly(
                     paymentControllerAssembly: paymentControllerAssembly
                 )
             ),
@@ -378,20 +380,22 @@ public class AcquiringUISDK: NSObject {
 
         acquiringView?.onTouchButtonSBP = { [weak self] paymentViewController in
             guard let self = self else { return }
-            let urlSBPViewController = self.urlSBPPaymentViewController(
-                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-                configuration: configuration,
-                completionHandler: { [weak paymentViewController] result in
-                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
-                    paymentViewController?.dismiss(animated: true, completion: {
-                        // Закрываем AcquiringPaymentViewController
-                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
-                            completionHandler(result)
-                        })
-                    })
-                }
-            )
-            paymentViewController.present(urlSBPViewController, animated: true, completion: nil)
+//            let urlSBPViewController = self.urlSBPPaymentViewController(
+//                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+//                configuration: configuration,
+//                completionHandler: { [weak paymentViewController] result in
+//                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
+//                    paymentViewController?.dismiss(animated: true, completion: {
+//                        // Закрываем AcquiringPaymentViewController
+//                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
+//                            completionHandler(result)
+//                        })
+//                    })
+//                }
+//            )
+            let sbpModule = self.sbpBanksAssembly.build()
+            let navVC = UINavigationController(rootViewController: sbpModule.view)
+            paymentViewController.present(navVC, animated: true, completion: nil)
         }
     }
 

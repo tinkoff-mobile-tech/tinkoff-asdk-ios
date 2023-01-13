@@ -34,6 +34,7 @@ final class ImageLoader {
         self.urlDataLoader = urlDataLoader
     }
 
+    @discardableResult
     func loadImage(
         url: URL,
         preCacheClosure: @escaping (UIImage) -> UIImage,

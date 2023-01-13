@@ -59,13 +59,8 @@ final class SBPBankListTableManager: NSObject {
 
 private extension SBPBankListTableManager {
     func setup() {
-        cellImageLoader.setImageProcessors([
-            SizeImageProcessor(
-                size: CGSize(width: .cellImageSide, height: .cellImageSide),
-                scale: UIScreen.main.scale
-            ),
-            RoundImageProcessor(),
-        ])
+        let size = CGSize(width: .cellImageSide, height: .cellImageSide)
+        cellImageLoader.set(type: .roundAndSize(size))
     }
 
     func setupTableView() {

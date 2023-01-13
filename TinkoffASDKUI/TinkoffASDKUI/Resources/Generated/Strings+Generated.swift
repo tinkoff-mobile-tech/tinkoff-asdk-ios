@@ -61,6 +61,20 @@ internal enum Loc {
       /// Банк ВТБ
       internal static let vtbCardTitle = Loc.tr("Localizable", "Acquiring.Common.VtbCardTitle", fallback: "Банк ВТБ")
     }
+    internal enum Sbp {
+      /// Выбор банка
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.SBP.ScreenTitle", fallback: "Выбор банка")
+    }
+    internal enum SBPAllBanks {
+      /// Название
+      internal static let searchPlaceholder = Loc.tr("Localizable", "Acquiring.SBPAllBanks.SearchPlaceholder", fallback: "Название")
+    }
+    internal enum SBPBanks {
+      /// Другой банк
+      internal static let anotherBank = Loc.tr("Localizable", "Acquiring.SBPBanks.AnotherBank", fallback: "Другой банк")
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.SBPBanks.ButtonClose", fallback: "Закрыть")
+    }
   }
   internal enum AcquiringPayment {
     internal enum Button {
@@ -107,6 +121,11 @@ internal enum Loc {
       /// Не получилось удалить карту
       internal static let title = Loc.tr("Localizable", "CommonAlert.DeleteCard.Title", fallback: "Не получилось удалить карту")
     }
+    internal enum SBPNoBank {
+      /// Установите его или выберите другой банк
+      internal static let description = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Description", fallback: "Установите его или выберите другой банк")
+      /// Не получилось найти приложение этого банка
+      internal static let title = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Title", fallback: "Не получилось найти приложение этого банка")
     internal enum SomeProblem {
       /// Попробуйте снова через пару минут
       internal static let description = Loc.tr("Localizable", "CommonAlert.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
@@ -161,8 +180,8 @@ internal enum Loc {
       internal enum Header {
         /// Мы откроем приложение этого банка для подтверждения оплаты
         internal static let subtitle = Loc.tr("Localizable", "SBP.BanksList.Header.Subtitle", fallback: "Мы откроем приложение этого банка для подтверждения оплаты")
-        /// Выберите банк
-        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Header.Title", fallback: "Выберите банк")
+        /// Выбор банка
+        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Header.Title", fallback: "Выбор банка")
       }
     }
     internal enum EmptyBanks {
