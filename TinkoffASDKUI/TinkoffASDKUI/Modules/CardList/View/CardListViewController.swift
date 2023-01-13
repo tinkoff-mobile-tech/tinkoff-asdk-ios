@@ -27,10 +27,8 @@ protocol ICardListViewInput: AnyObject {
     func enableViewUserInteraction()
     func showShimmer()
     func hideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
+    func showStub(mode: StubMode)
     func hideStub()
-    func showNoCardsStub()
-    func showNoNetworkStub()
-    func showServerErrorStub()
     func dismiss()
     func showDoneEditingButton()
     func showEditButton()
@@ -46,11 +44,10 @@ final class CardListViewController: UIViewController {
     private let presenter: ICardListViewOutput
 
     private let style: CardListView.Style
-    private let stubBuilder: IStubViewBuilder
 
     // MARK: Views
 
-    private lazy var cardListView = CardListView(style: style, stubBuilder: stubBuilder)
+    private lazy var cardListView = CardListView(style: style)
 
     // MARK: State
 
@@ -62,11 +59,9 @@ final class CardListViewController: UIViewController {
 
     init(
         style: CardListView.Style,
-        presenter: ICardListViewOutput,
-        stubBuilder: IStubViewBuilder
+        presenter: ICardListViewOutput
     ) {
         self.presenter = presenter
-        self.stubBuilder = stubBuilder
         self.style = style
         super.init(nibName: nil, bundle: nil)
     }
@@ -172,26 +167,12 @@ extension CardListViewController: ICardListViewInput {
         )
     }
 
+    func showStub(mode: StubMode) {
+        cardListView.showStubView(mode: mode)
+    }
+
     func hideStub() {
-        cardListView.hideStub()
-    }
-
-    func showNoCardsStub() {
-        cardListView.showStub(mode: .noCards { [weak presenter] in
-            presenter?.viewDidTapEditButton()
-        })
-    }
-
-    func showNoNetworkStub() {
-        cardListView.showStub(mode: .noNetwork { [weak presenter] in
-            presenter?.viewDidTapNoNetworkStubButton()
-        })
-    }
-
-    func showServerErrorStub() {
-        cardListView.showStub(mode: .serverError { [weak presenter] in
-            presenter?.viewDidTapServerErrorStubButton()
-        })
+        cardListView.hideStubView()
     }
 
     func dismiss() {

@@ -62,7 +62,7 @@
 "TinkoffAcquiring.view.title.confimration" = "Подтверждение";
 
 // SBP Banks List
-"SBP.BanksList.Header.Title" = "Выберите банк";
+"SBP.BanksList.Header.Title" = "Выбор банка";
 "SBP.BanksList.Header.Subtitle" = "Мы откроем приложение этого банка для подтверждения оплаты";
 "SBP.BanksList.Button.Title" = "Продолжить";
 
@@ -76,6 +76,17 @@
 
 "SBP.OpenApplication.Error" = "Не удалось открыть приложение";
 "SBP.LoadingStatus.Title" = "Ожидаем подтверждения платежа";
+
+// Acquiring
+"Acquiring.SBP.ScreenTitle" = "Выбор банка";
+"Acquiring.SBPBanks.ButtonClose" = "Закрыть";
+"Acquiring.SBPBanks.AnotherBank" = "Другой банк";
+"Acquiring.SBPAllBanks.SearchPlaceholder" = "Название";
+
+// CommonAlert
+"CommonAlert.SBPNoBank.Title" = "Не получилось найти приложение этого банка";
+"CommonAlert.SBPNoBank.Description" = "Установите его или выберите другой банк";
+"CommonAlert.Button" = "Понятно";
 
 // Tinkoff Pay
 "TP.Error.Title" = "Не удалось выполнить оплату через Tinkoff Pay";

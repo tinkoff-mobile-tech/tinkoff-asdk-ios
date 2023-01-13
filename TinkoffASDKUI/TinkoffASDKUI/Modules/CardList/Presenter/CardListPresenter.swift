@@ -29,9 +29,6 @@ protocol ICardListViewOutput: AnyObject {
     func viewDidTapCard(cardIndex: Int)
     func viewDidTapAddCardCell()
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
-    func viewDidTapNoCardsStubButton()
-    func viewDidTapNoNetworkStubButton()
-    func viewDidTapServerErrorStubButton()
 }
 
 protocol ICardListModule: AnyObject {
@@ -152,18 +149,6 @@ extension CardListPresenter: ICardListViewOutput {
         handleFetchedActiveCard(result: fetchCardsResult)
     }
 
-    func viewDidTapNoCardsStubButton() {
-        onAddNewCardTap?()
-    }
-
-    func viewDidTapNoNetworkStubButton() {
-        viewDidLoad()
-    }
-
-    func viewDidTapServerErrorStubButton() {
-        view?.dismiss()
-    }
-
     func view(didTapDeleteOn card: CardList.Card) {
         isLoading = true
         view?.disableViewUserInteraction()
@@ -252,20 +237,24 @@ extension CardListPresenter {
 
     private func showServerErrorStub() {
         screenState = .showingStub
-        view?.hideStub()
-        view?.showServerErrorStub()
+        view?.showStub(mode: .serverError { [weak self] in
+            self?.view?.dismiss()
+        })
     }
 
     private func showNoNetworkStub() {
         screenState = .showingStub
-        view?.hideStub()
-        view?.showNoNetworkStub()
+        view?.showStub(mode: .noNetwork { [weak self] in
+            self?.view?.hideStub()
+            self?.viewDidLoad()
+        })
     }
 
     private func showNoCardsStub() {
         screenState = .showingStub
-        view?.hideStub()
-        view?.showNoCardsStub()
+        view?.showStub(mode: .noCards { [weak self] in
+            self?.viewDidTapEditButton()
+        })
     }
 
     private func reloadCardsSection() {

@@ -36,49 +36,6 @@ final class CardListPresenterTests: XCTestCase {
         XCTAssertEqual(view.hideShimmerCallCounter, 1)
     }
 
-    func test_viewDidTapNoCardsStubButton() throws {
-        // given
-        let dependencies = buildDependecies()
-
-        var onAddNewCardTapCalled = false
-        let expectation = expectation(description: #function)
-        dependencies.sut.onAddNewCardTap = {
-            onAddNewCardTapCalled = true
-            expectation.fulfill()
-        }
-        // when
-
-        dependencies.sutAsProtocol.viewDidTapNoCardsStubButton()
-        wait(for: [expectation], timeout: 1)
-
-        // then
-        XCTAssertEqual(onAddNewCardTapCalled, true)
-    }
-
-    func test_viewDidTapNoNetworkStubButton() throws {
-        // given
-        let dependencies = buildDependecies()
-
-        // when
-
-        dependencies.sutAsProtocol.viewDidTapNoNetworkStubButton()
-
-        // then
-        XCTAssertEqual(dependencies.mockView.showShimmerCallCounter, 1)
-    }
-
-    func test_viewDidTapServerErrorStubButton() throws {
-        // given
-        let dependencies = buildDependecies()
-
-        // when
-
-        dependencies.sutAsProtocol.viewDidTapServerErrorStubButton()
-
-        // then
-        XCTAssertEqual(dependencies.mockView.dismissCallCounter, 1)
-    }
-
     func test_viewDidTapEditButton_when_showingCards() throws {
         // given
         let dependencies = buildDependecies()
@@ -219,8 +176,7 @@ final class CardListPresenterTests: XCTestCase {
 
         // then
         XCTAssertEqual(view.reloadCallCounter, 2)
-        XCTAssertEqual(view.hideStubCallCounter, 3)
-        XCTAssertEqual(view.showNoCardsStubCallCounter, 1)
+        XCTAssertEqual(view.showStubCallCounter, 1)
     }
 
     func test_viewDidHideShimmer_success_emptyCards_shouldShowCards() throws {
@@ -235,6 +191,34 @@ final class CardListPresenterTests: XCTestCase {
         // then
         XCTAssertEqual(view.reloadCallCounter, 1)
         XCTAssertEqual(view.hideStubCallCounter, 1)
+    }
+
+    func test_viewDidHideShimmer_failure_internerError() throws {
+        // given
+        let dependencies = buildDependecies()
+        let view = dependencies.mockView
+        let error = NSError(domain: "", code: NSURLErrorNotConnectedToInternet)
+        let fetchCardsResult: Result<[PaymentCard], Error> = .failure(error)
+
+        // when
+        dependencies.sutAsProtocol.viewDidHideShimmer(fetchCardsResult: fetchCardsResult)
+
+        // then
+        XCTAssertEqual(view.showStubCallCounter, 1)
+    }
+
+    func test_viewDidHideShimmer_failure_commonError() throws {
+        // given
+        let dependencies = buildDependecies()
+        let view = dependencies.mockView
+        let error = NSError(domain: "", code: NSURLErrorUnknown)
+        let fetchCardsResult: Result<[PaymentCard], Error> = .failure(error)
+
+        // when
+        dependencies.sutAsProtocol.viewDidHideShimmer(fetchCardsResult: fetchCardsResult)
+
+        // then
+        XCTAssertEqual(view.showStubCallCounter, 1)
     }
 
     func test_viewDidTapCard_cardIndex() throws {
