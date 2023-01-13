@@ -163,43 +163,32 @@ final class CommonSheetView: UIView {
     }
 
     private func updateButtons(with state: CommonSheetState) {
-        if let primaryButtonTitle = state.primaryButtonTitle {
-            let buttonConfiguration = Button.Configuration(
-                data: Button.Data(
-                    text: .basic(normal: primaryButtonTitle, highlighted: nil, disabled: nil),
-                    onTapAction: { [weak self] in
-                        guard let self = self else { return }
-                        self.delegate?.commonSheetViewDidTapPrimaryButton(self)
-                    }
-                ),
-                style: .primary
-            )
-
-            primaryButton.configure(buttonConfiguration)
-            primaryButton.isHidden = false
-        } else {
-            primaryButton.isHidden = true
+        updateButton(primaryButton, withTitle: state.primaryButtonTitle, style: .primary) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.commonSheetViewDidTapPrimaryButton(self)
         }
 
-        if let secondaryButtonTitle = state.secondaryButtonTitle {
-            let buttonConfiguration = Button.Configuration(
-                data: Button.Data(
-                    text: .basic(normal: secondaryButtonTitle, highlighted: nil, disabled: nil),
-                    onTapAction: { [weak self] in
-                        guard let self = self else { return }
-                        self.delegate?.commonSheetViewDidTapSecondaryButton(self)
-                    }
-                ),
-                style: .secondary
-            )
-
-            secondaryButton.configure(buttonConfiguration)
-            secondaryButton.isHidden = false
-        } else {
-            secondaryButton.isHidden = true
+        updateButton(secondaryButton, withTitle: state.secondaryButtonTitle, style: .secondary) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.commonSheetViewDidTapSecondaryButton(self)
         }
 
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
+    }
+
+    private func updateButton(_ button: Button, withTitle title: String?, style: Button.Style, action: @escaping () -> Void) {
+        if let title = title {
+            let configuration = Button.Configuration(
+                data: Button.Data(
+                    text: .basic(normal: title, highlighted: title, disabled: title),
+                    onTapAction: action
+                ),
+                style: style
+            )
+            button.configure(configuration)
+        }
+
+        button.isHidden = title == nil
     }
 
     // MARK: Overlay Animation
