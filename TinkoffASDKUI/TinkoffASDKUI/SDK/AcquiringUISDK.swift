@@ -1807,6 +1807,10 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
                 confirmationComplete(response)
             }
 
+            onRandomAmountCheckingAddCardCompletionHandler = { result in
+                confirmationComplete(result.map { _ in () })
+            }
+
             present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: tdsVersion) { [weak self] in
                 self?.cancelAddCard()
             }
