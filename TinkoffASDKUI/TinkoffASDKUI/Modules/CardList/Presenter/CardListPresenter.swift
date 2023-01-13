@@ -229,7 +229,7 @@ extension CardListPresenter {
 
         case let .failure(error):
             switch (error as NSError).code {
-            case NSURLErrorNotConnectedToInternet:
+            case NSURLErrorNotConnectedToInternet, NSURLErrorDataNotAllowed:
                 showNoNetworkStub()
             default:
                 showServerErrorStub()
