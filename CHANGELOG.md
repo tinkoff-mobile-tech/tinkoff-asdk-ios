@@ -26,7 +26,7 @@
 
 ### Fixed
 
-* [MIC-7668] Remove Apple Pay from README
+* [MIC-7670] Remove Apple Pay from README
 
 ## [2.15.0] - 2022-12-29Z
 
