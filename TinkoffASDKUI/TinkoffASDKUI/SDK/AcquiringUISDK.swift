@@ -249,7 +249,7 @@ public class AcquiringUISDK: NSObject {
         webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
     }
 
-    /// Вызывается кода пользователь привязывает карту.
+    /// Вызывается когда пользователь привязывает карту.
     /// Нужно указать с каким методом привязывать карту, по умолчанию `PaymentCardCheckType.no` - на усмотрение сервера
     public var addCardNeedSetCheckTypeHandler: (() -> PaymentCardCheckType)?
 

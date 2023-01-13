@@ -27,6 +27,7 @@ final class AddNewCardPresenter {
     private let networking: IAddNewCardNetworking
 
     private var didAddCard = false
+    private var didReceviedError = false
 
     init(networking: IAddNewCardNetworking, output: IAddNewCardOutput?) {
         self.networking = networking
@@ -51,7 +52,7 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 
     func viewUserClosedTheScreen() {
         // проверка что мы не сами закрываем экран после успешного добавления карты
-        guard !didAddCard else { return }
+        guard !didAddCard, !didReceviedError else { return }
         output?.addingNewCardCompleted(result: .cancelled)
     }
 
@@ -84,6 +85,7 @@ extension AddNewCardPresenter {
                     self.didAddCard = true
                     self.output?.addingNewCardCompleted(result: .success(card: card))
                 case let .failure(error):
+                    self.didReceviedError = true
                     self.handleAddCard(error: error)
                 case .cancelled:
                     self.view?.closeScreen()

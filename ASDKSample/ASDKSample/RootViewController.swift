@@ -178,6 +178,9 @@ class RootViewController: UITableViewController {
 
     @IBAction func openAddCard(_ sender: UIBarButtonItem) {
         if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            sdk.addCardNeedSetCheckTypeHandler = {
+                AppSetting.shared.addCardChekType
+            }
 
             sdk.presentAddCard(
                 on: self,
