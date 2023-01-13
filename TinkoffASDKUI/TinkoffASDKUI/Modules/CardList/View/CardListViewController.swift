@@ -169,10 +169,12 @@ extension CardListViewController: ICardListViewInput {
     }
 
     func showStub(mode: StubMode) {
+        cardListView.setCollectionView(isHidden: true)
         cardListView.showStubView(mode: mode)
     }
 
     func hideStub() {
+        cardListView.setCollectionView(isHidden: false)
         cardListView.hideStubView()
     }
 

@@ -137,6 +137,10 @@ final class CardListView: UIView, StubViewPresentable {
         )
     }
 
+    func setCollectionView(isHidden: Bool) {
+        collectionView.isHidden = isHidden
+    }
+
     // MARK: Initial Configuration
 
     private func setupView() {
