@@ -10,9 +10,9 @@ import Foundation
 final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
     weak var output: IYandexPayPaymentFlowOutput?
     weak var presentingViewControllerProvider: IPresentingViewControllerProvider?
-    private let paymentActivityAssembly: IYandexPayPaymentActivityAssembly
+    private let paymentActivityAssembly: IYandexPayPaymentSheetAssembly
 
-    init(paymentActivityAssembly: IYandexPayPaymentActivityAssembly) {
+    init(paymentActivityAssembly: IYandexPayPaymentSheetAssembly) {
         self.paymentActivityAssembly = paymentActivityAssembly
     }
 
@@ -31,9 +31,9 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
     }
 }
 
-// MARK: - IYandexPayPaymentActivityOutput
+// MARK: - IYandexPayPaymentSheetOutput
 
-extension YandexPayPaymentFlow: IYandexPayPaymentActivityOutput {
+extension YandexPayPaymentFlow: IYandexPayPaymentSheetOutput {
     func yandexPayPaymentActivity(completedWith result: YandexPayPaymentResult) {
         output?.yandexPayPaymentFlow(self, didCompleteWith: result)
     }

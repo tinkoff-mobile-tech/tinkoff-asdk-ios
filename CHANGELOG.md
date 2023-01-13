@@ -11,6 +11,10 @@
 * [MIC-6841] Card List Screen Redesign - Tests
 * [MIC-7538] Add New Tinkoff Bins
 
+### Changed
+
+* [MIC-7482] CommonSheet adoption for different states
+
 ## [2.15.0] - 2022-12-29Z
 
 ### Added
