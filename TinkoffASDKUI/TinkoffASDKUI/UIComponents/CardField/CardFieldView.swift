@@ -1,8 +1,8 @@
 import UIKit
 
 protocol CardFieldDelegate: AnyObject {
-
     func sizeDidChange(view: CardFieldView, size: CGSize)
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
 // MARK: - CardFieldView
@@ -17,8 +17,6 @@ protocol CardFieldDelegate: AnyObject {
 
 final class CardFieldView: UIView {
 
-    typealias Cell = CollectionCell<CardFieldView>
-
     override var intrinsicContentSize: CGSize { self.frame.size }
 
     override var frame: CGRect {
@@ -29,6 +27,11 @@ final class CardFieldView: UIView {
     }
 
     private(set) var configuration: Config?
+
+    var input: ICardFieldInput { presenter }
+    weak var delegate: CardFieldDelegate?
+
+    private let presenter: ICardFieldPresenter
 
     // MARK: - UI
 
@@ -45,8 +48,6 @@ final class CardFieldView: UIView {
 
     // MARK: - Other
 
-    private weak var delegate: CardFieldDelegate?
-
     private var observation: NSKeyValueObservation?
 
     private var cardNumberWidthAnchor: NSLayoutConstraint?
@@ -55,8 +56,9 @@ final class CardFieldView: UIView {
 
     // MARK: - Init
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(presenter: ICardFieldPresenter) {
+        self.presenter = presenter
+        super.init(frame: .zero)
         setupViews()
     }
 
@@ -110,7 +112,6 @@ extension CardFieldView {
                 make.height(constant: Constants.Card.height),
                 make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
                 make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
-//                make.rightAnchor.constraint(lessThanOrEqualTo: make.forcedSuperview.rightAnchor),
             ]
         }
 

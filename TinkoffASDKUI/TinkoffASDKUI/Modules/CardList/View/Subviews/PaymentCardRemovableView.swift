@@ -34,7 +34,8 @@ final class PaymentCardRemovableView: UIView {
     private let contentView = UIView()
 
     private lazy var cardView = DynamicIconCardView()
-    private lazy var textLabel = UILabel()
+    private lazy var bankNameLabel = FadingLabel()
+    private lazy var cardNumberLabel = UILabel()
     private let buttonContainer = ViewContainer()
 
     private lazy var removeButton: UIButton = {
@@ -70,7 +71,8 @@ final class PaymentCardRemovableView: UIView {
         addSubview(contentView)
 
         contentView.addSubview(cardView)
-        contentView.addSubview(textLabel)
+        contentView.addSubview(bankNameLabel)
+        contentView.addSubview(cardNumberLabel)
         contentView.addSubview(buttonContainer)
 
         buttonContainer.clipsToBounds = true
@@ -99,13 +101,26 @@ final class PaymentCardRemovableView: UIView {
             ] + view.size(DynamicIconCardView.defaultSize)
         }
 
-        textLabel.makeConstraints { view in
+        bankNameLabel.makeConstraints { view in
             [
                 view.leftAnchor.constraint(equalTo: cardView.rightAnchor, constant: .normalInset),
-                view.rightAnchor.constraint(equalTo: buttonContainer.leftAnchor),
+                view.rightAnchor.constraint(lessThanOrEqualTo: cardNumberLabel.leftAnchor),
                 view.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
             ]
         }
+
+        cardNumberLabel.makeConstraints { view in
+            [
+                view.leftAnchor.constraint(equalTo: bankNameLabel.rightAnchor),
+                view.rightAnchor.constraint(lessThanOrEqualTo: buttonContainer.leftAnchor),
+                view.centerYAnchor.constraint(equalTo: bankNameLabel.centerYAnchor),
+            ]
+        }
+
+        bankNameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        bankNameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        cardNumberLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        cardNumberLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
         buttonContainer.makeConstraints { view in
             [
@@ -134,7 +149,8 @@ extension PaymentCardRemovableView: ConfigurableItem, Configurable {
     }
 
     struct Configuration {
-        let content: UILabel.Content
+        let bankNameContent: UILabel.Content
+        let cardNumberContent: UILabel.Content
         let card: DynamicIconCardView.Model
         let accessoryItem: AccessoryItem
         let insets: UIEdgeInsets
@@ -143,7 +159,8 @@ extension PaymentCardRemovableView: ConfigurableItem, Configurable {
     func configure(with configuration: Configuration) {
         self.configuration = configuration
         cardView.configure(model: configuration.card)
-        textLabel.configure(UILabel.Configuration(content: configuration.content))
+        bankNameLabel.configure(UILabel.Configuration(content: configuration.bankNameContent))
+        cardNumberLabel.configure(UILabel.Configuration(content: configuration.cardNumberContent))
         contentView.constraintUpdater.updateEdgeInsets(insets: configuration.insets)
 
         switch configuration.accessoryItem {
@@ -166,7 +183,8 @@ extension PaymentCardRemovableView.Configuration {
 
     static var empty: Self {
         Self(
-            content: .empty,
+            bankNameContent: .empty,
+            cardNumberContent: .empty,
             card: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
             accessoryItem: .none,
             insets: .zero
@@ -179,7 +197,8 @@ extension PaymentCardRemovableView.Configuration {
 extension PaymentCardRemovableView: Reusable {
     func prepareForReuse() {
         removeHandler = nil
-        textLabel.prepareForReuse()
+        bankNameLabel.prepareForReuse()
+        cardNumberLabel.prepareForReuse()
     }
 }
 

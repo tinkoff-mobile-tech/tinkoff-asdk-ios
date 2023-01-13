@@ -9,8 +9,8 @@ import Foundation
 
 protocol ICardFieldFactory {
 
-    /// Собирает конфиг и настраивает логические связи / обработку событий
-    func assembleCardFieldConfig(getCardFieldView: @escaping () -> ICardFieldView?) -> CardFieldFactory.FactoryResult
+    /// Собирает CardFieldView конфигурирует и настраивает логические связи / обработку событий
+    func assembleCardFieldView() -> CardFieldView
 }
 
 final class CardFieldFactory: ICardFieldFactory {
@@ -24,7 +24,7 @@ final class CardFieldFactory: ICardFieldFactory {
     private let maskingFactory: ICardFieldMaskingFactory = CardFieldMaskingFactory()
 
     /// Собирает конфиг и настраивает логические связи / обработку событий
-    func assembleCardFieldConfig(getCardFieldView: @escaping () -> ICardFieldView?) -> FactoryResult {
+    func assembleCardFieldView() -> CardFieldView {
         var cardFieldPresenter: ICardFieldPresenter!
         var listenerStorage: [NSObject] = []
 
@@ -68,11 +68,20 @@ final class CardFieldFactory: ICardFieldFactory {
             )
         )
 
-        cardFieldPresenter = CardFieldPresenter(
-            getCardFieldView: getCardFieldView,
+        let presenter = CardFieldPresenter(
             listenerStorage: listenerStorage,
             config: config
         )
-        return FactoryResult(configuration: config, presenter: cardFieldPresenter)
+
+        cardFieldPresenter = presenter
+        let view = CardFieldView(presenter: cardFieldPresenter)
+        presenter.view = view
+
+        cardFieldPresenter.validationResultDidChange = { [weak view] result in
+            view?.delegate?.cardFieldValidationResultDidChange(result: result)
+        }
+
+        view.update(with: config)
+        return view
     }
 }

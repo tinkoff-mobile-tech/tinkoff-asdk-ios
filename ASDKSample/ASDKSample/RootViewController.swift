@@ -252,19 +252,25 @@ private extension RootViewController {
 
 extension RootViewController: IAddNewCardOutput {
 
-    func addNewCardDidTapCloseButton() {
-        presentedViewController?.dismiss(animated: true)
-    }
+    func addingNewCardCompleted(result: AddNewCardResult) {
+        switch result {
+        case .cancelled, .failure:
+            let alert = UIAlertController.okAlert(
+                title: nil,
+                message: String(describing: result),
+                buttonTitle: Loc.Button.ok
+            )
 
-    func addNewCardDidAddCard(paymentCard: PaymentCard) {
-        presentedViewController?.dismiss(animated: true)
+            present(alert, animated: true)
 
-        let alert = UIAlertController.okAlert(
-            title: nil,
-            message: Loc.AddCard.Alert.message(String.format(pan: paymentCard.cardId)),
-            buttonTitle: Loc.Button.ok
-        )
-        present(alert, animated: true)
+        case let .success(card):
+            let alert = UIAlertController.okAlert(
+                title: nil,
+                message: Loc.AddCard.Alert.message(String.format(pan: card.cardId)),
+                buttonTitle: Loc.Button.ok
+            )
+            present(alert, animated: true)
+        }
     }
 }
 

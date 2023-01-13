@@ -40,7 +40,7 @@ extension ASDKButton.Style {
 
     static func primary(
         title: String,
-        backgroundColor: UIColor = ASDKColors.tinkoffYellow,
+        backgroundColor: UIColor = ASDKColors.Foreground.brandTinkoffAccent,
         titleColor: UIColor = ASDKColors.textPrimary
     ) -> ASDKButton.Style {
         ASDKButton.Style(

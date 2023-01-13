@@ -67,8 +67,7 @@ final class CardListPresenter: ICardListModule {
     private var isLoading = false
     private var hasVisualContent: Bool { !activeCardsCache.isEmpty }
     private var screenState = CardListScreenState.initial
-    private var fetchActiveCardsResult: Result<[PaymentCard], Error>?
-    private var deactivateCardResult: (() -> Result<Void, Error>)?
+    private var deactivateCardResult: Result<Void, Error>?
     private var sections: [CardListSection] { getSections() }
 
     // MARK: Init
@@ -100,15 +99,16 @@ final class CardListPresenter: ICardListModule {
                 )
             )
 
-            var bankText = bank?.naming ?? ""
-            bankText = bankText.isEmpty ? bankText : bankText.appending(" ")
-            let finalText = bankText + "· \(card.pan.suffix(4))"
+            let bankText = bank?.naming ?? ""
+            var cardNumberText = String.format(pan: card.pan)
+            cardNumberText = bankText.isEmpty ? cardNumberText : (" " + cardNumberText)
 
             return CardList.Card(
                 id: card.cardId,
                 pan: .format(pan: card.pan),
                 cardModel: cardModel,
-                assembledText: finalText,
+                bankNameText: bankText,
+                cardNumberText: cardNumberText,
                 isInEditingMode: screenState == .editingCards
             )
         }
@@ -162,7 +162,7 @@ extension CardListPresenter: ICardListViewOutput {
         provider.deactivateCard(cardId: card.id) { [weak self] result in
             guard let self = self else { return }
             self.isLoading = false
-            self.deactivateCardResult = { result }
+            self.deactivateCardResult = result
             self.view?.hideLoadingSnackbar()
         }
     }
@@ -182,7 +182,7 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidHideLoadingSnackbar() {
-        if let result = deactivateCardResult?() {
+        if let result = deactivateCardResult {
             deactivateCardResult = nil
 
             switch result {
@@ -201,13 +201,15 @@ extension CardListPresenter: ICardListViewOutput {
 
 extension CardListPresenter: IAddNewCardOutput {
 
-    func addNewCardDidTapCloseButton() {
-        view?.closeScreen()
-    }
-
-    func addNewCardDidAddCard(paymentCard card: PaymentCard) {
-        activeCardsCache.append(card)
-        view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+    func addingNewCardCompleted(result: AddNewCardResult) {
+        switch result {
+        case .cancelled, .failure:
+            break
+        case let .success(card):
+            screenState = .showingCards
+            activeCardsCache.append(card)
+            view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+        }
     }
 }
 
@@ -219,7 +221,6 @@ extension CardListPresenter {
         isLoading = true
         provider.fetchActiveCards { [weak self] result in
             self?.isLoading = false
-            self?.fetchActiveCardsResult = result
             self?.view?.hideShimmer(fetchCardsResult: result)
         }
     }
@@ -249,6 +250,8 @@ extension CardListPresenter {
                 showServerErrorStub()
             }
         }
+
+        view?.enableViewUserInteraction()
     }
 
     private func prepareViewForShowingStub() {
@@ -286,9 +289,10 @@ extension CardListPresenter {
 
     private func showRemoveCardErrorAlert() {
         view?.showNativeAlert(
-            title: Loc.CommonAlert.DeleteCard.title,
-            message: nil,
-            buttonTitle: Loc.CommonAlert.button
+            data: OkAlertData(
+                title: Loc.CommonAlert.DeleteCard.title,
+                buttonTitle: Loc.CommonAlert.button
+            )
         )
     }
 
@@ -314,7 +318,7 @@ extension CardListPresenter {
 
 private extension String {
     static func format(pan: String) -> String {
-        "•" + pan.suffix(4)
+        "• " + pan.suffix(4)
     }
 
     static func format(validThru: String?) -> String {

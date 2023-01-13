@@ -88,7 +88,7 @@ private extension ActivityIndicatorView.Style {
 
     static var tinkoffYellow: Self {
         ActivityIndicatorView.Style(
-            lineColor: ASDKColors.tinkoffYellow,
+            lineColor: ASDKColors.Foreground.brandTinkoffAccent,
             diameter: 30
         )
     }

@@ -30,4 +30,24 @@ final class NetworkClientMock: INetworkClient {
         invokedPerformRequestParametersList.append(request)
         return performRequestMethodStub(request, completion)
     }
+
+    var invokedPerformRequestURLRequestCompletion = false
+    var invokedPerformRequestURLRequestCompletionCount = 0
+    var invokedPerformRequestURLRequestCompletionParameters: (urlRequest: URLRequest, Void)?
+    var invokedPerformRequestURLRequestCompletionParametersList = [(urlRequest: URLRequest, Void)]()
+    var performRequestURLRequestMethodStub = { (urlRequest: URLRequest, completion: @escaping PerformRequestCompletion) -> Cancellable in
+        completion(.success(.stub()))
+        return CancellableMock()
+    }
+
+    func performRequest(
+        _ urlRequest: URLRequest,
+        completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
+    ) -> Cancellable {
+        invokedPerformRequestURLRequestCompletion = true
+        invokedPerformRequestURLRequestCompletionCount += 1
+        invokedPerformRequestURLRequestCompletionParameters = (urlRequest, ())
+        invokedPerformRequestURLRequestCompletionParametersList.append((urlRequest, ()))
+        return performRequestURLRequestMethodStub(urlRequest, completion)
+    }
 }

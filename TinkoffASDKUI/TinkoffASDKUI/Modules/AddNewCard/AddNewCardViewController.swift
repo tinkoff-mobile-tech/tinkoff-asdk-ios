@@ -21,14 +21,19 @@ import TinkoffASDKCore
 import UIKit
 
 enum AddNewCardSection {
-    case cardField(configs: [CardFieldView.Configuration])
+    case cardField
+}
+
+public enum AddNewCardResult {
+    case cancelled
+    case success(card: PaymentCard)
+    case failure(error: Error)
 }
 
 // MARK: - AddNewCardOutput
 
 public protocol IAddNewCardOutput: AnyObject {
-    func addNewCardDidTapCloseButton()
-    func addNewCardDidAddCard(paymentCard: PaymentCard)
+    func addingNewCardCompleted(result: AddNewCardResult)
 }
 
 // MARK: - AddNewCardView
@@ -37,35 +42,37 @@ protocol IAddNewCardView: AnyObject {
     func reloadCollection(sections: [AddNewCardSection])
     func showLoadingState()
     func hideLoadingState()
-    func notifyAdded(card: PaymentCard)
     func closeScreen()
-    func showAlreadySuchCardErrorNativeAlert()
-    func showGenericErrorNativeAlert()
     func disableAddButton()
     func enableAddButton()
+    func activateCardField()
+    func showOkNativeAlert(data: OkAlertData)
 }
 
 // MARK: - AddNewCardViewController
 
 final class AddNewCardViewController: UIViewController {
 
-    private weak var output: IAddNewCardOutput?
     private let presenter: IAddNewCardPresenter
 
-    private lazy var addCardView = AddNewCardView(delegate: self)
+    private lazy var addCardView = AddNewCardView(delegate: self, cardFieldFactory: cardFieldFactory)
 
     // Local State
 
-    private weak var cardFieldView: ICardFieldView?
+    private var didAddCard = false
+
+    // Dependecies
+
+    private let cardFieldFactory: ICardFieldFactory
 
     // MARK: - Inits
 
     init(
-        output: IAddNewCardOutput?,
-        presenter: IAddNewCardPresenter
+        presenter: IAddNewCardPresenter,
+        cardFieldFactory: ICardFieldFactory
     ) {
-        self.output = output
         self.presenter = presenter
+        self.cardFieldFactory = cardFieldFactory
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -88,7 +95,16 @@ final class AddNewCardViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        cardFieldView?.activate()
+        presenter.viewDidAppear()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let isBeingDismissed = navigationController?.isBeingDismissed == true
+        // Тречит дисмисс или свайп вью контроллера
+        if isBeingDismissed || isMovingFromParent {
+            presenter.viewUserClosedTheScreen()
+        }
     }
 }
 
@@ -108,37 +124,20 @@ extension AddNewCardViewController: IAddNewCardView {
         addCardView.hideLoadingState()
     }
 
-    func notifyAdded(card: PaymentCard) {
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + 0.3,
-            execute: {
-                self.output?.addNewCardDidAddCard(paymentCard: card)
-            }
-        )
+    func activateCardField() {
+        addCardView.cardFieldView.activate()
     }
 
     func closeScreen() {
-        navigationController?.popViewController(animated: true)
+        let popedViewController = navigationController?.popViewController(animated: true)
+        if popedViewController == nil {
+            presentingViewController?.dismiss(animated: true)
+        }
     }
 
-    func showGenericErrorNativeAlert() {
-        let alertViewController = UIAlertController.okAlert(
-            title: Loc.CommonAlert.SomeProblem.title,
-            message: Loc.CommonAlert.SomeProblem.description,
-            buttonTitle: Loc.CommonAlert.button
-        )
-
-        present(alertViewController, animated: true)
-    }
-
-    func showAlreadySuchCardErrorNativeAlert() {
-        let alertViewController = UIAlertController.okAlert(
-            title: Loc.CommonAlert.AddCard.title,
-            message: nil,
-            buttonTitle: Loc.CommonAlert.button
-        )
-
-        present(alertViewController, animated: true)
+    func showOkNativeAlert(data: OkAlertData) {
+        let alert = UIAlertController.okAlert(data: data)
+        present(alert, animated: true)
     }
 
     func disableAddButton() {
@@ -165,7 +164,7 @@ extension AddNewCardViewController {
     }
 
     @objc private func closeButtonTapped() {
-        output?.addNewCardDidTapCloseButton()
+        closeScreen()
     }
 }
 
@@ -173,12 +172,11 @@ extension AddNewCardViewController {
 
 extension AddNewCardViewController: AddNewCardViewDelegate {
 
-    func viewAddCardTapped() {
-        presenter.viewAddCardTapped()
+    func viewAddCardTapped(cardData: CardData) {
+        presenter.viewAddCardTapped(cardData: cardData)
     }
 
-    func viewDidReceiveCardFieldView(cardFieldView: ICardFieldView) {
-        self.cardFieldView = cardFieldView
-        presenter.viewDidReceiveCardFieldView(cardFieldView: cardFieldView)
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
+        presenter.cardFieldValidationResultDidChange(result: result)
     }
 }

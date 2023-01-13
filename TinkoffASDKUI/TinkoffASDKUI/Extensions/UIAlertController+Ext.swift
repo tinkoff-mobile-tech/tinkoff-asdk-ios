@@ -7,22 +7,24 @@
 
 import UIKit
 
+struct OkAlertData {
+    var title: String?
+    var message: String?
+    var buttonTitle: String?
+}
+
 extension UIAlertController {
 
-    static func okAlert(
-        title: String?,
-        message: String?,
-        buttonTitle: String?
-    ) -> UIAlertController {
+    static func okAlert(data: OkAlertData) -> UIAlertController {
 
         let alert = UIAlertController(
-            title: title,
-            message: message,
+            title: data.title,
+            message: data.message,
             preferredStyle: .alert
         )
 
         let ok = UIAlertAction(
-            title: buttonTitle,
+            title: data.buttonTitle,
             style: .default
         )
 

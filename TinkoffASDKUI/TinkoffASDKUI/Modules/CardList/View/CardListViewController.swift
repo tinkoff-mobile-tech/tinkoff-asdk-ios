@@ -35,7 +35,7 @@ protocol ICardListViewInput: AnyObject {
     func showDoneEditingButton()
     func showEditButton()
     func hideRightBarButton()
-    func showNativeAlert(title: String?, message: String?, buttonTitle: String?)
+    func showNativeAlert(data: OkAlertData)
     func showLoadingSnackbar(text: String?)
     func hideLoadingSnackbar()
     func showAddedCardSnackbar(cardMaskedPan: String)
@@ -179,7 +179,7 @@ extension CardListViewController: ICardListViewInput {
 
     func showNoCardsStub() {
         cardListView.showStub(mode: .noCards { [weak presenter] in
-            presenter?.viewDidTapEditButton()
+            presenter?.viewDidTapNoCardsStubButton()
         })
     }
 
@@ -211,17 +211,8 @@ extension CardListViewController: ICardListViewInput {
         navigationItem.rightBarButtonItem = nil
     }
 
-    func showNativeAlert(
-        title: String?,
-        message: String?,
-        buttonTitle: String?
-    ) {
-        let alert = UIAlertController.okAlert(
-            title: title,
-            message: message,
-            buttonTitle: buttonTitle
-        )
-
+    func showNativeAlert(data: OkAlertData) {
+        let alert = UIAlertController.okAlert(data: data)
         present(alert, animated: true)
     }
 
@@ -236,13 +227,13 @@ extension CardListViewController: ICardListViewInput {
             ),
             style: .base
         )
-        snackBarViewController = showSnack(config: config, completion: nil)
+        snackBarViewController = showSnack(animated: true, config: config, completion: nil)
     }
 
     func hideLoadingSnackbar() {
         snackBarViewController?.hideSnackView(
             animated: true,
-            completion: { [weak self] in
+            completion: { [weak self] _ in
                 self?.presenter.viewDidHideLoadingSnackbar()
                 self?.snackBarViewController = nil
             }
@@ -258,13 +249,13 @@ extension CardListViewController: ICardListViewInput {
             style: .base
         )
 
+        presenter.viewDidShowAddedCardSnackbar()
         showSnackFor(
             seconds: 1,
+            animated: false,
             config: config,
             didShowCompletion: nil,
-            didHideCompletion: { [weak presenter] in
-                presenter?.viewDidShowAddedCardSnackbar()
-            }
+            didHideCompletion: nil
         )
     }
 

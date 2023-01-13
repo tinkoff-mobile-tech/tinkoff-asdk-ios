@@ -19,6 +19,7 @@ extension UILabel {
             font = style.font
             textAlignment = style.alignment
             numberOfLines = style.numberOfLines
+            lineBreakMode = style.lineBreakMode
 
         case let .attributed(string):
             attributedText = string
@@ -55,6 +56,7 @@ extension UILabel {
         var font: UIFont = .systemFont(ofSize: 16, weight: .regular)
         var alignment: NSTextAlignment = .left
         var numberOfLines = 0 // no limit
+        var lineBreakMode: NSLineBreakMode = .byClipping
 
         func set(textColor: UIColor?) -> Self {
             var shadowCopy = self
@@ -79,12 +81,24 @@ extension UILabel {
             shadowCopy.numberOfLines = numberOfLines
             return shadowCopy
         }
+
+        func set(lineBreakMode: NSLineBreakMode) -> Self {
+            var shadowCopy = self
+            shadowCopy.lineBreakMode = lineBreakMode
+            return shadowCopy
+        }
     }
 }
 
 // MARK: - Styles
 
 extension UILabel.Style {
+    static var headingM: Self {
+        Self(
+            textColor: ASDKColors.Text.primary.color,
+            font: .systemFont(ofSize: 20, weight: .bold)
+        )
+    }
 
     static func bodyM() -> Self {
         Self(
@@ -102,6 +116,14 @@ extension UILabel.Style {
             alignment: .left,
             numberOfLines: 0
         )
+    }
+
+    func configureLabel() {
+        let textStyle = UILabel.Style.bodyL()
+            .set(alignment: .center)
+            .set(numberOfLines: 1)
+
+        let label = UILabel().configure(UILabel.Configuration(content: .plain(text: "Hello", style: textStyle)))
     }
 
     static func headingS() -> Self {

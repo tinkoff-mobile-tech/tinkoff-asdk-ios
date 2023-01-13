@@ -25,7 +25,8 @@ struct CardList {
         let id: String
         let pan: String
         let cardModel: DynamicIconCardView.Model
-        let assembledText: String
+        let bankNameText: String
+        let cardNumberText: String
         let isInEditingMode: Bool
     }
 

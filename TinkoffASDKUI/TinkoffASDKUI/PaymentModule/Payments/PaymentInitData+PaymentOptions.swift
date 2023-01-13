@@ -27,18 +27,10 @@ extension PaymentInitData {
         let orderOptions = paymentOptions.orderOptions
         let customerOptions = paymentOptions.customerOptions
 
-        let customerKey: String?
-        switch customerOptions.customer {
-        case let .customer(key, _):
-            customerKey = key
-        case .none:
-            customerKey = nil
-        }
-
         var initData = PaymentInitData(
             amount: orderOptions.amount,
             orderId: orderOptions.orderId,
-            customerKey: customerKey
+            customerKey: customerOptions?.customerKey
         )
 
         initData.description = orderOptions.description

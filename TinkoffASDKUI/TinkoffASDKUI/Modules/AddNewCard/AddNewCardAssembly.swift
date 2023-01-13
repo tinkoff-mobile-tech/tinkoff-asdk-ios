@@ -22,14 +22,10 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
         networking: IAddNewCardNetworking
     ) -> AddNewCardViewController {
 
-        let presenter = AddNewCardPresenter(
-            cardFieldFactory: CardFieldFactory(),
-            networking: networking
-        )
-
+        let presenter = AddNewCardPresenter(networking: networking, output: addNewCardOutput)
         let viewController = AddNewCardViewController(
-            output: addNewCardOutput,
-            presenter: presenter
+            presenter: presenter,
+            cardFieldFactory: CardFieldFactory()
         )
         presenter.view = viewController
         return viewController

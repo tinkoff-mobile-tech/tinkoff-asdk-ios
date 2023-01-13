@@ -69,7 +69,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     struct PaymentNeedCollect3DsPassedArguments {
         let paymentProcess: PaymentProcess
         let needToCollect3DSData: TinkoffASDKCore.Checking3DSURLData
-        let completion: (TinkoffASDKCore.DeviceInfoParams) -> Void
+        let completion: (TinkoffASDKCore.ThreeDSDeviceInfo) -> Void
     }
 
     var paymentNeedCollect3DsCallCounter = 0
@@ -78,7 +78,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     func payment(
         _ paymentProcess: PaymentProcess,
         needToCollect3DSData checking3DSURLData: TinkoffASDKCore.Checking3DSURLData,
-        completion: @escaping (TinkoffASDKCore.DeviceInfoParams) -> Void
+        completion: @escaping (TinkoffASDKCore.ThreeDSDeviceInfo) -> Void
     ) {
         paymentNeedCollect3DsCallCounter += 1
         paymentNeedCollect3DsPassedArguments = PaymentNeedCollect3DsPassedArguments(

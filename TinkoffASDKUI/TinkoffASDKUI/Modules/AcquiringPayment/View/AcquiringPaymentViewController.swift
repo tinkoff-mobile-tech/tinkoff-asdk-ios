@@ -99,7 +99,7 @@ protocol AcquiringView: AnyObject {
 
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
 
-    func checkDeviceFor3DSData(with request: URLRequest)
+    func checkDeviceFor3DSData(with request: URLRequest, navigationDelegate: WKNavigationDelegate)
 
     var onTouchButtonShowCardList: (() -> Void)? { get set }
     var onTouchButtonPay: (() -> Void)? { get set }
@@ -708,7 +708,11 @@ extension AcquiringPaymentViewController: AcquiringView {
         userTableViewCells = value
     }
 
-    func checkDeviceFor3DSData(with request: URLRequest) {
+    func checkDeviceFor3DSData(with request: URLRequest, navigationDelegate: WKNavigationDelegate) {
+        if webView.navigationDelegate == nil {
+            webView.navigationDelegate = navigationDelegate
+        }
+
         webView.load(request)
     }
 

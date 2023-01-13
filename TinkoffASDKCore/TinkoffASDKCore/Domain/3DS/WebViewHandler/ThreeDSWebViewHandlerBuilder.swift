@@ -8,7 +8,7 @@
 import Foundation
 
 protocol IThreeDSWebViewHandlerBuilder {
-    func threeDSWebViewHandler<Payload: Decodable>() -> ThreeDSWebViewHandler<Payload>
+    func threeDSWebViewHandler() -> IThreeDSWebViewHandler
 }
 
 final class ThreeDSWebViewHandlerBuilder: IThreeDSWebViewHandlerBuilder {
@@ -20,7 +20,7 @@ final class ThreeDSWebViewHandlerBuilder: IThreeDSWebViewHandlerBuilder {
         self.decoder = decoder
     }
 
-    func threeDSWebViewHandler<Payload>() -> ThreeDSWebViewHandler<Payload> where Payload: Decodable {
+    func threeDSWebViewHandler() -> IThreeDSWebViewHandler {
         ThreeDSWebViewHandler(
             urlBuilder: threeDSURLBuilder,
             decoder: decoder

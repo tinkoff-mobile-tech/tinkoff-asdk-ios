@@ -98,7 +98,7 @@ extension Button.Style {
     static var primary: Self {
         Self(
             background: .color(
-                normal: ASDKColors.tinkoffYellow,
+                normal: ASDKColors.Foreground.brandTinkoffAccent,
                 highlighted: UIColor(hex: "#FFCD33"),
                 disabled: ASDKColors.Background.neutral1.color
             ),

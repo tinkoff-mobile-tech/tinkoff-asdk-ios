@@ -10,12 +10,6 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
-  /// The card has already been added
-  internal static let theCardHasAlreadyBeenAdded = Loc.tr("Localizable", "The card has already been added", fallback: "The card has already been added")
-  /// Try again in a couple of minutes
-  internal static let tryAgainInACoupleOfMinutes = Loc.tr("Localizable", "Try again in a couple of minutes", fallback: "Try again in a couple of minutes")
-  /// We have a problem, we are already solving it
-  internal static let weHaveAProblemWeAreAlreadySolvingIt = Loc.tr("Localizable", "We have a problem, we are already solving it", fallback: "We have a problem, we are already solving it")
   internal enum Acquiring {
     internal enum AddNewCard {
       /// Добавить
@@ -118,6 +112,20 @@ internal enum Loc {
       internal static let description = Loc.tr("Localizable", "CommonAlert.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
       /// У нас проблема, мы уже решаем ее
       internal static let title = Loc.tr("Localizable", "CommonAlert.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
+    }
+  }
+  internal enum CommonSheet {
+    internal enum Paid {
+      /// Понятно
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.Paid.PrimaryButton", fallback: "Понятно")
+      /// Оплачено
+      internal static let title = Loc.tr("Localizable", "CommonSheet.Paid.Title", fallback: "Оплачено")
+    }
+    internal enum Processing {
+      /// Это займет некоторое время
+      internal static let description = Loc.tr("Localizable", "CommonSheet.Processing.Description", fallback: "Это займет некоторое время")
+      /// Обрабатываем платеж
+      internal static let title = Loc.tr("Localizable", "CommonSheet.Processing.Title", fallback: "Обрабатываем платеж")
     }
   }
   internal enum CommonStub {
@@ -343,6 +351,16 @@ internal enum Loc {
         /// Сохраненные карты
         internal static let savedCards = Loc.tr("Localizable", "TinkoffAcquiring.view.title.savedCards", fallback: "Сохраненные карты")
       }
+    }
+  }
+  internal enum YandexSheet {
+    internal enum Failed {
+      /// Воспользуйтесь другим способом оплаты
+      internal static let description = Loc.tr("Localizable", "YandexSheet.Failed.Description", fallback: "Воспользуйтесь другим способом оплаты")
+      /// Понятно
+      internal static let primaryButton = Loc.tr("Localizable", "YandexSheet.Failed.PrimaryButton", fallback: "Понятно")
+      /// Не получилось оплатить
+      internal static let title = Loc.tr("Localizable", "YandexSheet.Failed.Title", fallback: "Не получилось оплатить")
     }
   }
 }

@@ -54,6 +54,21 @@ final class PaymentFactoryTests: XCTestCase {
 
     // MARK: - Tests
 
+    func testCreatePayment_withYandexPayFinishFlow_shouldReturnNil() throws {
+        let dependencies = Self.makeDependencies()
+        let sut = dependencies.sut
+
+        // when
+        let proccess = sut.createPayment(
+            paymentSource: .yandexPay(base64Token: "some token"),
+            paymentFlow: .finish(paymentId: "fdfd", customerOptions: nil),
+            paymentDelegate: dependencies.paymentDelegateMock
+        )
+
+        // then
+        XCTAssertNil(proccess)
+    }
+
     func testCreatePayment_when_PaymentSource_Unknown() throws {
         let paymentFlow: PaymentFlow = .full(paymentOptions: UIASDKTestsAssembly.makePaymentOptions())
 
@@ -106,7 +121,7 @@ final class PaymentFactoryTests: XCTestCase {
 
     func testCreatePayment_when_PaymentSource_PaymentData() throws {
         // given
-        let paymentSourceData = PaymentSourceData.paymentData("234234")
+        let paymentSourceData = PaymentSourceData.applePay(base64Token: "234234")
         let paymentFlow: PaymentFlow = .full(paymentOptions: UIASDKTestsAssembly.makePaymentOptions())
 
         // when

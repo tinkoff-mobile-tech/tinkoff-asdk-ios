@@ -31,8 +31,8 @@ final class SnackbarView: UIView, ShadowAvailable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        userInterfaceThemeDidChange(style: UIScreen.main.traitCollection.userInterfaceStyle)
     }
 
     // MARK: - Public
@@ -64,15 +64,6 @@ extension SnackbarView {
         layer.cornerRadius = style.cornerRadius
         contentView.layer.cornerRadius = style.cornerRadius
         contentView.backgroundColor = style.backgroundColor
-
-        NotificationCenter.default.removeObserver(self)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(userInterfaceThemeDidChange),
-            name: .userInterfaceStyleDidChange,
-            object: nil
-        )
-
         shadowStyle = style.shadow
         applyShadow(for: UIScreen.main.traitCollection.userInterfaceStyle)
     }
@@ -89,9 +80,7 @@ extension SnackbarView {
         }
     }
 
-    @objc private func userInterfaceThemeDidChange(notification: NSNotification) {
-        guard let style = notification.userInfo?[Notification.Keys.value] as? UIUserInterfaceStyle
-        else { return }
+    private func userInterfaceThemeDidChange(style: UIUserInterfaceStyle) {
         applyShadow(for: style)
     }
 
