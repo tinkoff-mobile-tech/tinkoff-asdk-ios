@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 28.12.2022.
 //
 
+import UIKit
+
 extension UILabel {
     func isTextFitsBounds() -> Bool {
         attributedText?.fitsIn(size: rectForText().size, font: minimumAdjustedFont, numberOfLines: numberOfLines) ?? true

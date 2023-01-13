@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 28.12.2022.
 //
 
+import UIKit
+
 extension NSAttributedString {
     func fitsIn(size: CGSize, font: UIFont, numberOfLines: Int) -> Bool {
         // lineBreakMode should be byWordWrapping to return multiline height in boundingRect(with size:)
