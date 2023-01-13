@@ -9,7 +9,6 @@ Acquiring SDK позволяет интегрировать Интернет-Э�
 - Работа с привязанными картами
 - Поддержка английской локализации
 - Интеграция с онлайн-кассами
-- Оплата с помощью ApplePay
 - Оплата с помощью Системы Быстрых Платежей
 - Оплата с помощью TinkoffPay
 - [Оплата с помощью YandexPay](./YandexPayIntergration.md)
@@ -89,7 +88,6 @@ File -> Add packages -> `https://github.com/Tinkoff/AcquiringSdk_IOS.git`
 - **presentPaymentView(paymentData: PaymentInitData, parentPatmentId Int64)** быстрая оплата, оплатить рекуррентный/регулярный платеж.  
 - **presentPaymentSBP(paymentData: PaymentInitData)** оплатить используя **Систему Быстрых Платежей**
 - **presentPaymentAcceptanceQR()** - сгенерировать и показать QR-код для приема платежей
-- **paymentApplePay(paymentData: PaymentInitData)** - оплатить используя **ApplePay**
 
 Для работы со списком сохраненных карты реализован метод:
 
@@ -332,18 +330,6 @@ extension RootViewController: AcquiringScanerProtocol {
 }
 ```
 
-### Оплата товара через Apple Pay
-
-```swift
-presentPaymentApplePay(
-	on presentingViewController: UIViewController,
-	paymentData data: PaymentInitData,
-	viewConfiguration: AcquiringViewConfiguration,
-	paymentConfiguration: AcquiringUISDK.ApplePayConfiguration,
-	completionHandler: @escaping PaymentCompletionHandler
-)
-```
-
 ### Отобразить список сохраненных карт
 
 ```swift
@@ -437,7 +423,6 @@ let sdk = try AcquiringUISDK(configuration: acquiringSDKConfiguration style: MyA
 - Документация на сайте, описание [API методов][server-api]
 
 [acquiring]: https://www.tinkoff.ru/kassa/
-[applepay]: https://developer.apple.com/documentation/passkit/apple_pay
 [cocoapods]: https://cocoapods.org
 [img-pay]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/payscreen.png
 [img-pay2]: https://raw.githubusercontent.com/TinkoffCreditSystems/tinkoff-asdk-ios/master/payscreen2.png
