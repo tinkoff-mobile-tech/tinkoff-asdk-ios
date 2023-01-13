@@ -16,5 +16,6 @@ protocol ICommonSheetViewOutput {
     func viewDidLoad()
     func primaryButtonTapped()
     func secondaryButtonTapped()
+    func canDismissViewByUserInteraction() -> Bool
     func viewWasClosed()
 }

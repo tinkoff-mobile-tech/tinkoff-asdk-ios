@@ -21,6 +21,7 @@ final class YandexPayPaymentSheetPresenter {
     // MARK: State
 
     private var paymentResult: YandexPayPaymentResult = .cancelled
+    private var canDismissView = false
 
     // MARK: Init
 
@@ -57,6 +58,10 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetViewOutput {
 
     func secondaryButtonTapped() {}
 
+    func canDismissViewByUserInteraction() -> Bool {
+        canDismissView
+    }
+
     func viewWasClosed() {
         output?.yandexPayPaymentActivity(completedWith: paymentResult)
     }
@@ -77,6 +82,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
             paymentId: state.paymentId
         )
         paymentResult = .succeeded(paymentInfo)
+        canDismissView = true
         view?.update(state: .paid)
     }
 
@@ -87,6 +93,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         paymentResult = .cancelled
+        canDismissView = true
         view?.close()
     }
 
@@ -97,6 +104,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         paymentResult = .failed(error)
+        canDismissView = true
         view?.update(state: .failed)
     }
 }
@@ -108,8 +116,7 @@ private extension CommonSheetState {
         CommonSheetState(
             status: .processing,
             title: Loc.CommonSheet.Processing.title,
-            description: Loc.CommonSheet.Processing.description,
-            dismissionAllowed: false
+            description: Loc.CommonSheet.Processing.description
         )
     }
 
@@ -117,8 +124,7 @@ private extension CommonSheetState {
         CommonSheetState(
             status: .succeeded,
             title: Loc.CommonSheet.Paid.title,
-            primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton,
-            dismissionAllowed: true
+            primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
         )
     }
 
@@ -127,8 +133,7 @@ private extension CommonSheetState {
             status: .failed,
             title: Loc.YandexSheet.Failed.title,
             description: Loc.YandexSheet.Failed.description,
-            primaryButtonTitle: Loc.YandexSheet.Failed.primaryButton,
-            dismissionAllowed: true
+            primaryButtonTitle: Loc.YandexSheet.Failed.primaryButton
         )
     }
 }

@@ -20,21 +20,18 @@ struct CommonSheetState {
     let description: String?
     let primaryButtonTitle: String?
     let secondaryButtonTitle: String?
-    let dismissionAllowed: Bool
 
     init(
         status: Status,
         title: String,
         description: String? = nil,
         primaryButtonTitle: String? = nil,
-        secondaryButtonTitle: String? = nil,
-        dismissionAllowed: Bool = true
+        secondaryButtonTitle: String? = nil
     ) {
         self.status = status
         self.title = title
         self.description = description
         self.primaryButtonTitle = primaryButtonTitle
         self.secondaryButtonTitle = secondaryButtonTitle
-        self.dismissionAllowed = dismissionAllowed
     }
 }

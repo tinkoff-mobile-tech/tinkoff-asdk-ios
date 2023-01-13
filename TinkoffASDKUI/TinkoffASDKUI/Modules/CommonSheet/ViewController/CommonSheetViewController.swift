@@ -24,10 +24,6 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 
     private lazy var paymentActivityView = CommonSheetView(delegate: self)
 
-    // MARK: State
-
-    private var dismissionAllowed = true
-
     // MARK: Init
 
     init(presenter: ICommonSheetViewOutput) {
@@ -56,7 +52,6 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 
 extension CommonSheetViewController: ICommonSheetViewInput {
     func update(state: CommonSheetState) {
-        dismissionAllowed = state.dismissionAllowed
         paymentActivityView.update(state: state)
     }
 
@@ -89,10 +84,10 @@ extension CommonSheetViewController {
     }
 
     func pullableContainerShouldDismissOnDownDragging() -> Bool {
-        dismissionAllowed
+        presenter.canDismissViewByUserInteraction()
     }
 
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool {
-        dismissionAllowed
+        presenter.canDismissViewByUserInteraction()
     }
 }
