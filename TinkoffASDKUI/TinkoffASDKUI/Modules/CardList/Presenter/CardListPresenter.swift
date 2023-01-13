@@ -241,6 +241,7 @@ extension CardListPresenter {
 
     private func showServerErrorStub() {
         screenState = .showingStub
+        view?.hideRightBarButton()
         view?.showStub(mode: .serverError { [weak self] in
             self?.view?.dismiss()
         })
@@ -248,6 +249,7 @@ extension CardListPresenter {
 
     private func showNoNetworkStub() {
         screenState = .showingStub
+        view?.hideRightBarButton()
         view?.showStub(mode: .noNetwork { [weak self] in
             self?.view?.hideStub()
             self?.viewDidLoad()
@@ -256,8 +258,9 @@ extension CardListPresenter {
 
     private func showNoCardsStub() {
         screenState = .showingStub
+        view?.hideRightBarButton()
         view?.showStub(mode: .noCards { [weak self] in
-            self?.viewDidTapEditButton()
+            self?.onAddNewCardTap?()
         })
     }
 
