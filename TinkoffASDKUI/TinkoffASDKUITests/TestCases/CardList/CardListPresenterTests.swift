@@ -51,7 +51,7 @@ final class CardListPresenterTests: XCTestCase {
         XCTAssertEqual(view.showDoneEditingButtonCallCounter, 1)
         XCTAssertEqual(view.reloadCallCounter, 2)
     }
-    
+
     func test_viewDidTapEditButton_when_editingCards() throws {
         // given
         let dependencies = buildDependecies()
@@ -192,35 +192,35 @@ final class CardListPresenterTests: XCTestCase {
         XCTAssertEqual(view.reloadCallCounter, 1)
         XCTAssertEqual(view.hideStubCallCounter, 1)
     }
-    
+
     func test_viewDidHideShimmer_failure_internerError() throws {
         // given
         let dependencies = buildDependecies()
         let view = dependencies.mockView
         let error = NSError(domain: "", code: NSURLErrorNotConnectedToInternet)
         let fetchCardsResult: Result<[PaymentCard], Error> = .failure(error)
-        
+
         // when
         dependencies.sutAsProtocol.viewDidHideShimmer(fetchCardsResult: fetchCardsResult)
-        
+
         // then
         XCTAssertEqual(view.showStubCallCounter, 1)
     }
-    
+
     func test_viewDidHideShimmer_failure_commonError() throws {
         // given
         let dependencies = buildDependecies()
         let view = dependencies.mockView
         let error = NSError(domain: "", code: NSURLErrorUnknown)
         let fetchCardsResult: Result<[PaymentCard], Error> = .failure(error)
-        
+
         // when
         dependencies.sutAsProtocol.viewDidHideShimmer(fetchCardsResult: fetchCardsResult)
-        
+
         // then
         XCTAssertEqual(view.showStubCallCounter, 1)
     }
-    
+
     func test_viewDidTapCard_cardIndex() throws {
         // given
         let dependencies = buildDependecies()

@@ -42,7 +42,7 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
     ///   - bank: Банк, приложение которого надо открыть
     ///   - completion: Возвращает true если получилось открыть приложение банка, false если нет
     func openBankApp(_ bank: SBPBank, completion: @escaping SBPBankAppCheckerOpenBankAppCompletion) {
-        guard let url = URL(string: "\(bank.schema)://") else { return }
+        guard let url = URL(string: "\(bank.schema)://") else { completion(false); return }
         application.open(url, options: [:], completionHandler: completion)
     }
 }

@@ -93,7 +93,7 @@ extension SBPBanksPresenter {
         guard lastSearchedText != lowercasedText else { return }
         lastSearchedText = lowercasedText
 
-        DispatchQueue.main.asyncDeduped(target: self, after: 0.3) { [weak self] in
+        DispatchQueue.main.asyncDeduped(target: self, after: .searchDelay) { [weak self] in
             guard let self = self else { return }
 
             if lowercasedText.isEmpty {
@@ -114,7 +114,7 @@ extension SBPBanksPresenter {
 
 extension SBPBanksPresenter {
     private func prepareAndShowSkeletonModels() {
-        allBanksCellPresenters = [SBPBankCellNewPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: 7))
+        allBanksCellPresenters = [SBPBankCellNewPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: .skeletonsCount))
         filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
@@ -211,4 +211,14 @@ extension SBPBanksPresenter {
             self?.router.closeScreen()
         })
     }
+}
+
+// MARK: - Constants
+
+private extension Int {
+    static let skeletonsCount = 7
+}
+
+private extension TimeInterval {
+    static let searchDelay = 0.3
 }
