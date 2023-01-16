@@ -29,9 +29,6 @@ protocol ICardListViewOutput: AnyObject, IAddNewCardOutput {
     func viewDidTapCard(cardIndex: Int)
     func viewDidTapAddCardCell()
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
-    func viewDidTapNoCardsStubButton()
-    func viewDidTapNoNetworkStubButton()
-    func viewDidTapServerErrorStubButton()
     func viewDidShowAddedCardSnackbar()
 }
 
@@ -136,16 +133,8 @@ extension CardListPresenter: ICardListViewOutput {
         handleFetchedActiveCard(result: fetchCardsResult)
     }
 
-    func viewDidTapNoCardsStubButton() {
-        onAddNewCardTap?()
-    }
-
-    func viewDidTapNoNetworkStubButton() {
-        viewDidLoad()
-    }
-
-    func viewDidTapServerErrorStubButton() {
-        view?.dismiss()
+    func viewDidShowAddedCardSnackbar() {
+        reloadCollection()
     }
 
     func viewDidShowAddedCardSnackbar() {
@@ -244,7 +233,7 @@ extension CardListPresenter {
 
         case let .failure(error):
             switch (error as NSError).code {
-            case NSURLErrorNotConnectedToInternet:
+            case NSURLErrorNotConnectedToInternet, NSURLErrorDataNotAllowed:
                 showNoNetworkStub()
             default:
                 showServerErrorStub()
@@ -254,25 +243,29 @@ extension CardListPresenter {
         view?.enableViewUserInteraction()
     }
 
-    private func prepareViewForShowingStub() {
-        screenState = .showingStub
-        view?.hideStub()
-        view?.hideRightBarButton()
-    }
-
     private func showServerErrorStub() {
-        prepareViewForShowingStub()
-        view?.showServerErrorStub()
+        screenState = .showingStub
+        view?.hideRightBarButton()
+        view?.showStub(mode: .serverError { [weak self] in
+            self?.view?.dismiss()
+        })
     }
 
     private func showNoNetworkStub() {
-        prepareViewForShowingStub()
-        view?.showNoNetworkStub()
+        screenState = .showingStub
+        view?.hideRightBarButton()
+        view?.showStub(mode: .noNetwork { [weak self] in
+            self?.view?.hideStub()
+            self?.viewDidLoad()
+        })
     }
 
     private func showNoCardsStub() {
-        prepareViewForShowingStub()
-        view?.showNoCardsStub()
+        screenState = .showingStub
+        view?.hideRightBarButton()
+        view?.showStub(mode: .noCards { [weak self] in
+            self?.onAddNewCardTap?()
+        })
     }
 
     private func reloadCollection() {

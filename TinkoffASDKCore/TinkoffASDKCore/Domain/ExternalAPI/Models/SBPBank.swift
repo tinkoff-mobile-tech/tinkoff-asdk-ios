@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct SBPBank: Decodable {
+public struct SBPBank: Decodable, Equatable {
     public let name: String
     public let logoURL: URL?
     public let schema: String

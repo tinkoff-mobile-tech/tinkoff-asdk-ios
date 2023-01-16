@@ -30,7 +30,7 @@ protocol CardListViewDelegate: AnyObject {
     func didSelectCell(at: IndexPath)
 }
 
-final class CardListView: UIView {
+final class CardListView: UIView, StubViewPresentable {
 
     // MARK: Style
 
@@ -43,9 +43,10 @@ final class CardListView: UIView {
 
     weak var delegate: CardListViewDelegate?
     private let style: Style
-    private let stubBuilder: IStubViewBuilder
 
     // MARK: UI
+
+    var stubViewPinTo: UIView { self }
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -77,10 +78,9 @@ final class CardListView: UIView {
 
     // MARK: Init
 
-    init(style: Style, stubBuilder: IStubViewBuilder, delegate: CardListViewDelegate? = nil) {
+    init(style: Style, delegate: CardListViewDelegate? = nil) {
         self.style = style
         self.delegate = delegate
-        self.stubBuilder = stubBuilder
         super.init(frame: .zero)
         setupView()
     }
@@ -137,29 +137,8 @@ final class CardListView: UIView {
         )
     }
 
-    func showStub(mode: StubMode) {
-        collectionView.isHidden = true
-        let stubView = stubBuilder.buildFrom(coverMode: mode)
-        stubView.center = center
-        stubView.alpha = .zero
-        addSubview(stubView)
-        UIView.addPopingAnimation { stubView.alpha = 1 }
-    }
-
-    func hideStub() {
-        collectionView.isHidden = false
-        subviews.forEach { subview in
-            if subview is StubView {
-                UIView.addPopingAnimation(
-                    animations: {
-                        subview.alpha = .zero
-                    },
-                    completion: { _ in
-                        subview.removeFromSuperview()
-                    }
-                )
-            }
-        }
+    func setCollectionView(isHidden: Bool) {
+        collectionView.isHidden = isHidden
     }
 
     // MARK: Initial Configuration

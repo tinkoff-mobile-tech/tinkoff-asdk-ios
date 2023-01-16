@@ -21,9 +21,9 @@ import TinkoffASDKCore
 import UIKit
 
 final class SBPBankAppAvailabilityChecker {
-    private let application: UIApplication
+    private let application: IUIApplication
 
-    public init(application: UIApplication) {
+    public init(application: IUIApplication) {
         self.application = application
     }
 
