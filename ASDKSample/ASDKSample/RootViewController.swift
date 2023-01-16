@@ -269,7 +269,7 @@ extension RootViewController: IAddNewCardOutput {
         case let .success(card):
             let alert = UIAlertController.okAlert(
                 title: nil,
-                message: Loc.AddCard.Alert.message(String.format(pan: card.cardId)),
+                message: Loc.AddCard.Alert.message(String.format(pan: card.pan)),
                 buttonTitle: Loc.Button.ok
             )
             present(alert, animated: true)
