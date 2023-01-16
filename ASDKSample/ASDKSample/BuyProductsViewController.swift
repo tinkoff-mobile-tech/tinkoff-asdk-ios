@@ -732,7 +732,7 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
             case .cancelled:
                 return "\(Loc.Text.payment) \(Loc.Text.paymentStatusCancel)"
             case let .succeeded(info):
-                return "\(Loc.Text.paymentStatusAmount) \(info.paymentOptions.orderOptions.amount) \(Loc.Text.paymentStatusSuccess)"
+                return "\(Loc.Text.paymentStatusAmount) \(info.amount) \(Loc.Text.paymentStatusSuccess)"
             case let .failed(error):
                 return "\(error)"
             }

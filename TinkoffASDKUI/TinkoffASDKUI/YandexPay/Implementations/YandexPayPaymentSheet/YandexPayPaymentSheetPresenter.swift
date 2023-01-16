@@ -78,9 +78,11 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         let paymentInfo = YandexPayPaymentResult.PaymentInfo(
-            paymentOptions: paymentOptions,
-            paymentId: state.paymentId
+            paymentId: state.paymentId,
+            orderId: state.orderId,
+            amount: state.amount
         )
+
         paymentResult = .succeeded(paymentInfo)
         canDismissView = true
         view?.update(state: .paid)
