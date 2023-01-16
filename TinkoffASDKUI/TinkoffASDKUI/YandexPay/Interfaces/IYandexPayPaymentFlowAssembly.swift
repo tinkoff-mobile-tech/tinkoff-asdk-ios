@@ -10,5 +10,5 @@ import Foundation
 /// Объект, формирующий `IYandexPayPaymentFlow`
 public protocol IYandexPayPaymentFlowAssembly {
     /// Формирование `IYandexPayPaymentFlow`
-    func yandexPayPaymentFlow() -> IYandexPayPaymentFlow
+    func yandexPayPaymentFlow(delegate: IYandexPayPaymentFlowOutput) -> IYandexPayPaymentFlow
 }

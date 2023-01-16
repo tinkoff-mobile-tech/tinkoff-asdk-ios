@@ -712,10 +712,20 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
             paymentData: ["testPaymentDataFromASDKSample": "SomeValue"]
         )
 
-        let paymentSheet = YandexPayPaymentSheet(paymentOptions: paymentOptions)
+        let paymentSheet = YandexPayPaymentSheet(
+            order: YandexPayPaymentSheet.Order(
+                orderId: orderOptions.orderId,
+                amount: orderOptions.amount
+            )
+        )
 
         completion(paymentSheet)
     }
+
+    func yandexPayButtonContainer(
+        _ container: IYandexPayButtonContainer,
+        didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
+    ) {}
 
     func yandexPayButtonContainerDidRequestViewControllerForPresentation(
         _ container: IYandexPayButtonContainer

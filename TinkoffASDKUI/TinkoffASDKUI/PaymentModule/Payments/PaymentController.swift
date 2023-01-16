@@ -22,6 +22,7 @@ import WebKit
 
 protocol IPaymentController {
     func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData)
+    func performFinishPayment(paymentId: String, paymentSource: PaymentSourceData, customerOptions: CustomerOptions?)
 }
 
 /// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа

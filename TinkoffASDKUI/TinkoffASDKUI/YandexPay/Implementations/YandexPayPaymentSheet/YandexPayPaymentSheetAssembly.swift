@@ -17,7 +17,7 @@ final class YandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly {
     }
 
     func yandexPayActivity(
-        paymentOptions: PaymentOptions,
+        paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
     ) -> UIViewController {
@@ -27,7 +27,7 @@ final class YandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly {
         let presenter = YandexPayPaymentSheetPresenter(
             paymentController: paymentController,
             paymentControllerUIProvider: paymentControllerUIProvider,
-            paymentOptions: paymentOptions,
+            paymentFlow: paymentFlow,
             base64Token: base64Token,
             output: output
         )

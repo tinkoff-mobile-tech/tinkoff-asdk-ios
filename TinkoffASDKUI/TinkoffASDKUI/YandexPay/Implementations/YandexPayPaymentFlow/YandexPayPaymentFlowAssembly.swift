@@ -14,7 +14,7 @@ final class YandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly {
         self.yandexPayActivityAssebmly = yandexPayActivityAssebmly
     }
 
-    func yandexPayPaymentFlow() -> IYandexPayPaymentFlow {
-        YandexPayPaymentFlow(paymentActivityAssembly: yandexPayActivityAssebmly)
+    func yandexPayPaymentFlow(delegate: IYandexPayPaymentFlowOutput) -> IYandexPayPaymentFlow {
+        YandexPayPaymentFlow(paymentActivityAssembly: yandexPayActivityAssebmly, delegate: delegate)
     }
 }

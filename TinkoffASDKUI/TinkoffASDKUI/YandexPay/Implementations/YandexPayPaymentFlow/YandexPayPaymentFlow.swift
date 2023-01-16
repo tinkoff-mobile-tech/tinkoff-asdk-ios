@@ -8,21 +8,21 @@
 import Foundation
 
 final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
-    weak var output: IYandexPayPaymentFlowOutput?
-    weak var presentingViewControllerProvider: IPresentingViewControllerProvider?
     private let paymentActivityAssembly: IYandexPayPaymentSheetAssembly
+    private weak var delegate: IYandexPayPaymentFlowOutput?
 
-    init(paymentActivityAssembly: IYandexPayPaymentSheetAssembly) {
+    init(paymentActivityAssembly: IYandexPayPaymentSheetAssembly, delegate: IYandexPayPaymentFlowOutput) {
         self.paymentActivityAssembly = paymentActivityAssembly
+        self.delegate = delegate
     }
 
-    func start(with paymentOption: PaymentOptions, base64Token: String) {
-        guard let presentingViewController = presentingViewControllerProvider?.viewControllerForPresentation() else {
+    func start(with paymentFlow: PaymentFlow, base64Token: String) {
+        guard let presentingViewController = delegate?.yandexPayPaymentFlowDidRequestViewControllerForPresentation(self) else {
             return
         }
 
         let paymentActivityViewController = paymentActivityAssembly.yandexPayActivity(
-            paymentOptions: paymentOption,
+            paymentFlow: paymentFlow,
             base64Token: base64Token,
             output: self
         )
@@ -35,6 +35,6 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
 
 extension YandexPayPaymentFlow: IYandexPayPaymentSheetOutput {
     func yandexPayPaymentActivity(completedWith result: YandexPayPaymentResult) {
-        output?.yandexPayPaymentFlow(self, didCompleteWith: result)
+        delegate?.yandexPayPaymentFlow(self, didCompleteWith: result)
     }
 }

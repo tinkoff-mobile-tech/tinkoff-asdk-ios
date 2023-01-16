@@ -35,4 +35,13 @@ public protocol YandexPayButtonContainerDelegate: AnyObject {
         _ container: IYandexPayButtonContainer,
         didRequestPaymentSheet completion: @escaping (_ paymentSheet: YandexPayPaymentSheet?) -> Void
     )
+
+    /// Запрашивает параметры оплаты с помощью `YandexPay`
+    /// - Parameters:
+    ///   - container: UI-контейнер для кнопки `YandexPay`
+    ///   - completion:
+    func yandexPayButtonContainer(
+        _ container: IYandexPayButtonContainer,
+        didRequestPaymentFlow completion: @escaping (_ paymentFlow: PaymentFlow?) -> Void
+    )
 }

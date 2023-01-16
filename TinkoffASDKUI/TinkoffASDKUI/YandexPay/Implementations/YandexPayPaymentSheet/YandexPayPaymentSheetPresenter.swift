@@ -15,7 +15,7 @@ final class YandexPayPaymentSheetPresenter {
     private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
     private let paymentControllerUIProvider: PaymentControllerUIProvider
-    private let paymentOptions: PaymentOptions
+    private let paymentFlow: PaymentFlow
     private let base64Token: String
 
     // MARK: State
@@ -28,13 +28,13 @@ final class YandexPayPaymentSheetPresenter {
     init(
         paymentController: IPaymentController,
         paymentControllerUIProvider: PaymentControllerUIProvider,
-        paymentOptions: PaymentOptions,
+        paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
     ) {
         self.paymentController = paymentController
         self.paymentControllerUIProvider = paymentControllerUIProvider
-        self.paymentOptions = paymentOptions
+        self.paymentFlow = paymentFlow
         self.base64Token = base64Token
         self.output = output
     }
@@ -46,10 +46,19 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
         view?.update(state: .processing)
 
-        paymentController.performInitPayment(
-            paymentOptions: paymentOptions,
-            paymentSource: .yandexPay(base64Token: base64Token)
-        )
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            paymentController.performInitPayment(
+                paymentOptions: paymentOptions,
+                paymentSource: .yandexPay(base64Token: base64Token)
+            )
+        case let .finish(paymentId, customerOptions):
+            paymentController.performFinishPayment(
+                paymentId: paymentId,
+                paymentSource: .yandexPay(base64Token: base64Token),
+                customerOptions: customerOptions
+            )
+        }
     }
 
     func primaryButtonTapped() {

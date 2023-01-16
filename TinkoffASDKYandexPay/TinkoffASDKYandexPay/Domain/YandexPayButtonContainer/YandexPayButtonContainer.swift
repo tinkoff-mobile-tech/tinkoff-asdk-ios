@@ -15,7 +15,8 @@ final class YandexPayButtonContainer: UIView {
 
     private var configuration: YandexPayButtonContainerConfiguration
     private let sdkButtonFactory: IYandexPaySDKButtonFactory
-    private let controllerFactory: IYandexPayButtonContainerControllerFactory
+    private let paymentSheetFactory: IYPPaymentSheetFactory
+    private let paymentFlowFactory: IYandexPayPaymentFlowAssembly
     private weak var delegate: YandexPayButtonContainerDelegate?
 
     // MARK: Lazy Dependencies
@@ -25,19 +26,21 @@ final class YandexPayButtonContainer: UIView {
         asyncDelegate: self
     )
 
-    private lazy var controller: IYandexPayButtonContainerController = controllerFactory.create(with: self)
+    private lazy var paymentFlow = paymentFlowFactory.yandexPayPaymentFlow(delegate: self)
 
     // MARK: Init
 
     init(
         configuration: YandexPayButtonContainerConfiguration,
         sdkButtonFactory: IYandexPaySDKButtonFactory,
-        controllerFactory: IYandexPayButtonContainerControllerFactory,
+        paymentSheetFactory: IYPPaymentSheetFactory,
+        paymentFlowFactory: IYandexPayPaymentFlowAssembly,
         delegate: YandexPayButtonContainerDelegate
     ) {
         self.configuration = configuration
         self.sdkButtonFactory = sdkButtonFactory
-        self.controllerFactory = controllerFactory
+        self.paymentSheetFactory = paymentSheetFactory
+        self.paymentFlowFactory = paymentFlowFactory
         self.delegate = delegate
         super.init(frame: .zero)
         setupView()
@@ -93,6 +96,10 @@ extension YandexPayButtonContainer: IYandexPayButtonContainer {
 // MARK: - YandexPayButtonAsyncDelegate
 
 extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
+    private enum Failure: Error {
+        case unknown
+    }
+
     func yandexPayButtonDidRequestViewControllerForPresentation(_ button: YandexPayButton) -> UIViewController? {
         delegate?.yandexPayButtonContainerDidRequestViewControllerForPresentation(self)
     }
@@ -101,36 +108,47 @@ extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
         _ button: YandexPayButton,
         completion: @escaping (YPPaymentSheet?) -> Void
     ) {
-        controller.requestPaymentSheet(completion: completion)
+        let didRequestPaymentSheet = { [paymentSheetFactory] (paymentSheet: YandexPayPaymentSheet?) in
+            let yandexPayPaymentSheet = paymentSheet.map(paymentSheetFactory.create(with:))
+            completion(yandexPayPaymentSheet)
+        }
+
+        delegate?.yandexPayButtonContainer(self, didRequestPaymentSheet: didRequestPaymentSheet)
     }
 
     func yandexPayButton(
         _ button: YandexPayButton,
         didCompletePaymentWithResult result: YPPaymentResult
     ) {
-        controller.handlePaymentResult(result)
+        switch result {
+        case let .succeeded(paymentInfo):
+            let didRequestPaymentFlow = { [weak self] (flow: PaymentFlow?) in
+                guard let self = self, let flow = flow else { return }
+                DispatchQueue.performOnMain {
+                    self.paymentFlow.start(with: flow, base64Token: paymentInfo.paymentToken)
+                }
+            }
+            delegate?.yandexPayButtonContainer(self, didRequestPaymentFlow: didRequestPaymentFlow)
+        case .cancelled:
+            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .cancelled)
+        case let .failed(error):
+            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .failed(error))
+        @unknown default:
+            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .failed(Failure.unknown))
+        }
     }
 }
 
-// MARK: - YandexPayButtonContainerControllerDelegate
+// MARK: - IYandexPayPaymentFlowOutput
 
-extension YandexPayButtonContainer: YandexPayButtonContainerControllerDelegate {
-    func yandexPayController(
-        _ controller: IYandexPayButtonContainerController,
-        didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
-    ) {
-        delegate?.yandexPayButtonContainer(self, didRequestPaymentSheet: completion)
-    }
-
-    func yandexPayControllerDidRequestViewControllerForPresentation(
-        _ controller: IYandexPayButtonContainerController
-    ) -> UIViewController? {
+extension YandexPayButtonContainer: IYandexPayPaymentFlowOutput {
+    func yandexPayPaymentFlowDidRequestViewControllerForPresentation(_ flow: IYandexPayPaymentFlow) -> UIViewController? {
         delegate?.yandexPayButtonContainerDidRequestViewControllerForPresentation(self)
     }
 
-    func yandexPayController(
-        _ controller: YandexPayButtonContainerController,
-        didCompleteWithResult result: YandexPayPaymentResult
+    func yandexPayPaymentFlow(
+        _ flow: IYandexPayPaymentFlow,
+        didCompleteWith result: YandexPayPaymentResult
     ) {
         delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: result)
     }

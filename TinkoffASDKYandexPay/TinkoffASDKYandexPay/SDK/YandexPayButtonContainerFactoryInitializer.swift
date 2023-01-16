@@ -26,10 +26,8 @@ final class YandexPayButtonContainerFactoryInitializer: IYandexPayButtonContaine
 
         return YandexPayButtonContainerFactory(
             sdkButtonFactory: yandexPaySDK,
-            controllerFactory: YandexPayButtonContainerControllerFactory(
-                paymentSheetFactory: YPPaymentSheetFactory(method: method),
-                paymentFlowAssembly: flowAssembly
-            )
+            paymentFlowAssembly: flowAssembly,
+            method: method
         )
     }
 }
