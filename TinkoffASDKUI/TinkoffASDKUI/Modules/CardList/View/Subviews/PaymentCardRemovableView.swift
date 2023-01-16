@@ -27,7 +27,7 @@ final class PaymentCardRemovableView: UIView {
 
     // MARK: Action Handlers
 
-    private var removeHandler: (() -> Void)?
+    private var accessoryItemTap: (() -> Void)?
 
     // MARK: Subviews
 
@@ -38,14 +38,9 @@ final class PaymentCardRemovableView: UIView {
     private lazy var cardNumberLabel = UILabel()
     private let buttonContainer = ViewContainer()
 
-    private lazy var removeButton: UIButton = {
+    private lazy var acessoryRightButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(
-            Asset.tuiIcServiceCross24.image.withRenderingMode(.alwaysTemplate),
-            for: .normal
-        )
-        button.tintColor = ASDKColors.Text.secondary.color
-        button.addTarget(self, action: #selector(removeTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         return button
     }()
 
@@ -79,7 +74,7 @@ final class PaymentCardRemovableView: UIView {
 
         buttonContainer.configure(
             with: ViewContainer.Configuration(
-                content: removeButton,
+                content: acessoryRightButton,
                 layoutStrategy: .custom { view in
                     view.makeConstraints { view in
                         [
@@ -132,10 +127,32 @@ final class PaymentCardRemovableView: UIView {
         }
     }
 
+    private func configureAcessoryRightButton(item: AccessoryItem) {
+        var isNoneCase = false
+        if case AccessoryItem.none = item {
+            isNoneCase = true
+        }
+
+        buttonContainer.isHidden = isNoneCase
+        buttonContainer.constraintUpdater.updateWidth(to: isNoneCase ? .zero : .accessoryContainerWidth)
+
+        switch item {
+        case .none: break
+        case .checkmark:
+            acessoryRightButton.setImage(Asset.Icons.check.image.withRenderingMode(.alwaysTemplate), for: .normal)
+            acessoryRightButton.tintColor = ASDKColors.Text.accent.color
+            accessoryItemTap = nil
+        case let .removeButton(removeAction):
+            acessoryRightButton.setImage(Asset.tuiIcServiceCross24.image.withRenderingMode(.alwaysTemplate), for: .normal)
+            acessoryRightButton.tintColor = ASDKColors.Text.secondary.color
+            accessoryItemTap = removeAction
+        }
+    }
+
     // MARK: Actions
 
-    @objc private func removeTapped() {
-        removeHandler?()
+    @objc private func buttonTapped() {
+        accessoryItemTap?()
     }
 }
 
@@ -146,6 +163,7 @@ extension PaymentCardRemovableView: ConfigurableItem, Configurable {
     enum AccessoryItem {
         case none
         case removeButton(onRemove: () -> Void)
+        case checkmark
     }
 
     struct Configuration {
@@ -162,16 +180,7 @@ extension PaymentCardRemovableView: ConfigurableItem, Configurable {
         bankNameLabel.configure(UILabel.Configuration(content: configuration.bankNameContent))
         cardNumberLabel.configure(UILabel.Configuration(content: configuration.cardNumberContent))
         contentView.constraintUpdater.updateEdgeInsets(insets: configuration.insets)
-
-        switch configuration.accessoryItem {
-        case .none:
-            buttonContainer.isHidden = true
-            buttonContainer.constraintUpdater.updateWidth(to: .zero)
-        case let .removeButton(onRemove):
-            buttonContainer.isHidden = false
-            buttonContainer.constraintUpdater.updateWidth(to: .accessoryContainerWidth)
-            removeHandler = onRemove
-        }
+        configureAcessoryRightButton(item: configuration.accessoryItem)
     }
 
     func update(with configuration: Configuration) {
@@ -196,7 +205,7 @@ extension PaymentCardRemovableView.Configuration {
 
 extension PaymentCardRemovableView: Reusable {
     func prepareForReuse() {
-        removeHandler = nil
+        accessoryItemTap = nil
         bankNameLabel.prepareForReuse()
         cardNumberLabel.prepareForReuse()
     }

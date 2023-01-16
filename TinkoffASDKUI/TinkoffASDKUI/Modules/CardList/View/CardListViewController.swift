@@ -45,11 +45,11 @@ final class CardListViewController: UIViewController {
 
     private let presenter: ICardListViewOutput
 
-    private let style: CardListView.Style
+    private let configuration: CardListScreenConfiguration
 
     // MARK: Views
 
-    private lazy var cardListView = CardListView(style: style)
+    private lazy var cardListView = CardListView(configuration: configuration)
 
     // MARK: State
 
@@ -60,11 +60,11 @@ final class CardListViewController: UIViewController {
     // MARK: Init
 
     init(
-        style: CardListView.Style,
+        configuration: CardListScreenConfiguration,
         presenter: ICardListViewOutput
     ) {
         self.presenter = presenter
-        self.style = style
+        self.configuration = configuration
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -89,7 +89,7 @@ final class CardListViewController: UIViewController {
     // MARK: Initial Configuration
 
     private func setupNavigationItem() {
-        title = Loc.Acquiring.CardList.screenTitle
+        title = configuration.navigationTitle
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.backButtonTitle = ""
 

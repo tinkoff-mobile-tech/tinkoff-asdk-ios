@@ -145,6 +145,7 @@ extension ASDKColors {
     // MARK: - Text
 
     struct Text {
+
         static var primary: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: ASDKColors.textPrimary,
@@ -170,6 +171,13 @@ extension ASDKColors {
             UIColor.Dynamic(
                 light: UIColor(hex: "#001024")!.withAlphaComponent(0.22),
                 dark: UIColor.white.withAlphaComponent(0.3)
+            )
+        }
+
+        static var accent: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#428BF9")!,
+                dark: UIColor(hex: "#428BF9")!
             )
         }
     }
