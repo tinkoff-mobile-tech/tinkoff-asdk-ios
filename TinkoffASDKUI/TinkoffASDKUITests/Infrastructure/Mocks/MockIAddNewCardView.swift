@@ -57,4 +57,18 @@ final class MockIAddNewCardView: IAddNewCardView {
     func enableAddButton() {
         enableAddButtonCallCounter += 1
     }
+
+    var activateCardFieldCallCounter = 0
+
+    func activateCardField() {
+        activateCardFieldCallCounter += 1
+    }
+
+    var showOkNativeAlertCallCounter = 0
+    var showOkNativeAlertStub: (OkAlertData) -> Void = { _ in }
+
+    func showOkNativeAlert(data: OkAlertData) {
+        showOkNativeAlertCallCounter += 1
+        showOkNativeAlertStub(data)
+    }
 }

@@ -14,7 +14,7 @@ final class MockAddNewCardNetworking: IAddNewCardNetworking {
         let number: String
         let expiration: String
         let cvc: String
-        let resultCompletion: (Result<PaymentCard, Error>) -> Void
+        let resultCompletion: (AddNewCardResult) -> Void
     }
 
     var addCardCallCounter = 0
@@ -24,16 +24,16 @@ final class MockAddNewCardNetworking: IAddNewCardNetworking {
         number: String,
         expiration: String,
         cvc: String,
-        resultCompletion: @escaping (Result<PaymentCard, Error>) -> Void
+        resultCompletion: @escaping (AddNewCardResult) -> Void
     ) {
         addCardCallCounter += 1
-        addCardStub(
-            AddCardInputData(
-                number: number,
-                expiration: expiration,
-                cvc: cvc,
-                resultCompletion: resultCompletion
-            )
+        let data = AddCardInputData(
+            number: number,
+            expiration: expiration,
+            cvc: cvc,
+            resultCompletion: resultCompletion
         )
+
+        addCardStub(data)
     }
 }

@@ -18,6 +18,7 @@ final class PaymentFactoryTests: XCTestCase {
     var ipProviderMock: MockIPAddressProvider!
     var paymentsServiceMock: MockAcquiringPaymentsService!
     var threeDsServiceMock: MockAcquiringThreeDsService!
+    var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var sut: PaymentFactory!
 
     // MARK: - Setup
@@ -29,10 +30,12 @@ final class PaymentFactoryTests: XCTestCase {
         let paymentDelegateMock = MockPaymentProcessDelegate()
         let paymentsServiceMock = MockAcquiringPaymentsService()
         let threeDsServiceMock = MockAcquiringThreeDsService()
+        let threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
 
         let sut = PaymentFactory(
             paymentsService: paymentsServiceMock,
             threeDsService: threeDsServiceMock,
+            threeDSDeviceInfoProvider: threeDSDeviceInfoProviderMock,
             ipProvider: ipProviderMock
         )
 
@@ -40,6 +43,7 @@ final class PaymentFactoryTests: XCTestCase {
         self.ipProviderMock = ipProviderMock
         self.paymentsServiceMock = paymentsServiceMock
         self.threeDsServiceMock = threeDsServiceMock
+        self.threeDSDeviceInfoProviderMock = threeDSDeviceInfoProviderMock
         self.sut = sut
     }
 
@@ -48,6 +52,7 @@ final class PaymentFactoryTests: XCTestCase {
         ipProviderMock = nil
         paymentsServiceMock = nil
         threeDsServiceMock = nil
+        threeDSDeviceInfoProviderMock = nil
         sut = nil
         super.tearDown()
     }
@@ -55,27 +60,11 @@ final class PaymentFactoryTests: XCTestCase {
     // MARK: - Tests
 
     func testCreatePayment_withYandexPayFinishFlow_shouldReturnNil() throws {
-        let dependencies = Self.makeDependencies()
-        let sut = dependencies.sut
 
         // when
         let proccess = sut.createPayment(
             paymentSource: .yandexPay(base64Token: "some token"),
             paymentFlow: .finish(paymentId: "fdfd", customerOptions: nil),
-            paymentDelegate: dependencies.paymentDelegateMock
-        )
-
-        // then
-        XCTAssertNil(proccess)
-    }
-
-    func testCreatePayment_when_PaymentSource_Unknown() throws {
-        let paymentFlow: PaymentFlow = .full(paymentOptions: UIASDKTestsAssembly.makePaymentOptions())
-
-        // when
-        let proccess = sut.createPayment(
-            paymentSource: .unknown,
-            paymentFlow: paymentFlow,
             paymentDelegate: paymentDelegateMock
         )
 

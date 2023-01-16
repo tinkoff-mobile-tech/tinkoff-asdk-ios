@@ -19,6 +19,7 @@ final class AddNewCardPresenterTests: XCTestCase {
     var cardFieldFactoryMock: MockCardFieldFactory!
     var networkingMock: MockAddNewCardNetworking!
     var viewMock: MockIAddNewCardView!
+    var addNewCardOutputMock: MockAddNewCardOutput!
     var cardFieldPresenterMock: MockCardFieldPresenter!
     var sutAsProtocol: IAddNewCardPresenter { sut }
 
@@ -31,10 +32,11 @@ final class AddNewCardPresenterTests: XCTestCase {
         let cardFieldFactoryMock = MockCardFieldFactory()
         let mockView = MockIAddNewCardView()
         let cardFieldPresenterMock = MockCardFieldPresenter()
+        let addNewCardOutputMock = MockAddNewCardOutput()
 
         let presenter = AddNewCardPresenter(
-            cardFieldFactory: cardFieldFactoryMock,
-            networking: networkingMock
+            networking: networkingMock,
+            output: addNewCardOutputMock
         )
 
         presenter.view = mockView
@@ -44,12 +46,13 @@ final class AddNewCardPresenterTests: XCTestCase {
         self.networkingMock = networkingMock
         viewMock = mockView
         self.cardFieldPresenterMock = cardFieldPresenterMock
+        self.addNewCardOutputMock = addNewCardOutputMock
 
         // setup
-
-        cardFieldFactoryMock.assembleCardFieldConfigStub = { input in
-            .init(configuration: nil, presenter: cardFieldPresenterMock)
-        }
+//
+//        cardFieldFactoryMock.assembleCardFieldConfigStub = { input in
+//            .init(presenter: cardFieldPresenterMock)
+//        }
     }
 
     override func tearDown() {
@@ -58,6 +61,7 @@ final class AddNewCardPresenterTests: XCTestCase {
         networkingMock = nil
         viewMock = nil
         cardFieldPresenterMock = nil
+        addNewCardOutputMock = nil
 
         super.tearDown()
     }
@@ -77,28 +81,28 @@ final class AddNewCardPresenterTests: XCTestCase {
         // given
         let paymentCard = buildPaymentCard()
         let addCardExpectation = expectation(description: #function + "addCard")
-        let notifyAddedCardExpectation = expectation(description: #function + "notifyAddedCard")
+        let addNewCardResultSuccess = expectation(description: #function + "addNewCardResultSuccess")
 
         cardFieldPresenterMock.validateWholeFormStub = {
-            CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
+            CardFieldValidationResult.initWithAllFieldsValid()
         }
 
         networkingMock.addCardStub = { input in
-            input.resultCompletion(.success(paymentCard))
+            input.resultCompletion(.success(card: paymentCard))
             addCardExpectation.fulfill()
         }
 
-        viewMock.notifyAddedStub = { card in
-            XCTAssertEqual(card, paymentCard)
-            notifyAddedCardExpectation.fulfill()
+        addNewCardOutputMock.addingNewCardCompletedStub = { result in
+            if case AddNewCardResult.success = result {
+                addNewCardResultSuccess.fulfill()
+            }
         }
 
-        // triggers setting inner cardfield factory result
         sutAsProtocol.viewDidLoad()
 
         // when
-        sutAsProtocol.viewAddCardTapped()
-        wait(for: [addCardExpectation, notifyAddedCardExpectation], timeout: .testTimeout)
+        sutAsProtocol.viewAddCardTapped(cardData: buildAddCardData())
+        wait(for: [addCardExpectation, addNewCardResultSuccess], timeout: .testTimeout)
 
         // then
         XCTAssertEqual(viewMock.showLoadingStateCallCounter, 1)
@@ -107,7 +111,7 @@ final class AddNewCardPresenterTests: XCTestCase {
 
         // success flow
         XCTAssertEqual(viewMock.closeScreenCallCounter, 1)
-        XCTAssertEqual(viewMock.notifyAddedCallCounter, 1)
+        XCTAssertEqual(addNewCardOutputMock.addingNewCardCompletedCallCounter, 1)
     }
 
     // MARK: - addCard() failure flows
@@ -117,11 +121,11 @@ final class AddNewCardPresenterTests: XCTestCase {
         let addCardExpectation = expectation(description: #function + "addCard")
 
         cardFieldPresenterMock.validateWholeFormStub = {
-            CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
+            CardFieldValidationResult.initWithAllFieldsValid()
         }
 
         networkingMock.addCardStub = { input in
-            input.resultCompletion(.failure(TestsError.basic))
+            input.resultCompletion(.failure(error: TestsError.basic))
             addCardExpectation.fulfill()
         }
 
@@ -129,7 +133,7 @@ final class AddNewCardPresenterTests: XCTestCase {
         sutAsProtocol.viewDidLoad()
 
         // when
-        sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped(cardData: buildAddCardData())
         wait(for: [addCardExpectation], timeout: .testTimeout)
 
         // then
@@ -138,7 +142,7 @@ final class AddNewCardPresenterTests: XCTestCase {
         XCTAssertEqual(viewMock.hideLoadingStateCallCounter, 1)
 
         // failure flow
-        XCTAssertEqual(viewMock.showGenericErrorNativeAlertCallCounter, 1)
+        XCTAssertEqual(viewMock.showOkNativeAlertCallCounter, 1)
     }
 
     func test_viewAddCardTapped_addCard_failure_userCancelledCardAddingError() throws {
@@ -146,19 +150,18 @@ final class AddNewCardPresenterTests: XCTestCase {
         let addCardExpectation = expectation(description: #function + "addCard")
 
         cardFieldPresenterMock.validateWholeFormStub = {
-            CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
+            CardFieldValidationResult.initWithAllFieldsValid()
         }
 
         networkingMock.addCardStub = { input in
-            input.resultCompletion(.failure(AcquiringUiSdkError.userCancelledCardAdding))
+            input.resultCompletion(.cancelled)
             addCardExpectation.fulfill()
         }
 
-        // triggers setting inner cardfield factory result
         sutAsProtocol.viewDidLoad()
 
         // when
-        sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped(cardData: buildAddCardData())
         wait(for: [addCardExpectation], timeout: .testTimeout)
 
         // then
@@ -176,20 +179,19 @@ final class AddNewCardPresenterTests: XCTestCase {
         let alreadyHasSuchCardErrorCode = 510
 
         cardFieldPresenterMock.validateWholeFormStub = {
-            CardFieldPresenter.ValidationResult.initWithAllFieldsValid()
+            CardFieldValidationResult.initWithAllFieldsValid()
         }
 
         networkingMock.addCardStub = { input in
             let error = APIError.failure(APIFailureError(errorCode: alreadyHasSuchCardErrorCode))
-            input.resultCompletion(.failure(error))
+            input.resultCompletion(.failure(error: error))
             addCardExpectation.fulfill()
         }
 
-        // triggers setting inner cardfield factory result
         sutAsProtocol.viewDidLoad()
 
         // when
-        sutAsProtocol.viewAddCardTapped()
+        sutAsProtocol.viewAddCardTapped(cardData: buildAddCardData())
         wait(for: [addCardExpectation], timeout: .testTimeout)
 
         // then
@@ -198,7 +200,7 @@ final class AddNewCardPresenterTests: XCTestCase {
         XCTAssertEqual(viewMock.hideLoadingStateCallCounter, 1)
 
         // failure flow
-        XCTAssertEqual(viewMock.showAlreadySuchCardErrorNativeAlertCallCounter, 1)
+        XCTAssertEqual(viewMock.showOkNativeAlertCallCounter, 1)
     }
 }
 
@@ -212,5 +214,16 @@ extension AddNewCardPresenterTests {
             parentPaymentId: nil,
             expDate: "1129"
         )
+    }
+
+    func buildAddCardData() -> CardData {
+        CardData(cardNumber: "", expiration: "", cvc: "")
+    }
+}
+
+extension CardFieldValidationResult {
+
+    static func initWithAllFieldsValid() -> Self {
+        Self(cardNumberIsValid: true, expirationIsValid: true, cvcIsValid: true)
     }
 }

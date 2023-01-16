@@ -137,10 +137,6 @@ extension CardListPresenter: ICardListViewOutput {
         reloadCollection()
     }
 
-    func viewDidShowAddedCardSnackbar() {
-        reloadCollection()
-    }
-
     func view(didTapDeleteOn card: CardList.Card) {
         isLoading = true
         view?.disableViewUserInteraction()

@@ -11,15 +11,15 @@ import TinkoffASDKCore
 final class MockCardFieldPresenter: ICardFieldPresenter {
     var getCardFieldView: () -> ICardFieldView? = { nil }
     var config: CardFieldView.Config?
-    var validationResult = CardFieldPresenter.ValidationResult()
-    var validationResultDidChange: ((CardFieldPresenter.ValidationResult) -> Void)?
+    var validationResult = CardFieldValidationResult()
+    var validationResultDidChange: ((CardFieldValidationResult) -> Void)?
     var cardNumber: String = ""
     var expiration: String = ""
     var cvc: String = ""
 
     var validateWholeFormCallCounter = 0
-    var validateWholeFormStub: () -> CardFieldPresenter.ValidationResult = { CardFieldPresenter.ValidationResult() }
-    func validateWholeForm() -> CardFieldPresenter.ValidationResult {
+    var validateWholeFormStub: () -> CardFieldValidationResult = { CardFieldValidationResult() }
+    func validateWholeForm() -> CardFieldValidationResult {
         validateWholeFormCallCounter += 1
         return validateWholeFormStub()
     }

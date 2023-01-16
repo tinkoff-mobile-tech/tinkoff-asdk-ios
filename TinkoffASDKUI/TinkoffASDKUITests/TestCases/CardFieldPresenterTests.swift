@@ -33,7 +33,6 @@ final class CardFieldPresenterTests: XCTestCase {
         let bankSystemResolverMock = MockBankResolver()
 
         let presenter = CardFieldPresenter(
-            getCardFieldView: { viewMock },
             listenerStorage: [],
             config: assembleConfig(),
             validator: validatorMock,
@@ -42,6 +41,7 @@ final class CardFieldPresenterTests: XCTestCase {
         )
 
         sut = presenter
+        presenter.view = viewMock
         self.viewMock = viewMock
         self.validatorMock = validatorMock
         self.paymentSystemResolverMock = paymentSystemResolverMock

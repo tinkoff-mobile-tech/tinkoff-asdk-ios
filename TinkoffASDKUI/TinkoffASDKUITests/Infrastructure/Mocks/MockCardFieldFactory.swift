@@ -11,20 +11,20 @@ import TinkoffASDKCore
 final class MockCardFieldFactory: ICardFieldFactory {
 
     var assembleCardFieldConfigCallCounter = 0
-    lazy var assembleCardFieldConfigStub: (@escaping () -> ICardFieldView?) -> CardFieldFactory.FactoryResult =
-        { [unowned self] getCardFieldView in
-            self.prepareFactoryResult(getCardFieldView: getCardFieldView)
-        }
+    lazy var assembleCardFieldConfigStub: () -> CardFieldView = {
+        let presenter = MockCardFieldPresenter()
+        return CardFieldView(presenter: presenter)
+    }
 
-    func assembleCardFieldConfig(getCardFieldView: @escaping () -> ICardFieldView?) -> CardFieldFactory.FactoryResult {
+    func assembleCardFieldView() -> CardFieldView {
         assembleCardFieldConfigCallCounter += 1
-        return assembleCardFieldConfigStub(getCardFieldView)
+        return assembleCardFieldConfigStub()
     }
 }
 
 extension MockCardFieldFactory {
 
-    private func prepareFactoryResult(getCardFieldView: @escaping () -> ICardFieldView?) -> CardFieldFactory.FactoryResult {
+    private func prepareFactoryResult() -> CardFieldFactory.FactoryResult {
         return .init(
             configuration:
             .assembleWithRegularStyle(
@@ -41,7 +41,7 @@ extension MockCardFieldFactory {
                     )
                 )
             ),
-            presenter: CardFieldPresenter(getCardFieldView: getCardFieldView, listenerStorage: [])
+            presenter: CardFieldPresenter(listenerStorage: [])
         )
     }
 }
