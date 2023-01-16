@@ -3,7 +3,6 @@ import UIKit
 extension CardFieldView {
 
     struct DataDependecies {
-        let cardFieldData: Data
         let dynamicCardIconData: DynamicIconCardView.Data
 
         let expirationTextFieldData: TextFieldData

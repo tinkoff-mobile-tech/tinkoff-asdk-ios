@@ -9,6 +9,11 @@ import UIKit
 
 extension UIWindow {
 
+    static var globalSafeAreaInsets: UIEdgeInsets {
+        guard let window = Self.findKeyWindow() else { return .zero }
+        return window.safeAreaInsets
+    }
+
     static func findKeyWindow() -> UIWindow? {
 
         if #available(iOS 13.0, *) {

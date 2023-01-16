@@ -17,6 +17,8 @@ final class SnackbarView: UIView, ShadowAvailable {
 
     private let contentView = UIView()
 
+    private var shadowStyle: ShadowStyle?
+
     // MARK: - Inits
 
     override init(frame: CGRect) {
@@ -27,6 +29,10 @@ final class SnackbarView: UIView, ShadowAvailable {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        userInterfaceThemeDidChange(style: UIScreen.main.traitCollection.userInterfaceStyle)
     }
 
     // MARK: - Public
@@ -58,10 +64,24 @@ extension SnackbarView {
         layer.cornerRadius = style.cornerRadius
         contentView.layer.cornerRadius = style.cornerRadius
         contentView.backgroundColor = style.backgroundColor
+        shadowStyle = style.shadow
+        applyShadow(for: UIScreen.main.traitCollection.userInterfaceStyle)
+    }
 
-        if let shadow = style.shadow {
-            dropShadow(with: shadow)
+    private func applyShadow(for style: UIUserInterfaceStyle?) {
+        guard let style = style else { return }
+        switch style {
+        case .dark:
+            removeShadow()
+        default:
+            if let shadowStyle = shadowStyle {
+                dropShadow(with: shadowStyle)
+            }
         }
+    }
+
+    private func userInterfaceThemeDidChange(style: UIUserInterfaceStyle) {
+        applyShadow(for: style)
     }
 
     private func configureSnack(data: Content) {

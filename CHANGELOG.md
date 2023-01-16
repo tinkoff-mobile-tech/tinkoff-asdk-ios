@@ -32,6 +32,18 @@
 * [MIC-7349] Ability to provide dismissing behavior to PullableContainer
 * [MIC-4762] YandexPayButton integration
 * [MIC-6875] Payment system validation for Union Pay
+* [MIC-7349] Add ability to provide dismissing behavior to PullableContainer
+* [MIC-6827] Implemented CardFieldView
+* [MIC-6824] Redesigned Card List Cell
+* [MIC-6825] Card List Screen Redesign
+* [MIC-6843] Card List Screen Redesign - Cards Removal
+* [MIC-6837] Card List Screen Redesign - Integration
+* [MIC-6841] Card List Screen Redesign - Tests
+* [MIC-6833] Add New Card Screen Redisign - General Redisign
+* [MIC-6834] Add New Card Screen Redisign - Card List Integration
+* [MIC-6835] Add New Card Screen Redisign - Present Add Card Only Integration
+* [MIC-6836] Add New Card Screen Redisign - Sample add shortcut button for presenting Add Card
+* [MIC-7538] Add New Tinkoff Bins
 
 ### Fixed
 

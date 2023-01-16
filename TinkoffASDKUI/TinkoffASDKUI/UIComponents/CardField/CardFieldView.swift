@@ -1,8 +1,8 @@
 import UIKit
 
 protocol CardFieldDelegate: AnyObject {
-
     func sizeDidChange(view: CardFieldView, size: CGSize)
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
 // MARK: - CardFieldView
@@ -28,6 +28,11 @@ final class CardFieldView: UIView {
 
     private(set) var configuration: Config?
 
+    var input: ICardFieldInput { presenter }
+    weak var delegate: CardFieldDelegate?
+
+    private let presenter: ICardFieldPresenter
+
     // MARK: - UI
 
     private let contentView = UIView()
@@ -43,17 +48,17 @@ final class CardFieldView: UIView {
 
     // MARK: - Other
 
-    private weak var delegate: CardFieldDelegate?
-
     private var observation: NSKeyValueObservation?
 
+    private var cardNumberWidthAnchor: NSLayoutConstraint?
     private var expireWidthAnchor: NSLayoutConstraint?
     private var cvcWidthAnchor: NSLayoutConstraint?
 
     // MARK: - Init
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(presenter: ICardFieldPresenter) {
+        self.presenter = presenter
+        super.init(frame: .zero)
         setupViews()
     }
 
@@ -98,12 +103,15 @@ extension CardFieldView {
     private func setupConstraints() {
 
         // Card Number
+        let cardNumberWidthAnchor = cardNumberView.width(constant: .zero)
+        self.cardNumberWidthAnchor = cardNumberWidthAnchor
+
         cardNumberView.makeConstraints { make in
             [
-                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
-                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor),
-                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
+                cardNumberWidthAnchor,
                 make.height(constant: Constants.Card.height),
+                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
+                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
             ]
         }
 
@@ -159,6 +167,7 @@ extension CardFieldView {
     private func handleFrameChange() {
         contentView.layoutIfNeeded()
         let width = (contentView.frame.size.width / 2) - (Constants.Cvc.leftInset / 2)
+        cardNumberWidthAnchor?.constant = contentView.frame.size.width
         expireWidthAnchor?.constant = width
         cvcWidthAnchor?.constant = width
         delegate?.sizeDidChange(view: self, size: bounds.size)
@@ -199,7 +208,6 @@ extension CardFieldView: ConfigurableItem {
     func configure(with config: Config?) {
         prepareForReuse()
         guard let config = config else { return }
-        apply(data: config.data)
         apply(style: config.style)
 
         config.dynamicCardIcon.updater = self
@@ -212,8 +220,6 @@ extension CardFieldView: ConfigurableItem {
 
     // MARK: - Private
 
-    private func apply(data: Data) {}
-
     private func apply(style: Style) {
         cardNumberView.layer.cornerRadius = style.card.cornerRadius
         cardNumberView.backgroundColor = style.card.backgroundColor
@@ -224,8 +230,15 @@ extension CardFieldView: ConfigurableItem {
         cvcView.layer.cornerRadius = style.cvc.cornerRadius
         cvcView.backgroundColor = style.cvc.backgroundColor
     }
+}
 
-    private func prepareForReuse() {
+extension CardFieldView: Reusable, Configurable {
+
+    func update(with configuration: Config?) {
+        configure(with: configuration)
+    }
+
+    func prepareForReuse() {
         cardNumberView.layer.cornerRadius = .zero
         cardNumberView.backgroundColor = .clear
         expireView.layer.cornerRadius = .zero

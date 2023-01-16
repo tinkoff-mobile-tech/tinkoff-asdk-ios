@@ -89,3 +89,6 @@
 "credentialsView.title.terminalPassword" = "Terminal Password";
 "credentialsView.title.publicKey" = "Public Key";
 "credentialsView.title.customerKey" = "Customer Key";
+
+// Add Card
+"addCard.alert.message" = "The card %@ was added";

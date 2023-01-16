@@ -80,6 +80,16 @@ extension UIView {
         ]
     }
 
+    func equalToSuperview(insets: UIEdgeInsets = .zero) -> [NSLayoutConstraint] {
+        assert(superview != nil)
+        return [
+            topAnchor.constraint(equalTo: forcedSuperview.topAnchor, constant: insets.top),
+            leftAnchor.constraint(equalTo: forcedSuperview.leftAnchor, constant: insets.left),
+            rightAnchor.constraint(equalTo: forcedSuperview.rightAnchor, constant: -insets.right),
+            bottomAnchor.constraint(equalTo: forcedSuperview.bottomAnchor, constant: -insets.bottom),
+        ]
+    }
+
     func makeLeftAndRightEqualToSuperView(inset: CGFloat) -> [NSLayoutConstraint] {
         return [
             leftAnchor.constraint(equalTo: forcedSuperview.leftAnchor, constant: inset),
@@ -103,16 +113,11 @@ extension UIView {
     func makeEqualToSuperview(insets: UIEdgeInsets = .zero) {
         assert(superview != nil)
         makeConstraints { make in
-            [
-                make.topAnchor.constraint(equalTo: forcedSuperview.topAnchor, constant: insets.top),
-                make.leftAnchor.constraint(equalTo: forcedSuperview.leftAnchor, constant: insets.left),
-                make.rightAnchor.constraint(equalTo: forcedSuperview.rightAnchor, constant: -insets.right),
-                make.bottomAnchor.constraint(equalTo: forcedSuperview.bottomAnchor, constant: -insets.bottom),
-            ]
+            make.equalToSuperview(insets: insets)
         }
     }
 
-    func makeEqualToSuperviewToSafeArea(insets: UIEdgeInsets = .zero) {
+    func pinEdgesToSafeArea(insets: UIEdgeInsets = .zero) {
         assert(superview != nil)
         makeConstraints { make in
             [

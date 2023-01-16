@@ -97,13 +97,6 @@ final class MockCardListViewInput: ICardListViewInput {
         showEditButtonCallCounter += 1
     }
 
-    var showNativeAlertCallCounter = 0
-    var showNativeAlertStub: (String?, String?, String?) -> Void = { _, _, _ in }
-    func showNativeAlert(title: String?, message: String?, buttonTitle: String?) {
-        showNativeAlertCallCounter += 1
-        showNativeAlertStub(title, message, buttonTitle)
-    }
-
     var showLoadingSnackbarCallCounter = 0
     var showLoadingSnackbarStub: (String?) -> Void = { _ in }
     func showLoadingSnackbar(text: String?) {
@@ -127,5 +120,22 @@ final class MockCardListViewInput: ICardListViewInput {
     var showAddedCardSnackbarStub: (String) -> Void = { _ in }
     func showAddedCardSnackbar(cardMaskedPan: String) {
         showAddedCardSnackbarCallCounter += 1
+    }
+
+    var hideRightBarButtonCalCounter = 0
+    func hideRightBarButton() {
+        hideStubCallCounter += 1
+    }
+
+    var closeScreenCounter = 0
+    func closeScreen() {
+        closeScreenCounter += 1
+    }
+
+    var showNativeAlertCallCounter = 0
+    var showNativeAlertStub: (OkAlertData) -> Void = { _ in }
+    func showNativeAlert(data: OkAlertData) {
+        showNativeAlertCallCounter += 1
+        showNativeAlertStub(data)
     }
 }

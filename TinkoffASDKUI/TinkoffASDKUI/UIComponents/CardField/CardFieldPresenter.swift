@@ -12,12 +12,19 @@ protocol ICardFieldView: AnyObject, Activatable {
     func activateCvcField()
 }
 
-protocol ICardFieldPresenter: AnyObject {
-    var view: ICardFieldView? { get }
-    var config: CardFieldView.Config? { get set }
-    var validationResult: CardFieldPresenter.ValidationResult { get }
+protocol ICardFieldInput: AnyObject {
+    var cardNumber: String { get }
+    var expiration: String { get }
+    var cvc: String { get }
 
-    func validateWholeForm() -> CardFieldPresenter.ValidationResult
+    var validationResult: CardFieldValidationResult { get }
+
+    func validateWholeForm() -> CardFieldValidationResult
+}
+
+protocol ICardFieldPresenter: ICardFieldInput {
+    var config: CardFieldView.Config? { get set }
+    var validationResultDidChange: ((CardFieldValidationResult) -> Void)? { get set }
 
     func didFillCardNumber(text: String, filled: Bool)
     func didFillExpiration(text: String, filled: Bool)
@@ -27,12 +34,17 @@ protocol ICardFieldPresenter: AnyObject {
 final class CardFieldPresenter: ICardFieldPresenter {
 
     var config: CardFieldView.Config?
-    private(set) weak var view: ICardFieldView?
-    private(set) var validationResult: ValidationResult
+    var validationResultDidChange: ((CardFieldValidationResult) -> Void)?
 
-    private var cardNumber: String = ""
-    private var expiration: String = ""
-    private var cvc: String = ""
+    weak var view: ICardFieldView?
+
+    private(set) var validationResult: CardFieldValidationResult {
+        didSet { validationResultDidChange?(validationResult) }
+    }
+
+    private(set) var cardNumber: String = ""
+    private(set) var expiration: String = ""
+    private(set) var cvc: String = ""
 
     private var didStartEditingExpiration = false
     private var didEndEditingExpiration = false
@@ -47,28 +59,26 @@ final class CardFieldPresenter: ICardFieldPresenter {
     private var listenerStorage: [NSObject]
 
     init(
-        view: ICardFieldView,
         listenerStorage: [NSObject],
         config: CardFieldView.Config? = nil,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver()
     ) {
-        self.view = view
         self.listenerStorage = listenerStorage
         self.config = config
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
-        validationResult = ValidationResult()
-        self.config?.onDidConfigure = { [weak self] in self?.didConfigureView() }
+        validationResult = CardFieldValidationResult()
         setupEventHandlers()
     }
 
     func didFillCardNumber(text: String, filled: Bool) {
         cardNumber = text
-        let textFieldConfig = config?.cardNumberTextFieldConfig.textField
+        validate()
 
+        let textFieldConfig = config?.cardNumberTextFieldConfig.textField
         (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
             .didChangeText(hasText: !text.isEmpty)
 
@@ -92,39 +102,46 @@ final class CardFieldPresenter: ICardFieldPresenter {
 
     func didFillExpiration(text: String, filled: Bool) {
         expiration = text
+        validate()
+
+        let textFieldConfig = config?.expirationTextFieldConfig.textField
+        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
+            .didChangeText(hasText: !text.isEmpty)
+
         if filled { view?.activateCvcField() }
     }
 
     func didFillCvc(text: String, filled: Bool) {
         cvc = text
+        validate()
+
+        let textFieldConfig = config?.cvcTextFieldConfig.textField
+        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
+            .didChangeText(hasText: !text.isEmpty)
+
         if filled { view?.deactivate() }
     }
 
-    func validateWholeForm() -> ValidationResult {
-        return validate(forced: true)
+    func validateWholeForm() -> CardFieldValidationResult {
+        let result = validate()
+        updateTextfieldHeaderStyle(validationResult: result, forcedValidation: true)
+        return result
     }
 
     // MARK: - Private
 
     @discardableResult
-    private func validate(forced: Bool = false) -> ValidationResult {
-        let result = ValidationResult(
+    private func validate() -> CardFieldValidationResult {
+        let result = CardFieldValidationResult(
             cardNumberIsValid: validator.validate(inputPAN: cardNumber),
             expirationIsValid: validator.validate(inputValidThru: expiration),
             cvcIsValid: validator.validate(inputCVC: cvc)
         )
         validationResult = result
-
-        print(result)
-        updateTextfieldHeaderStyle(validationResult: result, forcedValidation: forced)
         return result
     }
 
-    private func didConfigureView() {
-        view?.activate()
-    }
-
-    private func updateTextfieldHeaderStyle(validationResult result: ValidationResult, forcedValidation: Bool) {
+    private func updateTextfieldHeaderStyle(validationResult result: CardFieldValidationResult, forcedValidation: Bool) {
         guard let config = config else { return }
 
         var cardNumberHeaderLabelConfig = config.cardNumberTextFieldConfig.headerLabel
@@ -197,38 +214,53 @@ final class CardFieldPresenter: ICardFieldPresenter {
         guard let config = config else { return }
 
         config.cardNumberTextFieldConfig.textField.eventHandler = { [weak self] event, _ in
+            guard let self = self else { return }
             switch event {
             case .didBeginEditing:
-                self?.validate()
-                self?.clearVisualErrorState(for: .cardNumber)
+                let result = self.validate()
+                self.updateTextfieldHeaderStyle(
+                    validationResult: result,
+                    forcedValidation: false
+                )
+                self.clearVisualErrorState(for: .cardNumber)
             case .didEndEditing:
-                self?.validate()
+                self.validate()
             default: break
             }
         }
 
         config.expirationTextFieldConfig.textField.eventHandler = { [weak self] event, _ in
+            guard let self = self else { return }
             switch event {
             case .didBeginEditing:
-                self?.didStartEditingExpiration = true
-                self?.validate()
-                self?.clearVisualErrorState(for: .expiration)
+                self.didStartEditingExpiration = true
+                let result = self.validate()
+                self.updateTextfieldHeaderStyle(
+                    validationResult: result,
+                    forcedValidation: false
+                )
+                self.clearVisualErrorState(for: .expiration)
             case .didEndEditing:
-                self?.didEndEditingExpiration = true
-                self?.validate()
+                self.didEndEditingExpiration = true
+                self.validate()
             default: break
             }
         }
 
         config.cvcTextFieldConfig.textField.eventHandler = { [weak self] event, _ in
+            guard let self = self else { return }
             switch event {
             case .didBeginEditing:
-                self?.didStartEditingCvc = true
-                self?.validate()
-                self?.clearVisualErrorState(for: .cvc)
+                self.didStartEditingCvc = true
+                let result = self.validate()
+                self.updateTextfieldHeaderStyle(
+                    validationResult: result,
+                    forcedValidation: false
+                )
+                self.clearVisualErrorState(for: .cvc)
             case .didEndEditing:
-                self?.didEndEditingCvc = true
-                self?.validate()
+                self.didEndEditingCvc = true
+                self.validate()
             default: break
             }
         }
@@ -256,12 +288,6 @@ final class CardFieldPresenter: ICardFieldPresenter {
 }
 
 extension CardFieldPresenter {
-
-    struct ValidationResult {
-        var cardNumberIsValid = false
-        var expirationIsValid = false
-        var cvcIsValid = false
-    }
 
     enum Field: CaseIterable {
         case cardNumber

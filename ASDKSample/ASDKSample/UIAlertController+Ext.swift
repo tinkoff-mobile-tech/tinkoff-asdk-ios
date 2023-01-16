@@ -1,6 +1,6 @@
 //
 //
-//  CardList.swift
+//  UIAlertController+Ext.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -17,22 +17,28 @@
 //  limitations under the License.
 //
 
-import TinkoffASDKCore
 import UIKit
 
-struct CardList {
-    struct Card {
-        let id: String
-        let pan: String
-        let cardModel: DynamicIconCardView.Model
-        let bankNameText: String
-        let cardNumberText: String
-        let isInEditingMode: Bool
-    }
+extension UIAlertController {
 
-    struct Alert {
-        let title: String
-        let message: String?
-        let icon: AcquiringAlertIconType
+    static func okAlert(
+        title: String?,
+        message: String?,
+        buttonTitle: String?
+    ) -> UIAlertController {
+
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+
+        let ok = UIAlertAction(
+            title: buttonTitle,
+            style: .default
+        )
+
+        alert.addAction(ok)
+        return alert
     }
 }

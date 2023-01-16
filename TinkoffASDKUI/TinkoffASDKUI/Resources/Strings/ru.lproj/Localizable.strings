@@ -141,11 +141,19 @@
 // Alerts
 "CommonAlert.DeleteCard.Title" = "Не получилось удалить карту";
 "CommonAlert.Button" = "Понятно";
+"CommonAlert.AddCard.Title" = "Карта уже добавлена";
+"CommonAlert.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";
+"CommonAlert.SomeProblem.Description" = "Попробуйте снова через пару минут";
 
 // CardList
 "Acquiring.CardList.AddCard" = "Добавить новую";
 "Acquiring.CardList.DeleteSnackBar" = "Удаляем карту";
 "Acquiring.CardList.AddSnackBar" = "Карта %@ добавлена";
+
+// Add New Card
+"Acquiring.AddNewCard.ScreenTitle" = "Новая карта";
+"Acquiring.AddNewCard.ButtonClose" = "Закрыть";
+"Acquiring.AddNewCard.AddButton" = "Добавить";
 
 // Заглушки
 "CommonStub.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";

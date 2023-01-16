@@ -20,7 +20,7 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewOutput: AnyObject {
+protocol ICardListViewOutput: AnyObject, IAddNewCardOutput {
     func viewDidLoad()
     func view(didTapDeleteOn card: CardList.Card)
     func viewDidTapEditButton()
@@ -29,13 +29,12 @@ protocol ICardListViewOutput: AnyObject {
     func viewDidTapCard(cardIndex: Int)
     func viewDidTapAddCardCell()
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
+    func viewDidShowAddedCardSnackbar()
 }
 
 protocol ICardListModule: AnyObject {
     var onSelectCard: ((PaymentCard) -> Void)? { get set }
     var onAddNewCardTap: (() -> Void)? { get set }
-
-    func addingNewCard(completedWith result: Result<PaymentCard?, Error>)
 }
 
 enum CardListScreenState {
@@ -84,22 +83,6 @@ final class CardListPresenter: ICardListModule {
 
     // MARK: ICardListModule Methods
 
-    func addingNewCard(completedWith result: Result<PaymentCard?, Error>) {
-        switch result {
-        case let .success(card):
-            // card == nil - добавление карты отменено пользователем
-            if let card = card {
-                activeCardsCache.append(card)
-                reloadCardsSection()
-                view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
-            }
-        case let .failure(error):
-            break
-            // Will be fixed in add card flow
-            // view?.show(alert: .cardAddingFailed(with: error))
-        }
-    }
-
     // MARK: Helpers
 
     private func transform(_ paymentCards: [PaymentCard]) -> [CardList.Card] {
@@ -113,15 +96,16 @@ final class CardListPresenter: ICardListModule {
                 )
             )
 
-            var bankText = bank?.naming ?? ""
-            bankText = bankText.isEmpty ? bankText : bankText.appending(" ")
-            let finalText = bankText + "· \(card.pan.suffix(4))"
+            let bankText = bank?.naming ?? ""
+            var cardNumberText = String.format(pan: card.pan)
+            cardNumberText = bankText.isEmpty ? cardNumberText : (" " + cardNumberText)
 
             return CardList.Card(
                 id: card.cardId,
                 pan: .format(pan: card.pan),
                 cardModel: cardModel,
-                assembledText: finalText,
+                bankNameText: bankText,
+                cardNumberText: cardNumberText,
                 isInEditingMode: screenState == .editingCards
             )
         }
@@ -149,6 +133,10 @@ extension CardListPresenter: ICardListViewOutput {
         handleFetchedActiveCard(result: fetchCardsResult)
     }
 
+    func viewDidShowAddedCardSnackbar() {
+        reloadCollection()
+    }
+
     func view(didTapDeleteOn card: CardList.Card) {
         isLoading = true
         view?.disableViewUserInteraction()
@@ -168,14 +156,14 @@ extension CardListPresenter: ICardListViewOutput {
         guard screenState == .showingCards, !isLoading else { return }
         screenState = .editingCards
         view?.showDoneEditingButton()
-        reloadCardsSection()
+        reloadCollection()
     }
 
     func viewDidTapDoneEditingButton() {
         guard !isLoading else { return }
         screenState = .showingCards
         view?.showEditButton()
-        reloadCardsSection()
+        reloadCollection()
     }
 
     func viewDidHideLoadingSnackbar() {
@@ -193,6 +181,20 @@ extension CardListPresenter: ICardListViewOutput {
         }
 
         view?.enableViewUserInteraction()
+    }
+}
+
+extension CardListPresenter: IAddNewCardOutput {
+
+    func addingNewCardCompleted(result: AddNewCardResult) {
+        switch result {
+        case .cancelled, .failure:
+            break
+        case let .success(card):
+            screenState = .showingCards
+            activeCardsCache.append(card)
+            view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+        }
     }
 }
 
@@ -216,27 +218,30 @@ extension CardListPresenter {
             activeCardsCache = paymentCards
             if paymentCards.isEmpty {
                 viewDidTapDoneEditingButton()
-                reloadCardsSection()
+                reloadCollection()
                 showNoCardsStub()
             } else {
                 if screenState != .editingCards {
                     screenState = .showingCards
                 }
-                reloadCardsSection()
+                reloadCollection()
             }
 
         case let .failure(error):
             switch (error as NSError).code {
-            case NSURLErrorNotConnectedToInternet:
+            case NSURLErrorNotConnectedToInternet, NSURLErrorDataNotAllowed:
                 showNoNetworkStub()
             default:
                 showServerErrorStub()
             }
         }
+
+        view?.enableViewUserInteraction()
     }
 
     private func showServerErrorStub() {
         screenState = .showingStub
+        view?.hideRightBarButton()
         view?.showStub(mode: .serverError { [weak self] in
             self?.view?.dismiss()
         })
@@ -244,6 +249,7 @@ extension CardListPresenter {
 
     private func showNoNetworkStub() {
         screenState = .showingStub
+        view?.hideRightBarButton()
         view?.showStub(mode: .noNetwork { [weak self] in
             self?.view?.hideStub()
             self?.viewDidLoad()
@@ -252,21 +258,30 @@ extension CardListPresenter {
 
     private func showNoCardsStub() {
         screenState = .showingStub
+        view?.hideRightBarButton()
         view?.showStub(mode: .noCards { [weak self] in
-            self?.viewDidTapEditButton()
+            self?.onAddNewCardTap?()
         })
     }
 
-    private func reloadCardsSection() {
+    private func reloadCollection() {
+        showBarButton()
         view?.hideStub()
         view?.reload(sections: sections)
     }
 
+    private func showBarButton() {
+        screenState == .editingCards
+            ? view?.showDoneEditingButton()
+            : view?.showEditButton()
+    }
+
     private func showRemoveCardErrorAlert() {
         view?.showNativeAlert(
-            title: Loc.CommonAlert.DeleteCard.title,
-            message: nil,
-            buttonTitle: Loc.CommonAlert.button
+            data: OkAlertData(
+                title: Loc.CommonAlert.DeleteCard.title,
+                buttonTitle: Loc.CommonAlert.button
+            )
         )
     }
 
@@ -292,7 +307,7 @@ extension CardListPresenter {
 
 private extension String {
     static func format(pan: String) -> String {
-        "•" + pan.suffix(4)
+        "• " + pan.suffix(4)
     }
 
     static func format(validThru: String?) -> String {

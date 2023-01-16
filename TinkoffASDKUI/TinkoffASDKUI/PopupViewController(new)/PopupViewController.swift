@@ -29,6 +29,11 @@ final class PopupViewController: UIViewController {
         }
     }
 
+    override var modalPresentationStyle: UIModalPresentationStyle {
+        get { .overFullScreen }
+        set {}
+    }
+
     // State
     private var originalPopupOriginY: CGFloat = 0
     private var beganPopupOriginY: CGFloat = 0
@@ -321,7 +326,7 @@ final class PopupViewController: UIViewController {
                 view.topAnchor.constraint(equalTo: popupView.topAnchor, constant: model.style.topBarHeight),
                 view.leftAnchor.constraint(equalTo: popupView.leftAnchor),
                 view.rightAnchor.constraint(equalTo: popupView.rightAnchor),
-                view.height(constant: popupView.frame.height),
+                view.bottomAnchor.constraint(equalTo: popupView.forcedSuperview.bottomAnchor),
             ]
         }
     }

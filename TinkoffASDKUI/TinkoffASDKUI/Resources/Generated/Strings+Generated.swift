@@ -11,6 +11,14 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
   internal enum Acquiring {
+    internal enum AddNewCard {
+      /// Добавить
+      internal static let addButton = Loc.tr("Localizable", "Acquiring.AddNewCard.AddButton", fallback: "Добавить")
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.AddNewCard.ButtonClose", fallback: "Закрыть")
+      /// Новая карта
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.AddNewCard.ScreenTitle", fallback: "Новая карта")
+    }
     internal enum CardField {
       /// 123
       internal static let cvvPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.CVVPlaceholder", fallback: "123")
@@ -105,6 +113,10 @@ internal enum Loc {
   internal enum CommonAlert {
     /// Понятно
     internal static let button = Loc.tr("Localizable", "CommonAlert.Button", fallback: "Понятно")
+    internal enum AddCard {
+      /// Карта уже добавлена
+      internal static let title = Loc.tr("Localizable", "CommonAlert.AddCard.Title", fallback: "Карта уже добавлена")
+    }
     internal enum DeleteCard {
       /// Не получилось удалить карту
       internal static let title = Loc.tr("Localizable", "CommonAlert.DeleteCard.Title", fallback: "Не получилось удалить карту")
@@ -114,6 +126,12 @@ internal enum Loc {
       internal static let description = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Description", fallback: "Установите его или выберите другой банк")
       /// Не получилось найти приложение этого банка
       internal static let title = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Title", fallback: "Не получилось найти приложение этого банка")
+    }
+    internal enum SomeProblem {
+      /// Попробуйте снова через пару минут
+      internal static let description = Loc.tr("Localizable", "CommonAlert.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
+      /// У нас проблема, мы уже решаем ее
+      internal static let title = Loc.tr("Localizable", "CommonAlert.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
     }
   }
   internal enum CommonSheet {

@@ -154,33 +154,6 @@ class RootViewController: UITableViewController {
 
     // MARK: - Navigation
 
-    private func addCardView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
-        sdk.presentAddCardView(on: self, customerKey: customerKey, configuration: cardListViewConfigration) { result in
-            var alertMessage: String
-            var alertIcon: AcquiringAlertIconType
-            switch result {
-            case let .success(card):
-                if card != nil {
-                    alertMessage = Loc.Alert.Title.cardSuccessAdded
-                    alertIcon = .success
-                } else {
-                    alertMessage = Loc.Alert.Message.addingCardCancel
-                    alertIcon = .error
-                }
-
-            case let .failure(error):
-                alertMessage = error.localizedDescription
-                alertIcon = .error
-            }
-
-            sdk.presentAlertView(on: self, title: alertMessage, icon: alertIcon)
-        }
-    }
-
-    private func addCardListView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
-        sdk.presentCardList(on: self, customerKey: customerKey, configuration: cardListViewConfigration)
-    }
-
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
         let cardListViewConfigration = AcquiringViewConfiguration()
         cardListViewConfigration.viewTitle = Loc.Title.paymentCardList
@@ -191,14 +164,29 @@ class RootViewController: UITableViewController {
         }
 
         if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
-            // открыть экран сиска карт
-            addCardListView(sdk, AppSetting.shared.activeSdkCredentials.customerKey, cardListViewConfigration)
-            // или открыть экран добавлени карты
-            // addCardView(sdk, customerKey, cardListViewConfigration)
-
             sdk.addCardNeedSetCheckTypeHandler = {
                 AppSetting.shared.addCardChekType
             }
+
+            sdk.presentCardList(
+                on: self,
+                customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
+                configuration: cardListViewConfigration
+            )
+        }
+    }
+
+    @IBAction func openAddCard(_ sender: UIBarButtonItem) {
+        if let sdk = try? SdkAssembly.assembleUIsdk(creds: AppSetting.shared.activeSdkCredentials) {
+            sdk.addCardNeedSetCheckTypeHandler = {
+                AppSetting.shared.addCardChekType
+            }
+
+            sdk.presentAddCard(
+                on: self,
+                customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
+                output: self
+            )
         }
     }
 }
@@ -262,5 +250,36 @@ private extension RootViewController {
             viewController.products = [product]
             navigationController?.pushViewController(viewController, animated: true)
         }
+    }
+}
+
+extension RootViewController: IAddNewCardOutput {
+
+    func addingNewCardCompleted(result: AddNewCardResult) {
+        switch result {
+        case .cancelled, .failure:
+            let alert = UIAlertController.okAlert(
+                title: nil,
+                message: String(describing: result),
+                buttonTitle: Loc.Button.ok
+            )
+
+            present(alert, animated: true)
+
+        case let .success(card):
+            let alert = UIAlertController.okAlert(
+                title: nil,
+                message: Loc.AddCard.Alert.message(String.format(pan: card.cardId)),
+                buttonTitle: Loc.Button.ok
+            )
+            present(alert, animated: true)
+        }
+    }
+}
+
+private extension String {
+
+    static func format(pan: String) -> String {
+        "•" + pan.suffix(4)
     }
 }

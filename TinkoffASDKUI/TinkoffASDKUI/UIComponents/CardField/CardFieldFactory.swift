@@ -7,27 +7,34 @@
 
 import Foundation
 
-final class CardFieldFactory {
+protocol ICardFieldFactory {
+
+    /// Собирает CardFieldView конфигурирует и настраивает логические связи / обработку событий
+    func assembleCardFieldView() -> CardFieldView
+}
+
+final class CardFieldFactory: ICardFieldFactory {
+
+    struct FactoryResult {
+        let configuration: CardFieldView.Configuration
+        let presenter: ICardFieldPresenter
+    }
 
     typealias Texts = Loc.Acquiring.CardField
     private let maskingFactory: ICardFieldMaskingFactory = CardFieldMaskingFactory()
-    private var cardFieldPresenter: ICardFieldPresenter!
 
     /// Собирает конфиг и настраивает логические связи / обработку событий
-    /// - Parameters:
-    ///   - view: CardFieldView (
-    /// - Returns: Конфиг для CardFieldView
-    func assembleCardFieldConfig(view: ICardFieldView) -> CardFieldView.Configuration {
+    func assembleCardFieldView() -> CardFieldView {
+        var cardFieldPresenter: ICardFieldPresenter!
+        var listenerStorage: [NSObject] = []
+
         let cardViewModel = DynamicIconCardView.Model(
             data: DynamicIconCardView.Data()
         )
 
-        var listenerStorage: [NSObject] = []
-
         let expData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForExpiration(didFillMask: { [weak self] text, completed in
-                guard let self = self else { return }
-                self.cardFieldPresenter.didFillExpiration(text: text, filled: completed)
+            delegate: maskingFactory.buildForExpiration(didFillMask: { text, completed in
+                cardFieldPresenter.didFillExpiration(text: text, filled: completed)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.termPlaceholder,
@@ -35,9 +42,8 @@ final class CardFieldFactory {
         )
 
         let cardNumberData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForCardNumber(didFillMask: { [weak self] text, completed in
-                guard let self = self else { return }
-                self.cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
+            delegate: maskingFactory.buildForCardNumber(didFillMask: { text, completed in
+                cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: nil,
@@ -45,9 +51,8 @@ final class CardFieldFactory {
         )
 
         let cvcData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForCvc(didFillMask: { [weak self] text, completed in
-                guard let self = self else { return }
-                self.cardFieldPresenter.didFillCvc(text: text, filled: completed)
+            delegate: maskingFactory.buildForCvc(didFillMask: { text, completed in
+                cardFieldPresenter.didFillCvc(text: text, filled: completed)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.cvvPlaceholder,
@@ -56,7 +61,6 @@ final class CardFieldFactory {
 
         let config = CardFieldView.Config.assembleWithRegularStyle(
             data: CardFieldView.DataDependecies(
-                cardFieldData: CardFieldView.Data(),
                 dynamicCardIconData: cardViewModel.data,
                 expirationTextFieldData: expData,
                 cardNumberTextFieldData: cardNumberData,
@@ -64,7 +68,20 @@ final class CardFieldFactory {
             )
         )
 
-        cardFieldPresenter = CardFieldPresenter(view: view, listenerStorage: listenerStorage, config: config)
-        return config
+        let presenter = CardFieldPresenter(
+            listenerStorage: listenerStorage,
+            config: config
+        )
+
+        cardFieldPresenter = presenter
+        let view = CardFieldView(presenter: cardFieldPresenter)
+        presenter.view = view
+
+        cardFieldPresenter.validationResultDidChange = { [weak view] result in
+            view?.delegate?.cardFieldValidationResultDidChange(result: result)
+        }
+
+        view.update(with: config)
+        return view
     }
 }

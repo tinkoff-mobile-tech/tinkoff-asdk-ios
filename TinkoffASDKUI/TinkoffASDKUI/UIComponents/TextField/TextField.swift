@@ -256,14 +256,9 @@ final class TextField: UIView, Editable {
 
 extension TextField: ConfigurableItem {
 
-    func configure(with config: Configuration) {
-        config.updater = self
-        prepareForReuse()
-        configuration = config
-        apply(textFieldConfig: config.textField)
-
-        textField.setNeedsLayout()
-        textField.layoutIfNeeded()
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard headerLabel.frame.width == .zero else { return }
 
         let headerLabelHeight = textField.font?.lineHeight ?? 0
         headerLabel.frame = CGRect(
@@ -272,9 +267,15 @@ extension TextField: ConfigurableItem {
             width: textField.frame.width,
             height: headerLabelHeight
         )
-
-        headerLabel.configure(config.headerLabel)
         showTitle(hasContentOrActive: hasContentOrActive, animated: false)
+    }
+
+    func configure(with config: Configuration) {
+        config.updater = self
+        prepareForReuse()
+        configuration = config
+        apply(textFieldConfig: config.textField)
+        headerLabel.configure(config.headerLabel)
     }
 
     private func apply(textFieldConfig config: TextFieldConfiguration) {
@@ -382,10 +383,18 @@ extension TextField: DeleteButtonContentDelegate {
     }
 
     func hideAccessoryContentView() {
-        accessoryWidthConstraint.constant = 0
+        startTransition {
+            self.accessoryWidthConstraint.constant = .zero
+        }
     }
 
     func showAccessoryContentView(width: CGFloat) {
-        accessoryWidthConstraint.constant = width
+        startTransition {
+            self.accessoryWidthConstraint.constant = width
+        }
+    }
+
+    private func startTransition(animations: @escaping () -> Void) {
+        UIView.transition(with: self, duration: 0.1, options: .transitionCrossDissolve, animations: animations)
     }
 }

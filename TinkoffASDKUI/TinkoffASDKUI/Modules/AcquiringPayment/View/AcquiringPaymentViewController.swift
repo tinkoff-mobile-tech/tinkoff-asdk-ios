@@ -44,15 +44,7 @@ protocol AcquiringCardListDataSourceDelegate: AnyObject {
         number: String,
         expDate: String,
         cvc: String,
-        addCardViewPresenter: AcquiringView,
         alertViewHelper: AcquiringAlertViewProtocol?,
-        completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
-    )
-    /// Показать экран добавления карты
-    func presentAddCard(
-        on presentingViewController: UIViewController,
-        customerKey: String,
-        configuration: AcquiringViewConfiguration,
         completeHandler: @escaping (_ result: Result<PaymentCard?, Error>) -> Void
     )
 }

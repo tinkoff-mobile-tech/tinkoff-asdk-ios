@@ -15,7 +15,7 @@ extension Button {
             case image(normal: UIImage?, highlighted: UIImage?, disabled: UIImage?)
         }
 
-        let background: Background
+        var background: Background
         var cornerRadius: CGFloat
         let loaderStyle: ActivityIndicatorView.Style
         var contentEdgeInsets: UIEdgeInsets
@@ -37,6 +37,18 @@ extension Button {
         func set(cornerRadius: CGFloat) -> Self {
             var shadowCopy = self
             shadowCopy.cornerRadius = cornerRadius
+            return shadowCopy
+        }
+
+        func set(basicTextStyle: Data.Text.Style?) -> Self {
+            var shadowCopy = self
+            shadowCopy.basicTextStyle = basicTextStyle
+            return shadowCopy
+        }
+
+        func set(background: Background) -> Self {
+            var shadowCopy = self
+            shadowCopy.background = background
             return shadowCopy
         }
     }
@@ -86,9 +98,9 @@ extension Button.Style {
     static var primary: Self {
         Self(
             background: .color(
-                normal: UIColor(hex: "#FEDE2E"),
-                highlighted: UIColor(hex: "#FACE2E"),
-                disabled: nil
+                normal: ASDKColors.Foreground.brandTinkoffAccent,
+                highlighted: UIColor(hex: "#FFCD33"),
+                disabled: ASDKColors.Background.neutral1.color
             ),
             cornerRadius: .defaultCornerRadius,
             loaderStyle: ActivityIndicatorView.Style(
@@ -96,9 +108,10 @@ extension Button.Style {
             ),
             contentEdgeInsets: UIEdgeInsets(vertical: 8, horizontal: 16),
             basicTextStyle: Button.Data.Text.Style(
-                normal: UIColor(hex: "#333334"),
-                highlighted: nil,
-                disabled: nil
+                normal: ASDKColors.Text.primaryOnTinkoff.color,
+                highlighted: ASDKColors.Text.primaryOnTinkoff.color,
+                disabled: ASDKColors.Text.tertiary.color,
+                font: UILabel.Style.bodyL().font
             )
         )
     }

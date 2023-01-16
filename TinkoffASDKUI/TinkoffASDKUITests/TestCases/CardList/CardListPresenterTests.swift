@@ -48,7 +48,7 @@ final class CardListPresenterTests: XCTestCase {
 
         // then
         XCTAssertEqual(view.hideStubCallCounter, 2)
-        XCTAssertEqual(view.showDoneEditingButtonCallCounter, 1)
+        XCTAssertEqual(view.showDoneEditingButtonCallCounter, 2)
         XCTAssertEqual(view.reloadCallCounter, 2)
     }
 
@@ -75,7 +75,7 @@ final class CardListPresenterTests: XCTestCase {
         dependencies.sutAsProtocol.viewDidTapDoneEditingButton()
 
         // then
-        XCTAssertEqual(view.showEditButtonCallCounter, 1)
+        XCTAssertEqual(view.showEditButtonCallCounter, 2)
         XCTAssertEqual(view.hideStubCallCounter, 1)
         XCTAssertEqual(view.reloadCallCounter, 1)
     }
@@ -115,7 +115,7 @@ final class CardListPresenterTests: XCTestCase {
         dependencies.sutAsProtocol.viewDidHideLoadingSnackbar()
 
         // then
-        XCTAssertEqual(view.enableViewUserInteractionCallCounter, 1)
+        XCTAssertEqual(view.enableViewUserInteractionCallCounter, 2)
         XCTAssertEqual(view.showNativeAlertCallCounter, 1)
     }
 
@@ -319,7 +319,8 @@ extension CardListPresenterTests {
             id: "",
             pan: "",
             cardModel: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
-            assembledText: "",
+            bankNameText: "",
+            cardNumberText: "",
             isInEditingMode: true
         )
     }

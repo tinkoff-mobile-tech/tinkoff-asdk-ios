@@ -66,7 +66,6 @@ extension CardFieldPresenterTests {
 
         return .assembleWithRegularStyle(
             data: CardFieldView.DataDependecies(
-                cardFieldData: CardFieldView.Data(),
                 dynamicCardIconData: DynamicIconCardView.Data(),
                 expirationTextFieldData: textFieldData,
                 cardNumberTextFieldData: textFieldData,
@@ -82,13 +81,14 @@ extension CardFieldPresenterTests {
         let bankSystemResolverMock = MockBankResolver()
 
         let presenter = CardFieldPresenter(
-            view: viewMock,
             listenerStorage: [],
             config: assembleConfig(),
             validator: validatorMock,
             paymentSystemResolver: paymentSystemResolverMock,
             bankResolver: bankSystemResolverMock
         )
+
+        presenter.view = viewMock
 
         return Dependencies(
             sut: presenter,

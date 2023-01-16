@@ -10,7 +10,6 @@ import UIKit
 extension CardFieldView {
 
     final class Config {
-        let data: Data
         let style: Style
         var dynamicCardIcon: DynamicIconCardView.Model
 
@@ -21,14 +20,12 @@ extension CardFieldView {
         var onDidConfigure: (() -> Void)?
 
         init(
-            data: Data,
             style: Style,
             dynamicCardIcon: DynamicIconCardView.Model,
             expirationTextFieldConfig: TextField.Configuration,
             cardNumberTextFieldConfig: TextField.Configuration,
             cvcTextFieldConfig: TextField.Configuration
         ) {
-            self.data = data
             self.style = style
             self.dynamicCardIcon = dynamicCardIcon
             self.expirationTextFieldConfig = expirationTextFieldConfig
@@ -36,8 +33,6 @@ extension CardFieldView {
             self.cvcTextFieldConfig = cvcTextFieldConfig
         }
     }
-
-    struct Data {}
 
     struct Style {
         let card: Card
@@ -71,7 +66,6 @@ extension CardFieldView.Config {
             .set(textColor: ASDKColors.Text.secondary.color)
 
         return Self(
-            data: data.cardFieldData,
             style: .regular,
             dynamicCardIcon: DynamicIconCardView.Model(data: data.dynamicCardIconData),
             expirationTextFieldConfig: TextField.Configuration(
@@ -79,7 +73,7 @@ extension CardFieldView.Config {
                     delegate: data.expirationTextFieldData.delegate,
                     text: data.expirationTextFieldData.text,
                     placeholder: data.expirationTextFieldData.placeholder,
-                    hasClearButton: false,
+                    hasClearButton: true,
                     keyboardType: .decimalPad
                 ),
                 headerLabel: UILabel.Configuration(
@@ -103,7 +97,7 @@ extension CardFieldView.Config {
                     delegate: data.cvcTextFieldData.delegate,
                     text: data.cvcTextFieldData.text,
                     placeholder: data.cvcTextFieldData.placeholder,
-                    hasClearButton: false,
+                    hasClearButton: true,
                     keyboardType: .decimalPad,
                     isSecure: true
                 ),

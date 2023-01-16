@@ -64,7 +64,7 @@ final class CardListView: UIView, StubViewPresentable {
     private lazy var collectionViewLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumLineSpacing = .zero
         return layout
     }()
 
@@ -103,17 +103,20 @@ final class CardListView: UIView, StubViewPresentable {
 
     func disableUserInteraction() {
         guard blockingView.superview == nil else { return }
-        blockingView.alpha = 0
+        blockingView.alpha = 1
         addSubview(blockingView)
         blockingView.pinEdgesToSuperview()
+
         UIView.addPopingAnimation {
-            self.blockingView.alpha = 0.5
+            self.collectionView.alpha = 0.5
         }
     }
 
     func enableUserInteraction() {
+        blockingView.alpha = 0
+
         UIView.addPopingAnimation(animations: {
-            self.blockingView.alpha = 0
+            self.collectionView.alpha = 1
         }, completion: { [weak self] _ in
             self?.blockingView.removeFromSuperview()
         })
@@ -132,6 +135,10 @@ final class CardListView: UIView, StubViewPresentable {
             animations: { self.shimmerView.alpha = showing ? 1 : 0 },
             completion: { _ in completion?() }
         )
+    }
+
+    func setCollectionView(isHidden: Bool) {
+        collectionView.isHidden = isHidden
     }
 
     // MARK: Initial Configuration
@@ -159,7 +166,7 @@ final class CardListView: UIView, StubViewPresentable {
                 + view.makeLeftAndRightEqualToSuperView(inset: .zero)
         }
 
-        blockingView.backgroundColor = style.backgroundColor
+        blockingView.backgroundColor = .clear
     }
 }
 
@@ -182,8 +189,6 @@ extension CardListView: UICollectionViewDataSource {
         case let .addCard(configs):
             return configs.count
         }
-
-        return .zero
     }
 
     func collectionView(
@@ -202,8 +207,10 @@ extension CardListView: UICollectionViewDataSource {
                 })
                 : .none
 
-            let configuration = PaymentCardRemovableView.Cell.Configuration(
-                content: .plain(text: model.assembledText, style: .bodyL()),
+            let textStyle = UILabel.Style.bodyL().set(numberOfLines: 1)
+            let configuration = PaymentCardRemovableView.Cell.ContentConfiguration(
+                bankNameContent: .plain(text: model.bankNameText, style: textStyle),
+                cardNumberContent: .plain(text: model.cardNumberText, style: textStyle),
                 card: model.cardModel,
                 accessoryItem: accesoryItem,
                 insets: PaymentCardRemovableView.contentInsets
@@ -211,30 +218,26 @@ extension CardListView: UICollectionViewDataSource {
 
             let cell = collectionView
                 .dequeue(PaymentCardRemovableView.Cell.self, for: indexPath)
-            cell.shouldHighlight = false
 
-            cell.customAutolayoutForContent = {
-                $0.makeConstraints { view in
-                    view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
-                }
-            }
-            cell.update(with: configuration)
+            cell.update(
+                with: CollectionCell<PaymentCardRemovableView>.Configuration(
+                    contentConfiguration: configuration,
+                    shouldHighlight: false
+                )
+            )
+
             return cell
 
         case let .addCard(data):
             let model = data[indexPath.item]
             let cell = collectionView.dequeue(IconTitleView.Cell.self, for: indexPath)
-            cell.customAutolayoutForContent = {
-                $0.makeConstraints { view in
-                    view.edgesEqualToSuperview() + [view.width(constant: self.frame.width)]
-                }
-            }
+
             let config = IconTitleView.Configuration.buildAddCardButton(
                 icon: model.icon.image,
                 text: model.title
             )
 
-            cell.update(with: config)
+            cell.update(with: CollectionCell<IconTitleView>.Configuration(contentConfiguration: config))
             return cell
         }
     }
@@ -273,6 +276,14 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
         didSelectItemAt indexPath: IndexPath
     ) {
         delegate?.didSelectCell(at: indexPath)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: frame.width, height: CGFloat.itemHeight)
     }
 }
 

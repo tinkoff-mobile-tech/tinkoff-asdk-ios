@@ -48,7 +48,7 @@ final class SnackbarViewController: UIViewController {
 extension SnackbarViewController {
 
     /// Показать снек (с анимацией)
-    func showSnackView(config: SnackbarView.Configuration, completion: (() -> Void)? = nil) {
+    func showSnackView(config: SnackbarView.Configuration, animated: Bool, completion: ((Bool) -> Void)? = nil) {
         state = .showing
         let snackbarView = SnackbarView()
         self.snackbarView = snackbarView
@@ -59,32 +59,51 @@ extension SnackbarViewController {
         snackbarView.frame = hiddenFrame
         snackbarView.configure(with: config)
 
+        let firstStepAnimations: () -> Void = {
+            var frame = shownFrame
+            frame.origin.y -= (frame.height / 8)
+            snackbarView.frame = frame
+        }
+
+        let secondStepAnimations: () -> Void = {
+            snackbarView.frame = shownFrame
+        }
+
+        let localCompletion: ((Bool) -> Void)? = { [weak self] didComplete in
+            self?.state = .shown
+            completion?(didComplete)
+        }
+
+        if animated == false {
+            let transformations = {
+                firstStepAnimations()
+                secondStepAnimations()
+                localCompletion?(true)
+            }
+
+            // run without animation
+            transformations()
+            // leaving the scope
+            return
+        }
+
         let animationItem = Animation(
             body: {
                 // 1
                 UIView.addKeyframe(
                     withRelativeStartTime: 0,
                     relativeDuration: 1,
-                    animations: {
-                        var frame = shownFrame
-                        frame.origin.y -= (frame.height / 8)
-                        snackbarView.frame = frame
-                    }
+                    animations: firstStepAnimations
                 )
 
                 // 2
                 UIView.addKeyframe(
                     withRelativeStartTime: 0.8,
                     relativeDuration: 1,
-                    animations: {
-                        snackbarView.frame = shownFrame
-                    }
+                    animations: secondStepAnimations
                 )
             },
-            completion: {
-                self.state = .shown
-                completion?()
-            }
+            completion: localCompletion
         )
 
         let animation = {
@@ -95,8 +114,8 @@ extension SnackbarViewController {
                 animations: {
                     animationItem.body()
                 },
-                completion: { _ in
-                    animationItem.completion()
+                completion: { didComplete in
+                    animationItem.completion?(didComplete)
                 }
             )
         }
@@ -109,7 +128,7 @@ extension SnackbarViewController {
     }
 
     /// Убрать снек (с анимацией или без)
-    func hideSnackView(animated: Bool = true, completion: (() -> Void)? = nil) {
+    func hideSnackView(animated: Bool = true, completion: ((Bool) -> Void)? = nil) {
         if state == .showing {
             didSetStateToShownActions[#function] = { [weak self] in
                 self?.hideSnackView(animated: animated, completion: completion)
@@ -133,10 +152,10 @@ extension SnackbarViewController {
             body: {
                 snackbarView.frame = self.getHiddenSnackFrame()
             },
-            completion: { [weak self] in
+            completion: { [weak self] didComplete in
                 self?.state = .hidden
                 self?.view.removeFromSuperview()
-                completion?()
+                completion?(didComplete)
             }
         )
 
@@ -146,13 +165,13 @@ extension SnackbarViewController {
                 delay: .zero,
                 animations: {
                     animation.body()
-                }, completion: { _ in
-                    animation.completion()
+                }, completion: { didComplete in
+                    animation.completion?(didComplete)
                 }
             )
         } else {
             animation.body()
-            animation.completion()
+            animation.completion?(true)
         }
     }
 }
@@ -241,7 +260,7 @@ extension SnackbarViewController {
 
     struct Animation {
         let body: () -> Void
-        let completion: () -> Void
+        let completion: ((Bool) -> Void)?
     }
 
     struct Constants {

@@ -10,6 +10,14 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
+  internal enum AddCard {
+    internal enum Alert {
+      /// Карта %@ была добавлена
+      internal static func message(_ p1: Any) -> String {
+        return Loc.tr("Localizable", "addCard.alert.message", String(describing: p1), fallback: "Карта %@ была добавлена")
+      }
+    }
+  }
   internal enum Alert {
     internal enum Message {
       /// Операция отменена

@@ -9,13 +9,13 @@ extension CardFieldView {
 
             struct DynamicIcon {
                 static let topInset: CGFloat = 15
-                static let leftInset: CGFloat = 16
+                static let leftInset: CGFloat = 12
                 static let size = CGSize(width: 40, height: 26)
             }
 
             struct TextField {
                 static let topInset: CGFloat = 9
-                static let leftInset: CGFloat = 16
+                static let leftInset: CGFloat = 12
                 static let rightInset: CGFloat = 20
             }
         }
