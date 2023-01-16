@@ -47,7 +47,8 @@ class BuyProductsViewController: UIViewController {
     }
 
     var products: [Product] = []
-    var sdk: AcquiringUISDK!
+    var uiSDK: AcquiringUISDK!
+    var coreSDK: AcquiringSdk!
     var customerKey: String!
     var customerEmail: String?
     weak var scaner: AcquiringScanerProtocol?
@@ -82,9 +83,9 @@ class BuyProductsViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
 
-        sdk.setupCardListDataProvider(for: customerKey, statusListener: self)
-        try? sdk.cardListReloadData()
-        sdk.addCardNeedSetCheckTypeHandler = {
+        uiSDK.setupCardListDataProvider(for: customerKey, statusListener: self)
+        try? uiSDK.cardListReloadData()
+        uiSDK.addCardNeedSetCheckTypeHandler = {
             AppSetting.shared.addCardChekType
         }
 
@@ -99,7 +100,7 @@ class BuyProductsViewController: UIViewController {
     private func setupYandexPayButton() {
         let configuration = YandexPaySDKConfiguration(environment: .sandbox, locale: .system)
 
-        sdk.yandexPayButtonContainerFactory(with: configuration) { [weak self] result in
+        uiSDK.yandexPayButtonContainerFactory(with: configuration) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
@@ -256,7 +257,7 @@ class BuyProductsViewController: UIViewController {
             }
 
             if AppSetting.shared.acquiring {
-                sdk.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
+                uiSDK.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
             } else {
                 let alertView = UIAlertController(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
                 alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
@@ -265,7 +266,7 @@ class BuyProductsViewController: UIViewController {
 
         case let .failure(error):
             if AppSetting.shared.acquiring {
-                sdk.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
+                uiSDK.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
             } else {
                 let alertView = UIAlertController(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
                 alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
@@ -275,7 +276,7 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfiguration) {
-        sdk.presentPaymentView(
+        uiSDK.presentPaymentView(
             on: self,
             acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration(
                 paymentStage: .`init`(paymentData: paymentData)
@@ -292,7 +293,7 @@ class BuyProductsViewController: UIViewController {
     }
 
     func pay(_ complete: @escaping (() -> Void)) {
-        sdk.pay(
+        uiSDK.pay(
             on: self,
             initPaymentData: createPaymentData(),
             cardRequisites: PaymentSourceData.cardNumber(number: "!!!номер карты!!!", expDate: "1120", cvv: "111"),
@@ -342,7 +343,7 @@ class BuyProductsViewController: UIViewController {
 
     func charge(_ complete: @escaping (() -> Void)) {
         if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
-            sdk.presentPaymentView(
+            uiSDK.presentPaymentView(
                 on: self,
                 paymentData: createPaymentData(),
                 parentPatmentId: parentPaymentId,
@@ -355,7 +356,7 @@ class BuyProductsViewController: UIViewController {
     }
 
     func generateSbpQrImage() {
-        sdk.presentPaymentSbpQrImage(
+        uiSDK.presentPaymentSbpQrImage(
             on: self,
             paymentData: createPaymentData(),
             configuration: acquiringViewConfiguration()
@@ -368,7 +369,7 @@ class BuyProductsViewController: UIViewController {
         let acquiringPaymentStageConfiguration = AcquiringPaymentStageConfiguration(
             paymentStage: .`init`(paymentData: createPaymentData())
         )
-        let viewController = sdk.urlSBPPaymentViewController(
+        let viewController = uiSDK.urlSBPPaymentViewController(
             acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
             configuration: acquiringViewConfiguration()
         )
@@ -518,7 +519,7 @@ extension BuyProductsViewController: UITableViewDataSource {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
                 cell.button.setImage(Asset.buttonApplePay.image, for: .normal)
-                cell.button.isEnabled = sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration)
+                cell.button.isEnabled = uiSDK.canMakePaymentsApplePay(with: paymentApplePayConfiguration)
 
                 cell.onButtonTouch = { [weak self] in
                     self?.payByApplePay()
@@ -531,7 +532,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.isEnabled = sdk.canMakePaymentsSBP()
+                cell.button.isEnabled = uiSDK.canMakePaymentsSBP()
                 cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpQrImage()
@@ -544,7 +545,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.isEnabled = sdk.canMakePaymentsSBP()
+                cell.button.isEnabled = uiSDK.canMakePaymentsSBP()
                 cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpUrl()
@@ -593,14 +594,14 @@ extension BuyProductsViewController: UITableViewDataSource {
             return "сумма: \(Utils.formatAmount(NSDecimalNumber(value: productsAmount())))"
 
         case .pay:
-            let cardsCount = (try? sdk.cardListNumberOfCards()) ?? 0
+            let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара, доступно \(cardsCount) сохраненных карт"
             }
 
             return "открыть платежную форму и перейти к оплате товара"
         case .payAndSaveAsParent:
-            let cardsCount = (try? sdk.cardListNumberOfCards()) ?? 0
+            let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cardsCount) сохраненных карт"
             }
@@ -614,21 +615,21 @@ extension BuyProductsViewController: UITableViewDataSource {
             return "нет доступных родительских платежей"
 
         case .payApplePay:
-            if sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration) {
+            if uiSDK.canMakePaymentsApplePay(with: paymentApplePayConfiguration) {
                 return "оплатить с помощью ApplePay"
             }
 
             return "оплата с помощью ApplePay недоступна"
 
         case .paySbpUrl:
-            if sdk.canMakePaymentsSBP() {
+            if uiSDK.canMakePaymentsSBP() {
                 return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
             }
 
             return "оплата недоступна"
 
         case .paySbpQrCode:
-            if sdk.canMakePaymentsSBP() {
+            if uiSDK.canMakePaymentsSBP() {
                 return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
             }
 
@@ -669,7 +670,7 @@ extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegat
         handler completion: @escaping (PKPaymentAuthorizationResult) -> Void
     ) {
         let initData = createPaymentData()
-        sdk.performPaymentWithApplePay(
+        uiSDK.performPaymentWithApplePay(
             paymentData: initData,
             paymentToken: payment.token,
             acquiringConfiguration: AcquiringConfiguration(paymentStage: .none)
