@@ -15,14 +15,14 @@ public enum YandexPayPaymentResult {
         public let paymentId: String
         /// Идентификатор заказа в системе продавца
         public let orderId: String
-        /// Сумма оплаты в копейках
+        /// Сумма заказа в копейках
         public let amount: Int64
 
         /// Инициализация параметров
         /// - Parameters:
         ///   - paymentId: Идентификатор платежа
         ///   - orderId: Идентификатор заказа в системе продавца
-        ///   - amount: Сумма оплаты в копейках
+        ///   - amount: Сумма заказа в копейках
         init(
             paymentId: String,
             orderId: String,

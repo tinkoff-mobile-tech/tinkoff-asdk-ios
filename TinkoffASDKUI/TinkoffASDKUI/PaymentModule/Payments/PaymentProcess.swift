@@ -19,8 +19,11 @@
 
 import TinkoffASDKCore
 
+/// Тип проведения оплаты
 public enum PaymentFlow: Equatable {
+    /// Оплата совершится с помощью вызова `v2/Init` в API эквайринга, на основе которого будет сформирован `paymentId`
     case full(paymentOptions: PaymentOptions)
+    /// Используется в ситуациях, когда вызов `v2/Init` и формирование `paymentId` происходит на бекенде продавца
     case finish(paymentId: String, customerOptions: CustomerOptions?)
 }
 
