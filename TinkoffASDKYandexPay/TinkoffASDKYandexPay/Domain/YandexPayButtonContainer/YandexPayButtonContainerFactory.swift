@@ -12,16 +12,16 @@ import YandexPaySDK
 
 final class YandexPayButtonContainerFactory: IYandexPayButtonContainerFactory {
     private let sdkButtonFactory: IYandexPaySDKButtonFactory
-    private let paymentFlowAssembly: IYandexPayPaymentFlowAssembly
+    private let yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly
     private let method: YandexPayMethod
 
     init(
         sdkButtonFactory: IYandexPaySDKButtonFactory,
-        paymentFlowAssembly: IYandexPayPaymentFlowAssembly,
+        yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly,
         method: YandexPayMethod
     ) {
         self.sdkButtonFactory = sdkButtonFactory
-        self.paymentFlowAssembly = paymentFlowAssembly
+        self.yandexPayPaymentFlowAssembly = yandexPayPaymentFlowAssembly
         self.method = method
     }
 
@@ -33,7 +33,7 @@ final class YandexPayButtonContainerFactory: IYandexPayButtonContainerFactory {
             configuration: configuration,
             sdkButtonFactory: sdkButtonFactory,
             paymentSheetFactory: YPPaymentSheetFactory(method: method),
-            paymentFlowFactory: paymentFlowAssembly,
+            yandexPayPaymentFlowAssembly: yandexPayPaymentFlowAssembly,
             delegate: delegate
         )
     }

@@ -26,7 +26,7 @@ final class YandexPayButtonContainerFactoryInitializer: IYandexPayButtonContaine
 
         return YandexPayButtonContainerFactory(
             sdkButtonFactory: yandexPaySDK,
-            paymentFlowAssembly: flowAssembly,
+            yandexPayPaymentFlowAssembly: flowAssembly,
             method: method
         )
     }

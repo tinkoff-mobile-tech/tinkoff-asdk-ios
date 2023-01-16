@@ -9,9 +9,9 @@ import Foundation
 
 final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
     private let paymentActivityAssembly: IYandexPayPaymentSheetAssembly
-    private weak var delegate: IYandexPayPaymentFlowOutput?
+    private weak var delegate: YandexPayPaymentFlowDelegate?
 
-    init(paymentActivityAssembly: IYandexPayPaymentSheetAssembly, delegate: IYandexPayPaymentFlowOutput) {
+    init(paymentActivityAssembly: IYandexPayPaymentSheetAssembly, delegate: YandexPayPaymentFlowDelegate) {
         self.paymentActivityAssembly = paymentActivityAssembly
         self.delegate = delegate
     }
