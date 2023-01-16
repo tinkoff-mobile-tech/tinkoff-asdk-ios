@@ -42,8 +42,10 @@ class BuyProductsViewController: UIViewController {
         /// оплатить с помощью `Системы Быстрых Платежей`
         /// сгенерировать url для оплаты
         case paySbpUrl
-        /// Оплатить с помощью встроенной кнопки `YandexPay`
-        case yandexPay
+        ///  Кнопка `YandexPay` с полным флоу оплаты (платеж инициируется из SDK)
+        case yandexPayFull
+        /// Кнопка `YandexPay` c завершающим флоу оплаты (платеж инициируется вне SDK)
+        case yandexPayFinish
     }
 
     var products: [Product] = []
@@ -59,7 +61,9 @@ class BuyProductsViewController: UIViewController {
 
     @IBOutlet var tableView: UITableView!
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
-    private lazy var yandexPayButtonContainerView = YPButtonContainerView()
+
+    private var fullPaymentFlowYandexPayButton: IYandexPayButtonContainer?
+    private var finishPaymentFLowYandexPayButton: IYandexPayButtonContainer?
 
     private var paymentData: PaymentInitData?
     private var cardRebillIds: [PaymentCard]?
@@ -79,7 +83,7 @@ class BuyProductsViewController: UIViewController {
         title = Loc.Title.paymentSource
 
         tableView.registerCells(types: [ButtonTableViewCell.self])
-        tableView.register(ContainerTableViewCell.self, forCellReuseIdentifier: ContainerTableViewCell.reusableId)
+        tableView.register(ContainerTableViewCell.self)
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -105,13 +109,16 @@ class BuyProductsViewController: UIViewController {
 
             switch result {
             case let .success(factory):
-                let button = factory.createButtonContainer(
-                    with: YandexPayButtonContainerConfiguration(theme: YandexPayButtonContainerTheme(appearance: .dark)),
-                    delegate: self
+                let configuration = YandexPayButtonContainerConfiguration(
+                    theme: YandexPayButtonContainerTheme(appearance: .dark)
                 )
+                let fullPaymentButton = factory.createButtonContainer(with: configuration, delegate: self)
+                self.fullPaymentFlowYandexPayButton = fullPaymentButton
+                self.tableViewCells.append(.yandexPayFull)
 
-                self.yandexPayButtonContainerView.set(button: button)
-                self.tableViewCells.append(.yandexPay)
+                let finishPaymentButton = factory.createButtonContainer(with: configuration, delegate: self)
+                self.finishPaymentFLowYandexPayButton = finishPaymentButton
+                self.tableViewCells.append(.yandexPayFinish)
                 self.tableView.reloadData()
             case .failure:
                 break
@@ -237,7 +244,6 @@ class BuyProductsViewController: UIViewController {
         viewConfigration.featuresOptions.tinkoffPayEnabled = AppSetting.shared.tinkoffPay
 
         viewConfigration.viewTitle = Loc.Title.pay
-        viewConfigration.localizableInfo = AcquiringViewConfiguration.LocalizableInfo(lang: AppSetting.shared.languageId)
 
         return viewConfigration
     }
@@ -553,11 +559,17 @@ extension BuyProductsViewController: UITableViewDataSource {
 
                 return cell
             }
-        case .yandexPay:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: ContainerTableViewCell.reusableId) as? ContainerTableViewCell else {
-                fatalError()
+        case .yandexPayFull:
+            let cell = tableView.dequeue(ContainerTableViewCell.self)
+            if let button = fullPaymentFlowYandexPayButton {
+                cell.setContent(button, insets: UIEdgeInsets(horizontal: 32, vertical: 8))
             }
-            cell.setContent(yandexPayButtonContainerView)
+            return cell
+        case .yandexPayFinish:
+            let cell = tableView.dequeue(ContainerTableViewCell.self)
+            if let button = finishPaymentFLowYandexPayButton {
+                cell.setContent(button, insets: UIEdgeInsets(horizontal: 64, vertical: 8))
+            }
             return cell
         }
 
@@ -568,22 +580,17 @@ extension BuyProductsViewController: UITableViewDataSource {
         switch tableViewCells[section] {
         case .products:
             return Loc.Title.goods
-
         case .pay:
             return Loc.Title.paymeny
-
         case .payAndSaveAsParent:
             return Loc.Title.payAndSaveAsParent
-
         case .payRequrent:
             return Loc.Title.paymentTryAgain
-
         case .payApplePay:
             return Loc.Title.payByApplePay
-
         case .paySbpUrl, .paySbpQrCode:
             return Loc.Title.payBySBP
-        case .yandexPay:
+        case .yandexPayFull, .yandexPayFinish:
             return Loc.Title.yandexPay
         }
     }
@@ -634,8 +641,10 @@ extension BuyProductsViewController: UITableViewDataSource {
             }
 
             return "оплата недоступна"
-        case .yandexPay:
-            return nil
+        case .yandexPayFull:
+            return "Full payment flow"
+        case .yandexPayFinish:
+            return "Finish payment flow"
         }
     }
 }
