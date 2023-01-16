@@ -1013,32 +1013,13 @@ public class AcquiringUISDK: NSObject {
             modalViewController.acquiringPaymentController = acquiringPaymentController
         }
 
-        modalViewController.onTouchButtonShowCardList = { [injectableCardListProvider, weak self, weak modalViewController] in
-            guard let self = self,
-                  let cardListProvider = injectableCardListProvider
-            else { return }
-
-            let (cardsView, module) = self.cardListAssembly.cardSelectionModule(
-                cardListProvider: cardListProvider
+        modalViewController.onTouchButtonShowCardList = { [injectableCardListProvider, weak self] in
+            guard let cardListProvider = injectableCardListProvider else { return }
+            self?.startChoosePaymentCardFlow(
+                cardListDataProvider: cardListProvider,
+                modalViewController: modalViewController,
+                customerKey: customerKey
             )
-
-            module.onSelectCard = { [weak cardsView, weak modalViewController] selectedCard in
-                modalViewController?.selectCard(withId: selectedCard.cardId)
-                cardsView?.dismiss(animated: true)
-            }
-
-            module.onAddNewCardTap = { [weak cardsView, weak modalViewController] in
-                modalViewController?.selectRequisitesInput()
-                cardsView?.dismiss(animated: true)
-            }
-
-            let cardsNavigationController = UINavigationController(rootViewController: cardsView)
-
-            if let modalViewController = modalViewController {
-                modalViewController.presentVC(cardsNavigationController, animated: true)
-            } else {
-                self.presentingViewController?.present(cardsNavigationController, animated: true)
-            }
         }
 
         modalViewController.onCancelPayment = { [weak self] in
@@ -1059,6 +1040,59 @@ public class AcquiringUISDK: NSObject {
                 onPresenting?(modalViewController)
             }
         )
+    }
+
+    private func startChoosePaymentCardFlow(
+        cardListDataProvider: CardListDataProvider,
+        modalViewController: AcquiringPaymentViewController?,
+        customerKey: String?
+    ) {
+        let presentingViewController = modalViewController == nil
+            ? self.presentingViewController
+            : modalViewController
+
+        guard let presentingViewController = presentingViewController, let customerKey = customerKey
+        else { return }
+
+        var selectedCardId = ""
+        if case let .savedCard(cardId, _) = modalViewController?.cardRequisites() {
+            selectedCardId = cardId
+        }
+
+        let context = ChoosePaymentCardListContext(
+            baseContext: CardListContext(
+                presentingViewController: presentingViewController,
+                customerKey: customerKey
+            ),
+            selectedCardId: selectedCardId,
+            setOutputEvents: { [weak modalViewController, weak presentingViewController] cardListOutput in
+
+                let dismissDelayed: () -> Void = {
+                    let presentedModalViewController = presentingViewController?.presentedViewController
+                    presentedModalViewController?.view.isUserInteractionEnabled = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        presentedModalViewController?.dismiss(animated: true)
+                    }
+                }
+
+                cardListOutput.onAddNewCardTap = {
+                    modalViewController?.selectRequisitesInput()
+                    dismissDelayed()
+                }
+
+                cardListOutput.onSelectCard = { selectedCard in
+                    modalViewController?.selectCard(withId: selectedCard.cardId)
+                    dismissDelayed()
+                }
+            }
+        )
+
+        let chooseCardFlow = ChoosePaymentCardListFlow(
+            cardListAssembly: cardListAssembly,
+            cardListDataProvider: cardListDataProvider
+        )
+
+        chooseCardFlow.start(context: context)
     }
 
     // MARK: Payment

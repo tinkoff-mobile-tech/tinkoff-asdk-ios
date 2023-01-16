@@ -33,7 +33,8 @@ protocol ICardListAssembly {
     ///
     /// Доступные операции: добавление, удаление, выбор карты
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider
+        cardListProvider: CardListDataProvider,
+        selectedCardId: String
     ) -> (view: CardListViewController, module: ICardListModule)
 }
 
@@ -46,16 +47,17 @@ final class CardListAssembly: ICardListAssembly {
     ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
-            style: .presenting()
+            configuration: .cardList()
         )
     }
 
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider
+        cardListProvider: CardListDataProvider,
+        selectedCardId: String
     ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
             provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
-            style: .selection()
+            configuration: .choosePaymentCardList(selectedCardId: selectedCardId)
         )
     }
 
@@ -63,9 +65,10 @@ final class CardListAssembly: ICardListAssembly {
 
     private func buildModule(
         provider: IPaymentCardsProvider,
-        style: CardListView.Style
+        configuration: CardListScreenConfiguration
     ) -> (view: CardListViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
+            screenConfiguration: configuration,
             imageResolver: PaymentSystemImageResolver(),
             provider: provider,
             bankResolver: BankResolver(),
@@ -73,7 +76,7 @@ final class CardListAssembly: ICardListAssembly {
         )
 
         let view = CardListViewController(
-            style: style,
+            configuration: configuration,
             presenter: presenter
         )
 
@@ -82,20 +85,25 @@ final class CardListAssembly: ICardListAssembly {
     }
 }
 
-// MARK: - CardListViewController + Styles
+// MARK: - CardListScreenConfiguration + Styles
 
-private extension CardListView.Style {
-    static func presenting() -> CardListView.Style {
-        CardListView.Style(
-            listItemsAreSelectable: true,
-            backgroundColor: ASDKColors.Background.elevation1.color
+private extension CardListScreenConfiguration {
+    static func cardList() -> Self {
+        Self(
+            listItemsAreSelectable: false,
+            navigationTitle: Loc.Acquiring.CardList.screenTitle,
+            addNewCardCellTitle: Loc.Acquiring.CardList.addCard,
+            selectedCardId: nil
         )
     }
 
-    static func selection() -> CardListView.Style {
-        CardListView.Style(
+    static func choosePaymentCardList(selectedCardId: String) -> Self {
+        // заменить строки на ключи после добавления на странице локализации в спеке
+        Self(
             listItemsAreSelectable: true,
-            backgroundColor: ASDKColors.Background.elevation1.color
+            navigationTitle: Loc.CardList.Screen.Title.paymentByCard,
+            addNewCardCellTitle: Loc.CardList.Button.anotherCard,
+            selectedCardId: selectedCardId
         )
     }
 }

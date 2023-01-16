@@ -282,7 +282,15 @@ extension CardListPresenterTests {
         let mockPaymentSystemResolver = MockPaymentSystemResolver()
         let mockView = MockCardListViewInput()
 
+        let screenConfiguration = CardListScreenConfiguration(
+            listItemsAreSelectable: true,
+            navigationTitle: "",
+            addNewCardCellTitle: "",
+            selectedCardId: nil
+        )
+
         let sut = CardListPresenter(
+            screenConfiguration: screenConfiguration,
             imageResolver: mockPaymentSystemImageResolver,
             provider: mockPaymentCardsProvider,
             bankResolver: mockBankResolver,
@@ -321,7 +329,8 @@ extension CardListPresenterTests {
             cardModel: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
             bankNameText: "",
             cardNumberText: "",
-            isInEditingMode: true
+            isInEditingMode: true,
+            hasCheckmarkInNormalMode: false
         )
     }
 }

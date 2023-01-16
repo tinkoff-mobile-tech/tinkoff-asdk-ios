@@ -118,6 +118,10 @@
 "CardList.status.noCards" = "You don't have any saved cards";
 "CardList.button.addNewCard" = "Add new card";
 
+// CardList for Change Card Flow
+"CardList.screen.title.paymentByCard" = "Payment by card";
+"CardList.button.anotherCard" = "Another card";
+
 // AcquiringPayment
 "AcquiringPayment.button.chooseCard" = "Choose another card";
 
