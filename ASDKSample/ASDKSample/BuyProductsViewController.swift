@@ -60,6 +60,7 @@ class BuyProductsViewController: UIViewController {
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
     private lazy var yandexPayButtonContainerView = YPButtonContainerView()
 
+    private var paymentData: PaymentInitData?
     private var cardRebillIds: [PaymentCard]?
     private var tableViewCells: [TableViewCellType] = [
         .products,
@@ -690,34 +691,15 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         _ container: IYandexPayButtonContainer,
         didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
     ) {
-        let data = createPaymentData()
+        let paymentData = createPaymentData()
+        self.paymentData = paymentData
 
-        let orderOptions = OrderOptions(
-            orderId: data.orderId,
-            amount: data.amount,
-            description: data.description,
-            receipt: data.receipt,
-            shops: data.shops,
-            receipts: data.receipts,
-            savingAsParentPayment: data.savingAsParentPayment ?? false
+        let order = YandexPayPaymentSheet.Order(
+            orderId: paymentData.orderId,
+            amount: paymentData.amount
         )
 
-        let customerOptions = data.customerKey.map {
-            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoffASDK.ru")
-        }
-
-        let paymentOptions = PaymentOptions(
-            orderOptions: orderOptions,
-            customerOptions: customerOptions,
-            paymentData: ["testPaymentDataFromASDKSample": "SomeValue"]
-        )
-
-        let paymentSheet = YandexPayPaymentSheet(
-            order: YandexPayPaymentSheet.Order(
-                orderId: orderOptions.orderId,
-                amount: orderOptions.amount
-            )
-        )
+        let paymentSheet = YandexPayPaymentSheet(order: order)
 
         completion(paymentSheet)
     }
@@ -725,7 +707,33 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
         didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
-    ) {}
+    ) {
+        let paymentFlow: PaymentFlow? = paymentData.map { paymentData in
+            let orderOptions = OrderOptions(
+                orderId: paymentData.orderId,
+                amount: paymentData.amount,
+                description: paymentData.description,
+                receipt: paymentData.receipt,
+                shops: paymentData.shops,
+                receipts: paymentData.receipts,
+                savingAsParentPayment: paymentData.savingAsParentPayment ?? false
+            )
+
+            let customerOptions = paymentData.customerKey.map {
+                CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
+            }
+
+            let paymentOptions = PaymentOptions(
+                orderOptions: orderOptions,
+                customerOptions: customerOptions,
+                paymentData: ["PaymentFlowType": "Full"]
+            )
+
+            return .full(paymentOptions: paymentOptions)
+        }
+
+        completion(paymentFlow)
+    }
 
     func yandexPayButtonContainerDidRequestViewControllerForPresentation(
         _ container: IYandexPayButtonContainer
