@@ -240,7 +240,7 @@ public class AcquiringUISDK: NSObject {
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
-                yandexPayActivityAssebmly: YandexPayPaymentSheetAssembly(
+                yandexPayPaymentSheetAssembly: YandexPayPaymentSheetAssembly(
                     paymentControllerAssembly: paymentControllerAssembly
                 )
             ),

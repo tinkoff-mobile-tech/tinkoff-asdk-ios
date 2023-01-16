@@ -8,11 +8,11 @@
 import Foundation
 
 final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
-    private let paymentActivityAssembly: IYandexPayPaymentSheetAssembly
+    private let yandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly
     private weak var delegate: YandexPayPaymentFlowDelegate?
 
-    init(paymentActivityAssembly: IYandexPayPaymentSheetAssembly, delegate: YandexPayPaymentFlowDelegate) {
-        self.paymentActivityAssembly = paymentActivityAssembly
+    init(yandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly, delegate: YandexPayPaymentFlowDelegate) {
+        self.yandexPayPaymentSheetAssembly = yandexPayPaymentSheetAssembly
         self.delegate = delegate
     }
 
@@ -21,7 +21,7 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
             return
         }
 
-        let paymentActivityViewController = paymentActivityAssembly.yandexPayActivity(
+        let paymentActivityViewController = yandexPayPaymentSheetAssembly.yandexPayPaymentSheet(
             paymentFlow: paymentFlow,
             base64Token: base64Token,
             output: self

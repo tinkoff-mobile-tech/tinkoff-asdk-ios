@@ -16,7 +16,7 @@ final class YandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly {
         self.paymentControllerAssembly = paymentControllerAssembly
     }
 
-    func yandexPayActivity(
+    func yandexPayPaymentSheet(
         paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
