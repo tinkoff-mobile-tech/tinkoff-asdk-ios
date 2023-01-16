@@ -63,7 +63,7 @@ class BuyProductsViewController: UIViewController {
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
 
     private var fullPaymentFlowYandexPayButton: IYandexPayButtonContainer?
-    private var finishPaymentFLowYandexPayButton: IYandexPayButtonContainer?
+    private var finishPaymentFlowYandexPayButton: IYandexPayButtonContainer?
 
     private var paymentData: PaymentInitData?
     private var cardRebillIds: [PaymentCard]?
@@ -117,7 +117,7 @@ class BuyProductsViewController: UIViewController {
                 self.tableViewCells.append(.yandexPayFull)
 
                 let finishPaymentButton = factory.createButtonContainer(with: configuration, delegate: self)
-                self.finishPaymentFLowYandexPayButton = finishPaymentButton
+                self.finishPaymentFlowYandexPayButton = finishPaymentButton
                 self.tableViewCells.append(.yandexPayFinish)
                 self.tableView.reloadData()
             case .failure:
@@ -567,7 +567,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             return cell
         case .yandexPayFinish:
             let cell = tableView.dequeue(ContainerTableViewCell.self)
-            if let button = finishPaymentFLowYandexPayButton {
+            if let button = finishPaymentFlowYandexPayButton {
                 cell.setContent(button, insets: UIEdgeInsets(horizontal: 64, vertical: 8))
             }
             return cell
@@ -718,31 +718,51 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         _ container: IYandexPayButtonContainer,
         didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
     ) {
-        let paymentFlow: PaymentFlow? = paymentData.map { paymentData in
+        guard var initData = paymentData else { return }
+
+        let customerOptions = initData.customerKey.map {
+            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
+        }
+
+        switch container {
+        case fullPaymentFlowYandexPayButton as UIView?:
             let orderOptions = OrderOptions(
-                orderId: paymentData.orderId,
-                amount: paymentData.amount,
-                description: paymentData.description,
-                receipt: paymentData.receipt,
-                shops: paymentData.shops,
-                receipts: paymentData.receipts,
-                savingAsParentPayment: paymentData.savingAsParentPayment ?? false
+                orderId: initData.orderId,
+                amount: initData.amount,
+                description: initData.description,
+                receipt: initData.receipt,
+                shops: initData.shops,
+                receipts: initData.receipts,
+                savingAsParentPayment: initData.savingAsParentPayment ?? false
             )
 
-            let customerOptions = paymentData.customerKey.map {
-                CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
-            }
+            initData.addPaymentData(["Sample_PaymentFlowType": "Full"])
 
             let paymentOptions = PaymentOptions(
                 orderOptions: orderOptions,
                 customerOptions: customerOptions,
-                paymentData: ["PaymentFlowType": "Full"]
+                paymentData: initData.paymentFormData ?? [:]
             )
 
-            return .full(paymentOptions: paymentOptions)
-        }
+            completion(.full(paymentOptions: paymentOptions))
+        case finishPaymentFlowYandexPayButton as UIView?:
+            container.setLoaderVisible(true, animated: true)
+            initData.addPaymentData(["Sample_PaymentFlowType": "Finish"])
 
-        completion(paymentFlow)
+            coreSDK.initPayment(data: initData) { [weak container] result in
+                DispatchQueue.main.async {
+                    container?.setLoaderVisible(false, animated: true)
+                }
+
+                let paymentFlow = try? result.map { payload in
+                    PaymentFlow.finish(paymentId: payload.paymentId, customerOptions: customerOptions)
+                }.get()
+
+                completion(paymentFlow)
+            }
+        default:
+            break
+        }
     }
 
     func yandexPayButtonContainerDidRequestViewControllerForPresentation(
