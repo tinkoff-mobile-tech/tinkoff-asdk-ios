@@ -183,16 +183,3 @@ private extension String {
     static let threeDSVersion = "2.1.0"
     static let threeDSCompInd = "N"
 }
-
-// MARK: PaymentFlow + Helpers
-
-private extension PaymentFlow {
-    var customerOptions: CustomerOptions? {
-        switch self {
-        case let .full(paymentOptions):
-            return paymentOptions.customerOptions
-        case let .finish(_, customerOptions):
-            return customerOptions
-        }
-    }
-}
