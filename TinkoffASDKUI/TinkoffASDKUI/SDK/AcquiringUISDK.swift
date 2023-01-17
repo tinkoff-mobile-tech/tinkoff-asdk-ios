@@ -126,7 +126,7 @@ public typealias AddCardCompletionHandler = (_ result: Result<AddCardStatusRespo
 public protocol AcquiringScanerProtocol: AnyObject {
     ///
     /// - Parameters:
-    ///   - completion: результат сканирования, номер карты `number`, месяц `month, год `year`
+    ///   - completion: результат сканирования, номер карты `number`, месяц `month`, год `year`
     /// - Returns: сканер UIViewController
     func presentScanner(completion: @escaping (_ number: String?, _ month: Int?, _ year: Int?) -> Void) -> UIViewController?
 }
