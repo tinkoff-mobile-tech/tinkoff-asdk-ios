@@ -1547,6 +1547,9 @@ public class AcquiringUISDK: NSObject {
     private func cancelAddCard() {
         onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse(success: false, errorCode: 0)))
         on3DSCheckingAddCardCompletionHandler?(.success(()))
+        // clearing
+        onRandomAmountCheckingAddCardCompletionHandler = nil
+        on3DSCheckingAddCardCompletionHandler = nil
     }
 
     fileprivate func presentWebView(load request: URLRequest, onCancel: @escaping (() -> Void)) {
