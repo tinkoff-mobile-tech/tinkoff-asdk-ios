@@ -1546,6 +1546,10 @@ public class AcquiringUISDK: NSObject {
 
     private func cancelAddCard() {
         onRandomAmountCheckingAddCardCompletionHandler?(.success(AddCardStatusResponse(success: false, errorCode: 0)))
+        on3DSCheckingAddCardCompletionHandler?(.success(()))
+        // clearing
+        onRandomAmountCheckingAddCardCompletionHandler = nil
+        on3DSCheckingAddCardCompletionHandler = nil
     }
 
     fileprivate func presentWebView(load request: URLRequest, onCancel: @escaping (() -> Void)) {
@@ -1839,10 +1843,6 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         case let .needConfirmation3DSACS(confirmation3DSDataACS):
             on3DSCheckingAddCardCompletionHandler = { response in
                 confirmationComplete(response)
-            }
-
-            onRandomAmountCheckingAddCardCompletionHandler = { result in
-                confirmationComplete(result.map { _ in () })
             }
 
             present3DSCheckingACS(with: confirmation3DSDataACS, messageVersion: tdsVersion) { [weak self] in
