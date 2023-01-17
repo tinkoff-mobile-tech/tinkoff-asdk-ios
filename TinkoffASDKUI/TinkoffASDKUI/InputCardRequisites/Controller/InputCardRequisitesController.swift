@@ -118,9 +118,10 @@ class InputCardRequisitesController: NSObject {
                 inputView?.labelShortCardNumber.text = "*" + numberValue.suffix(4)
             }
 
-            if let valueMM = mm, let valueYY = yy, requisitesInputValidator.validate(validThruYear: valueYY, month: valueMM) {
+            if let monthValue = mm, let yearValue = yy, requisitesInputValidator.validate(validThruYear: yearValue, month: monthValue) {
                 if let textField = inputView?.textFieldCardExpDate {
-                    maskedTextFieldCardExpDateDelegate.put(text: "\(valueMM)/\(valueYY)", into: textField)
+                    let validThruText = String(format: "%02d", monthValue) + String(format: "%02d", yearValue)
+                    maskedTextFieldCardExpDateDelegate.put(text: validThruText, into: textField)
                 }
                 activateStep(.inputCardCVC)
             } else {
