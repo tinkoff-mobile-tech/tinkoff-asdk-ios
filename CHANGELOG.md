@@ -4,6 +4,7 @@
 ### Fixed
 
 * [MIC-7670] Remove Apple Pay from README
+* [MIC-7653] Scanner result handling
 
 ## [2.15.0] - 2022-12-29Z
 
