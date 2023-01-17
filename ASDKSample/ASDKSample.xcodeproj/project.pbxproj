@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2C06D08B23F1492C006FC588 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C06D08923F1492C006FC588 /* AboutViewController.swift */; };
 		2C2F7B8D2451726F008A2415 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C2F7B8C2451726F008A2415 /* WebKit.framework */; };
-		2C4683FB247258AA0067DA48 /* CardScanerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4683FA247258AA0067DA48 /* CardScanerViewController.swift */; };
 		2C4683FD247258BC0067DA48 /* BuyProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4683FC247258BC0067DA48 /* BuyProductsViewController.swift */; };
 		2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4D782D23F42090003A355D /* SettingsTableViewController.swift */; };
 		2C6560832476D18800DEA4A9 /* SegmentedTabeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6560812476D18800DEA4A9 /* SegmentedTabeViewCell.swift */; };
@@ -63,7 +62,6 @@
 		0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C06D08923F1492C006FC588 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		2C2F7B8C2451726F008A2415 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		2C4683FA247258AA0067DA48 /* CardScanerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardScanerViewController.swift; sourceTree = "<group>"; };
 		2C4683FC247258BC0067DA48 /* BuyProductsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProductsViewController.swift; sourceTree = "<group>"; };
 		2C4D782D23F42090003A355D /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		2C6560812476D18800DEA4A9 /* SegmentedTabeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedTabeViewCell.swift; sourceTree = "<group>"; };
@@ -192,7 +190,6 @@
 				B1347FFC28F5B56700CB88FF /* TableCells */,
 				B1347FFB28F5B54C00CB88FF /* Views */,
 				B1419C4828D46AB2005C61DE /* Resources */,
-				2CFEEE0C246EA7670009E633 /* Scaner */,
 				2C9C7EC2239FBCB200DE4071 /* RootViewController.swift */,
 				B1A4EDD628F3FB38004D0C99 /* Creds */,
 				2CA7764A2451AA8E0078AEB3 /* About */,
@@ -246,14 +243,6 @@
 				2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */,
 			);
 			name = RebuildCardList;
-			sourceTree = "<group>";
-		};
-		2CFEEE0C246EA7670009E633 /* Scaner */ = {
-			isa = PBXGroup;
-			children = (
-				2C4683FA247258AA0067DA48 /* CardScanerViewController.swift */,
-			);
-			name = Scaner;
 			sourceTree = "<group>";
 		};
 		57622A602C9DDE929C6B40CF /* Frameworks */ = {
@@ -612,7 +601,6 @@
 				B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */,
 				2CD7522424A36D19005FA56C /* RebuildCardTableViewCell.swift in Sources */,
 				57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */,
-				2C4683FB247258AA0067DA48 /* CardScanerViewController.swift in Sources */,
 				B1419C5A28D46D96005C61DE /* Assets+Generated.swift in Sources */,
 				57EEFB9228F544D500809488 /* SHA256.swift in Sources */,
 				B156F90C28F0440000ABABDD /* UIEdgeInsets+Ext.swift in Sources */,
