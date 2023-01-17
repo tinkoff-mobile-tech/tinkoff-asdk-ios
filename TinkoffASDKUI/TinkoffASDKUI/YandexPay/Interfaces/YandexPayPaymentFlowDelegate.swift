@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Делегат объекта `IYandexPayPaymentFlow`
 public protocol YandexPayPaymentFlowDelegate: AnyObject {
