@@ -35,8 +35,10 @@ final class CardListPresenterTests: XCTestCase {
         let mockBankResolver = MockBankResolver()
         let mockPaymentSystemResolver = MockPaymentSystemResolver()
         let mockView = MockCardListViewInput()
+        let screenConfiguration = buildScreenConfiguration()
 
         let sut = CardListPresenter(
+            screenConfiguration: screenConfiguration,
             imageResolver: mockPaymentSystemImageResolver,
             provider: mockPaymentCardsProvider,
             bankResolver: mockBankResolver,
@@ -318,7 +320,17 @@ extension CardListPresenterTests {
             cardModel: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
             bankNameText: "",
             cardNumberText: "",
-            isInEditingMode: true
+            isInEditingMode: true,
+            hasCheckmarkInNormalMode: false
+        )
+    }
+
+    func buildScreenConfiguration() -> CardListScreenConfiguration {
+        CardListScreenConfiguration(
+            listItemsAreSelectable: true,
+            navigationTitle: "",
+            addNewCardCellTitle: "",
+            selectedCardId: nil
         )
     }
 }

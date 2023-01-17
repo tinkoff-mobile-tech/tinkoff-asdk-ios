@@ -45,6 +45,7 @@
 * [MIC-6836] Add New Card Screen Redisign - Sample add shortcut button for presenting Add Card
 * [MIC-6842] Add New Card Screen Redisign - Unit Tests
 * [MIC-7538] Add New Tinkoff Bins
+* [MIC-7545] Adapt CardList for Payment Card Selection Flow
 
 ### Fixed
 

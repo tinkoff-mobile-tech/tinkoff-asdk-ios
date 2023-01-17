@@ -28,6 +28,7 @@ struct CardList {
         let bankNameText: String
         let cardNumberText: String
         let isInEditingMode: Bool
+        let hasCheckmarkInNormalMode: Bool
     }
 
     struct Alert {
