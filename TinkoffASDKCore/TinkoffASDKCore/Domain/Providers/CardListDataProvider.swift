@@ -399,17 +399,17 @@ private extension CardListDataProvider {
                 return completion(.failure(error))
             }
 
-            if cardId == nil {
-                return completion(.success(nil))
-            }
-
             if let card = cardId.flatMap({ self.item(with: $0) }) {
                 return completion(.success(card))
-            } else {
-                // weird logic? should be fixed?
-                let card = self.activeCards.first { !oldActiveCardIds.contains($0.cardId) }
-                return completion(.success(card))
             }
+
+            let firstNewActiveCard = self.activeCards.first(where: { !oldActiveCardIds.contains($0.cardId) })
+            if let firstNewActiveCard = firstNewActiveCard {
+                return completion(.success(firstNewActiveCard))
+            }
+
+            // cancelled by user or couldn't find added card
+            return completion(.success(nil))
         }
     }
 }
