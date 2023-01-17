@@ -10,7 +10,8 @@
 * [MIC-6837] Card List Screen Redesign - Integration
 * [MIC-6841] Card List Screen Redesign - Tests
 * [MIC-7538] Add New Tinkoff Bins
-* [MIC-7380] SBP Redesign - without payment 
+* [MIC-7380] SBP Redesign - without payment
+* [MIC-7555] Add finish flow handling for YandexPay payments
 
 ### Changed
 

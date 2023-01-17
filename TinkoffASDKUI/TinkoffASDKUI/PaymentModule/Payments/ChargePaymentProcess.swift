@@ -30,15 +30,6 @@ final class ChargePaymentProcess: PaymentProcess {
 
     private weak var delegate: PaymentProcessDelegate?
 
-    private var customerEmail: String? {
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            return paymentOptions.customerOptions?.email
-        case let .finish(_, customerOptions):
-            return customerOptions?.email
-        }
-    }
-
     init(
         paymentsService: IAcquiringPaymentsService,
         paymentSource: PaymentSourceData,

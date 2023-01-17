@@ -8,13 +8,13 @@
 import Foundation
 
 final class YandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly {
-    private let yandexPayActivityAssebmly: IYandexPayPaymentSheetAssembly
+    private let yandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly
 
-    init(yandexPayActivityAssebmly: IYandexPayPaymentSheetAssembly) {
-        self.yandexPayActivityAssebmly = yandexPayActivityAssebmly
+    init(yandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly) {
+        self.yandexPayPaymentSheetAssembly = yandexPayPaymentSheetAssembly
     }
 
-    func yandexPayPaymentFlow() -> IYandexPayPaymentFlow {
-        YandexPayPaymentFlow(paymentActivityAssembly: yandexPayActivityAssebmly)
+    func yandexPayPaymentFlow(delegate: YandexPayPaymentFlowDelegate) -> IYandexPayPaymentFlow {
+        YandexPayPaymentFlow(yandexPayPaymentSheetAssembly: yandexPayPaymentSheetAssembly, delegate: delegate)
     }
 }

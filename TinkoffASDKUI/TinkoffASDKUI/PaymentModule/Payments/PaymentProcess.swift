@@ -19,11 +19,6 @@
 
 import TinkoffASDKCore
 
-public enum PaymentFlow: Equatable {
-    case full(paymentOptions: PaymentOptions)
-    case finish(paymentId: String, customerOptions: CustomerOptions?)
-}
-
 protocol PaymentProcessDelegate: AnyObject {
     func paymentDidFinish(
         _ paymentProcess: PaymentProcess,

@@ -22,6 +22,7 @@ import WebKit
 
 protocol IPaymentController {
     func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData)
+    func performFinishPayment(paymentId: String, paymentSource: PaymentSourceData, customerOptions: CustomerOptions?)
 }
 
 /// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа
@@ -115,14 +116,9 @@ public final class PaymentController: IPaymentController {
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
 
-    private var threeDSHandlerDidCancel: () -> Void = {}
-    private var threeDSHandlerCompletion: ((Result<GetPaymentStatePayload, Error>) -> Void)?
-
     // MARK: - Temporary until refactor PaymentView!
 
     private let acquiringUISDK: AcquiringUISDK
-
-    private var paymentDelegate: PaymentProcessDelegate!
 
     // MARK: - Init
 
@@ -142,7 +138,6 @@ public final class PaymentController: IPaymentController {
         self.tdsController = tdsController
         self.webViewAuthChallengeService = webViewAuthChallengeService
         self.acquiringUISDK = acquiringUISDK
-        paymentDelegate = paymentDelegate ?? self
     }
 
     deinit {
@@ -161,7 +156,7 @@ public final class PaymentController: IPaymentController {
             let paymentProcess = self.paymentFactory.createPayment(
                 paymentSource: paymentSource,
                 paymentFlow: .full(paymentOptions: paymentOptions),
-                paymentDelegate: self.paymentDelegate
+                paymentDelegate: self
             )
 
             guard let paymentProcess = paymentProcess else {
@@ -185,7 +180,7 @@ public final class PaymentController: IPaymentController {
                     paymentId: paymentId,
                     customerOptions: customerOptions
                 ),
-                paymentDelegate: self.paymentDelegate
+                paymentDelegate: self
             )
 
             guard let paymentProcess = paymentProcess else {

@@ -8,8 +8,8 @@
 import UIKit
 
 protocol IYandexPayPaymentSheetAssembly {
-    func yandexPayActivity(
-        paymentOptions: PaymentOptions,
+    func yandexPayPaymentSheet(
+        paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
     ) -> UIViewController
