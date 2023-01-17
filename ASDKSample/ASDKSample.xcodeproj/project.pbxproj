@@ -32,6 +32,7 @@
 		2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */; };
 		2CFEEE08246EA4910009E633 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEEE07246EA4910009E633 /* InfoPlist.strings */; };
 		4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */; };
+		576E765329769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576E765229769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift */; };
 		57DE3DF32934C3D600FD6F1B /* YPButtonContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DE3DF22934C3D600FD6F1B /* YPButtonContainerView.swift */; };
 		57DE3DF72934ED2C00FD6F1B /* ContainerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DE3DF62934ED2C00FD6F1B /* ContainerTableViewCell.swift */; };
 		57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8928F409A300809488 /* StageTestData.swift */; };
@@ -88,6 +89,7 @@
 		2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebuildCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		576E765229769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+CardScannerMock.swift"; sourceTree = "<group>"; };
 		57DE3DF22934C3D600FD6F1B /* YPButtonContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPButtonContainerView.swift; sourceTree = "<group>"; };
 		57DE3DF62934ED2C00FD6F1B /* ContainerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTableViewCell.swift; sourceTree = "<group>"; };
 		57EEFB8928F409A300809488 /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StageTestData.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 			children = (
 				B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */,
 				2CA0206023F2C2B600C2AB0E /* Utils.swift */,
+				576E765229769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift */,
 				57EEFB8928F409A300809488 /* StageTestData.swift */,
 				57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */,
 				57EEFB9128F544D500809488 /* SHA256.swift */,
@@ -587,6 +590,7 @@
 				B1C97B7828F46E4000DC007B /* UIImage+Ext.swift in Sources */,
 				B1A4EDDB28F3FC2C004D0C99 /* ViewProtocols.swift in Sources */,
 				B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */,
+				576E765329769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift in Sources */,
 				2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */,
 				57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */,
 				2C9C7EBF239FBCB200DE4071 /* AppDelegate.swift in Sources */,

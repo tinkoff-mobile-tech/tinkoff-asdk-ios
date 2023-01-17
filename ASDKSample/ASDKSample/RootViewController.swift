@@ -206,16 +206,7 @@ class RootViewController: UITableViewController {
 extension RootViewController: AcquiringScanerProtocol {
 
     func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController? {
-        if let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
-            .instantiateViewController(withIdentifier: "CardScanerViewController") as? CardScanerViewController {
-            viewController.onScannerResult = { numbres in
-                completion(numbres, nil, nil)
-            }
-
-            return viewController
-        }
-
-        return nil
+        UIAlertController.cardScannerMock(confirmationHandler: completion)
     }
 }
 
