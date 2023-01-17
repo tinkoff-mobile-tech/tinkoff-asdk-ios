@@ -21,7 +21,7 @@ import UIKit
 
 extension UIAlertController {
     static func cardScannerMock(
-        confirmationHandler: @escaping (_ cardNumber: String?, _ yy: Int?, _ mm: Int?) -> Void
+        confirmationHandler: @escaping (_ cardNumber: String?, _ month: Int?, _ year: Int?) -> Void
     ) -> UIAlertController {
         let alert = UIAlertController(
             title: "Scanner mock",
@@ -34,20 +34,20 @@ extension UIAlertController {
         }
 
         alert.addTextField { textField in
-            textField.placeholder = "YY"
+            textField.placeholder = "Month"
         }
 
         alert.addTextField { textField in
-            textField.placeholder = "MM"
+            textField.placeholder = "Year"
         }
 
         let confirmationAction = UIAlertAction(title: "confirm", style: .default) { [weak alert] _ in
             guard let textFields = alert?.textFields, textFields.count == 3 else { return }
             let cardNumber = textFields[0].text
-            let yy = textFields[1].text.flatMap(Int.init)
-            let mm = textFields[2].text.flatMap(Int.init)
+            let month = textFields[1].text.flatMap(Int.init)
+            let year = textFields[2].text.flatMap(Int.init)
 
-            confirmationHandler(cardNumber, yy, mm)
+            confirmationHandler(cardNumber, month, year)
         }
 
         alert.addAction(confirmationAction)
