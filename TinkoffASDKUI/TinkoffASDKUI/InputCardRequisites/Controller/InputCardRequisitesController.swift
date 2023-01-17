@@ -104,15 +104,18 @@ class InputCardRequisitesController: NSObject {
     }
 
     private func onScanerResult(_ number: String?, _ mm: Int?, _ yy: Int?) {
-        if let valueNumber = number, requisitesInputValidator.validate(inputPAN: number) {
+        if let numberValue = number?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: " ", with: ""),
+            requisitesInputValidator.validate(inputPAN: numberValue) {
             if let textField = inputView?.textFieldCardNumber {
                 maskedTextFieldCardNumberDelegate.maskFormat = inputMaskResolver.panMask(for: nil)
-                maskedTextFieldCardNumberDelegate.put(text: valueNumber, into: textField)
+                maskedTextFieldCardNumberDelegate.put(text: numberValue, into: textField)
 
                 inputView?.buttonRight.isHidden = true
                 inputView?.buttonRight.setImage(nil, for: .normal)
                 inputView?.onButtonRightTouch = nil
-                inputView?.labelShortCardNumber.text = "*" + valueNumber.suffix(4)
+                inputView?.labelShortCardNumber.text = "*" + numberValue.suffix(4)
             }
 
             if let valueMM = mm, let valueYY = yy, requisitesInputValidator.validate(validThruYear: valueYY, month: valueMM) {
