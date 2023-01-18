@@ -26,13 +26,23 @@ public protocol YandexPayButtonContainerDelegate: AnyObject {
         _ container: IYandexPayButtonContainer
     ) -> UIViewController?
 
-    /// Запрашивает параметры для оплаты с помощью `YandexPay`
+    /// Запрашивает параметры для отображения шторки с выбором привязанной к системе `YandexPay` карты
     /// - Parameters:
     ///   - container: UI-контейнер для кнопки `YandexPay`
-    ///   - completion: Замыкание, которое необходимо вызвать, передав в него сформированные параметры для оплаты.
-    ///   При `nil` нажатие на кнопку будет проигнорировано
+    ///   - completion: Замыкание, которое необходимо вызвать, передав в него сформированные параметры.
+    ///   При `nil` нажатие на кнопку будет проигнорировано. Замыкание может быть безопасно вызвано с любого потока.
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
         didRequestPaymentSheet completion: @escaping (_ paymentSheet: YandexPayPaymentSheet?) -> Void
+    )
+
+    /// Запрашивает тип проведения платежа и параметры оплаты после того, как пользователь выбрал привязанную к `YandexPay` карту
+    /// - Parameters:
+    ///   - container: UI-контейнер для кнопки `YandexPay`
+    ///   - completion: Замыкание, которые необходимо вызвать, передав в него сформированные параметры.
+    /// При `nil` проведение оплаты будет проигнорировано. Замыкание может быть безопасно вызвано с любого потока.
+    func yandexPayButtonContainer(
+        _ container: IYandexPayButtonContainer,
+        didRequestPaymentFlow completion: @escaping (_ paymentFlow: PaymentFlow?) -> Void
     )
 }

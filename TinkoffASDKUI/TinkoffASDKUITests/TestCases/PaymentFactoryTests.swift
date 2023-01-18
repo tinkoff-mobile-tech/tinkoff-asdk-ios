@@ -59,17 +59,37 @@ final class PaymentFactoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testCreatePayment_withYandexPayFinishFlow_shouldReturnNil() throws {
+    func testCreatePayment_withYandexPayFullFlow_shouldReturnYandexPayPaymentProcess() throws {
+        // given
+        let dependencies = Self.makeDependencies()
+        let sut = dependencies.sut
+        let options = PaymentOptions(orderOptions: OrderOptions(orderId: "id", amount: 100))
+
+        // when
+        let process = sut.createPayment(
+            paymentSource: .yandexPay(base64Token: "some token"),
+            paymentFlow: .full(paymentOptions: options),
+            paymentDelegate: dependencies.paymentDelegateMock
+        )
+
+        // then
+        XCTAssert(process is YandexPayPaymentProcess)
+    }
+
+    func testCreatePayment_withYandexPayFinishFlow_shouldReturnYandexPayPaymentProcess() throws {
+        // given
+        let dependencies = Self.makeDependencies()
+        let sut = dependencies.sut
 
         // when
         let proccess = sut.createPayment(
             paymentSource: .yandexPay(base64Token: "some token"),
             paymentFlow: .finish(paymentId: "fdfd", customerOptions: nil),
-            paymentDelegate: paymentDelegateMock
+            paymentDelegate: dependencies.paymentDelegateMock
         )
 
         // then
-        XCTAssertNil(proccess)
+        XCTAssertNotNil(proccess is YandexPayPaymentProcess)
     }
 
     func testCreatePayment_when_PaymentSource_CardNumber() throws {
