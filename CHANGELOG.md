@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [MIC-7555] Add finish flow handling for YandexPay payments
+
 ## [2.15.1] - 2023-01-18Z
 
 ### Fixed
