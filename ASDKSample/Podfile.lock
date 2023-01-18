@@ -3,13 +3,13 @@ PODS:
   - SwiftFormat/CLI (0.49.18)
   - SwiftGen (6.6.2)
   - SwiftLint (0.47.0)
-  - TinkoffASDKCore (2.14.1)
-  - TinkoffASDKCore/Tests (2.14.1)
-  - TinkoffASDKUI (2.14.1):
+  - TinkoffASDKCore (2.15.0)
+  - TinkoffASDKCore/Tests (2.15.0)
+  - TinkoffASDKUI (2.15.0):
     - TinkoffASDKCore
-  - TinkoffASDKUI/Tests (2.14.1):
+  - TinkoffASDKUI/Tests (2.15.0):
     - TinkoffASDKCore
-  - TinkoffASDKYandexPay (2.12.2):
+  - TinkoffASDKYandexPay (2.15.0):
     - TinkoffASDKCore
     - TinkoffASDKUI
     - YandexPaySDK/Dynamic (~> 1.2)
@@ -58,9 +58,9 @@ SPEC CHECKSUMS:
   SwiftFormat: 2402d29b26746f169cce5454d5af88314cbb2e35
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
-  TinkoffASDKCore: bd4e1e264012e2bbc33d516d2b456ebe63e2a7de
-  TinkoffASDKUI: 7199504bfbb0f51f639cf4c269836ab989524c44
-  TinkoffASDKYandexPay: 9cc7b9b1f240482fd59533bdcb675126c70972f3
+  TinkoffASDKCore: 36348ed3f5f86e84f3159e3392894931a0be97e5
+  TinkoffASDKUI: a9a72ac2d21146d949dc9d8f72433b4fe28fd48c
+  TinkoffASDKYandexPay: cec7214426ed8f9663a63da72c78587296044bb9
   YandexLoginSDK: cd407482207b4b7da75c5f7d7fd2fdd6a604c325
   YandexMobileMetrica: baf7cea47cb87fc9af963c4f747ce8dd7df3d7c0
   YandexPaySDK: 77bfc6e67d889e26f1f3926c2a6cdfd5ccbb6a52
