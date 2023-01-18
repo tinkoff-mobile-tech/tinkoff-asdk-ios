@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 17.01.2023.
 //
 
+import Foundation
 import TinkoffASDKCore
 
 /// Презентер для управления платежной шторкой в разделе СБП
