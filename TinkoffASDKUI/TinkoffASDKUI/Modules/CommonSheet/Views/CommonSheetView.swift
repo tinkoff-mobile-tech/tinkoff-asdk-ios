@@ -44,7 +44,7 @@ final class CommonSheetView: UIView {
 
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = ASDKColors.Text.secondary.color
+        label.textColor = ASDKColors.Text.secondary
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textAlignment = .center
         label.numberOfLines = 0

@@ -292,7 +292,6 @@
 				B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */,
 				B156F90D28F06B3700ABABDD /* UIView+Ext.swift */,
 				B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */,
-				B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */,
 				57D1C5C52975A9B900C6D1CA /* UITableView+Utils.swift */,
 			);
 			name = Extensions;
