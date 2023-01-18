@@ -61,15 +61,13 @@ final class PaymentFactoryTests: XCTestCase {
 
     func testCreatePayment_withYandexPayFullFlow_shouldReturnYandexPayPaymentProcess() throws {
         // given
-        let dependencies = Self.makeDependencies()
-        let sut = dependencies.sut
         let options = PaymentOptions(orderOptions: OrderOptions(orderId: "id", amount: 100))
 
         // when
         let process = sut.createPayment(
             paymentSource: .yandexPay(base64Token: "some token"),
             paymentFlow: .full(paymentOptions: options),
-            paymentDelegate: dependencies.paymentDelegateMock
+            paymentDelegate: paymentDelegateMock
         )
 
         // then
@@ -77,15 +75,11 @@ final class PaymentFactoryTests: XCTestCase {
     }
 
     func testCreatePayment_withYandexPayFinishFlow_shouldReturnYandexPayPaymentProcess() throws {
-        // given
-        let dependencies = Self.makeDependencies()
-        let sut = dependencies.sut
-
         // when
         let proccess = sut.createPayment(
             paymentSource: .yandexPay(base64Token: "some token"),
             paymentFlow: .finish(paymentId: "fdfd", customerOptions: nil),
-            paymentDelegate: dependencies.paymentDelegateMock
+            paymentDelegate: paymentDelegateMock
         )
 
         // then
@@ -111,7 +105,6 @@ final class PaymentFactoryTests: XCTestCase {
 
     func testCreatePayment_when_PaymentSource_SavedCard() throws {
         // given
-
         let paymentSourceData = PaymentSourceData.savedCard(cardId: "4324234234", cvv: "232")
         let paymentFlow: PaymentFlow = .full(paymentOptions: UIASDKTestsAssembly.makePaymentOptions())
 

@@ -69,6 +69,13 @@ final class CardRequisitesValidatorTests: XCTestCase {
         XCTAssertEqual(isValid, false)
     }
 
+    func test_validate_validThruYear_failure2() throws {
+        // when
+        let isValid = sutAsProtocol.validate(validThruYear: 29, month: 13)
+        // then
+        XCTAssertEqual(isValid, false)
+    }
+
     func test_validate_inputCVC_success() throws {
         // when
         let isValid = sutAsProtocol.validate(inputCVC: "123")

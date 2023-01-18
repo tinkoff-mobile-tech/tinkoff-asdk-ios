@@ -86,39 +86,6 @@ final class CardListPresenterTests: XCTestCase {
         XCTAssertEqual(mockView.hideShimmerCallCounter, 1)
     }
 
-//    func test_viewDidTapNoCardsStubButton() throws {
-//        // given
-//        var onAddNewCardTapCalled = false
-//        let expectation = expectation(description: #function)
-//        sut.onAddNewCardTap = {
-//            onAddNewCardTapCalled = true
-//            expectation.fulfill()
-//        }
-//        // when
-//
-//        sutAsProtocol.viewDidTapNoCardsStubButton()
-//        wait(for: [expectation], timeout: 1)
-//
-//        // then
-//        XCTAssertEqual(onAddNewCardTapCalled, true)
-//    }
-//
-//    func test_viewDidTapNoNetworkStubButton() throws {
-//        // when
-//        sutAsProtocol.
-//
-//            // then
-//            XCTAssertEqual(mockView.showShimmerCallCounter, 1)
-//    }
-//
-//    func test_viewDidTapServerErrorStubButton() throws {
-//        // when
-//        sutAsProtocol.viewDidTapServerErrorStubButton()
-//
-//        // then
-//        XCTAssertEqual(mockView.dismissCallCounter, 1)
-//    }
-
     func test_viewDidTapEditButton_when_showingCards() throws {
         // given
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))

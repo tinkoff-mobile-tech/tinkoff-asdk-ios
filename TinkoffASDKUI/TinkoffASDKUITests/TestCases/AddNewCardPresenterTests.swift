@@ -47,12 +47,6 @@ final class AddNewCardPresenterTests: XCTestCase {
         viewMock = mockView
         self.cardFieldPresenterMock = cardFieldPresenterMock
         self.addNewCardOutputMock = addNewCardOutputMock
-
-        // setup
-//
-//        cardFieldFactoryMock.assembleCardFieldConfigStub = { input in
-//            .init(presenter: cardFieldPresenterMock)
-//        }
     }
 
     override func tearDown() {
