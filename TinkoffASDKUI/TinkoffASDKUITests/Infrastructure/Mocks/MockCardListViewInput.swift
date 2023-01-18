@@ -26,21 +26,6 @@ final class MockCardListViewInput: ICardListViewInput {
         deleteItemsStub(at)
     }
 
-    var showNoCardsStubCallCounter = 0
-    func showNoCardsStub() {
-        showNoCardsStubCallCounter += 1
-    }
-
-    var showNoNetworkStubCallCounter = 0
-    func showNoNetworkStub() {
-        showNoNetworkStubCallCounter += 1
-    }
-
-    var showServerErrorStubCallCounter = 0
-    func showServerErrorStub() {
-        showServerErrorStubCallCounter += 1
-    }
-
     var removeCallCounter = 0
     var removeStub: (CardList.Card) -> Void = { _ in }
     func remove(card: CardList.Card) {

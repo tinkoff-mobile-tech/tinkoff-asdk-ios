@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PaymentCard: Codable {
+public struct PaymentCard: Codable, Equatable {
     private enum CodingKeys: CodingKey {
         case pan
         case cardId
