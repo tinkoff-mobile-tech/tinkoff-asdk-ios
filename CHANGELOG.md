@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.15.1] - 2023-01-18Z
+
 ### Fixed
 
 * [MIC-7670] Remove Apple Pay from README
