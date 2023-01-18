@@ -112,7 +112,7 @@
 "CommonSheet.Processing.Title" = "Processing the payment";
 "CommonSheet.Processing.Description" = "It will take some time";
 "CommonSheet.Paid.Title" = "Paid";
-"CommonSheet.Paid.PrimaryButton" = "Clear";
+"CommonSheet.Paid.PrimaryButton" = "Ok";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Payment error";
