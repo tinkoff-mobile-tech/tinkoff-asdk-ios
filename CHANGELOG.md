@@ -20,10 +20,6 @@
 * [MIC-7670] Remove Apple Pay from README
 * [MIC-7653] Scanner result handling
 
-### Changed
-
-* [MIC-7482] CommonSheet adoption for different states
-
 ## [2.15.0] - 2022-12-29Z
 
 ### Added
