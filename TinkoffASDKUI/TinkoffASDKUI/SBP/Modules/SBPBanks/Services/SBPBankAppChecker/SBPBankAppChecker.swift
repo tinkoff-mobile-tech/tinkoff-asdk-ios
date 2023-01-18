@@ -10,16 +10,17 @@ import TinkoffASDKCore
 
 final class SBPBankAppChecker: ISBPBankAppChecker {
 
-    // Dependencies
+    // MARK: Dependencies
+
     private let application: IUIApplication
 
-    // MARK: - Initialization
+    // MARK: Initialization
 
-    public init(application: IUIApplication) {
+    init(application: IUIApplication) {
         self.application = application
     }
 
-    // MARK: - ISBPBankAppChecker
+    // MARK: ISBPBankAppChecker
 
     /// Принимает список банков из которых происходит выборка по следующей логике:
     /// Смотрит в Info.plist мерча и осталяет только те банки которые указанны в этом Info.plist (это те банки которые мерч считает наиболее предпочтительными для совершения оплаты)
@@ -35,15 +36,6 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
         } else {
             return []
         }
-    }
-
-    /// Пытается открыть приложение конкретного банка
-    /// - Parameters:
-    ///   - bank: Банк, приложение которого надо открыть
-    ///   - completion: Возвращает true если получилось открыть приложение банка, false если нет
-    func openBankApp(_ bank: SBPBank, completion: @escaping SBPBankAppCheckerOpenBankAppCompletion) {
-        guard let url = URL(string: "\(bank.schema)://") else { completion(false); return }
-        application.open(url, options: [:], completionHandler: completion)
     }
 }
 

@@ -14,20 +14,46 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // Dependencies
     private let acquiringSdk: AcquiringSdk
+    private let sbpConfiguration: SBPConfiguration
 
     // MARK: - Initialization
 
-    init(acquiringSdk: AcquiringSdk) {
+    init(
+        acquiringSdk: AcquiringSdk,
+        sbpConfiguration: SBPConfiguration
+    ) {
         self.acquiringSdk = acquiringSdk
+        self.sbpConfiguration = sbpConfiguration
     }
 
     // MARK: - ISBPBanksAssembly
 
     func build() -> SBPBanksModule {
-        let router = SBPBanksRouter(sbpBanksAssembly: self)
+        build(paymentService: nil)
+    }
+
+    func build(paymentConfiguration: AcquiringPaymentStageConfiguration) -> SBPBanksModule {
+        let paymentService = SBPPaymentServiceNew(
+            acquiringSdk: acquiringSdk,
+            paymentConfiguration: paymentConfiguration
+        )
+        return build(paymentService: paymentService)
+    }
+}
+
+// MARK: - Private
+
+extension SBPBanksAssembly {
+    private func build(paymentService: SBPPaymentServiceNew?) -> SBPBanksModule {
+        let sbpPaymentSheetAssembly = SBPPaymentSheetAssembly(
+            acquiringSdk: acquiringSdk,
+            sbpConfiguration: sbpConfiguration
+        )
+        let router = SBPBanksRouter(sbpBanksAssembly: self, sbpPaymentSheetAssembly: sbpPaymentSheetAssembly)
 
         let banksService = SBPBanksServiceNew(acquiringSdk: acquiringSdk)
         let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
+        let bankAppOpener = SBPBankAppOpener(application: UIApplication.shared)
 
         let cellImageLoader = CellImageLoader(imageLoader: ImageLoader(urlDataLoader: acquiringSdk))
         cellImageLoader.set(type: .roundAndSize(.logoImageSize))
@@ -35,8 +61,10 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
         let presenter = SBPBanksPresenter(
             router: router,
+            paymentService: paymentService,
             banksService: banksService,
             bankAppChecker: bankAppChecker,
+            bankAppOpener: bankAppOpener,
             cellPresentersAssembly: cellPresentersAssembly
         )
 

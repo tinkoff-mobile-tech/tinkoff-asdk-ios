@@ -141,11 +141,33 @@ internal enum Loc {
       /// Оплачено
       internal static let title = Loc.tr("Localizable", "CommonSheet.Paid.Title", fallback: "Оплачено")
     }
+    internal enum PaymentFailed {
+      /// Попробуйте другой способ оплаты
+      internal static let description = Loc.tr("Localizable", "CommonSheet.PaymentFailed.Description", fallback: "Попробуйте другой способ оплаты")
+      /// Выбрать другой способ
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.PaymentFailed.PrimaryButton", fallback: "Выбрать другой способ")
+      /// Ошибка при оплате
+      internal static let title = Loc.tr("Localizable", "CommonSheet.PaymentFailed.Title", fallback: "Ошибка при оплате")
+    }
+    internal enum PaymentWaiting {
+      /// Закрыть
+      internal static let secondaryButton = Loc.tr("Localizable", "CommonSheet.PaymentWaiting.SecondaryButton", fallback: "Закрыть")
+      /// Ждем оплату в приложении банка
+      internal static let title = Loc.tr("Localizable", "CommonSheet.PaymentWaiting.Title", fallback: "Ждем оплату в приложении банка")
+    }
     internal enum Processing {
       /// Это займет некоторое время
       internal static let description = Loc.tr("Localizable", "CommonSheet.Processing.Description", fallback: "Это займет некоторое время")
       /// Обрабатываем платеж
       internal static let title = Loc.tr("Localizable", "CommonSheet.Processing.Title", fallback: "Обрабатываем платеж")
+    }
+    internal enum TimeoutFailed {
+      /// Попробуйте оплатить снова
+      internal static let description = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.Description", fallback: "Попробуйте оплатить снова")
+      /// Закрыть
+      internal static let secondaryButton = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.SecondaryButton", fallback: "Закрыть")
+      /// Время оплаты истекло
+      internal static let title = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.Title", fallback: "Время оплаты истекло")
     }
   }
   internal enum CommonStub {
