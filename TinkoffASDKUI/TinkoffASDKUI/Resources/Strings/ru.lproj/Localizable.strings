@@ -117,6 +117,10 @@
 "CardList.status.noCards" = "У вас нет сохраненных карт";
 "CardList.button.addNewCard" = "Добавить новую карту";
 
+// CardList for Change Card Flow
+"CardList.screen.title.paymentByCard" = "Оплата картой";
+"CardList.button.anotherCard" = "Другой картой";
+
 // AcquiringPayment
 "AcquiringPayment.button.chooseCard" = "Выбрать другую карту";
 

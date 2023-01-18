@@ -400,11 +400,16 @@ private extension CardListDataProvider {
             }
 
             if let card = cardId.flatMap({ self.item(with: $0) }) {
-                completion(.success(card))
-            } else {
-                let card = self.activeCards.first { !oldActiveCardIds.contains($0.cardId) }
-                completion(.success(card))
+                return completion(.success(card))
             }
+
+            let firstNewActiveCard = self.activeCards.first(where: { !oldActiveCardIds.contains($0.cardId) })
+            if let firstNewActiveCard = firstNewActiveCard {
+                return completion(.success(firstNewActiveCard))
+            }
+
+            // cancelled by user or couldn't find added card
+            return completion(.success(nil))
         }
     }
 }

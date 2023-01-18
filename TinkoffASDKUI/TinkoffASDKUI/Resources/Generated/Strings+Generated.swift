@@ -104,6 +104,14 @@ internal enum Loc {
     internal enum Button {
       /// Добавить новую карту
       internal static let addNewCard = Loc.tr("Localizable", "CardList.button.addNewCard", fallback: "Добавить новую карту")
+      /// Другой картой
+      internal static let anotherCard = Loc.tr("Localizable", "CardList.button.anotherCard", fallback: "Другой картой")
+    }
+    internal enum Screen {
+      internal enum Title {
+        /// Оплата картой
+        internal static let paymentByCard = Loc.tr("Localizable", "CardList.screen.title.paymentByCard", fallback: "Оплата картой")
+      }
     }
     internal enum Status {
       /// У вас нет сохраненных карт

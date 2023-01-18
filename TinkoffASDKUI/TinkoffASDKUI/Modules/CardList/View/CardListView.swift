@@ -30,19 +30,21 @@ protocol CardListViewDelegate: AnyObject {
     func didSelectCell(at: IndexPath)
 }
 
+// MARK: - Screen Configuration
+
+struct CardListScreenConfiguration {
+    let listItemsAreSelectable: Bool
+    let navigationTitle: String
+    let addNewCardCellTitle: String
+    let selectedCardId: String?
+}
+
 final class CardListView: UIView, StubViewPresentable {
-
-    // MARK: Style
-
-    struct Style {
-        let listItemsAreSelectable: Bool
-        let backgroundColor: UIColor
-    }
 
     // MARK: Dependencies
 
     weak var delegate: CardListViewDelegate?
-    private let style: Style
+    private let viewConfiguration: CardListScreenConfiguration
 
     // MARK: UI
 
@@ -56,8 +58,6 @@ final class CardListView: UIView, StubViewPresentable {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(cellClasses: PaymentCardRemovableView.Cell.self, IconTitleView.Cell.self, UICollectionViewCell.self)
-        collectionView.backgroundColor = style.backgroundColor
-        collectionView.allowsSelection = style.listItemsAreSelectable
         return collectionView
     }()
 
@@ -78,8 +78,11 @@ final class CardListView: UIView, StubViewPresentable {
 
     // MARK: Init
 
-    init(style: Style, delegate: CardListViewDelegate? = nil) {
-        self.style = style
+    init(
+        configuration: CardListScreenConfiguration,
+        delegate: CardListViewDelegate? = nil
+    ) {
+        viewConfiguration = configuration
         self.delegate = delegate
         super.init(frame: .zero)
         setupView()
@@ -144,7 +147,7 @@ final class CardListView: UIView, StubViewPresentable {
     // MARK: Initial Configuration
 
     private func setupView() {
-        backgroundColor = style.backgroundColor
+        backgroundColor = ASDKColors.Background.elevation1.color
         addSubview(collectionView)
         collectionView.makeConstraints { view in
             [
@@ -200,12 +203,16 @@ extension CardListView: UICollectionViewDataSource {
         switch section {
         case let .cards(data):
             let model = data[indexPath.item]
-            let accesoryItem: PaymentCardRemovableView.AccessoryItem = model.isInEditingMode
-                ? .removeButton(onRemove: { [weak self] in
+            var accesoryItem: PaymentCardRemovableView.AccessoryItem = .none
+
+            if model.isInEditingMode {
+                accesoryItem = .removeButton(onRemove: { [weak self] in
                     guard let self = self else { return }
                     self.delegate?.cardListView(self, didTapDeleteOn: model)
                 })
-                : .none
+            } else if model.hasCheckmarkInNormalMode {
+                accesoryItem = .checkmark
+            }
 
             let textStyle = UILabel.Style.bodyL().set(numberOfLines: 1)
             let configuration = PaymentCardRemovableView.Cell.ContentConfiguration(
@@ -222,7 +229,7 @@ extension CardListView: UICollectionViewDataSource {
             cell.update(
                 with: CollectionCell<PaymentCardRemovableView>.Configuration(
                     contentConfiguration: configuration,
-                    shouldHighlight: false
+                    shouldHighlight: viewConfiguration.listItemsAreSelectable
                 )
             )
 
@@ -275,6 +282,14 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
+        var shouldPropagateCall = true
+        switch indexPath.section {
+        case .zero:
+            shouldPropagateCall = viewConfiguration.listItemsAreSelectable
+        default: break
+        }
+
+        guard shouldPropagateCall else { return }
         delegate?.didSelectCell(at: indexPath)
     }
 

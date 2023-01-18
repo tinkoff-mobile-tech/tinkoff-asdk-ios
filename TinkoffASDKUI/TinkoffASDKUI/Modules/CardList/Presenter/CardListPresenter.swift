@@ -57,6 +57,7 @@ final class CardListPresenter: ICardListModule {
     private let provider: IPaymentCardsProvider
     private let bankResolver: IBankResolver
     private let paymentSystemResolver: IPaymentSystemResolver
+    private var screenConfiguration: CardListScreenConfiguration
 
     // MARK: State
 
@@ -70,11 +71,13 @@ final class CardListPresenter: ICardListModule {
     // MARK: Init
 
     init(
+        screenConfiguration: CardListScreenConfiguration,
         imageResolver: IPaymentSystemImageResolver,
         provider: IPaymentCardsProvider,
         bankResolver: IBankResolver,
         paymentSystemResolver: IPaymentSystemResolver
     ) {
+        self.screenConfiguration = screenConfiguration
         self.imageResolver = imageResolver
         self.provider = provider
         self.bankResolver = bankResolver
@@ -106,7 +109,8 @@ final class CardListPresenter: ICardListModule {
                 cardModel: cardModel,
                 bankNameText: bankText,
                 cardNumberText: cardNumberText,
-                isInEditingMode: screenState == .editingCards
+                isInEditingMode: screenState == .editingCards,
+                hasCheckmarkInNormalMode: screenConfiguration.selectedCardId == card.cardId
             )
         }
     }
@@ -298,7 +302,7 @@ extension CardListPresenter {
 
     private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
         return [
-            (icon: Asset.Icons.addCard, title: Loc.Acquiring.CardList.addCard),
+            (icon: Asset.Icons.addCard, title: screenConfiguration.addNewCardCellTitle),
         ]
     }
 }

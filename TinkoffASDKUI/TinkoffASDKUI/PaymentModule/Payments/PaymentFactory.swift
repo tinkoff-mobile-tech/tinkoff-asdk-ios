@@ -61,20 +61,15 @@ struct PaymentFactory: IPaymentFactory {
                 paymentFlow: paymentFlow,
                 delegate: paymentDelegate
             )
-        case let .yandexPay(base64Token):
-            switch paymentFlow {
-            case let .full(paymentOptions):
-                return YandexPayPaymentProcess(
-                    paymentOptions: paymentOptions,
-                    base64Token: base64Token,
-                    paymentService: paymentsService,
-                    threeDSService: threeDsService,
-                    threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
-                    delegate: paymentDelegate
-                )
-            case .finish:
-                return nil
-            }
+        case .yandexPay:
+            return YandexPayPaymentProcess(
+                paymentFlow: paymentFlow,
+                paymentSource: paymentSource,
+                paymentService: paymentsService,
+                threeDSService: threeDsService,
+                threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
+                delegate: paymentDelegate
+            )
         case .parentPayment:
             return ChargePaymentProcess(
                 paymentsService: paymentsService,

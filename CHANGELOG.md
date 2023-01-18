@@ -10,11 +10,16 @@
 * [MIC-6837] Card List Screen Redesign - Integration
 * [MIC-6841] Card List Screen Redesign - Tests
 * [MIC-7538] Add New Tinkoff Bins
-* [MIC-7380] SBP Redesign - without payment 
+* [MIC-7380] SBP Redesign - without payment
+* [MIC-7555] Add finish flow handling for YandexPay payments
 
 ### Changed
 
 * [MIC-7482] CommonSheet adoption for different states
+
+### Fixed
+
+* [MIC-7710] CommonSheet primary button's english localization
 
 ## [2.15.0] - 2022-12-29Z
 
@@ -43,7 +48,9 @@
 * [MIC-6834] Add New Card Screen Redisign - Card List Integration
 * [MIC-6835] Add New Card Screen Redisign - Present Add Card Only Integration
 * [MIC-6836] Add New Card Screen Redisign - Sample add shortcut button for presenting Add Card
+* [MIC-6842] Add New Card Screen Redisign - Unit Tests
 * [MIC-7538] Add New Tinkoff Bins
+* [MIC-7545] Adapt CardList for Payment Card Selection Flow
 
 ### Fixed
 

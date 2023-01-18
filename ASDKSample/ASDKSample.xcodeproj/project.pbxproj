@@ -32,11 +32,12 @@
 		2CD7522624A36D19005FA56C /* SelectRebuildCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */; };
 		2CFEEE08246EA4910009E633 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2CFEEE07246EA4910009E633 /* InfoPlist.strings */; };
 		4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */; };
-		57DE3DF32934C3D600FD6F1B /* YPButtonContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DE3DF22934C3D600FD6F1B /* YPButtonContainerView.swift */; };
+		57D1C5C62975A9B900C6D1CA /* UITableView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D1C5C52975A9B900C6D1CA /* UITableView+Utils.swift */; };
 		57DE3DF72934ED2C00FD6F1B /* ContainerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DE3DF62934ED2C00FD6F1B /* ContainerTableViewCell.swift */; };
 		57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8928F409A300809488 /* StageTestData.swift */; };
 		57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */; };
 		57EEFB9228F544D500809488 /* SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB9128F544D500809488 /* SHA256.swift */; };
+		A87513892971CD6100FCD98A /* PROJECT_RULES.md in Resources */ = {isa = PBXBuildFile; fileRef = A87513882971CD6100FCD98A /* PROJECT_RULES.md */; };
 		B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */; };
 		B121157B28EED63D007C6543 /* CGFloat+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157A28EED63D007C6543 /* CGFloat+Ext.swift */; };
 		B1419C5328D46AB2005C61DE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1419C4B28D46AB2005C61DE /* Localizable.strings */; };
@@ -89,11 +90,12 @@
 		2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebuildCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		57DE3DF22934C3D600FD6F1B /* YPButtonContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPButtonContainerView.swift; sourceTree = "<group>"; };
+		57D1C5C52975A9B900C6D1CA /* UITableView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Utils.swift"; sourceTree = "<group>"; };
 		57DE3DF62934ED2C00FD6F1B /* ContainerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTableViewCell.swift; sourceTree = "<group>"; };
 		57EEFB8928F409A300809488 /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StageTestData.swift; sourceTree = "<group>"; };
 		57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTokenProvider.swift; sourceTree = "<group>"; };
 		57EEFB9128F544D500809488 /* SHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHA256.swift; sourceTree = "<group>"; };
+		A87513882971CD6100FCD98A /* PROJECT_RULES.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = PROJECT_RULES.md; sourceTree = "<group>"; };
 		B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSdkCredentialsViewController.swift; sourceTree = "<group>"; };
 		B121157A28EED63D007C6543 /* CGFloat+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Ext.swift"; sourceTree = "<group>"; };
 		B1419C4C28D46AB2005C61DE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 		2C9C7EBD239FBCB200DE4071 /* ASDKSample */ = {
 			isa = PBXGroup;
 			children = (
+				A87513882971CD6100FCD98A /* PROJECT_RULES.md */,
 				B1347FFF28F5B5AB00CB88FF /* App */,
 				B1347FFE28F5B59700CB88FF /* Extensions */,
 				B1347FFD28F5B57600CB88FF /* Protocols */,
@@ -271,7 +274,6 @@
 				B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */,
 				B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */,
 				B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */,
-				57DE3DF22934C3D600FD6F1B /* YPButtonContainerView.swift */,
 				B1D01A1128F5A20800D429F4 /* JustButton.swift */,
 			);
 			name = Views;
@@ -302,6 +304,7 @@
 				B156F90D28F06B3700ABABDD /* UIView+Ext.swift */,
 				B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */,
 				B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */,
+				57D1C5C52975A9B900C6D1CA /* UITableView+Utils.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A87513892971CD6100FCD98A /* PROJECT_RULES.md in Resources */,
 				2CA0206E23F2D1F400C2AB0E /* CartEmptyTableViewCell.xib in Resources */,
 				B1419C5328D46AB2005C61DE /* Localizable.strings in Resources */,
 				2CA0206923F2CFB100C2AB0E /* CartBuyButtonView.xib in Resources */,
@@ -593,6 +597,7 @@
 				B1C97B7828F46E4000DC007B /* UIImage+Ext.swift in Sources */,
 				B1A4EDDB28F3FC2C004D0C99 /* ViewProtocols.swift in Sources */,
 				B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */,
+				57D1C5C62975A9B900C6D1CA /* UITableView+Utils.swift in Sources */,
 				2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */,
 				57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */,
 				2C9C7EBF239FBCB200DE4071 /* AppDelegate.swift in Sources */,
@@ -604,7 +609,6 @@
 				57DE3DF72934ED2C00FD6F1B /* ContainerTableViewCell.swift in Sources */,
 				B1A4EDDF28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift in Sources */,
 				2C6560832476D18800DEA4A9 /* SegmentedTabeViewCell.swift in Sources */,
-				57DE3DF32934C3D600FD6F1B /* YPButtonContainerView.swift in Sources */,
 				2CAEC1A5246D20F20052E07C /* SwitchTableViewCell.swift in Sources */,
 				2CA0205F23F2C01500C2AB0E /* CartTableViewController.swift in Sources */,
 				B1A4EDE328F3FD86004D0C99 /* CredentialsView.swift in Sources */,

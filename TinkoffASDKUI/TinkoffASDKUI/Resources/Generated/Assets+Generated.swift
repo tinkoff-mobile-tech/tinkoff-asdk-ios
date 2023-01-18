@@ -54,6 +54,7 @@ internal enum Asset {
   internal enum Icons {
     internal static let addCard = ImageAsset(name: "add-card")
     internal static let addedCard = ImageAsset(name: "added-card")
+    internal static let check = ImageAsset(name: "check")
     internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")
   }

@@ -118,6 +118,10 @@
 "CardList.status.noCards" = "You don't have any saved cards";
 "CardList.button.addNewCard" = "Add new card";
 
+// CardList for Change Card Flow
+"CardList.screen.title.paymentByCard" = "Payment by card";
+"CardList.button.anotherCard" = "Another card";
+
 // AcquiringPayment
 "AcquiringPayment.button.chooseCard" = "Choose another card";
 
@@ -169,7 +173,7 @@
 "CommonSheet.Processing.Title" = "Processing the payment";
 "CommonSheet.Processing.Description" = "It will take some time";
 "CommonSheet.Paid.Title" = "Paid";
-"CommonSheet.Paid.PrimaryButton" = "Clear";
+"CommonSheet.Paid.PrimaryButton" = "Ok";
 "CommonSheet.PaymentWaiting.Title" = "Waiting for payment in the bank application";
 "CommonSheet.PaymentWaiting.SecondaryButton" = "Close";
 "CommonSheet.TimeoutFailed.Title" = "Payment time has expired";
