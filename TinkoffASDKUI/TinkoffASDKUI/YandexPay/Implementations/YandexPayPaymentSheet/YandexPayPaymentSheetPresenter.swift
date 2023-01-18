@@ -1,5 +1,5 @@
 //
-//  YandexPayPaymentActivityPresenter.swift
+//  YandexPayPaymentSheetPresenter.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 12.12.2022.
@@ -8,11 +8,11 @@
 import Foundation
 import TinkoffASDKCore
 
-final class YandexPayPaymentActivityPresenter {
+final class YandexPayPaymentSheetPresenter {
     // MARK: Dependencies
 
-    weak var view: IPaymentActivityViewInput?
-    private weak var output: IYandexPayPaymentActivityOutput?
+    weak var view: ICommonSheetView?
+    private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
     private let paymentControllerUIProvider: PaymentControllerUIProvider
     private let paymentOptions: PaymentOptions
@@ -21,6 +21,7 @@ final class YandexPayPaymentActivityPresenter {
     // MARK: State
 
     private var paymentResult: YandexPayPaymentResult = .cancelled
+    private var canDismissView = false
 
     // MARK: Init
 
@@ -29,7 +30,7 @@ final class YandexPayPaymentActivityPresenter {
         paymentControllerUIProvider: PaymentControllerUIProvider,
         paymentOptions: PaymentOptions,
         base64Token: String,
-        output: IYandexPayPaymentActivityOutput
+        output: IYandexPayPaymentSheetOutput
     ) {
         self.paymentController = paymentController
         self.paymentControllerUIProvider = paymentControllerUIProvider
@@ -39,11 +40,11 @@ final class YandexPayPaymentActivityPresenter {
     }
 }
 
-// MARK: - IPaymentActivityViewOutput
+// MARK: - ICommonSheetPresenter
 
-extension YandexPayPaymentActivityPresenter: IPaymentActivityViewOutput {
+extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
-        view?.update(with: .processing, animated: false)
+        view?.update(state: .processing)
 
         paymentController.performInitPayment(
             paymentOptions: paymentOptions,
@@ -55,6 +56,12 @@ extension YandexPayPaymentActivityPresenter: IPaymentActivityViewOutput {
         view?.close()
     }
 
+    func secondaryButtonTapped() {}
+
+    func canDismissViewByUserInteraction() -> Bool {
+        canDismissView
+    }
+
     func viewWasClosed() {
         output?.yandexPayPaymentActivity(completedWith: paymentResult)
     }
@@ -62,7 +69,7 @@ extension YandexPayPaymentActivityPresenter: IPaymentActivityViewOutput {
 
 // MARK: - PaymentControllerDelegate
 
-extension YandexPayPaymentActivityPresenter: PaymentControllerDelegate {
+extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     func paymentController(
         _ controller: PaymentController,
         didFinishPayment: PaymentProcess,
@@ -75,7 +82,8 @@ extension YandexPayPaymentActivityPresenter: PaymentControllerDelegate {
             paymentId: state.paymentId
         )
         paymentResult = .succeeded(paymentInfo)
-        view?.update(with: .paid, animated: true)
+        canDismissView = true
+        view?.update(state: .paid)
     }
 
     func paymentController(
@@ -85,6 +93,7 @@ extension YandexPayPaymentActivityPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         paymentResult = .cancelled
+        canDismissView = true
         view?.close()
     }
 
@@ -95,40 +104,36 @@ extension YandexPayPaymentActivityPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         paymentResult = .failed(error)
-        view?.update(with: .failed, animated: true)
+        canDismissView = true
+        view?.update(state: .failed)
     }
 }
 
-// MARK: - PaymentActivityViewState + YandexPayPaymentActivity States
+// MARK: - CommonSheetState + YandexPay States
 
-private extension PaymentActivityViewState {
-    static var processing: PaymentActivityViewState {
-        .processing(
-            Processing(
-                title: Loc.CommonSheet.Processing.title,
-                description: Loc.CommonSheet.Processing.description
-            )
+private extension CommonSheetState {
+    static var processing: CommonSheetState {
+        CommonSheetState(
+            status: .processing,
+            title: Loc.CommonSheet.Processing.title,
+            description: Loc.CommonSheet.Processing.description
         )
     }
 
-    static var paid: PaymentActivityViewState {
-        .processed(
-            Processed(
-                image: Asset.TuiIcMedium.checkCirclePositive.image,
-                title: Loc.CommonSheet.Paid.title,
-                primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
-            )
+    static var paid: CommonSheetState {
+        CommonSheetState(
+            status: .succeeded,
+            title: Loc.CommonSheet.Paid.title,
+            primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
         )
     }
 
-    static var failed: PaymentActivityViewState {
-        .processed(
-            Processed(
-                image: Asset.TuiIcMedium.crossCircle.image,
-                title: Loc.YandexSheet.Failed.title,
-                description: Loc.YandexSheet.Failed.description,
-                primaryButtonTitle: Loc.YandexSheet.Failed.primaryButton
-            )
+    static var failed: CommonSheetState {
+        CommonSheetState(
+            status: .failed,
+            title: Loc.YandexSheet.Failed.title,
+            description: Loc.YandexSheet.Failed.description,
+            primaryButtonTitle: Loc.YandexSheet.Failed.primaryButton
         )
     }
 }
