@@ -13,7 +13,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
     // MARK: Properties
 
     /// От этого параметра зависит, какая будет задержка между повторяющимися операциями
-    private var delay: TimeInterval
+    private let delay: TimeInterval
 
     private var lastExecutionTime = Date(timeIntervalSince1970: 0)
 
