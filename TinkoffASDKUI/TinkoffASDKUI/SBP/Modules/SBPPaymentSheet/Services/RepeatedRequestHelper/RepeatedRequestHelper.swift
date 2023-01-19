@@ -10,6 +10,10 @@ import TinkoffASDKCore
 
 final class RepeatedRequestHelper: IRepeatedRequestHelper {
 
+    // MARK: Dependencies
+
+    private weak var timer: Timer?
+
     // MARK: Properties
 
     /// От этого параметра зависит, какая будет задержка между повторяющимися операциями
@@ -23,16 +27,21 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
         self.delay = delay
     }
 
+    deinit {
+        timer?.invalidate()
+    }
+
     // MARK: IRepeatedRequestHelper
 
     /// Выполняет переданный блок кода не раньше заданного времени `var delay: TimeInterval`
     /// Пример: delay = 10
     /// Первый вызов будет осуществлен мгновенно.
     /// А вот следующий будет исполнен только после задержки. Когда пройдет установленное время.
-    /// Важно! Если накидать пять операций подряд, то все они будут выполнены одновременно после задержки.
-    /// За этим моментом необходимо следить самостоятельно.
+    /// Важно! Если накидать несколько операций подряд, то будет выполнена только последняя с соблюдением условий задержки.
     /// - Parameter action: Блок который должен быть выполнен
     func executeWithWaitingIfNeeded(action: @escaping VoidBlock) {
+        timer?.invalidate()
+
         let currentTime = Date()
         let differenceInSeconds = currentTime.timeIntervalSince(lastExecutionTime)
 
@@ -40,10 +49,12 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
             lastExecutionTime = Date()
             action()
         } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + (delay - differenceInSeconds)) {
-                self.lastExecutionTime = Date()
+            let timer = Timer(timeInterval: delay - differenceInSeconds, repeats: false) { [weak self] _ in
+                self?.lastExecutionTime = Date()
                 action()
             }
+            self.timer = timer
+            RunLoop.current.add(timer, forMode: .common)
         }
     }
 }
