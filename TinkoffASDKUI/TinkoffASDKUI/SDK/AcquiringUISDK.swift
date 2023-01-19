@@ -186,6 +186,7 @@ public class AcquiringUISDK: NSObject {
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
+    private let mainFormAssembly: IMainFormAssembly
 
     // MARK: Init
 
@@ -247,6 +248,7 @@ public class AcquiringUISDK: NSObject {
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
         webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+        mainFormAssembly = MainFormAssembly()
     }
 
     /// Вызывается когда пользователь привязывает карту.
@@ -2129,6 +2131,7 @@ extension AcquiringUISDK: IAddNewCardNetworking {
 
 public extension AcquiringUISDK {
     func presentMainForm(on presentingViewController: UIViewController, stub: MainFormStub) {
-        // TODO: MIC-7702 Открыть модуль главной формы
+        let viewController = mainFormAssembly.build(stub: stub)
+        presentingViewController.present(viewController, animated: true)
     }
 }
