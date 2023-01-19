@@ -27,7 +27,7 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
         self.sbpConfiguration = sbpConfiguration
     }
 
-    // MARK: - ISBPPaymentSheetAssembly
+    // MARK: ISBPPaymentSheetAssembly
 
     func build() -> SBPPaymentSheetModule {
         let paymentStatusService = SBPPaymentStatusService(acquiringSdk: acquiringSdk)

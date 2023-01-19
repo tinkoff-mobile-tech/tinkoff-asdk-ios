@@ -24,6 +24,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private let bankAppChecker: ISBPBankAppChecker
     private let bankAppOpener: ISBPBankAppOpener
     private let cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
+    private let dispatchGroup: DispatchGroup
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
@@ -34,6 +35,9 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private var lastSearchedText = ""
     private var qrPayload: GetQRPayload?
 
+    private var tempBanksResult: Result<[SBPBank], Error>?
+    private var tempQrPayloadResult: Result<GetQRPayload, Error>?
+
     // MARK: - Initialization
 
     init(
@@ -42,7 +46,8 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
         bankAppOpener: ISBPBankAppOpener,
-        cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
+        cellPresentersAssembly: ISBPBankCellPresenterNewAssembly,
+        dispatchGroup: DispatchGroup
     ) {
         self.router = router
         self.paymentService = paymentService
@@ -50,6 +55,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         self.bankAppChecker = bankAppChecker
         self.bankAppOpener = bankAppOpener
         self.cellPresentersAssembly = cellPresentersAssembly
+        self.dispatchGroup = dispatchGroup
     }
 }
 
@@ -134,33 +140,42 @@ extension SBPBanksPresenter {
     }
 
     private func loadQrPayloadAndBanks() {
-        paymentService?.loadPaymentQr(completion: { [weak self] result in
+        loadQrPayload()
+        loadBanks()
+
+        dispatchGroup.notify(queue: .main) { [weak self] in
             guard let self = self else { return }
 
-            switch result {
-            case let .success(qrPayload):
+            switch (self.tempBanksResult, self.tempQrPayloadResult) {
+            case let (.success(banks), .success(qrPayload)):
                 self.qrPayload = qrPayload
-                self.loadBanks()
-            case let .failure(error):
-                DispatchQueue.main.async {
-                    self.handleFailureLoad(error: error)
-                }
+                self.handleSuccessLoaded(banks: banks)
+            case let (.failure(error), _), let (_, .failure(error)):
+                self.handleFailureLoad(error: error)
+            default:
+                self.handleFailureLoad(error: CustomError.undefined)
             }
+
+            self.tempBanksResult = nil
+            self.tempQrPayloadResult = nil
+        }
+    }
+
+    private func loadQrPayload() {
+        dispatchGroup.enter()
+
+        paymentService?.loadPaymentQr(completion: { [weak self] result in
+            self?.tempQrPayloadResult = result
+            self?.dispatchGroup.leave()
         })
     }
 
     private func loadBanks() {
-        banksService.loadBanks { [weak self] result in
-            guard let self = self else { return }
+        dispatchGroup.enter()
 
-            DispatchQueue.main.async {
-                switch result {
-                case let .success(banks):
-                    self.handleSuccessLoaded(banks: banks)
-                case let .failure(error):
-                    self.handleFailureLoad(error: error)
-                }
-            }
+        banksService.loadBanks { [weak self] result in
+            self?.tempBanksResult = result
+            self?.dispatchGroup.leave()
         }
     }
 
@@ -252,4 +267,10 @@ private extension Int {
 
 private extension TimeInterval {
     static let searchDelay = 0.3
+}
+
+// MARK: - Errors
+
+private enum CustomError: Error {
+    case undefined
 }
