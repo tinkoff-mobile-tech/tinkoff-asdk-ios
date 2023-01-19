@@ -7,9 +7,11 @@
 
 import UIKit
 
-final class MainFormViewController: UIViewController, PullableContainerContent {
+final class MainFormViewController: UIViewController, PullableContainerScrollableContent {
+
     // MARK: PullableContainer Properties
 
+    var scrollView: UIScrollView { tableView }
     var pullableContainerContentHeight: CGFloat { headerView.estimatedHeight }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
