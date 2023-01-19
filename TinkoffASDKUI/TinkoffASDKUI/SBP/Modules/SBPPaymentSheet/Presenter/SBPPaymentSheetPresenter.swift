@@ -11,7 +11,7 @@ import TinkoffASDKCore
 /// Презентер для управления платежной шторкой в разделе СБП
 /// После показа, начинается повторяющаяся серия запросов для получения статуса с интервалом в 3 секунды
 /// Количество таких запросов `requestRepeatCount` по умолчанию установленно в 10, мерч может сам установить этот параметр как ему хочется
-final class SBPPaymentSheetPresenter: ICommonSheetPresenter, SBPPaymentSheetModuleInput {
+final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 
     // MARK: Dependencies
 
@@ -23,9 +23,9 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter, SBPPaymentSheetModu
 
     // MARK: Properties
 
-    private lazy var requestRepeatCount: Int = sbpConfiguration.paymentStatusRetriesCount
+    private let paymentId: String
 
-    private var paymentId: String?
+    private lazy var requestRepeatCount: Int = sbpConfiguration.paymentStatusRetriesCount
     private var canDismissView = true
 
     private var currentViewState: CommonSheetState = .waiting
@@ -35,18 +35,12 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter, SBPPaymentSheetModu
     init(
         paymentStatusService: ISBPPaymentStatusService,
         repeatedRequestHelper: IRepeatedRequestHelper,
-        sbpConfiguration: SBPConfiguration
+        sbpConfiguration: SBPConfiguration,
+        paymentId: String
     ) {
         self.paymentStatusService = paymentStatusService
         self.repeatedRequestHelper = repeatedRequestHelper
         self.sbpConfiguration = sbpConfiguration
-    }
-}
-
-// MARK: - SBPPaymentSheetModuleInput
-
-extension SBPPaymentSheetPresenter {
-    func set(paymentId: String) {
         self.paymentId = paymentId
     }
 }
@@ -80,12 +74,10 @@ extension SBPPaymentSheetPresenter {
 
 extension SBPPaymentSheetPresenter {
     private func getPaymentStatus() {
-        guard let paymentId = paymentId else { return }
-
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentStatus(paymentId: paymentId) { result in
+            self.paymentStatusService.getPaymentStatus(paymentId: self.paymentId) { result in
                 DispatchQueue.main.async {
                     switch result {
                     case let .success(paymentStatus):

@@ -52,8 +52,7 @@ extension SBPBanksRouter {
     }
 
     func showPaymentSheet(paymentId: String) {
-        let sbpPaymentSheetModule = sbpPaymentSheetAssembly.build()
-        sbpPaymentSheetModule.input.set(paymentId: paymentId)
-        transitionHandler?.present(sbpPaymentSheetModule.view, animated: true)
+        let sbpPaymentSheetViewController = sbpPaymentSheetAssembly.build(paymentId: paymentId)
+        transitionHandler?.present(sbpPaymentSheetViewController, animated: true)
     }
 }

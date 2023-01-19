@@ -226,8 +226,8 @@ extension SBPBanksPresenter {
 
         return banks.map { bank in
             cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
-                self?.bankAppOpener.openBankApp(url: paymentUrl, bank, completion: { isOpen in
-                    isOpen ? self?.router.showPaymentSheet(paymentId: paymentId) : self?.router.showDidNotFindBankAppAlert()
+                self?.bankAppOpener.openBankApp(url: paymentUrl, bank, completion: { isOpened in
+                    isOpened ? self?.router.showPaymentSheet(paymentId: paymentId) : self?.router.showDidNotFindBankAppAlert()
                 })
             })
         }

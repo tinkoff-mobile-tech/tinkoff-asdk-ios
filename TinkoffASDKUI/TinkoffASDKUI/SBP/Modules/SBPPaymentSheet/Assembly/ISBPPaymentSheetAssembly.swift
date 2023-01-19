@@ -6,5 +6,5 @@
 //
 
 protocol ISBPPaymentSheetAssembly {
-    func build() -> SBPPaymentSheetModule
+    func build(paymentId: String) -> UIViewController
 }

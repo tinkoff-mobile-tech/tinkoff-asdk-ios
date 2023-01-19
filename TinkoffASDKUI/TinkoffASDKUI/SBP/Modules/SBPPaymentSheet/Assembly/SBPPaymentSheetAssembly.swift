@@ -8,8 +8,6 @@
 import Foundation
 import TinkoffASDKCore
 
-typealias SBPPaymentSheetModule = Module<SBPPaymentSheetModuleInput>
-
 final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
 
     // MARK: Dependencies
@@ -29,21 +27,20 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
 
     // MARK: ISBPPaymentSheetAssembly
 
-    func build() -> SBPPaymentSheetModule {
+    func build(paymentId: String) -> UIViewController {
         let paymentStatusService = SBPPaymentStatusService(acquiringSdk: acquiringSdk)
         let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
         let presenter = SBPPaymentSheetPresenter(
             paymentStatusService: paymentStatusService,
             repeatedRequestHelper: repeatedRequestHelper,
-            sbpConfiguration: sbpConfiguration
+            sbpConfiguration: sbpConfiguration,
+            paymentId: paymentId
         )
 
         let sheetView = CommonSheetViewController(presenter: presenter)
         presenter.view = sheetView
 
-        let view = PullableContainerViewController(content: sheetView)
-
-        return Module(view: view, input: presenter)
+        return PullableContainerViewController(content: sheetView)
     }
 }
 
