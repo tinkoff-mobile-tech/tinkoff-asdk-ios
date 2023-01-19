@@ -10,12 +10,21 @@ import UIKit
 final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: PullableContainer Properties
 
-    var pullableContainerContentHeight: CGFloat = 400
+    var pullableContainerContentHeight: CGFloat { headerView.estimatedHeight }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     // MARK: Dependencies
 
     private let presenter: IMainFormPresenter
+
+    // MARK: Subviews
+
+    private lazy var headerView = MainFormHeaderView()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.tableHeaderView = headerView
+        return tableView
+    }()
 
     // MARK: Init
 
@@ -30,6 +39,10 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     }
 
     // MARK: Life Cycle
+
+    override func loadView() {
+        view = tableView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
