@@ -1,0 +1,28 @@
+//
+//  MainFormStub.swift
+//  TinkoffASDKUI
+//
+//  Created by r.akhmadeev on 19.01.2023.
+//
+
+import Foundation
+
+// TODO: MIC-7708 Удалить заглушку состояний
+/// Временная заглушка состояний экрана для отладки и тестирования главной формы оплаты через Sample
+public struct MainFormStub {
+    public enum PayMethod: CaseIterable {
+        case card
+        case sbp
+        case tinkoffPay
+    }
+
+    /// сумма в копейках
+    public let amount: Int64
+    /// главный метод оплаты (в блоке с суммой оплаты)
+    public let primaryPayMethod: PayMethod
+
+    public init(amount: Int64, primaryPayMethod: PayMethod) {
+        self.amount = amount
+        self.primaryPayMethod = primaryPayMethod
+    }
+}
