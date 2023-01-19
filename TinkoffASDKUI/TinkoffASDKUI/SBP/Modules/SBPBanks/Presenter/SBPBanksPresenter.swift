@@ -19,9 +19,12 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     weak var view: ISBPBanksViewController?
     private let router: ISBPBanksRouter
 
+    private let paymentService: ISBPPaymentServiceNew?
     private let banksService: ISBPBanksService
     private let bankAppChecker: ISBPBankAppChecker
+    private let bankAppOpener: ISBPBankAppOpener
     private let cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
+    private let dispatchGroup: DispatchGroup
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
@@ -30,26 +33,37 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private var filteredBanksCellPresenters = [ISBPBankCellNewPresenter]()
 
     private var lastSearchedText = ""
+    private var qrPayload: GetQRPayload?
+
+    private var tempBanksResult: Result<[SBPBank], Error>?
+    private var tempQrPayloadResult: Result<GetQRPayload, Error>?
 
     // MARK: - Initialization
 
     init(
         router: ISBPBanksRouter,
+        paymentService: ISBPPaymentServiceNew?,
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
-        cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
+        bankAppOpener: ISBPBankAppOpener,
+        cellPresentersAssembly: ISBPBankCellPresenterNewAssembly,
+        dispatchGroup: DispatchGroup
     ) {
         self.router = router
+        self.paymentService = paymentService
         self.banksService = banksService
         self.bankAppChecker = bankAppChecker
+        self.bankAppOpener = bankAppOpener
         self.cellPresentersAssembly = cellPresentersAssembly
+        self.dispatchGroup = dispatchGroup
     }
 }
 
 // MARK: - ISBPBanksModuleInput
 
 extension SBPBanksPresenter {
-    func set(banks: [SBPBank]) {
+    func set(qrPayload: GetQRPayload?, banks: [SBPBank]) {
+        self.qrPayload = qrPayload
         allBanks = banks
         screenType = .startWithData
     }
@@ -63,7 +77,7 @@ extension SBPBanksPresenter {
         case .startEmpty:
             view?.hideSearchBar()
             prepareAndShowSkeletonModels()
-            loadBanks()
+            loadQrPayloadAndBanks()
             view?.setupNavigationWithCloseButton()
         case .startWithData:
             setupScreen(with: allBanks)
@@ -125,23 +139,43 @@ extension SBPBanksPresenter {
         view?.reloadTableView()
     }
 
-    private func loadBanks() {
-        banksService.loadBanks { [weak self] result in
+    private func loadQrPayloadAndBanks() {
+        loadQrPayload()
+        loadBanks()
+
+        dispatchGroup.notify(queue: .main) { [weak self] in
             guard let self = self else { return }
 
-            DispatchQueue.main.async {
-                switch result {
-                case let .success(banks):
-                    self.handleSuccessLoaded(banks: banks)
-                case let .failure(error):
-                    switch (error as NSError).code {
-                    case NSURLErrorNotConnectedToInternet:
-                        self.viewShowNoNetworkStub()
-                    default:
-                        self.viewShowServerErrorStub()
-                    }
-                }
+            switch (self.tempBanksResult, self.tempQrPayloadResult) {
+            case let (.success(banks), .success(qrPayload)):
+                self.qrPayload = qrPayload
+                self.handleSuccessLoaded(banks: banks)
+            case let (.failure(error), _), let (_, .failure(error)):
+                self.handleFailureLoad(error: error)
+            default:
+                self.handleFailureLoad(error: CustomError.undefined)
             }
+
+            self.tempBanksResult = nil
+            self.tempQrPayloadResult = nil
+        }
+    }
+
+    private func loadQrPayload() {
+        dispatchGroup.enter()
+
+        paymentService?.loadPaymentQr(completion: { [weak self] result in
+            self?.tempQrPayloadResult = result
+            self?.dispatchGroup.leave()
+        })
+    }
+
+    private func loadBanks() {
+        dispatchGroup.enter()
+
+        banksService.loadBanks { [weak self] result in
+            self?.tempBanksResult = result
+            self?.dispatchGroup.leave()
         }
     }
 
@@ -161,7 +195,7 @@ extension SBPBanksPresenter {
                 guard let self = self else { return }
 
                 let otherBanks = self.getNotPreferredBanks()
-                self.router.show(banks: otherBanks)
+                self.router.show(banks: otherBanks, qrPayload: self.qrPayload)
             })
             allBanksCellPresenters = createCellPresenters(from: preferredBanks)
             allBanksCellPresenters.append(otherBankCellPresenter)
@@ -171,6 +205,15 @@ extension SBPBanksPresenter {
         view?.reloadTableView()
     }
 
+    private func handleFailureLoad(error: Error) {
+        switch (error as NSError).code {
+        case NSURLErrorNotConnectedToInternet:
+            viewShowNoNetworkStub()
+        default:
+            viewShowServerErrorStub()
+        }
+    }
+
     private func setupScreen(with banks: [SBPBank]) {
         allBanksCellPresenters = createCellPresenters(from: banks)
         filteredBanksCellPresenters = allBanksCellPresenters
@@ -178,10 +221,13 @@ extension SBPBanksPresenter {
     }
 
     private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellNewPresenter] {
-        banks.map { bank in
+        guard let paymentUrl = URL(string: qrPayload?.qrCodeData ?? ""),
+              let paymentId = qrPayload?.paymentId else { return [] }
+
+        return banks.map { bank in
             cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
-                self?.bankAppChecker.openBankApp(bank, completion: { isOpen in
-                    isOpen ? () : self?.router.showDidNotFindBankAppAlert()
+                self?.bankAppOpener.openBankApp(url: paymentUrl, bank, completion: { isOpened in
+                    isOpened ? self?.router.showPaymentSheet(paymentId: paymentId) : self?.router.showDidNotFindBankAppAlert()
                 })
             })
         }
@@ -201,7 +247,7 @@ extension SBPBanksPresenter {
         view?.showStubView(mode: .noNetwork { [weak self] in
             self?.view?.hideStubView()
             self?.prepareAndShowSkeletonModels()
-            self?.loadBanks()
+            self?.loadQrPayloadAndBanks()
         })
     }
 
@@ -221,4 +267,10 @@ private extension Int {
 
 private extension TimeInterval {
     static let searchDelay = 0.3
+}
+
+// MARK: - Errors
+
+private enum CustomError: Error {
+    case undefined
 }

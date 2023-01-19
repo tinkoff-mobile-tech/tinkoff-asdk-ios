@@ -14,11 +14,16 @@ final class SBPBanksRouter: ISBPBanksRouter {
     weak var transitionHandler: UIViewController?
 
     private let sbpBanksAssembly: ISBPBanksAssembly
+    private let sbpPaymentSheetAssembly: ISBPPaymentSheetAssembly
 
     // MARK: - Initialization
 
-    init(sbpBanksAssembly: ISBPBanksAssembly) {
+    init(
+        sbpBanksAssembly: ISBPBanksAssembly,
+        sbpPaymentSheetAssembly: ISBPPaymentSheetAssembly
+    ) {
         self.sbpBanksAssembly = sbpBanksAssembly
+        self.sbpPaymentSheetAssembly = sbpPaymentSheetAssembly
     }
 }
 
@@ -29,9 +34,9 @@ extension SBPBanksRouter {
         transitionHandler?.dismiss(animated: true)
     }
 
-    func show(banks: [SBPBank]) {
-        let sbpModule = sbpBanksAssembly.build()
-        sbpModule.input.set(banks: banks)
+    func show(banks: [SBPBank], qrPayload: GetQRPayload?) {
+        let sbpModule = sbpBanksAssembly.buildPreparedModule()
+        sbpModule.input.set(qrPayload: qrPayload, banks: banks)
         transitionHandler?.navigationController?.pushViewController(sbpModule.view, animated: true)
     }
 
@@ -44,5 +49,10 @@ extension SBPBanksRouter {
         let alertAction = UIAlertAction(title: actionTitle, style: .default)
         alertVC.addAction(alertAction)
         transitionHandler?.present(alertVC, animated: true)
+    }
+
+    func showPaymentSheet(paymentId: String) {
+        let sbpPaymentSheetViewController = sbpPaymentSheetAssembly.build(paymentId: paymentId)
+        transitionHandler?.present(sbpPaymentSheetViewController, animated: true)
     }
 }

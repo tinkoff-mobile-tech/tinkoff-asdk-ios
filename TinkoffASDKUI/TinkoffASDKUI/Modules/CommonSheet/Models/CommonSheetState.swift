@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct CommonSheetState {
+struct CommonSheetState: Equatable {
     enum Status {
         case processing
         case succeeded

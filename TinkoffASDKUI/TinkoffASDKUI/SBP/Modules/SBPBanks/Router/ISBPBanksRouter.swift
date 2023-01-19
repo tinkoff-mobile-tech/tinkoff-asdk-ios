@@ -9,6 +9,7 @@ import TinkoffASDKCore
 
 protocol ISBPBanksRouter {
     func closeScreen()
-    func show(banks: [SBPBank])
+    func show(banks: [SBPBank], qrPayload: GetQRPayload?)
     func showDidNotFindBankAppAlert()
+    func showPaymentSheet(paymentId: String)
 }

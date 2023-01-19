@@ -7,9 +7,6 @@
 
 import TinkoffASDKCore
 
-typealias SBPBankAppCheckerOpenBankAppCompletion = (Bool) -> Void
-
 protocol ISBPBankAppChecker {
     func bankAppsPreferredByMerchant(from allBanks: [SBPBank]) -> [SBPBank]
-    func openBankApp(_ bank: SBPBank, completion: @escaping SBPBankAppCheckerOpenBankAppCompletion)
 }
