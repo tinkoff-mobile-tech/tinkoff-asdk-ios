@@ -2130,3 +2130,9 @@ extension AcquiringUISDK: IAddNewCardNetworking {
         )
     }
 }
+
+public extension AcquiringUISDK {
+    func presentMainForm(on presentingViewController: UIViewController, stub: MainFormStub) {
+        // TODO: MIC-7702 Открыть модуль главной формы
+    }
+}

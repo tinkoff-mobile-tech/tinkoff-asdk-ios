@@ -30,6 +30,8 @@ class BuyProductsViewController: UIViewController {
         case products
         /// открыть экран оплаты и перейти к оплате
         case pay
+        /// оплатить с помощью главной формы оплаты
+        case mainFormPayment
         /// оплатить с карты - выбрать карту из списка и сделать этот платеж родительским
         case payAndSaveAsParent
         /// оплатить
@@ -70,6 +72,7 @@ class BuyProductsViewController: UIViewController {
     private var tableViewCells: [TableViewCellType] = [
         .products,
         .pay,
+        .mainFormPayment,
         .payAndSaveAsParent,
         .payRequrent,
         .payApplePay,
@@ -381,6 +384,39 @@ class BuyProductsViewController: UIViewController {
         )
         present(viewController, animated: true, completion: nil)
     }
+
+    // TODO: MIC-7708 Удалить заглушку состояний
+    private func payWithMainForm() {
+        let actionHandler: (MainFormStub.PayMethod) -> Void = { [weak self] method in
+            guard let self = self else { return }
+            let initData = self.createPaymentData()
+            let stub = MainFormStub(amount: initData.amount, primaryPayMethod: method)
+            self.uiSDK.presentMainForm(on: self, stub: stub)
+        }
+
+        let actionTitle: (MainFormStub.PayMethod) -> String = { method in
+            switch method {
+            case .card: return "По карте"
+            case .sbp: return "СБП"
+            case .tinkoffPay: return "Tinkoff Pay"
+            }
+        }
+
+        let alert = UIAlertController(title: "Выберите приоритетный метод оплаты", message: nil, preferredStyle: .actionSheet)
+
+        MainFormStub.PayMethod.allCases
+            .map { method in
+                UIAlertAction(
+                    title: actionTitle(method),
+                    style: .default,
+                    handler: { _ in actionHandler(method) }
+                )
+            }
+            .forEach(alert.addAction(_:))
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
 }
 
 extension BuyProductsViewController: CardListDataSourceStatusListener {
@@ -443,6 +479,7 @@ extension BuyProductsViewController: UITableViewDataSource {
         return result
     }
 
+    // swiftlint:disable:next function_body_length
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableViewCells[indexPath.section] {
         case .products:
@@ -475,7 +512,13 @@ extension BuyProductsViewController: UITableViewDataSource {
 
                 return cell
             }
-
+        case .mainFormPayment:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell else { break }
+            cell.button.setTitle(Loc.Button.pay, for: .normal)
+            cell.button.backgroundColor = yellowButtonColor()
+            cell.button.setImage(nil, for: .normal)
+            cell.onButtonTouch = { [weak self] in self?.payWithMainForm() }
+            return cell
         case .payAndSaveAsParent:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(Loc.Button.pay, for: .normal)
@@ -582,6 +625,8 @@ extension BuyProductsViewController: UITableViewDataSource {
             return Loc.Title.goods
         case .pay:
             return Loc.Title.paymeny
+        case .mainFormPayment:
+            return Loc.Title.paymeny
         case .payAndSaveAsParent:
             return Loc.Title.payAndSaveAsParent
         case .payRequrent:
@@ -607,6 +652,8 @@ extension BuyProductsViewController: UITableViewDataSource {
             }
 
             return "открыть платежную форму и перейти к оплате товара"
+        case .mainFormPayment:
+            return "Открыть главную платежную форму и перейти к оплате товара"
         case .payAndSaveAsParent:
             let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
             if cardsCount > 0 {
