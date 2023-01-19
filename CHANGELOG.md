@@ -12,6 +12,7 @@
 * [MIC-7538] Add New Tinkoff Bins
 * [MIC-7380] SBP Redesign - without payment
 * [MIC-7555] Add finish flow handling for YandexPay payments
+* [MIC-7703] MainForm - Add entry point in ASDKSample
 
 ### Changed
 
