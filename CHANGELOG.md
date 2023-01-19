@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.16.0] - 2023-01-19Z
+
 ### Added
 
 * [MIC-6827] Implemented CardFieldView
