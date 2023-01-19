@@ -385,7 +385,38 @@ class BuyProductsViewController: UIViewController {
         present(viewController, animated: true, completion: nil)
     }
 
-    private func payWithMainForm() {}
+    // TODO: MIC-7708 Удалить заглушку состояний
+    private func payWithMainForm() {
+        let actionHandler: (MainFormStub.PayMethod) -> Void = { [weak self] method in
+            guard let self = self else { return }
+            let initData = self.createPaymentData()
+            let stub = MainFormStub(amount: initData.amount, primaryPayMethod: method)
+            self.uiSDK.presentMainForm(on: self, stub: stub)
+        }
+
+        let actionTitle: (MainFormStub.PayMethod) -> String = { method in
+            switch method {
+            case .card: return "По карте"
+            case .sbp: return "СБП"
+            case .tinkoffPay: return "Tinkoff Pay"
+            }
+        }
+
+        let alert = UIAlertController(title: "Выберите приоритетный метод оплаты", message: nil, preferredStyle: .actionSheet)
+
+        MainFormStub.PayMethod.allCases
+            .map { method in
+                UIAlertAction(
+                    title: actionTitle(method),
+                    style: .default,
+                    handler: { _ in actionHandler(method) }
+                )
+            }
+            .forEach(alert.addAction(_:))
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
 }
 
 extension BuyProductsViewController: CardListDataSourceStatusListener {
