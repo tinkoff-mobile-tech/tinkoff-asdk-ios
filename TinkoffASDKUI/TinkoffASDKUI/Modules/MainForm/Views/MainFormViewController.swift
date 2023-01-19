@@ -7,7 +7,12 @@
 
 import UIKit
 
-final class MainFormViewController: UIViewController {
+final class MainFormViewController: UIViewController, PullableContainerContent {
+    // MARK: PullableContainer Properties
+
+    var pullableContainerContentHeight: CGFloat = 400
+    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
+
     // MARK: Dependencies
 
     private let presenter: IMainFormPresenter
@@ -35,3 +40,11 @@ final class MainFormViewController: UIViewController {
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {}
+
+// MARK: - PullableContainerContent Methods
+
+extension MainFormViewController {
+    func pullableContainerWasClosed() {
+        presenter.viewWasClosed()
+    }
+}

@@ -26,4 +26,6 @@ final class MainFormPresenter {
 
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {}
+
+    func viewWasClosed() {}
 }

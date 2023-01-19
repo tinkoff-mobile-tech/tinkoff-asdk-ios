@@ -14,6 +14,8 @@ final class MainFormAssembly: IMainFormAssembly {
         let viewController = MainFormViewController(presenter: presenter)
         router.transitionHandler = viewController
         presenter.view = viewController
-        return viewController
+
+        let pullableContainerViewController = PullableContainerViewController(content: viewController)
+        return pullableContainerViewController
     }
 }
