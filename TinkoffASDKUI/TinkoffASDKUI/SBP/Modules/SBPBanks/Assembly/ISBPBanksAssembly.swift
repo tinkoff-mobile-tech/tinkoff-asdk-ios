@@ -9,10 +9,10 @@ protocol ISBPBanksAssembly {
 
     /// Формирует модуль, когда уже есть пре загруженная платежная информация
     /// - Returns: Возвращает сформированный модуль
-    func build() -> SBPBanksModule
+    func buildPreparedModule() -> SBPBanksModule
 
     /// Формирует модуль, когда нет загруженной платежной информации и требуется ее загрузить внутри модуля
     /// - Parameter paymentConfiguration: необходимые данные для загрузки платежной информации
     /// - Returns: Возвращает сформированный модуль
-    func build(paymentConfiguration: AcquiringPaymentStageConfiguration) -> SBPBanksModule
+    func buildInitialModule(paymentConfiguration: AcquiringPaymentStageConfiguration) -> SBPBanksModule
 }

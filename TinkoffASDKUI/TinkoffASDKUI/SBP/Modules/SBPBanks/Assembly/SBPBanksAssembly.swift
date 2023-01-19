@@ -28,11 +28,11 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // MARK: - ISBPBanksAssembly
 
-    func build() -> SBPBanksModule {
+    func buildPreparedModule() -> SBPBanksModule {
         build(paymentService: nil)
     }
 
-    func build(paymentConfiguration: AcquiringPaymentStageConfiguration) -> SBPBanksModule {
+    func buildInitialModule(paymentConfiguration: AcquiringPaymentStageConfiguration) -> SBPBanksModule {
         let paymentService = SBPPaymentServiceNew(
             acquiringSdk: acquiringSdk,
             paymentConfiguration: paymentConfiguration

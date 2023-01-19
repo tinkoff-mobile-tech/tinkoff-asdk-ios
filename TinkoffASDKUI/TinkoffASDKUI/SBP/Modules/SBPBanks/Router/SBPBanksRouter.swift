@@ -35,7 +35,7 @@ extension SBPBanksRouter {
     }
 
     func show(banks: [SBPBank], qrPayload: GetQRPayload?) {
-        let sbpModule = sbpBanksAssembly.build()
+        let sbpModule = sbpBanksAssembly.buildPreparedModule()
         sbpModule.input.set(qrPayload: qrPayload, banks: banks)
         transitionHandler?.navigationController?.pushViewController(sbpModule.view, animated: true)
     }

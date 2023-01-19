@@ -397,7 +397,7 @@ public class AcquiringUISDK: NSObject {
 //                }
 //            )
 
-            let sbpModule = self.sbpBanksAssembly.build(paymentConfiguration: acquiringPaymentStageConfiguration)
+            let sbpModule = self.sbpBanksAssembly.buildInitialModule(paymentConfiguration: acquiringPaymentStageConfiguration)
             let navVC = UINavigationController(rootViewController: sbpModule.view)
             paymentViewController.present(navVC, animated: true, completion: nil)
         }
