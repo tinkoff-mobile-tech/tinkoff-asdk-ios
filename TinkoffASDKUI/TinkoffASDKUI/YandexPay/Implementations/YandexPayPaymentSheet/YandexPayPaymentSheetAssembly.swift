@@ -1,5 +1,5 @@
 //
-//  YandexPayPaymentActivityAssembly.swift
+//  YandexPayPaymentSheetAssembly.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 12.12.2022.
@@ -9,30 +9,30 @@ import Foundation
 import UIKit
 import WebKit
 
-final class YandexPayPaymentActivityAssembly: IYandexPayPaymentActivityAssembly {
+final class YandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly {
     private let paymentControllerAssembly: IPaymentControllerAssembly
 
     init(paymentControllerAssembly: IPaymentControllerAssembly) {
         self.paymentControllerAssembly = paymentControllerAssembly
     }
 
-    func yandexPayActivity(
-        paymentOptions: PaymentOptions,
+    func yandexPayPaymentSheet(
+        paymentFlow: PaymentFlow,
         base64Token: String,
-        output: IYandexPayPaymentActivityOutput
+        output: IYandexPayPaymentSheetOutput
     ) -> UIViewController {
-        let paymentControllerUIProvider = YandexPayPaymentActivityUIProvider()
+        let paymentControllerUIProvider = YandexPayPaymentSheetUIProvider()
         let paymentController = paymentControllerAssembly.paymentController()
 
-        let presenter = YandexPayPaymentActivityPresenter(
+        let presenter = YandexPayPaymentSheetPresenter(
             paymentController: paymentController,
             paymentControllerUIProvider: paymentControllerUIProvider,
-            paymentOptions: paymentOptions,
+            paymentFlow: paymentFlow,
             base64Token: base64Token,
             output: output
         )
 
-        let view = PaymentActivityViewController(presenter: presenter)
+        let view = CommonSheetViewController(presenter: presenter)
 
         presenter.view = view
         paymentControllerUIProvider.view = view

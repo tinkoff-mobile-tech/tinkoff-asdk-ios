@@ -21,23 +21,32 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 struct SdkAssembly {
-
-    static func assembleUIsdk(
-        creds: SdkCredentials,
+    static func assembleUISDK(
+        credential: SdkCredentials,
         style: Style = DefaultStyle()
     ) throws -> AcquiringUISDK {
+        try AcquiringUISDK(configuration: createConfiguration(credential: credential), style: style)
+    }
 
-        let credentional = AcquiringSdkCredential(
-            terminalKey: creds.terminalKey,
-            publicKey: creds.publicKey
+    static func assembleCoreSDK(credential: SdkCredentials) throws -> AcquiringSdk {
+        try AcquiringSdk(configuration: createConfiguration(credential: credential))
+    }
+
+    private static func createConfiguration(credential: SdkCredentials) -> AcquiringSdkConfiguration {
+        let sdkCredential = AcquiringSdkCredential(
+            terminalKey: credential.terminalKey,
+            publicKey: credential.publicKey
         )
 
-        let tokenProvider = SampleTokenProvider(password: creds.terminalPassword)
+        let tokenProvider = SampleTokenProvider(password: credential.terminalPassword)
         let logger = AcquiringLoggerDefault()
 
-        let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional, tokenProvider: tokenProvider)
+        let acquiringSDKConfiguration = AcquiringSdkConfiguration(
+            credential: sdkCredential,
+            tokenProvider: tokenProvider
+        )
         acquiringSDKConfiguration.logger = logger
 
-        return try AcquiringUISDK(configuration: acquiringSDKConfiguration, style: style)
+        return acquiringSDKConfiguration
     }
 }
