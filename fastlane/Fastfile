@@ -21,9 +21,15 @@ lane :build_spm do
   end
 end
 
-lane :tests do  
+lane :tests do
   run_tests(
-    workspace: "ASDKSample/ASDKSample.xcworkspace", 
-    scheme: "ASDKSample"
-    )
+    workspace: 'ASDKSample/ASDKSample.xcworkspace',
+    scheme: 'ASDKSample',
+    testplan: "Core"
+  )
+  run_tests(
+    workspace: 'ASDKSample/ASDKSample.xcworkspace',
+    scheme: 'ASDKSample',
+    testplan: "UI"
+  )
 end
