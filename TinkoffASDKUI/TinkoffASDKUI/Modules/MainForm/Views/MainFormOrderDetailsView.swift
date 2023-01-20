@@ -63,7 +63,21 @@ final class MainFormOrderDetailsView: UIView {
 
     private func setupView() {
         textStack.addArrangedSubviews(amountDescriptionLabel, amountLabel, orderDescriptionLabel)
+
         addSubview(textStack)
-        textStack.pinEdgesToSuperview()
+        textStack.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            textStack.topAnchor.constraint(equalTo: topAnchor, constant: .textStackVerticalInsets),
+            textStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            textStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            textStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.textStackVerticalInsets),
+        ])
     }
+}
+
+// MARK: - Constants
+
+private extension CGFloat {
+    static let textStackVerticalInsets: CGFloat = 32
 }

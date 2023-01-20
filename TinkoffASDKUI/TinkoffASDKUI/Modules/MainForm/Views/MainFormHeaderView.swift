@@ -26,7 +26,7 @@ final class MainFormHeaderView: UIView {
         return imageView
     }()
 
-    private lazy var orderDetailsContainer = ContainerView(MainFormOrderDetailsView())
+    private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var payButton = Button()
 
     // MARK: Init
@@ -45,9 +45,8 @@ final class MainFormHeaderView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
-        contentStack.addArrangedSubviews(logoImageView, orderDetailsContainer)
+        contentStack.addArrangedSubviews(logoImageView, orderDetailsView)
         layoutContentStack()
-        layoutOrderDetails()
     }
 
     private func layoutContentStack() {
@@ -74,20 +73,8 @@ final class MainFormHeaderView: UIView {
         ])
     }
 
-    private func layoutOrderDetails() {
-        let subview = orderDetailsContainer.content
-        let superview = orderDetailsContainer
-
-        NSLayoutConstraint.activate([
-            subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .orderDetailsVerticalInsets),
-            subview.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
-            subview.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
-            subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.orderDetailsVerticalInsets),
-        ])
-    }
-
     private func setupStubContent() {
-        orderDetailsContainer.content.update(
+        orderDetailsView.update(
             amountDescription: "К оплате",
             amount: "10 500 ₽",
             orderDescription: "Заказ №123456"
@@ -113,7 +100,6 @@ private extension CGFloat {
     static let indicatorVerticalInsets: CGFloat = 32
     static let commonHorizontalInsets: CGFloat = 16
     static let contentStackBottomInset: CGFloat = 36
-    static let orderDetailsVerticalInsets: CGFloat = 32
 }
 
 // MARK: ContainerView Helper
