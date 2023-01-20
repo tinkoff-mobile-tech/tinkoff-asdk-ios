@@ -9,4 +9,5 @@ import Foundation
 
 struct MainFormHeaderViewModel {
     let orderDetails: MainFormOrderDetailsViewModel
+    let paymentControls: MainFormPaymentControlsViewModel
 }

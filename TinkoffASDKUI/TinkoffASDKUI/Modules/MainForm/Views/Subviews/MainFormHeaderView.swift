@@ -45,6 +45,7 @@ final class MainFormHeaderView: UIView {
 
     func update(with viewModel: MainFormHeaderViewModel) {
         orderDetailsView.update(with: viewModel.orderDetails)
+        paymentControlsView.update(with: viewModel.paymentControls)
     }
 
     // MARK: Initial Configuration

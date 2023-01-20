@@ -32,8 +32,13 @@ extension MainFormPresenter: IMainFormPresenter {
             orderDescription: "Заказ №123456"
         )
 
+        let paymentControls = MainFormPaymentControlsViewModel(
+            buttonType: .primary(title: "Оплатить картой")
+        )
+
         let header = MainFormHeaderViewModel(
-            orderDetails: orderDetails
+            orderDetails: orderDetails,
+            paymentControls: paymentControls
         )
 
         view?.updateHeader(with: header)

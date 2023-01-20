@@ -32,12 +32,32 @@ final class MainFormPaymentControlsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: View Updating
+
+    func update(with viewModel: MainFormPaymentControlsViewModel) {
+        let buttonTitle: String
+
+        switch viewModel.buttonType {
+        case let .primary(title):
+            buttonTitle = title
+        }
+
+        let configuration = Button.Configuration(
+            data: Button.Data(
+                text: .basic(normal: buttonTitle, highlighted: nil, disabled: nil),
+                onTapAction: {}
+            ),
+            style: .primary
+        )
+
+        payButton.configure(configuration)
+    }
+
     // MARK: Initial Configuration
 
     private func setupView() {
         layoutContentStack()
         layoutPayButton()
-        setupPayButton()
         contentStack.addArrangedSubviews(payButton)
     }
 
@@ -55,18 +75,6 @@ final class MainFormPaymentControlsView: UIView {
 
     private func layoutPayButton() {
         payButton.heightAnchor.constraint(equalToConstant: .payButtonHeight).activated()
-    }
-
-    private func setupPayButton() {
-        let configuration = Button.Configuration(
-            data: Button.Data(
-                text: .basic(normal: "Оплатить картой", highlighted: nil, disabled: nil),
-                onTapAction: {}
-            ),
-            style: .primary
-        )
-
-        payButton.configure(configuration)
     }
 }
 
