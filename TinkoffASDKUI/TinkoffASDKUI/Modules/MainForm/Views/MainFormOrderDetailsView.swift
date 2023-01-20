@@ -33,11 +33,11 @@ final class MainFormOrderDetailsView: UIView {
         return label
     }()
 
-    private lazy var textStack: UIStackView = {
+    private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = 8
+        stack.spacing = .contentStackSpacing
         return stack
     }()
 
@@ -62,16 +62,19 @@ final class MainFormOrderDetailsView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
-        textStack.addArrangedSubviews(amountDescriptionLabel, amountLabel, orderDescriptionLabel)
+        layoutContentStack()
+        contentStack.addArrangedSubviews(amountDescriptionLabel, amountLabel, orderDescriptionLabel)
+    }
 
-        addSubview(textStack)
-        textStack.translatesAutoresizingMaskIntoConstraints = false
+    private func layoutContentStack() {
+        addSubview(contentStack)
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            textStack.topAnchor.constraint(equalTo: topAnchor, constant: .textStackVerticalInsets),
-            textStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            textStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.textStackVerticalInsets),
+            contentStack.topAnchor.constraint(equalTo: topAnchor, constant: .contentStackVerticalInsets),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.contentStackVerticalInsets),
         ])
     }
 }
@@ -79,5 +82,6 @@ final class MainFormOrderDetailsView: UIView {
 // MARK: - Constants
 
 private extension CGFloat {
-    static let textStackVerticalInsets: CGFloat = 32
+    static let contentStackVerticalInsets: CGFloat = 32
+    static let contentStackSpacing: CGFloat = 8
 }
