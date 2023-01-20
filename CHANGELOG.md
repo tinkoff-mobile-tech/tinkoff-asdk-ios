@@ -20,6 +20,8 @@
 
 * [MIC-7482] CommonSheet adoption for different states
 
+## [2.15.1] - 2023-01-18Z
+
 ### Fixed
 
 * [MIC-7710] CommonSheet primary button's english localization
