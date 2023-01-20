@@ -23,8 +23,10 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     private lazy var headerView = MainFormHeaderView()
     private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.tableHeaderView = headerView
+        // Явное присваивание фрейма до того, как произошел цикл autolayout,
+        // позволяет избавиться от логов с конфликтами констрейнтов в консоли при установке `tableHeaderView`
+        let tableView = UITableView(frame: view.bounds)
+        tableView.alwaysBounceVertical = false
         return tableView
     }()
 
@@ -42,13 +44,18 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     // MARK: Life Cycle
 
-    override func loadView() {
-        view = tableView
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
         presenter.viewDidLoad()
+    }
+
+    // MARK: Initial Configuration
+
+    private func setupTableView() {
+        view.addSubview(tableView)
+        tableView.pinEdgesToSuperview()
+        tableView.tableHeaderView = headerView
     }
 }
 
