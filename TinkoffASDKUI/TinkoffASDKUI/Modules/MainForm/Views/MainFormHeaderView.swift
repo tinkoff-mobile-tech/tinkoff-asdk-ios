@@ -27,7 +27,7 @@ final class MainFormHeaderView: UIView {
     }()
 
     private lazy var orderDetailsView = MainFormOrderDetailsView()
-    private lazy var payButton = Button()
+    private lazy var paymentControlsView = MainFormPaymentControlsView()
 
     // MARK: Init
 
@@ -45,7 +45,7 @@ final class MainFormHeaderView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
-        contentStack.addArrangedSubviews(logoImageView, orderDetailsView)
+        contentStack.addArrangedSubviews(logoImageView, orderDetailsView, paymentControlsView)
         layoutContentStack()
     }
 
@@ -99,7 +99,7 @@ extension MainFormHeaderView {
 private extension CGFloat {
     static let indicatorVerticalInsets: CGFloat = 32
     static let commonHorizontalInsets: CGFloat = 16
-    static let contentStackBottomInset: CGFloat = 36
+    static let contentStackBottomInset: CGFloat = 24
 }
 
 // MARK: ContainerView Helper
