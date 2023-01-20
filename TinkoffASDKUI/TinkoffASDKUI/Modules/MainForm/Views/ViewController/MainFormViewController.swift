@@ -54,7 +54,11 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
 // MARK: - IMainFormViewController
 
-extension MainFormViewController: IMainFormViewController {}
+extension MainFormViewController: IMainFormViewController {
+    func updateHeader(with viewModel: MainFormHeaderViewModel) {
+        headerView.update(with: viewModel)
+    }
+}
 
 // MARK: - PullableContainerContent Methods
 

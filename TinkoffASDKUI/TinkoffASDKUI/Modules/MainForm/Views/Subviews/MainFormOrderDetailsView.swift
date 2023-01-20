@@ -53,10 +53,12 @@ final class MainFormOrderDetailsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func update(with orderDetails: MainFormOrderDetails) {
-        amountDescriptionLabel.text = orderDetails.amountDescription
-        amountLabel.text = orderDetails.amount
-        orderDescriptionLabel.text = orderDetails.orderDescription
+    // MARK: View Updating
+
+    func update(with viewModel: MainFormOrderDetailsViewModel) {
+        amountDescriptionLabel.text = viewModel.amountDescription
+        amountLabel.text = viewModel.amount
+        orderDescriptionLabel.text = viewModel.orderDescription
     }
 
     // MARK: Initial Configuration

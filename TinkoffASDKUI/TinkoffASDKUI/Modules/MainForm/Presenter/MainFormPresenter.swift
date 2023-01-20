@@ -25,7 +25,19 @@ final class MainFormPresenter {
 // MARK: - IMainFormPresenter
 
 extension MainFormPresenter: IMainFormPresenter {
-    func viewDidLoad() {}
+    func viewDidLoad() {
+        let orderDetails = MainFormOrderDetailsViewModel(
+            amountDescription: "К оплате",
+            amount: "10 500 ₽",
+            orderDescription: "Заказ №123456"
+        )
+
+        let header = MainFormHeaderViewModel(
+            orderDetails: orderDetails
+        )
+
+        view?.updateHeader(with: header)
+    }
 
     func viewWasClosed() {}
 }

@@ -34,12 +34,17 @@ final class MainFormHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        setupStubContent()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: View Updating
+
+    func update(with viewModel: MainFormHeaderViewModel) {
+        orderDetailsView.update(with: viewModel.orderDetails)
     }
 
     // MARK: Initial Configuration
@@ -71,16 +76,6 @@ final class MainFormHeaderView: UIView {
             subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .indicatorVerticalInsets),
             subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.indicatorVerticalInsets),
         ])
-    }
-
-    private func setupStubContent() {
-        let orderDetails = MainFormOrderDetails(
-            amountDescription: "К оплате",
-            amount: "10 500 ₽",
-            orderDescription: "Заказ №123456"
-        )
-
-        orderDetailsView.update(with: orderDetails)
     }
 }
 
