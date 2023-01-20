@@ -12,7 +12,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeight: CGFloat { headerView.estimatedHeight }
+    var pullableContainerContentHeight: CGFloat { headerView.bounds.height }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     // MARK: Dependencies
@@ -27,6 +27,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         // позволяет избавиться от логов с конфликтами констрейнтов в консоли при установке `tableHeaderView`
         let tableView = UITableView(frame: view.bounds)
         tableView.alwaysBounceVertical = false
+
         return tableView
     }()
 
@@ -48,6 +49,17 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         super.viewDidLoad()
         setupTableView()
         presenter.viewDidLoad()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // Хедер таблицы не изменяет свой размер во время лейаута.
+        // Здесь принудительно выставляется высота на основе его констрейнтов
+        headerView.frame.size = headerView.systemLayoutSizeFitting(
+            CGSize(width: headerView.bounds.width, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
     }
 
     // MARK: Initial Configuration
