@@ -10,45 +10,23 @@ import UIKit
 final class MainFormHeaderView: UIView {
     // MARK: Subviews
 
-    private lazy var activityIndicator = ActivityIndicatorView(style: .xlYellow)
-
-    private lazy var logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        return imageView
-    }()
-
-    // MARK: Text Subviews
-
-    private lazy var textStack: UIStackView = {
+    private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = 8
+        stack.distribution = .fill
+        stack.spacing = .zero
         return stack
     }()
 
-    private lazy var amountDescriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .regular)
-        label.textColor = ASDKColors.Text.secondary.color
-        label.textAlignment = .center
-        return label
+    private lazy var activityIndicatorContainer = ContainerView(ActivityIndicatorView(style: .xlYellow))
+
+    private lazy var logoImageContainer: ContainerView<UIImageView> = {
+        let imageView = UIImageView()
+        return ContainerView(imageView)
     }()
 
-    private lazy var amountLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 34, weight: .bold)
-        label.textAlignment = .center
-        return label
-    }()
-
-    private lazy var orderDescriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .regular)
-        label.textColor = ASDKColors.Text.secondary.color
-        label.textAlignment = .center
-        return label
-    }()
+    private lazy var orderDetailsContainer = ContainerView(MainFormOrderDetailsView())
 
     private lazy var payButton = Button()
 
@@ -57,6 +35,7 @@ final class MainFormHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupStubContent()
     }
 
     @available(*, unavailable)
@@ -67,15 +46,64 @@ final class MainFormHeaderView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
-        addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        contentStack.addArrangedSubviews(orderDetailsContainer)
+        layoutContentStack()
+        layoutOrderDetails()
+    }
+
+    private func layoutContentStack() {
+        addSubview(contentStack)
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
-            activityIndicator.topAnchor.constraint(equalTo: topAnchor, constant: .indicatorVerticalInsets),
-            activityIndicator.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.indicatorVerticalInsets)
-                .with(priority: .fittingSizeLevel),
+            contentStack.topAnchor.constraint(equalTo: topAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .commonHorizontalInsets),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.commonHorizontalInsets).with(priority: .fittingSizeLevel),
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.contentStackBottomInset).with(priority: .fittingSizeLevel),
         ])
+    }
+
+    private func layoutActivityIndicator() {
+        let subview = activityIndicatorContainer.content
+        let superview = activityIndicatorContainer
+
+        NSLayoutConstraint.activate([
+            subview.centerXAnchor.constraint(equalTo: superview.centerXAnchor),
+            subview.centerYAnchor.constraint(equalTo: superview.centerYAnchor),
+            subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .indicatorVerticalInsets),
+            subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.indicatorVerticalInsets),
+        ])
+    }
+
+    private func layoutLogoImage() {
+        let subview = logoImageContainer.content
+        let superview = logoImageContainer
+
+        NSLayoutConstraint.activate([
+            subview.topAnchor.constraint(equalTo: superview.topAnchor),
+            subview.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
+            subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+        ])
+    }
+
+    private func layoutOrderDetails() {
+        let subview = orderDetailsContainer.content
+        let superview = orderDetailsContainer
+
+        NSLayoutConstraint.activate([
+            subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .orderDetailsVerticalInsets),
+            subview.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
+            subview.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
+            subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.orderDetailsVerticalInsets),
+        ])
+    }
+
+    private func setupStubContent() {
+        orderDetailsContainer.content.update(
+            amountDescription: "К оплате",
+            amount: "10 500 ₽",
+            orderDescription: "Заказ №123456"
+        )
     }
 }
 
@@ -96,4 +124,34 @@ extension MainFormHeaderView {
 private extension CGFloat {
     static let indicatorVerticalInsets: CGFloat = 32
     static let commonHorizontalInsets: CGFloat = 16
+    static let contentStackBottomInset: CGFloat = 36
+    static let orderDetailsVerticalInsets: CGFloat = 32
+}
+
+// MARK: ContainerView Helper
+
+private final class ContainerView<Content: UIView>: UIView {
+    // MARK: Dependencies
+
+    let content: Content
+
+    // MARK: Init
+
+    init(_ content: Content) {
+        self.content = content
+        super.init(frame: .zero)
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Initial Configuration
+
+    private func setupView() {
+        addSubview(content)
+        content.translatesAutoresizingMaskIntoConstraints = false
+    }
 }
