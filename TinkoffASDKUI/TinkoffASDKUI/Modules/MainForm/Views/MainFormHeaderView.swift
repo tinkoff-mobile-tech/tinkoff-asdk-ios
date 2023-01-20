@@ -13,21 +13,20 @@ final class MainFormHeaderView: UIView {
     private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.alignment = .center
-        stack.distribution = .fill
+        stack.alignment = .fill
         stack.spacing = .zero
         return stack
     }()
 
     private lazy var activityIndicatorContainer = ContainerView(ActivityIndicatorView(style: .xlYellow))
 
-    private lazy var logoImageContainer: ContainerView<UIImageView> = {
-        let imageView = UIImageView()
-        return ContainerView(imageView)
+    private lazy var logoImageView: UIImageView = {
+        let imageView = UIImageView(image: Asset.Logo.smallGerb.image)
+        imageView.contentMode = .left
+        return imageView
     }()
 
     private lazy var orderDetailsContainer = ContainerView(MainFormOrderDetailsView())
-
     private lazy var payButton = Button()
 
     // MARK: Init
@@ -46,7 +45,7 @@ final class MainFormHeaderView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
-        contentStack.addArrangedSubviews(orderDetailsContainer)
+        contentStack.addArrangedSubviews(logoImageView, orderDetailsContainer)
         layoutContentStack()
         layoutOrderDetails()
     }
@@ -58,7 +57,7 @@ final class MainFormHeaderView: UIView {
         NSLayoutConstraint.activate([
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .commonHorizontalInsets),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.commonHorizontalInsets).with(priority: .fittingSizeLevel),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.commonHorizontalInsets),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.contentStackBottomInset).with(priority: .fittingSizeLevel),
         ])
     }
@@ -72,17 +71,6 @@ final class MainFormHeaderView: UIView {
             subview.centerYAnchor.constraint(equalTo: superview.centerYAnchor),
             subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .indicatorVerticalInsets),
             subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.indicatorVerticalInsets),
-        ])
-    }
-
-    private func layoutLogoImage() {
-        let subview = logoImageContainer.content
-        let superview = logoImageContainer
-
-        NSLayoutConstraint.activate([
-            subview.topAnchor.constraint(equalTo: superview.topAnchor),
-            subview.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
-            subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
         ])
     }
 
