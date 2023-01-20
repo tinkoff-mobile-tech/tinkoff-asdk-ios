@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "4F590F73-E4D6-4B66-8836-E8BC1D4127CD",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Pods\/Pods.xcodeproj",
+        "identifier" : "C3C81D2058EE95A9FFAB9B9ACD4643CD",
+        "name" : "TinkoffASDKCore-Unit-Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

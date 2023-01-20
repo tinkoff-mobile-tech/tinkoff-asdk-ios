@@ -4,20 +4,20 @@ platform :ios, '12.3'
 
 use_frameworks!
 target 'ASDKSample' do
-  pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
-  pod 'TinkoffASDKUI', :path => "../", :testspecs => ['Tests']
-  pod 'TinkoffASDKYandexPay', :path => '../'
+  pod 'TinkoffASDKCore', path: '../', testspecs: ['Tests']
+  pod 'TinkoffASDKUI', path: '../', testspecs: ['Tests']
+  pod 'TinkoffASDKYandexPay', path: '../'
 
-	# Linting and Formatting
+  # Linting and Formatting
   pod 'SwiftFormat/CLI', '0.49.18' # Версия должна совпадать с версией контейнера на CI
   pod 'SwiftLint', '0.47.0' # Версия должна совпадать с версией контейнера на CI
   pod 'SwiftGen', '~> 6.0'
 end
 
 def install_githooks
-  system("git config --local core.hooksPath \"$(git rev-parse --show-toplevel)/githooks\"")
+  system('git config --local core.hooksPath "$(git rev-parse --show-toplevel)/githooks"')
 end
 
-post_install do |installer|
+post_install do |_installer|
   install_githooks
 end

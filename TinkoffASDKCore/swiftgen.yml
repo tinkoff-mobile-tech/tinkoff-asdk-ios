@@ -6,4 +6,3 @@ strings:
       params:
         enumName: Loc
         bundle: Bundle.coreResources
-      
