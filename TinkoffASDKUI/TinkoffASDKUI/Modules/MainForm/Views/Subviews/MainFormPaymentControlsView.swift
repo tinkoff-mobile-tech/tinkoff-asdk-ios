@@ -7,7 +7,15 @@
 
 import UIKit
 
+protocol MainFormPaymentControlsViewDelegate: AnyObject {
+    func paymentControlsViewDidTapPayButton()
+}
+
 final class MainFormPaymentControlsView: UIView {
+    // MARK: Dependencies
+
+    weak var delegate: MainFormPaymentControlsViewDelegate?
+
     // MARK: Subviews
 
     private lazy var contentStack: UIStackView = {
@@ -21,6 +29,11 @@ final class MainFormPaymentControlsView: UIView {
     private lazy var payButton = Button()
 
     // MARK: Init
+
+    convenience init(frame: CGRect = .zero, delegate: MainFormPaymentControlsViewDelegate) {
+        self.init(frame: frame)
+        self.delegate = delegate
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,7 +58,9 @@ final class MainFormPaymentControlsView: UIView {
         let configuration = Button.Configuration(
             data: Button.Data(
                 text: .basic(normal: buttonTitle, highlighted: nil, disabled: nil),
-                onTapAction: {}
+                onTapAction: { [weak self] in
+                    self?.delegate?.paymentControlsViewDidTapPayButton()
+                }
             ),
             style: .primary
         )

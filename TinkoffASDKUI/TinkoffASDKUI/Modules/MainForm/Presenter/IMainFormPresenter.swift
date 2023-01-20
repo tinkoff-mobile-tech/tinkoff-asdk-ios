@@ -10,4 +10,5 @@ import Foundation
 protocol IMainFormPresenter {
     func viewDidLoad()
     func viewWasClosed()
+    func viewDidTapPayButton()
 }

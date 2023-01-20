@@ -7,7 +7,15 @@
 
 import UIKit
 
+protocol MainFormHeaderViewDelegate: AnyObject {
+    func headerViewDidTapPrimaryButton()
+}
+
 final class MainFormHeaderView: UIView {
+    // MARK: Dependencies
+
+    weak var delegate: MainFormHeaderViewDelegate?
+
     // MARK: Subviews
 
     private lazy var contentStack: UIStackView = {
@@ -27,9 +35,14 @@ final class MainFormHeaderView: UIView {
     }()
 
     private lazy var orderDetailsView = MainFormOrderDetailsView()
-    private lazy var paymentControlsView = MainFormPaymentControlsView()
+    private lazy var paymentControlsView = MainFormPaymentControlsView(delegate: self)
 
     // MARK: Init
+
+    convenience init(frame: CGRect = .zero, delegate: MainFormHeaderViewDelegate) {
+        self.init(frame: frame)
+        self.delegate = delegate
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -77,6 +90,14 @@ final class MainFormHeaderView: UIView {
             subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .indicatorVerticalInsets),
             subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.indicatorVerticalInsets),
         ])
+    }
+}
+
+// MARK: - MainFormPaymentControlsViewDelegate
+
+extension MainFormHeaderView: MainFormPaymentControlsViewDelegate {
+    func paymentControlsViewDidTapPayButton() {
+        delegate?.headerViewDidTapPrimaryButton()
     }
 }
 

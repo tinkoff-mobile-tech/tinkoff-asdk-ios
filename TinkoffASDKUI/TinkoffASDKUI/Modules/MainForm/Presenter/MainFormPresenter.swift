@@ -45,4 +45,8 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 
     func viewWasClosed() {}
+
+    func viewDidTapPayButton() {
+        router.openCardPaymentForm()
+    }
 }

@@ -21,7 +21,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     // MARK: Subviews
 
-    private lazy var headerView = MainFormHeaderView()
+    private lazy var headerView = MainFormHeaderView(delegate: self)
     private lazy var tableView: UITableView = {
         // Явное присваивание фрейма до того, как произошел цикл autolayout,
         // позволяет избавиться от логов с конфликтами констрейнтов в консоли при установке `tableHeaderView`
@@ -64,6 +64,14 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 extension MainFormViewController: IMainFormViewController {
     func updateHeader(with viewModel: MainFormHeaderViewModel) {
         headerView.update(with: viewModel)
+    }
+}
+
+// MARK: - MainFormHeaderViewDelegate
+
+extension MainFormViewController: MainFormHeaderViewDelegate {
+    func headerViewDidTapPrimaryButton() {
+        presenter.viewDidTapPayButton()
     }
 }
 
