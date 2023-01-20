@@ -74,11 +74,13 @@ final class MainFormHeaderView: UIView {
     }
 
     private func setupStubContent() {
-        orderDetailsView.update(
+        let orderDetails = MainFormOrderDetails(
             amountDescription: "К оплате",
             amount: "10 500 ₽",
             orderDescription: "Заказ №123456"
         )
+
+        orderDetailsView.update(with: orderDetails)
     }
 }
 
