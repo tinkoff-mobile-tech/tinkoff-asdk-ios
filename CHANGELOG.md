@@ -14,6 +14,7 @@
 * [MIC-7555] Add finish flow handling for YandexPay payments
 * [MIC-7384] Add payment sheet to SBP
 * [MIC-7703] MainForm - Add entry point in ASDKSample
+* [MIC-7702] MainForm - MVP module foundation
 
 ### Changed
 
