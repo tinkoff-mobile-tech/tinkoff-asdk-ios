@@ -24,6 +24,10 @@
 
 * [MIC-7710] CommonSheet primary button's english localization
 
+### Fixed
+
+* [MIC-7668] Remove Apple Pay from README
+
 ## [2.15.0] - 2022-12-29Z
 
 ### Added
