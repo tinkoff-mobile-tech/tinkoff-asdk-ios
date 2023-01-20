@@ -23,9 +23,9 @@ disabled_rules:
   - generic_type_name
   # Порядок set и get в свойствах.
   - computed_accessors_order
-  # ⛔ FIXME: - Enable after refactoring 
+  # ⛔ FIXME: - Enable after refactoring
   - file_length
-  # ⛔ FIXME: - Enable after refactoring 
+  # ⛔ FIXME: - Enable after refactoring
   - implicitly_unwrapped_optional
 
 opt_in_rules:
@@ -84,7 +84,7 @@ function_body_length:
   error: 100
 
 # Сложность тела функции должна быть ограничена
-# ⛔ FIXME: - Enable after refactoring commeted values 
+# ⛔ FIXME: - Enable after refactoring commeted values
 cyclomatic_complexity:
   warning: 25 # 12
   error: 30 # 18

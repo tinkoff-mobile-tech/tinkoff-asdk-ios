@@ -13,4 +13,3 @@ xcassets:
       output: ASDKSample/Resources/Generated/Assets+Generated.swift
       params:
         forceProvidesNamespaces: true
-      
