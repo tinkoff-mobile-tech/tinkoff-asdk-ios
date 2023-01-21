@@ -26,8 +26,6 @@ final class MainFormHeaderView: UIView {
         return stack
     }()
 
-    private lazy var activityIndicatorContainer = ContainerView(ActivityIndicatorView(style: .xlYellow))
-
     private lazy var logoImageView: UIImageView = {
         let imageView = UIImageView(image: Asset.Logo.smallGerb.image)
         imageView.contentMode = .left
@@ -77,18 +75,6 @@ final class MainFormHeaderView: UIView {
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .commonHorizontalInsets),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.commonHorizontalInsets),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.contentStackBottomInset).with(priority: .fittingSizeLevel),
-        ])
-    }
-
-    private func layoutActivityIndicator() {
-        let subview = activityIndicatorContainer.content
-        let superview = activityIndicatorContainer
-
-        NSLayoutConstraint.activate([
-            subview.centerXAnchor.constraint(equalTo: superview.centerXAnchor),
-            subview.centerYAnchor.constraint(equalTo: superview.centerYAnchor),
-            subview.topAnchor.constraint(equalTo: superview.topAnchor, constant: .indicatorVerticalInsets),
-            subview.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -.indicatorVerticalInsets),
         ])
     }
 }
