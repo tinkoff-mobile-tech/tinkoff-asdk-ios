@@ -7,4 +7,6 @@
 
 import Foundation
 
-protocol IMainFormRouter {}
+protocol IMainFormRouter {
+    func openCardPaymentForm()
+}
