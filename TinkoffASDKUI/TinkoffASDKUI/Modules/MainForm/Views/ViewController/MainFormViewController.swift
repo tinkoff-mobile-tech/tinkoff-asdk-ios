@@ -24,10 +24,8 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private lazy var headerView = MainFormHeaderView(delegate: self)
     private lazy var tableView: UITableView = {
         // Явное присваивание фрейма до того, как произошел цикл autolayout,
-        // позволяет избавиться от логов с конфликтами констрейнтов в консоли при установке `tableHeaderView`
+        // позволяет избавиться от логов в консоли с конфликтами горизонтальных констрейнтов при установке `tableHeaderView`
         let tableView = UITableView(frame: view.bounds)
-        tableView.alwaysBounceVertical = false
-
         return tableView
     }()
 
@@ -53,8 +51,8 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // Хедер таблицы не изменяет свой размер во время лейаута.
-        // Здесь принудительно выставляется высота на основе его констрейнтов
+        // tableHeaderView не изменяет свой размер во время лейаута.
+        // Здесь выставляется высота на основе его констрейнтов
         headerView.frame.size = headerView.systemLayoutSizeFitting(
             CGSize(width: headerView.bounds.width, height: UIView.layoutFittingCompressedSize.height),
             withHorizontalFittingPriority: .required,
