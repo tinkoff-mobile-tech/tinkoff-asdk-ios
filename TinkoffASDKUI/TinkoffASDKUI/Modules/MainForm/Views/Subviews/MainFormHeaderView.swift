@@ -87,50 +87,10 @@ extension MainFormHeaderView: MainFormPaymentControlsViewDelegate {
     }
 }
 
-// MARK: - MainFormHeaderView + Estimated Height
-
-extension MainFormHeaderView {
-    var estimatedHeight: CGFloat {
-        systemLayoutSizeFitting(
-            CGSize(width: bounds.width, height: UIView.layoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        ).height
-    }
-}
-
 // MARK: - Constants
 
 private extension CGFloat {
     static let indicatorVerticalInsets: CGFloat = 32
     static let commonHorizontalInsets: CGFloat = 16
     static let contentStackBottomInset: CGFloat = 24
-}
-
-// MARK: ContainerView Helper
-
-private final class ContainerView<Content: UIView>: UIView {
-    // MARK: Dependencies
-
-    let content: Content
-
-    // MARK: Init
-
-    init(_ content: Content) {
-        self.content = content
-        super.init(frame: .zero)
-        setupView()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: Initial Configuration
-
-    private func setupView() {
-        addSubview(content)
-        content.translatesAutoresizingMaskIntoConstraints = false
-    }
 }
