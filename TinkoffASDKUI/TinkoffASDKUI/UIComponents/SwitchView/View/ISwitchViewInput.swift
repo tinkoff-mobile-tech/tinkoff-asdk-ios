@@ -7,5 +7,5 @@
 
 protocol ISwitchViewInput: AnyObject {
     func setNameLabel(text: String?)
-    func setSwitchState(isOn: Bool)
+    func setSwitchButtonState(isOn: Bool)
 }

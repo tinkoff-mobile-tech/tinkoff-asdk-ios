@@ -7,4 +7,8 @@
 
 protocol ICardPaymentViewControllerInput: AnyObject {
     func setPayButton(title: String)
+
+    func reloadTableView()
+    func insert(row: Int)
+    func delete(row: Int)
 }

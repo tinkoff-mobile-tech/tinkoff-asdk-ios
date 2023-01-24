@@ -13,5 +13,7 @@ protocol ICardPaymentViewControllerOutput {
 
     func cardFieldDidChangeState(isValid: Bool)
 
-    func viewPresenter(for row: Int) -> SwitchViewPresenter
+    func numberOfRows() -> Int
+    func cellType(for row: Int) -> CardPaymentCellType
+    func switchViewPresenter() -> SwitchViewPresenter
 }

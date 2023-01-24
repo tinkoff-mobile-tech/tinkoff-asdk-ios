@@ -8,5 +8,5 @@
 protocol ISwitchViewOutput: AnyObject {
     var view: ISwitchViewInput? { get set }
 
-    func switchDidChangeState(to isOn: Bool)
+    func switchButtonValueChanged(to isOn: Bool)
 }

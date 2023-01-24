@@ -69,6 +69,22 @@ extension CardPaymentViewController {
         )
         payButton.configure(configuration)
     }
+
+    func reloadTableView() {
+        tableView.reloadData()
+    }
+
+    func insert(row: Int) {
+        tableView.beginUpdates()
+        tableView.insertRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        tableView.endUpdates()
+    }
+
+    func delete(row: Int) {
+        tableView.beginUpdates()
+        tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        tableView.endUpdates()
+    }
 }
 
 // MARK: - Actions
@@ -83,31 +99,26 @@ extension CardPaymentViewController {
 
 extension CardPaymentViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        presenter.numberOfRows()
-        return 4
+        return presenter.numberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.row {
-        case 0:
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
+        let cellType = presenter.cellType(for: indexPath.row)
+        let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
+
+        switch cellType {
+        case .cardField:
             cell.setContent(cardFieldView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
-            return cell
-        case 1:
-            switchView.presenter = presenter.viewPresenter(for: indexPath.row)
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
+        case .getReceipt:
+            switchView.presenter = presenter.switchViewPresenter()
             cell.setContent(switchView, insets: UIEdgeInsets(vertical: 8, horizontal: 20))
-            return cell
-        case 2:
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
+        case .emailField:
             cell.setContent(emailContainerView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
-            return cell
-        case 3:
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
+        case .payButton:
             cell.setContent(payButton, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
-            return cell
-        default: return UITableViewCell()
         }
+
+        return cell
     }
 }
 
