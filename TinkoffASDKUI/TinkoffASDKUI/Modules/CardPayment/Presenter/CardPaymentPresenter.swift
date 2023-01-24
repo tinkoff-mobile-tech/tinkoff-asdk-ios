@@ -12,6 +12,10 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
 
+    // MARK: Properties
+
+    private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
+
     // MARK: Initialization
 
     init(router: ICardPaymentRouter) {
@@ -36,5 +40,20 @@ extension CardPaymentPresenter {
 
     func cardFieldDidChangeState(isValid: Bool) {
         print(isValid)
+    }
+
+    func viewPresenter(for row: Int) -> SwitchViewPresenter {
+        receiptSwitchViewPresenter
+    }
+}
+
+// MARK: - Private
+
+extension CardPaymentPresenter {
+    func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
+        SwitchViewPresenter(title: "Получить квитанцию", isOn: false, actionBlock: { isOn in
+            // показать или убрать ячейку с имейлом
+            print("свитч: \(isOn)")
+        })
     }
 }

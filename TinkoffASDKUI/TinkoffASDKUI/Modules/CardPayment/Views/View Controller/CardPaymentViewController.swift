@@ -21,6 +21,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     private lazy var payButton = Button()
     private lazy var emailContainerView = UIView()
     private lazy var emailTextField = TextField()
+    private lazy var switchView = SwitchView()
 
     // MARK: Initialization
 
@@ -47,6 +48,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         setupTableView()
         setupCardFieldView()
         setupPayButton()
+        setupSwitchView()
         setupEmailContainerView()
         setupEmailTextField()
 
@@ -82,7 +84,7 @@ extension CardPaymentViewController {
 extension CardPaymentViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //        presenter.numberOfRows()
-        return 3
+        return 4
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,10 +94,15 @@ extension CardPaymentViewController: UITableViewDataSource {
             cell.setContent(cardFieldView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
             return cell
         case 1:
+            switchView.presenter = presenter.viewPresenter(for: indexPath.row)
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
+            cell.setContent(switchView, insets: UIEdgeInsets(vertical: 8, horizontal: 20))
+            return cell
+        case 2:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
             cell.setContent(emailContainerView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
             return cell
-        case 2:
+        case 3:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
             cell.setContent(payButton, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
             return cell
@@ -169,6 +176,14 @@ extension CardPaymentViewController {
 
         NSLayoutConstraint.activate([
             payButton.heightAnchor.constraint(equalToConstant: 56),
+        ])
+    }
+
+    private func setupSwitchView() {
+        switchView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            switchView.heightAnchor.constraint(equalToConstant: 56),
         ])
     }
 

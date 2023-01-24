@@ -12,4 +12,6 @@ protocol ICardPaymentViewControllerOutput {
     func payButtonPressed()
 
     func cardFieldDidChangeState(isValid: Bool)
+
+    func viewPresenter(for row: Int) -> SwitchViewPresenter
 }
