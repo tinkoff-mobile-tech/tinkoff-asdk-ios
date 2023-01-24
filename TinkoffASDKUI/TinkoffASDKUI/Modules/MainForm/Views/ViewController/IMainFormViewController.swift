@@ -7,4 +7,6 @@
 
 import Foundation
 
-protocol IMainFormViewController: AnyObject {}
+protocol IMainFormViewController: AnyObject {
+    func updateHeader(with viewModel: MainFormHeaderViewModel)
+}

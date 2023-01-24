@@ -9,4 +9,6 @@ import UIKit
 
 final class MainFormRouter: IMainFormRouter {
     weak var transitionHandler: UIViewController?
+
+    func openCardPaymentForm() {}
 }

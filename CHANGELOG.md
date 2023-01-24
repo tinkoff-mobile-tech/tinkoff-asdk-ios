@@ -21,6 +21,7 @@
 * [MIC-7384] Add payment sheet to SBP
 * [MIC-7703] MainForm - Add entry point in ASDKSample
 * [MIC-7702] MainForm - MVP module foundation
+* [MIC-7704] MainForm - Primary pay method block
 
 ## [2.16.0] - 2023-01-19Z
 

@@ -64,6 +64,9 @@ internal enum Asset {
     internal static let illustrationsCommonLightCard = ImageAsset(name: "illustrations-common-light-card")
     internal static let wiFiOff = ImageAsset(name: "wi-fi-off")
   }
+  internal enum Logo {
+    internal static let smallGerb = ImageAsset(name: "small-gerb")
+  }
   internal static let logoPs = ImageAsset(name: "logo_ps")
   internal static let next = ImageAsset(name: "next")
   internal static let nexta = ImageAsset(name: "nexta")
