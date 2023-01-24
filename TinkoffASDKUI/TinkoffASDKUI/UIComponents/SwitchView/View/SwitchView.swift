@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 23.01.2023.
 //
 
+import UIKit
+
 final class SwitchView: UIView, ISwitchViewInput {
 
     // MARK: Dependencies
