@@ -172,7 +172,6 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
-    private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
     private let sbpAssembly: SBPAssembly
     private let tinkoffPayAssembly: TinkoffPayAssembly
@@ -221,7 +220,6 @@ public class AcquiringUISDK: NSObject {
             uiSDKConfiguration: uiSDKConfiguration
         )
 
-        cardPaymentAssembly = CardPaymentAssembly()
         sbpBanksAssembly = SBPBanksAssembly(
             acquiringSdk: acquiringSdk,
             sbpConfiguration: uiSDKConfiguration.sbpConfiguration
@@ -401,12 +399,8 @@ public class AcquiringUISDK: NSObject {
 //                }
 //            )
 
-//            let sbpModule = self.sbpBanksAssembly.buildInitialModule(paymentConfiguration: acquiringPaymentStageConfiguration)
-//            let navVC = UINavigationController(rootViewController: sbpModule.view)
-//            paymentViewController.present(navVC, animated: true, completion: nil)
-
-            let cardPaymentVC = self.cardPaymentAssembly.build()
-            let navVC = UINavigationController(rootViewController: cardPaymentVC)
+            let sbpModule = self.sbpBanksAssembly.buildInitialModule(paymentConfiguration: acquiringPaymentStageConfiguration)
+            let navVC = UINavigationController(rootViewController: sbpModule.view)
             paymentViewController.present(navVC, animated: true, completion: nil)
         }
     }

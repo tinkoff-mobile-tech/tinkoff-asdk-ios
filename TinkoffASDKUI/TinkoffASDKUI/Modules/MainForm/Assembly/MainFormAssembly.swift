@@ -9,7 +9,8 @@ import UIKit
 
 final class MainFormAssembly: IMainFormAssembly {
     func build(stub: MainFormStub) -> UIViewController {
-        let router = MainFormRouter()
+        let cardPaymentAssembly = CardPaymentAssembly()
+        let router = MainFormRouter(cardPaymentAssembly: cardPaymentAssembly)
         let presenter = MainFormPresenter(router: router, stub: stub)
         let viewController = MainFormViewController(presenter: presenter)
         router.transitionHandler = viewController
