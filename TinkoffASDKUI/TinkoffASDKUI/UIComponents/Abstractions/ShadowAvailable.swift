@@ -59,15 +59,15 @@ extension ShadowAvailable where Self: UIView {
 
     /// Удаляет тень
     func removeShadow() {
-        layer.shadowOpacity = 0.0
-        layer.shadowOffset = .zero
+        dropShadow(with: .clear)
     }
 }
 
-// MARK: - Styles
+extension UIView: ShadowAvailable {}
+
+// MARK: - ShadowStyle + Templates
 
 extension ShadowStyle {
-
     static var medium: Self {
         ShadowStyle(
             radius: Self.getBlurRadius(figmaBlur: 34),
@@ -76,5 +76,31 @@ extension ShadowStyle {
             offsetX: 0,
             offsetY: 6
         )
+    }
+
+    static var clear: Self {
+        ShadowStyle(
+            radius: .zero,
+            color: .clear,
+            opacity: .zero
+        )
+    }
+}
+
+// MARK: - ShadowConfiguration
+
+/// Конфигурация тени для разных тем приложения
+struct ShadowConfiguration {
+    /// Стиль тени при светлой теме
+    let light: ShadowStyle
+    /// Стиль тени при темной теме
+    let dark: ShadowStyle
+}
+
+// MARK: - ShadowConfiguration + Templates
+
+extension ShadowConfiguration {
+    static var clear: Self {
+        Self(light: .clear, dark: .clear)
     }
 }
