@@ -24,12 +24,26 @@ final class CardContainerView: UIView {
 
     private let style: Style
     private let insets: UIEdgeInsets
+    private let onTap: VoidBlock?
+
+    // MARK: State
+
+    private var isHighlighted = false {
+        didSet {
+            apply(highlighted: isHighlighted)
+        }
+    }
 
     // MARK: Init
 
-    init(style: Style = .prominent, insets: UIEdgeInsets = .zero) {
+    init(
+        style: Style = .prominent,
+        insets: UIEdgeInsets = .zero,
+        onTap: VoidBlock? = nil
+    ) {
         self.style = style
         self.insets = insets
+        self.onTap = onTap
         super.init(frame: .zero)
         setupView()
     }
@@ -43,7 +57,34 @@ final class CardContainerView: UIView {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        updateShadows()
+        applyShadows()
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        isHighlighted = true
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        isHighlighted = false
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        var movingFrame = bounds.applying(transform.inverted())
+        movingFrame.center = bounds.center
+        isHighlighted = touches.contains {
+            movingFrame.contains($0.location(in: self))
+        }
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        if isHighlighted {
+            isHighlighted = false
+            onTap?()
+        }
     }
 
     // MARK: Initial Configuration
@@ -58,10 +99,12 @@ final class CardContainerView: UIView {
         backgroundView.backgroundColor = style.backgroundColor
         backgroundView.layer.cornerRadius = .backgroundCornerRadius
 
-        updateShadows()
+        applyShadows()
     }
 
-    private func updateShadows() {
+    // MARK: Updating
+
+    private func applyShadows() {
         switch UITraitCollection.colorTheme {
         case .light:
             backgroundView.dropShadow(with: style.shadowConfiguration.light)
@@ -69,11 +112,26 @@ final class CardContainerView: UIView {
             backgroundView.dropShadow(with: style.shadowConfiguration.dark)
         }
     }
+
+    private func apply(highlighted: Bool) {
+        let animations = {
+            self.backgroundView.transform = highlighted ? .highlighted : .identity
+        }
+
+        UIView.animate(
+            withDuration: .animationDuration,
+            delay: .zero,
+            options: [.allowUserInteraction, .beginFromCurrentState, .curveEaseInOut],
+            animations: animations
+        )
+    }
 }
 
 // MARK: - CardContainerView.Style + Templates
 
 extension CardContainerView.Style {
+    /// Стиль с цветом фона `elevation1` и тенью `medium`
+    /// для использования на основных экранах с цветом `base`
     static var prominent: Self {
         Self(
             backgroundColor: ASDKColors.Background.elevation1.color,
@@ -81,6 +139,8 @@ extension CardContainerView.Style {
         )
     }
 
+    /// Стиль с цветом фона `elevation2` и тенью `medium`
+    /// для использования на основных экранах с цветом `elevation1`
     static var prominentOnElevation1: Self {
         Self(
             backgroundColor: ASDKColors.Background.elevation2.color,
@@ -88,6 +148,7 @@ extension CardContainerView.Style {
         )
     }
 
+    /// Стиль с цветом фона `neutral1` без тени
     static var flat: Self {
         Self(
             backgroundColor: ASDKColors.Background.neutral1.color,
@@ -100,4 +161,12 @@ extension CardContainerView.Style {
 
 private extension CGFloat {
     static let backgroundCornerRadius: CGFloat = 16
+}
+
+private extension TimeInterval {
+    static let animationDuration: TimeInterval = 0.1
+}
+
+private extension CGAffineTransform {
+    static let highlighted = CGAffineTransform(scaleX: 0.95, y: 0.95)
 }

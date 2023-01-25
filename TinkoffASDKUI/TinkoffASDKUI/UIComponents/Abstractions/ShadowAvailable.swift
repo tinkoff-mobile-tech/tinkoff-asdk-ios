@@ -68,6 +68,7 @@ extension UIView: ShadowAvailable {}
 // MARK: - ShadowStyle + Templates
 
 extension ShadowStyle {
+    /// Тень со стилем `medium`
     static var medium: Self {
         ShadowStyle(
             radius: Self.getBlurRadius(figmaBlur: 34),
@@ -78,6 +79,7 @@ extension ShadowStyle {
         )
     }
 
+    /// Отсутствие тени
     static var clear: Self {
         ShadowStyle(
             radius: .zero,
@@ -100,6 +102,7 @@ struct ShadowConfiguration {
 // MARK: - ShadowConfiguration + Templates
 
 extension ShadowConfiguration {
+    /// Отсутствие теней
     static var clear: Self {
         Self(light: .clear, dark: .clear)
     }
