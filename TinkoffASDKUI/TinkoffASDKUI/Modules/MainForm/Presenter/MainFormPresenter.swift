@@ -85,7 +85,7 @@ extension MainFormPresenter: IMainFormPresenter {
         )
 
         view?.updateHeader(with: header)
-        view?.set(payButtonEnabled: savedCardPresenter.isValid)
+//        view?.set(payButtonEnabled: savedCardPresenter.isValid)
         loadCardsIfNeeded()
     }
 
@@ -117,6 +117,6 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         didUpdateCVC cvc: String,
         isValid: Bool
     ) {
-        view?.set(payButtonEnabled: isValid)
+//        view?.set(payButtonEnabled: isValid)
     }
 }
