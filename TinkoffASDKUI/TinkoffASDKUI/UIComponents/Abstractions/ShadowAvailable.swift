@@ -20,6 +20,8 @@ protocol ShadowAvailable: AnyObject {
     func removeShadow()
 }
 
+// MARK: - ShadowStyle
+
 /// Структура стиля тени
 struct ShadowStyle: Equatable {
     /// Радиус
@@ -49,33 +51,6 @@ struct ShadowStyle: Equatable {
         figmaBlur / 2
     }
 }
-
-/// ShadowAvailable + UIView
-extension ShadowAvailable where Self: UIView {
-    /// Применяет стиль тени к объекту
-    func dropShadow(with style: ShadowStyle) {
-        layer.shadowOffset = CGSize(width: style.offsetX, height: style.offsetY)
-        layer.shadowColor = style.color.cgColor
-        layer.shadowOpacity = style.opacity
-        layer.shadowRadius = style.radius
-    }
-
-    func dropShadow(configuration: ShadowConfiguration) {
-        switch UITraitCollection.colorTheme {
-        case .light:
-            dropShadow(with: configuration.light)
-        case .dark:
-            dropShadow(with: configuration.dark)
-        }
-    }
-
-    /// Удаляет тень
-    func removeShadow() {
-        dropShadow(with: .clear)
-    }
-}
-
-extension UIView: ShadowAvailable {}
 
 // MARK: - ShadowStyle + Templates
 
@@ -119,3 +94,34 @@ extension ShadowConfiguration {
         Self(light: .clear, dark: .clear)
     }
 }
+
+// MARK: - ShadowAvailable + UIView
+
+/// ShadowAvailable + UIView
+extension ShadowAvailable where Self: UIView {
+    /// Применяет стиль тени к объекту
+    func dropShadow(with style: ShadowStyle) {
+        layer.shadowOffset = CGSize(width: style.offsetX, height: style.offsetY)
+        layer.shadowColor = style.color.cgColor
+        layer.shadowOpacity = style.opacity
+        layer.shadowRadius = style.radius
+    }
+
+    func dropShadow(configuration: ShadowConfiguration) {
+        switch UITraitCollection.colorTheme {
+        case .light:
+            dropShadow(with: configuration.light)
+        case .dark:
+            dropShadow(with: configuration.dark)
+        }
+    }
+
+    /// Удаляет тень
+    func removeShadow() {
+        dropShadow(with: .clear)
+    }
+}
+
+// MARK: - UIView + ShadowAvailable
+
+extension UIView: ShadowAvailable {}
