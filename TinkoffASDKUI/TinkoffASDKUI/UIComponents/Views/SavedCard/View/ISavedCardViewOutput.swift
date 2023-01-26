@@ -10,7 +10,7 @@ import Foundation
 protocol ISavedCardViewOutput: AnyObject {
     var view: ISavedCardViewInput? { get set }
 
-    func cvcFieldDidBeginEditing()
-    func cvcField(didFillWith text: String)
-    func didSelectView()
+    func savedCardViewDidBeginCVCFieldEditing()
+    func savedCardView(didFillCVC cvcInput: String)
+    func savedCardViewIsSelected()
 }

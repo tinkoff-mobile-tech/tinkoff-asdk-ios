@@ -128,8 +128,8 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
 // MARK: - ISavedCardViewOutput Methods
 
 extension SavedCardPresenter {
-    func cvcField(didFillWith text: String) {
-        cvсInputText = text
+    func savedCardView(didFillCVC cvcInput: String) {
+        cvсInputText = cvcInput
         reloadView()
 
         if isValid {
@@ -137,12 +137,12 @@ extension SavedCardPresenter {
         }
     }
 
-    func cvcFieldDidBeginEditing() {
+    func savedCardViewDidBeginCVCFieldEditing() {
         hasUserInteractedWithCVC = true
         reloadView()
     }
 
-    func didSelectView() {
+    func savedCardViewIsSelected() {
         switch presentationState {
         case let .selected(card, hasAnotherCards) where hasAnotherCards:
             output?.savedCardPresenter(self, didRequestReplacementFor: card)

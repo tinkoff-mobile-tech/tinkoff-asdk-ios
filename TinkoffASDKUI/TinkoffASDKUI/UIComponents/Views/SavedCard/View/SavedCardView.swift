@@ -21,7 +21,7 @@ final class SavedCardView: UIView {
 
     private lazy var containerView = CardContainerView(
         style: .prominentOnElevation1,
-        onTap: { [weak self] in self?.presenter?.didSelectView() }
+        onTap: { [weak self] in self?.presenter?.savedCardViewIsSelected() }
     )
 
     private lazy var contentStack: UIStackView = {
@@ -120,7 +120,7 @@ final class SavedCardView: UIView {
 
         let maskingDelegate = maskingFactory.buildForCvc(
             didFillMask: { [weak self] text, _ in
-                self?.presenter?.cvcField(didFillWith: text)
+                self?.presenter?.savedCardView(didFillCVC: text)
             },
             listenerStorage: &textFieldListeners
         )
@@ -132,7 +132,7 @@ final class SavedCardView: UIView {
             eventHandler: { [weak self] event, _ in
                 switch event {
                 case .didBeginEditing:
-                    self?.presenter?.cvcFieldDidBeginEditing()
+                    self?.presenter?.savedCardViewDidBeginCVCFieldEditing()
                 default:
                     break
                 }
