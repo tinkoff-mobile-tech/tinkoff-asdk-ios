@@ -84,8 +84,12 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
     }
 
     private func cvcInputTextDidChange(from oldValue: String, to newValue: String) {
-        guard oldValue != newValue else { return }
-        output?.savedCardPresenter(self, didUpdateCVC: newValue, isValid: isValid)
+        switch presentationState {
+        case .idle:
+            break
+        case .selected:
+            output?.savedCardPresenter(self, didUpdateCVC: newValue, isValid: isValid)
+        }
     }
 
     // MARK: View Models Creation
