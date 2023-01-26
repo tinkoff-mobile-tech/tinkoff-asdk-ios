@@ -118,14 +118,6 @@ extension UILabel.Style {
         )
     }
 
-    func configureLabel() {
-        let textStyle = UILabel.Style.bodyL()
-            .set(alignment: .center)
-            .set(numberOfLines: 1)
-
-        let label = UILabel().configure(UILabel.Configuration(content: .plain(text: "Hello", style: textStyle)))
-    }
-
     static func headingS() -> Self {
         Self(
             textColor: ASDKColors.Text.primary.color,

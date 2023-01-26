@@ -8,7 +8,7 @@
 import UIKit
 
 /// Показывает бабл с информацией внутри. Умеет презентоваться снизу вверх.
-final class SnackbarView: UIView, ShadowAvailable {
+final class SnackbarView: UIView {
 
     /// Стандартный размер снекбара
     static var defaultSize: CGSize { Constants.defaultSize }

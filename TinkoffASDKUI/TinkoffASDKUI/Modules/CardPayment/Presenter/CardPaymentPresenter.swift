@@ -62,7 +62,7 @@ extension CardPaymentPresenter {
     func payButtonPressed() {
         view?.hideKeyboard()
         view?.startLoadingPayButton()
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             self.view?.stopLoadingPayButton()
         }
