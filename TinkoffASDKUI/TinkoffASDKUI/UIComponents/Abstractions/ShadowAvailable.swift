@@ -13,6 +13,9 @@ protocol ShadowAvailable: AnyObject {
     /// Применяет стиль тени к объекту
     func dropShadow(with style: ShadowStyle)
 
+    /// Применяет тень к объекту с учетом текущей темы
+    func dropShadow(configuration: ShadowConfiguration)
+
     /// Удаляет тень
     func removeShadow()
 }
@@ -55,6 +58,15 @@ extension ShadowAvailable where Self: UIView {
         layer.shadowColor = style.color.cgColor
         layer.shadowOpacity = style.opacity
         layer.shadowRadius = style.radius
+    }
+
+    func dropShadow(configuration: ShadowConfiguration) {
+        switch UITraitCollection.colorTheme {
+        case .light:
+            dropShadow(with: configuration.light)
+        case .dark:
+            dropShadow(with: configuration.dark)
+        }
     }
 
     /// Удаляет тень

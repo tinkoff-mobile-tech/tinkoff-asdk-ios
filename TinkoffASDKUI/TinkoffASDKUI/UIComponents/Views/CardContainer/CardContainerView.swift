@@ -105,12 +105,7 @@ final class CardContainerView: UIView {
     // MARK: Updating
 
     private func applyShadows() {
-        switch UITraitCollection.colorTheme {
-        case .light:
-            backgroundView.dropShadow(with: style.shadowConfiguration.light)
-        case .dark:
-            backgroundView.dropShadow(with: style.shadowConfiguration.dark)
-        }
+        backgroundView.dropShadow(configuration: style.shadowConfiguration)
     }
 
     private func apply(highlighted: Bool) {
