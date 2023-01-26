@@ -343,7 +343,9 @@ extension TextField: ConfigurableItem {
         }
     }
 
-    private func putText(_ text: String) {
+    func putText(_ text: String) {
+        guard self.text != text else { return }
+
         if let maskedDelegate = textField.delegate as? MaskedTextFieldDelegate {
             maskedDelegate.put(text: text, into: textField)
             textField.sendActions(for: .valueChanged)
