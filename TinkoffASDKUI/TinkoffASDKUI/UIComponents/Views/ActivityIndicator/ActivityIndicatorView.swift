@@ -8,7 +8,7 @@
 import UIKit
 
 /// Индикатор активности
-final class ActivityIndicatorView: UIView, Stylable, ShadowAvailable {
+final class ActivityIndicatorView: UIView, Stylable {
 
     /// Флаг активности анимации
     private(set) var isAnimating = false

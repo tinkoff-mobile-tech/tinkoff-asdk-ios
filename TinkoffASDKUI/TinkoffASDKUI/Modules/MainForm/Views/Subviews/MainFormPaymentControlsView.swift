@@ -68,6 +68,10 @@ final class MainFormPaymentControlsView: UIView {
         payButton.configure(configuration)
     }
 
+    func set(payButtonEnabled: Bool) {
+        payButton.isEnabled = payButtonEnabled
+    }
+
     // MARK: Initial Configuration
 
     private func setupView() {

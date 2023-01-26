@@ -22,6 +22,7 @@
 * [MIC-7703] MainForm - Add entry point in ASDKSample
 * [MIC-7702] MainForm - MVP module foundation
 * [MIC-7704] MainForm - Primary pay method block
+* [MIC-7775] MainForm - SavedCard view
 
 ## [2.16.0] - 2023-01-19Z
 

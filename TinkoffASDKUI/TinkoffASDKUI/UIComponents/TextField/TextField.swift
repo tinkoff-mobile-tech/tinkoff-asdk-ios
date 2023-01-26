@@ -311,6 +311,7 @@ extension TextField: ConfigurableItem {
         textField.textColor = nil
         textField.font = nil
         textField.attributedText = nil
+        unshrinkTitle(animated: false)
     }
 
     private func setupAccessoryView(_ accessoryView: TextField.AccessoryView?) {
