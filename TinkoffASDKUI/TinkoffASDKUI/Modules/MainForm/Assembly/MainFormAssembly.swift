@@ -20,7 +20,7 @@ final class MainFormAssembly: IMainFormAssembly {
         configuration: MainFormUIConfiguration,
         stub: MainFormStub
     ) -> UIViewController {
-        let router = MainFormRouter()
+        let router = MainFormRouter(configuration: configuration)
 
         let presenter = MainFormPresenter(
             router: router,
