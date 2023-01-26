@@ -109,9 +109,9 @@ extension MainFormViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewPresenter = presenter.viewPresenter(at: indexPath.row)
+        let row = presenter.row(at: indexPath)
 
-        switch viewPresenter {
+        switch row {
         case let .savedCard(savedCardPresenter):
             savedCardView.presenter = savedCardPresenter
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)

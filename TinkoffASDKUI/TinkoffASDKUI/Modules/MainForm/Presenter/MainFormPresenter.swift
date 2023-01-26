@@ -21,7 +21,7 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private var presenters: [MainFormViewPresenterType] { [.savedCard(savedCardPresenter)] }
+    private var rows: [MainFormRowType] { [.savedCard(savedCardPresenter)] }
 
     // MARK: Init
 
@@ -73,11 +73,11 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 
     func numberOfRows() -> Int {
-        presenters.count
+        rows.count
     }
 
-    func viewPresenter(at index: Int) -> MainFormViewPresenterType {
-        presenters[index]
+    func row(at indexPath: IndexPath) -> MainFormRowType {
+        rows[indexPath.row]
     }
 }
 
