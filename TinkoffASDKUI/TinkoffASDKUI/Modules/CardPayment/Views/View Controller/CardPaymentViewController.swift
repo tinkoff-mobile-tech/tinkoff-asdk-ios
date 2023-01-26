@@ -59,6 +59,10 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 // MARK: - ICardPaymentViewControllerInput
 
 extension CardPaymentViewController {
+    func forceValidateCardField() {
+        cardFieldView.input.validateWholeForm()
+    }
+
     func setPayButton(title: String) {
         let configuration = Button.Configuration(
             data: Button.Data(
@@ -68,6 +72,61 @@ extension CardPaymentViewController {
             style: .primary
         )
         payButton.configure(configuration)
+    }
+
+    func setPayButton(isEnabled: Bool) {
+        payButton.isEnabled = isEnabled
+    }
+
+    func startLoadingPayButton() {
+        payButton.startLoading()
+        UIApplication.shared.beginIgnoringInteractionEvents()
+    }
+
+    func stopLoadingPayButton() {
+        payButton.stopLoading()
+        UIApplication.shared.endIgnoringInteractionEvents()
+    }
+
+    func setEmailHeader(isError: Bool) {
+        let color = isError ? ASDKColors.Foreground.negativeAccent : ASDKColors.Text.secondary.color
+        let headerLabelStyle = UILabel.Style.bodyL().set(textColor: color)
+        let content = UILabel.Content.plain(text: "Электронная почта", style: headerLabelStyle)
+        let headerConfig = UILabel.Configuration(content: content)
+
+        emailTextField.updateHeader(config: headerConfig)
+    }
+
+    func setEmailTextField(text: String) {
+        let config = TextField.TextFieldConfiguration(
+            delegate: self,
+            eventHandler: { [weak self] event, textField in
+                switch event {
+                case .didBeginEditing:
+                    self?.presenter.emailTextFieldDidBeginEditing()
+                case .textDidChange:
+                    self?.presenter.emailTextFieldDidChangeText(to: textField.text)
+                case .didEndEditing:
+                    self?.presenter.emailTextFieldDidEndEditing()
+                }
+            },
+            content: .plain(text: text, style: .bodyL()),
+            placeholder: .plain(text: "", style: .bodyL()),
+            tintColor: nil,
+            rightAccessoryView: TextField.AccessoryView(kind: .clearButton),
+            isSecure: false,
+            keyboardType: .default
+        )
+        let headerLabelStyle = UILabel.Style.bodyL().set(textColor: ASDKColors.Text.secondary.color)
+        let content = UILabel.Content.plain(text: "Электронная почта", style: headerLabelStyle)
+        let headerConfig = UILabel.Configuration(content: content)
+
+        let emailConfig = TextField.Configuration(textField: config, headerLabel: headerConfig)
+        emailTextField.configure(with: emailConfig)
+    }
+
+    func hideKeyboard() {
+        view.endEditing(true)
     }
 
     func reloadTableView() {
@@ -95,6 +154,15 @@ extension CardPaymentViewController {
     }
 }
 
+// MARK: - UITextFieldDelegate
+
+extension CardPaymentViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        presenter.emailTextFieldDidPressReturn()
+        return true
+    }
+}
+
 // MARK: - UITableViewDataSource
 
 extension CardPaymentViewController: UITableViewDataSource {
@@ -115,7 +183,7 @@ extension CardPaymentViewController: UITableViewDataSource {
         case .emailField:
             cell.setContent(emailContainerView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
         case .payButton:
-            cell.setContent(payButton, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
+            cell.setContent(payButton, insets: UIEdgeInsets(vertical: 16, horizontal: 16))
         }
 
         return cell
@@ -219,22 +287,5 @@ extension CardPaymentViewController {
             emailTextField.rightAnchor.constraint(equalTo: emailContainerView.rightAnchor, constant: -12),
             emailTextField.centerYAnchor.constraint(equalTo: emailContainerView.centerYAnchor),
         ])
-
-        let config = TextField.TextFieldConfiguration(
-            delegate: nil,
-            eventHandler: nil,
-            content: .plain(text: "", style: .bodyL()),
-            placeholder: .plain(text: "", style: .bodyL()),
-            tintColor: nil,
-            rightAccessoryView: TextField.AccessoryView(kind: .clearButton),
-            isSecure: false,
-            keyboardType: .default
-        )
-        let headerLabelStyle = UILabel.Style.bodyL().set(textColor: ASDKColors.Text.secondary.color)
-        let content = UILabel.Content.plain(text: "Электронная почта", style: headerLabelStyle)
-        let headerConfig = UILabel.Configuration(content: content)
-
-        let emailConfig = TextField.Configuration(textField: config, headerLabel: headerConfig)
-        emailTextField.configure(with: emailConfig)
     }
 }

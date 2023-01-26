@@ -5,15 +5,20 @@
 //  Created by Aleksandr Pravosudov on 20.01.2023.
 //
 
+import TinkoffASDKCore
 import UIKit
 
 final class CardPaymentAssembly: ICardPaymentAssembly {
 
     // MARK: ICardPaymentAssembly
 
-    func build() -> UIViewController {
+    func build(activeCards: [PaymentCard], customerEmail: String) -> UIViewController {
         let router = CardPaymentRouter()
-        let presenter = CardPaymentPresenter(router: router)
+        let presenter = CardPaymentPresenter(
+            router: router,
+            activeCards: activeCards,
+            customerEmail: customerEmail
+        )
 
         let cardFieldFactory = CardFieldFactory()
 

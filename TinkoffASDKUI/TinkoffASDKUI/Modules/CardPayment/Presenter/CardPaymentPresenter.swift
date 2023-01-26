@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 20.01.2023.
 //
 
+import TinkoffASDKCore
+
 enum CardPaymentCellType {
     case cardField
     case getReceipt
@@ -24,10 +26,21 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private var cellTypes = [CardPaymentCellType]()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
 
+    private var isCardFieldValid = false
+
+    private let activeCards: [PaymentCard]
+    private var customerEmail: String
+
     // MARK: Initialization
 
-    init(router: ICardPaymentRouter) {
+    init(
+        router: ICardPaymentRouter,
+        activeCards: [PaymentCard],
+        customerEmail: String
+    ) {
         self.router = router
+        self.activeCards = activeCards
+        self.customerEmail = customerEmail
     }
 }
 
@@ -36,7 +49,9 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 extension CardPaymentPresenter {
     func viewDidLoad() {
         view?.setPayButton(title: "Оплатить 1 070 724 ₽")
-        setupCellTypes(isCardExist: false, isEmailExist: false)
+        view?.setPayButton(isEnabled: false)
+        view?.setEmailTextField(text: customerEmail)
+        setupCellTypes(isCardExist: false)
         view?.reloadTableView()
     }
 
@@ -45,11 +60,39 @@ extension CardPaymentPresenter {
     }
 
     func payButtonPressed() {
-        print(#function)
+        view?.hideKeyboard()
+        view?.startLoadingPayButton()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.view?.stopLoadingPayButton()
+        }
     }
 
     func cardFieldDidChangeState(isValid: Bool) {
-        print(isValid)
+        isCardFieldValid = isValid
+        activatePayButtonIfNeeded()
+    }
+
+    func emailTextFieldDidBeginEditing() {
+        view?.setEmailHeader(isError: false)
+        view?.forceValidateCardField()
+    }
+
+    func emailTextFieldDidChangeText(to text: String) {
+        guard text != customerEmail else { return }
+
+        customerEmail = text
+        activatePayButtonIfNeeded()
+    }
+
+    func emailTextFieldDidEndEditing() {
+        let isValid = isValidEmail(customerEmail)
+        view?.setEmailHeader(isError: !isValid)
+    }
+
+    func emailTextFieldDidPressReturn() {
+        view?.hideKeyboard()
+        view?.forceValidateCardField()
     }
 
     func numberOfRows() -> Int {
@@ -69,7 +112,7 @@ extension CardPaymentPresenter {
 
 extension CardPaymentPresenter {
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
-        SwitchViewPresenter(title: "Получить квитанцию", isOn: false, actionBlock: { [weak self] isOn in
+        SwitchViewPresenter(title: "Получить квитанцию", isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
             guard let self = self else { return }
 
             if isOn {
@@ -81,14 +124,34 @@ extension CardPaymentPresenter {
                 self.cellTypes.remove(at: emailIndex)
                 self.view?.delete(row: emailIndex)
             }
+
+            self.activatePayButtonIfNeeded()
+            self.view?.hideKeyboard()
+            self.view?.forceValidateCardField()
         })
     }
 
-    private func setupCellTypes(isCardExist: Bool, isEmailExist: Bool) {
-        if !isCardExist, !isEmailExist {
+    private func setupCellTypes(isCardExist: Bool) {
+        if !isCardExist, customerEmail.isEmpty {
             cellTypes = [.cardField, .getReceipt, .payButton]
-        } else if !isCardExist, isEmailExist {
+        } else if !isCardExist {
             cellTypes = [.cardField, .getReceipt, .emailField, .payButton]
         }
+    }
+
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = ".+\\@.+\\..+"
+
+        let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
+    }
+
+    private func activatePayButtonIfNeeded() {
+        let isEmailFieldOn = receiptSwitchViewPresenter.isOn
+        let isEmailFieldValid = isValidEmail(customerEmail)
+        let isEmailValid = isEmailFieldOn ? isEmailFieldValid : true
+
+        let isPayButtonEnabled = isCardFieldValid && isEmailValid
+        view?.setPayButton(isEnabled: isPayButtonEnabled)
     }
 }
