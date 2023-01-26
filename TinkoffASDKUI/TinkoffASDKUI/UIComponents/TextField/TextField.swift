@@ -311,6 +311,7 @@ extension TextField: ConfigurableItem {
         textField.textColor = nil
         textField.font = nil
         textField.attributedText = nil
+        unshrinkTitle(animated: false)
     }
 
     private func setupAccessoryView(_ accessoryView: TextField.AccessoryView?) {
@@ -343,9 +344,7 @@ extension TextField: ConfigurableItem {
         }
     }
 
-    func putText(_ text: String) {
-        guard self.text != text else { return }
-
+    private func putText(_ text: String) {
         if let maskedDelegate = textField.delegate as? MaskedTextFieldDelegate {
             maskedDelegate.put(text: text, into: textField)
             textField.sendActions(for: .valueChanged)

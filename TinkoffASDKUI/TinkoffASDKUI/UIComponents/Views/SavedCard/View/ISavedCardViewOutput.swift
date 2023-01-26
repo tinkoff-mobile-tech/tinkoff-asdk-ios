@@ -11,6 +11,6 @@ protocol ISavedCardViewOutput: AnyObject {
     var view: ISavedCardViewInput? { get set }
 
     func savedCardViewDidBeginCVCFieldEditing()
-    func savedCardView(didChangeCVC cvcInput: String)
+    func savedCardView(didChangeCVC cvcInputText: String)
     func savedCardViewIsSelected()
 }

@@ -8,7 +8,7 @@
 import Foundation
 import TinkoffASDKCore
 
-enum SavedCardPresentationState {
+enum SavedCardPresentationState: Equatable {
     case idle
     case selected(card: PaymentCard, hasAnotherCards: Bool)
 }

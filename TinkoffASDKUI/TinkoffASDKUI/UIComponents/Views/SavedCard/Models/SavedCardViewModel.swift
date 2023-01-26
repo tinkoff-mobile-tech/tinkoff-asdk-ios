@@ -8,13 +8,17 @@
 import Foundation
 
 struct SavedCardViewModel {
-    struct CVCField {
-        let text: String
-        let isValid: Bool
-    }
-
     let iconModel: DynamicIconCardView.Model
     let cardName: String
     let actionDescription: String?
-    let cvcField: CVCField?
+
+    init(
+        iconModel: DynamicIconCardView.Model = DynamicIconCardView.Model(),
+        cardName: String = "",
+        actionDescription: String? = nil
+    ) {
+        self.iconModel = iconModel
+        self.cardName = cardName
+        self.actionDescription = actionDescription
+    }
 }

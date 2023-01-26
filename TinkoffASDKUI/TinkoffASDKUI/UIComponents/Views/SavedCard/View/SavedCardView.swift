@@ -91,7 +91,7 @@ final class SavedCardView: UIView {
 
     private func setupView() {
         setupLayout()
-        configureCVCField()
+        configureCVCField(text: nil)
     }
 
     private func setupLayout() {
@@ -105,7 +105,7 @@ final class SavedCardView: UIView {
 
         labelsStack.addArrangedSubviews(cardNameLabel, actionLabel)
         cvcBackgroundContainer.addSubview(cvcField)
-        cvcField.pinEdgesToSuperview(insets: .cvcFiledInsets)
+        cvcField.pinEdgesToSuperview(insets: .cvcFieldInsets)
 
         NSLayoutConstraint.activate([
             cvcBackgroundContainer.widthAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.width),
@@ -115,7 +115,7 @@ final class SavedCardView: UIView {
         ])
     }
 
-    private func configureCVCField() {
+    private func configureCVCField(text: String?) {
         let maskingFactory = CardFieldMaskingFactory()
 
         let maskingDelegate = maskingFactory.buildForCvc(
@@ -127,7 +127,7 @@ final class SavedCardView: UIView {
 
         let textFieldConfiguration = TextField.TextFieldConfiguration.assembleWithRegularContentAndStyle(
             delegate: maskingDelegate,
-            text: nil,
+            text: text,
             placeholder: .cvcFieldPlaceholder,
             eventHandler: { [weak self] event, _ in
                 switch event {
@@ -158,13 +158,26 @@ extension SavedCardView: ISavedCardViewInput {
         iconView.configure(model: viewModel.iconModel)
         cardNameLabel.text = viewModel.cardName
         actionLabel.text = viewModel.actionDescription
+    }
 
-        if let cvcModel = viewModel.cvcField {
-            cvcField.updateHeader(config: cvcModel.isValid ? .validCVCHeader : .invalidCVCHeader)
-            cvcField.putText(cvcModel.text)
-        }
+    func showCVCField() {
+        cvcBackgroundContainer.isHidden = false
+    }
 
-        cvcBackgroundContainer.isHidden = viewModel.cvcField == nil
+    func hideCVCField() {
+        cvcBackgroundContainer.isHidden = true
+    }
+
+    func setCVCText(_ text: String) {
+        configureCVCField(text: text)
+    }
+
+    func setCVCFieldValid() {
+        cvcField.updateHeader(config: .validCVCHeader)
+    }
+
+    func setCVCFieldInvalid() {
+        cvcField.updateHeader(config: .invalidCVCHeader)
     }
 
     func deactivateCVCField() {
@@ -187,7 +200,7 @@ private extension CGSize {
 }
 
 private extension UIEdgeInsets {
-    static let cvcFiledInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
+    static let cvcFieldInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
     static let contentStackInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 8)
 }
 

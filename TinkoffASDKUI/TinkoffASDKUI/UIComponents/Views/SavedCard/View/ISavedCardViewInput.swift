@@ -9,5 +9,10 @@ import Foundation
 
 protocol ISavedCardViewInput: AnyObject {
     func update(with viewModel: SavedCardViewModel)
+    func showCVCField()
+    func hideCVCField()
+    func setCVCText(_ text: String)
+    func setCVCFieldValid()
+    func setCVCFieldInvalid()
     func deactivateCVCField()
 }

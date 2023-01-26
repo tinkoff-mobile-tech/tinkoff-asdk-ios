@@ -163,6 +163,16 @@ extension DynamicIconCardView {
         var style = Style()
 
         weak var updater: IDynamicIconCardViewUpdater?
+
+        init(
+            data: Data = Data(),
+            style: Style = Style(),
+            updater: IDynamicIconCardViewUpdater? = nil
+        ) {
+            self.data = data
+            self.style = style
+            self.updater = updater
+        }
     }
 
     struct Data {

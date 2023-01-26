@@ -12,21 +12,27 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
     // MARK: ISavedCardPresenterInput Properties
 
     var presentationState: SavedCardPresentationState = .idle {
-        didSet { presentationStateDidChange(from: oldValue, to: presentationState) }
+        didSet {
+            guard presentationState != oldValue else { return }
+            resetInternalState()
+            setupView()
+        }
     }
 
     var isValid: Bool {
-        validator.validate(inputCVC: cvсInputText)
+        validator.validate(inputCVC: cvcInputText)
     }
 
     var cvc: String? {
-        isValid ? cvсInputText : nil
+        isValid ? cvcInputText : nil
     }
 
     // MARK: ISavedCardViewOutput Properties
 
     weak var view: ISavedCardViewInput? {
-        didSet { reloadView() }
+        didSet {
+            setupView()
+        }
     }
 
     // MARK: Dependencies
@@ -39,8 +45,11 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
     // MARK: State
 
     private var hasUserInteractedWithCVC = false
-    private var cvсInputText = "" {
-        didSet { cvcInputTextDidChange(from: oldValue, to: cvсInputText) }
+    private var cvcInputText = "" {
+        didSet {
+            guard cvcInputText != oldValue else { return }
+            output?.savedCardPresenter(self, didUpdateCVC: cvcInputText, isValid: isValid)
+        }
     }
 
     // MARK: Init
@@ -59,51 +68,30 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
 
     // MARK: View Reloading
 
-    private func reloadView() {
-        let viewModel: SavedCardViewModel
+    private func setupView() {
+        view?.deactivateCVCField()
 
         switch presentationState {
-        case .idle:
-            viewModel = createIdleViewModel()
         case let .selected(card, hasAnotherCards):
-            viewModel = createSelectedViewModel(card: card, hasAnotherCards: hasAnotherCards)
-        }
-
-        view?.update(with: viewModel)
-    }
-
-    // MARK: Property Events
-
-    private func presentationStateDidChange(
-        from oldValue: SavedCardPresentationState,
-        to newValue: SavedCardPresentationState
-    ) {
-        hasUserInteractedWithCVC = false
-        cvсInputText = ""
-        reloadView()
-    }
-
-    private func cvcInputTextDidChange(from oldValue: String, to newValue: String) {
-        switch presentationState {
+            let viewModel = createViewModel(card: card, hasAnotherCards: hasAnotherCards)
+            view?.update(with: viewModel)
+            view?.showCVCField()
+            view?.setCVCText(cvcInputText)
+            updateCVCFieldValidationState()
         case .idle:
-            break
-        case .selected:
-            output?.savedCardPresenter(self, didUpdateCVC: newValue, isValid: isValid)
+            view?.update(with: SavedCardViewModel())
+            view?.hideCVCField()
         }
+    }
+
+    private func resetInternalState() {
+        hasUserInteractedWithCVC = false
+        cvcInputText = ""
     }
 
     // MARK: View Models Creation
 
-    private func createIdleViewModel() -> SavedCardViewModel {
-        SavedCardViewModel(
-            iconModel: DynamicIconCardView.Model(data: DynamicIconCardView.Data()),
-            cardName: "",
-            actionDescription: nil,
-            cvcField: nil
-        )
-    }
-
-    private func createSelectedViewModel(card: PaymentCard, hasAnotherCards: Bool) -> SavedCardViewModel {
+    private func createViewModel(card: PaymentCard, hasAnotherCards: Bool) -> SavedCardViewModel {
         let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
         let paymentSystem = paymentSystemResolver.resolve(by: card.pan).getPaymentSystem()
 
@@ -111,35 +99,38 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
             data: DynamicIconCardView.Data(bank: bank?.icon, paymentSystem: paymentSystem?.icon)
         )
 
-        let cvcModel = SavedCardViewModel.CVCField(
-            text: cvсInputText,
-            isValid: hasUserInteractedWithCVC ? isValid : true
-        )
-
         return SavedCardViewModel(
             iconModel: iconModel,
             cardName: .formatCardName(bankName: bank?.naming, pan: card.pan),
-            actionDescription: hasAnotherCards ? "Сменить карту" : nil,
-            cvcField: cvcModel
+            actionDescription: hasAnotherCards ? "Сменить карту" : nil
         )
+    }
+
+    private func updateCVCFieldValidationState() {
+        let shouldShowValidState = !hasUserInteractedWithCVC || isValid
+        shouldShowValidState ? view?.setCVCFieldValid() : view?.setCVCFieldInvalid()
     }
 }
 
 // MARK: - ISavedCardViewOutput Methods
 
 extension SavedCardPresenter {
-    func savedCardView(didChangeCVC cvcInput: String) {
-        cvсInputText = cvcInput
-        reloadView()
+    func savedCardView(didChangeCVC cvcInputText: String) {
+        guard self.cvcInputText != cvcInputText else { return }
+
+        self.cvcInputText = cvcInputText
+        updateCVCFieldValidationState()
 
         if isValid {
             view?.deactivateCVCField()
         }
+
+        output?.savedCardPresenter(self, didUpdateCVC: cvcInputText, isValid: isValid)
     }
 
     func savedCardViewDidBeginCVCFieldEditing() {
         hasUserInteractedWithCVC = true
-        reloadView()
+        updateCVCFieldValidationState()
     }
 
     func savedCardViewIsSelected() {

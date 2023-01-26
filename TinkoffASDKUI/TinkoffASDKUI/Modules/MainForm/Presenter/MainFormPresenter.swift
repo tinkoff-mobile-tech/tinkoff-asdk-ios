@@ -64,6 +64,7 @@ extension MainFormPresenter: IMainFormPresenter {
         )
 
         view?.updateHeader(with: header)
+        view?.set(payButtonEnabled: savedCardPresenter.isValid)
     }
 
     func viewWasClosed() {}
