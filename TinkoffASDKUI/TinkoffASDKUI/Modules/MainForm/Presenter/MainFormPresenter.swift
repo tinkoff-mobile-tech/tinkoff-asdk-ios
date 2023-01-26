@@ -13,6 +13,7 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
+    private let coreSDK: AcquiringSdk
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
     private let stub: MainFormStub
@@ -29,11 +30,13 @@ final class MainFormPresenter {
 
     init(
         router: IMainFormRouter,
+        coreSDK: AcquiringSdk,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
         stub: MainFormStub
     ) {
         self.router = router
+        self.coreSDK = coreSDK
         self.paymentFlow = paymentFlow
         self.configuration = configuration
         self.stub = stub
