@@ -2134,7 +2134,12 @@ extension AcquiringUISDK: IAddNewCardNetworking {
 }
 
 public extension AcquiringUISDK {
-    func presentMainForm(on presentingViewController: UIViewController, stub: MainFormStub) {
+    func presentMainForm(
+        on presentingViewController: UIViewController,
+        paymentFlow: PaymentFlow,
+        configuration: MainFormUIConfiguration,
+        stub: MainFormStub
+    ) {
         let viewController = mainFormAssembly.build(stub: stub)
         presentingViewController.present(viewController, animated: true)
     }
