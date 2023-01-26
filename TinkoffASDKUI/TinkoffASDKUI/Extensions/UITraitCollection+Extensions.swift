@@ -1,5 +1,5 @@
 //
-//  UITraintCollection+Extensions.swift
+//  UITraitCollection+Extensions.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 25.01.2023.
