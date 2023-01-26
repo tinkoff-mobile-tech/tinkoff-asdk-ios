@@ -120,7 +120,7 @@ final class SavedCardView: UIView {
 
         let maskingDelegate = maskingFactory.buildForCvc(
             didFillMask: { [weak self] text, _ in
-                self?.presenter?.savedCardView(didFillCVC: text)
+                self?.presenter?.savedCardView(didChangeCVC: text)
             },
             listenerStorage: &textFieldListeners
         )

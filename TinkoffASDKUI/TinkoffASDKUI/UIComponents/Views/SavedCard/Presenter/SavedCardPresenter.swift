@@ -128,7 +128,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
 // MARK: - ISavedCardViewOutput Methods
 
 extension SavedCardPresenter {
-    func savedCardView(didFillCVC cvcInput: String) {
+    func savedCardView(didChangeCVC cvcInput: String) {
         cvсInputText = cvcInput
         reloadView()
 
