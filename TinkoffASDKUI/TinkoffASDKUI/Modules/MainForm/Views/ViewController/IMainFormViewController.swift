@@ -9,4 +9,5 @@ import Foundation
 
 protocol IMainFormViewController: AnyObject {
     func updateHeader(with viewModel: MainFormHeaderViewModel)
+    func set(payButtonEnabled: Bool)
 }

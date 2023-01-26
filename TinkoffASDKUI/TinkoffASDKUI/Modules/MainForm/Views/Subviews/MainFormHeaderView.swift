@@ -59,6 +59,10 @@ final class MainFormHeaderView: UIView {
         paymentControlsView.update(with: viewModel.paymentControls)
     }
 
+    func set(payButtonEnabled: Bool) {
+        paymentControlsView.set(payButtonEnabled: payButtonEnabled)
+    }
+
     // MARK: Initial Configuration
 
     private func setupView() {

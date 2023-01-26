@@ -12,7 +12,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeight: CGFloat { headerView.bounds.height }
+    var pullableContainerContentHeight: CGFloat { 650 }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     // MARK: Dependencies
@@ -26,8 +26,14 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         // Явное присваивание фрейма до того, как произошел цикл autolayout,
         // позволяет избавиться от логов в консоли с конфликтами горизонтальных констрейнтов при установке `tableHeaderView`
         let tableView = UITableView(frame: view.bounds)
+        tableView.separatorStyle = .none
+        tableView.register(ContainerTableViewCell.self)
+        tableView.dataSource = self
+        tableView.keyboardDismissMode = .onDrag
         return tableView
     }()
+
+    private lazy var savedCardView = SavedCardView()
 
     // MARK: Init
 
@@ -75,6 +81,10 @@ extension MainFormViewController: IMainFormViewController {
     func updateHeader(with viewModel: MainFormHeaderViewModel) {
         headerView.update(with: viewModel)
     }
+
+    func set(payButtonEnabled: Bool) {
+        headerView.set(payButtonEnabled: payButtonEnabled)
+    }
 }
 
 // MARK: - MainFormHeaderViewDelegate
@@ -91,4 +101,28 @@ extension MainFormViewController {
     func pullableContainerWasClosed() {
         presenter.viewWasClosed()
     }
+}
+
+extension MainFormViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        presenter.numberOfRows()
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let viewPresenter = presenter.viewPresenter(at: indexPath.row)
+
+        switch viewPresenter {
+        case let .savedCard(savedCardPresenter):
+            savedCardView.presenter = savedCardPresenter
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(savedCardView, insets: .savedCardInsets)
+            return cell
+        }
+    }
+}
+
+// MARK: - Constants
+
+private extension UIEdgeInsets {
+    static let savedCardInsets = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
 }
