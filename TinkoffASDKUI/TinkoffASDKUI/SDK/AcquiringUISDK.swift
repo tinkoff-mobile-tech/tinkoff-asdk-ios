@@ -2140,7 +2140,12 @@ public extension AcquiringUISDK {
         configuration: MainFormUIConfiguration,
         stub: MainFormStub
     ) {
-        let viewController = mainFormAssembly.build(stub: stub)
+        let viewController = mainFormAssembly.build(
+            paymentFlow: paymentFlow,
+            configuration: configuration,
+            stub: stub
+        )
+
         presentingViewController.present(viewController, animated: true)
     }
 }

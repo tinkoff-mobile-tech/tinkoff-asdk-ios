@@ -13,6 +13,8 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
+    private let paymentFlow: PaymentFlow
+    private let configuration: MainFormUIConfiguration
     private let stub: MainFormStub
 
     // MARK: Child Presenters
@@ -25,8 +27,15 @@ final class MainFormPresenter {
 
     // MARK: Init
 
-    init(router: IMainFormRouter, stub: MainFormStub) {
+    init(
+        router: IMainFormRouter,
+        paymentFlow: PaymentFlow,
+        configuration: MainFormUIConfiguration,
+        stub: MainFormStub
+    ) {
         self.router = router
+        self.paymentFlow = paymentFlow
+        self.configuration = configuration
         self.stub = stub
     }
 }
