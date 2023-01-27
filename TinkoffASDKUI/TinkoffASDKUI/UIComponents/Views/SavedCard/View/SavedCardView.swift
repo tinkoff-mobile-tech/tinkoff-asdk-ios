@@ -117,16 +117,16 @@ final class SavedCardView: UIView {
         cvcField.pinEdgesToSuperview(insets: .cvcFieldInsets)
 
         NSLayoutConstraint.activate([
-            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 64),
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: .containerMinimalHeight),
 
             iconView.widthAnchor.constraint(equalToConstant: CGSize.iconSize.width),
             iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             iconView.heightAnchor.constraint(equalToConstant: CGSize.iconSize.height),
-            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: .iconLeadingInset),
 
             labelsStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 16),
-            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16),
+            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: .labelsStackHorizontalInset),
+            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -.labelsStackHorizontalInset),
             labelsStack.trailingAnchor.constraint(equalTo: accessoryView.leadingAnchor).with(priority: .defaultLow),
 
             accessoryViewWidthConstraint,
@@ -137,7 +137,7 @@ final class SavedCardView: UIView {
             cvcBackground.widthAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.width),
             cvcBackground.heightAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.height),
             cvcBackground.centerYAnchor.constraint(equalTo: accessoryView.centerYAnchor),
-            cvcBackground.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -8),
+            cvcBackground.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -.cvcBackgroundTrailingInset),
         ])
     }
 
@@ -194,7 +194,7 @@ extension SavedCardView: ISavedCardViewInput {
 
     func showCVCField() {
         accessoryView.isHidden = false
-        accessoryViewWidthConstraint.constant = 83
+        accessoryViewWidthConstraint.constant = .accessoryViewWidth
     }
 
     func hideCVCField() {
@@ -223,10 +223,12 @@ extension SavedCardView: ISavedCardViewInput {
 
 private extension CGFloat {
     static let containerMinimalHeight: CGFloat = 64
+    static let iconLeadingInset: CGFloat = 16
     static let labelsStackSpacing: CGFloat = 4
-    static let contentStackDefaultSpacing: CGFloat = 22
-    static let contentStackIconTrailingSpacing: CGFloat = 16
+    static let labelsStackHorizontalInset: CGFloat = 16
+    static let cvcBackgroundTrailingInset: CGFloat = 8
     static let cvcFieldBackgroundCornerRadius: CGFloat = 16
+    static let accessoryViewWidth: CGFloat = 83
 }
 
 private extension CGSize {
@@ -236,7 +238,6 @@ private extension CGSize {
 
 private extension UIEdgeInsets {
     static let cvcFieldInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
-    static let contentStackInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 8)
 }
 
 private extension String {
