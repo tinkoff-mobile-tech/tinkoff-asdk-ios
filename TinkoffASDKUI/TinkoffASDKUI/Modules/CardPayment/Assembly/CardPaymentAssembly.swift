@@ -12,12 +12,15 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
 
     // MARK: ICardPaymentAssembly
 
-    func build(activeCards: [PaymentCard], customerEmail: String) -> UIViewController {
+    func build(activeCards: [PaymentCard], paymentFlow: PaymentFlow, amount: Int64) -> UIViewController {
         let router = CardPaymentRouter()
+        let moneyFormatter = MoneyFormatter()
         let presenter = CardPaymentPresenter(
             router: router,
+            moneyFormatter: moneyFormatter,
             activeCards: activeCards,
-            customerEmail: customerEmail
+            paymentFlow: paymentFlow,
+            amount: Int(amount)
         )
 
         let cardFieldFactory = CardFieldFactory()

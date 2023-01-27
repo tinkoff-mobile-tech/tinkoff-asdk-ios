@@ -20,7 +20,11 @@ final class MainFormAssembly: IMainFormAssembly {
         configuration: MainFormUIConfiguration,
         stub: MainFormStub
     ) -> UIViewController {
-        let router = MainFormRouter(configuration: configuration)
+        let cardPaymentAssembly = CardPaymentAssembly()
+        let router = MainFormRouter(
+            configuration: configuration,
+            cardPaymentAssembly: cardPaymentAssembly
+        )
 
         let presenter = MainFormPresenter(
             router: router,

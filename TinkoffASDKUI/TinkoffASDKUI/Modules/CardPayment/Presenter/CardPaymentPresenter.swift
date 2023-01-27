@@ -21,6 +21,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
+    private let moneyFormatter: IMoneyFormatter
 
     // MARK: Properties
 
@@ -31,18 +32,24 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private var isCardFieldValid = false
 
     private let activeCards: [PaymentCard]
-    private var customerEmail: String
+    private let paymentFlow: PaymentFlow
+    private let amount: Int
+    private lazy var currentEmail = getCustomerEmailFromPaymentFlow()
 
     // MARK: Initialization
 
     init(
         router: ICardPaymentRouter,
+        moneyFormatter: IMoneyFormatter,
         activeCards: [PaymentCard],
-        customerEmail: String
+        paymentFlow: PaymentFlow,
+        amount: Int
     ) {
         self.router = router
+        self.moneyFormatter = moneyFormatter
         self.activeCards = activeCards
-        self.customerEmail = customerEmail
+        self.paymentFlow = paymentFlow
+        self.amount = amount
     }
 }
 
@@ -52,19 +59,13 @@ extension CardPaymentPresenter {
     func viewDidLoad() {
         createSavedCardViewPresenterIfNeeded()
 
-        view?.setPayButton(title: "Оплатить 1 070 724 ₽")
+        let stringAmount = moneyFormatter.formatAmount(amount)
+        view?.setPayButton(title: "Оплатить \(stringAmount)")
         view?.setPayButton(isEnabled: false)
-        view?.setEmailTextField(text: customerEmail)
+        view?.setEmailTextField(text: currentEmail)
 
         setupCellTypes()
         view?.reloadTableView()
-
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-//            self.view?.reloadTableView()
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-//                self.view?.reloadTableView()
-//            }
-//        }
     }
 
     func closeButtonPressed() {
@@ -91,14 +92,14 @@ extension CardPaymentPresenter {
     }
 
     func emailTextFieldDidChangeText(to text: String) {
-        guard text != customerEmail else { return }
+        guard text != currentEmail else { return }
 
-        customerEmail = text
+        currentEmail = text
         activatePayButtonIfNeeded()
     }
 
     func emailTextFieldDidEndEditing() {
-        let isValid = isValidEmail(customerEmail)
+        let isValid = isValidEmail(currentEmail)
         view?.setEmailHeader(isError: !isValid)
     }
 
@@ -146,7 +147,7 @@ extension CardPaymentPresenter {
     }
 
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
-        SwitchViewPresenter(title: "Получить квитанцию", isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
+        SwitchViewPresenter(title: "Получить квитанцию", isOn: !currentEmail.isEmpty, actionBlock: { [weak self] isOn in
             guard let self = self else { return }
 
             if isOn {
@@ -166,11 +167,11 @@ extension CardPaymentPresenter {
     }
 
     private func setupCellTypes() {
-        if activeCards.isEmpty, customerEmail.isEmpty {
+        if activeCards.isEmpty, currentEmail.isEmpty {
             cellTypes = [.cardField, .getReceipt, .payButton]
         } else if activeCards.isEmpty {
             cellTypes = [.cardField, .getReceipt, .emailField, .payButton]
-        } else if !activeCards.isEmpty, customerEmail.isEmpty {
+        } else if !activeCards.isEmpty, currentEmail.isEmpty {
             cellTypes = [.savedCard, .getReceipt, .payButton]
         } else if !activeCards.isEmpty {
             cellTypes = [.savedCard, .getReceipt, .emailField, .payButton]
@@ -190,10 +191,19 @@ extension CardPaymentPresenter {
         let isCardValid = isSavedCardExist ? isSavedCardValid : isCardFieldValid
 
         let isEmailFieldOn = receiptSwitchViewPresenter.isOn
-        let isEmailFieldValid = isValidEmail(customerEmail)
+        let isEmailFieldValid = isValidEmail(currentEmail)
         let isEmailValid = isEmailFieldOn ? isEmailFieldValid : true
 
         let isPayButtonEnabled = isCardValid && isEmailValid
         view?.setPayButton(isEnabled: isPayButtonEnabled)
+    }
+
+    private func getCustomerEmailFromPaymentFlow() -> String {
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            return paymentOptions.customerOptions?.email ?? ""
+        case let .finish(_, customerOptions):
+            return customerOptions?.email ?? ""
+        }
     }
 }

@@ -9,5 +9,5 @@ import TinkoffASDKCore
 import UIKit
 
 protocol ICardPaymentAssembly {
-    func build(activeCards: [PaymentCard], customerEmail: String) -> UIViewController
+    func build(activeCards: [PaymentCard], paymentFlow: PaymentFlow, amount: Int64) -> UIViewController
 }
