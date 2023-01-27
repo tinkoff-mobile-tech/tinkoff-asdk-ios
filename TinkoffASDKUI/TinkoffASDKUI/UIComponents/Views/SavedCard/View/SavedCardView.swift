@@ -93,7 +93,7 @@ final class SavedCardView: UIView {
 
     private func setupView() {
         setupLayout()
-        configureCVCField(text: nil)
+        configureCVCField()
     }
 
     private func setupLayout() {
@@ -140,7 +140,7 @@ final class SavedCardView: UIView {
         ])
     }
 
-    private func configureCVCField(text: String?) {
+    private func configureCVCField(text: String? = nil) {
         let maskingFactory = CardFieldMaskingFactory()
 
         let maskingDelegate = maskingFactory.buildForCvc(
