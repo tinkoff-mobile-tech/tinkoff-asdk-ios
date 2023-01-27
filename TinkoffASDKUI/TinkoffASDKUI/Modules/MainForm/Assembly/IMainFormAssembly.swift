@@ -8,5 +8,9 @@
 import UIKit
 
 protocol IMainFormAssembly {
-    func build(stub: MainFormStub) -> UIViewController
+    func build(
+        paymentFlow: PaymentFlow,
+        configuration: MainFormUIConfiguration,
+        stub: MainFormStub
+    ) -> UIViewController
 }

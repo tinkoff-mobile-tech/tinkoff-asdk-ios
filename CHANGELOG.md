@@ -23,6 +23,7 @@
 * [MIC-7702] MainForm - MVP module foundation
 * [MIC-7704] MainForm - Primary pay method block
 * [MIC-7775] MainForm - SavedCard view
+* [MIC-7828] MainForm - Provide payment data to CardPaymentForm
 
 ## [2.16.0] - 2023-01-19Z
 
