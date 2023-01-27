@@ -19,9 +19,9 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     private lazy var tableView = UITableView()
     private lazy var savedCardView = SavedCardView()
     private lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
-    private lazy var payButton = Button()
-    private lazy var emailView = EmailView()
     private lazy var switchView = SwitchView()
+    private lazy var emailView = EmailView()
+    private lazy var payButton = Button()
 
     // MARK: Initialization
 
@@ -47,9 +47,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         setupNavigationBar()
         setupTableView()
         setupCardFieldView()
-        setupPayButton()
-        setupSwitchView()
-        setupEmailView()
+        setupViewsHeights()
 
         presenter.viewDidLoad()
     }
@@ -128,19 +126,19 @@ extension CardPaymentViewController: UITableViewDataSource {
         let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
 
         switch cellType {
-        case .savedCard:
-            savedCardView.presenter = presenter.savedCardViewPresenter()
-            cell.setContent(savedCardView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
+        case let .savedCard(cellPresenter):
+            savedCardView.presenter = cellPresenter
+            cell.setContent(savedCardView, insets: .commonCellInsets)
         case .cardField:
-            cell.setContent(cardFieldView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
-        case .getReceipt:
-            switchView.presenter = presenter.switchViewPresenter()
-            cell.setContent(switchView, insets: UIEdgeInsets(vertical: 8, horizontal: 20))
-        case .emailField:
-            emailView.presenter = presenter.emailViewPresenter()
-            cell.setContent(emailView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
+            cell.setContent(cardFieldView, insets: .commonCellInsets)
+        case let .getReceipt(cellPresenter):
+            switchView.presenter = cellPresenter
+            cell.setContent(switchView, insets: .switchViewInsets)
+        case let .emailField(cellPresenter):
+            emailView.presenter = cellPresenter
+            cell.setContent(emailView, insets: .commonCellInsets)
         case .payButton:
-            cell.setContent(payButton, insets: UIEdgeInsets(vertical: 16, horizontal: 16))
+            cell.setContent(payButton, insets: .payButtonInsets)
         }
 
         return cell
@@ -163,10 +161,10 @@ extension CardPaymentViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.title = "Оплата картой"
+        navigationItem.title = Loc.Acquiring.PaymentNewCard.screenTitle
 
         let leftItem = UIBarButtonItem(
-            title: "Закрыть",
+            title: Loc.Acquiring.PaymentNewCard.buttonClose,
             style: .plain,
             target: self,
             action: #selector(closeButtonAction(_:))
@@ -190,34 +188,32 @@ extension CardPaymentViewController {
         tableView.dataSource = self
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 56
+        tableView.estimatedRowHeight = .commonCellHeight
     }
 
     private func setupCardFieldView() {
         cardFieldView.delegate = self
     }
 
-    private func setupPayButton() {
-        payButton.translatesAutoresizingMaskIntoConstraints = false
+    private func setupViewsHeights() {
+        [switchView, emailView, payButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            payButton.heightAnchor.constraint(equalToConstant: 56),
-        ])
+            NSLayoutConstraint.activate([
+                $0.heightAnchor.constraint(equalToConstant: .commonCellHeight),
+            ])
+        }
     }
+}
 
-    private func setupSwitchView() {
-        switchView.translatesAutoresizingMaskIntoConstraints = false
+// MARK: - Constanst
 
-        NSLayoutConstraint.activate([
-            switchView.heightAnchor.constraint(equalToConstant: 56),
-        ])
-    }
+private extension CGFloat {
+    static let commonCellHeight: CGFloat = 56
+}
 
-    private func setupEmailView() {
-        emailView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            emailView.heightAnchor.constraint(equalToConstant: 56),
-        ])
-    }
+private extension UIEdgeInsets {
+    static let commonCellInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
+    static let switchViewInsets = UIEdgeInsets(vertical: 8, horizontal: 20)
+    static let payButtonInsets = UIEdgeInsets(vertical: 16, horizontal: 16)
 }

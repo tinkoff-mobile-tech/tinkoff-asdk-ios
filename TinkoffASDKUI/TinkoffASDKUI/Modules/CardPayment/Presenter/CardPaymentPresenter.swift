@@ -7,14 +7,6 @@
 
 import TinkoffASDKCore
 
-enum CardPaymentCellType {
-    case savedCard
-    case cardField
-    case getReceipt
-    case emailField
-    case payButton
-}
-
 final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     // MARK: Dependencies
@@ -27,8 +19,8 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     private var cellTypes = [CardPaymentCellType]()
     private var savedCardPresenter: SavedCardPresenter?
-    private lazy var emailPresenter = createEmailViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
+    private lazy var emailPresenter = createEmailViewPresenter()
 
     private var isCardFieldValid = false
 
@@ -60,10 +52,7 @@ extension CardPaymentPresenter {
     func viewDidLoad() {
         createSavedCardViewPresenterIfNeeded()
 
-        let stringAmount = moneyFormatter.formatAmount(amount)
-        view?.setPayButton(title: "Оплатить \(stringAmount)")
-        view?.setPayButton(isEnabled: false)
-
+        viewSetupPayButton()
         setupCellTypes()
         view?.reloadTableView()
     }
@@ -76,6 +65,7 @@ extension CardPaymentPresenter {
         view?.hideKeyboard()
         view?.startLoadingPayButton()
 
+        // Удалить при появлении логики оплаты
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             self.view?.stopLoadingPayButton()
         }
@@ -92,18 +82,6 @@ extension CardPaymentPresenter {
 
     func cellType(for row: Int) -> CardPaymentCellType {
         cellTypes[row]
-    }
-
-    func savedCardViewPresenter() -> SavedCardPresenter? {
-        savedCardPresenter
-    }
-
-    func emailViewPresenter() -> EmailViewPresenter {
-        emailPresenter
-    }
-
-    func switchViewPresenter() -> SwitchViewPresenter {
-        receiptSwitchViewPresenter
     }
 }
 
@@ -126,7 +104,9 @@ extension CardPaymentPresenter: IEmailViewPresenterOutput {
 // MARK: - ISavedCardPresenterOutput
 
 extension CardPaymentPresenter: ISavedCardPresenterOutput {
-    func savedCardPresenter(_ presenter: SavedCardPresenter, didRequestReplacementFor paymentCard: PaymentCard) {}
+    func savedCardPresenter(_ presenter: SavedCardPresenter, didRequestReplacementFor paymentCard: PaymentCard) {
+        // логика открытия экрана со спиком карт
+    }
 
     func savedCardPresenter(_ presenter: SavedCardPresenter, didUpdateCVC cvc: String, isValid: Bool) {
         activatePayButtonIfNeeded()
@@ -145,15 +125,15 @@ extension CardPaymentPresenter {
     }
 
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
-        SwitchViewPresenter(title: "Получить квитанцию", isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
+        SwitchViewPresenter(title: Loc.Acquiring.EmailField.switchButton, isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
             guard let self = self else { return }
 
             if isOn {
-                let getReceiptIndex = self.cellTypes.firstIndex(of: .getReceipt) ?? 0
+                let getReceiptIndex = self.cellTypes.firstIndex(of: .getReceipt(self.receiptSwitchViewPresenter)) ?? 0
                 let emailIndex = getReceiptIndex + 1
-                self.cellTypes.insert(.emailField, at: emailIndex)
+                self.cellTypes.insert(.emailField(self.emailPresenter), at: emailIndex)
                 self.view?.insert(row: emailIndex)
-            } else if let emailIndex = self.cellTypes.firstIndex(of: .emailField) {
+            } else if let emailIndex = self.cellTypes.firstIndex(of: .emailField(self.emailPresenter)) {
                 self.cellTypes.remove(at: emailIndex)
                 self.view?.delete(row: emailIndex)
             }
@@ -168,16 +148,23 @@ extension CardPaymentPresenter {
         EmailViewPresenter(customerEmail: customerEmail, output: self)
     }
 
+    private func viewSetupPayButton() {
+        let stringAmount = moneyFormatter.formatAmount(amount)
+        view?.setPayButton(title: "\(Loc.Acquiring.PaymentNewCard.paymentButton) \(stringAmount)")
+        view?.setPayButton(isEnabled: false)
+    }
+
     private func setupCellTypes() {
-        if activeCards.isEmpty, customerEmail.isEmpty {
-            cellTypes = [.cardField, .getReceipt, .payButton]
-        } else if activeCards.isEmpty {
-            cellTypes = [.cardField, .getReceipt, .emailField, .payButton]
-        } else if !activeCards.isEmpty, customerEmail.isEmpty {
-            cellTypes = [.savedCard, .getReceipt, .payButton]
-        } else if !activeCards.isEmpty {
-            cellTypes = [.savedCard, .getReceipt, .emailField, .payButton]
+        activeCards.isEmpty ? cellTypes.append(.cardField) : cellTypes.append(.savedCard(savedCardPresenter))
+
+        if customerEmail.isEmpty {
+            cellTypes.append(.getReceipt(receiptSwitchViewPresenter))
+        } else {
+            cellTypes.append(.getReceipt(receiptSwitchViewPresenter))
+            cellTypes.append(.emailField(emailPresenter))
         }
+
+        cellTypes.append(.payButton)
     }
 
     private func activatePayButtonIfNeeded() {

@@ -15,7 +15,4 @@ protocol ICardPaymentViewControllerOutput {
 
     func numberOfRows() -> Int
     func cellType(for row: Int) -> CardPaymentCellType
-    func savedCardViewPresenter() -> SavedCardPresenter?
-    func emailViewPresenter() -> EmailViewPresenter
-    func switchViewPresenter() -> SwitchViewPresenter
 }

@@ -62,8 +62,18 @@ internal enum Loc {
       internal static let vtbCardTitle = Loc.tr("Localizable", "Acquiring.Common.VtbCardTitle", fallback: "Банк ВТБ")
     }
     internal enum EmailField {
+      /// Получить квитанцию
+      internal static let switchButton = Loc.tr("Localizable", "Acquiring.EmailField.SwitchButton", fallback: "Получить квитанцию")
       /// Электронная почта
       internal static let title = Loc.tr("Localizable", "Acquiring.EmailField.Title", fallback: "Электронная почта")
+    }
+    internal enum PaymentNewCard {
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.PaymentNewCard.ButtonClose", fallback: "Закрыть")
+      /// Оплатить
+      internal static let paymentButton = Loc.tr("Localizable", "Acquiring.PaymentNewCard.PaymentButton", fallback: "Оплатить")
+      /// Оплата картой
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.PaymentNewCard.ScreenTitle", fallback: "Оплата картой")
     }
     internal enum Sbp {
       /// Выбор банка
