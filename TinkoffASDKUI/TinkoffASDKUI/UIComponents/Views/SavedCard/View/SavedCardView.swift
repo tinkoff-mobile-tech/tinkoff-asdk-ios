@@ -71,7 +71,7 @@ final class SavedCardView: UIView {
         return view
     }()
 
-    private lazy var accessoryViewWidthConstraint = accessoryView.widthAnchor.constraint(equalToConstant: .zero)
+    private lazy var accessoryViewWidthConstraint = accessoryView.widthAnchor.constraint(equalToConstant: .accessoryViewWidth)
 
     // MARK: State
 
@@ -129,7 +129,6 @@ final class SavedCardView: UIView {
             labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -.labelsStackHorizontalInset),
             labelsStack.trailingAnchor.constraint(equalTo: accessoryView.leadingAnchor).with(priority: .defaultLow),
 
-            accessoryViewWidthConstraint,
             accessoryView.topAnchor.constraint(equalTo: contentView.topAnchor),
             accessoryView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             accessoryView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -194,12 +193,12 @@ extension SavedCardView: ISavedCardViewInput {
 
     func showCVCField() {
         accessoryView.isHidden = false
-        accessoryViewWidthConstraint.constant = .accessoryViewWidth
+        accessoryViewWidthConstraint.isActive = true
     }
 
     func hideCVCField() {
         accessoryView.isHidden = true
-        accessoryViewWidthConstraint.constant = .zero
+        accessoryViewWidthConstraint.isActive = false
     }
 
     func setCVCText(_ text: String) {
