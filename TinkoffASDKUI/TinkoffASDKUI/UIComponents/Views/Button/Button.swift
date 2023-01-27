@@ -18,53 +18,25 @@ final class Button: UIView {
 
     var isEnabled: Bool {
         get { button.isEnabled }
-        set {
-            button.isEnabled = newValue
-            controlState = newValue ? .normal : .disabled
-            controlStateDidChange(controlState: controlState)
-        }
+        set { button.isEnabled = newValue }
     }
 
     private(set) var configuration: Configuration?
 
-    private(set) var state: State = .normal {
-        didSet {
-            stateDidChange(state: state)
-        }
+    private(set) var activityIndicatorState: State = .normal {
+        didSet { stateDidChange(state: activityIndicatorState) }
     }
 
-    private(set) lazy var controlState: UIControl.State = button.state {
-        didSet {
-            guard controlState != oldValue else { return }
-            controlStateDidChange(controlState: controlState)
-        }
-    }
+    var state: UIControl.State { button.state }
 
-    private var stateObservations: [NSKeyValueObservation?] = []
+    private var stateObservers: [NSKeyValueObservation] = []
 
     // MARK: - Inits
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
-
-        stateObservations.append(
-            button.observe(\.isHighlighted) { [weak self] button, _ in
-                self?.controlState = button.state
-            }
-        )
-
-        stateObservations.append(
-            button.observe(\.isEnabled) { [weak self] button, _ in
-                self?.controlState = button.state
-            }
-        )
-
-        stateObservations.append(
-            button.observe(\.isSelected) { [weak self] button, _ in
-                self?.controlState = button.state
-            }
-        )
+        setupObservers()
     }
 
     @available(*, unavailable)
@@ -72,14 +44,27 @@ final class Button: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: State Observing
+
+    private func setupObservers() {
+        let changeHandler: (UIButton, NSKeyValueObservedChange<Bool>) -> Void = { [weak self] button, _ in
+            self?.setButtonBackground(controlState: button.state)
+        }
+
+        stateObservers = [
+            button.observe(\.isHighlighted, changeHandler: changeHandler),
+            button.observe(\.isEnabled, changeHandler: changeHandler),
+        ]
+    }
+
     // MARK: - Public
 
     func startLoading() {
-        state = .loading
+        activityIndicatorState = .loading
     }
 
     func stopLoading() {
-        state = .normal
+        activityIndicatorState = .normal
     }
 
     // MARK: - Private
@@ -116,10 +101,6 @@ final class Button: UIView {
                 showActivityIndicator(with: loaderStyle)
             }
         }
-    }
-
-    private func controlStateDidChange(controlState: UIControl.State) {
-        setButtonBackground(controlState: controlState)
     }
 }
 
