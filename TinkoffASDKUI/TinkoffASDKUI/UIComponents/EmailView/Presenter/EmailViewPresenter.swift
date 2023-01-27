@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 27.01.2023.
 //
 
+import Foundation
+
 final class EmailViewPresenter: IEmailViewOutput, IEmailViewPresenterInput {
 
     // MARK: Dependencies
