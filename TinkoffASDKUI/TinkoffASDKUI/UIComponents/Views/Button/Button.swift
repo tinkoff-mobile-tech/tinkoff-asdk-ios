@@ -23,8 +23,8 @@ final class Button: UIView {
 
     private(set) var configuration: Configuration?
 
-    private(set) var activityIndicatorState: State = .normal {
-        didSet { stateDidChange(state: activityIndicatorState) }
+    private(set) var activityIndicatorState: ActivityIndicatorState = .normal {
+        didSet { activityIndicatorStateDidChange(activityIndicatorState) }
     }
 
     var state: UIControl.State { button.state }
@@ -35,8 +35,7 @@ final class Button: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupViews()
-        setupObservers()
+        setupView()
     }
 
     @available(*, unavailable)
@@ -69,22 +68,18 @@ final class Button: UIView {
 
     // MARK: - Private
 
-    private func setupViews() {
+    private func setupView() {
         addSubview(button)
         button.makeEqualToSuperview()
-
-        button.addTarget(
-            self,
-            action: #selector(didTapActionButton),
-            for: .touchUpInside
-        )
+        button.addTarget(self, action: #selector(didTapActionButton), for: .touchUpInside)
+        setupObservers()
     }
 
     @objc private func didTapActionButton() {
         configuration?.data.onTapAction()
     }
 
-    private func stateDidChange(state: State) {
+    private func activityIndicatorStateDidChange(_ state: ActivityIndicatorState) {
         switch state {
         case .normal:
             hideActivityIndicator { [weak self] in
@@ -279,7 +274,7 @@ extension Button {
         }
     }
 
-    enum State {
+    enum ActivityIndicatorState {
         case loading
         case normal
     }
