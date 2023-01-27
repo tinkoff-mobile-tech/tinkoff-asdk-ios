@@ -27,6 +27,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     private var cellTypes = [CardPaymentCellType]()
     private var savedCardPresenter: SavedCardPresenter?
+    private lazy var emailPresenter = createEmailViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
 
     private var isCardFieldValid = false
@@ -34,7 +35,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let activeCards: [PaymentCard]
     private let paymentFlow: PaymentFlow
     private let amount: Int
-    private lazy var currentEmail = getCustomerEmailFromPaymentFlow()
+    private lazy var customerEmail = getCustomerEmailFromPaymentFlow()
 
     // MARK: Initialization
 
@@ -62,7 +63,6 @@ extension CardPaymentPresenter {
         let stringAmount = moneyFormatter.formatAmount(amount)
         view?.setPayButton(title: "Оплатить \(stringAmount)")
         view?.setPayButton(isEnabled: false)
-        view?.setEmailTextField(text: currentEmail)
 
         setupCellTypes()
         view?.reloadTableView()
@@ -86,28 +86,6 @@ extension CardPaymentPresenter {
         activatePayButtonIfNeeded()
     }
 
-    func emailTextFieldDidBeginEditing() {
-        view?.setEmailHeader(isError: false)
-        view?.forceValidateCardField()
-    }
-
-    func emailTextFieldDidChangeText(to text: String) {
-        guard text != currentEmail else { return }
-
-        currentEmail = text
-        activatePayButtonIfNeeded()
-    }
-
-    func emailTextFieldDidEndEditing() {
-        let isValid = isValidEmail(currentEmail)
-        view?.setEmailHeader(isError: !isValid)
-    }
-
-    func emailTextFieldDidPressReturn() {
-        view?.hideKeyboard()
-        view?.forceValidateCardField()
-    }
-
     func numberOfRows() -> Int {
         cellTypes.count
     }
@@ -120,8 +98,28 @@ extension CardPaymentPresenter {
         savedCardPresenter
     }
 
+    func emailViewPresenter() -> EmailViewPresenter {
+        emailPresenter
+    }
+
     func switchViewPresenter() -> SwitchViewPresenter {
         receiptSwitchViewPresenter
+    }
+}
+
+// MARK: - IEmailViewPresenterOutput
+
+extension CardPaymentPresenter: IEmailViewPresenterOutput {
+    func emailTextFieldDidBeginEditing(_ presenter: EmailViewPresenter) {
+        view?.forceValidateCardField()
+    }
+
+    func emailTextField(_ presenter: EmailViewPresenter, didChangeEmail email: String, isValid: Bool) {
+        activatePayButtonIfNeeded()
+    }
+
+    func emailTextFieldDidPressReturn(_ presenter: EmailViewPresenter) {
+        view?.forceValidateCardField()
     }
 }
 
@@ -147,7 +145,7 @@ extension CardPaymentPresenter {
     }
 
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
-        SwitchViewPresenter(title: "Получить квитанцию", isOn: !currentEmail.isEmpty, actionBlock: { [weak self] isOn in
+        SwitchViewPresenter(title: "Получить квитанцию", isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
             guard let self = self else { return }
 
             if isOn {
@@ -166,23 +164,20 @@ extension CardPaymentPresenter {
         })
     }
 
+    private func createEmailViewPresenter() -> EmailViewPresenter {
+        EmailViewPresenter(customerEmail: customerEmail, output: self)
+    }
+
     private func setupCellTypes() {
-        if activeCards.isEmpty, currentEmail.isEmpty {
+        if activeCards.isEmpty, customerEmail.isEmpty {
             cellTypes = [.cardField, .getReceipt, .payButton]
         } else if activeCards.isEmpty {
             cellTypes = [.cardField, .getReceipt, .emailField, .payButton]
-        } else if !activeCards.isEmpty, currentEmail.isEmpty {
+        } else if !activeCards.isEmpty, customerEmail.isEmpty {
             cellTypes = [.savedCard, .getReceipt, .payButton]
         } else if !activeCards.isEmpty {
             cellTypes = [.savedCard, .getReceipt, .emailField, .payButton]
         }
-    }
-
-    private func isValidEmail(_ email: String) -> Bool {
-        let emailRegEx = ".+\\@.+\\..+"
-
-        let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-        return emailPred.evaluate(with: email)
     }
 
     private func activatePayButtonIfNeeded() {
@@ -191,7 +186,7 @@ extension CardPaymentPresenter {
         let isCardValid = isSavedCardExist ? isSavedCardValid : isCardFieldValid
 
         let isEmailFieldOn = receiptSwitchViewPresenter.isOn
-        let isEmailFieldValid = isValidEmail(currentEmail)
+        let isEmailFieldValid = emailPresenter.isEmailValid
         let isEmailValid = isEmailFieldOn ? isEmailFieldValid : true
 
         let isPayButtonEnabled = isCardValid && isEmailValid

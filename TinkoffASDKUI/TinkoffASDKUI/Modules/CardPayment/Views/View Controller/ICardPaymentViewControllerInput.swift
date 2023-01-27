@@ -13,9 +13,6 @@ protocol ICardPaymentViewControllerInput: AnyObject {
     func startLoadingPayButton()
     func stopLoadingPayButton()
 
-    func setEmailHeader(isError: Bool)
-    func setEmailTextField(text: String)
-
     func hideKeyboard()
 
     func reloadTableView()

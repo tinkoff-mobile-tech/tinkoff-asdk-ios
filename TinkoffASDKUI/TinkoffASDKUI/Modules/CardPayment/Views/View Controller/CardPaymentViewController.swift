@@ -20,8 +20,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     private lazy var savedCardView = SavedCardView()
     private lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
     private lazy var payButton = Button()
-    private lazy var emailContainerView = UIView()
-    private lazy var emailTextField = TextField()
+    private lazy var emailView = EmailView()
     private lazy var switchView = SwitchView()
 
     // MARK: Initialization
@@ -50,8 +49,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         setupCardFieldView()
         setupPayButton()
         setupSwitchView()
-        setupEmailContainerView()
-        setupEmailTextField()
+        setupEmailView()
 
         presenter.viewDidLoad()
     }
@@ -89,43 +87,6 @@ extension CardPaymentViewController {
         UIApplication.shared.endIgnoringInteractionEvents()
     }
 
-    func setEmailHeader(isError: Bool) {
-        let color = isError ? ASDKColors.Foreground.negativeAccent : ASDKColors.Text.secondary.color
-        let headerLabelStyle = UILabel.Style.bodyL().set(textColor: color)
-        let content = UILabel.Content.plain(text: "Электронная почта", style: headerLabelStyle)
-        let headerConfig = UILabel.Configuration(content: content)
-
-        emailTextField.updateHeader(config: headerConfig)
-    }
-
-    func setEmailTextField(text: String) {
-        let config = TextField.TextFieldConfiguration(
-            delegate: self,
-            eventHandler: { [weak self] event, textField in
-                switch event {
-                case .didBeginEditing:
-                    self?.presenter.emailTextFieldDidBeginEditing()
-                case .textDidChange:
-                    self?.presenter.emailTextFieldDidChangeText(to: textField.text)
-                case .didEndEditing:
-                    self?.presenter.emailTextFieldDidEndEditing()
-                }
-            },
-            content: .plain(text: text, style: .bodyL()),
-            placeholder: .plain(text: "", style: .bodyL()),
-            tintColor: nil,
-            rightAccessoryView: TextField.AccessoryView(kind: .clearButton),
-            isSecure: false,
-            keyboardType: .default
-        )
-        let headerLabelStyle = UILabel.Style.bodyL().set(textColor: ASDKColors.Text.secondary.color)
-        let content = UILabel.Content.plain(text: "Электронная почта", style: headerLabelStyle)
-        let headerConfig = UILabel.Configuration(content: content)
-
-        let emailConfig = TextField.Configuration(textField: config, headerLabel: headerConfig)
-        emailTextField.configure(with: emailConfig)
-    }
-
     func hideKeyboard() {
         view.endEditing(true)
     }
@@ -155,15 +116,6 @@ extension CardPaymentViewController {
     }
 }
 
-// MARK: - UITextFieldDelegate
-
-extension CardPaymentViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        presenter.emailTextFieldDidPressReturn()
-        return true
-    }
-}
-
 // MARK: - UITableViewDataSource
 
 extension CardPaymentViewController: UITableViewDataSource {
@@ -185,21 +137,13 @@ extension CardPaymentViewController: UITableViewDataSource {
             switchView.presenter = presenter.switchViewPresenter()
             cell.setContent(switchView, insets: UIEdgeInsets(vertical: 8, horizontal: 20))
         case .emailField:
-            cell.setContent(emailContainerView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
+            emailView.presenter = presenter.emailViewPresenter()
+            cell.setContent(emailView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
         case .payButton:
             cell.setContent(payButton, insets: UIEdgeInsets(vertical: 16, horizontal: 16))
         }
 
         return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-
-extension CardPaymentViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-//        presenter.didSelectRow(at: indexPath.row)
     }
 }
 
@@ -244,7 +188,6 @@ extension CardPaymentViewController {
 
         tableView.register(ContainerTableViewCell.self)
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 56
@@ -270,26 +213,11 @@ extension CardPaymentViewController {
         ])
     }
 
-    private func setupEmailContainerView() {
-        emailContainerView.translatesAutoresizingMaskIntoConstraints = false
+    private func setupEmailView() {
+        emailView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            emailContainerView.heightAnchor.constraint(equalToConstant: 56),
-        ])
-
-        emailContainerView.backgroundColor = ASDKColors.Background.neutral1.color
-        emailContainerView.layer.cornerRadius = 16
-
-        emailContainerView.addSubview(emailTextField)
-    }
-
-    private func setupEmailTextField() {
-        emailTextField.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            emailTextField.leftAnchor.constraint(equalTo: emailContainerView.leftAnchor, constant: 12),
-            emailTextField.rightAnchor.constraint(equalTo: emailContainerView.rightAnchor, constant: -12),
-            emailTextField.centerYAnchor.constraint(equalTo: emailContainerView.centerYAnchor),
+            emailView.heightAnchor.constraint(equalToConstant: 56),
         ])
     }
 }

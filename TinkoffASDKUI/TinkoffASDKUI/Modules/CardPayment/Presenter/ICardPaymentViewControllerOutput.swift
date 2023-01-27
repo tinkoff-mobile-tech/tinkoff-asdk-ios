@@ -13,14 +13,9 @@ protocol ICardPaymentViewControllerOutput {
 
     func cardFieldDidChangeState(isValid: Bool)
 
-    func emailTextFieldDidBeginEditing()
-    func emailTextFieldDidChangeText(to text: String)
-    func emailTextFieldDidEndEditing()
-
-    func emailTextFieldDidPressReturn()
-
     func numberOfRows() -> Int
     func cellType(for row: Int) -> CardPaymentCellType
     func savedCardViewPresenter() -> SavedCardPresenter?
+    func emailViewPresenter() -> EmailViewPresenter
     func switchViewPresenter() -> SwitchViewPresenter
 }
