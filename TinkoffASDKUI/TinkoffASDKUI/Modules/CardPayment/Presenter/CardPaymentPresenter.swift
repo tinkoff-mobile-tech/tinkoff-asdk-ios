@@ -8,6 +8,7 @@
 import TinkoffASDKCore
 
 enum CardPaymentCellType {
+    case savedCard
     case cardField
     case getReceipt
     case emailField
@@ -24,6 +25,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     // MARK: Properties
 
     private var cellTypes = [CardPaymentCellType]()
+    private var savedCardPresenter: SavedCardPresenter?
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
 
     private var isCardFieldValid = false
@@ -48,11 +50,21 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
 extension CardPaymentPresenter {
     func viewDidLoad() {
+        createSavedCardViewPresenterIfNeeded()
+
         view?.setPayButton(title: "Оплатить 1 070 724 ₽")
         view?.setPayButton(isEnabled: false)
         view?.setEmailTextField(text: customerEmail)
-        setupCellTypes(isCardExist: false)
+
+        setupCellTypes()
         view?.reloadTableView()
+
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+//            self.view?.reloadTableView()
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+//                self.view?.reloadTableView()
+//            }
+//        }
     }
 
     func closeButtonPressed() {
@@ -103,14 +115,36 @@ extension CardPaymentPresenter {
         cellTypes[row]
     }
 
+    func savedCardViewPresenter() -> SavedCardPresenter? {
+        savedCardPresenter
+    }
+
     func switchViewPresenter() -> SwitchViewPresenter {
         receiptSwitchViewPresenter
+    }
+}
+
+// MARK: - ISavedCardPresenterOutput
+
+extension CardPaymentPresenter: ISavedCardPresenterOutput {
+    func savedCardPresenter(_ presenter: SavedCardPresenter, didRequestReplacementFor paymentCard: PaymentCard) {}
+
+    func savedCardPresenter(_ presenter: SavedCardPresenter, didUpdateCVC cvc: String, isValid: Bool) {
+        activatePayButtonIfNeeded()
     }
 }
 
 // MARK: - Private
 
 extension CardPaymentPresenter {
+    private func createSavedCardViewPresenterIfNeeded() {
+        guard let activeCard = activeCards.first else { return }
+
+        let hasAnotherCards = activeCards.count > 1
+        savedCardPresenter = SavedCardPresenter(output: self)
+        savedCardPresenter?.presentationState = .selected(card: activeCard, hasAnotherCards: hasAnotherCards)
+    }
+
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
         SwitchViewPresenter(title: "Получить квитанцию", isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
             guard let self = self else { return }
@@ -131,11 +165,15 @@ extension CardPaymentPresenter {
         })
     }
 
-    private func setupCellTypes(isCardExist: Bool) {
-        if !isCardExist, customerEmail.isEmpty {
+    private func setupCellTypes() {
+        if activeCards.isEmpty, customerEmail.isEmpty {
             cellTypes = [.cardField, .getReceipt, .payButton]
-        } else if !isCardExist {
+        } else if activeCards.isEmpty {
             cellTypes = [.cardField, .getReceipt, .emailField, .payButton]
+        } else if !activeCards.isEmpty, customerEmail.isEmpty {
+            cellTypes = [.savedCard, .getReceipt, .payButton]
+        } else if !activeCards.isEmpty {
+            cellTypes = [.savedCard, .getReceipt, .emailField, .payButton]
         }
     }
 
@@ -147,11 +185,15 @@ extension CardPaymentPresenter {
     }
 
     private func activatePayButtonIfNeeded() {
+        let isSavedCardValid = savedCardPresenter?.isValid ?? false
+        let isSavedCardExist = !activeCards.isEmpty
+        let isCardValid = isSavedCardExist ? isSavedCardValid : isCardFieldValid
+
         let isEmailFieldOn = receiptSwitchViewPresenter.isOn
         let isEmailFieldValid = isValidEmail(customerEmail)
         let isEmailValid = isEmailFieldOn ? isEmailFieldValid : true
 
-        let isPayButtonEnabled = isCardFieldValid && isEmailValid
+        let isPayButtonEnabled = isCardValid && isEmailValid
         view?.setPayButton(isEnabled: isPayButtonEnabled)
     }
 }

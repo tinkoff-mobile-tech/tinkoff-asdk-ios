@@ -17,6 +17,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     // MARK: Properties
 
     private lazy var tableView = UITableView()
+    private lazy var savedCardView = SavedCardView()
     private lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
     private lazy var payButton = Button()
     private lazy var emailContainerView = UIView()
@@ -175,6 +176,9 @@ extension CardPaymentViewController: UITableViewDataSource {
         let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
 
         switch cellType {
+        case .savedCard:
+            savedCardView.presenter = presenter.savedCardViewPresenter()
+            cell.setContent(savedCardView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
         case .cardField:
             cell.setContent(cardFieldView, insets: UIEdgeInsets(vertical: 8, horizontal: 16))
         case .getReceipt:
