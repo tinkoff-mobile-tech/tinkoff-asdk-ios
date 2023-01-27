@@ -16,13 +16,10 @@ public struct MainFormStub {
         case tinkoffPay
     }
 
-    /// сумма в копейках
-    public let amount: Int64
     /// главный метод оплаты (в блоке с суммой оплаты)
     public let primaryPayMethod: PayMethod
 
-    public init(amount: Int64, primaryPayMethod: PayMethod) {
-        self.amount = amount
+    public init(primaryPayMethod: PayMethod) {
         self.primaryPayMethod = primaryPayMethod
     }
 }

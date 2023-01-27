@@ -9,5 +9,9 @@ import TinkoffASDKCore
 import UIKit
 
 protocol IMainFormAssembly {
-    func build(stub: MainFormStub, acquiringSdk: AcquiringSdk, customerKey: String?) -> UIViewController
+    func build(
+        paymentFlow: PaymentFlow,
+        configuration: MainFormUIConfiguration,
+        stub: MainFormStub
+    ) -> UIViewController
 }

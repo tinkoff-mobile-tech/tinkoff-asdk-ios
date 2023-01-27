@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
 protocol IMainFormRouter {
-    func openCardPaymentForm()
+    func openCardPaymentForm(paymentFlow: PaymentFlow, cards: [PaymentCard])
 }

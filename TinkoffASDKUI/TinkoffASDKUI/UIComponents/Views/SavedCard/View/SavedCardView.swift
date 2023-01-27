@@ -108,6 +108,7 @@ final class SavedCardView: UIView {
         cvcField.pinEdgesToSuperview(insets: .cvcFieldInsets)
 
         NSLayoutConstraint.activate([
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: .containerMinimalHeight),
             cvcBackgroundContainer.widthAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.width),
             cvcBackgroundContainer.heightAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.height),
             iconView.widthAnchor.constraint(equalToConstant: CGSize.iconSize.width),
@@ -188,6 +189,7 @@ extension SavedCardView: ISavedCardViewInput {
 // MARK: - Constants
 
 private extension CGFloat {
+    static let containerMinimalHeight: CGFloat = 64
     static let labelsStackSpacing: CGFloat = 4
     static let contentStackDefaultSpacing: CGFloat = 22
     static let contentStackIconTrailingSpacing: CGFloat = 16

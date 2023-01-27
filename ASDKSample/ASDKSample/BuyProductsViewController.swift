@@ -389,9 +389,22 @@ class BuyProductsViewController: UIViewController {
     private func payWithMainForm() {
         let actionHandler: (MainFormStub.PayMethod) -> Void = { [weak self] method in
             guard let self = self else { return }
-            let initData = self.createPaymentData()
-            let stub = MainFormStub(amount: initData.amount, primaryPayMethod: method)
-            self.uiSDK.presentMainForm(on: self, stub: stub)
+
+            let stub = MainFormStub(primaryPayMethod: method)
+            let paymentOptions = PaymentOptions.create(from: self.createPaymentData())
+            let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+            let configuration = MainFormUIConfiguration(
+                amount: paymentOptions.orderOptions.amount,
+                orderDescription: paymentOptions.orderOptions.description
+            )
+
+            self.uiSDK.presentMainForm(
+                on: self,
+                paymentFlow: paymentFlow,
+                configuration: configuration,
+                stub: stub
+            )
         }
 
         let actionTitle: (MainFormStub.PayMethod) -> String = { method in
@@ -767,38 +780,20 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
     ) {
         guard var initData = paymentData else { return }
 
-        let customerOptions = initData.customerKey.map {
-            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
-        }
-
         switch container {
         case fullPaymentFlowYandexPayButton as UIView?:
-            let orderOptions = OrderOptions(
-                orderId: initData.orderId,
-                amount: initData.amount,
-                description: initData.description,
-                receipt: initData.receipt,
-                shops: initData.shops,
-                receipts: initData.receipts,
-                savingAsParentPayment: initData.savingAsParentPayment ?? false
-            )
+            completion(.full(paymentOptions: .create(from: initData)))
 
-            initData.addPaymentData(["Sample_PaymentFlowType": "Full"])
-
-            let paymentOptions = PaymentOptions(
-                orderOptions: orderOptions,
-                customerOptions: customerOptions,
-                paymentData: initData.paymentFormData ?? [:]
-            )
-
-            completion(.full(paymentOptions: paymentOptions))
         case finishPaymentFlowYandexPayButton as UIView?:
             container.setLoaderVisible(true, animated: true)
-            initData.addPaymentData(["Sample_PaymentFlowType": "Finish"])
 
             coreSDK.initPayment(data: initData) { [weak container] result in
                 DispatchQueue.main.async {
                     container?.setLoaderVisible(false, animated: true)
+                }
+
+                let customerOptions = initData.customerKey.map {
+                    CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
                 }
 
                 let paymentFlow = try? result.map { payload in
@@ -842,5 +837,31 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         let action = UIAlertAction(title: Loc.Button.ok, style: .default)
         alert.addAction(action)
         present(alert, animated: true)
+    }
+}
+
+// MARK: - PaymentOptions + PaymentInitData
+
+private extension PaymentOptions {
+    static func create(from initData: PaymentInitData) -> PaymentOptions {
+        let orderOptions = OrderOptions(
+            orderId: initData.orderId,
+            amount: initData.amount,
+            description: initData.description,
+            receipt: initData.receipt,
+            shops: initData.shops,
+            receipts: initData.receipts,
+            savingAsParentPayment: initData.savingAsParentPayment ?? false
+        )
+
+        let customerOptions = initData.customerKey.map {
+            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
+        }
+
+        return PaymentOptions(
+            orderOptions: orderOptions,
+            customerOptions: customerOptions,
+            paymentData: initData.paymentFormData ?? [:]
+        )
     }
 }
