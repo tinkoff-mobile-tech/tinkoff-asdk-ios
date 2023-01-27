@@ -159,6 +159,9 @@
 "Acquiring.AddNewCard.ButtonClose" = "Закрыть";
 "Acquiring.AddNewCard.AddButton" = "Добавить";
 
+// Email Field
+"Acquiring.EmailField.Title" = "Электронная почта";
+
 // Заглушки
 "CommonStub.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";
 "CommonStub.NoNetwork.Title" = "Не загрузилось";
