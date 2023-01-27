@@ -24,14 +24,6 @@ final class SavedCardView: UIView {
         onTap: { [weak self] in self?.presenter?.savedCardViewIsSelected() }
     )
 
-    private lazy var contentStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.alignment = .center
-        stack.spacing = .contentStackDefaultSpacing
-        return stack
-    }()
-
     // MARK: Icon Subviews
 
     private lazy var iconView = DynamicIconCardView()
@@ -64,12 +56,22 @@ final class SavedCardView: UIView {
 
     private lazy var cvcField = TextField()
 
-    private lazy var cvcBackgroundContainer: UIView = {
-        let view = UIView()
+    private lazy var cvcBackground: UIView = {
+        let view = PassthroughView()
         view.layer.cornerRadius = .cvcFieldBackgroundCornerRadius
         view.backgroundColor = ASDKColors.Background.neutral1.color
         return view
     }()
+
+    private lazy var accessoryView: UIView = {
+        let view = UIView()
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(accessoryViewTapped))
+        view.addGestureRecognizer(recognizer)
+        view.isHidden = true
+        return view
+    }()
+
+    private lazy var accessoryViewWidthConstraint = accessoryView.widthAnchor.constraint(equalToConstant: .zero)
 
     // MARK: State
 
@@ -96,23 +98,46 @@ final class SavedCardView: UIView {
 
     private func setupLayout() {
         addSubview(containerView)
-        containerView.pinEdgesToSuperview()
 
-        containerView.contentView.addSubview(contentStack)
-        contentStack.pinEdgesToSuperview(insets: .contentStackInsets)
-        contentStack.addArrangedSubviews(iconView, labelsStack, cvcBackgroundContainer)
-        contentStack.setCustomSpacing(.contentStackIconTrailingSpacing, after: iconView)
+        let contentView = containerView.contentView
 
+        contentView.addSubview(iconView)
+        contentView.addSubview(labelsStack)
+        contentView.addSubview(accessoryView)
+        accessoryView.addSubview(cvcBackground)
+        cvcBackground.addSubview(cvcField)
         labelsStack.addArrangedSubviews(cardNameLabel, actionLabel)
-        cvcBackgroundContainer.addSubview(cvcField)
+
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+        labelsStack.translatesAutoresizingMaskIntoConstraints = false
+        accessoryView.translatesAutoresizingMaskIntoConstraints = false
+        cvcBackground.translatesAutoresizingMaskIntoConstraints = false
+
+        containerView.pinEdgesToSuperview()
         cvcField.pinEdgesToSuperview(insets: .cvcFieldInsets)
 
         NSLayoutConstraint.activate([
-            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: .containerMinimalHeight),
-            cvcBackgroundContainer.widthAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.width),
-            cvcBackgroundContainer.heightAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.height),
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 64),
+
             iconView.widthAnchor.constraint(equalToConstant: CGSize.iconSize.width),
+            iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             iconView.heightAnchor.constraint(equalToConstant: CGSize.iconSize.height),
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+
+            labelsStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 16),
+            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16),
+            labelsStack.trailingAnchor.constraint(equalTo: accessoryView.leadingAnchor).with(priority: .defaultLow),
+
+            accessoryViewWidthConstraint,
+            accessoryView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            accessoryView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            accessoryView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+
+            cvcBackground.widthAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.width),
+            cvcBackground.heightAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.height),
+            cvcBackground.centerYAnchor.constraint(equalTo: accessoryView.centerYAnchor),
+            cvcBackground.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -8),
         ])
     }
 
@@ -150,6 +175,12 @@ final class SavedCardView: UIView {
 
         cvcField.configure(with: configuration)
     }
+
+    // MARK: Events
+
+    @objc private func accessoryViewTapped() {
+        cvcField.activate()
+    }
 }
 
 // MARK: ISavedPaymentCardViewInput
@@ -162,11 +193,13 @@ extension SavedCardView: ISavedCardViewInput {
     }
 
     func showCVCField() {
-        cvcBackgroundContainer.isHidden = false
+        accessoryView.isHidden = false
+        accessoryViewWidthConstraint.constant = 83
     }
 
     func hideCVCField() {
-        cvcBackgroundContainer.isHidden = true
+        accessoryView.isHidden = true
+        accessoryViewWidthConstraint.constant = .zero
     }
 
     func setCVCText(_ text: String) {
