@@ -21,7 +21,7 @@ final class SwitchView: UIView, ISwitchViewInput {
     // MARK: Properties
 
     private lazy var nameLabel = UILabel()
-    private lazy var buttonSwitch = UISwitch()
+    private lazy var switchButton = UISwitch()
 
     // MARK: Initialization
 
@@ -48,16 +48,16 @@ extension SwitchView {
         nameLabel.text = text
     }
 
-    func setSwitchState(isOn: Bool) {
-        buttonSwitch.isOn = isOn
+    func setSwitchButtonState(isOn: Bool) {
+        switchButton.isOn = isOn
     }
 }
 
 // MARK: - Actions
 
 extension SwitchView {
-    @objc private func settingSwitchValueChanged(_ sender: UISwitch) {
-        presenter?.switchDidChangeState(to: sender.isOn)
+    @objc private func switchButtonValueChanged(_ sender: UISwitch) {
+        presenter?.switchButtonValueChanged(to: sender.isOn)
     }
 }
 
@@ -68,32 +68,32 @@ extension SwitchView {
         backgroundColor = .clear
 
         addSubview(nameLabel)
-        addSubview(buttonSwitch)
+        addSubview(switchButton)
 
         nameLabel.numberOfLines = 1
         nameLabel.lineBreakMode = .byTruncatingTail
         nameLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         nameLabel.textColor = ASDKColors.Text.primary.color
 
-        buttonSwitch.isOn = false
-        buttonSwitch.addTarget(self, action: #selector(settingSwitchValueChanged(_:)), for: .valueChanged)
-        buttonSwitch.onTintColor = ASDKColors.accent
-        buttonSwitch.tintColor = ASDKColors.Background.neutral1.color
-        buttonSwitch.backgroundColor = ASDKColors.Background.neutral1.color
-        buttonSwitch.layer.cornerRadius = buttonSwitch.frame.height / 2
+        switchButton.isOn = false
+        switchButton.addTarget(self, action: #selector(switchButtonValueChanged(_:)), for: .valueChanged)
+        switchButton.onTintColor = ASDKColors.accent
+        switchButton.tintColor = ASDKColors.Background.neutral1.color
+        switchButton.backgroundColor = ASDKColors.Background.neutral1.color
+        switchButton.layer.cornerRadius = switchButton.frame.height / 2
     }
 
     private func setupViewsConstraints() {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        buttonSwitch.translatesAutoresizingMaskIntoConstraints = false
+        switchButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             nameLabel.leftAnchor.constraint(equalTo: leftAnchor),
-            nameLabel.rightAnchor.constraint(equalTo: buttonSwitch.leftAnchor, constant: .nameLabelRightInset),
+            nameLabel.rightAnchor.constraint(equalTo: switchButton.leftAnchor, constant: .nameLabelRightInset),
             nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            buttonSwitch.rightAnchor.constraint(equalTo: rightAnchor),
-            buttonSwitch.centerYAnchor.constraint(equalTo: centerYAnchor),
+            switchButton.rightAnchor.constraint(equalTo: rightAnchor),
+            switchButton.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 }

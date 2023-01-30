@@ -159,6 +159,15 @@
 "Acquiring.AddNewCard.ButtonClose" = "Close";
 "Acquiring.AddNewCard.AddButton" = "Add";
 
+// Payment New Card
+"Acquiring.PaymentNewCard.ScreenTitle" = "Pay by card";
+"Acquiring.PaymentNewCard.ButtonClose" = "Close";
+"Acquiring.PaymentNewCard.PaymentButton" = "Pay";
+
+// Email Field
+"Acquiring.EmailField.Title" = "Email";
+"Acquiring.EmailField.SwitchButton" = "Get receipt";
+
 // Заглушки
 "CommonStub.SomeProblem.Title" = "We have a problem, we are already solving it";
 "CommonStub.NoNetwork.Title" = "It didn't load";

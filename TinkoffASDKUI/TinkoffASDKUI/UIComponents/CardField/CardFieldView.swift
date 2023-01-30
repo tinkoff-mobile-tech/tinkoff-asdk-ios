@@ -5,6 +5,10 @@ protocol CardFieldDelegate: AnyObject {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
+extension CardFieldDelegate {
+    func sizeDidChange(view: CardFieldView, size: CGSize) {}
+}
+
 // MARK: - CardFieldView
 
 //

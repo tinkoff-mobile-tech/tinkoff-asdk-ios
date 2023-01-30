@@ -19,6 +19,7 @@ protocol ICardFieldInput: AnyObject {
 
     var validationResult: CardFieldValidationResult { get }
 
+    @discardableResult
     func validateWholeForm() -> CardFieldValidationResult
 }
 
@@ -122,6 +123,7 @@ final class CardFieldPresenter: ICardFieldPresenter {
         if filled { view?.deactivate() }
     }
 
+    @discardableResult
     func validateWholeForm() -> CardFieldValidationResult {
         let result = validate()
         updateTextfieldHeaderStyle(validationResult: result, forcedValidation: true)

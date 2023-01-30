@@ -159,6 +159,15 @@
 "Acquiring.AddNewCard.ButtonClose" = "Закрыть";
 "Acquiring.AddNewCard.AddButton" = "Добавить";
 
+// Payment New Card
+"Acquiring.PaymentNewCard.ScreenTitle" = "Оплата картой";
+"Acquiring.PaymentNewCard.ButtonClose" = "Закрыть";
+"Acquiring.PaymentNewCard.PaymentButton" = "Оплатить";
+
+// Email Field
+"Acquiring.EmailField.Title" = "Электронная почта";
+"Acquiring.EmailField.SwitchButton" = "Получить квитанцию";
+
 // Заглушки
 "CommonStub.SomeProblem.Title" = "У нас проблема, мы уже решаем ее";
 "CommonStub.NoNetwork.Title" = "Не загрузилось";

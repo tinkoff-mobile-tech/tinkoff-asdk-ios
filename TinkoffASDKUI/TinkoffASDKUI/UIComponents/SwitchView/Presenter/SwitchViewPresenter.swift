@@ -35,7 +35,7 @@ final class SwitchViewPresenter: ISwitchViewOutput {
 // MARK: - ISwitchViewOutput
 
 extension SwitchViewPresenter {
-    func switchDidChangeState(to isOn: Bool) {
+    func switchButtonValueChanged(to isOn: Bool) {
         guard isOn != self.isOn else { return }
 
         self.isOn = isOn
@@ -48,6 +48,6 @@ extension SwitchViewPresenter {
 extension SwitchViewPresenter {
     private func setupView() {
         view?.setNameLabel(text: title)
-        view?.setSwitchState(isOn: isOn)
+        view?.setSwitchButtonState(isOn: isOn)
     }
 }
