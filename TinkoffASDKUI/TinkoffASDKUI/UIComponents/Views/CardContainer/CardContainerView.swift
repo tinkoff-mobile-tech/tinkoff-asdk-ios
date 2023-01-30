@@ -134,12 +134,12 @@ extension CardContainerView.Style {
         )
     }
 
-    /// Стиль с цветом фона `elevation2` и тенью `medium`
+    /// Стиль с цветом фона `elevation2` и тенью `small`
     /// для использования на основных экранах с цветом `elevation1`
     static var prominentOnElevation1: Self {
         Self(
             backgroundColor: ASDKColors.Background.elevation2.color,
-            shadowConfiguration: ShadowConfiguration(light: .medium, dark: .clear)
+            shadowConfiguration: ShadowConfiguration(light: .small, dark: .clear)
         )
     }
 

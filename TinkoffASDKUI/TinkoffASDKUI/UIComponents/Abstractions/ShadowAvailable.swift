@@ -66,6 +66,17 @@ extension ShadowStyle {
         )
     }
 
+    /// Тень со стилем `small`
+    static var small: Self {
+        ShadowStyle(
+            radius: Self.getBlurRadius(figmaBlur: 16),
+            color: .black,
+            opacity: 0.1,
+            offsetX: 0,
+            offsetY: 5
+        )
+    }
+
     /// Отсутствие тени
     static var clear: Self {
         ShadowStyle(
