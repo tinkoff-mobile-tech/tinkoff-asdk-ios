@@ -180,6 +180,13 @@ extension ASDKColors {
                 dark: UIColor(hex: "#428BF9")!
             )
         }
+
+        static var negative: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#F52222")!,
+                dark: UIColor(hex: "#F52222")!
+            )
+        }
     }
 
     // MARK: - Button

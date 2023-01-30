@@ -9,9 +9,16 @@ import UIKit
 
 extension UIColor {
     func highlighted(
-        traitCollection: UITraitCollection,
-        settings: HighlightSettings
+        settings: HighlightSettings = .default
     ) -> UIColor {
+        let traitCollection: UITraitCollection = {
+            if #available(iOS 13, *) {
+                return .current
+            } else {
+                return UIScreen.main.traitCollection
+            }
+        }()
+
         let color: UIColor = {
             if #available(iOS 13, *) {
                 return resolvedColor(with: traitCollection)
