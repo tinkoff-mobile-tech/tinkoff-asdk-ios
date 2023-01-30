@@ -28,7 +28,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let activeCards: [PaymentCard]
     private let paymentFlow: PaymentFlow
     private let amount: Int
-    private lazy var customerEmail = getCustomerEmailFromPaymentFlow()
+    private lazy var customerEmail = paymentFlow.customerOptions?.email ?? ""
 
     // MARK: Initialization
 
@@ -179,14 +179,5 @@ extension CardPaymentPresenter {
 
         let isPayButtonEnabled = isCardValid && isEmailValid
         view?.setPayButton(isEnabled: isPayButtonEnabled)
-    }
-
-    private func getCustomerEmailFromPaymentFlow() -> String {
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            return paymentOptions.customerOptions?.email ?? ""
-        case let .finish(_, customerOptions):
-            return customerOptions?.email ?? ""
-        }
     }
 }
