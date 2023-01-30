@@ -258,7 +258,6 @@ extension TextField: ConfigurableItem {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard headerLabel.frame.width == .zero else { return }
 
         let headerLabelHeight = textField.font?.lineHeight ?? 0
         headerLabel.frame = CGRect(
