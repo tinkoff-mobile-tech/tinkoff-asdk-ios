@@ -29,7 +29,6 @@ final class DeleteButtonContent: IAccessoryViewContent {
 
     var state = State.hidden {
         didSet {
-            guard state != oldValue else { return }
             handleStateChange(state: state)
         }
     }

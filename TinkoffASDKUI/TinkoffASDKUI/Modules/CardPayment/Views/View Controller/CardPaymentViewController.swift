@@ -128,9 +128,9 @@ extension CardPaymentViewController: UITableViewDataSource {
         switch cellType {
         case let .savedCard(cellPresenter):
             savedCardView.presenter = cellPresenter
-            cell.setContent(savedCardView, insets: .commonCellInsets)
+            cell.setContent(savedCardView, insets: .cardCellsInsets)
         case .cardField:
-            cell.setContent(cardFieldView, insets: .commonCellInsets)
+            cell.setContent(cardFieldView, insets: .cardCellsInsets)
         case let .getReceipt(cellPresenter):
             switchView.presenter = cellPresenter
             cell.setContent(switchView, insets: .switchViewInsets)
@@ -196,24 +196,32 @@ extension CardPaymentViewController {
     }
 
     private func setupViewsHeights() {
-        [switchView, emailView, payButton].forEach {
+        [emailView, payButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
 
             NSLayoutConstraint.activate([
                 $0.heightAnchor.constraint(equalToConstant: .commonCellHeight),
             ])
         }
+
+        switchView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            switchView.heightAnchor.constraint(equalToConstant: .switchCellHeight),
+        ])
     }
 }
 
 // MARK: - Constanst
 
 private extension CGFloat {
+    static let switchCellHeight: CGFloat = 40
     static let commonCellHeight: CGFloat = 56
 }
 
 private extension UIEdgeInsets {
+    static let cardCellsInsets = UIEdgeInsets(top: 8, left: 16, bottom: 20, right: 16)
     static let commonCellInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
-    static let switchViewInsets = UIEdgeInsets(vertical: 8, horizontal: 20)
+    static let switchViewInsets = UIEdgeInsets(top: 0, left: 20, bottom: 16, right: 20)
     static let payButtonInsets = UIEdgeInsets(vertical: 16, horizontal: 16)
 }
