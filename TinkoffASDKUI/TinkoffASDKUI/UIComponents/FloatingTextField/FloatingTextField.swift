@@ -65,18 +65,6 @@ final class FloatingTextField: UIView {
     }
 }
 
-// MARK: - Actions
-
-extension FloatingTextField {
-    @objc private func tapGestureAction(_ sender: UITapGestureRecognizer) {
-        textField.becomeFirstResponder()
-    }
-
-    @objc private func textFieldEditingChanged(_ textField: UITextField) {
-        delegate?.textField(textField, didChangeTextTo: textField.text ?? "")
-    }
-}
-
 // MARK: - Public
 
 extension FloatingTextField {
@@ -128,6 +116,18 @@ extension FloatingTextField: UITextFieldDelegate {
             downHeaderLabel()
         }
         delegate?.textFieldDidEndEditing(textField)
+    }
+}
+
+// MARK: - Actions
+
+extension FloatingTextField {
+    @objc private func tapGestureAction(_ sender: UITapGestureRecognizer) {
+        textField.becomeFirstResponder()
+    }
+
+    @objc private func textFieldEditingChanged(_ textField: UITextField) {
+        delegate?.textField(textField, didChangeTextTo: textField.text ?? "")
     }
 }
 
