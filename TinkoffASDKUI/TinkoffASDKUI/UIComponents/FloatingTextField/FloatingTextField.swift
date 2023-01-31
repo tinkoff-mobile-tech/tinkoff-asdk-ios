@@ -87,6 +87,13 @@ extension FloatingTextField {
         }
     }
 
+    func set(placeholder: String) {
+        textField.placeholder = placeholder
+        if textField.text?.isEmpty == true {
+            textField.setPlaceholder(color: .clear)
+        }
+    }
+
     func set(keyboardType: UIKeyboardType) {
         textField.keyboardType = keyboardType
     }
@@ -96,9 +103,7 @@ extension FloatingTextField {
     }
 
     func setHeader(color: UIColor) {
-        UIView.animate(withDuration: .defaultAnimationDuration) {
-            self.headerLabel.textColor = color
-        }
+        animateChanges(in: headerLabel, animations: { self.headerLabel.textColor = color })
     }
 }
 
@@ -165,6 +170,8 @@ extension FloatingTextField {
     }
 
     private func animateHeaderLabel(isLifting: Bool) {
+        let placeholderColor: UIColor = isLifting ? ASDKColors.Text.tertiary.color : .clear
+
         let headerLabelScale: CGFloat = isLifting ? .headerLabelLiftedScale : .headerLabelDownScale
         let headerLabelXTranslation: Double = isLifting ? -.headerLabelLiftingTranslationX : .zero
         let headerLabelYTranslation: Double = isLifting ? -.headerLabelLiftingTranslationY : .zero
@@ -176,6 +183,18 @@ extension FloatingTextField {
         UIView.animate(withDuration: .defaultAnimationDuration) {
             self.headerLabel.transform = allTransforms
         }
+
+        animateChanges(in: textField, animations: { self.textField.setPlaceholder(color: placeholderColor) })
+    }
+
+    private func animateChanges(in view: UIView, animations: @escaping VoidBlock) {
+        UIView.transition(
+            with: view,
+            duration: .defaultAnimationDuration,
+            options: .transitionCrossDissolve,
+            animations: animations,
+            completion: nil
+        )
     }
 }
 
