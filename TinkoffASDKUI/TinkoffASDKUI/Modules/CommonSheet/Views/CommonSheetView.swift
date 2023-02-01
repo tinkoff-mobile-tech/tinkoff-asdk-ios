@@ -51,8 +51,21 @@ final class CommonSheetView: UIView {
         return label
     }()
 
-    private lazy var primaryButton = Button()
-    private lazy var secondaryButton = Button()
+    private lazy var primaryButton = Button(
+        configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
+        onTapAction: { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.commonSheetViewDidTapPrimaryButton(self)
+        }
+    )
+
+    private lazy var secondaryButton = Button(
+        configuration: Button.Configuration(style: .secondary, contentSize: .basicLarge),
+        onTapAction: { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.commonSheetViewDidTapSecondaryButton(self)
+        }
+    )
 
     private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
@@ -163,29 +176,16 @@ final class CommonSheetView: UIView {
     }
 
     private func updateButtons(with state: CommonSheetState) {
-        updateButton(primaryButton, withTitle: state.primaryButtonTitle, style: .primary) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.commonSheetViewDidTapPrimaryButton(self)
-        }
-
-        updateButton(secondaryButton, withTitle: state.secondaryButtonTitle, style: .secondary) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.commonSheetViewDidTapSecondaryButton(self)
-        }
-
+        updateButton(primaryButton, withTitle: state.primaryButtonTitle)
+        updateButton(secondaryButton, withTitle: state.secondaryButtonTitle)
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
     }
 
-    private func updateButton(_ button: Button, withTitle title: String?, style: Button.DeprecatedStyle, action: @escaping () -> Void) {
+    private func updateButton(_ button: Button, withTitle title: String?) {
         if let title = title {
-            let configuration = Button.DeprecatedConfiguration(
-                data: Button.Data(
-                    text: .basic(normal: title, highlighted: title, disabled: title),
-                    onTapAction: action
-                ),
-                style: style
-            )
-            button.configure(configuration)
+            button.reconfigure(animated: false) { configuration in
+                configuration.title = title
+            }
         }
 
         button.isHidden = title == nil

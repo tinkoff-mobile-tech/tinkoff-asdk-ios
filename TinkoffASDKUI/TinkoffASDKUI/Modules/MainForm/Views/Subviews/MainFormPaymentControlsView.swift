@@ -27,10 +27,7 @@ final class MainFormPaymentControlsView: UIView {
     }()
 
     private lazy var payButton = Button(
-        configuration: Button.Configuration(
-            contentSize: .basicLarge,
-            imagePlacement: .trailing
-        ),
+        configuration: Button.Configuration(contentSize: .basicLarge, imagePlacement: .trailing),
         onTapAction: { [weak self] in self?.delegate?.paymentControlsViewDidTapPayButton() }
     )
 
