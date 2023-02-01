@@ -15,4 +15,3 @@ xcassets:
       params:
         forceProvidesNamespaces: true
         bundle: Bundle.uiResources
-      

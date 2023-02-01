@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:../Example/TestPlans/UI.xctestplan">
+   </FileRef>
+   <FileRef
+      location = "group:ASDKSample.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:/Users/i.o.novikov/tinkoff/AcquiringSdkIOS/Example/TestPlans/Core.xctestplan">
+   </FileRef>
+</Workspace>

@@ -1,0 +1,380 @@
+require:
+  - rubocop/require_tools
+
+AllCops:
+  TargetRubyVersion: 2.6
+  Exclude:
+    - vendor/**/*
+    - "bin/**/*"
+    - vendor/**/*
+    - Development/voicekit_sdk/**/*
+
+Style/MultipleComparison:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+# kind_of? is a good way to check a type
+Style/ClassCheck:
+  EnforcedStyle: kind_of?
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# This doesn't work with older versions of Ruby (pre 2.4.0)
+Style/SafeNavigation:
+  Enabled: false
+
+# .length == 0 is also good, we don't always want .zero?
+Style/NumericPredicate:
+  Enabled: false
+
+# this would cause errors with long lanes
+Metrics/BlockLength:
+  Enabled: false
+
+# this is a bit buggy
+Metrics/ModuleLength:
+  Enabled: false
+
+# certificate_1 is an okay variable name
+Naming/VariableNumber:
+  Enabled: false
+
+# This is used a lot across the fastlane code base for config files
+Lint/MissingSuper:
+  Enabled: false
+
+Style/MissingRespondToMissing:
+  Enabled: false
+
+# This rule isn't useful, lots of discussion happening around it also
+# e.g. https://github.com/bbatsov/rubocop/issues/2338
+# MultilineBlockChain:
+#   Enabled: false
+
+#
+#   File.chmod(0777, f)
+#
+# is easier to read than
+#
+#   File.chmod(0o777, f)
+#
+Style/NumericLiteralPrefix:
+  Enabled: false
+
+#
+# command = (!clean_expired.nil? || !clean_pattern.nil?) ? CLEANUP : LIST
+#
+# is easier to read than
+#
+# command = !clean_expired.nil? || !clean_pattern.nil? ? CLEANUP : LIST
+#
+Style/TernaryParentheses:
+  Enabled: false
+
+# sometimes it is useful to have those empty methods
+Style/EmptyMethod:
+  Enabled: false
+
+Require/MissingRequireStatement:
+  Enabled: false
+
+# We could potentially enable the 2 below:
+Layout/FirstHashElementIndentation:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: false
+
+# HoundCI doesn't like this rule
+Layout/DotPosition:
+  Enabled: false
+
+# We allow !! as it's an easy way to convert to boolean
+Style/DoubleNegation:
+  Enabled: false
+
+# Prevent to replace [] into %i
+Style/SymbolArray:
+  Enabled: false
+
+# We still support Ruby 2.0.0
+Layout/HeredocIndentation:
+  Enabled: false
+
+# Sometimes we allow a rescue block that doesn't contain code
+Lint/SuppressedException:
+  Enabled: false
+
+# Cop supports --auto-correct.
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+# Needed for $verbose
+Style/GlobalVars:
+  Enabled: false
+
+# We want to allow class Fastlane::Class
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# $? Exit
+Style/SpecialGlobalVars:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+# The %w might be confusing for new users
+Style/WordArray:
+  MinSize: 19
+
+# raise and fail are both okay
+Style/SignalException:
+  Enabled: false
+
+# Better too much 'return' than one missing
+Style/RedundantReturn:
+  Enabled: false
+
+# Having if in the same line might not always be good
+Style/IfUnlessModifier:
+  Enabled: false
+
+# and and or is okay
+Style/AndOr:
+  Enabled: true
+  EnforcedStyle: conditionals
+
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Max: 320
+
+# Configuration parameters: AllowURI, URISchemes.
+Layout/LineLength:
+  Max: 370
+
+# Configuration parameters: CountKeywordArgs.
+Metrics/ParameterLists:
+  Max: 17
+
+Metrics/PerceivedComplexity:
+  Max: 18
+
+# Sometimes it's easier to read without guards
+Style/GuardClause:
+  Enabled: false
+
+# We allow both " and '
+Style/StringLiterals:
+  Enabled: false
+
+# something = if something_else
+# that's confusing
+Style/ConditionalAssignment:
+  Enabled: false
+
+# Better to have too much self than missing a self
+Style/RedundantSelf:
+  Enabled: false
+
+# e.g.
+# def self.is_supported?(platform)
+# we may never use `platform`
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+# the let(:key) { ... }
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: true
+
+# This would reject is_ in front of methods
+# We use `is_supported?` everywhere already
+Naming/PredicateName:
+  Enabled: false
+
+# We allow the $
+Style/PerlBackrefs:
+  Enabled: false
+
+# Disable '+ should be surrounded with a single space' for xcodebuild_spec.rb
+Layout/SpaceAroundOperators:
+  Enabled: true
+
+# They have not to be snake_case
+Naming/FileName:
+  Exclude:
+    - "**/Brewfile"
+    - "**/Gemfile"
+    - "**/Podfile"
+    - "**/Rakefile"
+    - "**/Fastfile"
+    - "**/Deliverfile"
+    - "**/Snapfile"
+    - "**/*.gemspec"
+    - "**/*.podspec"
+
+# We're not there yet
+Style/Documentation:
+  Enabled: false
+
+# Added after upgrade to 0.38.0
+Style/MutableConstant:
+  Enabled: false
+
+# length > 0 is good
+Style/ZeroLengthPredicate:
+  Enabled: false
+
+# Adds complexity
+Style/IfInsideElse:
+  Enabled: false
+
+# Sometimes we just want to 'collect'
+Style/CollectionMethods:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+# ( ) for method calls
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  Exclude:
+    - "**/*.podspec"
+  IgnoredMethods:
+    - "require"
+    - "require_relative"
+    - "fastlane_require"
+    - "gem"
+    - "program"
+    - "command"
+    - "raise"
+    - "attr_accessor"
+    - "attr_reader"
+    - "desc"
+    - "lane"
+    - "private_lane"
+    - "platform"
+    # rspec tests code below
+    - "to"
+    - "not_to"
+    - "describe"
+    - "it"
+    - "be"
+    - "context"
+    - "before"
+    - "after"
+
+# suggested by rubocop
+Layout/BeginEndAlignment: # (new in 0.91)
+  Enabled: true
+Layout/EmptyLinesAroundAttributeAccessor: # (new in 0.83)
+  Enabled: true
+Layout/SpaceAroundMethodCallOperator: # (new in 0.82)
+  Enabled: true
+Lint/BinaryOperatorWithIdenticalOperands: # (new in 0.89)
+  Enabled: true
+Lint/ConstantDefinitionInBlock: # (new in 0.91)
+  Enabled: true
+Lint/DeprecatedOpenSSLConstant: # (new in 0.84)
+  Enabled: true
+Lint/DuplicateElsifCondition: # (new in 0.88)
+  Enabled: true
+Lint/DuplicateRequire: # (new in 0.90)
+  Enabled: true
+Lint/DuplicateRescueException: # (new in 0.89)
+  Enabled: true
+Lint/EmptyConditionalBody: # (new in 0.89)
+  Enabled: true
+Lint/EmptyFile: # (new in 0.90)
+  Enabled: true
+Lint/FloatComparison: # (new in 0.89)
+  Enabled: true
+Lint/HashCompareByIdentity: # (new in 0.93)
+  Enabled: true
+Lint/IdentityComparison: # (new in 0.91)
+  Enabled: true
+Lint/MixedRegexpCaptureTypes: # (new in 0.85)
+  Enabled: true
+Lint/OutOfRangeRegexpRef: # (new in 0.89)
+  Enabled: true
+Lint/RaiseException: # (new in 0.81)
+  Enabled: true
+Lint/RedundantSafeNavigation: # (new in 0.93)
+  Enabled: true
+Lint/SelfAssignment: # (new in 0.89)
+  Enabled: true
+Lint/StructNewOverride: # (new in 0.81)
+  Enabled: true
+Lint/TopLevelReturnWithArgument: # (new in 0.89)
+  Enabled: true
+Lint/TrailingCommaInAttributeDeclaration: # (new in 0.90)
+  Enabled: true
+Lint/UnreachableLoop: # (new in 0.89)
+  Enabled: true
+Lint/UselessMethodDefinition: # (new in 0.90)
+  Enabled: true
+Lint/UselessTimes: # (new in 0.91)
+  Enabled: true
+Style/AccessorGrouping: # (new in 0.87)
+  Enabled: true
+Style/BisectedAttrAccessor: # (new in 0.87)
+  Enabled: true
+Style/CaseLikeIf: # (new in 0.88)
+  Enabled: true
+Style/ClassEqualityComparison: # (new in 0.93)
+  Enabled: true
+Style/CombinableLoops: # (new in 0.90)
+  Enabled: true
+Style/ExplicitBlockArgument: # (new in 0.89)
+  Enabled: true
+Style/ExponentialNotation: # (new in 0.82)
+  Enabled: true
+Style/GlobalStdStream: # (new in 0.89)
+  Enabled: true
+Style/HashAsLastArrayItem: # (new in 0.88)
+  Enabled: true
+Style/HashEachMethods: # (new in 0.80)
+  Enabled: true
+Style/HashLikeCase: # (new in 0.88)
+  Enabled: true
+Style/HashTransformKeys: # (new in 0.80)
+  Enabled: true
+Style/HashTransformValues: # (new in 0.80)
+  Enabled: true
+Style/KeywordParametersOrder: # (new in 0.90)
+  Enabled: true
+Style/OptionalBooleanParameter: # (new in 0.89)
+  Enabled: true
+Style/RedundantAssignment: # (new in 0.87)
+  Enabled: true
+Style/RedundantFetchBlock: # (new in 0.86)
+  Enabled: true
+Style/RedundantFileExtensionInRequire: # (new in 0.88)
+  Enabled: true
+Style/RedundantRegexpCharacterClass: # (new in 0.85)
+  Enabled: true
+Style/RedundantRegexpEscape: # (new in 0.85)
+  Enabled: true
+Style/RedundantSelfAssignment: # (new in 0.90)
+  Enabled: true
+Style/SingleArgumentDig: # (new in 0.89)
+  Enabled: true
+Style/SlicingWithRange: # (new in 0.83)
+  Enabled: true
+Style/SoleNestedConditional: # (new in 0.89)
+  Enabled: true
+Style/StringConcatenation: # (new in 0.89)
+  Enabled: true
