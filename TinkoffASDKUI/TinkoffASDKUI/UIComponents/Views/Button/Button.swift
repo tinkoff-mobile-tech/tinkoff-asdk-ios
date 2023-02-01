@@ -21,7 +21,6 @@ final class Button: UIView {
 
     // MARK: Subviews & Constraints
 
-    private lazy var backgroundView = UIView()
     private lazy var control = UIControl()
     private lazy var contentStack = UIStackView()
     private lazy var titleLabel = UILabel()
@@ -30,10 +29,10 @@ final class Button: UIView {
     private lazy var loaderContainer = ViewHolder(base: loader)
 
     private lazy var preferredHeight = heightAnchor.constraint(equalToConstant: .zero)
-    private lazy var contentTop = contentStack.topAnchor.constraint(greaterThanOrEqualTo: topAnchor)
-    private lazy var contentLeading = contentStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor)
-    private lazy var contentTrailing = contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-    private lazy var contentBottom = contentStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
+    private lazy var contentTop = contentStack.topAnchor.constraint(greaterThanOrEqualTo: control.topAnchor)
+    private lazy var contentLeading = contentStack.leadingAnchor.constraint(greaterThanOrEqualTo: control.leadingAnchor)
+    private lazy var contentTrailing = contentStack.trailingAnchor.constraint(lessThanOrEqualTo: control.trailingAnchor)
+    private lazy var contentBottom = contentStack.bottomAnchor.constraint(lessThanOrEqualTo: control.bottomAnchor)
 
     // MARK: Private State
 
@@ -103,27 +102,23 @@ final class Button: UIView {
     }
 
     private func setupViewHierarchy() {
-        addSubview(backgroundView)
         addSubview(control)
-        addSubview(contentStack)
-        addSubview(loaderContainer)
+        control.addSubview(contentStack)
+        control.addSubview(loaderContainer)
+        control.clipsToBounds = true
         contentStack.axis = .horizontal
         contentStack.alignment = .center
-
-        [backgroundView, contentStack, imageView, titleLabel].forEach {
-            $0.isUserInteractionEnabled = false
-        }
+        contentStack.isUserInteractionEnabled = false
     }
 
     private func setupConstraints() {
-        backgroundView.pinEdgesToSuperview()
         control.pinEdgesToSuperview()
         loaderContainer.pinEdgesToSuperview()
         contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentStack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            contentStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            contentStack.centerXAnchor.constraint(equalTo: control.centerXAnchor),
+            contentStack.centerYAnchor.constraint(equalTo: control.centerYAnchor),
             contentTop,
             contentLeading,
             contentTrailing,
@@ -213,14 +208,14 @@ final class Button: UIView {
     private func updateColorsForState() {
         titleLabel.textColor = configuration.style.foregroundColor.forState(control.state)
         imageView.tintColor = configuration.style.foregroundColor.forState(control.state)
-        backgroundView.backgroundColor = configuration.style.backgroundColor.forState(control.state)
+        control.backgroundColor = configuration.style.backgroundColor.forState(control.state)
     }
 
     private func updateCorners() {
-        backgroundView.layer.cornerRadius = configuration
+        control.layer.cornerRadius = configuration
             .contentSize
             .cornersStyle
-            .cornerRadius(for: backgroundView.bounds)
+            .cornerRadius(for: control.bounds)
     }
 
     private func updateLoaderVisibility() {
