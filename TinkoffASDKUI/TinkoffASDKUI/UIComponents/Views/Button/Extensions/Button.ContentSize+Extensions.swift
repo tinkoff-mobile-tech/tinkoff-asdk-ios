@@ -7,37 +7,6 @@
 
 import Foundation
 
-// MARK: - Button + ContentSize
-
-extension Button {
-    struct ContentSize: Equatable {
-        var titleFont: UIFont?
-        var cornersStyle: CornersStyle = .none
-        var activityIndicatorDiameter: CGFloat = .zero
-        var imagePadding: CGFloat = .zero
-        var preferredHeight: CGFloat = .zero
-        var contentInsets: UIEdgeInsets = .zero
-    }
-}
-
-extension Button.ContentSize {
-    enum CornersStyle: Equatable {
-        case none
-        case rounded(radius: CGFloat)
-    }
-}
-
-extension Button.ContentSize.CornersStyle {
-    func cornerRadius(for bounds: CGRect) -> CGFloat {
-        switch self {
-        case .none:
-            return .zero
-        case let .rounded(radius):
-            return radius
-        }
-    }
-}
-
 extension Button.ContentSize {
     static var basicSmall: Button.ContentSize {
         Button.ContentSize(

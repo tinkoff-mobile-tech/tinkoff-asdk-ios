@@ -1,59 +1,26 @@
 //
-//  Button+Style2.swift
+//  Button.Style+Extensions.swift
 //  TinkoffASDKUI
 //
-//  Created by r.akhmadeev on 30.01.2023.
+//  Created by r.akhmadeev on 01.02.2023.
 //
 
-import UIKit
-
-extension Button {
-    struct Style2: Equatable {
-        var foregroundColor: Color
-        var backgroundColor: Color
-    }
-}
-
-// MARK: - Button.Style + Color
-
-extension Button.Style2 {
-    struct Color: Equatable {
-        var normal: UIColor
-        var highlighted: UIColor
-        var disabled: UIColor
-    }
-}
-
-// MARK: - Button.Style.Color + Helpers
-
-extension Button.Style2.Color {
-    static var clear: Button.Style2.Color {
-        Button.Style2.Color(normal: .clear, highlighted: .clear, disabled: .clear)
-    }
-
-    init(withDefaultHighlight defaultColor: UIColor, disabled: UIColor) {
-        self.init(
-            normal: defaultColor,
-            highlighted: defaultColor.highlighted(),
-            disabled: disabled
-        )
-    }
-}
-
-// MARK: - Button.Style + Styles
+import Foundation
 
 extension Button.Style2 {
     static var clear: Button.Style2 {
         Button.Style2(foregroundColor: .clear, backgroundColor: .clear)
     }
 
+    // MARK: Design System
+
     static var primaryTinkoff: Button.Style2 {
         Button.Style2(
-            foregroundColor: Color(
+            foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.primaryOnTinkoff.color,
                 disabled: ASDKColors.Text.tertiary.color
             ),
-            backgroundColor: Color(
+            backgroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Foreground.brandTinkoffAccent,
                 disabled: ASDKColors.Background.neutral1.color
             )
@@ -62,11 +29,11 @@ extension Button.Style2 {
 
     static var secondary: Button.Style2 {
         Button.Style2(
-            foregroundColor: Color(
+            foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.accent.color,
                 disabled: ASDKColors.Text.tertiary.color
             ),
-            backgroundColor: Color(
+            backgroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Background.neutral1.color,
                 disabled: ASDKColors.Background.neutral1.color
             )
@@ -75,11 +42,11 @@ extension Button.Style2 {
 
     static var flat: Button.Style2 {
         Button.Style2(
-            foregroundColor: Color(
+            foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.accent.color,
                 disabled: ASDKColors.Text.tertiary.color
             ),
-            backgroundColor: Color(
+            backgroundColor: Button.InteractiveColor(
                 normal: .clear,
                 highlighted: ASDKColors.Background.neutral1.color,
                 disabled: .clear
@@ -89,11 +56,11 @@ extension Button.Style2 {
 
     static var destructive: Button.Style2 {
         Button.Style2(
-            foregroundColor: Color(
+            foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.negative.color,
                 disabled: ASDKColors.Text.tertiary.color
             ),
-            backgroundColor: Color(
+            backgroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Background.neutral1.color,
                 disabled: ASDKColors.Background.neutral1.color
             )

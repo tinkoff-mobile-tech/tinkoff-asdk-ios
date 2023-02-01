@@ -41,7 +41,7 @@ final class Button: UIView {
 
     // MARK: Init
 
-    init(configuration: Configuration2 = .empty, onTapAction: VoidBlock? = nil) {
+    init(configuration: Configuration2 = Configuration2(), onTapAction: VoidBlock? = nil) {
         self.configuration = configuration
         self.onTapAction = onTapAction
         super.init(frame: .zero)
@@ -281,21 +281,6 @@ extension Button {
     enum ActivityIndicatorState {
         case loading
         case normal
-    }
-}
-
-// MARK: - Button.Style.Color + Helpers
-
-private extension Button.Style2.Color {
-    func forState(_ state: UIControl.State) -> UIColor {
-        switch state {
-        case .highlighted:
-            return highlighted
-        case .disabled:
-            return disabled
-        default:
-            return normal
-        }
     }
 }
 
