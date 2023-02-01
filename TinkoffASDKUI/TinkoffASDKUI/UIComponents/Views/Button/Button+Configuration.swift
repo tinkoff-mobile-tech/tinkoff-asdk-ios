@@ -14,6 +14,7 @@ extension Button {
         var style: Style = .clear
         var contentSize = ContentSize()
         var imagePlacement: ImagePlacement = .leading
+        var loaderVisible = false
     }
 
     struct Style: Equatable {

@@ -28,7 +28,7 @@ final class AddNewCardView: UIView {
             style: .primaryTinkoff,
             contentSize: .basicLarge
         ),
-        onTapAction: { [weak self] in self?.addButtonTapped() }
+        action: { [weak self] in self?.addButtonTapped() }
     )
 
     // Local State
@@ -78,7 +78,7 @@ extension AddNewCardView {
         }
 
         endEditing(true)
-        addButton.setLoaderVisible(true, animated: true)
+        addButton.startLoading()
     }
 
     func hideLoadingState() {
@@ -88,7 +88,7 @@ extension AddNewCardView {
             self.collectionView.alpha = 1
         }
 
-        addButton.setLoaderVisible(true, animated: true)
+        addButton.stopLoading()
     }
 
     func disableAddButton() {

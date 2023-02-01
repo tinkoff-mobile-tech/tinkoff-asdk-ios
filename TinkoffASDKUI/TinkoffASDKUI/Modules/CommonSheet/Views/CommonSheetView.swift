@@ -53,7 +53,7 @@ final class CommonSheetView: UIView {
 
     private lazy var primaryButton = Button(
         configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
-        onTapAction: { [weak self] in
+        action: { [weak self] in
             guard let self = self else { return }
             self.delegate?.commonSheetViewDidTapPrimaryButton(self)
         }
@@ -61,7 +61,7 @@ final class CommonSheetView: UIView {
 
     private lazy var secondaryButton = Button(
         configuration: Button.Configuration(style: .secondary, contentSize: .basicLarge),
-        onTapAction: { [weak self] in
+        action: { [weak self] in
             guard let self = self else { return }
             self.delegate?.commonSheetViewDidTapSecondaryButton(self)
         }
@@ -176,19 +176,11 @@ final class CommonSheetView: UIView {
     }
 
     private func updateButtons(with state: CommonSheetState) {
-        updateButton(primaryButton, withTitle: state.primaryButtonTitle)
-        updateButton(secondaryButton, withTitle: state.secondaryButtonTitle)
+        primaryButton.setTitle(state.primaryButtonTitle)
+        primaryButton.isHidden = state.primaryButtonTitle == nil
+        secondaryButton.setTitle(state.secondaryButtonTitle)
+        secondaryButton.isHidden = state.secondaryButtonTitle == nil
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
-    }
-
-    private func updateButton(_ button: Button, withTitle title: String?) {
-        if let title = title {
-            button.reconfigure(animated: false) { configuration in
-                configuration.title = title
-            }
-        }
-
-        button.isHidden = title == nil
     }
 
     // MARK: Overlay Animation

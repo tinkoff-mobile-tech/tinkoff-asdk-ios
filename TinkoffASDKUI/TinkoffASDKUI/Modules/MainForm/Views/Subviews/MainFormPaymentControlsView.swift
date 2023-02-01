@@ -27,8 +27,8 @@ final class MainFormPaymentControlsView: UIView {
     }()
 
     private lazy var payButton = Button(
-        configuration: Button.Configuration(contentSize: .basicLarge, imagePlacement: .trailing),
-        onTapAction: { [weak self] in self?.delegate?.paymentControlsViewDidTapPayButton() }
+        configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge, imagePlacement: .trailing),
+        action: { [weak self] in self?.delegate?.paymentControlsViewDidTapPayButton() }
     )
 
     // MARK: Init
@@ -58,10 +58,7 @@ final class MainFormPaymentControlsView: UIView {
             buttonTitle = title
         }
 
-        payButton.reconfigure(animated: false) { configuration in
-            configuration.style = .primaryTinkoff
-            configuration.title = buttonTitle
-        }
+        payButton.setTitle(buttonTitle)
     }
 
     func set(payButtonEnabled: Bool) {

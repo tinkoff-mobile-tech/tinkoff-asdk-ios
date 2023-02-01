@@ -15,9 +15,7 @@ final class Button: UIView {
         set { control.isEnabled = newValue }
     }
 
-    var onTapAction: VoidBlock?
     private(set) var configuration: Configuration
-    private(set) var loaderVisible = false
 
     // MARK: Subviews & Constraints
 
@@ -36,15 +34,17 @@ final class Button: UIView {
 
     // MARK: Private State
 
+    private var action: VoidBlock?
     private var stateObservers: [NSKeyValueObservation] = []
 
     // MARK: Init
 
-    init(configuration: Configuration = Configuration(), onTapAction: VoidBlock? = nil) {
+    init(configuration: Configuration = Configuration(), action: VoidBlock? = nil) {
         self.configuration = configuration
-        self.onTapAction = onTapAction
+        self.action = action
         super.init(frame: .zero)
         setupView()
+        updateView()
     }
 
     @available(*, unavailable)
@@ -61,39 +61,57 @@ final class Button: UIView {
 
     // MARK: Button Methods
 
-    func configure(_ configuration: Configuration, animated: Bool) {
+    func configure(_ configuration: Configuration) {
         guard self.configuration != configuration else { return }
-
         self.configuration = configuration
-        applyConfiguration(animated: animated)
+        updateView()
     }
 
-    func reconfigure(animated: Bool, _ configurationChangeHandler: (inout Configuration) -> Void) {
-        let configuration = modify(configuration, configurationChangeHandler)
-        configure(configuration, animated: animated)
+    func setTitle(_ title: String?) {
+        guard configuration.title != title else { return }
+        configuration.title = title
+        updateContent()
+        updateContentVisibility()
     }
 
-    func setLoaderVisible(_ loaderVisible: Bool, animated: Bool) {
-        guard self.loaderVisible != loaderVisible else { return }
+    func setImage(_ image: UIImage?) {
+        guard configuration.icon != image else { return }
+        configuration.icon = image
+        updateContent()
+        updateContentVisibility()
+    }
 
-        self.loaderVisible = loaderVisible
+    func setStyle(_ style: Button.Style) {
+        guard configuration.style != style else { return }
+        configuration.style = style
+        updateStyleForCurrentState()
+    }
 
-        performUpdates(
-            animated: animated,
-            updates: loaderVisible ? updateContentPlacement : updateLoaderVisibility,
-            completion: { [self] in
-                performUpdates(
-                    animated: animated,
-                    updates: loaderVisible ? updateLoaderVisibility : updateContentPlacement
-                )
-            }
-        )
+    func startLoading(animated: Bool = true) {
+        guard !configuration.loaderVisible else { return }
+        configuration.loaderVisible = true
+
+        performUpdates(animated: animated, updates: updateContentVisibility) { [self] in
+            performUpdates(animated: animated, updates: updateLoaderVisibility)
+        }
+    }
+
+    func stopLoading(animated: Bool = true) {
+        guard configuration.loaderVisible else { return }
+        configuration.loaderVisible = false
+
+        performUpdates(animated: animated, updates: updateLoaderVisibility) { [self] in
+            performUpdates(animated: animated, updates: updateContentVisibility)
+        }
+    }
+
+    func setAction(_ action: VoidBlock?) {
+        self.action = action
     }
 
     // MARK: Initial Configuration
 
     private func setupView() {
-        applyConfiguration(animated: false)
         setupViewHierarchy()
         setupConstraints()
         setupObservers()
@@ -138,19 +156,81 @@ final class Button: UIView {
         ]
     }
 
-    // MARK: Subviews Updating
+    // MARK: View Updating
 
-    private func applyConfiguration(animated: Bool) {
-        updateLayoutConstants()
+    private func updateView() {
+        updateStyleForCurrentState()
+        updateContentSize()
+        updateContent()
+        updateContentPlacement()
+        updateContentVisibility()
+        updateLoaderVisibility()
         loader.setNeedsLayout()
+        updateCorners()
+    }
 
-        performUpdates(animated: animated) { [self] in
-            updateColorsForState()
-            updateContent()
-            loader.apply(style: .from(configuration))
-            UIView.performWithoutAnimation(updateContentPlacement)
+    private func updateStyleForCurrentState() {
+        titleLabel.textColor = configuration.style.foregroundColor.forState(control.state)
+        imageView.tintColor = configuration.style.foregroundColor.forState(control.state)
+        control.backgroundColor = configuration.style.backgroundColor.forState(control.state)
+        loader.apply(style: .from(configuration))
+    }
+
+    private func updateContentSize() {
+        titleLabel.font = configuration.contentSize.titleFont
+        contentStack.spacing = configuration.contentSize.imagePadding
+        contentTop.constant = configuration.contentSize.contentInsets.top
+        contentLeading.constant = configuration.contentSize.contentInsets.left
+        contentTrailing.constant = -configuration.contentSize.contentInsets.right
+        contentBottom.constant = -configuration.contentSize.contentInsets.bottom
+        preferredHeight.constant = configuration.contentSize.preferredHeight
+    }
+
+    private func updateContent() {
+        titleLabel.text = configuration.title
+        imageView.image = configuration.icon
+    }
+
+    private func updateContentPlacement() {
+        contentStack.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+
+        switch configuration.imagePlacement {
+        case .leading:
+            contentStack.addArrangedSubviews(imageView, titleLabel)
+        case .trailing:
+            contentStack.addArrangedSubviews(titleLabel, imageView)
         }
     }
+
+    private func updateContentVisibility() {
+        imageView.isHidden = configuration.icon == nil || configuration.loaderVisible
+        titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.loaderVisible
+    }
+
+    private func updateLoaderVisibility() {
+        loaderContainer.isHidden = !configuration.loaderVisible
+    }
+
+    private func updateCorners() {
+        control.layer.cornerRadius = configuration
+            .contentSize
+            .cornersStyle
+            .cornerRadius(for: control.bounds)
+    }
+
+    // MARK: Events
+
+    @objc private func buttonTapped() {
+        action?()
+    }
+
+    private func controlStateDidChange() {
+        performUpdates(animated: true, updates: updateStyleForCurrentState)
+    }
+
+    // MARK: Animations
 
     private func performUpdates(
         animated: Bool,
@@ -170,66 +250,6 @@ final class Button: UIView {
             animations: updates,
             completion: { _ in completion?() }
         )
-    }
-
-    private func updateLayoutConstants() {
-        contentTop.constant = configuration.contentSize.contentInsets.top
-        contentLeading.constant = configuration.contentSize.contentInsets.left
-        contentTrailing.constant = -configuration.contentSize.contentInsets.right
-        contentBottom.constant = -configuration.contentSize.contentInsets.bottom
-
-        preferredHeight.constant = configuration.contentSize.preferredHeight
-        contentStack.spacing = configuration.contentSize.imagePadding
-    }
-
-    private func updateContent() {
-        titleLabel.font = configuration.contentSize.titleFont
-        titleLabel.text = configuration.title
-        imageView.image = configuration.icon
-    }
-
-    private func updateContentPlacement() {
-        contentStack.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
-        }
-
-        switch configuration.imagePlacement {
-        case .leading:
-            contentStack.addArrangedSubviews(imageView, titleLabel)
-        case .trailing:
-            contentStack.addArrangedSubviews(titleLabel, imageView)
-        }
-
-        contentStack.isHidden = loaderVisible
-        imageView.isHidden = configuration.icon == nil
-        titleLabel.isHidden = configuration.title == nil
-    }
-
-    private func updateColorsForState() {
-        titleLabel.textColor = configuration.style.foregroundColor.forState(control.state)
-        imageView.tintColor = configuration.style.foregroundColor.forState(control.state)
-        control.backgroundColor = configuration.style.backgroundColor.forState(control.state)
-    }
-
-    private func updateCorners() {
-        control.layer.cornerRadius = configuration
-            .contentSize
-            .cornersStyle
-            .cornerRadius(for: control.bounds)
-    }
-
-    private func updateLoaderVisibility() {
-        loaderContainer.isHidden = !loaderVisible
-    }
-
-    // MARK: Events
-
-    @objc private func buttonTapped() {
-        onTapAction?()
-    }
-
-    private func controlStateDidChange() {
-        performUpdates(animated: true, updates: updateColorsForState)
     }
 }
 

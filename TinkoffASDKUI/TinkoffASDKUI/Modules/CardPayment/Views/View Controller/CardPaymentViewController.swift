@@ -22,7 +22,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     private lazy var emailView = EmailView()
     private lazy var payButton = Button(
         configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
-        onTapAction: { [presenter] in presenter.payButtonPressed() }
+        action: { [presenter] in presenter.payButtonPressed() }
     )
 
     // MARK: Initialization
@@ -54,9 +54,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 
 extension CardPaymentViewController {
     func setPayButton(title: String) {
-        payButton.reconfigure(animated: false) { configuration in
-            configuration.title = title
-        }
+        payButton.setTitle(title)
     }
 
     func setPayButton(isEnabled: Bool) {
@@ -64,12 +62,12 @@ extension CardPaymentViewController {
     }
 
     func startLoadingPayButton() {
-        payButton.setLoaderVisible(true, animated: true)
+        payButton.startLoading()
         UIApplication.shared.beginIgnoringInteractionEvents()
     }
 
     func stopLoadingPayButton() {
-        payButton.setLoaderVisible(false, animated: true)
+        payButton.stopLoading()
         UIApplication.shared.endIgnoringInteractionEvents()
     }
 

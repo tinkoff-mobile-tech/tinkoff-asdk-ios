@@ -115,8 +115,8 @@ extension StubView: ConfigurableItem {
         iconImageView.configure(with: configuration.icon)
         titleLabel.configure(configuration.title)
         subtitleLabel.configure(configuration.subtitle)
-        button.configure(configuration.button, animated: false)
-        button.onTapAction = configuration.buttonAction
+        button.configure(configuration.button)
+        button.setAction(configuration.buttonAction)
         // handling empty content cases
         tuneConstraintsForEmptyContent(configuration: configuration)
     }
