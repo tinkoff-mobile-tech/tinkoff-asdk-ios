@@ -206,8 +206,11 @@ final class Button: UIView {
     }
 
     private func updateContentVisibility() {
-        imageView.isHidden = configuration.image == nil || configuration.isLoading
-        titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.isLoading
+        // Исправляет странные движения внутри стека во время анимации
+        UIView.performWithoutAnimation {
+            imageView.isHidden = configuration.image == nil || configuration.isLoading
+            titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.isLoading
+        }
     }
 
     private func updateLoaderVisibility() {
