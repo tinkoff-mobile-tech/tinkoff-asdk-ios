@@ -11,12 +11,12 @@ extension Button {
     struct Configuration2: Equatable {
         var title: String?
         var icon: UIImage?
-        var style: Style2 = .clear
+        var style: Style = .clear
         var contentSize = ContentSize()
         var imagePlacement: ImagePlacement = .leading
     }
 
-    struct Style2: Equatable {
+    struct Style: Equatable {
         var foregroundColor: InteractiveColor
         var backgroundColor: InteractiveColor
     }

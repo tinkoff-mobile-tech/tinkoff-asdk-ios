@@ -176,7 +176,7 @@ final class CommonSheetView: UIView {
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
     }
 
-    private func updateButton(_ button: Button, withTitle title: String?, style: Button.Style, action: @escaping () -> Void) {
+    private func updateButton(_ button: Button, withTitle title: String?, style: Button.DeprecatedStyle, action: @escaping () -> Void) {
         if let title = title {
             let configuration = Button.Configuration(
                 data: Button.Data(

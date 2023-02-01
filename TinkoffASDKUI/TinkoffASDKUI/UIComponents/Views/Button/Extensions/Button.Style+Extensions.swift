@@ -7,15 +7,15 @@
 
 import Foundation
 
-extension Button.Style2 {
-    static var clear: Button.Style2 {
-        Button.Style2(foregroundColor: .clear, backgroundColor: .clear)
+extension Button.Style {
+    static var clear: Button.Style {
+        Button.Style(foregroundColor: .clear, backgroundColor: .clear)
     }
 
     // MARK: Design System
 
-    static var primaryTinkoff: Button.Style2 {
-        Button.Style2(
+    static var primaryTinkoff: Button.Style {
+        Button.Style(
             foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.primaryOnTinkoff.color,
                 disabled: ASDKColors.Text.tertiary.color
@@ -27,8 +27,8 @@ extension Button.Style2 {
         )
     }
 
-    static var secondary: Button.Style2 {
-        Button.Style2(
+    static var secondary: Button.Style {
+        Button.Style(
             foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.accent.color,
                 disabled: ASDKColors.Text.tertiary.color
@@ -40,8 +40,8 @@ extension Button.Style2 {
         )
     }
 
-    static var flat: Button.Style2 {
-        Button.Style2(
+    static var flat: Button.Style {
+        Button.Style(
             foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.accent.color,
                 disabled: ASDKColors.Text.tertiary.color
@@ -54,8 +54,8 @@ extension Button.Style2 {
         )
     }
 
-    static var destructive: Button.Style2 {
-        Button.Style2(
+    static var destructive: Button.Style {
+        Button.Style(
             foregroundColor: Button.InteractiveColor(
                 withDefaultHighlight: ASDKColors.Text.negative.color,
                 disabled: ASDKColors.Text.tertiary.color

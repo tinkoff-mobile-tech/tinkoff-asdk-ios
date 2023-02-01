@@ -79,11 +79,11 @@ final class Button: UIView {
         guard self.loaderVisible != loaderVisible else { return }
 
         self.loaderVisible = loaderVisible
+
         performUpdates(
             animated: animated,
             updates: loaderVisible ? updateContentPlacement : updateLoaderVisibility,
             completion: { [self] in
-
                 performUpdates(
                     animated: animated,
                     updates: loaderVisible ? updateLoaderVisibility : updateContentPlacement
@@ -254,7 +254,7 @@ extension Button {
     func stopLoading() {}
     func configure(_ configuration: Configuration) {}
     private func configureButton(data: Data) {}
-    private func configureButton(style: Style) {}
+    private func configureButton(style: DeprecatedStyle) {}
 
     struct Data {
         enum Text {
@@ -271,7 +271,7 @@ extension Button {
 
     struct Configuration {
         let data: Data
-        let style: Style
+        let style: DeprecatedStyle
 
         static var empty: Self {
             Self(data: Button.Data(text: nil, onTapAction: {}), style: .destructive)

@@ -9,7 +9,7 @@ import UIKit
 
 extension Button {
 
-    struct Style {
+    struct DeprecatedStyle {
         enum Background {
             case color(normal: UIColor?, highlighted: UIColor?, disabled: UIColor?)
             case image(normal: UIImage?, highlighted: UIImage?, disabled: UIImage?)
@@ -91,7 +91,7 @@ extension Button.Data.Text {
 
 // MARK: - Styles
 
-extension Button.Style {
+extension Button.DeprecatedStyle {
 
     // Primary
 
