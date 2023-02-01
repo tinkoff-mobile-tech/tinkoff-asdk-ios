@@ -8,7 +8,7 @@
 import UIKit
 
 extension Button {
-    struct Configuration2: Equatable {
+    struct Configuration: Equatable {
         var title: String?
         var icon: UIImage?
         var style: Style = .clear

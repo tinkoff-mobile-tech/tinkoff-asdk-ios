@@ -55,7 +55,7 @@ final class MainFormPaymentControlsView: UIView {
             buttonTitle = title
         }
 
-        let configuration = Button.Configuration(
+        let configuration = Button.DeprecatedConfiguration(
             data: Button.Data(
                 text: .basic(normal: buttonTitle, highlighted: nil, disabled: nil),
                 onTapAction: { [weak self] in

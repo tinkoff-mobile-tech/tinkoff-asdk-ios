@@ -124,7 +124,7 @@ extension StubView: ConfigurableItem {
         let icon: UIImageView.Configuration
         let title: UILabel.Configuration
         let subtitle: UILabel.Configuration
-        let button: Button.Configuration
+        let button: Button.DeprecatedConfiguration
 
         static var empty: Self {
             Self(icon: .empty, title: .empty, subtitle: .empty, button: .empty)

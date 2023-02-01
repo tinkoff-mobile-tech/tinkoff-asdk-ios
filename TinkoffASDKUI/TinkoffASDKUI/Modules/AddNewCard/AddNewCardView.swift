@@ -244,9 +244,9 @@ extension AddNewCardView.Constants.AddButton {
         UIWindow.globalSafeAreaInsets.bottom + Self.bottomInset
     }
 
-    static func getConfiguration(action: @escaping () -> Void) -> Button.Configuration {
+    static func getConfiguration(action: @escaping () -> Void) -> Button.DeprecatedConfiguration {
 
-        return Button.Configuration(
+        return Button.DeprecatedConfiguration(
             data: Button.Data(
                 text: .basic(
                     normal: Loc.Acquiring.AddNewCard.addButton,

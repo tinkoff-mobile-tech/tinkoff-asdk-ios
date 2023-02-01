@@ -16,7 +16,7 @@ final class Button: UIView {
     }
 
     var onTapAction: VoidBlock?
-    private(set) var configuration: Configuration2
+    private(set) var configuration: Configuration
     private(set) var loaderVisible = false
 
     // MARK: Subviews & Constraints
@@ -41,7 +41,7 @@ final class Button: UIView {
 
     // MARK: Init
 
-    init(configuration: Configuration2 = Configuration2(), onTapAction: VoidBlock? = nil) {
+    init(configuration: Configuration = Configuration(), onTapAction: VoidBlock? = nil) {
         self.configuration = configuration
         self.onTapAction = onTapAction
         super.init(frame: .zero)
@@ -62,14 +62,14 @@ final class Button: UIView {
 
     // MARK: Button Methods
 
-    func configure(_ configuration: Configuration2, animated: Bool) {
+    func configure(_ configuration: Configuration, animated: Bool) {
         guard self.configuration != configuration else { return }
 
         self.configuration = configuration
         applyConfiguration(animated: animated)
     }
 
-    func reconfigure(animated: Bool, _ configurationChangeHandler: (inout Configuration2) -> Void) {
+    func reconfigure(animated: Bool, _ configurationChangeHandler: (inout Configuration) -> Void) {
         var configuration = self.configuration
         configurationChangeHandler(&configuration)
         configure(configuration, animated: animated)
@@ -252,7 +252,7 @@ extension Button {
 
     func startLoading() {}
     func stopLoading() {}
-    func configure(_ configuration: Configuration) {}
+    func configure(_ configuration: DeprecatedConfiguration) {}
     private func configureButton(data: Data) {}
     private func configureButton(style: DeprecatedStyle) {}
 
@@ -269,7 +269,7 @@ extension Button {
         let onTapAction: () -> Void
     }
 
-    struct Configuration {
+    struct DeprecatedConfiguration {
         let data: Data
         let style: DeprecatedStyle
 
@@ -287,7 +287,7 @@ extension Button {
 // MARK: - ActivityIndicatorView.Style + Helpers
 
 private extension ActivityIndicatorView.Style {
-    static func from(_ configuration: Button.Configuration2) -> ActivityIndicatorView.Style {
+    static func from(_ configuration: Button.Configuration) -> ActivityIndicatorView.Style {
         ActivityIndicatorView.Style(
             lineColor: configuration.style.foregroundColor.normal,
             diameter: configuration.contentSize.activityIndicatorDiameter

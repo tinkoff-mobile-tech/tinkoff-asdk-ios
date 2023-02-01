@@ -178,7 +178,7 @@ final class CommonSheetView: UIView {
 
     private func updateButton(_ button: Button, withTitle title: String?, style: Button.DeprecatedStyle, action: @escaping () -> Void) {
         if let title = title {
-            let configuration = Button.Configuration(
+            let configuration = Button.DeprecatedConfiguration(
                 data: Button.Data(
                     text: .basic(normal: title, highlighted: title, disabled: title),
                     onTapAction: action

@@ -50,7 +50,7 @@ final class BaseStubViewBuilder: IStubViewBuilder {
                         .set(numberOfLines: 2)
                 )
             ),
-            button: Button.Configuration(
+            button: Button.DeprecatedConfiguration(
                 data: Button.Data(
                     text: .basic(normal: inputData.buttonTitle, highlighted: nil, disabled: nil),
                     onTapAction: inputData.buttonAction
