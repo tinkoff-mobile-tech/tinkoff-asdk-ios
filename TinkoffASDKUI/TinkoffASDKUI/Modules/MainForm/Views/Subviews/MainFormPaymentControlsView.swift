@@ -26,7 +26,13 @@ final class MainFormPaymentControlsView: UIView {
         return stack
     }()
 
-    private lazy var payButton = Button()
+    private lazy var payButton = Button(
+        configuration: Button.Configuration(
+            contentSize: .basicLarge,
+            imagePlacement: .trailing
+        ),
+        onTapAction: { [weak self] in self?.delegate?.paymentControlsViewDidTapPayButton() }
+    )
 
     // MARK: Init
 
@@ -55,17 +61,10 @@ final class MainFormPaymentControlsView: UIView {
             buttonTitle = title
         }
 
-        let configuration = Button.DeprecatedConfiguration(
-            data: Button.Data(
-                text: .basic(normal: buttonTitle, highlighted: nil, disabled: nil),
-                onTapAction: { [weak self] in
-                    self?.delegate?.paymentControlsViewDidTapPayButton()
-                }
-            ),
-            style: .primary
-        )
-
-        payButton.configure(configuration)
+        payButton.reconfigure(animated: false) { configuration in
+            configuration.style = .primaryTinkoff
+            configuration.title = buttonTitle
+        }
     }
 
     func set(payButtonEnabled: Bool) {
@@ -76,7 +75,6 @@ final class MainFormPaymentControlsView: UIView {
 
     private func setupView() {
         layoutContentStack()
-        layoutPayButton()
         contentStack.addArrangedSubviews(payButton)
     }
 
@@ -91,15 +89,10 @@ final class MainFormPaymentControlsView: UIView {
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
-
-    private func layoutPayButton() {
-        payButton.heightAnchor.constraint(equalToConstant: .payButtonHeight).activated()
-    }
 }
 
 // MARK: - Constants
 
 private extension CGFloat {
     static let contentStackSpacing: CGFloat = 12
-    static let payButtonHeight: CGFloat = 56
 }
