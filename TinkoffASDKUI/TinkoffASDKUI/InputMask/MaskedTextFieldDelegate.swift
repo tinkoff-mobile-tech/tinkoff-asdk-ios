@@ -13,7 +13,7 @@ import UIKit
 }
 
 @IBDesignable
-open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
+open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate, FloatingTextFieldDelegate {
     private var _maskFormat: String
     private var _autocomplete: Bool
     private var _autocompleteOnFocus: Bool

@@ -17,6 +17,19 @@ final class SavedCardView: UIView {
         }
     }
 
+    private lazy var maskingDelegate: MaskedTextFieldDelegate = {
+        let maskingFactory = CardFieldMaskingFactory()
+        let maskingDelegate = maskingFactory.buildForCvc(
+            didFillMask: { [weak self] text, _ in
+                self?.presenter?.savedCardView(didChangeCVC: text)
+            }, didBeginEditing: { [weak self] in
+                self?.presenter?.savedCardViewDidBeginCVCFieldEditing()
+            },
+            listenerStorage: &textFieldListeners
+        )
+        return maskingDelegate
+    }()
+
     // MARK: Content Container Subviews
 
     private lazy var containerView = CardContainerView(
@@ -54,14 +67,7 @@ final class SavedCardView: UIView {
 
     // MARK: CVC Field Subviews
 
-    private lazy var cvcField = TextField()
-
-    private lazy var cvcBackground: UIView = {
-        let view = PassthroughView()
-        view.layer.cornerRadius = .cvcFieldBackgroundCornerRadius
-        view.backgroundColor = ASDKColors.Background.neutral1.color
-        return view
-    }()
+    private lazy var cvcField = FloatingTextField(insetsType: .smallInsets)
 
     private lazy var accessoryView: UIView = {
         let view = UIView()
@@ -104,17 +110,15 @@ final class SavedCardView: UIView {
         contentView.addSubview(iconView)
         contentView.addSubview(labelsStack)
         contentView.addSubview(accessoryView)
-        accessoryView.addSubview(cvcBackground)
-        cvcBackground.addSubview(cvcField)
+        accessoryView.addSubview(cvcField)
         labelsStack.addArrangedSubviews(cardNameLabel, actionLabel)
 
         iconView.translatesAutoresizingMaskIntoConstraints = false
         labelsStack.translatesAutoresizingMaskIntoConstraints = false
         accessoryView.translatesAutoresizingMaskIntoConstraints = false
-        cvcBackground.translatesAutoresizingMaskIntoConstraints = false
+        cvcField.translatesAutoresizingMaskIntoConstraints = false
 
         containerView.pinEdgesToSuperview()
-        cvcField.pinEdgesToSuperview(insets: .cvcFieldInsets)
 
         NSLayoutConstraint.activate([
             containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: .containerMinimalHeight),
@@ -133,52 +137,27 @@ final class SavedCardView: UIView {
             accessoryView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             accessoryView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
-            cvcBackground.widthAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.width),
-            cvcBackground.heightAnchor.constraint(equalToConstant: CGSize.cvcBackgroundContainerSize.height),
-            cvcBackground.centerYAnchor.constraint(equalTo: accessoryView.centerYAnchor),
-            cvcBackground.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -.cvcBackgroundTrailingInset),
+            cvcField.widthAnchor.constraint(equalToConstant: CGSize.cvcFieldContainerSize.width),
+            cvcField.heightAnchor.constraint(equalToConstant: CGSize.cvcFieldContainerSize.height),
+            cvcField.centerYAnchor.constraint(equalTo: accessoryView.centerYAnchor),
+            cvcField.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -.cvcFieldTrailingInset),
         ])
     }
 
-    private func configureCVCField(text: String? = nil) {
-        let maskingFactory = CardFieldMaskingFactory()
-
-        let maskingDelegate = maskingFactory.buildForCvc(
-            didFillMask: { [weak self] text, _ in
-                self?.presenter?.savedCardView(didChangeCVC: text)
-            },
-            listenerStorage: &textFieldListeners
-        )
-
-        let textFieldConfiguration = TextField.TextFieldConfiguration.assembleWithRegularContentAndStyle(
-            delegate: maskingDelegate,
-            text: text,
-            placeholder: .cvcFieldPlaceholder,
-            eventHandler: { [weak self] event, _ in
-                switch event {
-                case .didBeginEditing:
-                    self?.presenter?.savedCardViewDidBeginCVCFieldEditing()
-                default:
-                    break
-                }
-            },
-            hasClearButton: false,
-            keyboardType: .decimalPad,
-            isSecure: true
-        )
-
-        let configuration = TextField.Configuration(
-            textField: textFieldConfiguration,
-            headerLabel: .validCVCHeader
-        )
-
-        cvcField.configure(with: configuration)
+    private func configureCVCField() {
+        cvcField.delegate = maskingDelegate
+        cvcField.set(placeholder: .cvcFieldPlaceholder)
+        cvcField.set(clearButtonMode: .never)
+        cvcField.set(keyboardType: .decimalPad)
+        cvcField.set(isSecureTextEntry: true)
+        cvcField.setHeader(text: .cvcFieldHeader)
+        cvcField.setHeader(color: ASDKColors.Text.secondary.color)
     }
 
     // MARK: Events
 
     @objc private func accessoryViewTapped() {
-        cvcField.activate()
+        cvcField.becomeFirstResponder()
     }
 }
 
@@ -202,19 +181,19 @@ extension SavedCardView: ISavedCardViewInput {
     }
 
     func setCVCText(_ text: String) {
-        configureCVCField(text: text)
+        cvcField.set(text: text)
     }
 
     func setCVCFieldValid() {
-        cvcField.updateHeader(config: .validCVCHeader)
+        cvcField.setHeader(color: ASDKColors.Text.secondary.color)
     }
 
     func setCVCFieldInvalid() {
-        cvcField.updateHeader(config: .invalidCVCHeader)
+        cvcField.setHeader(color: ASDKColors.Foreground.negativeAccent)
     }
 
     func deactivateCVCField() {
-        cvcField.deactivate()
+        cvcField.resignFirstResponder()
     }
 }
 
@@ -225,41 +204,16 @@ private extension CGFloat {
     static let iconLeadingInset: CGFloat = 16
     static let labelsStackSpacing: CGFloat = 4
     static let labelsStackHorizontalInset: CGFloat = 16
-    static let cvcBackgroundTrailingInset: CGFloat = 8
-    static let cvcFieldBackgroundCornerRadius: CGFloat = 16
+    static let cvcFieldTrailingInset: CGFloat = 8
     static let accessoryViewWidth: CGFloat = 83
 }
 
 private extension CGSize {
     static let iconSize = CGSize(width: 40, height: 26)
-    static let cvcBackgroundContainerSize = CGSize(width: 59, height: 48)
-}
-
-private extension UIEdgeInsets {
-    static let cvcFieldInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
+    static let cvcFieldContainerSize = CGSize(width: 59, height: 48)
 }
 
 private extension String {
     static let cvcFieldHeader = "CVC"
     static let cvcFieldPlaceholder = "123"
-}
-
-private extension UILabel.Configuration {
-    static var validCVCHeader: Self {
-        Self(
-            content: .plain(
-                text: .cvcFieldHeader,
-                style: .bodyL().set(textColor: ASDKColors.Text.secondary.color)
-            )
-        )
-    }
-
-    static var invalidCVCHeader: Self {
-        Self(
-            content: .plain(
-                text: .cvcFieldHeader,
-                style: .bodyL().set(textColor: ASDKColors.Foreground.negativeAccent)
-            )
-        )
-    }
 }

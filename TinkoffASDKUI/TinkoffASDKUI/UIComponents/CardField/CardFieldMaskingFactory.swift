@@ -30,6 +30,18 @@ protocol ICardFieldMaskingFactory {
     ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
     /// - Returns: Делегат маскированного текст филда
     func buildForCvc(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
+
+    /// Готовит делегат текстфилда для поля - cvc
+    /// - Parameters:
+    ///   - didFillMask: Событие редактирования поля
+    ///   - didBeginEditing: Событие начала редактирования поля
+    ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
+    /// - Returns: Делегат маскированного текст филда
+    func buildForCvc(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate
 }
 
 final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
@@ -84,11 +96,16 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
     }
 
     func buildForCvc(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
+        buildForCvc(didFillMask: didFillMask, didBeginEditing: nil, listenerStorage: &listenerStorage)
+    }
+
+    func buildForCvc(didFillMask: DidFillMask?, didBeginEditing: VoidBlock? = nil, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
         let listener = CvcListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.cvcMask)
         listenerStorage.append(listener)
         delegate.listener = listener
         listener.didFill = didFillMask
+        listener.didBeginEditing = didBeginEditing
         return delegate
     }
 }
@@ -113,9 +130,14 @@ extension CardFieldMaskingFactory {
 
     final class CvcListener: NSObject, MaskedTextFieldDelegateListener {
         var didFill: DidFillMask?
+        var didBeginEditing: VoidBlock?
 
         func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
             didFill?(value, complete)
+        }
+
+        func textFieldDidBeginEditing(_ textField: UITextField) {
+            didBeginEditing?()
         }
     }
 }
