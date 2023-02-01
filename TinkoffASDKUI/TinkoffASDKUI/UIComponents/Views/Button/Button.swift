@@ -79,7 +79,17 @@ final class Button: UIView {
         guard self.loaderVisible != loaderVisible else { return }
 
         self.loaderVisible = loaderVisible
-        performUpdates(animated: animated, updates: updateLoaderVisibility)
+        performUpdates(
+            animated: animated,
+            updates: loaderVisible ? updateContentPlacement : updateLoaderVisibility,
+            completion: { [self] in
+
+                performUpdates(
+                    animated: animated,
+                    updates: loaderVisible ? updateLoaderVisibility : updateContentPlacement
+                )
+            }
+        )
     }
 
     // MARK: Initial Configuration
@@ -148,14 +158,23 @@ final class Button: UIView {
         }
     }
 
-    private func performUpdates(animated: Bool, updates: @escaping VoidBlock) {
-        guard animated else { return updates() }
+    private func performUpdates(
+        animated: Bool,
+        updates: @escaping VoidBlock,
+        completion: VoidBlock? = nil
+    ) {
+        guard animated else {
+            updates()
+            completion?()
+            return
+        }
 
         UIView.transition(
             with: self,
             duration: .defaultAnimationDuration,
-            options: [.transitionCrossDissolve],
-            animations: updates
+            options: [.transitionCrossDissolve, .curveEaseInOut],
+            animations: updates,
+            completion: { _ in completion?() }
         )
     }
 
@@ -187,6 +206,7 @@ final class Button: UIView {
             contentStack.addArrangedSubviews(titleLabel, imageView)
         }
 
+        contentStack.isHidden = loaderVisible
         imageView.isHidden = configuration.icon == nil
         titleLabel.isHidden = configuration.title == nil
     }
@@ -205,7 +225,6 @@ final class Button: UIView {
     }
 
     private func updateLoaderVisibility() {
-        contentStack.isHidden = loaderVisible
         loaderContainer.isHidden = !loaderVisible
     }
 
