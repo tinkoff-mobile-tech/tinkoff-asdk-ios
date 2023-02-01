@@ -26,7 +26,7 @@ final class Button: UIView {
     private lazy var loader = ActivityIndicatorView()
     private lazy var loaderContainer = ViewHolder(base: loader)
 
-    private lazy var preferredHeight = heightAnchor.constraint(equalToConstant: .zero)
+    private lazy var preferredHeight = control.heightAnchor.constraint(equalToConstant: .zero)
     private lazy var contentTop = contentStack.topAnchor.constraint(greaterThanOrEqualTo: control.topAnchor)
     private lazy var contentLeading = contentStack.leadingAnchor.constraint(greaterThanOrEqualTo: control.leadingAnchor)
     private lazy var contentTrailing = contentStack.trailingAnchor.constraint(lessThanOrEqualTo: control.trailingAnchor)
@@ -75,8 +75,8 @@ final class Button: UIView {
     }
 
     func setImage(_ image: UIImage?) {
-        guard configuration.icon != image else { return }
-        configuration.icon = image
+        guard configuration.image != image else { return }
+        configuration.image = image
         updateContent()
         updateContentVisibility()
     }
@@ -88,8 +88,8 @@ final class Button: UIView {
     }
 
     func startLoading(animated: Bool = true) {
-        guard !configuration.loaderVisible else { return }
-        configuration.loaderVisible = true
+        guard !configuration.isLoading else { return }
+        configuration.isLoading = true
 
         performUpdates(animated: animated, updates: updateContentVisibility) { [self] in
             performUpdates(animated: animated, updates: updateLoaderVisibility)
@@ -97,8 +97,8 @@ final class Button: UIView {
     }
 
     func stopLoading(animated: Bool = true) {
-        guard configuration.loaderVisible else { return }
-        configuration.loaderVisible = false
+        guard configuration.isLoading else { return }
+        configuration.isLoading = false
 
         performUpdates(animated: animated, updates: updateLoaderVisibility) { [self] in
             performUpdates(animated: animated, updates: updateContentVisibility)
@@ -165,8 +165,6 @@ final class Button: UIView {
         updateContentPlacement()
         updateContentVisibility()
         updateLoaderVisibility()
-        loader.setNeedsLayout()
-        updateCorners()
     }
 
     private func updateStyleForCurrentState() {
@@ -184,11 +182,14 @@ final class Button: UIView {
         contentTrailing.constant = -configuration.contentSize.contentInsets.right
         contentBottom.constant = -configuration.contentSize.contentInsets.bottom
         preferredHeight.constant = configuration.contentSize.preferredHeight
+        loader.apply(style: .from(configuration))
+        loader.setNeedsLayout()
+        updateCorners()
     }
 
     private func updateContent() {
         titleLabel.text = configuration.title
-        imageView.image = configuration.icon
+        imageView.image = configuration.image
     }
 
     private func updateContentPlacement() {
@@ -205,12 +206,12 @@ final class Button: UIView {
     }
 
     private func updateContentVisibility() {
-        imageView.isHidden = configuration.icon == nil || configuration.loaderVisible
-        titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.loaderVisible
+        imageView.isHidden = configuration.image == nil || configuration.isLoading
+        titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.isLoading
     }
 
     private func updateLoaderVisibility() {
-        loaderContainer.isHidden = !configuration.loaderVisible
+        loaderContainer.isHidden = !configuration.isLoading
     }
 
     private func updateCorners() {

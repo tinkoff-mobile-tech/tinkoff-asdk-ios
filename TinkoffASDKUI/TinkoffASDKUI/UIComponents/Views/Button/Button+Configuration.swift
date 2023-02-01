@@ -10,11 +10,11 @@ import UIKit
 extension Button {
     struct Configuration: Equatable {
         var title: String?
-        var icon: UIImage?
+        var image: UIImage?
         var style: Style = .clear
         var contentSize = ContentSize()
         var imagePlacement: ImagePlacement = .leading
-        var loaderVisible = false
+        var isLoading = false
     }
 
     struct Style: Equatable {
