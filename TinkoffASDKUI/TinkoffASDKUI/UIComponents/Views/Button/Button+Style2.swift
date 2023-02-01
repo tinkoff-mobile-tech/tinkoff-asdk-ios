@@ -81,8 +81,8 @@ extension Button.Style2 {
             ),
             backgroundColor: Color(
                 normal: .clear,
-                highlighted: .clear,
-                disabled: ASDKColors.Background.neutral1.color
+                highlighted: ASDKColors.Background.neutral1.color,
+                disabled: .clear
             )
         )
     }

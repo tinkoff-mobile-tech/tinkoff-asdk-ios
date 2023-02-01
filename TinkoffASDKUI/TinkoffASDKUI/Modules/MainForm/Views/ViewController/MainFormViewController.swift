@@ -30,6 +30,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         tableView.register(ContainerTableViewCell.self)
         tableView.dataSource = self
         tableView.keyboardDismissMode = .onDrag
+        tableView.delaysContentTouches = false
         return tableView
     }()
 

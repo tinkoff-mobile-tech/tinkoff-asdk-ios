@@ -8,12 +8,12 @@
 import UIKit
 
 extension Button {
-    struct Configuration2 {
+    struct Configuration2: Equatable {
         var style: Style2
         var contentSize: ContentSize
         var title: String?
         var icon: UIImage?
-        var action: VoidBlock?
+        var imagePlacement: ImagePlacement = .leading
     }
 }
 
@@ -25,5 +25,14 @@ extension Button.Configuration2 {
             style: .clear,
             contentSize: Button.ContentSize()
         )
+    }
+}
+
+// MARK: - Button + ImagePlacement
+
+extension Button {
+    enum ImagePlacement {
+        case leading
+        case trailing
     }
 }

@@ -15,7 +15,7 @@ extension Button {
         var cornersStyle: CornersStyle = .none
         var activityIndicatorDiameter: CGFloat = .zero
         var imagePadding: CGFloat = .zero
-        var minHeight: CGFloat = .zero
+        var preferredHeight: CGFloat = .zero
         var contentInsets: UIEdgeInsets = .zero
     }
 }
@@ -39,14 +39,14 @@ extension Button.ContentSize.CornersStyle {
 }
 
 extension Button.ContentSize {
-    static var basicLarge: Button.ContentSize {
+    static var basicSmall: Button.ContentSize {
         Button.ContentSize(
-            titleFont: .systemFont(ofSize: 17, weight: .regular),
-            cornersStyle: .rounded(radius: 16),
-            activityIndicatorDiameter: 24,
-            imagePadding: 8,
-            minHeight: 56,
-            contentInsets: UIEdgeInsets(side: 10)
+            titleFont: .systemFont(ofSize: 13, weight: .bold),
+            cornersStyle: .rounded(radius: 12),
+            activityIndicatorDiameter: 20,
+            imagePadding: 4,
+            preferredHeight: 30,
+            contentInsets: UIEdgeInsets(side: 7)
         )
     }
 
@@ -56,8 +56,19 @@ extension Button.ContentSize {
             cornersStyle: .rounded(radius: 12),
             activityIndicatorDiameter: 24,
             imagePadding: 8,
-            minHeight: 44,
-            contentInsets: UIEdgeInsets(vertical: 16, horizontal: 16)
+            preferredHeight: 44,
+            contentInsets: UIEdgeInsets(side: 10)
+        )
+    }
+
+    static var basicLarge: Button.ContentSize {
+        Button.ContentSize(
+            titleFont: .systemFont(ofSize: 17, weight: .regular),
+            cornersStyle: .rounded(radius: 16),
+            activityIndicatorDiameter: 24,
+            imagePadding: 8,
+            preferredHeight: 56,
+            contentInsets: UIEdgeInsets(side: 10)
         )
     }
 }
