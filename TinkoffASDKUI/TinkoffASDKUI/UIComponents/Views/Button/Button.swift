@@ -39,7 +39,7 @@ final class Button: UIView {
 
     // MARK: Init
 
-    init(configuration: Configuration = Configuration(), action: VoidBlock? = nil) {
+    init(configuration: Configuration = .empty, action: VoidBlock? = nil) {
         self.configuration = configuration
         self.action = action
         super.init(frame: .zero)
