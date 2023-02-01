@@ -87,22 +87,18 @@ final class Button: UIView {
         updateStyleForCurrentState()
     }
 
-    func startLoading(animated: Bool = true) {
+    func startLoading() {
         guard !configuration.isLoading else { return }
         configuration.isLoading = true
-
-        performUpdates(animated: animated, updates: updateContentVisibility) { [self] in
-            performUpdates(animated: animated, updates: updateLoaderVisibility)
-        }
+        updateLoaderVisibility()
+        updateContentVisibility()
     }
 
     func stopLoading(animated: Bool = true) {
         guard configuration.isLoading else { return }
         configuration.isLoading = false
-
-        performUpdates(animated: animated, updates: updateLoaderVisibility) { [self] in
-            performUpdates(animated: animated, updates: updateContentVisibility)
-        }
+        updateLoaderVisibility()
+        updateContentVisibility()
     }
 
     func setAction(_ action: VoidBlock?) {
@@ -249,8 +245,8 @@ final class Button: UIView {
 
         UIView.transition(
             with: self,
-            duration: .defaultAnimationDuration,
-            options: [.transitionCrossDissolve, .curveEaseInOut],
+            duration: .animationDuration,
+            options: [.transitionCrossDissolve],
             animations: updates,
             completion: { _ in completion?() }
         )
