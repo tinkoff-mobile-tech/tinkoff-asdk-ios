@@ -244,45 +244,6 @@ private extension TimeInterval {
     static let animationDuration: TimeInterval = 0.15
 }
 
-// MARK: - Button + Types
-
-extension Button {
-    static var defaultHeight: CGFloat { 56 }
-
-    func startLoading() {}
-    func stopLoading() {}
-    func configure(_ configuration: DeprecatedConfiguration) {}
-    private func configureButton(data: Data) {}
-    private func configureButton(style: DeprecatedStyle) {}
-
-    struct Data {
-        enum Text {
-            case basic(
-                normal: String?,
-                highlighted: String?,
-                disabled: String?
-            )
-        }
-
-        let text: Text?
-        let onTapAction: () -> Void
-    }
-
-    struct DeprecatedConfiguration {
-        let data: Data
-        let style: DeprecatedStyle
-
-        static var empty: Self {
-            Self(data: Button.Data(text: nil, onTapAction: {}), style: .destructive)
-        }
-    }
-
-    enum ActivityIndicatorState {
-        case loading
-        case normal
-    }
-}
-
 // MARK: - ActivityIndicatorView.Style + Helpers
 
 private extension ActivityIndicatorView.Style {
