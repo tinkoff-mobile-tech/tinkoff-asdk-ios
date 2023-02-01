@@ -70,8 +70,7 @@ final class Button: UIView {
     }
 
     func reconfigure(animated: Bool, _ configurationChangeHandler: (inout Configuration) -> Void) {
-        var configuration = self.configuration
-        configurationChangeHandler(&configuration)
+        let configuration = modify(configuration, configurationChangeHandler)
         configure(configuration, animated: animated)
     }
 

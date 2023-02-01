@@ -115,7 +115,8 @@ extension StubView: ConfigurableItem {
         iconImageView.configure(with: configuration.icon)
         titleLabel.configure(configuration.title)
         subtitleLabel.configure(configuration.subtitle)
-        button.configure(configuration.button)
+        button.configure(configuration.button, animated: false)
+        button.onTapAction = configuration.buttonAction
         // handling empty content cases
         tuneConstraintsForEmptyContent(configuration: configuration)
     }
@@ -124,10 +125,11 @@ extension StubView: ConfigurableItem {
         let icon: UIImageView.Configuration
         let title: UILabel.Configuration
         let subtitle: UILabel.Configuration
-        let button: Button.DeprecatedConfiguration
+        let button: Button.Configuration
+        let buttonAction: VoidBlock
 
         static var empty: Self {
-            Self(icon: .empty, title: .empty, subtitle: .empty, button: .empty)
+            Self(icon: .empty, title: .empty, subtitle: .empty, button: .empty, buttonAction: {})
         }
     }
 }

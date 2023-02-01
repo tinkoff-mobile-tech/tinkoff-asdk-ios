@@ -50,16 +50,14 @@ final class BaseStubViewBuilder: IStubViewBuilder {
                         .set(numberOfLines: 2)
                 )
             ),
-            button: Button.DeprecatedConfiguration(
-                data: Button.Data(
-                    text: .basic(normal: inputData.buttonTitle, highlighted: nil, disabled: nil),
-                    onTapAction: inputData.buttonAction
-                ),
-                style: .secondary
-                    .set(contentEdgeInsets: UIEdgeInsets(vertical: 13, horizontal: 18))
-                    .set(font: UILabel.Style.bodyM().font)
-                    .set(cornerRadius: 12)
-            )
+            button: Button.Configuration(
+                title: inputData.buttonTitle,
+                style: .secondary,
+                contentSize: modify(.basicMedium) {
+                    $0.contentInsets = UIEdgeInsets(vertical: 13, horizontal: 18)
+                }
+            ),
+            buttonAction: inputData.buttonAction
         )
 
         return config
