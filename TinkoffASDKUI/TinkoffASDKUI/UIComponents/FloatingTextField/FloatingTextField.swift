@@ -15,6 +15,8 @@ final class FloatingTextField: UIView {
 
     // MARK: Properties
 
+    private var insetsType: InsetsType
+
     private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = ASDKColors.Background.neutral1.color
@@ -49,11 +51,15 @@ final class FloatingTextField: UIView {
 
     // MARK: Initialization
 
-    convenience init() {
-        self.init(frame: .zero)
+    init(insetsType: InsetsType = .commonInsets) {
+        self.insetsType = insetsType
+        super.init(frame: .zero)
+        setupViews()
+        setupViewsConstraints()
     }
 
     override init(frame: CGRect) {
+        insetsType = .commonInsets
         super.init(frame: .zero)
         setupViews()
         setupViewsConstraints()
@@ -63,6 +69,18 @@ final class FloatingTextField: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: Overrides
+
+    @discardableResult
+    override func becomeFirstResponder() -> Bool {
+        textField.becomeFirstResponder()
+    }
+
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
+        textField.resignFirstResponder()
+    }
 }
 
 // MARK: - Public
@@ -70,9 +88,7 @@ final class FloatingTextField: UIView {
 extension FloatingTextField {
     func set(text: String) {
         textField.text = text
-        if !text.isEmpty {
-            liftHeaderLabel()
-        }
+        liftHeaderLabelIfNeeded()
     }
 
     func set(placeholder: String) {
@@ -82,12 +98,21 @@ extension FloatingTextField {
         }
     }
 
+    func set(clearButtonMode: UITextField.ViewMode) {
+        textField.clearButtonMode = clearButtonMode
+    }
+
     func set(keyboardType: UIKeyboardType) {
         textField.keyboardType = keyboardType
     }
 
+    func set(isSecureTextEntry: Bool) {
+        textField.isSecureTextEntry = isSecureTextEntry
+    }
+
     func setHeader(text: String) {
         headerLabel.text = text
+        liftHeaderLabelIfNeeded()
     }
 
     func setHeader(color: UIColor) {
@@ -98,8 +123,8 @@ extension FloatingTextField {
 // MARK: - UITextFieldDelegate
 
 extension FloatingTextField: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return delegate?.textFieldShouldReturn(textField) ?? true
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        delegate?.textFieldShouldBeginEditing(textField) ?? true
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -111,11 +136,23 @@ extension FloatingTextField: UITextFieldDelegate {
         delegate?.textField(textField, shouldChangeCharactersIn: range, replacementString: string) ?? true
     }
 
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        delegate?.textFieldShouldEndEditing(textField) ?? true
+    }
+
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.text?.isEmpty == true {
             downHeaderLabel()
         }
         delegate?.textFieldDidEndEditing(textField)
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        delegate?.textFieldShouldReturn(textField) ?? true
+    }
+
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        delegate?.textFieldShouldClear(textField) ?? true
     }
 }
 
@@ -151,10 +188,10 @@ extension FloatingTextField {
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            textField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: .textFieldLeftInset),
-            textField.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -.textFieldRightInset),
-            textField.topAnchor.constraint(equalTo: containerView.topAnchor, constant: .textFieldTopInset),
-            textField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -.textFieldBottomInset),
+            textField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: insetsType.textFieldInsets.left),
+            textField.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -insetsType.textFieldInsets.right),
+            textField.topAnchor.constraint(equalTo: containerView.topAnchor, constant: insetsType.textFieldInsets.top),
+            textField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -insetsType.textFieldInsets.bottom),
 
             headerLabel.leftAnchor.constraint(equalTo: textField.leftAnchor),
             headerLabel.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
@@ -172,9 +209,12 @@ extension FloatingTextField {
     private func animateHeaderLabel(isLifting: Bool) {
         let placeholderColor: UIColor = isLifting ? ASDKColors.Text.tertiary.color : .clear
 
-        let headerLabelScale: CGFloat = isLifting ? .headerLabelLiftedScale : .headerLabelDownScale
-        let headerLabelXTranslation: Double = isLifting ? -.headerLabelLiftingTranslationX : .zero
+        let headerWidth = headerLabel.intrinsicContentSize.width
+        let headerLiftedX: Double = (headerWidth - (headerWidth * .headerLabelLiftedScale)) / 2.0
+        let headerLabelXTranslation: Double = isLifting ? -headerLiftedX : .zero
         let headerLabelYTranslation: Double = isLifting ? -.headerLabelLiftingTranslationY : .zero
+
+        let headerLabelScale: CGFloat = isLifting ? .headerLabelLiftedScale : .headerLabelDownScale
 
         let translationTransform = CGAffineTransform(translationX: headerLabelXTranslation, y: headerLabelYTranslation)
         let scaleTransform = CGAffineTransform(scaleX: headerLabelScale, y: headerLabelScale)
@@ -185,6 +225,10 @@ extension FloatingTextField {
         }
 
         animateChanges(in: textField, animations: { self.textField.setPlaceholder(color: placeholderColor) })
+    }
+
+    private func liftHeaderLabelIfNeeded() {
+        if textField.text?.isEmpty == false { liftHeaderLabel() }
     }
 
     private func animateChanges(in view: UIView, animations: @escaping VoidBlock) {
@@ -200,8 +244,21 @@ extension FloatingTextField {
 
 // MARK: - Constants
 
+extension FloatingTextField {
+    enum InsetsType {
+        case commonInsets
+        case smallInsets
+
+        var textFieldInsets: UIEdgeInsets {
+            switch self {
+            case .commonInsets: return UIEdgeInsets(top: 9, left: 12, bottom: 9, right: 7)
+            case .smallInsets: return UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 7)
+            }
+        }
+    }
+}
+
 private extension Double {
-    static let headerLabelLiftingTranslationX: Double = 16
     static let headerLabelLiftingTranslationY: Double = 10
 }
 
@@ -210,9 +267,4 @@ private extension CGFloat {
     static let headerLabelDownScale: CGFloat = 1
 
     static let containerViewRadius: CGFloat = 16
-
-    static let textFieldLeftInset: CGFloat = 12
-    static let textFieldRightInset: CGFloat = 7
-    static let textFieldTopInset: CGFloat = 9
-    static let textFieldBottomInset: CGFloat = 9
 }
