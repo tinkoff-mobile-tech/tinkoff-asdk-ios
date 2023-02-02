@@ -161,7 +161,7 @@ extension CardFieldView {
         }
     }
 
-    private func configure(textField: FloatingTextField, with config: TextField.Configuration) {
+    private func configure(textField: FloatingTextField, with config: FloatingTextField.Configuration) {
         textField.setHeader(text: config.headerLabel.content.text)
         textField.set(text: config.textField.content.text)
         textField.set(placeholder: config.textField.placeholder.text)

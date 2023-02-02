@@ -13,18 +13,18 @@ extension CardFieldView {
         let style: Style
         var dynamicCardIcon: DynamicIconCardView.Model
 
-        let expirationTextFieldConfig: TextField.Configuration
-        let cardNumberTextFieldConfig: TextField.Configuration
-        let cvcTextFieldConfig: TextField.Configuration
+        let expirationTextFieldConfig: FloatingTextField.Configuration
+        let cardNumberTextFieldConfig: FloatingTextField.Configuration
+        let cvcTextFieldConfig: FloatingTextField.Configuration
 
         var onDidConfigure: (() -> Void)?
 
         init(
             style: Style,
             dynamicCardIcon: DynamicIconCardView.Model,
-            expirationTextFieldConfig: TextField.Configuration,
-            cardNumberTextFieldConfig: TextField.Configuration,
-            cvcTextFieldConfig: TextField.Configuration
+            expirationTextFieldConfig: FloatingTextField.Configuration,
+            cardNumberTextFieldConfig: FloatingTextField.Configuration,
+            cvcTextFieldConfig: FloatingTextField.Configuration
         ) {
             self.style = style
             self.dynamicCardIcon = dynamicCardIcon
@@ -68,7 +68,7 @@ extension CardFieldView.Config {
         return Self(
             style: .regular,
             dynamicCardIcon: DynamicIconCardView.Model(data: data.dynamicCardIconData),
-            expirationTextFieldConfig: TextField.Configuration(
+            expirationTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.expirationTextFieldData.delegate,
                     text: data.expirationTextFieldData.text,
@@ -80,7 +80,7 @@ extension CardFieldView.Config {
                     content: .plain(text: data.expirationTextFieldData.headerText, style: headerLabelStyle)
                 )
             ),
-            cardNumberTextFieldConfig: TextField.Configuration(
+            cardNumberTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.cardNumberTextFieldData.delegate,
                     text: data.cardNumberTextFieldData.text,
@@ -92,7 +92,7 @@ extension CardFieldView.Config {
                     content: .plain(text: data.cardNumberTextFieldData.headerText, style: headerLabelStyle)
                 )
             ),
-            cvcTextFieldConfig: TextField.Configuration(
+            cvcTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.cvcTextFieldData.delegate,
                     text: data.cvcTextFieldData.text,
