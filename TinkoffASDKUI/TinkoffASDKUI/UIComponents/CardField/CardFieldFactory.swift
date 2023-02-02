@@ -40,8 +40,7 @@ final class CardFieldFactory: ICardFieldFactory {
             }, didEndEditing: {
                 cardFieldPresenter.didEndEditing(fieldType: .cardNumber)
             }, listenerStorage: &listenerStorage),
-            text: nil,
-            headerText: Texts.panTitle
+            text: nil
         )
 
         let expData = CardFieldView.DataDependecies.TextFieldData(
@@ -52,8 +51,7 @@ final class CardFieldFactory: ICardFieldFactory {
             }, didEndEditing: {
                 cardFieldPresenter.didEndEditing(fieldType: .expiration)
             }, listenerStorage: &listenerStorage),
-            text: nil,
-            headerText: Texts.termTitle
+            text: nil
         )
 
         let cvcData = CardFieldView.DataDependecies.TextFieldData(
@@ -64,8 +62,7 @@ final class CardFieldFactory: ICardFieldFactory {
             }, didEndEditing: {
                 cardFieldPresenter.didEndEditing(fieldType: .cvc)
             }, listenerStorage: &listenerStorage),
-            text: nil,
-            headerText: Texts.cvvTitle
+            text: nil
         )
 
         let config = CardFieldView.Config.assembleWithRegularStyle(

@@ -154,11 +154,14 @@ extension CardFieldView {
         contentView.addSubview(expireTextField)
         contentView.addSubview(cvcTextField)
 
+        cardNumberTextField.setHeader(text: Loc.Acquiring.CardField.panTitle)
         cardNumberTextField.set(keyboardType: .numberPad)
 
+        expireTextField.setHeader(text: Loc.Acquiring.CardField.termTitle)
         expireTextField.set(placeholder: Loc.Acquiring.CardField.termPlaceholder)
         expireTextField.set(keyboardType: .numberPad)
 
+        cvcTextField.setHeader(text: Loc.Acquiring.CardField.cvvTitle)
         cvcTextField.set(placeholder: Loc.Acquiring.CardField.cvvPlaceholder)
         cvcTextField.set(keyboardType: .numberPad)
         cvcTextField.set(isSecureTextEntry: true)
@@ -173,7 +176,6 @@ extension CardFieldView {
     }
 
     private func configure(textField: FloatingTextField, with config: FloatingTextField.Configuration) {
-        textField.setHeader(text: config.headerLabel.content.text)
         textField.set(text: config.textField.content.text)
         textField.delegate = config.textField.delegate
     }

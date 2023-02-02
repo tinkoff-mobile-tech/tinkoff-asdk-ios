@@ -10,11 +10,9 @@ import UIKit
 extension FloatingTextField {
     final class Configuration {
         var textField: TextFieldConfiguration
-        let headerLabel: UILabel.Configuration
 
-        init(textField: TextFieldConfiguration, headerLabel: UILabel.Configuration) {
+        init(textField: TextFieldConfiguration) {
             self.textField = textField
-            self.headerLabel = headerLabel
         }
     }
 }

@@ -37,37 +37,24 @@ extension CardFieldView {
 extension CardFieldView.Config {
 
     static func assembleWithRegularStyle(data: CardFieldView.DataDependecies) -> Self {
-        let headerLabelStyle = UILabel.Style
-            .bodyL()
-            .set(textColor: ASDKColors.Text.secondary.color)
-
         return Self(
             dynamicCardIcon: DynamicIconCardView.Model(data: data.dynamicCardIconData),
             expirationTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.expirationTextFieldData.delegate,
                     text: data.expirationTextFieldData.text
-                ),
-                headerLabel: UILabel.Configuration(
-                    content: .plain(text: data.expirationTextFieldData.headerText, style: headerLabelStyle)
                 )
             ),
             cardNumberTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.cardNumberTextFieldData.delegate,
                     text: data.cardNumberTextFieldData.text
-                ),
-                headerLabel: UILabel.Configuration(
-                    content: .plain(text: data.cardNumberTextFieldData.headerText, style: headerLabelStyle)
                 )
             ),
             cvcTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.cvcTextFieldData.delegate,
                     text: data.cvcTextFieldData.text
-                ),
-                headerLabel: UILabel.Configuration(
-                    content: .plain(text: data.cvcTextFieldData.headerText, style: headerLabelStyle)
                 )
             )
         )
