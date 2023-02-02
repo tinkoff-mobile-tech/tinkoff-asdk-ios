@@ -20,18 +20,7 @@ extension CardFieldDelegate {
 // cardFieldView.configure(with: config)
 
 final class CardFieldView: UIView {
-
-    override var intrinsicContentSize: CGSize { self.frame.size }
-
-    override var frame: CGRect {
-        didSet {
-            guard frame != oldValue else { return }
-            handleFrameChange()
-        }
-    }
-
-    private(set) var configuration: Config?
-
+    
     var input: ICardFieldInput { presenter }
     weak var delegate: CardFieldDelegate?
 
@@ -41,22 +30,11 @@ final class CardFieldView: UIView {
 
     private let contentView = UIView()
 
-    private let cardNumberView = UIView()
-    private let expireView = UIView()
-    private let cvcView = UIView()
-
     private let dynamicCardView = DynamicIconCardView()
-    private let expireTextField = TextField()
-    private let cardNumberTextField = TextField()
-    private let cvcTextField = TextField()
-
-    // MARK: - Other
-
-    private var observation: NSKeyValueObservation?
-
-    private var cardNumberWidthAnchor: NSLayoutConstraint?
-    private var expireWidthAnchor: NSLayoutConstraint?
-    private var cvcWidthAnchor: NSLayoutConstraint?
+    
+    private let cardNumberTextField = FloatingTextField(insetsType: .commonAndHugeLeftInset)
+    private let expireTextField = FloatingTextField()
+    private let cvcTextField = FloatingTextField()
 
     // MARK: - Init
 
@@ -64,6 +42,7 @@ final class CardFieldView: UIView {
         self.presenter = presenter
         super.init(frame: .zero)
         setupViews()
+        setupConstraints()
     }
 
     @available(*, unavailable)
@@ -73,102 +52,46 @@ final class CardFieldView: UIView {
 }
 
 extension CardFieldView {
-
     private func setupViews() {
-        observation = observe(\.center) { [weak self] _, _ in
-            self?.handleFrameChange()
-        }
-
-        addViews()
-        setupConstraints()
-    }
-
-    private func addViews() {
         contentView.backgroundColor = .clear
         addSubview(contentView)
-        contentView.makeEqualToSuperview()
 
-        contentView.addSubview(cardNumberView)
-        contentView.addSubview(expireView)
-        contentView.addSubview(cvcView)
-
-        cardNumberView.addSubview(dynamicCardView)
-        cardNumberView.addSubview(cardNumberTextField)
-        expireView.addSubview(expireTextField)
-        cvcView.addSubview(cvcTextField)
+        contentView.addSubview(cardNumberTextField)
+        contentView.addSubview(dynamicCardView)
+        contentView.addSubview(expireTextField)
+        contentView.addSubview(cvcTextField)
     }
 
     private func setupConstraints() {
+        contentView.makeEqualToSuperview()
 
-        // Card Number
-        let cardNumberWidthAnchor = cardNumberView.width(constant: .zero)
-        self.cardNumberWidthAnchor = cardNumberWidthAnchor
+        cardNumberTextField.translatesAutoresizingMaskIntoConstraints = false
+        dynamicCardView.translatesAutoresizingMaskIntoConstraints = false
+        expireTextField.translatesAutoresizingMaskIntoConstraints = false
+        cvcTextField.translatesAutoresizingMaskIntoConstraints = false
 
-        cardNumberView.makeConstraints { make in
-            [
-                cardNumberWidthAnchor,
-                make.height(constant: Constants.Card.height),
-                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor),
-                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
-            ]
-        }
+        NSLayoutConstraint.activate([
+            cardNumberTextField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            cardNumberTextField.topAnchor.constraint(equalTo: contentView.topAnchor),
+            cardNumberTextField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            cardNumberTextField.heightAnchor.constraint(equalToConstant: Constants.Card.height),
 
-        dynamicCardView.makeConstraints { make in
-            [
-                make.topAnchor.constraint(equalTo: make.forcedSuperview.topAnchor, constant: Constants.Card.DynamicIcon.topInset),
-                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor, constant: Constants.Card.DynamicIcon.leftInset),
-            ] + make.size(Constants.Card.DynamicIcon.size)
-        }
+            dynamicCardView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Constants.Card.DynamicIcon.leftInset),
+            dynamicCardView.centerYAnchor.constraint(equalTo: cardNumberTextField.centerYAnchor),
+            dynamicCardView.heightAnchor.constraint(equalToConstant: Constants.Card.DynamicIcon.size.height),
+            dynamicCardView.widthAnchor.constraint(equalToConstant: Constants.Card.DynamicIcon.size.width),
 
-        cardNumberTextField.makeConstraints { view in
-            [
-                view.leftAnchor.constraint(equalTo: dynamicCardView.rightAnchor, constant: Constants.Card.TextField.leftInset),
-                view.topAnchor.constraint(equalTo: view.forcedSuperview.topAnchor, constant: Constants.Card.TextField.topInset),
-                view.rightAnchor.constraint(equalTo: view.forcedSuperview.rightAnchor, constant: -Constants.Card.TextField.rightInset),
-            ]
-        }
+            expireTextField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            expireTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: Constants.Expiration.topInset),
+            expireTextField.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+            expireTextField.heightAnchor.constraint(equalToConstant: Constants.Expiration.height),
+            expireTextField.widthAnchor.constraint(equalTo: cvcTextField.widthAnchor),
 
-        // Expire
-
-        expireView.makeConstraints { make in
-            let width = make.width(constant: 0)
-            expireWidthAnchor = width
-
-            return [
-                make.leftAnchor.constraint(equalTo: make.forcedSuperview.leftAnchor),
-                make.topAnchor.constraint(equalTo: cardNumberView.bottomAnchor, constant: Constants.Expiration.topInset),
-                make.height(constant: Constants.Expiration.height),
-                width,
-                make.bottomAnchor.constraint(lessThanOrEqualTo: make.forcedSuperview.bottomAnchor),
-            ]
-        }
-
-        expireTextField.makeEqualToSuperview(insets: Constants.Expiration.TextField.insets)
-
-        // CVC
-
-        cvcView.makeConstraints { make in
-            let width = make.width(constant: 0)
-            cvcWidthAnchor = width
-
-            return [
-                make.rightAnchor.constraint(equalTo: make.forcedSuperview.rightAnchor),
-                make.topAnchor.constraint(equalTo: cardNumberView.bottomAnchor, constant: Constants.Expiration.topInset),
-                make.height(constant: Constants.Cvc.height),
-                width,
-            ]
-        }
-
-        cvcTextField.makeEqualToSuperview(insets: Constants.Cvc.TextField.insets)
-    }
-
-    private func handleFrameChange() {
-        contentView.layoutIfNeeded()
-        let width = (contentView.frame.size.width / 2) - (Constants.Cvc.leftInset / 2)
-        cardNumberWidthAnchor?.constant = contentView.frame.size.width
-        expireWidthAnchor?.constant = width
-        cvcWidthAnchor?.constant = width
-        delegate?.sizeDidChange(view: self, size: bounds.size)
+            cvcTextField.leftAnchor.constraint(equalTo: expireTextField.rightAnchor, constant: Constants.Cvc.leftInset),
+            cvcTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: Constants.Expiration.topInset),
+            cvcTextField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            cvcTextField.heightAnchor.constraint(equalTo: expireTextField.heightAnchor),
+        ])
     }
 }
 
@@ -183,77 +106,52 @@ extension CardFieldView: IDynamicIconCardViewUpdater {
 
 extension CardFieldView: Activatable {
     var isActive: Bool {
-        cardNumberTextField.isActive || expireTextField.isActive || cvcTextField.isActive
+        cardNumberTextField.isFirstResponder || expireTextField.isFirstResponder || cvcTextField.isFirstResponder
     }
 
     func activate() {
         guard !isActive else { return }
-        cardNumberTextField.activate()
+        cardNumberTextField.becomeFirstResponder()
     }
 
     func deactivate() {
         guard isActive else { return }
-        cardNumberTextField.deactivate()
-        expireTextField.deactivate()
-        cvcTextField.deactivate()
+        cardNumberTextField.resignFirstResponder()
+        expireTextField.resignFirstResponder()
+        cvcTextField.resignFirstResponder()
     }
 }
 
-extension CardFieldView: ConfigurableItem {
+extension CardFieldView {
+    private func configure(textField: FloatingTextField, with config: TextField.Configuration) {
+        textField.setHeader(text: config.headerLabel.content.text)
+        textField.set(text: config.textField.content.text)
+        textField.set(placeholder: config.textField.placeholder.text)
+        textField.set(keyboardType: config.textField.keyboardType)
+        textField.set(isSecureTextEntry: config.textField.isSecure)
+        textField.delegate = config.textField.delegate
+    }
+}
 
-    // MARK: - Public
-
-    func configure(with config: Config?) {
-        prepareForReuse()
-        guard let config = config else { return }
-        apply(style: config.style)
+extension CardFieldView: Configurable {
+    func update(with configuration: Config?) {
+        guard let config = configuration else { return }
 
         config.dynamicCardIcon.updater = self
         dynamicCardView.configure(model: config.dynamicCardIcon)
-        expireTextField.configure(with: config.expirationTextFieldConfig)
-        cardNumberTextField.configure(with: config.cardNumberTextFieldConfig)
-        cvcTextField.configure(with: config.cvcTextFieldConfig)
-        config.onDidConfigure?()
-    }
-
-    // MARK: - Private
-
-    private func apply(style: Style) {
-        cardNumberView.layer.cornerRadius = style.card.cornerRadius
-        cardNumberView.backgroundColor = style.card.backgroundColor
-
-        expireView.layer.cornerRadius = style.card.cornerRadius
-        expireView.backgroundColor = style.card.backgroundColor
-
-        cvcView.layer.cornerRadius = style.cvc.cornerRadius
-        cvcView.backgroundColor = style.cvc.backgroundColor
-    }
-}
-
-extension CardFieldView: Reusable, Configurable {
-
-    func update(with configuration: Config?) {
-        configure(with: configuration)
-    }
-
-    func prepareForReuse() {
-        cardNumberView.layer.cornerRadius = .zero
-        cardNumberView.backgroundColor = .clear
-        expireView.layer.cornerRadius = .zero
-        expireView.backgroundColor = .clear
-        cvcView.layer.cornerRadius = .zero
-        cvcView.backgroundColor = .clear
+        configure(textField: cardNumberTextField, with: config.cardNumberTextFieldConfig)
+        configure(textField: expireTextField, with: config.expirationTextFieldConfig)
+        configure(textField: cvcTextField, with: config.cvcTextFieldConfig)
     }
 }
 
 extension CardFieldView: ICardFieldView {
-
     func activateExpirationField() {
-        expireTextField.activate()
+        expireTextField.becomeFirstResponder()
     }
 
     func activateCvcField() {
-        cvcTextField.activate()
+        cvcTextField.becomeFirstResponder()
     }
 }
 

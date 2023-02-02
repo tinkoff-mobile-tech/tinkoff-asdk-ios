@@ -278,7 +278,7 @@ extension TextField: ConfigurableItem {
     }
 
     private func apply(textFieldConfig config: TextFieldConfiguration) {
-        textField.delegate = config.delegate
+//        textField.delegate = config.delegate
         textField.isSecureTextEntry = config.isSecure
         textField.tintColor = config.tintColor
         textField.keyboardType = config.keyboardType

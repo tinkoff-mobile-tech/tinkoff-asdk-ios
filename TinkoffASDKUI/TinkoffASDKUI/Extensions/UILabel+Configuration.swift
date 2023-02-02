@@ -43,6 +43,15 @@ extension UILabel {
         case attributed(string: NSAttributedString?)
 
         static var empty: Self { Self.attributed(string: nil) }
+
+        var text: String {
+            switch self {
+            case let .plain(text, _):
+                return text ?? ""
+            case let .attributed(atrString):
+                return atrString?.string ?? ""
+            }
+        }
     }
 
     struct Configuration {

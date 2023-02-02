@@ -10,7 +10,7 @@ extension CardFieldView {
         let cvcTextFieldData: TextFieldData
 
         struct TextFieldData {
-            let delegate: UITextFieldDelegate?
+            let delegate: FloatingTextFieldDelegate?
             let text: String?
             let placeholder: String?
             let headerText: String

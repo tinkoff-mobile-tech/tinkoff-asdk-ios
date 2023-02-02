@@ -39,7 +39,7 @@ extension TextField {
 
     struct TextFieldConfiguration {
 
-        let delegate: UITextFieldDelegate?
+        let delegate: FloatingTextFieldDelegate?
         var eventHandler: ((TextFieldEvent, TextField) -> Void)?
         let content: UILabel.Content
         let placeholder: UILabel.Content
@@ -51,7 +51,7 @@ extension TextField {
         var keyboardType: UIKeyboardType = .default
 
         static func assembleWithRegularContentAndStyle(
-            delegate: UITextFieldDelegate?,
+            delegate: FloatingTextFieldDelegate?,
             text: String?,
             placeholder: String?,
             eventHandler: ((TextFieldEvent, TextField) -> Void)? = nil,
