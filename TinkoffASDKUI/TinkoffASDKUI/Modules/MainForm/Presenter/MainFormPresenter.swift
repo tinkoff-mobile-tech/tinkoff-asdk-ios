@@ -24,7 +24,7 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private var rows: [MainFormRowType] { [.savedCard(savedCardPresenter)] }
+    private var cellTypes: [MainFormCellType] = []
     private var loadedCards: [PaymentCard] = []
 
     // MARK: Init
@@ -75,17 +75,12 @@ extension MainFormPresenter: IMainFormPresenter {
             orderDescription: "Заказ №123456"
         )
 
-        let paymentControls = MainFormPaymentControlsViewModel(
-            buttonType: .primary(title: "Оплатить картой")
-        )
+        cellTypes = [
+            .orderDetails,
+            .savedCard(savedCardPresenter),
+        ]
 
-        let header = MainFormHeaderViewModel(
-            orderDetails: orderDetails,
-            paymentControls: paymentControls
-        )
-
-        view?.updateHeader(with: header)
-        view?.set(payButtonEnabled: savedCardPresenter.isValid)
+        view?.updateOrderDetails(with: orderDetails)
         loadCardsIfNeeded()
     }
 
@@ -96,11 +91,11 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 
     func numberOfRows() -> Int {
-        rows.count
+        cellTypes.count
     }
 
-    func row(at indexPath: IndexPath) -> MainFormRowType {
-        rows[indexPath.row]
+    func row(at indexPath: IndexPath) -> MainFormCellType {
+        cellTypes[indexPath.row]
     }
 }
 
@@ -116,7 +111,5 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didUpdateCVC cvc: String,
         isValid: Bool
-    ) {
-        view?.set(payButtonEnabled: isValid)
-    }
+    ) {}
 }

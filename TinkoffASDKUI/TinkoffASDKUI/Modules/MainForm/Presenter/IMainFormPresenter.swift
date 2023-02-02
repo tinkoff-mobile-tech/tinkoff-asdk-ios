@@ -12,5 +12,5 @@ protocol IMainFormPresenter {
     func viewWasClosed()
     func viewDidTapPayButton()
     func numberOfRows() -> Int
-    func row(at indexPath: IndexPath) -> MainFormRowType
+    func row(at indexPath: IndexPath) -> MainFormCellType
 }

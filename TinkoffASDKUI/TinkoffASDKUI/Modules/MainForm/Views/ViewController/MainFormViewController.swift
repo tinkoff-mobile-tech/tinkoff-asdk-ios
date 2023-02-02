@@ -21,20 +21,20 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     // MARK: Subviews
 
-    private lazy var headerView = MainFormHeaderView(delegate: self)
+    private lazy var headerView = MainFormHeaderView(frame: .headerInitialFrame)
+    private lazy var orderDetailsView = MainFormOrderDetailsView()
+    private lazy var savedCardView = SavedCardView()
+
     private lazy var tableView: UITableView = {
-        // Явное присваивание фрейма до того, как произошел цикл autolayout,
-        // позволяет избавиться от логов в консоли с конфликтами горизонтальных констрейнтов при установке `tableHeaderView`
         let tableView = UITableView(frame: view.bounds)
         tableView.separatorStyle = .none
         tableView.register(ContainerTableViewCell.self)
-        tableView.dataSource = self
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
+        tableView.dataSource = self
+
         return tableView
     }()
-
-    private lazy var savedCardView = SavedCardView()
 
     // MARK: Init
 
@@ -56,17 +56,6 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         presenter.viewDidLoad()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        // tableHeaderView не изменяет свой размер во время лейаута.
-        // Здесь выставляется высота на основе его констрейнтов
-        headerView.frame.size = headerView.systemLayoutSizeFitting(
-            CGSize(width: headerView.bounds.width, height: UIView.layoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        )
-    }
-
     // MARK: Initial Configuration
 
     private func setupTableView() {
@@ -79,21 +68,11 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func updateHeader(with viewModel: MainFormHeaderViewModel) {
-        headerView.update(with: viewModel)
+    func updateOrderDetails(with model: MainFormOrderDetailsViewModel) {
+        orderDetailsView.update(with: model)
     }
 
-    func set(payButtonEnabled: Bool) {
-        headerView.set(payButtonEnabled: payButtonEnabled)
-    }
-}
-
-// MARK: - MainFormHeaderViewDelegate
-
-extension MainFormViewController: MainFormHeaderViewDelegate {
-    func headerViewDidTapPrimaryButton() {
-        presenter.viewDidTapPayButton()
-    }
+    func set(payButtonEnabled: Bool) {}
 }
 
 // MARK: - PullableContainerContent Methods
@@ -104,20 +83,28 @@ extension MainFormViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension MainFormViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         presenter.numberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let row = presenter.row(at: indexPath)
+        let cellType = presenter.row(at: indexPath)
 
-        switch row {
+        switch cellType {
+        case .orderDetails:
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(orderDetailsView, insets: .zero)
+            return cell
         case let .savedCard(savedCardPresenter):
             savedCardView.presenter = savedCardPresenter
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(savedCardView, insets: .savedCardInsets)
             return cell
+        case .payButton:
+            fatalError("Not implemented")
         }
     }
 }
@@ -126,4 +113,9 @@ extension MainFormViewController: UITableViewDataSource {
 
 private extension UIEdgeInsets {
     static let savedCardInsets = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
+    static let payButtonInsets = UIEdgeInsets(vertical: 16, horizontal: 16)
+}
+
+private extension CGRect {
+    static let headerInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
 }
