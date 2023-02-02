@@ -160,7 +160,6 @@ extension AddNewCardView {
     private func prepareCollectionView() -> UICollectionView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -207,15 +206,21 @@ extension AddNewCardView: UICollectionViewDelegate {
     }
 
     private func prepareCardFieldCell(indexPath: IndexPath) -> UICollectionViewCell {
-        let insets = Constants.CollectionView.horizontalInsets
-        let width = collectionView.frame.width - insets.horizontal
-        let cardFieldHeight = cardFieldView.systemLayoutSizeFitting(.zero).height
-        let cardFieldSize = CGSize(width: width, height: cardFieldHeight)
-        cardFieldView.frame = CGRect(origin: .zero, size: cardFieldSize)
-
         let cell = collectionView.dequeue(ContainerCollectionCell.self, for: indexPath)
         cell.update(with: ContainerCollectionCell.Configuration(content: cardFieldView, shouldHighlight: false))
         return cell
+    }
+}
+
+extension AddNewCardView: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let cardFieldHeight = cardFieldView.systemLayoutSizeFitting(.zero).height
+        let width = collectionView.frame.width - Constants.CollectionView.horizontalInsets.horizontal
+        return CGSize(width: width, height: cardFieldHeight)
     }
 }
 

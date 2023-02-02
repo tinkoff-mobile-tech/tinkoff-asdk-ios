@@ -32,27 +32,39 @@ final class CardFieldFactory: ICardFieldFactory {
             data: DynamicIconCardView.Data()
         )
 
-        let expData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForExpiration(didFillMask: { text, completed in
-                cardFieldPresenter.didFillExpiration(text: text, filled: completed)
-            }, listenerStorage: &listenerStorage),
-            text: nil,
-            placeholder: Texts.termPlaceholder,
-            headerText: Texts.termTitle
-        )
-
         let cardNumberData = CardFieldView.DataDependecies.TextFieldData(
             delegate: maskingFactory.buildForCardNumber(didFillMask: { text, completed in
                 cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
+            }, didBeginEditing: {
+                cardFieldPresenter.didBeginEditing(fieldType: .cardNumber)
+            }, didEndEditing: {
+                cardFieldPresenter.didEndEditing(fieldType: .cardNumber)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: nil,
             headerText: Texts.panTitle
         )
 
+        let expData = CardFieldView.DataDependecies.TextFieldData(
+            delegate: maskingFactory.buildForExpiration(didFillMask: { text, completed in
+                cardFieldPresenter.didFillExpiration(text: text, filled: completed)
+            }, didBeginEditing: {
+                cardFieldPresenter.didBeginEditing(fieldType: .expiration)
+            }, didEndEditing: {
+                cardFieldPresenter.didEndEditing(fieldType: .expiration)
+            }, listenerStorage: &listenerStorage),
+            text: nil,
+            placeholder: Texts.termPlaceholder,
+            headerText: Texts.termTitle
+        )
+
         let cvcData = CardFieldView.DataDependecies.TextFieldData(
             delegate: maskingFactory.buildForCvc(didFillMask: { text, completed in
                 cardFieldPresenter.didFillCvc(text: text, filled: completed)
+            }, didBeginEditing: {
+                cardFieldPresenter.didBeginEditing(fieldType: .cvc)
+            }, didEndEditing: {
+                cardFieldPresenter.didEndEditing(fieldType: .cvc)
             }, listenerStorage: &listenerStorage),
             text: nil,
             placeholder: Texts.cvvPlaceholder,

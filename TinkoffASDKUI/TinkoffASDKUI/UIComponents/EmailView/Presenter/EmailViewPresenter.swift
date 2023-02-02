@@ -25,6 +25,8 @@ final class EmailViewPresenter: IEmailViewOutput, IEmailViewPresenterInput {
     private(set) lazy var currentEmail: String = customerEmail
     var isEmailValid: Bool { isValidEmail(currentEmail) }
 
+    private var isFieldDidBeginEditing = false
+
     // MARK: Initialization
 
     init(
@@ -40,6 +42,7 @@ final class EmailViewPresenter: IEmailViewOutput, IEmailViewPresenterInput {
 
 extension EmailViewPresenter {
     func textFieldDidBeginEditing() {
+        isFieldDidBeginEditing = true
         view?.setTextFieldHeaderNormal()
         output?.emailTextFieldDidBeginEditing(self)
     }
@@ -78,6 +81,11 @@ extension EmailViewPresenter {
     }
 
     private func viewSetTextFieldHeaderState() {
+        guard isFieldDidBeginEditing else {
+            view?.setTextFieldHeaderNormal()
+            return
+        }
+
         isEmailValid ? view?.setTextFieldHeaderNormal() : view?.setTextFieldHeaderError()
     }
 }

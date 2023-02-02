@@ -13,23 +13,30 @@ protocol ICardFieldMaskingFactory {
     /// Готовит делегат текстфилда для поля - номер карты
     /// - Parameters:
     ///   - didFillMask: Событие редактирования поля
+    ///   - didBeginEditing: Событие начала редактирования поля
+    ///   - didEndEditing: Событие окончания редактирования поля
     ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
     /// - Returns: Делегат маскированного текст филда
-    func buildForCardNumber(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
+    func buildForCardNumber(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        didEndEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate
 
     /// Готовит делегат текстфилда для поля - срок
     /// - Parameters:
     ///   - didFillMask: Событие редактирования поля
+    ///   - didBeginEditing: Событие начала редактирования поля
+    ///   - didEndEditing: Событие окончания редактирования поля
     ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
     /// - Returns: Делегат маскированного текст филда
-    func buildForExpiration(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
-
-    /// Готовит делегат текстфилда для поля - cvc
-    /// - Parameters:
-    ///   - didFillMask: Событие редактирования поля
-    ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
-    /// - Returns: Делегат маскированного текст филда
-    func buildForCvc(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate
+    func buildForExpiration(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        didEndEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate
 
     /// Готовит делегат текстфилда для поля - cvc
     /// - Parameters:
@@ -40,6 +47,20 @@ protocol ICardFieldMaskingFactory {
     func buildForCvc(
         didFillMask: DidFillMask?,
         didBeginEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate
+
+    /// Готовит делегат текстфилда для поля - cvc
+    /// - Parameters:
+    ///   - didFillMask: Событие редактирования поля
+    ///   - didBeginEditing: Событие начала редактирования поля
+    ///   - didEndEditing: Событие окончания редактирования поля
+    ///   - listenerStorage: Хранит сильной ссылкой listener событий для делегата
+    /// - Returns: Делегат маскированного текст филда
+    func buildForCvc(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        didEndEditing: VoidBlock?,
         listenerStorage: inout [NSObject]
     ) -> MaskedTextFieldDelegate
 }
@@ -66,7 +87,12 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
 
     // MARK: - ICardFieldMaskingFactory
 
-    func buildForCardNumber(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
+    func buildForCardNumber(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        didEndEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate {
         let listener = CardNumberListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.panMask(for: nil))
         listenerStorage.append(listener)
@@ -77,35 +103,57 @@ final class CardFieldMaskingFactory: ICardFieldMaskingFactory {
                 using: textField
             )
 
-            if updated {
-                return
-            } else {
+            if !updated || text.isEmpty {
                 didFillMask?(text, completed)
             }
         }
+        listener.didBeginEditing = didBeginEditing
+        listener.didEndEditing = didEndEditing
         return delegate
     }
 
-    func buildForExpiration(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
+    func buildForExpiration(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        didEndEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate {
         let listener = ExpirationListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.validThruMask)
         listenerStorage.append(listener)
         delegate.listener = listener
         listener.didFill = didFillMask
+        listener.didBeginEditing = didBeginEditing
+        listener.didEndEditing = didEndEditing
         return delegate
     }
 
-    func buildForCvc(didFillMask: DidFillMask?, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
-        buildForCvc(didFillMask: didFillMask, didBeginEditing: nil, listenerStorage: &listenerStorage)
+    func buildForCvc(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate {
+        buildForCvc(
+            didFillMask: didFillMask,
+            didBeginEditing: didBeginEditing,
+            didEndEditing: nil,
+            listenerStorage: &listenerStorage
+        )
     }
 
-    func buildForCvc(didFillMask: DidFillMask?, didBeginEditing: VoidBlock? = nil, listenerStorage: inout [NSObject]) -> MaskedTextFieldDelegate {
+    func buildForCvc(
+        didFillMask: DidFillMask?,
+        didBeginEditing: VoidBlock?,
+        didEndEditing: VoidBlock?,
+        listenerStorage: inout [NSObject]
+    ) -> MaskedTextFieldDelegate {
         let listener = CvcListener()
         let delegate = MaskedTextFieldDelegate(format: inputMaskResolver.cvcMask)
         listenerStorage.append(listener)
         delegate.listener = listener
         listener.didFill = didFillMask
         listener.didBeginEditing = didBeginEditing
+        listener.didEndEditing = didEndEditing
         return delegate
     }
 }
@@ -114,23 +162,26 @@ extension CardFieldMaskingFactory {
 
     final class CardNumberListener: NSObject, MaskedTextFieldDelegateListener {
         var didFill: ((String, Bool, UITextField) -> Void)?
+        var didBeginEditing: VoidBlock?
+        var didEndEditing: VoidBlock?
 
         func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
             didFill?(value, complete, textField)
+        }
+
+        func textFieldDidBeginEditing(_ textField: UITextField) {
+            didBeginEditing?()
+        }
+
+        func textFieldDidEndEditing(_ textField: UITextField) {
+            didEndEditing?()
         }
     }
 
     final class ExpirationListener: NSObject, MaskedTextFieldDelegateListener {
         var didFill: DidFillMask?
-
-        func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
-            didFill?(value, complete)
-        }
-    }
-
-    final class CvcListener: NSObject, MaskedTextFieldDelegateListener {
-        var didFill: DidFillMask?
         var didBeginEditing: VoidBlock?
+        var didEndEditing: VoidBlock?
 
         func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
             didFill?(value, complete)
@@ -138,6 +189,28 @@ extension CardFieldMaskingFactory {
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
             didBeginEditing?()
+        }
+
+        func textFieldDidEndEditing(_ textField: UITextField) {
+            didEndEditing?()
+        }
+    }
+
+    final class CvcListener: NSObject, MaskedTextFieldDelegateListener {
+        var didFill: DidFillMask?
+        var didBeginEditing: VoidBlock?
+        var didEndEditing: VoidBlock?
+
+        func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
+            didFill?(value, complete)
+        }
+
+        func textFieldDidBeginEditing(_ textField: UITextField) {
+            didBeginEditing?()
+        }
+
+        func textFieldDidEndEditing(_ textField: UITextField) {
+            didEndEditing?()
         }
     }
 }

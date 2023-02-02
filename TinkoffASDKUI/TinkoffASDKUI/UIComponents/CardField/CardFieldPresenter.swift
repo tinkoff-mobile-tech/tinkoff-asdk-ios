@@ -7,7 +7,16 @@
 
 import UIKit
 
+enum CardFieldType: CaseIterable {
+    case cardNumber
+    case expiration
+    case cvc
+}
+
 protocol ICardFieldView: AnyObject, Activatable {
+    func setHeaderErrorFor(textFieldType: CardFieldType)
+    func setHeaderNormalFor(textFieldType: CardFieldType)
+
     func activateExpirationField()
     func activateCvcField()
 }
@@ -30,6 +39,9 @@ protocol ICardFieldPresenter: ICardFieldInput {
     func didFillCardNumber(text: String, filled: Bool)
     func didFillExpiration(text: String, filled: Bool)
     func didFillCvc(text: String, filled: Bool)
+
+    func didBeginEditing(fieldType: CardFieldType)
+    func didEndEditing(fieldType: CardFieldType)
 }
 
 final class CardFieldPresenter: ICardFieldPresenter {
@@ -47,6 +59,7 @@ final class CardFieldPresenter: ICardFieldPresenter {
     private(set) var expiration: String = ""
     private(set) var cvc: String = ""
 
+    private var didEndEditingCardNumber = false
     private var didStartEditingExpiration = false
     private var didEndEditingExpiration = false
     private var didStartEditingCvc = false
@@ -72,16 +85,11 @@ final class CardFieldPresenter: ICardFieldPresenter {
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
         validationResult = CardFieldValidationResult()
-        setupEventHandlers()
     }
 
     func didFillCardNumber(text: String, filled: Bool) {
         cardNumber = text
         validate()
-
-        let textFieldConfig = config?.cardNumberTextFieldConfig.textField
-        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
-            .didChangeText(hasText: !text.isEmpty)
 
         let bankResult = bankResolver.resolve(cardNumber: text)
             .getBank()?
@@ -105,10 +113,6 @@ final class CardFieldPresenter: ICardFieldPresenter {
         expiration = text
         validate()
 
-        let textFieldConfig = config?.expirationTextFieldConfig.textField
-        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
-            .didChangeText(hasText: !text.isEmpty)
-
         if filled { view?.activateCvcField() }
     }
 
@@ -116,17 +120,35 @@ final class CardFieldPresenter: ICardFieldPresenter {
         cvc = text
         validate()
 
-        let textFieldConfig = config?.cvcTextFieldConfig.textField
-        (textFieldConfig?.rightAccessoryView?.content as? DeleteButtonContent)?
-            .didChangeText(hasText: !text.isEmpty)
-
         if filled { view?.deactivate() }
+    }
+
+    func didBeginEditing(fieldType: CardFieldType) {
+        switch fieldType {
+        case .cardNumber: break
+        case .expiration: didStartEditingExpiration = true
+        case .cvc: didStartEditingCvc = true
+        }
+
+        let result = validate()
+        viewUpdateHeadersIfNeeded(result: result)
+        clearVisualErrorState(for: fieldType)
+    }
+
+    func didEndEditing(fieldType: CardFieldType) {
+        switch fieldType {
+        case .cardNumber: didEndEditingCardNumber = true
+        case .expiration: didEndEditingExpiration = true
+        case .cvc: didEndEditingCvc = true
+        }
+
+        validate()
     }
 
     @discardableResult
     func validateWholeForm() -> CardFieldValidationResult {
         let result = validate()
-        updateTextfieldHeaderStyle(validationResult: result, forcedValidation: true)
+        viewUpdateHeadersIfNeeded(result: result)
         return result
     }
 
@@ -143,157 +165,32 @@ final class CardFieldPresenter: ICardFieldPresenter {
         return result
     }
 
-    private func updateTextfieldHeaderStyle(validationResult result: CardFieldValidationResult, forcedValidation: Bool) {
-        guard let config = config else { return }
-
-        var cardNumberHeaderLabelConfig = config.cardNumberTextFieldConfig.headerLabel
-        var expirationHeaderLabelConfig = config.expirationTextFieldConfig.headerLabel
-        var cvcHeaderLabelConfig = config.cvcTextFieldConfig.headerLabel
-
-        switch (
-            cardNumberHeaderLabelConfig.content,
-            expirationHeaderLabelConfig.content,
-            cvcHeaderLabelConfig.content
-        ) {
-        case let (
-            .plain(cardText, cardStyle),
-            .plain(expText, expStyle),
-            .plain(cvcText, cvcStyle)
-        ):
-            if !result.cardNumberIsValid {
-                cardNumberHeaderLabelConfig = UILabel.Configuration(
-                    content: .plain(text: cardText, style: cardStyle.set(textColor: ASDKColors.Foreground.negativeAccent))
-                )
-            }
-
-            if !result.expirationIsValid {
-                expirationHeaderLabelConfig = UILabel.Configuration(
-                    content: .plain(text: expText, style: expStyle.set(textColor: ASDKColors.Foreground.negativeAccent))
-                )
-            }
-
-            if !result.cvcIsValid {
-                cvcHeaderLabelConfig = UILabel.Configuration(
-                    content: .plain(text: cvcText, style: cvcStyle.set(textColor: ASDKColors.Foreground.negativeAccent))
-                )
-            }
-
-        default:
-            break
-        }
-
-        let fields = fieldsToValidate(forced: forcedValidation)
-
-        fields.forEach { field in
-            switch field {
-            case .cardNumber:
-                config.cardNumberTextFieldConfig.updater?.updateHeader(config: cardNumberHeaderLabelConfig)
-            case .expiration:
-                config.expirationTextFieldConfig.updater?.updateHeader(config: expirationHeaderLabelConfig)
-            case .cvc:
-                config.cvcTextFieldConfig.updater?.updateHeader(config: cvcHeaderLabelConfig)
-            }
-        }
+    private func viewUpdateHeader(fieldType: CardFieldType, isValid: Bool) {
+        isValid ? view?.setHeaderNormalFor(textFieldType: fieldType) : view?.setHeaderErrorFor(textFieldType: fieldType)
     }
 
-    private func clearVisualErrorState(for field: Field) {
-        guard let config = config else { return }
-
-        switch field {
-        case .cardNumber:
-            let cardNumberConfig = config.cardNumberTextFieldConfig
-            cardNumberConfig.updater?.updateHeader(config: cardNumberConfig.headerLabel)
-        case .expiration:
-            let expirationConfig = config.expirationTextFieldConfig
-            expirationConfig.updater?.updateHeader(config: expirationConfig.headerLabel)
-        case .cvc:
-            let cvcConfig = config.cvcTextFieldConfig
-            cvcConfig.updater?.updateHeader(config: cvcConfig.headerLabel)
-        }
+    private func viewUpdateHeadersIfNeeded(result: CardFieldValidationResult) {
+        let fields = fieldsToValidate()
+        fields.forEach { viewUpdateHeader(fieldType: $0, isValid: result.isFieldValid(type: $0)) }
     }
 
-    private func setupEventHandlers() {
-        guard let config = config else { return }
-
-        config.cardNumberTextFieldConfig.textField.eventHandler = { [weak self] event, _ in
-            guard let self = self else { return }
-            switch event {
-            case .didBeginEditing:
-                let result = self.validate()
-                self.updateTextfieldHeaderStyle(
-                    validationResult: result,
-                    forcedValidation: false
-                )
-                self.clearVisualErrorState(for: .cardNumber)
-            case .didEndEditing:
-                self.validate()
-            default: break
-            }
-        }
-
-        config.expirationTextFieldConfig.textField.eventHandler = { [weak self] event, _ in
-            guard let self = self else { return }
-            switch event {
-            case .didBeginEditing:
-                self.didStartEditingExpiration = true
-                let result = self.validate()
-                self.updateTextfieldHeaderStyle(
-                    validationResult: result,
-                    forcedValidation: false
-                )
-                self.clearVisualErrorState(for: .expiration)
-            case .didEndEditing:
-                self.didEndEditingExpiration = true
-                self.validate()
-            default: break
-            }
-        }
-
-        config.cvcTextFieldConfig.textField.eventHandler = { [weak self] event, _ in
-            guard let self = self else { return }
-            switch event {
-            case .didBeginEditing:
-                self.didStartEditingCvc = true
-                let result = self.validate()
-                self.updateTextfieldHeaderStyle(
-                    validationResult: result,
-                    forcedValidation: false
-                )
-                self.clearVisualErrorState(for: .cvc)
-            case .didEndEditing:
-                self.didEndEditingCvc = true
-                self.validate()
-            default: break
-            }
-        }
+    private func clearVisualErrorState(for field: CardFieldType) {
+        view?.setHeaderNormalFor(textFieldType: field)
     }
 
-    private func fieldsToValidate(forced: Bool) -> [Field] {
-        if forced {
-            return Field.allCases
-        }
-
+    private func fieldsToValidate() -> [CardFieldType] {
         if didEndEditingCvc {
-            return Field.allCases
+            return CardFieldType.allCases
         }
 
         if didStartEditingCvc || didEndEditingExpiration {
             return [.cardNumber, .expiration]
         }
 
-        if didStartEditingExpiration {
+        if didStartEditingExpiration || didEndEditingCardNumber {
             return [.cardNumber]
         }
 
         return []
-    }
-}
-
-extension CardFieldPresenter {
-
-    enum Field: CaseIterable {
-        case cardNumber
-        case expiration
-        case cvc
     }
 }

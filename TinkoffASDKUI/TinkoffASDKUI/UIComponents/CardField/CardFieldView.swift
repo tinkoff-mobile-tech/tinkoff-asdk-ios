@@ -20,7 +20,7 @@ extension CardFieldDelegate {
 // cardFieldView.configure(with: config)
 
 final class CardFieldView: UIView {
-    
+
     var input: ICardFieldInput { presenter }
     weak var delegate: CardFieldDelegate?
 
@@ -31,7 +31,7 @@ final class CardFieldView: UIView {
     private let contentView = UIView()
 
     private let dynamicCardView = DynamicIconCardView()
-    
+
     private let cardNumberTextField = FloatingTextField(insetsType: .commonAndHugeLeftInset)
     private let expireTextField = FloatingTextField()
     private let cvcTextField = FloatingTextField()
@@ -122,17 +122,6 @@ extension CardFieldView: Activatable {
     }
 }
 
-extension CardFieldView {
-    private func configure(textField: FloatingTextField, with config: TextField.Configuration) {
-        textField.setHeader(text: config.headerLabel.content.text)
-        textField.set(text: config.textField.content.text)
-        textField.set(placeholder: config.textField.placeholder.text)
-        textField.set(keyboardType: config.textField.keyboardType)
-        textField.set(isSecureTextEntry: config.textField.isSecure)
-        textField.delegate = config.textField.delegate
-    }
-}
-
 extension CardFieldView: Configurable {
     func update(with configuration: Config?) {
         guard let config = configuration else { return }
@@ -146,12 +135,39 @@ extension CardFieldView: Configurable {
 }
 
 extension CardFieldView: ICardFieldView {
+    func setHeaderErrorFor(textFieldType: CardFieldType) {
+        getTextField(type: textFieldType).setHeader(color: ASDKColors.Foreground.negativeAccent)
+    }
+
+    func setHeaderNormalFor(textFieldType: CardFieldType) {
+        getTextField(type: textFieldType).setHeader(color: ASDKColors.Text.secondary.color)
+    }
+
     func activateExpirationField() {
         expireTextField.becomeFirstResponder()
     }
 
     func activateCvcField() {
         cvcTextField.becomeFirstResponder()
+    }
+}
+
+extension CardFieldView {
+    private func getTextField(type: CardFieldType) -> FloatingTextField {
+        switch type {
+        case .cardNumber: return cardNumberTextField
+        case .expiration: return expireTextField
+        case .cvc: return cvcTextField
+        }
+    }
+
+    private func configure(textField: FloatingTextField, with config: TextField.Configuration) {
+        textField.setHeader(text: config.headerLabel.content.text)
+        textField.set(text: config.textField.content.text)
+        textField.set(placeholder: config.textField.placeholder.text)
+        textField.set(keyboardType: config.textField.keyboardType)
+        textField.set(isSecureTextEntry: config.textField.isSecure)
+        textField.delegate = config.textField.delegate
     }
 }
 
