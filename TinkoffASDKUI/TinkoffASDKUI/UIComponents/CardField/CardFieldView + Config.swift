@@ -46,10 +46,7 @@ extension CardFieldView.Config {
             expirationTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.expirationTextFieldData.delegate,
-                    text: data.expirationTextFieldData.text,
-                    placeholder: data.expirationTextFieldData.placeholder,
-                    hasClearButton: true,
-                    keyboardType: .decimalPad
+                    text: data.expirationTextFieldData.text
                 ),
                 headerLabel: UILabel.Configuration(
                     content: .plain(text: data.expirationTextFieldData.headerText, style: headerLabelStyle)
@@ -58,10 +55,7 @@ extension CardFieldView.Config {
             cardNumberTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.cardNumberTextFieldData.delegate,
-                    text: data.cardNumberTextFieldData.text,
-                    placeholder: data.cardNumberTextFieldData.placeholder,
-                    hasClearButton: true,
-                    keyboardType: .decimalPad
+                    text: data.cardNumberTextFieldData.text
                 ),
                 headerLabel: UILabel.Configuration(
                     content: .plain(text: data.cardNumberTextFieldData.headerText, style: headerLabelStyle)
@@ -70,11 +64,7 @@ extension CardFieldView.Config {
             cvcTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
                     delegate: data.cvcTextFieldData.delegate,
-                    text: data.cvcTextFieldData.text,
-                    placeholder: data.cvcTextFieldData.placeholder,
-                    hasClearButton: true,
-                    keyboardType: .decimalPad,
-                    isSecure: true
+                    text: data.cvcTextFieldData.text
                 ),
                 headerLabel: UILabel.Configuration(
                     content: .plain(text: data.cvcTextFieldData.headerText, style: headerLabelStyle)

@@ -12,7 +12,6 @@ extension CardFieldView {
         struct TextFieldData {
             let delegate: FloatingTextFieldDelegate?
             let text: String?
-            let placeholder: String?
             let headerText: String
         }
     }

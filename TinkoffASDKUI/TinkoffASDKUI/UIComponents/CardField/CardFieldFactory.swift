@@ -41,7 +41,6 @@ final class CardFieldFactory: ICardFieldFactory {
                 cardFieldPresenter.didEndEditing(fieldType: .cardNumber)
             }, listenerStorage: &listenerStorage),
             text: nil,
-            placeholder: nil,
             headerText: Texts.panTitle
         )
 
@@ -54,7 +53,6 @@ final class CardFieldFactory: ICardFieldFactory {
                 cardFieldPresenter.didEndEditing(fieldType: .expiration)
             }, listenerStorage: &listenerStorage),
             text: nil,
-            placeholder: Texts.termPlaceholder,
             headerText: Texts.termTitle
         )
 
@@ -67,7 +65,6 @@ final class CardFieldFactory: ICardFieldFactory {
                 cardFieldPresenter.didEndEditing(fieldType: .cvc)
             }, listenerStorage: &listenerStorage),
             text: nil,
-            placeholder: Texts.cvvPlaceholder,
             headerText: Texts.cvvTitle
         )
 

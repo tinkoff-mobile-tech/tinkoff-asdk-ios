@@ -52,16 +52,6 @@ final class CardFieldView: UIView {
 }
 
 extension CardFieldView {
-    private func setupViews() {
-        contentView.backgroundColor = .clear
-        addSubview(contentView)
-
-        contentView.addSubview(cardNumberTextField)
-        contentView.addSubview(dynamicCardView)
-        contentView.addSubview(expireTextField)
-        contentView.addSubview(cvcTextField)
-    }
-
     private func setupConstraints() {
         contentView.makeEqualToSuperview()
 
@@ -152,7 +142,28 @@ extension CardFieldView: ICardFieldView {
     }
 }
 
+// MARK: - Private
+
 extension CardFieldView {
+    private func setupViews() {
+        contentView.backgroundColor = .clear
+        addSubview(contentView)
+
+        contentView.addSubview(cardNumberTextField)
+        contentView.addSubview(dynamicCardView)
+        contentView.addSubview(expireTextField)
+        contentView.addSubview(cvcTextField)
+
+        cardNumberTextField.set(keyboardType: .numberPad)
+
+        expireTextField.set(placeholder: Loc.Acquiring.CardField.termPlaceholder)
+        expireTextField.set(keyboardType: .numberPad)
+
+        cvcTextField.set(placeholder: Loc.Acquiring.CardField.cvvPlaceholder)
+        cvcTextField.set(keyboardType: .numberPad)
+        cvcTextField.set(isSecureTextEntry: true)
+    }
+
     private func getTextField(type: CardFieldType) -> FloatingTextField {
         switch type {
         case .cardNumber: return cardNumberTextField
@@ -164,9 +175,6 @@ extension CardFieldView {
     private func configure(textField: FloatingTextField, with config: FloatingTextField.Configuration) {
         textField.setHeader(text: config.headerLabel.content.text)
         textField.set(text: config.textField.content.text)
-        textField.set(placeholder: config.textField.placeholder.text)
-        textField.set(keyboardType: config.textField.keyboardType)
-        textField.set(isSecureTextEntry: config.textField.isSecure)
         textField.delegate = config.textField.delegate
     }
 }

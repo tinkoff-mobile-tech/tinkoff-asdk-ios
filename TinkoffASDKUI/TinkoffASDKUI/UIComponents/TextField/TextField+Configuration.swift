@@ -23,20 +23,10 @@ struct TextFieldConfiguration {
 
     let delegate: FloatingTextFieldDelegate?
     let content: UILabel.Content
-    let placeholder: UILabel.Content
-
-    // style
-    var tintColor: UIColor?
-    var isSecure = false
-    var keyboardType: UIKeyboardType = .default
 
     static func assembleWithRegularContentAndStyle(
         delegate: FloatingTextFieldDelegate?,
-        text: String?,
-        placeholder: String?,
-        hasClearButton: Bool,
-        keyboardType: UIKeyboardType = .default,
-        isSecure: Bool = false
+        text: String?
     ) -> Self {
         let textStyle = UILabel.Style
             .bodyL()
@@ -44,11 +34,7 @@ struct TextFieldConfiguration {
 
         return self.init(
             delegate: delegate,
-            content: .plain(text: text, style: textStyle),
-            placeholder: .plain(text: placeholder, style: textStyle),
-            tintColor: .systemBlue,
-            isSecure: isSecure,
-            keyboardType: keyboardType
+            content: .plain(text: text, style: textStyle)
         )
     }
 }

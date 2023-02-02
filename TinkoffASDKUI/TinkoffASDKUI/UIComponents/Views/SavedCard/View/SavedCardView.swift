@@ -148,7 +148,7 @@ final class SavedCardView: UIView {
         cvcField.delegate = maskingDelegate
         cvcField.set(placeholder: .cvcFieldPlaceholder)
         cvcField.set(clearButtonMode: .never)
-        cvcField.set(keyboardType: .decimalPad)
+        cvcField.set(keyboardType: .numberPad)
         cvcField.set(isSecureTextEntry: true)
         cvcField.setHeader(text: .cvcFieldHeader)
         cvcField.setHeader(color: ASDKColors.Text.secondary.color)
