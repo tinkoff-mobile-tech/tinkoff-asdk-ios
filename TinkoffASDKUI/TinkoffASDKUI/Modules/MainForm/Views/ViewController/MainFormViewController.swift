@@ -24,6 +24,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private lazy var headerView = MainFormHeaderView(frame: .headerInitialFrame)
     private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
+    private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds)
@@ -72,7 +73,33 @@ extension MainFormViewController: IMainFormViewController {
         orderDetailsView.update(with: model)
     }
 
-    func set(payButtonEnabled: Bool) {}
+    func set(payButtonEnabled: Bool) {
+        payButton.isEnabled = payButtonEnabled
+    }
+
+    func setButtonPrimaryAppearance() {
+        let configuration = Button.Configuration(
+            title: "Оплатить",
+            style: .primaryTinkoff,
+            contentSize: .basicLarge
+        )
+
+        payButton.configure(configuration)
+    }
+
+    func setButtonTinkoffPayAppearance() {
+        let configuration = Button.Configuration(
+            title: "Оплатить",
+            style: .primaryTinkoff,
+            contentSize: .basicLarge
+        )
+
+        payButton.configure(configuration)
+    }
+
+    func setButtonSBPAppearance() {}
+
+    func setPayButtonPrimaryStyle() {}
 }
 
 // MARK: - PullableContainerContent Methods
@@ -104,7 +131,9 @@ extension MainFormViewController: UITableViewDataSource {
             cell.setContent(savedCardView, insets: .savedCardInsets)
             return cell
         case .payButton:
-            fatalError("Not implemented")
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(payButton, insets: .payButtonInsets)
+            return cell
         }
     }
 }

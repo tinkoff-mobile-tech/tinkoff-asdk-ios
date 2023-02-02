@@ -24,7 +24,12 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private var cellTypes: [MainFormCellType] = []
+    private lazy var cellTypes: [MainFormCellType] = [
+        .orderDetails,
+        .savedCard(savedCardPresenter),
+        .payButton,
+    ]
+
     private var loadedCards: [PaymentCard] = []
 
     // MARK: Init
@@ -75,12 +80,17 @@ extension MainFormPresenter: IMainFormPresenter {
             orderDescription: "Заказ №123456"
         )
 
-        cellTypes = [
-            .orderDetails,
-            .savedCard(savedCardPresenter),
-        ]
-
         view?.updateOrderDetails(with: orderDetails)
+
+        switch stub.primaryPayMethod {
+        case .card:
+            view?.setButtonPrimaryAppearance()
+        case .tinkoffPay:
+            view?.setButtonTinkoffPayAppearance()
+        case .sbp:
+            view?.setButtonSBPAppearance()
+        }
+
         loadCardsIfNeeded()
     }
 
