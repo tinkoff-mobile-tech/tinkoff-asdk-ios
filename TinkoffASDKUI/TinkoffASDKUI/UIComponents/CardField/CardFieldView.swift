@@ -74,21 +74,21 @@ extension CardFieldView {
             cardNumberTextField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             cardNumberTextField.topAnchor.constraint(equalTo: contentView.topAnchor),
             cardNumberTextField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            cardNumberTextField.heightAnchor.constraint(equalToConstant: Constants.Card.height),
+            cardNumberTextField.heightAnchor.constraint(equalToConstant: .textFieldHeight),
 
-            dynamicCardView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Constants.Card.DynamicIcon.leftInset),
+            dynamicCardView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: .dynamicIconLeftInset),
             dynamicCardView.centerYAnchor.constraint(equalTo: cardNumberTextField.centerYAnchor),
-            dynamicCardView.heightAnchor.constraint(equalToConstant: Constants.Card.DynamicIcon.size.height),
-            dynamicCardView.widthAnchor.constraint(equalToConstant: Constants.Card.DynamicIcon.size.width),
+            dynamicCardView.heightAnchor.constraint(equalToConstant: .dynamicIconHeight),
+            dynamicCardView.widthAnchor.constraint(equalToConstant: .dynamicIconWidth),
 
             expireTextField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            expireTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: Constants.Expiration.topInset),
+            expireTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: .bottomFieldsTopInset),
             expireTextField.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
-            expireTextField.heightAnchor.constraint(equalToConstant: Constants.Expiration.height),
+            expireTextField.heightAnchor.constraint(equalToConstant: .textFieldHeight),
             expireTextField.widthAnchor.constraint(equalTo: cvcTextField.widthAnchor),
 
-            cvcTextField.leftAnchor.constraint(equalTo: expireTextField.rightAnchor, constant: Constants.Cvc.leftInset),
-            cvcTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: Constants.Expiration.topInset),
+            cvcTextField.leftAnchor.constraint(equalTo: expireTextField.rightAnchor, constant: .cvcFieldLeftInset),
+            cvcTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: .bottomFieldsTopInset),
             cvcTextField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             cvcTextField.heightAnchor.constraint(equalTo: expireTextField.heightAnchor),
         ])
@@ -171,19 +171,16 @@ extension CardFieldView {
     }
 }
 
-// MARK: - Default Styles
+// MARK: - Constants
 
-extension CardFieldView.Style {
+private extension CGFloat {
+    static let textFieldHeight: CGFloat = 56
 
-    static var regular: Self {
-        let color = ASDKColors.Background.neutral1.color
+    static let dynamicIconLeftInset: CGFloat = 12
+    static let dynamicIconWidth: CGFloat = 40
+    static let dynamicIconHeight: CGFloat = 26
 
-        return CardFieldView.Style(
-            card: Card(
-                backgroundColor: color, cornerRadius: 16
-            ),
-            expiration: Expiration(backgroundColor: color, cornerRadius: 16),
-            cvc: Cvc(backgroundColor: color, cornerRadius: 16)
-        )
-    }
+    static let bottomFieldsTopInset: CGFloat = 12
+
+    static let cvcFieldLeftInset: CGFloat = 11
 }

@@ -10,7 +10,6 @@ import UIKit
 extension CardFieldView {
 
     final class Config {
-        let style: Style
         var dynamicCardIcon: DynamicIconCardView.Model
 
         let expirationTextFieldConfig: FloatingTextField.Configuration
@@ -20,38 +19,15 @@ extension CardFieldView {
         var onDidConfigure: (() -> Void)?
 
         init(
-            style: Style,
             dynamicCardIcon: DynamicIconCardView.Model,
             expirationTextFieldConfig: FloatingTextField.Configuration,
             cardNumberTextFieldConfig: FloatingTextField.Configuration,
             cvcTextFieldConfig: FloatingTextField.Configuration
         ) {
-            self.style = style
             self.dynamicCardIcon = dynamicCardIcon
             self.expirationTextFieldConfig = expirationTextFieldConfig
             self.cardNumberTextFieldConfig = cardNumberTextFieldConfig
             self.cvcTextFieldConfig = cvcTextFieldConfig
-        }
-    }
-
-    struct Style {
-        let card: Card
-        let expiration: Expiration
-        let cvc: Cvc
-
-        struct Card {
-            let backgroundColor: UIColor?
-            let cornerRadius: CGFloat
-        }
-
-        struct Expiration {
-            let backgroundColor: UIColor?
-            let cornerRadius: CGFloat
-        }
-
-        struct Cvc {
-            let backgroundColor: UIColor?
-            let cornerRadius: CGFloat
         }
     }
 }
@@ -66,7 +42,6 @@ extension CardFieldView.Config {
             .set(textColor: ASDKColors.Text.secondary.color)
 
         return Self(
-            style: .regular,
             dynamicCardIcon: DynamicIconCardView.Model(data: data.dynamicCardIconData),
             expirationTextFieldConfig: FloatingTextField.Configuration(
                 textField: .assembleWithRegularContentAndStyle(
