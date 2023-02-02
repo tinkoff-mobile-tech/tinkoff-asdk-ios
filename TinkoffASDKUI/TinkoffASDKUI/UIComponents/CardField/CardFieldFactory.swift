@@ -13,9 +13,7 @@ protocol ICardFieldFactory {
 
 final class CardFieldFactory: ICardFieldFactory {
     func assembleCardFieldView() -> CardFieldView {
-        let cardViewModel = DynamicIconCardView.Model(data: DynamicIconCardView.Data())
-        let config = CardFieldViewConfig(dynamicCardIcon: cardViewModel)
-        let presenter = CardFieldPresenter(config: config)
+        let presenter = CardFieldPresenter()
 
         let maskingFactory = CardFieldMaskingFactory()
         let view = CardFieldView(presenter: presenter, maskingFactory: maskingFactory)
@@ -25,7 +23,6 @@ final class CardFieldFactory: ICardFieldFactory {
             view?.delegate?.cardFieldValidationResultDidChange(result: result)
         }
 
-        view.update(with: config)
         return view
     }
 }

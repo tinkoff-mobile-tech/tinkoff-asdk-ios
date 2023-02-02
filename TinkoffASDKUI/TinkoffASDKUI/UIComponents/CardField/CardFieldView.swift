@@ -4,38 +4,44 @@ protocol CardFieldDelegate: AnyObject {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }
 
-final class CardFieldView: UIView {
+final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Dependencies
 
-    var input: ICardFieldInput { presenter }
+    var input: ICardFieldInput? { presenter }
     weak var delegate: CardFieldDelegate?
 
-    private let presenter: ICardFieldPresenter
+    var presenter: ICardFieldViewOutput? {
+        didSet {
+            if oldValue?.view === self { oldValue?.view = nil }
+            presenter?.view = self
+        }
+    }
+
     private let maskingFactory: ICardFieldMaskingFactory
 
     private lazy var cardNumberDelegate: MaskedTextFieldDelegate = maskingFactory.buildForCardNumber(didFillMask: { [weak self] text, completed in
-        self?.presenter.didFillCardNumber(text: text, filled: completed)
+        self?.presenter?.didFillCardNumber(text: text, filled: completed)
     }, didBeginEditing: { [weak self] in
-        self?.presenter.didBeginEditing(fieldType: .cardNumber)
+        self?.presenter?.didBeginEditing(fieldType: .cardNumber)
     }, didEndEditing: { [weak self] in
-        self?.presenter.didEndEditing(fieldType: .cardNumber)
+        self?.presenter?.didEndEditing(fieldType: .cardNumber)
     }, listenerStorage: &textFieldListeners)
 
     private lazy var expirationDelegate: MaskedTextFieldDelegate = maskingFactory.buildForExpiration(didFillMask: { [weak self] text, completed in
-        self?.presenter.didFillExpiration(text: text, filled: completed)
+        self?.presenter?.didFillExpiration(text: text, filled: completed)
     }, didBeginEditing: { [weak self] in
-        self?.presenter.didBeginEditing(fieldType: .expiration)
+        self?.presenter?.didBeginEditing(fieldType: .expiration)
     }, didEndEditing: { [weak self] in
-        self?.presenter.didEndEditing(fieldType: .expiration)
+        self?.presenter?.didEndEditing(fieldType: .expiration)
     }, listenerStorage: &textFieldListeners)
 
     private lazy var cvcDelegate: MaskedTextFieldDelegate = maskingFactory.buildForCvc(didFillMask: { [weak self] text, completed in
-        self?.presenter.didFillCvc(text: text, filled: completed)
+        self?.presenter?.didFillCvc(text: text, filled: completed)
     }, didBeginEditing: { [weak self] in
-        self?.presenter.didBeginEditing(fieldType: .cvc)
+        self?.presenter?.didBeginEditing(fieldType: .cvc)
     }, didEndEditing: { [weak self] in
-        self?.presenter.didEndEditing(fieldType: .cvc)
+        self?.presenter?.didEndEditing(fieldType: .cvc)
     }, listenerStorage: &textFieldListeners)
 
     // MARK: Properties
@@ -54,7 +60,7 @@ final class CardFieldView: UIView {
 
     // MARK: Initialization
 
-    init(presenter: ICardFieldPresenter, maskingFactory: ICardFieldMaskingFactory) {
+    init(presenter: ICardFieldViewOutput, maskingFactory: ICardFieldMaskingFactory) {
         self.presenter = presenter
         self.maskingFactory = maskingFactory
         super.init(frame: .zero)
@@ -94,20 +100,13 @@ extension CardFieldView: Activatable {
     }
 }
 
+// MARK: - ICardFieldViewInput
+
 extension CardFieldView {
-    func update(with configuration: CardFieldViewConfig?) {
-        guard let config = configuration else { return }
-
-        config.dynamicCardIcon.updater = self
-        dynamicCardView.configure(model: config.dynamicCardIcon)
-
-        cardNumberTextField.delegate = cardNumberDelegate
-        expireTextField.delegate = expirationDelegate
-        cvcTextField.delegate = cvcDelegate
+    func updateDynamicCardView(with model: DynamicIconCardView.Model) {
+        dynamicCardView.configure(model: model)
     }
-}
 
-extension CardFieldView: ICardFieldView {
     func setHeaderErrorFor(textFieldType: CardFieldType) {
         getTextField(type: textFieldType).setHeader(color: ASDKColors.Foreground.negativeAccent)
     }
@@ -137,13 +136,16 @@ extension CardFieldView {
         contentView.addSubview(expireTextField)
         contentView.addSubview(cvcTextField)
 
+        cardNumberTextField.delegate = cardNumberDelegate
         cardNumberTextField.setHeader(text: Loc.Acquiring.CardField.panTitle)
         cardNumberTextField.set(keyboardType: .numberPad)
 
+        expireTextField.delegate = expirationDelegate
         expireTextField.setHeader(text: Loc.Acquiring.CardField.termTitle)
         expireTextField.set(placeholder: Loc.Acquiring.CardField.termPlaceholder)
         expireTextField.set(keyboardType: .numberPad)
 
+        cvcTextField.delegate = cvcDelegate
         cvcTextField.setHeader(text: Loc.Acquiring.CardField.cvvTitle)
         cvcTextField.set(placeholder: Loc.Acquiring.CardField.cvvPlaceholder)
         cvcTextField.set(keyboardType: .numberPad)

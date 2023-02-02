@@ -134,10 +134,11 @@ extension AddNewCardView {
         addButton.isEnabled = false
         addButton.configure(
             Constants.AddButton.getConfiguration { [weak self] in
-                guard let self = self else { return }
-                let validationResult = self.cardFieldView.input.validateWholeForm()
-                guard validationResult.isValid == true else { return }
-                let input = self.cardFieldView.input
+                guard let self = self,
+                      let input = self.cardFieldView.input,
+                      input.validateWholeForm().isValid else {
+                    return
+                }
                 self.delegate?.viewAddCardTapped(
                     cardData: CardData(cardNumber: input.cardNumber, expiration: input.expiration, cvc: input.cvc)
                 )

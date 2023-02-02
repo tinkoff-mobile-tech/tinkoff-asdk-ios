@@ -13,7 +13,9 @@ enum CardFieldType: CaseIterable {
     case cvc
 }
 
-protocol ICardFieldView: AnyObject, Activatable {
+protocol ICardFieldViewInput: AnyObject, Activatable {
+    func updateDynamicCardView(with model: DynamicIconCardView.Model)
+
     func setHeaderErrorFor(textFieldType: CardFieldType)
     func setHeaderNormalFor(textFieldType: CardFieldType)
 
@@ -32,8 +34,9 @@ protocol ICardFieldInput: AnyObject {
     func validateWholeForm() -> CardFieldValidationResult
 }
 
-protocol ICardFieldPresenter: ICardFieldInput {
-    var config: CardFieldViewConfig? { get set }
+protocol ICardFieldViewOutput: ICardFieldInput {
+    var view: ICardFieldViewInput? { get set }
+
     var validationResultDidChange: ((CardFieldValidationResult) -> Void)? { get set }
 
     func didFillCardNumber(text: String, filled: Bool)
@@ -44,12 +47,15 @@ protocol ICardFieldPresenter: ICardFieldInput {
     func didEndEditing(fieldType: CardFieldType)
 }
 
-final class CardFieldPresenter: ICardFieldPresenter {
+final class CardFieldPresenter: ICardFieldViewOutput {
 
-    var config: CardFieldViewConfig?
     var validationResultDidChange: ((CardFieldValidationResult) -> Void)?
 
-    weak var view: ICardFieldView?
+    weak var view: ICardFieldViewInput? {
+        didSet {
+            setupView()
+        }
+    }
 
     private(set) var validationResult: CardFieldValidationResult {
         didSet { validationResultDidChange?(validationResult) }
@@ -70,12 +76,10 @@ final class CardFieldPresenter: ICardFieldPresenter {
     private let bankResolver: IBankResolver
 
     init(
-        config: CardFieldViewConfig? = nil,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver()
     ) {
-        self.config = config
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
@@ -94,12 +98,10 @@ final class CardFieldPresenter: ICardFieldPresenter {
             .getPaymentSystem()?
             .icon
 
-        config?.dynamicCardIcon.data.bank = bankResult
-        config?.dynamicCardIcon.data.paymentSystem = paymentSystemResult
-
-        if let dynamicCardConfig = config?.dynamicCardIcon {
-            config?.dynamicCardIcon.updater?.update(config: dynamicCardConfig)
-        }
+        var dynamicCardModel = createDynamicCardModel()
+        dynamicCardModel.data.bank = bankResult
+        dynamicCardModel.data.paymentSystem = paymentSystemResult
+        view?.updateDynamicCardView(with: dynamicCardModel)
 
         if filled { view?.activateExpirationField() }
     }
@@ -148,6 +150,14 @@ final class CardFieldPresenter: ICardFieldPresenter {
     }
 
     // MARK: - Private
+
+    private func setupView() {
+        view?.updateDynamicCardView(with: createDynamicCardModel())
+    }
+
+    private func createDynamicCardModel() -> DynamicIconCardView.Model {
+        DynamicIconCardView.Model(data: DynamicIconCardView.Data())
+    }
 
     @discardableResult
     private func validate() -> CardFieldValidationResult {

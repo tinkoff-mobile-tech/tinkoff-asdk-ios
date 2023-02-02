@@ -57,7 +57,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 
 extension CardPaymentViewController {
     func forceValidateCardField() {
-        cardFieldView.input.validateWholeForm()
+        cardFieldView.input?.validateWholeForm()
     }
 
     func setPayButton(title: String) {
