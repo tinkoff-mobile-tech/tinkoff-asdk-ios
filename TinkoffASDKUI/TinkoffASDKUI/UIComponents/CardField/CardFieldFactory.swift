@@ -28,50 +28,37 @@ final class CardFieldFactory: ICardFieldFactory {
         var cardFieldPresenter: ICardFieldPresenter!
         var listenerStorage: [NSObject] = []
 
-        let cardViewModel = DynamicIconCardView.Model(
-            data: DynamicIconCardView.Data()
-        )
+        let cardViewModel = DynamicIconCardView.Model(data: DynamicIconCardView.Data())
 
-        let cardNumberData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForCardNumber(didFillMask: { text, completed in
-                cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
-            }, didBeginEditing: {
-                cardFieldPresenter.didBeginEditing(fieldType: .cardNumber)
-            }, didEndEditing: {
-                cardFieldPresenter.didEndEditing(fieldType: .cardNumber)
-            }, listenerStorage: &listenerStorage),
-            text: nil
-        )
+        let cardNumberDelegate = maskingFactory.buildForCardNumber(didFillMask: { text, completed in
+            cardFieldPresenter.didFillCardNumber(text: text, filled: completed)
+        }, didBeginEditing: {
+            cardFieldPresenter.didBeginEditing(fieldType: .cardNumber)
+        }, didEndEditing: {
+            cardFieldPresenter.didEndEditing(fieldType: .cardNumber)
+        }, listenerStorage: &listenerStorage)
 
-        let expData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForExpiration(didFillMask: { text, completed in
-                cardFieldPresenter.didFillExpiration(text: text, filled: completed)
-            }, didBeginEditing: {
-                cardFieldPresenter.didBeginEditing(fieldType: .expiration)
-            }, didEndEditing: {
-                cardFieldPresenter.didEndEditing(fieldType: .expiration)
-            }, listenerStorage: &listenerStorage),
-            text: nil
-        )
+        let expDelegate = maskingFactory.buildForExpiration(didFillMask: { text, completed in
+            cardFieldPresenter.didFillExpiration(text: text, filled: completed)
+        }, didBeginEditing: {
+            cardFieldPresenter.didBeginEditing(fieldType: .expiration)
+        }, didEndEditing: {
+            cardFieldPresenter.didEndEditing(fieldType: .expiration)
+        }, listenerStorage: &listenerStorage)
 
-        let cvcData = CardFieldView.DataDependecies.TextFieldData(
-            delegate: maskingFactory.buildForCvc(didFillMask: { text, completed in
-                cardFieldPresenter.didFillCvc(text: text, filled: completed)
-            }, didBeginEditing: {
-                cardFieldPresenter.didBeginEditing(fieldType: .cvc)
-            }, didEndEditing: {
-                cardFieldPresenter.didEndEditing(fieldType: .cvc)
-            }, listenerStorage: &listenerStorage),
-            text: nil
-        )
+        let cvcDelegate = maskingFactory.buildForCvc(didFillMask: { text, completed in
+            cardFieldPresenter.didFillCvc(text: text, filled: completed)
+        }, didBeginEditing: {
+            cardFieldPresenter.didBeginEditing(fieldType: .cvc)
+        }, didEndEditing: {
+            cardFieldPresenter.didEndEditing(fieldType: .cvc)
+        }, listenerStorage: &listenerStorage)
 
-        let config = CardFieldView.Config.assembleWithRegularStyle(
-            data: CardFieldView.DataDependecies(
-                dynamicCardIconData: cardViewModel.data,
-                expirationTextFieldData: expData,
-                cardNumberTextFieldData: cardNumberData,
-                cvcTextFieldData: cvcData
-            )
+        let config = CardFieldView.Config(
+            dynamicCardIcon: cardViewModel,
+            expirationFieldDelegate: expDelegate,
+            cardNumberFieldDelegate: cardNumberDelegate,
+            cvcFieldDelegate: cvcDelegate
         )
 
         let presenter = CardFieldPresenter(

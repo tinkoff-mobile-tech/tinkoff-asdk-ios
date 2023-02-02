@@ -118,9 +118,10 @@ extension CardFieldView: Configurable {
 
         config.dynamicCardIcon.updater = self
         dynamicCardView.configure(model: config.dynamicCardIcon)
-        configure(textField: cardNumberTextField, with: config.cardNumberTextFieldConfig)
-        configure(textField: expireTextField, with: config.expirationTextFieldConfig)
-        configure(textField: cvcTextField, with: config.cvcTextFieldConfig)
+
+        cardNumberTextField.delegate = config.cardNumberFieldDelegate
+        expireTextField.delegate = config.expirationFieldDelegate
+        cvcTextField.delegate = config.cvcFieldDelegate
     }
 }
 
@@ -173,11 +174,6 @@ extension CardFieldView {
         case .expiration: return expireTextField
         case .cvc: return cvcTextField
         }
-    }
-
-    private func configure(textField: FloatingTextField, with config: FloatingTextField.Configuration) {
-        textField.set(text: config.textField.content.text)
-        textField.delegate = config.textField.delegate
     }
 }
 
