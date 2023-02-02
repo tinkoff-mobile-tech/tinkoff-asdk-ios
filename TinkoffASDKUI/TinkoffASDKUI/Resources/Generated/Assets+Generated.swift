@@ -57,6 +57,7 @@ internal enum Asset {
     internal static let check = ImageAsset(name: "check")
     internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")
+    internal static let tinkoffPayIcon = ImageAsset(name: "tinkoffPay-icon")
   }
   internal enum Illustrations {
     internal static let alarm = ImageAsset(name: "alarm")

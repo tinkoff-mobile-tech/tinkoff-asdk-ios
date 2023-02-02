@@ -78,23 +78,11 @@ extension MainFormViewController: IMainFormViewController {
     }
 
     func setButtonPrimaryAppearance() {
-        let configuration = Button.Configuration(
-            title: "Оплатить",
-            style: .primaryTinkoff,
-            contentSize: .basicLarge
-        )
-
-        payButton.configure(configuration)
+        payButton.configure(.tinkoffPay)
     }
 
     func setButtonTinkoffPayAppearance() {
-        let configuration = Button.Configuration(
-            title: "Оплатить",
-            style: .primaryTinkoff,
-            contentSize: .basicLarge
-        )
-
-        payButton.configure(configuration)
+        payButton.configure(.tinkoffPay)
     }
 
     func setButtonSBPAppearance() {}
@@ -147,4 +135,26 @@ private extension UIEdgeInsets {
 
 private extension CGRect {
     static let headerInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
+}
+
+// MARK: - Button.Configuration + Helpers
+
+private extension Button.Configuration {
+    static var cardPayment: Button.Configuration {
+        Button.Configuration(
+            title: "Оплатить",
+            style: .primaryTinkoff,
+            contentSize: .basicLarge
+        )
+    }
+
+    static var tinkoffPay: Button.Configuration {
+        Button.Configuration(
+            title: "Оплатить с Тинькофф",
+            image: Asset.Icons.tinkoffPayIcon.image,
+            style: .primaryTinkoff,
+            contentSize: .basicLarge,
+            imagePlacement: .trailing
+        )
+    }
 }
