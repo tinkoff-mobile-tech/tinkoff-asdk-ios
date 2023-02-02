@@ -33,7 +33,7 @@ protocol ICardFieldInput: AnyObject {
 }
 
 protocol ICardFieldPresenter: ICardFieldInput {
-    var config: CardFieldView.Config? { get set }
+    var config: CardFieldViewConfig? { get set }
     var validationResultDidChange: ((CardFieldValidationResult) -> Void)? { get set }
 
     func didFillCardNumber(text: String, filled: Bool)
@@ -46,7 +46,7 @@ protocol ICardFieldPresenter: ICardFieldInput {
 
 final class CardFieldPresenter: ICardFieldPresenter {
 
-    var config: CardFieldView.Config?
+    var config: CardFieldViewConfig?
     var validationResultDidChange: ((CardFieldValidationResult) -> Void)?
 
     weak var view: ICardFieldView?
@@ -69,17 +69,12 @@ final class CardFieldPresenter: ICardFieldPresenter {
     private let paymentSystemResolver: IPaymentSystemResolver
     private let bankResolver: IBankResolver
 
-    // Хранит listener-ы для masked text field delegate
-    private var listenerStorage: [NSObject]
-
     init(
-        listenerStorage: [NSObject],
-        config: CardFieldView.Config? = nil,
+        config: CardFieldViewConfig? = nil,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver()
     ) {
-        self.listenerStorage = listenerStorage
         self.config = config
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
