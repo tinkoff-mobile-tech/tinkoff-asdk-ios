@@ -78,16 +78,16 @@ extension MainFormViewController: IMainFormViewController {
     }
 
     func setButtonPrimaryAppearance() {
-        payButton.configure(.tinkoffPay)
+        payButton.configure(.cardPayment)
     }
 
     func setButtonTinkoffPayAppearance() {
         payButton.configure(.tinkoffPay)
     }
 
-    func setButtonSBPAppearance() {}
-
-    func setPayButtonPrimaryStyle() {}
+    func setButtonSBPAppearance() {
+        payButton.configure(.sbp)
+    }
 }
 
 // MARK: - PullableContainerContent Methods
@@ -156,5 +156,41 @@ private extension Button.Configuration {
             contentSize: .basicLarge,
             imagePlacement: .trailing
         )
+    }
+
+    static var sbp: Button.Configuration {
+        Button.Configuration(
+            title: "Оплатить",
+            image: .sbpImage,
+            style: Button.Style(
+                foregroundColor: Button.InteractiveColor(
+                    withDefaultHighlight: .white,
+                    disabled: ASDKColors.Text.tertiary.dark
+                ),
+                backgroundColor: Button.InteractiveColor(
+                    withDefaultHighlight: UIColor(hex: "#1D1346") ?? .clear,
+                    disabled: ASDKColors.Background.neutral1.dark
+                )
+            ),
+            contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
+            imagePlacement: .trailing
+        )
+    }
+}
+
+// MARK: - UIImage + Helpers
+
+private extension UIImage {
+    static var sbpImage: UIImage {
+        let imageAsset = UIImageAsset()
+        let lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
+        let lightImage = Asset.buttonIconSBP.image(compatibleWith: lightTraitCollection)
+
+        imageAsset.register(
+            lightImage,
+            with: UITraitCollection(traitsFrom: [lightTraitCollection, UIScreen.main.traitCollection])
+        )
+
+        return imageAsset.image(with: UIScreen.main.traitCollection)
     }
 }
