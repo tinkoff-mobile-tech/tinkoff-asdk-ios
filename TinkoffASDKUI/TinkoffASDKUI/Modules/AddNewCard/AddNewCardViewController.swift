@@ -53,26 +53,20 @@ protocol IAddNewCardView: AnyObject {
 
 final class AddNewCardViewController: UIViewController {
 
+    // MARK: Dependecies
+
     private let presenter: IAddNewCardPresenter
 
-    private lazy var addCardView = AddNewCardView(delegate: self, cardFieldFactory: cardFieldFactory)
+    // MARK: Properties
 
-    // Local State
+    private lazy var addCardView = AddNewCardView(delegate: self)
 
     private var didAddCard = false
 
-    // Dependecies
-
-    private let cardFieldFactory: ICardFieldFactory
-
     // MARK: - Inits
 
-    init(
-        presenter: IAddNewCardPresenter,
-        cardFieldFactory: ICardFieldFactory
-    ) {
+    init(presenter: IAddNewCardPresenter) {
         self.presenter = presenter
-        self.cardFieldFactory = cardFieldFactory
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -125,7 +119,7 @@ extension AddNewCardViewController: IAddNewCardView {
     }
 
     func activateCardField() {
-        addCardView.cardFieldView.activate()
+        addCardView.activate()
     }
 
     func closeScreen() {
@@ -176,7 +170,7 @@ extension AddNewCardViewController: AddNewCardViewDelegate {
         presenter.viewAddCardTapped(cardData: cardData)
     }
 
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        presenter.cardFieldValidationResultDidChange(result: result)
+    func cardFieldViewPresenter() -> ICardFieldViewOutput {
+        presenter.cardFieldViewPresenter()
     }
 }

@@ -7,7 +7,7 @@
 
 enum CardPaymentCellType: Equatable {
     case savedCard(ISavedCardViewOutput?)
-    case cardField
+    case cardField(ICardFieldViewOutput)
     case getReceipt(ISwitchViewOutput)
     case emailField(IEmailViewOutput)
     case payButton

@@ -34,10 +34,12 @@ protocol ICardFieldInput: AnyObject {
     func validateWholeForm() -> CardFieldValidationResult
 }
 
+protocol CardFieldDelegate: AnyObject {
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
+}
+
 protocol ICardFieldViewOutput: ICardFieldInput {
     var view: ICardFieldViewInput? { get set }
-
-    var validationResultDidChange: ((CardFieldValidationResult) -> Void)? { get set }
 
     func didFillCardNumber(text: String, filled: Bool)
     func didFillExpiration(text: String, filled: Bool)
@@ -48,17 +50,18 @@ protocol ICardFieldViewOutput: ICardFieldInput {
 }
 
 final class CardFieldPresenter: ICardFieldViewOutput {
-
-    var validationResultDidChange: ((CardFieldValidationResult) -> Void)?
-
     weak var view: ICardFieldViewInput? {
         didSet {
             setupView()
         }
     }
 
-    private(set) var validationResult: CardFieldValidationResult {
-        didSet { validationResultDidChange?(validationResult) }
+    weak var delegate: CardFieldDelegate?
+
+    private(set) var validationResult = CardFieldValidationResult() {
+        didSet {
+            delegate?.cardFieldValidationResultDidChange(result: validationResult)
+        }
     }
 
     private(set) var cardNumber: String = ""
@@ -83,7 +86,6 @@ final class CardFieldPresenter: ICardFieldViewOutput {
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
-        validationResult = CardFieldValidationResult()
     }
 
     func didFillCardNumber(text: String, filled: Bool) {

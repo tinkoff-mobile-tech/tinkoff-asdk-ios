@@ -20,6 +20,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     private var cellTypes = [CardPaymentCellType]()
     private var savedCardPresenter: SavedCardPresenter?
+    private lazy var cardFieldPresenter = createCardFieldViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
     private lazy var emailPresenter = createEmailViewPresenter()
 
@@ -41,9 +42,11 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     ) {
         self.router = router
         self.moneyFormatter = moneyFormatter
-        self.activeCards = activeCards
+        self.activeCards = Int.random(in: 0 ... 100) % 2 == 0 ? activeCards : []
         self.paymentFlow = paymentFlow
         self.amount = amount
+
+        customerEmail = Int.random(in: 0 ... 100) % 2 == 0 ? paymentFlow.customerOptions?.email ?? "" : ""
     }
 }
 
@@ -72,17 +75,21 @@ extension CardPaymentPresenter {
         }
     }
 
-    func cardFieldDidChangeState(isValid: Bool) {
-        isCardFieldValid = isValid
-        activatePayButtonIfNeeded()
-    }
-
     func numberOfRows() -> Int {
         cellTypes.count
     }
 
     func cellType(for row: Int) -> CardPaymentCellType {
         cellTypes[row]
+    }
+}
+
+// MARK: - CardFieldDelegate
+
+extension CardPaymentPresenter: CardFieldDelegate {
+    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
+        isCardFieldValid = result.isValid
+        activatePayButtonIfNeeded()
     }
 }
 
@@ -125,6 +132,12 @@ extension CardPaymentPresenter {
         savedCardPresenter?.presentationState = .selected(card: activeCard, hasAnotherCards: hasAnotherCards)
     }
 
+    private func createCardFieldViewPresenter() -> CardFieldPresenter {
+        let cardFieldPresenter = CardFieldPresenter()
+        cardFieldPresenter.delegate = self
+        return cardFieldPresenter
+    }
+
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
         SwitchViewPresenter(title: Loc.Acquiring.EmailField.switchButton, isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
             guard let self = self else { return }
@@ -156,7 +169,7 @@ extension CardPaymentPresenter {
     }
 
     private func setupCellTypes() {
-        activeCards.isEmpty ? cellTypes.append(.cardField) : cellTypes.append(.savedCard(savedCardPresenter))
+        activeCards.isEmpty ? cellTypes.append(.cardField(cardFieldPresenter)) : cellTypes.append(.savedCard(savedCardPresenter))
 
         if customerEmail.isEmpty {
             cellTypes.append(.getReceipt(receiptSwitchViewPresenter))

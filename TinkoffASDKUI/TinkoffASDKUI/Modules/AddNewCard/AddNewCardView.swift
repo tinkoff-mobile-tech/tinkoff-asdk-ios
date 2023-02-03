@@ -9,7 +9,8 @@ import UIKit
 
 protocol AddNewCardViewDelegate: AnyObject {
     func viewAddCardTapped(cardData: CardData)
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
+
+    func cardFieldViewPresenter() -> ICardFieldViewOutput
 }
 
 final class AddNewCardView: UIView {
@@ -36,17 +37,14 @@ final class AddNewCardView: UIView {
     // Dependencies
 
     private let keyboardService = KeyboardService()
-    private let cardFieldFactory: ICardFieldFactory
 
-    lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
+    private lazy var cardFieldView = CardFieldView()
 
     // MARK: - Init
 
-    init(delegate: AddNewCardViewDelegate, cardFieldFactory: ICardFieldFactory) {
+    init(delegate: AddNewCardViewDelegate) {
         self.delegate = delegate
-        self.cardFieldFactory = cardFieldFactory
         super.init(frame: .zero)
-        cardFieldView.delegate = self
         setupViews()
     }
 
@@ -91,6 +89,10 @@ extension AddNewCardView {
 
     func enableAddButton() {
         addButton.isEnabled = true
+    }
+
+    func activate() {
+        cardFieldView.activate()
     }
 }
 
@@ -208,6 +210,7 @@ extension AddNewCardView: UICollectionViewDelegate {
 
     private func prepareCardFieldCell(indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(ContainerCollectionCell.self, for: indexPath)
+        cardFieldView.presenter = delegate?.cardFieldViewPresenter()
         cell.update(with: ContainerCollectionCell.Configuration(content: cardFieldView, shouldHighlight: false))
         return cell
     }
@@ -222,19 +225,6 @@ extension AddNewCardView: UICollectionViewDelegateFlowLayout {
         let cardFieldHeight = cardFieldView.systemLayoutSizeFitting(.zero).height
         let width = collectionView.frame.width - Constants.CollectionView.horizontalInsets.horizontal
         return CGSize(width: width, height: cardFieldHeight)
-    }
-}
-
-// MARK: - mark
-
-extension AddNewCardView: CardFieldDelegate {
-
-    func sizeDidChange(view: CardFieldView, size: CGSize) {
-        // do nothing
-    }
-
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        delegate?.cardFieldValidationResultDidChange(result: result)
     }
 }
 

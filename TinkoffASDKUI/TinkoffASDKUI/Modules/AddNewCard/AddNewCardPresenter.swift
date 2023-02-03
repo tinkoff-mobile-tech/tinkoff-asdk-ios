@@ -14,7 +14,8 @@ protocol IAddNewCardPresenter: AnyObject {
     func viewDidAppear()
     func viewAddCardTapped(cardData: CardData)
     func viewUserClosedTheScreen()
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
+
+    func cardFieldViewPresenter() -> ICardFieldViewOutput
 }
 
 // MARK: - Presenter
@@ -22,6 +23,8 @@ protocol IAddNewCardPresenter: AnyObject {
 final class AddNewCardPresenter {
 
     weak var view: IAddNewCardView?
+
+    private let cardFieldPresenter = CardFieldPresenter()
 
     private weak var output: IAddNewCardOutput?
     private let networking: IAddNewCardNetworking
@@ -32,6 +35,7 @@ final class AddNewCardPresenter {
     init(networking: IAddNewCardNetworking, output: IAddNewCardOutput?) {
         self.networking = networking
         self.output = output
+        cardFieldPresenter.delegate = self
     }
 }
 
@@ -56,12 +60,14 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
         output?.addingNewCardCompleted(result: .cancelled)
     }
 
+    func cardFieldViewPresenter() -> ICardFieldViewOutput {
+        cardFieldPresenter
+    }
+}
+
+extension AddNewCardPresenter: CardFieldDelegate {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        if result.isValid {
-            view?.enableAddButton()
-        } else {
-            view?.disableAddButton()
-        }
+        result.isValid ? view?.enableAddButton() : view?.disableAddButton()
     }
 }
 

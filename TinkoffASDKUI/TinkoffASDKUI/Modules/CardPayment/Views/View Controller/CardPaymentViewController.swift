@@ -12,25 +12,20 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     // MARK: Dependencies
 
     private let presenter: ICardPaymentViewControllerOutput
-    private let cardFieldFactory: ICardFieldFactory
 
     // MARK: Properties
 
     private lazy var tableView = UITableView()
     private lazy var savedCardView = SavedCardView()
-    private lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
+    private lazy var cardFieldView = CardFieldView()
     private lazy var switchView = SwitchView()
     private lazy var emailView = EmailView()
     private lazy var payButton = Button()
 
     // MARK: Initialization
 
-    init(
-        presenter: ICardPaymentViewControllerOutput,
-        cardFieldFactory: ICardFieldFactory
-    ) {
+    init(presenter: ICardPaymentViewControllerOutput) {
         self.presenter = presenter
-        self.cardFieldFactory = cardFieldFactory
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -46,7 +41,6 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         setupView()
         setupNavigationBar()
         setupTableView()
-        setupCardFieldView()
         setupViewsHeights()
 
         presenter.viewDidLoad()
@@ -129,7 +123,8 @@ extension CardPaymentViewController: UITableViewDataSource {
         case let .savedCard(cellPresenter):
             savedCardView.presenter = cellPresenter
             cell.setContent(savedCardView, insets: .cardCellsInsets)
-        case .cardField:
+        case let .cardField(cellPresenter):
+            cardFieldView.presenter = cellPresenter
             cell.setContent(cardFieldView, insets: .cardCellsInsets)
         case let .getReceipt(cellPresenter):
             switchView.presenter = cellPresenter
@@ -142,14 +137,6 @@ extension CardPaymentViewController: UITableViewDataSource {
         }
 
         return cell
-    }
-}
-
-// MARK: - CardFieldDelegate
-
-extension CardPaymentViewController: CardFieldDelegate {
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        presenter.cardFieldDidChangeState(isValid: result.isValid)
     }
 }
 
@@ -189,10 +176,6 @@ extension CardPaymentViewController {
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = .commonCellHeight
-    }
-
-    private func setupCardFieldView() {
-        cardFieldView.delegate = self
     }
 
     private func setupViewsHeights() {

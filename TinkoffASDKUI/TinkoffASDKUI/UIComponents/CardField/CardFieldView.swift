@@ -1,15 +1,10 @@
 import UIKit
 
-protocol CardFieldDelegate: AnyObject {
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
-}
-
 final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Dependencies
 
     var input: ICardFieldInput? { presenter }
-    weak var delegate: CardFieldDelegate?
 
     var presenter: ICardFieldViewOutput? {
         didSet {
@@ -60,8 +55,7 @@ final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Initialization
 
-    init(presenter: ICardFieldViewOutput, maskingFactory: ICardFieldMaskingFactory) {
-        self.presenter = presenter
+    init(maskingFactory: ICardFieldMaskingFactory = CardFieldMaskingFactory()) {
         self.maskingFactory = maskingFactory
         super.init(frame: .zero)
         setupViews()
