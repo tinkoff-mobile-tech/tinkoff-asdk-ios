@@ -17,18 +17,7 @@ final class SavedCardView: UIView {
         }
     }
 
-    private lazy var maskingDelegate: MaskedTextFieldDelegate = {
-        let maskingFactory = CardFieldMaskingFactory()
-        let maskingDelegate = maskingFactory.buildForCvc(
-            didFillMask: { [weak self] text, _ in
-                self?.presenter?.savedCardView(didChangeCVC: text)
-            }, didBeginEditing: { [weak self] in
-                self?.presenter?.savedCardViewDidBeginCVCFieldEditing()
-            },
-            listenerStorage: &textFieldListeners
-        )
-        return maskingDelegate
-    }()
+    private lazy var maskingDelegate = CardFieldMaskingFactory().buildMaskingDelegate(for: .cvc, listener: self)
 
     // MARK: Content Container Subviews
 
@@ -78,10 +67,6 @@ final class SavedCardView: UIView {
     }()
 
     private lazy var accessoryViewWidthConstraint = accessoryView.widthAnchor.constraint(equalToConstant: .accessoryViewWidth)
-
-    // MARK: State
-
-    private var textFieldListeners: [NSObject] = []
 
     // MARK: Init
 
@@ -194,6 +179,18 @@ extension SavedCardView: ISavedCardViewInput {
 
     func deactivateCVCField() {
         cvcField.resignFirstResponder()
+    }
+}
+
+// MARK: - MaskedTextFieldDelegateListener
+
+extension SavedCardView: MaskedTextFieldDelegateListener {
+    func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
+        presenter?.savedCardView(didChangeCVC: value)
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        presenter?.savedCardViewDidBeginCVCFieldEditing()
     }
 }
 

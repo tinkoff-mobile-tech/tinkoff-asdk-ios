@@ -8,10 +8,7 @@
 protocol ICardFieldViewOutput: ICardFieldInput {
     var view: ICardFieldViewInput? { get set }
 
-    func didFillCardNumber(text: String, filled: Bool)
-    func didFillExpiration(text: String, filled: Bool)
-    func didFillCvc(text: String, filled: Bool)
-
+    func didFillField(type: CardFieldType, text: String, filled: Bool)
     func didBeginEditing(fieldType: CardFieldType)
     func didEndEditing(fieldType: CardFieldType)
 }

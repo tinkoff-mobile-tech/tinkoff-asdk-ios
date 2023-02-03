@@ -25,7 +25,7 @@ final class FloatingTextField: UIView {
         return view
     }()
 
-    private lazy var textField: UITextField = {
+    private(set) lazy var textField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
         textField.backgroundColor = .clear

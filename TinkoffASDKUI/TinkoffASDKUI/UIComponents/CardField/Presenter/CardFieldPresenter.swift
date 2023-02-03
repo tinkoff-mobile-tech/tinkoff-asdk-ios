@@ -22,6 +22,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     private let validator: ICardRequisitesValidator
     private let paymentSystemResolver: IPaymentSystemResolver
     private let bankResolver: IBankResolver
+    private let inputMaskResolver: ICardRequisitesMasksResolver
 
     // MARK: Properties
 
@@ -43,12 +44,14 @@ final class CardFieldPresenter: ICardFieldViewOutput {
         output: ICardFieldOutput,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
-        bankResolver: IBankResolver = BankResolver()
+        bankResolver: IBankResolver = BankResolver(),
+        inputMaskResolver: ICardRequisitesMasksResolver = CardRequisitesMasksResolver(paymentSystemResolver: PaymentSystemResolver())
     ) {
         self.output = output
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
+        self.inputMaskResolver = inputMaskResolver
     }
 }
 
@@ -66,30 +69,17 @@ extension CardFieldPresenter {
 // MARK: - ICardFieldViewOutput
 
 extension CardFieldPresenter {
-    func didFillCardNumber(text: String, filled: Bool) {
-        cardNumber = text
-        validate()
-
-        var dynamicCardModel = createDynamicCardModel()
-        dynamicCardModel.data.bank = bankResolver.resolve(cardNumber: text).getBank()?.icon
-        dynamicCardModel.data.paymentSystem = paymentSystemResolver.resolve(by: text).getPaymentSystem()?.icon
-        view?.updateDynamicCardView(with: dynamicCardModel)
-
-        if filled { view?.activate(textFieldType: .expiration) }
-    }
-
-    func didFillExpiration(text: String, filled: Bool) {
-        expiration = text
-        validate()
-
-        if filled { view?.activate(textFieldType: .cvc) }
-    }
-
-    func didFillCvc(text: String, filled: Bool) {
-        cvc = text
-        validate()
-
-        if filled { view?.deactivate() }
+    func didFillField(type: CardFieldType, text: String, filled: Bool) {
+        switch type {
+        case .cardNumber:
+            let maskFormat = inputMaskResolver.panMask(for: text)
+            let isUpdated = view?.updateCardNumberField(with: maskFormat) ?? false
+            if !isUpdated || text.isEmpty {
+                didFillCardNumber(text: text, filled: filled)
+            }
+        case .expiration: didFillExpiration(text: text, filled: filled)
+        case .cvc: didFillCvc(text: text, filled: filled)
+        }
     }
 
     func didBeginEditing(fieldType: CardFieldType) {
@@ -124,6 +114,32 @@ extension CardFieldPresenter {
 
     private func createDynamicCardModel() -> DynamicIconCardView.Model {
         DynamicIconCardView.Model(data: DynamicIconCardView.Data())
+    }
+
+    private func didFillCardNumber(text: String, filled: Bool) {
+        cardNumber = text
+        validate()
+
+        var dynamicCardModel = createDynamicCardModel()
+        dynamicCardModel.data.bank = bankResolver.resolve(cardNumber: text).getBank()?.icon
+        dynamicCardModel.data.paymentSystem = paymentSystemResolver.resolve(by: text).getPaymentSystem()?.icon
+        view?.updateDynamicCardView(with: dynamicCardModel)
+
+        if filled { view?.activate(textFieldType: .expiration) }
+    }
+
+    private func didFillExpiration(text: String, filled: Bool) {
+        expiration = text
+        validate()
+
+        if filled { view?.activate(textFieldType: .cvc) }
+    }
+
+    private func didFillCvc(text: String, filled: Bool) {
+        cvc = text
+        validate()
+
+        if filled { view?.deactivate() }
     }
 
     @discardableResult

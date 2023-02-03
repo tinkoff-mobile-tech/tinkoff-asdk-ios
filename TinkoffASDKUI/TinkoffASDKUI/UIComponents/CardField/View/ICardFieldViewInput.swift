@@ -7,6 +7,7 @@
 
 protocol ICardFieldViewInput: AnyObject {
     func updateDynamicCardView(with model: DynamicIconCardView.Model)
+    func updateCardNumberField(with maskFormat: String) -> Bool
 
     func setHeaderErrorFor(textFieldType: CardFieldType)
     func setHeaderNormalFor(textFieldType: CardFieldType)
