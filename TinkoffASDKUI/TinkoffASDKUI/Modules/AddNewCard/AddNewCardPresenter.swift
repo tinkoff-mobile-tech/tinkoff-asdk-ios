@@ -12,7 +12,7 @@ protocol IAddNewCardPresenter: AnyObject {
 
     func viewDidLoad()
     func viewDidAppear()
-    func viewAddCardTapped(cardData: CardData)
+    func cardFieldViewAddCardTapped()
     func viewUserClosedTheScreen()
 
     func cardFieldViewPresenter() -> ICardFieldViewOutput
@@ -41,7 +41,10 @@ final class AddNewCardPresenter {
 
 extension AddNewCardPresenter: IAddNewCardPresenter {
 
-    func viewAddCardTapped(cardData: CardData) {
+    func cardFieldViewAddCardTapped() {
+        guard cardFieldPresenter.validateWholeForm().isValid else { return }
+
+        let cardData = CardData(cardNumber: cardFieldPresenter.cardNumber, expiration: cardFieldPresenter.expiration, cvc: cardFieldPresenter.cvc)
         addCard(cardData: cardData)
     }
 

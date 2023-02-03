@@ -97,7 +97,7 @@ extension CardPaymentPresenter: CardFieldDelegate {
 
 extension CardPaymentPresenter: IEmailViewPresenterOutput {
     func emailTextFieldDidBeginEditing(_ presenter: EmailViewPresenter) {
-        view?.forceValidateCardField()
+        cardFieldPresenter.validateWholeForm()
     }
 
     func emailTextField(_ presenter: EmailViewPresenter, didChangeEmail email: String, isValid: Bool) {
@@ -105,7 +105,7 @@ extension CardPaymentPresenter: IEmailViewPresenterOutput {
     }
 
     func emailTextFieldDidPressReturn(_ presenter: EmailViewPresenter) {
-        view?.forceValidateCardField()
+        cardFieldPresenter.validateWholeForm()
     }
 }
 
@@ -154,7 +154,7 @@ extension CardPaymentPresenter {
 
             self.activatePayButtonIfNeeded()
             self.view?.hideKeyboard()
-            self.view?.forceValidateCardField()
+            self.cardFieldPresenter.validateWholeForm()
         })
     }
 

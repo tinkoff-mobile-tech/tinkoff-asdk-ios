@@ -6,8 +6,6 @@
 //
 
 protocol ICardPaymentViewControllerInput: AnyObject {
-    func forceValidateCardField()
-
     func setPayButton(title: String)
     func setPayButton(isEnabled: Bool)
     func startLoadingPayButton()

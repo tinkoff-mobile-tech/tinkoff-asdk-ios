@@ -50,10 +50,6 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 // MARK: - ICardPaymentViewControllerInput
 
 extension CardPaymentViewController {
-    func forceValidateCardField() {
-        cardFieldView.input?.validateWholeForm()
-    }
-
     func setPayButton(title: String) {
         let configuration = Button.Configuration(
             data: Button.Data(

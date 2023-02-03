@@ -4,8 +4,6 @@ final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Dependencies
 
-    var input: ICardFieldInput? { presenter }
-
     var presenter: ICardFieldViewOutput? {
         didSet {
             if oldValue?.view === self { oldValue?.view = nil }

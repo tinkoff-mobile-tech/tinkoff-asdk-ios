@@ -166,8 +166,8 @@ extension AddNewCardViewController {
 
 extension AddNewCardViewController: AddNewCardViewDelegate {
 
-    func viewAddCardTapped(cardData: CardData) {
-        presenter.viewAddCardTapped(cardData: cardData)
+    func cardFieldViewAddCardTapped() {
+        presenter.cardFieldViewAddCardTapped()
     }
 
     func cardFieldViewPresenter() -> ICardFieldViewOutput {
