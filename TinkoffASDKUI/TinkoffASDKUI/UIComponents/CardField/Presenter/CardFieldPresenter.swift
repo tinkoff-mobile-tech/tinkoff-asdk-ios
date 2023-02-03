@@ -8,6 +8,9 @@
 import UIKit
 
 final class CardFieldPresenter: ICardFieldViewOutput {
+
+    // MARK: Dependencies
+
     weak var view: ICardFieldViewInput? {
         didSet {
             setupView()
@@ -16,11 +19,13 @@ final class CardFieldPresenter: ICardFieldViewOutput {
 
     private weak var output: ICardFieldOutput?
 
-    private(set) var validationResult = CardFieldValidationResult() {
-        didSet {
-            output?.cardFieldValidationResultDidChange(result: validationResult)
-        }
-    }
+    private let validator: ICardRequisitesValidator
+    private let paymentSystemResolver: IPaymentSystemResolver
+    private let bankResolver: IBankResolver
+
+    // MARK: Properties
+
+    private(set) var validationResult = CardFieldValidationResult()
 
     private(set) var cardNumber: String = ""
     private(set) var expiration: String = ""
@@ -32,9 +37,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     private var didStartEditingCvc = false
     private var didEndEditingCvc = false
 
-    private let validator: ICardRequisitesValidator
-    private let paymentSystemResolver: IPaymentSystemResolver
-    private let bankResolver: IBankResolver
+    // MARK: Initialization
 
     init(
         output: ICardFieldOutput,
@@ -47,22 +50,29 @@ final class CardFieldPresenter: ICardFieldViewOutput {
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
     }
+}
 
+// MARK: - ICardFieldInput
+
+extension CardFieldPresenter {
+    @discardableResult
+    func validateWholeForm() -> CardFieldValidationResult {
+        let result = validate()
+        viewUpdateHeadersIfNeeded(result: result)
+        return result
+    }
+}
+
+// MARK: - ICardFieldViewOutput
+
+extension CardFieldPresenter {
     func didFillCardNumber(text: String, filled: Bool) {
         cardNumber = text
         validate()
 
-        let bankResult = bankResolver.resolve(cardNumber: text)
-            .getBank()?
-            .icon
-
-        let paymentSystemResult = paymentSystemResolver.resolve(by: text)
-            .getPaymentSystem()?
-            .icon
-
         var dynamicCardModel = createDynamicCardModel()
-        dynamicCardModel.data.bank = bankResult
-        dynamicCardModel.data.paymentSystem = paymentSystemResult
+        dynamicCardModel.data.bank = bankResolver.resolve(cardNumber: text).getBank()?.icon
+        dynamicCardModel.data.paymentSystem = paymentSystemResolver.resolve(by: text).getPaymentSystem()?.icon
         view?.updateDynamicCardView(with: dynamicCardModel)
 
         if filled { view?.activate(textFieldType: .expiration) }
@@ -103,16 +113,11 @@ final class CardFieldPresenter: ICardFieldViewOutput {
 
         validate()
     }
+}
 
-    @discardableResult
-    func validateWholeForm() -> CardFieldValidationResult {
-        let result = validate()
-        viewUpdateHeadersIfNeeded(result: result)
-        return result
-    }
+// MARK: - Private
 
-    // MARK: - Private
-
+extension CardFieldPresenter {
     private func setupView() {
         view?.updateDynamicCardView(with: createDynamicCardModel())
     }
@@ -129,6 +134,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
             cvcIsValid: validator.validate(inputCVC: cvc)
         )
         validationResult = result
+        output?.cardFieldValidationResultDidChange(result: validationResult)
         return result
     }
 
@@ -146,17 +152,9 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     }
 
     private func fieldsToValidate() -> [CardFieldType] {
-        if didEndEditingCvc {
-            return CardFieldType.allCases
-        }
-
-        if didStartEditingCvc || didEndEditingExpiration {
-            return [.cardNumber, .expiration]
-        }
-
-        if didStartEditingExpiration || didEndEditingCardNumber {
-            return [.cardNumber]
-        }
+        if didEndEditingCvc { return CardFieldType.allCases }
+        if didStartEditingCvc || didEndEditingExpiration { return [.cardNumber, .expiration] }
+        if didStartEditingExpiration || didEndEditingCardNumber { return [.cardNumber] }
 
         return []
     }
