@@ -2,52 +2,10 @@
 //  CardFieldPresenter.swift
 //  TinkoffASDKUI
 //
-//  Created by Ivan Glushko on 29.11.2022.
+//  Created by Aleksandr Pravosudov on 03.02.2023.
 //
 
 import UIKit
-
-enum CardFieldType: CaseIterable {
-    case cardNumber
-    case expiration
-    case cvc
-}
-
-protocol ICardFieldViewInput: AnyObject, Activatable {
-    func updateDynamicCardView(with model: DynamicIconCardView.Model)
-
-    func setHeaderErrorFor(textFieldType: CardFieldType)
-    func setHeaderNormalFor(textFieldType: CardFieldType)
-
-    func activateExpirationField()
-    func activateCvcField()
-}
-
-protocol ICardFieldInput: AnyObject {
-    var cardNumber: String { get }
-    var expiration: String { get }
-    var cvc: String { get }
-
-    var validationResult: CardFieldValidationResult { get }
-
-    @discardableResult
-    func validateWholeForm() -> CardFieldValidationResult
-}
-
-protocol CardFieldDelegate: AnyObject {
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
-}
-
-protocol ICardFieldViewOutput: ICardFieldInput {
-    var view: ICardFieldViewInput? { get set }
-
-    func didFillCardNumber(text: String, filled: Bool)
-    func didFillExpiration(text: String, filled: Bool)
-    func didFillCvc(text: String, filled: Bool)
-
-    func didBeginEditing(fieldType: CardFieldType)
-    func didEndEditing(fieldType: CardFieldType)
-}
 
 final class CardFieldPresenter: ICardFieldViewOutput {
     weak var view: ICardFieldViewInput? {
@@ -56,11 +14,11 @@ final class CardFieldPresenter: ICardFieldViewOutput {
         }
     }
 
-    weak var delegate: CardFieldDelegate?
+    private weak var output: ICardFieldOutput?
 
     private(set) var validationResult = CardFieldValidationResult() {
         didSet {
-            delegate?.cardFieldValidationResultDidChange(result: validationResult)
+            output?.cardFieldValidationResultDidChange(result: validationResult)
         }
     }
 
@@ -79,10 +37,12 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     private let bankResolver: IBankResolver
 
     init(
+        output: ICardFieldOutput,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver()
     ) {
+        self.output = output
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
@@ -105,14 +65,14 @@ final class CardFieldPresenter: ICardFieldViewOutput {
         dynamicCardModel.data.paymentSystem = paymentSystemResult
         view?.updateDynamicCardView(with: dynamicCardModel)
 
-        if filled { view?.activateExpirationField() }
+        if filled { view?.activate(textFieldType: .expiration) }
     }
 
     func didFillExpiration(text: String, filled: Bool) {
         expiration = text
         validate()
 
-        if filled { view?.activateCvcField() }
+        if filled { view?.activate(textFieldType: .cvc) }
     }
 
     func didFillCvc(text: String, filled: Bool) {

@@ -24,7 +24,7 @@ final class AddNewCardPresenter {
 
     weak var view: IAddNewCardView?
 
-    private let cardFieldPresenter = CardFieldPresenter()
+    private lazy var cardFieldPresenter = CardFieldPresenter(output: self)
 
     private weak var output: IAddNewCardOutput?
     private let networking: IAddNewCardNetworking
@@ -35,7 +35,6 @@ final class AddNewCardPresenter {
     init(networking: IAddNewCardNetworking, output: IAddNewCardOutput?) {
         self.networking = networking
         self.output = output
-        cardFieldPresenter.delegate = self
     }
 }
 
@@ -68,7 +67,7 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     }
 }
 
-extension AddNewCardPresenter: CardFieldDelegate {
+extension AddNewCardPresenter: ICardFieldOutput {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         result.isValid ? view?.enableAddButton() : view?.disableAddButton()
     }

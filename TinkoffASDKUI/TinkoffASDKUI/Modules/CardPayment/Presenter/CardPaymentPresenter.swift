@@ -84,9 +84,9 @@ extension CardPaymentPresenter {
     }
 }
 
-// MARK: - CardFieldDelegate
+// MARK: - ICardFieldOutput
 
-extension CardPaymentPresenter: CardFieldDelegate {
+extension CardPaymentPresenter: ICardFieldOutput {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         isCardFieldValid = result.isValid
         activatePayButtonIfNeeded()
@@ -133,9 +133,7 @@ extension CardPaymentPresenter {
     }
 
     private func createCardFieldViewPresenter() -> CardFieldPresenter {
-        let cardFieldPresenter = CardFieldPresenter()
-        cardFieldPresenter.delegate = self
-        return cardFieldPresenter
+        CardFieldPresenter(output: self)
     }
 
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {

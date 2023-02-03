@@ -92,7 +92,7 @@ extension AddNewCardView {
     }
 
     func activate() {
-        cardFieldView.activate()
+        cardFieldView.activate(textFieldType: .cardNumber)
     }
 }
 

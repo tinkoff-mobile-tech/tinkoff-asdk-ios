@@ -1,3 +1,10 @@
+//
+//  CardFieldView.swift
+//  TinkoffASDKUI
+//
+//  Created by Aleksandr Pravosudov on 03.02.2023.
+//
+
 import UIKit
 
 final class CardFieldView: UIView, ICardFieldViewInput {
@@ -66,32 +73,6 @@ final class CardFieldView: UIView, ICardFieldViewInput {
     }
 }
 
-// MARK: - CardFieldView + ConfigurableItem
-
-extension CardFieldView: IDynamicIconCardViewUpdater {
-    func update(config: DynamicIconCardView.Model) {
-        dynamicCardView.configure(model: config)
-    }
-}
-
-extension CardFieldView: Activatable {
-    var isActive: Bool {
-        cardNumberTextField.isFirstResponder || expireTextField.isFirstResponder || cvcTextField.isFirstResponder
-    }
-
-    func activate() {
-        guard !isActive else { return }
-        cardNumberTextField.becomeFirstResponder()
-    }
-
-    func deactivate() {
-        guard isActive else { return }
-        cardNumberTextField.resignFirstResponder()
-        expireTextField.resignFirstResponder()
-        cvcTextField.resignFirstResponder()
-    }
-}
-
 // MARK: - ICardFieldViewInput
 
 extension CardFieldView {
@@ -107,12 +88,14 @@ extension CardFieldView {
         getTextField(type: textFieldType).setHeader(color: ASDKColors.Text.secondary.color)
     }
 
-    func activateExpirationField() {
-        expireTextField.becomeFirstResponder()
+    func activate(textFieldType: CardFieldType) {
+        getTextField(type: textFieldType).becomeFirstResponder()
     }
 
-    func activateCvcField() {
-        cvcTextField.becomeFirstResponder()
+    func deactivate() {
+        cardNumberTextField.resignFirstResponder()
+        expireTextField.resignFirstResponder()
+        cvcTextField.resignFirstResponder()
     }
 }
 
