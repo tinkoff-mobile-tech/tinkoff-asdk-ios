@@ -12,4 +12,5 @@ protocol IMainFormViewController: AnyObject {
     func setButtonPrimaryAppearance()
     func setButtonTinkoffPayAppearance()
     func setButtonSBPAppearance()
+    func setButtonEnabled(_ enabled: Bool)
 }

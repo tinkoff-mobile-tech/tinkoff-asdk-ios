@@ -68,6 +68,19 @@ final class MainFormPresenter {
             }
         }
     }
+
+    private func setupButton() {
+        switch stub.primaryPayMethod {
+        case .card:
+            view?.setButtonPrimaryAppearance()
+        case .tinkoffPay:
+            view?.setButtonTinkoffPayAppearance()
+        case .sbp:
+            view?.setButtonSBPAppearance()
+        }
+
+        view?.setButtonEnabled(savedCardPresenter.isValid)
+    }
 }
 
 // MARK: - IMainFormPresenter
@@ -81,16 +94,7 @@ extension MainFormPresenter: IMainFormPresenter {
         )
 
         view?.updateOrderDetails(with: orderDetails)
-
-        switch stub.primaryPayMethod {
-        case .card:
-            view?.setButtonPrimaryAppearance()
-        case .tinkoffPay:
-            view?.setButtonTinkoffPayAppearance()
-        case .sbp:
-            view?.setButtonSBPAppearance()
-        }
-
+        setupButton()
         loadCardsIfNeeded()
     }
 
@@ -121,5 +125,7 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didUpdateCVC cvc: String,
         isValid: Bool
-    ) {}
+    ) {
+        view?.setButtonEnabled(isValid)
+    }
 }

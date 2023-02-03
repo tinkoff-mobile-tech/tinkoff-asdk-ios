@@ -73,10 +73,6 @@ extension MainFormViewController: IMainFormViewController {
         orderDetailsView.update(with: model)
     }
 
-    func set(payButtonEnabled: Bool) {
-        payButton.isEnabled = payButtonEnabled
-    }
-
     func setButtonPrimaryAppearance() {
         payButton.configure(.cardPayment)
     }
@@ -87,6 +83,10 @@ extension MainFormViewController: IMainFormViewController {
 
     func setButtonSBPAppearance() {
         payButton.configure(.sbp)
+    }
+
+    func setButtonEnabled(_ enabled: Bool) {
+        payButton.isEnabled = enabled
     }
 }
 
@@ -165,11 +165,11 @@ private extension Button.Configuration {
             style: Button.Style(
                 foregroundColor: Button.InteractiveColor(
                     withDefaultHighlight: .white,
-                    disabled: ASDKColors.Text.tertiary.dark
+                    disabled: ASDKColors.Text.tertiary.color
                 ),
                 backgroundColor: Button.InteractiveColor(
                     withDefaultHighlight: UIColor(hex: "#1D1346") ?? .clear,
-                    disabled: ASDKColors.Background.neutral1.dark
+                    disabled: ASDKColors.Background.neutral1.color
                 )
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
