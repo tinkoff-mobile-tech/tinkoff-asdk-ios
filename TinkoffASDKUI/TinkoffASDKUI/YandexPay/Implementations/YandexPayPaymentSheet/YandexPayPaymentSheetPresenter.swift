@@ -20,7 +20,7 @@ final class YandexPayPaymentSheetPresenter {
 
     // MARK: State
 
-    private var paymentResult: YandexPayPaymentResult = .cancelled
+    private var paymentResult: PaymentResult = .cancelled(nil)
     private var canDismissView = false
 
     // MARK: Init
@@ -86,7 +86,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        let paymentInfo = YandexPayPaymentResult.PaymentInfo(
+        let paymentInfo = PaymentResult.PaymentInfo(
             paymentId: state.paymentId,
             orderId: state.orderId,
             amount: state.amount
@@ -103,7 +103,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        paymentResult = .cancelled
+        paymentResult = .cancelled(nil)
         canDismissView = true
         view?.close()
     }

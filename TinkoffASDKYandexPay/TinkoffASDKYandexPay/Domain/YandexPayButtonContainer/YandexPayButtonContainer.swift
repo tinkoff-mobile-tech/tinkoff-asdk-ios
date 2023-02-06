@@ -124,7 +124,7 @@ extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
             }
             delegate?.yandexPayButtonContainer(self, didRequestPaymentFlow: completion)
         case .cancelled:
-            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .cancelled)
+            delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .cancelled(nil))
         case let .failed(error):
             delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .failed(error))
         @unknown default:
@@ -140,7 +140,7 @@ extension YandexPayButtonContainer: YandexPayPaymentFlowDelegate {
         delegate?.yandexPayButtonContainerDidRequestViewControllerForPresentation(self)
     }
 
-    func yandexPayPaymentFlow(_ flow: IYandexPayPaymentFlow, didCompleteWith result: YandexPayPaymentResult) {
+    func yandexPayPaymentFlow(_ flow: IYandexPayPaymentFlow, didCompleteWith result: PaymentResult) {
         delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: result)
     }
 }

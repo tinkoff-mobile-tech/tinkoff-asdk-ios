@@ -34,8 +34,8 @@ extension SBPBanksRouter {
         transitionHandler?.dismiss(animated: true)
     }
 
-    func show(banks: [SBPBank], qrPayload: GetQRPayload?) {
-        let sbpModule = sbpBanksAssembly.buildPreparedModule()
+    func show(banks: [SBPBank], qrPayload: GetQRPayload?, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) {
+        let sbpModule = sbpBanksAssembly.buildPreparedModule(paymentSheetOutput: paymentSheetOutput)
         sbpModule.input.set(qrPayload: qrPayload, banks: banks)
         transitionHandler?.navigationController?.pushViewController(sbpModule.view, animated: true)
     }
@@ -51,8 +51,8 @@ extension SBPBanksRouter {
         transitionHandler?.present(alertVC, animated: true)
     }
 
-    func showPaymentSheet(paymentId: String) {
-        let sbpPaymentSheetViewController = sbpPaymentSheetAssembly.build(paymentId: paymentId)
+    func showPaymentSheet(paymentId: String, output: ISBPPaymentSheetPresenterOutput?) {
+        let sbpPaymentSheetViewController = sbpPaymentSheetAssembly.build(paymentId: paymentId, output: output)
         transitionHandler?.present(sbpPaymentSheetViewController, animated: true)
     }
 }

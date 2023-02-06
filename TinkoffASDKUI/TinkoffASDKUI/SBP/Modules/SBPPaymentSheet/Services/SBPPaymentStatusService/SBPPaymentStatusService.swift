@@ -27,6 +27,6 @@ final class SBPPaymentStatusService: ISBPPaymentStatusService {
     ///   - completion: в случае success выдает статус платежа
     func getPaymentStatus(paymentId: String, completion: @escaping SBPPaymentStatusServiceCompletion) {
         let stateData = GetPaymentStateData(paymentId: paymentId)
-        acquiringSdk.getPaymentState(data: stateData) { completion($0.map(\.status)) }
+        acquiringSdk.getPaymentState(data: stateData, completion: completion)
     }
 }
