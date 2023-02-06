@@ -26,6 +26,13 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private lazy var savedCardView = SavedCardView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
 
+    private lazy var otherPaymentMethodsLabel: UILabel = {
+        let label = UILabel()
+        label.font = .headingMedium
+        label.text = "Оплатить другим способом"
+        return label
+    }()
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds)
         tableView.separatorStyle = .none
@@ -33,6 +40,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
         tableView.dataSource = self
+        tableView.delegate = self
 
         return tableView
     }()
@@ -122,16 +130,25 @@ extension MainFormViewController: UITableViewDataSource {
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(payButton, insets: .payButtonInsets)
             return cell
+        case .otherPaymentMethodsHeader:
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(otherPaymentMethodsLabel, insets: .otherPaymentMethodsHeader)
+            return cell
         }
     }
 }
+
+// MARK: - UITableViewDelegate
+
+extension MainFormViewController: UITableViewDelegate {}
 
 // MARK: - Constants
 
 private extension UIEdgeInsets {
     static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 24, right: 16)
     static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
-    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 36, right: 16)
+    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 16)
+    static let otherPaymentMethodsHeader = UIEdgeInsets(vertical: 12, horizontal: 16)
 }
 
 private extension CGRect {

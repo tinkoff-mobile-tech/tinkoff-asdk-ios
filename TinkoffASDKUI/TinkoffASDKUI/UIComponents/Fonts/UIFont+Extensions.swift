@@ -19,4 +19,8 @@ extension UIFont {
     static var bodyLarge: UIFont {
         .systemFont(ofSize: 17, weight: .regular)
     }
+
+    static var headingMedium: UIFont {
+        .systemFont(ofSize: 20, weight: .bold)
+    }
 }

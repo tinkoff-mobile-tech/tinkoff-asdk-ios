@@ -28,6 +28,7 @@ final class MainFormPresenter {
         .orderDetails,
         .savedCard(savedCardPresenter),
         .payButton,
+        .otherPaymentMethodsHeader,
     ]
 
     private var loadedCards: [PaymentCard] = []

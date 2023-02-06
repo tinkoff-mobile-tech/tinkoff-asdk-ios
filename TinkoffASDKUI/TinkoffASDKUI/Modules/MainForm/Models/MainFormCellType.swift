@@ -11,4 +11,5 @@ enum MainFormCellType {
     case orderDetails
     case savedCard(ISavedCardViewOutput)
     case payButton
+    case otherPaymentMethodsHeader
 }
