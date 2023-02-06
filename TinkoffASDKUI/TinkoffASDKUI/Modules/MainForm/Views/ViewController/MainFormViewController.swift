@@ -111,7 +111,7 @@ extension MainFormViewController: UITableViewDataSource {
         switch cellType {
         case .orderDetails:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(orderDetailsView, insets: .zero)
+            cell.setContent(orderDetailsView, insets: .orderDetailsInsets)
             return cell
         case let .savedCard(savedCardPresenter):
             savedCardView.presenter = savedCardPresenter
@@ -129,8 +129,9 @@ extension MainFormViewController: UITableViewDataSource {
 // MARK: - Constants
 
 private extension UIEdgeInsets {
-    static let savedCardInsets = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
-    static let payButtonInsets = UIEdgeInsets(vertical: 16, horizontal: 16)
+    static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 24, right: 16)
+    static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
+    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 36, right: 16)
 }
 
 private extension CGRect {

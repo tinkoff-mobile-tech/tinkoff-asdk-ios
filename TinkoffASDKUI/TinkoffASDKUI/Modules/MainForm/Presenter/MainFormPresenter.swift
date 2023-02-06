@@ -99,7 +99,14 @@ extension MainFormPresenter: IMainFormPresenter {
     func viewWasClosed() {}
 
     func viewDidTapPayButton() {
-        router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+        switch stub.primaryPayMethod {
+        case .card:
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+        case .tinkoffPay:
+            router.openTinkoffPay(paymentFlow: paymentFlow)
+        case .sbp:
+            router.openSBP(paymentFlow: paymentFlow)
+        }
     }
 
     func numberOfRows() -> Int {

@@ -37,4 +37,8 @@ final class MainFormRouter: IMainFormRouter {
         let navVC = UINavigationController(rootViewController: cardPaymentViewController)
         transitionHandler?.present(navVC, animated: true)
     }
+
+    func openSBP(paymentFlow: PaymentFlow) {}
+
+    func openTinkoffPay(paymentFlow: PaymentFlow) {}
 }
