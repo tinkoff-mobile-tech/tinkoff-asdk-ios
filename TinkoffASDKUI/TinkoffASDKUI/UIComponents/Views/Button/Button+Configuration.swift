@@ -38,8 +38,8 @@ extension Button {
 
     struct InteractiveColor: Equatable {
         var normal: UIColor
-        var highlighted: UIColor
-        var disabled: UIColor
+        var highlighted: UIColor?
+        var disabled: UIColor?
     }
 
     enum ImagePlacement {

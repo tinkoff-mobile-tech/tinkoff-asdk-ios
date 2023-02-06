@@ -164,9 +164,35 @@ final class Button: UIView {
     }
 
     private func updateStyleForCurrentState() {
-        titleLabel.textColor = configuration.style.foregroundColor.forState(control.state)
-        imageView.tintColor = configuration.style.foregroundColor.forState(control.state)
-        control.backgroundColor = configuration.style.backgroundColor.forState(control.state)
+        let foregroundColor = {
+            let foregroundColors = configuration.style.foregroundColor
+
+            switch control.state {
+            case .highlighted:
+                return foregroundColors.highlighted ?? foregroundColors.normal.highlighted()
+            case .disabled:
+                return foregroundColors.disabled ?? ASDKColors.Text.tertiary.color
+            default:
+                return foregroundColors.normal
+            }
+        }()
+
+        let backgroundColor = {
+            let backgroundColors = configuration.style.backgroundColor
+
+            switch control.state {
+            case .highlighted:
+                return backgroundColors.highlighted ?? backgroundColors.normal.highlighted()
+            case .disabled:
+                return backgroundColors.disabled ?? ASDKColors.Background.neutral1.color
+            default:
+                return backgroundColors.normal
+            }
+        }()
+
+        titleLabel.textColor = foregroundColor
+        imageView.tintColor = foregroundColor
+        control.backgroundColor = backgroundColor
         loader.apply(style: .from(configuration))
     }
 
@@ -202,7 +228,7 @@ final class Button: UIView {
     }
 
     private func updateContentVisibility() {
-        // Исправляет странные движения внутри стека во время анимации
+        // Исправляет некорректное поведение внутри стека во время анимации
         UIView.performWithoutAnimation {
             imageView.isHidden = configuration.image == nil || configuration.isLoading
             titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.isLoading

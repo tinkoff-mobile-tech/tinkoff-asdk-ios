@@ -17,12 +17,10 @@ extension Button.Style {
     static var primaryTinkoff: Button.Style {
         Button.Style(
             foregroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Text.primaryOnTinkoff.color,
-                disabled: ASDKColors.Text.tertiary.color
+                normal: ASDKColors.Text.primaryOnTinkoff.color
             ),
             backgroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Foreground.brandTinkoffAccent,
-                disabled: ASDKColors.Background.neutral1.color
+                normal: ASDKColors.Foreground.brandTinkoffAccent
             )
         )
     }
@@ -30,12 +28,10 @@ extension Button.Style {
     static var secondary: Button.Style {
         Button.Style(
             foregroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Text.accent.color,
-                disabled: ASDKColors.Text.tertiary.color
+                normal: ASDKColors.Text.accent.color
             ),
             backgroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Background.neutral1.color,
-                disabled: ASDKColors.Background.neutral1.color
+                normal: ASDKColors.Background.neutral1.color
             )
         )
     }
@@ -43,8 +39,7 @@ extension Button.Style {
     static var flat: Button.Style {
         Button.Style(
             foregroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Text.accent.color,
-                disabled: ASDKColors.Text.tertiary.color
+                normal: ASDKColors.Text.accent.color
             ),
             backgroundColor: Button.InteractiveColor(
                 normal: .clear,
@@ -57,12 +52,10 @@ extension Button.Style {
     static var destructive: Button.Style {
         Button.Style(
             foregroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Text.negative.color,
-                disabled: ASDKColors.Text.tertiary.color
+                normal: ASDKColors.Text.negative.color
             ),
             backgroundColor: Button.InteractiveColor(
-                withDefaultHighlight: ASDKColors.Background.neutral1.color,
-                disabled: ASDKColors.Background.neutral1.color
+                normal: ASDKColors.Background.neutral1.color
             )
         )
     }

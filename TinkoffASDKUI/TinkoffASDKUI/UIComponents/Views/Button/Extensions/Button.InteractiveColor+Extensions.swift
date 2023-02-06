@@ -11,23 +11,4 @@ extension Button.InteractiveColor {
     static var clear: Button.InteractiveColor {
         Button.InteractiveColor(normal: .clear, highlighted: .clear, disabled: .clear)
     }
-
-    init(withDefaultHighlight defaultColor: UIColor, disabled: UIColor) {
-        self.init(
-            normal: defaultColor,
-            highlighted: defaultColor.highlighted(),
-            disabled: disabled
-        )
-    }
-
-    func forState(_ state: UIControl.State) -> UIColor {
-        switch state {
-        case .highlighted:
-            return highlighted
-        case .disabled:
-            return disabled
-        default:
-            return normal
-        }
-    }
 }

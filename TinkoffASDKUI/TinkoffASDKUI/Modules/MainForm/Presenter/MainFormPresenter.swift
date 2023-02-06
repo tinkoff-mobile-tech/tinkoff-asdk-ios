@@ -69,7 +69,7 @@ final class MainFormPresenter {
         }
     }
 
-    private func setupButton() {
+    private func setupButtonAppearance() {
         switch stub.primaryPayMethod {
         case .card:
             view?.setButtonPrimaryAppearance()
@@ -78,8 +78,6 @@ final class MainFormPresenter {
         case .sbp:
             view?.setButtonSBPAppearance()
         }
-
-        view?.setButtonEnabled(savedCardPresenter.isValid)
     }
 }
 
@@ -94,7 +92,7 @@ extension MainFormPresenter: IMainFormPresenter {
         )
 
         view?.updateOrderDetails(with: orderDetails)
-        setupButton()
+        setupButtonAppearance()
         loadCardsIfNeeded()
     }
 
@@ -108,7 +106,7 @@ extension MainFormPresenter: IMainFormPresenter {
         cellTypes.count
     }
 
-    func row(at indexPath: IndexPath) -> MainFormCellType {
+    func cellType(at indexPath: IndexPath) -> MainFormCellType {
         cellTypes[indexPath.row]
     }
 }
@@ -126,6 +124,6 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         didUpdateCVC cvc: String,
         isValid: Bool
     ) {
-        view?.setButtonEnabled(isValid)
+//        view?.setButtonEnabled(isValid)
     }
 }

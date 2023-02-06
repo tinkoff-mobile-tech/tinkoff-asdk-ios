@@ -106,7 +106,7 @@ extension MainFormViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellType = presenter.row(at: indexPath)
+        let cellType = presenter.cellType(at: indexPath)
 
         switch cellType {
         case .orderDetails:
@@ -164,12 +164,10 @@ private extension Button.Configuration {
             image: .sbpImage,
             style: Button.Style(
                 foregroundColor: Button.InteractiveColor(
-                    withDefaultHighlight: .white,
-                    disabled: ASDKColors.Text.tertiary.color
+                    normal: .white
                 ),
                 backgroundColor: Button.InteractiveColor(
-                    withDefaultHighlight: UIColor(hex: "#1D1346") ?? .clear,
-                    disabled: ASDKColors.Background.neutral1.color
+                    normal: UIColor(hex: "#1D1346") ?? .clear
                 )
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
@@ -181,6 +179,7 @@ private extension Button.Configuration {
 // MARK: - UIImage + Helpers
 
 private extension UIImage {
+    /// Извлекает иконку для светлой темы из динамического ассета
     static var sbpImage: UIImage {
         let imageAsset = UIImageAsset()
         let lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
