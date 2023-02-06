@@ -164,7 +164,7 @@ final class Button: UIView {
     }
 
     private func updateStyleForCurrentState() {
-        let foregroundColor = {
+        let foregroundColor: UIColor = {
             let foregroundColors = configuration.style.foregroundColor
 
             switch control.state {
@@ -177,7 +177,7 @@ final class Button: UIView {
             }
         }()
 
-        let backgroundColor = {
+        let backgroundColor: UIColor = {
             let backgroundColors = configuration.style.backgroundColor
 
             switch control.state {
