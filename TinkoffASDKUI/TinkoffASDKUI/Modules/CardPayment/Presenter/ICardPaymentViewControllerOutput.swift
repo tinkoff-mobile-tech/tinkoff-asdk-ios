@@ -11,8 +11,6 @@ protocol ICardPaymentViewControllerOutput {
     func closeButtonPressed()
     func payButtonPressed()
 
-    func cardFieldDidChangeState(isValid: Bool)
-
     func numberOfRows() -> Int
     func cellType(for row: Int) -> CardPaymentCellType
 }

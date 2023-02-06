@@ -23,12 +23,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
             amount: Int(amount)
         )
 
-        let cardFieldFactory = CardFieldFactory()
-
-        let view = CardPaymentViewController(
-            presenter: presenter,
-            cardFieldFactory: cardFieldFactory
-        )
+        let view = CardPaymentViewController(presenter: presenter)
         presenter.view = view
         router.transitionHandler = view
 

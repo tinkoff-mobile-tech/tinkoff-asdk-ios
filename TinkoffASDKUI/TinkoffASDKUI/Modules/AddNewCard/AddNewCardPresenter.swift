@@ -12,9 +12,10 @@ protocol IAddNewCardPresenter: AnyObject {
 
     func viewDidLoad()
     func viewDidAppear()
-    func viewAddCardTapped(cardData: CardData)
+    func cardFieldViewAddCardTapped()
     func viewUserClosedTheScreen()
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
+
+    func cardFieldViewPresenter() -> ICardFieldViewOutput
 }
 
 // MARK: - Presenter
@@ -22,6 +23,8 @@ protocol IAddNewCardPresenter: AnyObject {
 final class AddNewCardPresenter {
 
     weak var view: IAddNewCardView?
+
+    private lazy var cardFieldPresenter = CardFieldPresenter(output: self)
 
     private weak var output: IAddNewCardOutput?
     private let networking: IAddNewCardNetworking
@@ -37,7 +40,10 @@ final class AddNewCardPresenter {
 
 extension AddNewCardPresenter: IAddNewCardPresenter {
 
-    func viewAddCardTapped(cardData: CardData) {
+    func cardFieldViewAddCardTapped() {
+        guard cardFieldPresenter.validateWholeForm().isValid else { return }
+
+        let cardData = CardData(cardNumber: cardFieldPresenter.cardNumber, expiration: cardFieldPresenter.expiration, cvc: cardFieldPresenter.cvc)
         addCard(cardData: cardData)
     }
 
@@ -56,12 +62,14 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
         output?.addingNewCardCompleted(result: .cancelled)
     }
 
+    func cardFieldViewPresenter() -> ICardFieldViewOutput {
+        cardFieldPresenter
+    }
+}
+
+extension AddNewCardPresenter: ICardFieldOutput {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        if result.isValid {
-            view?.enableAddButton()
-        } else {
-            view?.disableAddButton()
-        }
+        result.isValid ? view?.enableAddButton() : view?.disableAddButton()
     }
 }
 

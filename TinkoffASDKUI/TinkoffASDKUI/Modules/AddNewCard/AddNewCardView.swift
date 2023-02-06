@@ -8,8 +8,9 @@
 import UIKit
 
 protocol AddNewCardViewDelegate: AnyObject {
-    func viewAddCardTapped(cardData: CardData)
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
+    func cardFieldViewAddCardTapped()
+
+    func cardFieldViewPresenter() -> ICardFieldViewOutput
 }
 
 final class AddNewCardView: UIView {
@@ -36,17 +37,14 @@ final class AddNewCardView: UIView {
     // Dependencies
 
     private let keyboardService = KeyboardService()
-    private let cardFieldFactory: ICardFieldFactory
 
-    lazy var cardFieldView = cardFieldFactory.assembleCardFieldView()
+    private lazy var cardFieldView = CardFieldView()
 
     // MARK: - Init
 
-    init(delegate: AddNewCardViewDelegate, cardFieldFactory: ICardFieldFactory) {
+    init(delegate: AddNewCardViewDelegate) {
         self.delegate = delegate
-        self.cardFieldFactory = cardFieldFactory
         super.init(frame: .zero)
-        cardFieldView.delegate = self
         setupViews()
     }
 
@@ -92,6 +90,10 @@ extension AddNewCardView {
     func enableAddButton() {
         addButton.isEnabled = true
     }
+
+    func activate() {
+        cardFieldView.activate(textFieldType: .cardNumber)
+    }
 }
 
 // MARK: - Private
@@ -134,13 +136,7 @@ extension AddNewCardView {
         addButton.isEnabled = false
         addButton.configure(
             Constants.AddButton.getConfiguration { [weak self] in
-                guard let self = self else { return }
-                let validationResult = self.cardFieldView.input.validateWholeForm()
-                guard validationResult.isValid == true else { return }
-                let input = self.cardFieldView.input
-                self.delegate?.viewAddCardTapped(
-                    cardData: CardData(cardNumber: input.cardNumber, expiration: input.expiration, cvc: input.cvc)
-                )
+                self?.delegate?.cardFieldViewAddCardTapped()
             }
         )
     }
@@ -160,7 +156,6 @@ extension AddNewCardView {
     private func prepareCollectionView() -> UICollectionView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -207,28 +202,22 @@ extension AddNewCardView: UICollectionViewDelegate {
     }
 
     private func prepareCardFieldCell(indexPath: IndexPath) -> UICollectionViewCell {
-        let insets = Constants.CollectionView.horizontalInsets
-        let width = collectionView.frame.width - insets.horizontal
-        let cardFieldHeight = cardFieldView.systemLayoutSizeFitting(.zero).height
-        let cardFieldSize = CGSize(width: width, height: cardFieldHeight)
-        cardFieldView.frame = CGRect(origin: .zero, size: cardFieldSize)
-
         let cell = collectionView.dequeue(ContainerCollectionCell.self, for: indexPath)
+        cardFieldView.presenter = delegate?.cardFieldViewPresenter()
         cell.update(with: ContainerCollectionCell.Configuration(content: cardFieldView, shouldHighlight: false))
         return cell
     }
 }
 
-// MARK: - mark
-
-extension AddNewCardView: CardFieldDelegate {
-
-    func sizeDidChange(view: CardFieldView, size: CGSize) {
-        // do nothing
-    }
-
-    func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        delegate?.cardFieldValidationResultDidChange(result: result)
+extension AddNewCardView: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let cardFieldHeight = cardFieldView.systemLayoutSizeFitting(.zero).height
+        let width = collectionView.frame.width - Constants.CollectionView.horizontalInsets.horizontal
+        return CGSize(width: width, height: cardFieldHeight)
     }
 }
 

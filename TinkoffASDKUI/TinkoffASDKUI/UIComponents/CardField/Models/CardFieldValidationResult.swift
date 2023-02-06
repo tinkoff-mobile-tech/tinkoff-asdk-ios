@@ -13,4 +13,12 @@ struct CardFieldValidationResult {
     var cvcIsValid = false
 
     var isValid: Bool { cardNumberIsValid && expirationIsValid && cvcIsValid }
+
+    func isFieldValid(type: CardFieldType) -> Bool {
+        switch type {
+        case .cardNumber: return cardNumberIsValid
+        case .expiration: return expirationIsValid
+        case .cvc: return cvcIsValid
+        }
+    }
 }

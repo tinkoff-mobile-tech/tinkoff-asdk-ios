@@ -25,7 +25,7 @@ final class FloatingTextField: UIView {
         return view
     }()
 
-    private lazy var textField: UITextField = {
+    private(set) lazy var textField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
         textField.backgroundColor = .clear
@@ -80,6 +80,10 @@ final class FloatingTextField: UIView {
     @discardableResult
     override func resignFirstResponder() -> Bool {
         textField.resignFirstResponder()
+    }
+
+    override var isFirstResponder: Bool {
+        textField.isFirstResponder
     }
 }
 
@@ -247,11 +251,13 @@ extension FloatingTextField {
 extension FloatingTextField {
     enum InsetsType {
         case commonInsets
+        case commonAndHugeLeftInset
         case smallInsets
 
         var textFieldInsets: UIEdgeInsets {
             switch self {
             case .commonInsets: return UIEdgeInsets(top: 9, left: 12, bottom: 9, right: 7)
+            case .commonAndHugeLeftInset: return UIEdgeInsets(top: 9, left: 64, bottom: 9, right: 7)
             case .smallInsets: return UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 7)
             }
         }
