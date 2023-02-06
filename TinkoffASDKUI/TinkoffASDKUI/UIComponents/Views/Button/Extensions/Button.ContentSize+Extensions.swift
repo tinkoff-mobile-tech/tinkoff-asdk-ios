@@ -10,7 +10,7 @@ import Foundation
 extension Button.ContentSize {
     static var basicSmall: Button.ContentSize {
         Button.ContentSize(
-            titleFont: .systemFont(ofSize: 13, weight: .bold),
+            titleFont: .uiSmallBold,
             cornersStyle: .rounded(radius: 12),
             activityIndicatorDiameter: 20,
             imagePadding: 4,
@@ -21,7 +21,7 @@ extension Button.ContentSize {
 
     static var basicMedium: Button.ContentSize {
         Button.ContentSize(
-            titleFont: .systemFont(ofSize: 15, weight: .regular),
+            titleFont: .bodyMedium,
             cornersStyle: .rounded(radius: 12),
             activityIndicatorDiameter: 24,
             imagePadding: 8,
@@ -32,7 +32,7 @@ extension Button.ContentSize {
 
     static var basicLarge: Button.ContentSize {
         Button.ContentSize(
-            titleFont: .systemFont(ofSize: 17, weight: .regular),
+            titleFont: .bodyLarge,
             cornersStyle: .rounded(radius: 16),
             activityIndicatorDiameter: 24,
             imagePadding: 8,
