@@ -42,8 +42,8 @@ struct HighlightSettings: Equatable {
 
     var dark: ThemeSettings
     var light: ThemeSettings
-    var adjustYellow: FeatureWithParams<Yellow>
-    var adjustAlpha: FeatureWithParams<Alpha>
+    var adjustYellow: Yellow?
+    var adjustAlpha: Alpha?
 
     // MARK: - Methods
 
@@ -73,14 +73,12 @@ extension HighlightSettings {
     static let `default` = HighlightSettings(
         dark: ThemeSettings(brightnessAdjustment: 0.07),
         light: ThemeSettings(brightnessAdjustment: -0.05),
-        adjustYellow: .on(params: .default),
-        adjustAlpha: .on(params: .default)
+        adjustYellow: .default,
+        adjustAlpha: .default
     )
     /// A constant representing no highlight value.
     static let none = HighlightSettings(
         dark: .default,
-        light: .default,
-        adjustYellow: .off,
-        adjustAlpha: .off
+        light: .default
     )
 }

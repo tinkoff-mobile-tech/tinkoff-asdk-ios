@@ -16,7 +16,7 @@ extension HSBAColor {
         var hueAdjustment: CGFloat = 0
         var alphaMultiplier: CGFloat = 1
 
-        if case let .on(params) = settings.adjustAlpha {
+        if let params = settings.adjustAlpha {
             if alpha <= params.upperBounds {
                 alphaMultiplier = params.maxMultiplier
                 brightnessAdjustment = 0
@@ -36,7 +36,7 @@ extension HSBAColor {
             }
         }
 
-        if case let .on(params) = settings.adjustYellow,
+        if let params = settings.adjustYellow,
            params.hueRange.contains(hue),
            brightness > (1 - abs(brightnessAdjustment)) {
             hueAdjustment = params.hueAdjustment

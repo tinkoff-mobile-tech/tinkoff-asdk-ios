@@ -119,7 +119,7 @@ extension ShadowAvailable where Self: UIView {
     }
 
     func dropShadow(configuration: ShadowConfiguration) {
-        switch UITraitCollection.colorTheme {
+        switch UITraitCollection.theme {
         case .light:
             dropShadow(with: configuration.light)
         case .dark:

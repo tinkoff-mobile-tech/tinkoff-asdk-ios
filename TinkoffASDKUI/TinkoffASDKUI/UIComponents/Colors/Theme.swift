@@ -7,12 +7,20 @@
 
 import UIKit
 
-@frozen public enum Theme {
+enum Theme {
     case light
     case dark
 }
 
-public extension UITraitCollection {
+extension UITraitCollection {
+    static var theme: Theme {
+        if #available(iOS 13, *) {
+            return UITraitCollection.current.theme
+        } else {
+            return UIScreen.main.traitCollection.theme
+        }
+    }
+
     var theme: Theme {
         if #available(iOS 12.0, *) {
             return userInterfaceStyle.cast()
