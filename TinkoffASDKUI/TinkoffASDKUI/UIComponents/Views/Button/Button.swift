@@ -94,7 +94,7 @@ final class Button: UIView {
         updateContentVisibility()
     }
 
-    func stopLoading(animated: Bool = true) {
+    func stopLoading() {
         guard configuration.isLoading else { return }
         configuration.isLoading = false
         updateLoaderVisibility()
