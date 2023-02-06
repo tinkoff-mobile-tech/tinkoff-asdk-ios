@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 30.01.2023.
 //
 
-import Foundation
+import UIKit
 
 extension Button.ContentSize {
     static var basicSmall: Button.ContentSize {

@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 01.02.2023.
 //
 
-import Foundation
+import UIKit
 
 extension Button.InteractiveColor {
     static var clear: Button.InteractiveColor {
