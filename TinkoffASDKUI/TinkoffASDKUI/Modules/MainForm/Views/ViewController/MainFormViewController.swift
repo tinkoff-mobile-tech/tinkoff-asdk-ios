@@ -21,7 +21,8 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     // MARK: Subviews
 
-    private lazy var headerView = MainFormHeaderView(frame: .headerInitialFrame)
+    private lazy var tableView = UITableView(frame: view.bounds)
+    private lazy var tableHeaderView = MainFormHeaderView(frame: .headerInitialFrame)
     private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
@@ -32,18 +33,6 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         label.text = "Оплатить другим способом"
         label.textColor = ASDKColors.Text.primary.color
         return label
-    }()
-
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: view.bounds)
-        tableView.separatorStyle = .none
-        tableView.register(ContainerTableViewCell.self, AvatarTableViewCell.self)
-        tableView.keyboardDismissMode = .onDrag
-        tableView.delaysContentTouches = false
-        tableView.dataSource = self
-        tableView.delegate = self
-
-        return tableView
     }()
 
     // MARK: Init
@@ -71,7 +60,14 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
-        tableView.tableHeaderView = headerView
+
+        tableView.tableHeaderView = tableHeaderView
+        tableView.separatorStyle = .none
+        tableView.keyboardDismissMode = .onDrag
+        tableView.delaysContentTouches = false
+        tableView.register(ContainerTableViewCell.self, AvatarTableViewCell.self)
+        tableView.dataSource = self
+        tableView.delegate = self
     }
 }
 
