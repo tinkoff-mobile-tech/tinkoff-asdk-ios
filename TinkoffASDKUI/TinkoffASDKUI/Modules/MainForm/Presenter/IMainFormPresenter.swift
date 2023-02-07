@@ -13,4 +13,5 @@ protocol IMainFormPresenter {
     func viewDidTapPayButton()
     func numberOfRows() -> Int
     func cellType(at indexPath: IndexPath) -> MainFormCellType
+    func didSelectRow(at indexPath: IndexPath)
 }

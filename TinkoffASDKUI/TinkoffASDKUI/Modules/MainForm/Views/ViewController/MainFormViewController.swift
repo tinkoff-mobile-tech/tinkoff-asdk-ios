@@ -30,13 +30,14 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         let label = UILabel()
         label.font = .headingMedium
         label.text = "Оплатить другим способом"
+        label.textColor = ASDKColors.Text.primary.color
         return label
     }()
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds)
         tableView.separatorStyle = .none
-        tableView.register(ContainerTableViewCell.self)
+        tableView.register(ContainerTableViewCell.self, OtherPaymentMethodTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
         tableView.dataSource = self
@@ -134,13 +135,22 @@ extension MainFormViewController: UITableViewDataSource {
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(otherPaymentMethodsLabel, insets: .otherPaymentMethodsHeader)
             return cell
+        case let .otherPaymentMethod(paymentMethod):
+            let cell = tableView.dequeue(cellType: OtherPaymentMethodTableViewCell.self, indexPath: indexPath)
+            cell.update(with: .from(paymentMethod))
+            return cell
         }
     }
 }
 
 // MARK: - UITableViewDelegate
 
-extension MainFormViewController: UITableViewDelegate {}
+extension MainFormViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presenter.didSelectRow(at: indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
 
 // MARK: - Constants
 
@@ -191,6 +201,32 @@ private extension Button.Configuration {
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
             imagePlacement: .trailing
         )
+    }
+}
+
+// MARK: - OtherPaymentMethodViewModel + Helpers
+
+extension OtherPaymentMethodViewModel {
+    static func from(_ paymentMethod: MainFormPaymentMethod) -> OtherPaymentMethodViewModel {
+        switch paymentMethod {
+        case .card:
+            return OtherPaymentMethodViewModel(
+                title: "Картой",
+                avatarImage: Asset.Icons.tinkoffPayIcon.image
+            )
+        case .tinkoffPay:
+            return OtherPaymentMethodViewModel(
+                title: "Tinkoff Pay",
+                description: "В приложении Тинькофф",
+                avatarImage: Asset.Icons.tinkoffPayIcon.image
+            )
+        case .sbp:
+            return OtherPaymentMethodViewModel(
+                title: "СБП",
+                description: "В приложении любого банка",
+                avatarImage: Asset.Icons.tinkoffPayIcon.image
+            )
+        }
     }
 }
 
