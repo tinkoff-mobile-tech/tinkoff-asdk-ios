@@ -28,7 +28,7 @@ final class AddNewCardView: UIView {
             style: .primaryTinkoff,
             contentSize: .basicLarge
         ),
-        action: { [weak self] in self?.addButtonTapped() }
+        action: { [weak self] in self?.delegate?.cardFieldViewAddCardTapped() }
     )
 
     // Local State
