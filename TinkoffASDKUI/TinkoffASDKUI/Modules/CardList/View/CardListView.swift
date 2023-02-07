@@ -310,14 +310,3 @@ private extension CGFloat {
     static let buttonHorizontalInsets: CGFloat = 16
     static let contentAdditionalSpaceFromButton: CGFloat = 16
 }
-
-// MARK: - MessageView + Style
-
-private extension MessageView.Style {
-    static var noCards: MessageView.Style {
-        MessageView.Style(
-            largeImage: Asset.Illustrations.illustrationsCommonLightCard.image,
-            message: Loc.CardList.Status.noCards
-        )
-    }
-}

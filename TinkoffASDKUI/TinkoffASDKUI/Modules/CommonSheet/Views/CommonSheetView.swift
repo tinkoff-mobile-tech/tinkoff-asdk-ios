@@ -51,8 +51,21 @@ final class CommonSheetView: UIView {
         return label
     }()
 
-    private lazy var primaryButton = Button()
-    private lazy var secondaryButton = Button()
+    private lazy var primaryButton = Button(
+        configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
+        action: { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.commonSheetViewDidTapPrimaryButton(self)
+        }
+    )
+
+    private lazy var secondaryButton = Button(
+        configuration: Button.Configuration(style: .secondary, contentSize: .basicLarge),
+        action: { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.commonSheetViewDidTapSecondaryButton(self)
+        }
+    )
 
     private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
@@ -163,32 +176,11 @@ final class CommonSheetView: UIView {
     }
 
     private func updateButtons(with state: CommonSheetState) {
-        updateButton(primaryButton, withTitle: state.primaryButtonTitle, style: .primary) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.commonSheetViewDidTapPrimaryButton(self)
-        }
-
-        updateButton(secondaryButton, withTitle: state.secondaryButtonTitle, style: .secondary) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.commonSheetViewDidTapSecondaryButton(self)
-        }
-
+        primaryButton.setTitle(state.primaryButtonTitle)
+        primaryButton.isHidden = state.primaryButtonTitle == nil
+        secondaryButton.setTitle(state.secondaryButtonTitle)
+        secondaryButton.isHidden = state.secondaryButtonTitle == nil
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
-    }
-
-    private func updateButton(_ button: Button, withTitle title: String?, style: Button.Style, action: @escaping () -> Void) {
-        if let title = title {
-            let configuration = Button.Configuration(
-                data: Button.Data(
-                    text: .basic(normal: title, highlighted: title, disabled: title),
-                    onTapAction: action
-                ),
-                style: style
-            )
-            button.configure(configuration)
-        }
-
-        button.isHidden = title == nil
     }
 
     // MARK: Overlay Animation

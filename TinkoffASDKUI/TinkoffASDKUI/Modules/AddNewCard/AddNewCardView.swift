@@ -20,8 +20,16 @@ final class AddNewCardView: UIView {
     // UI
 
     private lazy var collectionView: UICollectionView = prepareCollectionView()
-    private let addButton = Button()
     private let blockingView = UIView()
+
+    private lazy var addButton = Button(
+        configuration: Button.Configuration(
+            title: Loc.Acquiring.AddNewCard.addButton,
+            style: .primaryTinkoff,
+            contentSize: .basicLarge
+        ),
+        action: { [weak self] in self?.delegate?.cardFieldViewAddCardTapped() }
+    )
 
     // Local State
 
@@ -126,19 +134,15 @@ extension AddNewCardView {
     }
 
     private func setupAddButton() {
-        addButton.makeConstraints { view in
-            [
-                view.height(constant: Button.defaultHeight),
-                addButtonBottomConstraint,
-            ] + view.makeLeftAndRightEqualToSuperView(inset: Constants.AddButton.horizontalInset)
-        }
+        addButton.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            addButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.AddButton.horizontalInset),
+            addButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.AddButton.horizontalInset),
+            addButtonBottomConstraint,
+        ])
 
         addButton.isEnabled = false
-        addButton.configure(
-            Constants.AddButton.getConfiguration { [weak self] in
-                self?.delegate?.cardFieldViewAddCardTapped()
-            }
-        )
     }
 
     private func calculateAddButtonBottomInset(keyboardHeight: CGFloat) -> CGFloat {
@@ -242,20 +246,5 @@ extension AddNewCardView.Constants.AddButton {
 
     static var bottomInsetWithSafeArea: CGFloat {
         UIWindow.globalSafeAreaInsets.bottom + Self.bottomInset
-    }
-
-    static func getConfiguration(action: @escaping () -> Void) -> Button.Configuration {
-
-        return Button.Configuration(
-            data: Button.Data(
-                text: .basic(
-                    normal: Loc.Acquiring.AddNewCard.addButton,
-                    highlighted: nil,
-                    disabled: nil
-                ),
-                onTapAction: action
-            ),
-            style: .primary
-        )
     }
 }

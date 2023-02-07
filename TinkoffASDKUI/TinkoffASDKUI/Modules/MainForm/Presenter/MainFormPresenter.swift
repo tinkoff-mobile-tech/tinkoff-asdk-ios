@@ -24,7 +24,12 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private var rows: [MainFormRowType] { [.savedCard(savedCardPresenter)] }
+    private lazy var cellTypes: [MainFormCellType] = [
+        .orderDetails,
+        .savedCard(savedCardPresenter),
+        .payButton,
+    ]
+
     private var loadedCards: [PaymentCard] = []
 
     // MARK: Init
@@ -63,6 +68,17 @@ final class MainFormPresenter {
             }
         }
     }
+
+    private func setupButtonAppearance() {
+        switch stub.primaryPayMethod {
+        case .card:
+            view?.setButtonPrimaryAppearance()
+        case .tinkoffPay:
+            view?.setButtonTinkoffPayAppearance()
+        case .sbp:
+            view?.setButtonSBPAppearance()
+        }
+    }
 }
 
 // MARK: - IMainFormPresenter
@@ -75,32 +91,30 @@ extension MainFormPresenter: IMainFormPresenter {
             orderDescription: "Заказ №123456"
         )
 
-        let paymentControls = MainFormPaymentControlsViewModel(
-            buttonType: .primary(title: "Оплатить картой")
-        )
-
-        let header = MainFormHeaderViewModel(
-            orderDetails: orderDetails,
-            paymentControls: paymentControls
-        )
-
-        view?.updateHeader(with: header)
-//        view?.set(payButtonEnabled: savedCardPresenter.isValid)
+        view?.updateOrderDetails(with: orderDetails)
+        setupButtonAppearance()
         loadCardsIfNeeded()
     }
 
     func viewWasClosed() {}
 
     func viewDidTapPayButton() {
-        router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+        switch stub.primaryPayMethod {
+        case .card:
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+        case .tinkoffPay:
+            router.openTinkoffPay(paymentFlow: paymentFlow)
+        case .sbp:
+            router.openSBP(paymentFlow: paymentFlow)
+        }
     }
 
     func numberOfRows() -> Int {
-        rows.count
+        cellTypes.count
     }
 
-    func row(at indexPath: IndexPath) -> MainFormRowType {
-        rows[indexPath.row]
+    func cellType(at indexPath: IndexPath) -> MainFormCellType {
+        cellTypes[indexPath.row]
     }
 }
 
@@ -117,6 +131,6 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         didUpdateCVC cvc: String,
         isValid: Bool
     ) {
-//        view?.set(payButtonEnabled: isValid)
+//        view?.setButtonEnabled(isValid)
     }
 }

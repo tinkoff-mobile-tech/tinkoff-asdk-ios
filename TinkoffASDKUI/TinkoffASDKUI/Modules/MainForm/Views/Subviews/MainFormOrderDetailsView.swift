@@ -70,20 +70,12 @@ final class MainFormOrderDetailsView: UIView {
 
     private func layoutContentStack() {
         addSubview(contentStack)
-        contentStack.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            contentStack.topAnchor.constraint(equalTo: topAnchor, constant: .contentStackVerticalInsets),
-            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.contentStackVerticalInsets),
-        ])
+        contentStack.pinEdgesToSuperview()
     }
 }
 
 // MARK: - Constants
 
 private extension CGFloat {
-    static let contentStackVerticalInsets: CGFloat = 32
     static let contentStackSpacing: CGFloat = 8
 }

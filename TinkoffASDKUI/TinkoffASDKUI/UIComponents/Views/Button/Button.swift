@@ -8,63 +8,43 @@
 import UIKit
 
 final class Button: UIView {
-
-    static var defaultHeight: CGFloat { 56 }
-    override var intrinsicContentSize: CGSize { button.intrinsicContentSize }
-
-    private let button = UIButton()
-
-    // MARK: - State
+    // MARK: Internal State
 
     var isEnabled: Bool {
-        get { button.isEnabled }
-        set {
-            button.isEnabled = newValue
-            controlState = newValue ? .normal : .disabled
-            controlStateDidChange(controlState: controlState)
-        }
+        get { control.isEnabled }
+        set { control.isEnabled = newValue }
     }
 
-    private(set) var configuration: Configuration?
+    private(set) var configuration: Configuration
 
-    private(set) var state: State = .normal {
-        didSet {
-            stateDidChange(state: state)
-        }
-    }
+    // MARK: Subviews & Constraints
 
-    private(set) lazy var controlState: UIControl.State = button.state {
-        didSet {
-            guard controlState != oldValue else { return }
-            controlStateDidChange(controlState: controlState)
-        }
-    }
+    private lazy var control = UIControl()
+    private lazy var contentStack = UIStackView()
+    private lazy var titleLabel = UILabel()
+    private lazy var imageView = UIImageView()
+    private lazy var loader = ActivityIndicatorView()
+    private lazy var loaderContainer = ViewHolder(base: loader)
 
-    private var stateObservations: [NSKeyValueObservation?] = []
+    private lazy var preferredHeight = control.heightAnchor.constraint(equalToConstant: .zero)
+    private lazy var contentTop = contentStack.topAnchor.constraint(greaterThanOrEqualTo: control.topAnchor)
+    private lazy var contentLeading = contentStack.leadingAnchor.constraint(greaterThanOrEqualTo: control.leadingAnchor)
+    private lazy var contentTrailing = contentStack.trailingAnchor.constraint(lessThanOrEqualTo: control.trailingAnchor)
+    private lazy var contentBottom = contentStack.bottomAnchor.constraint(lessThanOrEqualTo: control.bottomAnchor)
 
-    // MARK: - Inits
+    // MARK: Private State
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
+    private var action: VoidBlock?
+    private var stateObservers: [NSKeyValueObservation] = []
 
-        stateObservations.append(
-            button.observe(\.isHighlighted) { [weak self] button, _ in
-                self?.controlState = button.state
-            }
-        )
+    // MARK: Init
 
-        stateObservations.append(
-            button.observe(\.isEnabled) { [weak self] button, _ in
-                self?.controlState = button.state
-            }
-        )
-
-        stateObservations.append(
-            button.observe(\.isSelected) { [weak self] button, _ in
-                self?.controlState = button.state
-            }
-        )
+    init(configuration: Configuration = .empty, action: VoidBlock? = nil) {
+        self.configuration = configuration
+        self.action = action
+        super.init(frame: .zero)
+        setupView()
+        updateView()
     }
 
     @available(*, unavailable)
@@ -72,234 +52,246 @@ final class Button: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Public
+    // MARK: UIView Methods
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateCorners()
+    }
+
+    // MARK: Button Methods
+
+    func configure(_ configuration: Configuration) {
+        guard self.configuration != configuration else { return }
+        self.configuration = configuration
+        updateView()
+    }
+
+    func setTitle(_ title: String?) {
+        guard configuration.title != title else { return }
+        configuration.title = title
+        updateContent()
+        updateContentVisibility()
+    }
+
+    func setImage(_ image: UIImage?) {
+        guard configuration.image != image else { return }
+        configuration.image = image
+        updateContent()
+        updateContentVisibility()
+    }
+
+    func setStyle(_ style: Button.Style) {
+        guard configuration.style != style else { return }
+        configuration.style = style
+        updateStyleForCurrentState()
+    }
 
     func startLoading() {
-        state = .loading
+        guard !configuration.isLoading else { return }
+        configuration.isLoading = true
+        updateLoaderVisibility()
+        updateContentVisibility()
     }
 
     func stopLoading() {
-        state = .normal
+        guard configuration.isLoading else { return }
+        configuration.isLoading = false
+        updateLoaderVisibility()
+        updateContentVisibility()
     }
 
-    // MARK: - Private
-
-    private func setupViews() {
-        addSubview(button)
-        button.makeEqualToSuperview()
-
-        button.addTarget(
-            self,
-            action: #selector(didTapActionButton),
-            for: .touchUpInside
-        )
+    func setAction(_ action: VoidBlock?) {
+        self.action = action
     }
 
-    @objc private func didTapActionButton() {
-        configuration?.data.onTapAction()
+    // MARK: Initial Configuration
+
+    private func setupView() {
+        setupViewHierarchy()
+        setupConstraints()
+        setupObservers()
+        updateLoaderVisibility()
+        control.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
 
-    private func stateDidChange(state: State) {
-        switch state {
-        case .normal:
-            hideActivityIndicator { [weak self] in
-                guard let self = self else { return }
-                if let configuration = self.configuration {
-                    self.configure(configuration)
-                }
+    private func setupViewHierarchy() {
+        addSubview(control)
+        control.addSubview(contentStack)
+        control.addSubview(loaderContainer)
+        control.clipsToBounds = true
+        contentStack.axis = .horizontal
+        contentStack.alignment = .center
+        contentStack.isUserInteractionEnabled = false
+    }
+
+    private func setupConstraints() {
+        control.pinEdgesToSuperview()
+        loaderContainer.pinEdgesToSuperview()
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            contentStack.centerXAnchor.constraint(equalTo: control.centerXAnchor),
+            contentStack.centerYAnchor.constraint(equalTo: control.centerYAnchor),
+            contentTop,
+            contentLeading,
+            contentTrailing,
+            contentBottom,
+            preferredHeight,
+        ])
+    }
+
+    private func setupObservers() {
+        let changeHandler: (UIControl, NSKeyValueObservedChange<Bool>) -> Void = { [weak self] _, _ in
+            self?.controlStateDidChange()
+        }
+
+        stateObservers = [
+            control.observe(\.isHighlighted, changeHandler: changeHandler),
+            control.observe(\.isEnabled, changeHandler: changeHandler),
+        ]
+    }
+
+    // MARK: View Updating
+
+    private func updateView() {
+        updateStyleForCurrentState()
+        updateContentSize()
+        updateContent()
+        updateContentPlacement()
+        updateContentVisibility()
+        updateLoaderVisibility()
+    }
+
+    private func updateStyleForCurrentState() {
+        let foregroundColor: UIColor = {
+            let foregroundColors = configuration.style.foregroundColor
+
+            switch control.state {
+            case .highlighted:
+                return foregroundColors.highlighted ?? foregroundColors.normal.highlighted()
+            case .disabled:
+                return foregroundColors.disabled ?? ASDKColors.Text.tertiary.color
+            default:
+                return foregroundColors.normal
             }
+        }()
 
-        case .loading:
-            resetTitle()
-            hideActivityIndicator()
-            if let loaderStyle = configuration?.style.loaderStyle {
-                showActivityIndicator(with: loaderStyle)
+        let backgroundColor: UIColor = {
+            let backgroundColors = configuration.style.backgroundColor
+
+            switch control.state {
+            case .highlighted:
+                return backgroundColors.highlighted ?? backgroundColors.normal.highlighted()
+            case .disabled:
+                return backgroundColors.disabled ?? ASDKColors.Background.neutral1.color
+            default:
+                return backgroundColors.normal
             }
+        }()
+
+        titleLabel.textColor = foregroundColor
+        imageView.tintColor = foregroundColor
+        control.backgroundColor = backgroundColor
+        loader.apply(style: .from(configuration))
+    }
+
+    private func updateContentSize() {
+        titleLabel.font = configuration.contentSize.titleFont
+        contentStack.spacing = configuration.contentSize.imagePadding
+        contentTop.constant = configuration.contentSize.contentInsets.top
+        contentLeading.constant = configuration.contentSize.contentInsets.left
+        contentTrailing.constant = -configuration.contentSize.contentInsets.right
+        contentBottom.constant = -configuration.contentSize.contentInsets.bottom
+        preferredHeight.constant = configuration.contentSize.preferredHeight
+        loader.apply(style: .from(configuration))
+        loader.setNeedsLayout()
+        updateCorners()
+    }
+
+    private func updateContent() {
+        titleLabel.text = configuration.title
+        imageView.image = configuration.image
+    }
+
+    private func updateContentPlacement() {
+        contentStack.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+
+        switch configuration.imagePlacement {
+        case .leading:
+            contentStack.addArrangedSubviews(imageView, titleLabel)
+        case .trailing:
+            contentStack.addArrangedSubviews(titleLabel, imageView)
         }
     }
 
-    private func controlStateDidChange(controlState: UIControl.State) {
-        setButtonBackground(controlState: controlState)
-    }
-}
-
-extension Button {
-
-    // MARK: - Configuration
-
-    func configure(_ configuration: Configuration) {
-        prepareForReuse()
-
-        self.configuration = configuration
-        configureButton(data: configuration.data)
-        configureButton(style: configuration.style)
-    }
-
-    private func configureButton(data: Data) {
-        if let text = data.text {
-            switch text {
-            case let .basic(normalText, higlightedText, disabledText):
-                button.setTitle(normalText, for: .normal)
-                button.setTitle(higlightedText ?? normalText, for: .highlighted)
-                button.setTitle(disabledText ?? normalText, for: .disabled)
-            }
+    private func updateContentVisibility() {
+        // Исправляет некорректное поведение внутри стека во время анимации
+        UIView.performWithoutAnimation {
+            imageView.isHidden = configuration.image == nil || configuration.isLoading
+            titleLabel.isHidden = configuration.title == nil || configuration.title?.isEmpty == true || configuration.isLoading
         }
     }
 
-    private func configureButton(style: Style) {
-        button.contentEdgeInsets = style.contentEdgeInsets
-        button.layer.cornerRadius = style.cornerRadius
-
-        switch style.background {
-        case .color:
-            // backgroundColor
-            setButtonBackground(controlState: button.state)
-
-        case let .image(normal, highlighted, disabled):
-            // setBackgroundImage
-            button.setBackgroundImage(normal, for: .normal)
-            button.setBackgroundImage(highlighted ?? normal, for: .highlighted)
-            button.setBackgroundImage(disabled ?? normal, for: .disabled)
-        }
-        // titleColor
-        let textStyleNormal = style.basicTextStyle?.normal
-        button.setTitleColor(textStyleNormal, for: .normal)
-        button.setTitleColor(
-            style.basicTextStyle?.highlighted ?? textStyleNormal,
-            for: .highlighted
-        )
-
-        button.setTitleColor(
-            style.basicTextStyle?.disabled ?? textStyleNormal,
-            for: .disabled
-        )
-
-        // text Font
-        button.titleLabel?.font = style.basicTextStyle?.font ?? .systemFont(ofSize: 16)
+    private func updateLoaderVisibility() {
+        loaderContainer.isHidden = !configuration.isLoading
     }
 
-    private func setButtonBackground(controlState: UIControl.State) {
-        guard let background = configuration?.style.background else {
+    private func updateCorners() {
+        control.layer.cornerRadius = configuration
+            .contentSize
+            .cornersStyle
+            .cornerRadius(for: control.bounds)
+    }
+
+    // MARK: Events
+
+    @objc private func buttonTapped() {
+        action?()
+    }
+
+    private func controlStateDidChange() {
+        performUpdates(animated: true, updates: updateStyleForCurrentState)
+    }
+
+    // MARK: Animations
+
+    private func performUpdates(
+        animated: Bool,
+        updates: @escaping VoidBlock,
+        completion: VoidBlock? = nil
+    ) {
+        guard animated else {
+            updates()
+            completion?()
             return
         }
 
-        let animations: () -> Void = {
-            switch background {
-            case let .color(normal, highlighted, disabled):
-                // backgroundColor
-                switch controlState {
-                case .disabled:
-                    self.button.backgroundColor = disabled ?? normal
-                case .highlighted:
-                    self.button.backgroundColor = highlighted ?? normal
-                default:
-                    self.button.backgroundColor = normal
-                }
-
-            case .image:
-                break
-            }
-        }
-
-        UIView.animate(
-            withDuration: 0.3,
-            delay: .zero,
-            options: .curveEaseInOut,
-            animations: {
-                animations()
-            }
+        UIView.transition(
+            with: self,
+            duration: .animationDuration,
+            options: [.transitionCrossDissolve],
+            animations: updates,
+            completion: { _ in completion?() }
         )
     }
-
-    private func resetTitle() {
-        button.setTitle(nil, for: .normal)
-        button.setTitle(nil, for: .highlighted)
-        button.setTitle(nil, for: .disabled)
-    }
-
-    private func prepareForReuse() {
-        configuration = nil
-        // Data
-        resetTitle()
-        // Style
-        button.backgroundColor = nil
-        button.contentEdgeInsets = .zero
-        // background image
-        button.setBackgroundImage(nil, for: .normal)
-        button.setBackgroundImage(nil, for: .highlighted)
-        button.setBackgroundImage(nil, for: .disabled)
-        // title color
-        button.setTitleColor(nil, for: .normal)
-        button.setTitleColor(nil, for: .highlighted)
-        button.setTitleColor(nil, for: .disabled)
-    }
 }
 
-// MARK: - Button + Indicator
+// MARK: - Constants
 
-private extension Button {
-
-    func showActivityIndicator(with style: ActivityIndicatorView.Style) {
-        let activityIndicatorView = ActivityIndicatorView(style: style)
-        activityIndicatorView.transform = CGAffineTransform(scaleX: .zero, y: .zero)
-
-        let container = ViewHolder(base: activityIndicatorView)
-
-        addSubview(container)
-
-        container.makeEqualToSuperview()
-        UIView.animate(withDuration: .scaleDuration) {
-            activityIndicatorView.transform = .identity
-        }
-
-        activityIndicatorView.startAnimation(animated: true)
-    }
-
-    /// Скрыть индикатор
-    func hideActivityIndicator(completion: (() -> Void)?) {
-        let container = subviews.compactMap { $0 as? ViewHolder<ActivityIndicatorView> }.first
-        let indicatorView = container?.base
-        UIView.animate(withDuration: .scaleDuration, animations: {
-            indicatorView?.alpha = .zero
-        }, completion: { _ in
-            container?.removeFromSuperview()
-            completion?()
-        })
-    }
-
-    func hideActivityIndicator() {
-        hideActivityIndicator(completion: nil)
-    }
+private extension TimeInterval {
+    static let animationDuration: TimeInterval = 0.15
 }
 
-// MARK: - Button + Types
+// MARK: - ActivityIndicatorView.Style + Helpers
 
-extension Button {
-
-    struct Data {
-        enum Text {
-            case basic(
-                normal: String?,
-                highlighted: String?,
-                disabled: String?
-            )
-        }
-
-        let text: Text?
-        let onTapAction: () -> Void
-    }
-
-    struct Configuration {
-        let data: Data
-        let style: Style
-
-        static var empty: Self {
-            Self(data: Button.Data(text: nil, onTapAction: {}), style: .destructive)
-        }
-    }
-
-    enum State {
-        case loading
-        case normal
+private extension ActivityIndicatorView.Style {
+    static func from(_ configuration: Button.Configuration) -> ActivityIndicatorView.Style {
+        ActivityIndicatorView.Style(
+            lineColor: configuration.style.foregroundColor.normal,
+            diameter: configuration.contentSize.activityIndicatorDiameter
+        )
     }
 }

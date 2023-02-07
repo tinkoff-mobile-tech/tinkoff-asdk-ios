@@ -25,6 +25,7 @@
 * [MIC-7775] MainForm - SavedCard view
 * [MIC-7828] MainForm - Provide payment data to CardPaymentForm
 * [MIC-7827] MainForm - Extend cvc field's touch area
+* [MIC-7705] MainForm - Update Button for configuring
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 
 ## [2.16.0] - 2023-01-19Z

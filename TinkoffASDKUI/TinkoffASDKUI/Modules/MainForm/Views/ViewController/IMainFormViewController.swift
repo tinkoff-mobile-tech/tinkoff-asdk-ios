@@ -8,6 +8,9 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
-    func updateHeader(with viewModel: MainFormHeaderViewModel)
-    func set(payButtonEnabled: Bool)
+    func updateOrderDetails(with model: MainFormOrderDetailsViewModel)
+    func setButtonPrimaryAppearance()
+    func setButtonTinkoffPayAppearance()
+    func setButtonSBPAppearance()
+    func setButtonEnabled(_ enabled: Bool)
 }

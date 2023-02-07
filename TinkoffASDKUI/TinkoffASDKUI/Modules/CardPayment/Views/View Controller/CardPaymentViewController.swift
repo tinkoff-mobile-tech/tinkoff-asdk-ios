@@ -20,7 +20,10 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     private lazy var cardFieldView = CardFieldView()
     private lazy var switchView = SwitchView()
     private lazy var emailView = EmailView()
-    private lazy var payButton = Button()
+    private lazy var payButton = Button(
+        configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
+        action: { [presenter] in presenter.payButtonPressed() }
+    )
 
     // MARK: Initialization
 
@@ -51,14 +54,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 
 extension CardPaymentViewController {
     func setPayButton(title: String) {
-        let configuration = Button.Configuration(
-            data: Button.Data(
-                text: .basic(normal: title, highlighted: title, disabled: title),
-                onTapAction: { [weak self] in self?.presenter.payButtonPressed() }
-            ),
-            style: .primary
-        )
-        payButton.configure(configuration)
+        payButton.setTitle(title)
     }
 
     func setPayButton(isEnabled: Bool) {

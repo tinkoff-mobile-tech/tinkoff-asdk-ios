@@ -116,6 +116,7 @@ extension StubView: ConfigurableItem {
         titleLabel.configure(configuration.title)
         subtitleLabel.configure(configuration.subtitle)
         button.configure(configuration.button)
+        button.setAction(configuration.buttonAction)
         // handling empty content cases
         tuneConstraintsForEmptyContent(configuration: configuration)
     }
@@ -125,9 +126,10 @@ extension StubView: ConfigurableItem {
         let title: UILabel.Configuration
         let subtitle: UILabel.Configuration
         let button: Button.Configuration
+        let buttonAction: VoidBlock
 
         static var empty: Self {
-            Self(icon: .empty, title: .empty, subtitle: .empty, button: .empty)
+            Self(icon: .empty, title: .empty, subtitle: .empty, button: .empty, buttonAction: {})
         }
     }
 }

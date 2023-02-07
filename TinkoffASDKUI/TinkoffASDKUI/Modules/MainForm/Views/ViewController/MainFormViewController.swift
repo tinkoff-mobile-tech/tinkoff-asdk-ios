@@ -21,19 +21,21 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     // MARK: Subviews
 
-    private lazy var headerView = MainFormHeaderView(delegate: self)
+    private lazy var headerView = MainFormHeaderView(frame: .headerInitialFrame)
+    private lazy var orderDetailsView = MainFormOrderDetailsView()
+    private lazy var savedCardView = SavedCardView()
+    private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
+
     private lazy var tableView: UITableView = {
-        // Явное присваивание фрейма до того, как произошел цикл autolayout,
-        // позволяет избавиться от логов в консоли с конфликтами горизонтальных констрейнтов при установке `tableHeaderView`
         let tableView = UITableView(frame: view.bounds)
         tableView.separatorStyle = .none
         tableView.register(ContainerTableViewCell.self)
-        tableView.dataSource = self
         tableView.keyboardDismissMode = .onDrag
+        tableView.delaysContentTouches = false
+        tableView.dataSource = self
+
         return tableView
     }()
-
-    private lazy var savedCardView = SavedCardView()
 
     // MARK: Init
 
@@ -55,17 +57,6 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         presenter.viewDidLoad()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        // tableHeaderView не изменяет свой размер во время лейаута.
-        // Здесь выставляется высота на основе его констрейнтов
-        headerView.frame.size = headerView.systemLayoutSizeFitting(
-            CGSize(width: headerView.bounds.width, height: UIView.layoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        )
-    }
-
     // MARK: Initial Configuration
 
     private func setupTableView() {
@@ -78,20 +69,24 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func updateHeader(with viewModel: MainFormHeaderViewModel) {
-        headerView.update(with: viewModel)
+    func updateOrderDetails(with model: MainFormOrderDetailsViewModel) {
+        orderDetailsView.update(with: model)
     }
 
-    func set(payButtonEnabled: Bool) {
-        headerView.set(payButtonEnabled: payButtonEnabled)
+    func setButtonPrimaryAppearance() {
+        payButton.configure(.cardPayment)
     }
-}
 
-// MARK: - MainFormHeaderViewDelegate
+    func setButtonTinkoffPayAppearance() {
+        payButton.configure(.tinkoffPay)
+    }
 
-extension MainFormViewController: MainFormHeaderViewDelegate {
-    func headerViewDidTapPrimaryButton() {
-        presenter.viewDidTapPayButton()
+    func setButtonSBPAppearance() {
+        payButton.configure(.sbp)
+    }
+
+    func setButtonEnabled(_ enabled: Bool) {
+        payButton.isEnabled = enabled
     }
 }
 
@@ -103,19 +98,29 @@ extension MainFormViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension MainFormViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         presenter.numberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let row = presenter.row(at: indexPath)
+        let cellType = presenter.cellType(at: indexPath)
 
-        switch row {
+        switch cellType {
+        case .orderDetails:
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(orderDetailsView, insets: .orderDetailsInsets)
+            return cell
         case let .savedCard(savedCardPresenter):
             savedCardView.presenter = savedCardPresenter
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(savedCardView, insets: .savedCardInsets)
+            return cell
+        case .payButton:
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(payButton, insets: .payButtonInsets)
             return cell
         }
     }
@@ -124,5 +129,68 @@ extension MainFormViewController: UITableViewDataSource {
 // MARK: - Constants
 
 private extension UIEdgeInsets {
-    static let savedCardInsets = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
+    static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 24, right: 16)
+    static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
+    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 36, right: 16)
+}
+
+private extension CGRect {
+    static let headerInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
+}
+
+// MARK: - Button.Configuration + Helpers
+
+private extension Button.Configuration {
+    static var cardPayment: Button.Configuration {
+        Button.Configuration(
+            title: "Оплатить",
+            style: .primaryTinkoff,
+            contentSize: .basicLarge
+        )
+    }
+
+    static var tinkoffPay: Button.Configuration {
+        Button.Configuration(
+            title: "Оплатить с Тинькофф",
+            image: Asset.Icons.tinkoffPayIcon.image,
+            style: .primaryTinkoff,
+            contentSize: .basicLarge,
+            imagePlacement: .trailing
+        )
+    }
+
+    static var sbp: Button.Configuration {
+        Button.Configuration(
+            title: "Оплатить",
+            image: .sbpImage,
+            style: Button.Style(
+                foregroundColor: Button.InteractiveColor(
+                    normal: .white
+                ),
+                backgroundColor: Button.InteractiveColor(
+                    normal: UIColor(hex: "#1D1346") ?? .clear
+                )
+            ),
+            contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
+            imagePlacement: .trailing
+        )
+    }
+}
+
+// MARK: - UIImage + Helpers
+
+private extension UIImage {
+    /// Извлекает иконку для светлой темы из динамического ассета
+    static var sbpImage: UIImage {
+        let imageAsset = UIImageAsset()
+        let lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
+        let lightImage = Asset.buttonIconSBP.image(compatibleWith: lightTraitCollection)
+
+        imageAsset.register(
+            lightImage,
+            with: UITraitCollection(traitsFrom: [lightTraitCollection, UIScreen.main.traitCollection])
+        )
+
+        return imageAsset.image(with: UIScreen.main.traitCollection)
+    }
 }
