@@ -25,6 +25,7 @@ internal enum Asset {
   internal enum Sbp {
     internal static let emptyBanks = ImageAsset(name: "empty_banks")
     internal static let sbpAvatar = ImageAsset(name: "sbp-avatar")
+    internal static let sbpLogoLight = ImageAsset(name: "sbp-logo-light")
     internal static let sbpLogoUniversal = ImageAsset(name: "sbp-logo-universal")
     internal static let sbpLogo = ImageAsset(name: "sbp_logo")
     internal static let sbpNoImage = ImageAsset(name: "sbp_no_image")

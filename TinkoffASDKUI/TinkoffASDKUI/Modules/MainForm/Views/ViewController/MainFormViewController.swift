@@ -189,7 +189,7 @@ private extension Button.Configuration {
     static var sbp: Button.Configuration {
         Button.Configuration(
             title: "Оплатить",
-            image: .sbpImage,
+            image: Asset.Sbp.sbpLogoLight.image,
             style: Button.Style(
                 foregroundColor: Button.InteractiveColor(
                     normal: .white
@@ -227,23 +227,5 @@ extension OtherPaymentMethodViewModel {
                 avatarImage: Asset.Sbp.sbpAvatar.image
             )
         }
-    }
-}
-
-// MARK: - UIImage + Helpers
-
-private extension UIImage {
-    /// Извлекает иконку для светлой темы из динамического ассета
-    static var sbpImage: UIImage {
-        let imageAsset = UIImageAsset()
-        let lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
-        let lightImage = Asset.Sbp.sbpLogoUniversal.image(compatibleWith: lightTraitCollection)
-
-        imageAsset.register(
-            lightImage,
-            with: UITraitCollection(traitsFrom: [lightTraitCollection, UIScreen.main.traitCollection])
-        )
-
-        return imageAsset.image(with: UIScreen.main.traitCollection)
     }
 }
