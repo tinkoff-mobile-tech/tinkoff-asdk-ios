@@ -37,7 +37,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds)
         tableView.separatorStyle = .none
-        tableView.register(ContainerTableViewCell.self, OtherPaymentMethodTableViewCell.self)
+        tableView.register(ContainerTableViewCell.self, AvatarTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
         tableView.dataSource = self
@@ -136,7 +136,7 @@ extension MainFormViewController: UITableViewDataSource {
             cell.setContent(otherPaymentMethodsLabel, insets: .otherPaymentMethodsHeader)
             return cell
         case let .otherPaymentMethod(paymentMethod):
-            let cell = tableView.dequeue(cellType: OtherPaymentMethodTableViewCell.self, indexPath: indexPath)
+            let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
             cell.update(with: .from(paymentMethod))
             return cell
         }
@@ -204,24 +204,24 @@ private extension Button.Configuration {
     }
 }
 
-// MARK: - OtherPaymentMethodViewModel + Helpers
+// MARK: - AvatarTableViewCellModel + Helpers
 
-extension OtherPaymentMethodViewModel {
-    static func from(_ paymentMethod: MainFormPaymentMethod) -> OtherPaymentMethodViewModel {
+private extension AvatarTableViewCellModel {
+    static func from(_ paymentMethod: MainFormPaymentMethod) -> AvatarTableViewCellModel {
         switch paymentMethod {
         case .card:
-            return OtherPaymentMethodViewModel(
+            return AvatarTableViewCellModel(
                 title: "Картой",
                 avatarImage: Asset.PaymentCard.cardFrontsideAvatar.image
             )
         case .tinkoffPay:
-            return OtherPaymentMethodViewModel(
+            return AvatarTableViewCellModel(
                 title: "Tinkoff Pay",
                 description: "В приложении Тинькофф",
                 avatarImage: Asset.TinkoffPay.tinkoffPayAvatar.image
             )
         case .sbp:
-            return OtherPaymentMethodViewModel(
+            return AvatarTableViewCellModel(
                 title: "СБП",
                 description: "В приложении любого банка",
                 avatarImage: Asset.Sbp.sbpAvatar.image

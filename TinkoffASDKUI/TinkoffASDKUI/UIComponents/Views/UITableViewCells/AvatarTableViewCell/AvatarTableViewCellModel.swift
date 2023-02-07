@@ -1,5 +1,5 @@
 //
-//  OtherPaymentMethodViewModel.swift
+//  AvatarTableViewCellModel.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 06.02.2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct OtherPaymentMethodViewModel {
+struct AvatarTableViewCellModel {
     let title: String
     let description: String?
     let avatarImage: UIImage

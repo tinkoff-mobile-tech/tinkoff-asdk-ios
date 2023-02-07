@@ -1,5 +1,5 @@
 //
-//  OtherPaymentMethodTableViewCell.swift
+//  AvatarTableViewCell.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 06.02.2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class OtherPaymentMethodTableViewCell: UITableViewCell {
+final class AvatarTableViewCell: UITableViewCell {
     // MARK: Subviews
 
     private lazy var avatarImageView: UIImageView = {
@@ -68,7 +68,7 @@ final class OtherPaymentMethodTableViewCell: UITableViewCell {
 
     // MARK: View Updating
 
-    func update(with model: OtherPaymentMethodViewModel) {
+    func update(with model: AvatarTableViewCellModel) {
         avatarImageView.image = model.avatarImage
         titleLabel.text = model.title
         descriptionLabel.text = model.description
