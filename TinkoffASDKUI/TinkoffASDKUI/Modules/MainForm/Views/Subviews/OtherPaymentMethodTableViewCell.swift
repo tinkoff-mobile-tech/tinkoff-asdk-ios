@@ -12,6 +12,7 @@ final class OtherPaymentMethodTableViewCell: UITableViewCell {
 
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         return imageView
     }()

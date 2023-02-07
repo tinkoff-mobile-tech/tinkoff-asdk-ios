@@ -218,7 +218,7 @@ extension OtherPaymentMethodViewModel {
             return OtherPaymentMethodViewModel(
                 title: "Tinkoff Pay",
                 description: "В приложении Тинькофф",
-                avatarImage: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image
+                avatarImage: Asset.TinkoffPay.tinkoffPayAvatar.image
             )
         case .sbp:
             return OtherPaymentMethodViewModel(
