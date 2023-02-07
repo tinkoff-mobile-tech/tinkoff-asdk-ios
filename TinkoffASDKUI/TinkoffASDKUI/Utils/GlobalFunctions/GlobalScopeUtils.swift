@@ -1,5 +1,5 @@
 //
-//  GlobalScope+Utils.swift
+//  GlobalScopeUtils.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 01.02.2023.
