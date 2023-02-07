@@ -237,7 +237,7 @@ private extension UIImage {
     static var sbpImage: UIImage {
         let imageAsset = UIImageAsset()
         let lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
-        let lightImage = Asset.buttonIconSBP.image(compatibleWith: lightTraitCollection)
+        let lightImage = Asset.Sbp.sbpLogoUniversal.image(compatibleWith: lightTraitCollection)
 
         imageAsset.register(
             lightImage,
