@@ -22,7 +22,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     // MARK: Subviews
 
     private lazy var tableView = UITableView(frame: view.bounds)
-    private lazy var tableHeaderView = MainFormHeaderView(frame: .headerInitialFrame)
+    private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
     private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
@@ -158,7 +158,7 @@ private extension UIEdgeInsets {
 }
 
 private extension CGRect {
-    static let headerInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
+    static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
 }
 
 // MARK: - Button.Configuration + Helpers
