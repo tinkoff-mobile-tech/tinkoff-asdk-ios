@@ -29,6 +29,7 @@ internal enum Asset {
     internal static let sbpNoImage = ImageAsset(name: "sbp_no_image")
   }
   internal enum TinkoffPay {
+    internal static let tinkoffPaySmallNoBorder = ImageAsset(name: "tinkoffPay-small-no-border")
     internal static let tinkoffPayLogoBlack = ImageAsset(name: "tinkoff_pay_logo_black")
     internal static let tinkoffPayLogoWhite = ImageAsset(name: "tinkoff_pay_logo_white")
   }
@@ -47,7 +48,6 @@ internal enum Asset {
     internal static let check = ImageAsset(name: "check")
     internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")
-    internal static let tinkoffPayIcon = ImageAsset(name: "tinkoffPay-icon")
   }
   internal enum Illustrations {
     internal static let alarm = ImageAsset(name: "alarm")

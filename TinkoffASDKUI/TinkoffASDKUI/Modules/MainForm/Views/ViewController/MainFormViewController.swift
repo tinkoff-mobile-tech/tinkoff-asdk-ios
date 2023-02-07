@@ -179,7 +179,7 @@ private extension Button.Configuration {
     static var tinkoffPay: Button.Configuration {
         Button.Configuration(
             title: "Оплатить с Тинькофф",
-            image: Asset.Icons.tinkoffPayIcon.image,
+            image: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image,
             style: .primaryTinkoff,
             contentSize: .basicLarge,
             imagePlacement: .trailing
@@ -212,19 +212,19 @@ extension OtherPaymentMethodViewModel {
         case .card:
             return OtherPaymentMethodViewModel(
                 title: "Картой",
-                avatarImage: Asset.Icons.tinkoffPayIcon.image
+                avatarImage: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image
             )
         case .tinkoffPay:
             return OtherPaymentMethodViewModel(
                 title: "Tinkoff Pay",
                 description: "В приложении Тинькофф",
-                avatarImage: Asset.Icons.tinkoffPayIcon.image
+                avatarImage: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image
             )
         case .sbp:
             return OtherPaymentMethodViewModel(
                 title: "СБП",
                 description: "В приложении любого банка",
-                avatarImage: Asset.Icons.tinkoffPayIcon.image
+                avatarImage: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image
             )
         }
     }
