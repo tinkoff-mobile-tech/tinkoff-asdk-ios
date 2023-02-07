@@ -255,24 +255,24 @@ extension DynamicIconCardView.Icon {
             case .mir:
                 switch style {
                 case .white:
-                    return Asset.PaymentSystem.paymentSystemMirWhite.image
+                    return Asset.PaymentCard.PaymentSystem.mirWhite.image
                 case .plain:
-                    return Asset.PaymentSystem.paymentSystemMir.image
+                    return Asset.PaymentCard.PaymentSystem.mir.image
                 }
 
             case .visa:
                 switch style {
                 case .white:
-                    return Asset.PaymentSystem.paymentSystemVisaWhite.image
+                    return Asset.PaymentCard.PaymentSystem.visaWhite.image
                 case .plain:
-                    return Asset.PaymentSystem.paymentSystemVisa.image
+                    return Asset.PaymentCard.PaymentSystem.visa.image
                 }
             case .maestro:
-                return Asset.PaymentSystem.paymentSystemMaestro.image
+                return Asset.PaymentCard.PaymentSystem.maestro.image
             case .uninonPay:
-                return Asset.PaymentSystem.paymentSystemUnionpay.image
+                return Asset.PaymentCard.PaymentSystem.unionpay.image
             case .masterCard:
-                return Asset.PaymentSystem.paymentSystemMastercard.image
+                return Asset.PaymentCard.PaymentSystem.mastercard.image
             }
         }
     }

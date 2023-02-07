@@ -72,15 +72,15 @@ internal enum Asset {
       internal static let tinkoff = ImageAsset(name: "tinkoff")
       internal static let vtb = ImageAsset(name: "vtb")
     }
-  }
-  internal enum PaymentSystem {
-    internal static let paymentSystemMaestro = ImageAsset(name: "payment-system-maestro")
-    internal static let paymentSystemMastercard = ImageAsset(name: "payment-system-mastercard")
-    internal static let paymentSystemMirWhite = ImageAsset(name: "payment-system-mir-white")
-    internal static let paymentSystemMir = ImageAsset(name: "payment-system-mir")
-    internal static let paymentSystemUnionpay = ImageAsset(name: "payment-system-unionpay")
-    internal static let paymentSystemVisaWhite = ImageAsset(name: "payment-system-visa-white")
-    internal static let paymentSystemVisa = ImageAsset(name: "payment-system-visa")
+    internal enum PaymentSystem {
+      internal static let maestro = ImageAsset(name: "maestro")
+      internal static let mastercard = ImageAsset(name: "mastercard")
+      internal static let mirWhite = ImageAsset(name: "mir-white")
+      internal static let mir = ImageAsset(name: "mir")
+      internal static let unionpay = ImageAsset(name: "unionpay")
+      internal static let visaWhite = ImageAsset(name: "visa-white")
+      internal static let visa = ImageAsset(name: "visa")
+    }
   }
   internal static let scan = ImageAsset(name: "scan")
   internal static let share = ImageAsset(name: "share")

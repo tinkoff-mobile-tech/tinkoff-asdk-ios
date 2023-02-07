@@ -43,7 +43,7 @@ final class PaymentSystemImageResolver: IPaymentSystemImageResolver {
         case .resolved(.mir):
             return Card.mirLogo.image
         case .resolved(.unionPay):
-            return Asset.PaymentSystem.paymentSystemUnionpay.image
+            return Asset.PaymentCard.PaymentSystem.unionpay.image
         case .ambiguous, .unrecognized:
             return nil
         }
