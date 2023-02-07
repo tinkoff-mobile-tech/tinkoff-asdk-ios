@@ -26,6 +26,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
     private lazy var getReceiptSwitch = SwitchView()
+    private lazy var emailView = EmailView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
     private lazy var otherPaymentMethodsHeader = UILabel()
 
@@ -129,6 +130,11 @@ extension MainFormViewController: UITableViewDataSource {
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(getReceiptSwitch, insets: .getReceiptSwitchInsets)
             return cell
+        case let .email(emailPresenter):
+            emailView.presenter = emailPresenter
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(emailView, insets: .emailInsets)
+            return cell
         case .payButton:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(payButton, insets: .payButtonInsets)
@@ -161,6 +167,7 @@ private extension UIEdgeInsets {
     static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
     static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 16)
     static let getReceiptSwitchInsets = UIEdgeInsets(vertical: .zero, horizontal: 20)
+    static let emailInsets = UIEdgeInsets(vertical: .zero, horizontal: 16)
     static let otherPaymentMethodsHeader = UIEdgeInsets(vertical: 12, horizontal: 16)
 }
 

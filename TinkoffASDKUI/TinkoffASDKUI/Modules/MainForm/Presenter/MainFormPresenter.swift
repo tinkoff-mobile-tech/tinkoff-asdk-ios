@@ -22,6 +22,7 @@ final class MainFormPresenter {
 
     private lazy var savedCardPresenter = SavedCardPresenter(output: self)
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(title: "Получить квитанцию")
+    private lazy var emailPresenter = EmailViewPresenter(customerEmail: paymentFlow.customerOptions?.email ?? "", output: self)
 
     // MARK: State
 
@@ -29,6 +30,7 @@ final class MainFormPresenter {
         .orderDetails,
         .savedCard(savedCardPresenter),
         .getReceiptSwitch(getReceiptSwitchPresenter),
+        .email(emailPresenter),
         .payButton,
         .otherPaymentMethodsHeader,
         .otherPaymentMethod(.tinkoffPay),
@@ -160,4 +162,14 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
     ) {
 //        view?.setButtonEnabled(isValid)
     }
+}
+
+// MARK: - IEmailViewPresenterOutput
+
+extension MainFormPresenter: IEmailViewPresenterOutput {
+    func emailTextField(
+        _ presenter: EmailViewPresenter,
+        didChangeEmail email: String,
+        isValid: Bool
+    ) {}
 }
