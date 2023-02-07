@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 06.02.2023.
 //
 
-import Foundation
+import UIKit
 
 struct AvatarTableViewCellModel {
     let title: String
