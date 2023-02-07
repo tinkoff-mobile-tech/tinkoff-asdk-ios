@@ -12,7 +12,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeight: CGFloat { 650 }
+    var pullableContainerContentHeight: CGFloat { 900 }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
 
     // MARK: Dependencies
@@ -48,6 +48,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         super.viewDidLoad()
         setupTableView()
         setupOtherPaymentMethodsHeader()
+        setupHeights()
         presenter.viewDidLoad()
     }
 
@@ -70,6 +71,13 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         otherPaymentMethodsHeader.font = .headingMedium
         otherPaymentMethodsHeader.textColor = ASDKColors.Text.primary.color
         otherPaymentMethodsHeader.text = "Оплатить другим способом"
+    }
+
+    private func setupHeights() {
+        NSLayoutConstraint.activate([
+            getReceiptSwitch.heightAnchor.constraint(equalToConstant: .getReceiptSwitchHeight),
+            emailView.heightAnchor.constraint(equalToConstant: .emailHeight),
+        ])
     }
 }
 
@@ -163,12 +171,17 @@ extension MainFormViewController: UITableViewDelegate {
 // MARK: - Constants
 
 private extension UIEdgeInsets {
-    static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 24, right: 16)
+    static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 28, right: 16)
     static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
-    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 16)
-    static let getReceiptSwitchInsets = UIEdgeInsets(vertical: .zero, horizontal: 20)
-    static let emailInsets = UIEdgeInsets(vertical: .zero, horizontal: 16)
+    static let getReceiptSwitchInsets = UIEdgeInsets(vertical: 8, horizontal: 20)
+    static let emailInsets = UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 16)
+    static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
     static let otherPaymentMethodsHeader = UIEdgeInsets(vertical: 12, horizontal: 16)
+}
+
+private extension CGFloat {
+    static let getReceiptSwitchHeight: CGFloat = 56
+    static let emailHeight: CGFloat = 56
 }
 
 private extension CGRect {
