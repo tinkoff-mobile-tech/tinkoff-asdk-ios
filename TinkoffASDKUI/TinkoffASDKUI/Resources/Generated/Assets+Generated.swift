@@ -52,6 +52,8 @@ internal enum Asset {
   internal enum Illustrations {
     internal static let alarm = ImageAsset(name: "alarm")
     internal static let cardCross = ImageAsset(name: "card-cross")
+    internal static let checkCirclePositive = ImageAsset(name: "check-circle-positive")
+    internal static let crossCircle = ImageAsset(name: "cross-circle")
     internal static let illustrationsCommonLightCard = ImageAsset(name: "illustrations-common-light-card")
     internal static let wiFiOff = ImageAsset(name: "wi-fi-off")
   }
@@ -85,10 +87,6 @@ internal enum Asset {
   internal static let scan = ImageAsset(name: "scan")
   internal static let share = ImageAsset(name: "share")
   internal static let tick24 = ImageAsset(name: "tick_24")
-  internal enum TuiIcMedium {
-    internal static let checkCirclePositive = ImageAsset(name: "check-circle-positive")
-    internal static let crossCircle = ImageAsset(name: "cross-circle")
-  }
   internal static let tuiIcServiceCross24 = ImageAsset(name: "tui_ic_service_cross_24")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
