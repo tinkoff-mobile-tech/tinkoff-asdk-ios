@@ -12,6 +12,10 @@ extension UIFont {
         .systemFont(ofSize: 13, weight: .bold)
     }
 
+    static var uiSmall: UIFont {
+        .systemFont(ofSize: 13, weight: .regular)
+    }
+
     static var bodyMedium: UIFont {
         .systemFont(ofSize: 15, weight: .regular)
     }
