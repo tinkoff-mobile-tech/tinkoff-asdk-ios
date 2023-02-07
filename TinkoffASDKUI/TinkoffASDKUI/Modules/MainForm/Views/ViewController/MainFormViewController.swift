@@ -26,14 +26,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
-
-    private lazy var otherPaymentMethodsLabel: UILabel = {
-        let label = UILabel()
-        label.font = .headingMedium
-        label.text = "Оплатить другим способом"
-        label.textColor = ASDKColors.Text.primary.color
-        return label
-    }()
+    private lazy var otherPaymentMethodsHeader = UILabel()
 
     // MARK: Init
 
@@ -52,6 +45,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupOtherPaymentMethodsHeader()
         presenter.viewDidLoad()
     }
 
@@ -68,6 +62,12 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
         tableView.register(ContainerTableViewCell.self, AvatarTableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
+    }
+
+    private func setupOtherPaymentMethodsHeader() {
+        otherPaymentMethodsHeader.font = .headingMedium
+        otherPaymentMethodsHeader.textColor = ASDKColors.Text.primary.color
+        otherPaymentMethodsHeader.text = "Оплатить другим способом"
     }
 }
 
@@ -129,7 +129,7 @@ extension MainFormViewController: UITableViewDataSource {
             return cell
         case .otherPaymentMethodsHeader:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(otherPaymentMethodsLabel, insets: .otherPaymentMethodsHeader)
+            cell.setContent(otherPaymentMethodsHeader, insets: .otherPaymentMethodsHeader)
             return cell
         case let .otherPaymentMethod(paymentMethod):
             let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
@@ -187,12 +187,8 @@ private extension Button.Configuration {
             title: "Оплатить",
             image: Asset.Sbp.sbpLogoLight.image,
             style: Button.Style(
-                foregroundColor: Button.InteractiveColor(
-                    normal: .white
-                ),
-                backgroundColor: Button.InteractiveColor(
-                    normal: UIColor(hex: "#1D1346") ?? .clear
-                )
+                foregroundColor: Button.InteractiveColor(normal: .white),
+                backgroundColor: Button.InteractiveColor(normal: UIColor(hex: "#1D1346") ?? .clear)
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
             imagePlacement: .trailing
