@@ -182,6 +182,8 @@ private extension Button.Configuration {
         )
     }
 
+    // Кнопка СБП не может быть в состоянии disabled, поэтому корректные цвета для этого не заданы.
+    // Если появится необходимость, попросить дизайнера отрисовать это состояние, а затем положить цвет в `Button.Style`
     static var sbp: Button.Configuration {
         Button.Configuration(
             title: "Оплатить",
