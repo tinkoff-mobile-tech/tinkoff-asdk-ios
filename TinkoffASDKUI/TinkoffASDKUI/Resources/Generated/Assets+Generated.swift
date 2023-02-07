@@ -76,6 +76,7 @@ internal enum Asset {
       internal static let tinkoff = ImageAsset(name: "tinkoff")
       internal static let vtb = ImageAsset(name: "vtb")
     }
+    internal static let cardFrontsideAvatar = ImageAsset(name: "card-frontside-avatar")
     internal enum PaymentSystem {
       internal static let maestro = ImageAsset(name: "maestro")
       internal static let mastercard = ImageAsset(name: "mastercard")

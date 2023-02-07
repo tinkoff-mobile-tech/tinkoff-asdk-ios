@@ -212,7 +212,7 @@ extension OtherPaymentMethodViewModel {
         case .card:
             return OtherPaymentMethodViewModel(
                 title: "Картой",
-                avatarImage: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image
+                avatarImage: Asset.PaymentCard.cardFrontsideAvatar.image
             )
         case .tinkoffPay:
             return OtherPaymentMethodViewModel(
