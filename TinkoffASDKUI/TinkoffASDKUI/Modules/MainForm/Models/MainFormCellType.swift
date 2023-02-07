@@ -10,6 +10,7 @@ import Foundation
 enum MainFormCellType {
     case orderDetails
     case savedCard(ISavedCardViewOutput)
+    case getReceiptSwitch(ISwitchViewOutput)
     case payButton
     case otherPaymentMethodsHeader
     case otherPaymentMethod(MainFormPaymentMethod)

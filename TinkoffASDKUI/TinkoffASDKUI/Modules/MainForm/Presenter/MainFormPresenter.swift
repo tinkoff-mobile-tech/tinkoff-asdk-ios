@@ -21,12 +21,14 @@ final class MainFormPresenter {
     // MARK: Child Presenters
 
     private lazy var savedCardPresenter = SavedCardPresenter(output: self)
+    private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(title: "Получить квитанцию")
 
     // MARK: State
 
     private lazy var cellTypes: [MainFormCellType] = [
         .orderDetails,
         .savedCard(savedCardPresenter),
+        .getReceiptSwitch(getReceiptSwitchPresenter),
         .payButton,
         .otherPaymentMethodsHeader,
         .otherPaymentMethod(.tinkoffPay),
