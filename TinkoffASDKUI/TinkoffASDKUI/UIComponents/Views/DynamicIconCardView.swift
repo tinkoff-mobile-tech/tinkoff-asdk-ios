@@ -212,21 +212,21 @@ extension DynamicIconCardView.Icon {
         var image: UIImage {
             switch self {
             case .tinkoff:
-                return Asset.Cards.cardTinkoff.image
+                return Asset.PaymentCard.Bank.tinkoff.image
             case .alpha:
-                return Asset.Cards.cardAlpha.image
+                return Asset.PaymentCard.Bank.alpha.image
             case .raiffaisen:
-                return Asset.Cards.cardRaiffaisen.image
+                return Asset.PaymentCard.Bank.raiffaisen.image
             case .vtb:
-                return Asset.Cards.cardVtb.image
+                return Asset.PaymentCard.Bank.vtb.image
             case .gazprom:
-                return Asset.Cards.cardGazprom.image
+                return Asset.PaymentCard.Bank.gazprom.image
             case .ozon:
-                return Asset.Cards.cardOzon.image
+                return Asset.PaymentCard.Bank.ozon.image
             case .sber:
-                return Asset.Cards.cardSber.image
+                return Asset.PaymentCard.Bank.sber.image
             case .other:
-                return Asset.Cards.cardOther.image
+                return Asset.PaymentCard.Bank.other.image
             }
         }
     }
