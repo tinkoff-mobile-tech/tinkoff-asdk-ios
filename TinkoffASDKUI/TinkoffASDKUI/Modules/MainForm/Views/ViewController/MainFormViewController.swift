@@ -224,7 +224,7 @@ extension OtherPaymentMethodViewModel {
             return OtherPaymentMethodViewModel(
                 title: "СБП",
                 description: "В приложении любого банка",
-                avatarImage: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image
+                avatarImage: Asset.Sbp.sbpAvatar.image
             )
         }
     }
