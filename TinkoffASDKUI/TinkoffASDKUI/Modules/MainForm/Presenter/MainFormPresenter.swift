@@ -97,7 +97,7 @@ extension MainFormPresenter: IMainFormPresenter {
         cellTypes = [
             .orderDetails(orderDetailsPresenter),
             .savedCard(savedCardPresenter),
-//            .getReceiptSwitch(getReceiptSwitchPresenter),
+            .getReceiptSwitch(getReceiptSwitchPresenter),
             .email(emailPresenter),
 //            .payButton,
             .otherPaymentMethodsHeader,
@@ -175,16 +175,17 @@ extension MainFormPresenter {
     func getReceiptSwitch(didChange isOn: Bool) {
         guard let switchIndex = cellTypes.firstIndex(where: \.isGetReceiptSwitch) else { return }
         let emailIndex = switchIndex + 1
+        let emailIndexPath = IndexPath(row: emailIndex, section: .zero)
 
         if isOn {
             assert(!cellTypes.contains(where: \.isEmail))
             cellTypes.insert(.email(emailPresenter), at: emailIndex)
+            view?.insertRow(at: emailIndexPath)
         } else {
             assert(cellTypes.firstIndex(where: \.isEmail) == emailIndex)
             cellTypes.remove(at: emailIndex)
+            view?.deleteRow(at: emailIndexPath)
         }
-
-        view?.reloadData()
     }
 }
 

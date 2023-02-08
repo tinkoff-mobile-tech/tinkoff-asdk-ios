@@ -22,7 +22,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var getReceiptSwitch = SwitchView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
     private lazy var otherPaymentMethodsHeader = UILabel()
 
@@ -44,7 +43,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         super.viewDidLoad()
         setupTableView()
         setupOtherPaymentMethodsHeader()
-        setupHeights()
         presenter.viewDidLoad()
     }
 
@@ -61,6 +59,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.register(
             MainFormOrderDetailsTableCell.self,
             SavedCardTableCell.self,
+            SwitchTableCell.self,
             EmailTableCell.self,
             ContainerTableViewCell.self,
             AvatarTableViewCell.self
@@ -73,12 +72,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         otherPaymentMethodsHeader.font = .headingMedium
         otherPaymentMethodsHeader.textColor = ASDKColors.Text.primary.color
         otherPaymentMethodsHeader.text = "Оплатить другим способом"
-    }
-
-    private func setupHeights() {
-        NSLayoutConstraint.activate([
-            getReceiptSwitch.heightAnchor.constraint(equalToConstant: .getReceiptSwitchHeight),
-        ])
     }
 }
 
@@ -103,6 +96,18 @@ extension MainFormViewController: IMainFormViewController {
 
     func reloadData() {
         tableView.reloadData()
+    }
+
+    func insertRows(at indexPaths: [IndexPath]) {
+        tableView.beginUpdates()
+        tableView.insertRows(at: indexPaths, with: .automatic)
+        tableView.endUpdates()
+    }
+
+    func deleteRows(at indexPaths: [IndexPath]) {
+        tableView.beginUpdates()
+        tableView.deleteRows(at: indexPaths, with: .automatic)
+        tableView.endUpdates()
     }
 }
 
@@ -135,14 +140,14 @@ extension MainFormViewController: UITableViewDataSource {
             cell.containedView.presenter = presenter
             cell.insets = .savedCardInsets
             return cell
-        case let .getReceiptSwitch(getReceiptSwitchPresenter):
-            getReceiptSwitch.presenter = getReceiptSwitchPresenter
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(getReceiptSwitch, insets: .getReceiptSwitchInsets)
+        case let .getReceiptSwitch(presenter):
+            let cell = tableView.dequeue(cellType: SwitchTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = presenter
+            cell.insets = .getReceiptSwitchInsets
             return cell
-        case let .email(emailPresenter):
+        case let .email(presenter):
             let cell = tableView.dequeue(cellType: EmailTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = emailPresenter
+            cell.containedView.presenter = presenter
             cell.insets = .emailInsets
             return cell
         case .payButton:
@@ -179,11 +184,6 @@ private extension UIEdgeInsets {
     static let emailInsets = UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 16)
     static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
     static let otherPaymentMethodsHeader = UIEdgeInsets(vertical: 12, horizontal: 16)
-}
-
-private extension CGFloat {
-    static let getReceiptSwitchHeight: CGFloat = 56
-    static let emailHeight: CGFloat = 56
 }
 
 private extension CGRect {
