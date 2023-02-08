@@ -22,7 +22,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var savedCardView = SavedCardView()
     private lazy var getReceiptSwitch = SwitchView()
     private lazy var emailView = EmailView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
@@ -62,6 +61,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.delaysContentTouches = false
         tableView.register(
             MainFormOrderDetailsTableCell.self,
+            SavedCardTableCell.self,
             ContainerTableViewCell.self,
             AvatarTableViewCell.self
         )
@@ -131,10 +131,10 @@ extension MainFormViewController: UITableViewDataSource {
             cell.containedView.presenter = presenter
             cell.insets = .orderDetailsInsets
             return cell
-        case let .savedCard(savedCardPresenter):
-            savedCardView.presenter = savedCardPresenter
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(savedCardView, insets: .savedCardInsets)
+        case let .savedCard(presenter):
+            let cell = tableView.dequeue(cellType: SavedCardTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = presenter
+            cell.insets = .savedCardInsets
             return cell
         case let .getReceiptSwitch(getReceiptSwitchPresenter):
             getReceiptSwitch.presenter = getReceiptSwitchPresenter

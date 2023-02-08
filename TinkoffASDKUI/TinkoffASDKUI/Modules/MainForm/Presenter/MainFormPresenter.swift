@@ -96,7 +96,7 @@ extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
         cellTypes = [
             .orderDetails(orderDetailsPresenter),
-//            .savedCard(savedCardPresenter),
+            .savedCard(savedCardPresenter),
 //            .getReceiptSwitch(getReceiptSwitchPresenter),
 //            .email(emailPresenter),
 //            .payButton,
