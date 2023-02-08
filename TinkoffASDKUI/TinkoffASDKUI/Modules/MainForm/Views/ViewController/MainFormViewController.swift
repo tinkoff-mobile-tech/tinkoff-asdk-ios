@@ -22,7 +22,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
     private lazy var getReceiptSwitch = SwitchView()
     private lazy var emailView = EmailView()
@@ -61,7 +60,11 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
-        tableView.register(ContainerTableViewCell.self, AvatarTableViewCell.self)
+        tableView.register(
+            MainFormOrderDetailsTableCell.self,
+            ContainerTableViewCell.self,
+            AvatarTableViewCell.self
+        )
         tableView.dataSource = self
         tableView.delegate = self
     }
@@ -83,10 +86,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func updateOrderDetails(with model: MainFormOrderDetailsViewModel) {
-        orderDetailsView.update(with: model)
-    }
-
     func setButtonPrimaryAppearance() {
         payButton.configure(.cardPayment)
     }
@@ -127,9 +126,10 @@ extension MainFormViewController: UITableViewDataSource {
         let cellType = presenter.cellType(at: indexPath)
 
         switch cellType {
-        case .orderDetails:
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(orderDetailsView, insets: .orderDetailsInsets)
+        case let .orderDetails(presenter):
+            let cell = tableView.dequeue(cellType: MainFormOrderDetailsTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = presenter
+            cell.insets = .orderDetailsInsets
             return cell
         case let .savedCard(savedCardPresenter):
             savedCardView.presenter = savedCardPresenter

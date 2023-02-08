@@ -8,7 +8,6 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
-    func updateOrderDetails(with model: MainFormOrderDetailsViewModel)
     func setButtonPrimaryAppearance()
     func setButtonTinkoffPayAppearance()
     func setButtonSBPAppearance()

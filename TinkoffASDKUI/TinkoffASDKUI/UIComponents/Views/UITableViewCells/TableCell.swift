@@ -1,5 +1,5 @@
 //
-//  TableViewCell.swift
+//  TableCell.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 08.02.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TableViewCell<ContainedView: UIView>: UITableViewCell {
+final class TableCell<ContainedView: UIView>: UITableViewCell {
     // MARK: Properties
 
     var insets: UIEdgeInsets = .zero {
@@ -66,5 +66,6 @@ final class TableViewCell<ContainedView: UIView>: UITableViewCell {
         leadingConstraint.constant = insets.left
         trailingConstraint.constant = -insets.right
         bottomConstraint.constant = -insets.bottom
+        setNeedsLayout()
     }
 }

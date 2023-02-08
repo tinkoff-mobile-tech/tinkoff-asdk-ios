@@ -8,7 +8,7 @@
 import Foundation
 
 enum MainFormCellType {
-    case orderDetails
+    case orderDetails(IMainFormOrderDetailsViewOutput)
     case savedCard(ISavedCardViewOutput)
     case getReceiptSwitch(ISwitchViewOutput)
     case email(IEmailViewOutput)

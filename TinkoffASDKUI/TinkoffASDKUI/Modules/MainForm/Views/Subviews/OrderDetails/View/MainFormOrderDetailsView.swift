@@ -8,11 +8,20 @@
 import UIKit
 
 final class MainFormOrderDetailsView: UIView {
+    // MARK: Dependencies
+
+    var presenter: IMainFormOrderDetailsViewOutput? {
+        didSet {
+            if oldValue?.view === self { oldValue?.view = nil }
+            presenter?.view = self
+        }
+    }
+
     // MARK: Subviews
 
     private lazy var amountDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .bodyLarge
         label.textColor = ASDKColors.Text.secondary.color
         label.textAlignment = .center
         return label
@@ -27,7 +36,7 @@ final class MainFormOrderDetailsView: UIView {
 
     private lazy var orderDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .bodyLarge
         label.textColor = ASDKColors.Text.secondary.color
         label.textAlignment = .center
         return label
@@ -53,24 +62,28 @@ final class MainFormOrderDetailsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: View Updating
-
-    func update(with viewModel: MainFormOrderDetailsViewModel) {
-        amountDescriptionLabel.text = viewModel.amountDescription
-        amountLabel.text = viewModel.amount
-        orderDescriptionLabel.text = viewModel.orderDescription
-    }
-
     // MARK: Initial Configuration
 
     private func setupView() {
-        layoutContentStack()
-        contentStack.addArrangedSubviews(amountDescriptionLabel, amountLabel, orderDescriptionLabel)
-    }
-
-    private func layoutContentStack() {
         addSubview(contentStack)
         contentStack.pinEdgesToSuperview()
+        contentStack.addArrangedSubviews(amountDescriptionLabel, amountLabel, orderDescriptionLabel)
+    }
+}
+
+// MARK: - IMainFormOrderDetailsViewInput
+
+extension MainFormOrderDetailsView: IMainFormOrderDetailsViewInput {
+    func set(amountDescription: String) {
+        amountDescriptionLabel.text = amountDescription
+    }
+
+    func set(amount: String) {
+        amountLabel.text = amount
+    }
+
+    func set(orderDescription: String?) {
+        orderDescriptionLabel.text = orderDescription
     }
 }
 

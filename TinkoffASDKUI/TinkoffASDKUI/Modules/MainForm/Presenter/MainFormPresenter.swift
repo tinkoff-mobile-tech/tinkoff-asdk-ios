@@ -20,6 +20,11 @@ final class MainFormPresenter {
 
     // MARK: Child Presenters
 
+    private lazy var orderDetailsPresenter = MainFormOrderDetailsViewPresenter(
+        amount: configuration.amount,
+        orderDescription: configuration.orderDescription
+    )
+
     private lazy var savedCardPresenter = SavedCardPresenter(output: self)
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
         title: "Получить квитанцию",
@@ -90,24 +95,16 @@ final class MainFormPresenter {
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
         cellTypes = [
-            .orderDetails,
-            .savedCard(savedCardPresenter),
-            .getReceiptSwitch(getReceiptSwitchPresenter),
-            .email(emailPresenter),
-            .payButton,
+            .orderDetails(orderDetailsPresenter),
+//            .savedCard(savedCardPresenter),
+//            .getReceiptSwitch(getReceiptSwitchPresenter),
+//            .email(emailPresenter),
+//            .payButton,
             .otherPaymentMethodsHeader,
             .otherPaymentMethod(.tinkoffPay),
             .otherPaymentMethod(.card),
             .otherPaymentMethod(.sbp),
         ]
-
-        let orderDetails = MainFormOrderDetailsViewModel(
-            amountDescription: "К оплате",
-            amount: "10 500 ₽",
-            orderDescription: "Заказ №123456"
-        )
-
-        view?.updateOrderDetails(with: orderDetails)
         setupButtonAppearance()
         loadCardsIfNeeded()
     }
