@@ -119,7 +119,7 @@ public final class PaymentController: IPaymentController {
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
 
-    private var requestRepeatCount = 10
+    private var requestRepeatCount: Int
 
     // MARK: - Temporary until refactor PaymentView!
 
@@ -136,7 +136,8 @@ public final class PaymentController: IPaymentController {
         webViewAuthChallengeService: IWebViewAuthChallengeService,
         paymentStatusService: IPaymentStatusService,
         repeatedRequestHelper: IRepeatedRequestHelper,
-        acquiringUISDK: AcquiringUISDK /* temporary*/
+        acquiringUISDK: AcquiringUISDK, /* temporary*/
+        requestRepeatCount: Int
     ) {
         self.threeDSService = threeDSService
         self.paymentFactory = paymentFactory
@@ -147,6 +148,7 @@ public final class PaymentController: IPaymentController {
         self.paymentStatusService = paymentStatusService
         self.repeatedRequestHelper = repeatedRequestHelper
         self.acquiringUISDK = acquiringUISDK
+        self.requestRepeatCount = requestRepeatCount
     }
 
     deinit {
