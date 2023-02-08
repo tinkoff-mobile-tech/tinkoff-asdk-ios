@@ -96,5 +96,12 @@ extension EmailView {
 
     private func setupViewsConstraints() {
         textField.pinEdgesToSuperview()
+        heightAnchor.constraint(greaterThanOrEqualToConstant: .minimalHeight).isActive = true
     }
+}
+
+// MARK: - Constants
+
+private extension CGFloat {
+    static let minimalHeight: CGFloat = 56
 }

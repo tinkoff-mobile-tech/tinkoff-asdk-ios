@@ -98,7 +98,7 @@ extension MainFormPresenter: IMainFormPresenter {
             .orderDetails(orderDetailsPresenter),
             .savedCard(savedCardPresenter),
 //            .getReceiptSwitch(getReceiptSwitchPresenter),
-//            .email(emailPresenter),
+            .email(emailPresenter),
 //            .payButton,
             .otherPaymentMethodsHeader,
             .otherPaymentMethod(.tinkoffPay),

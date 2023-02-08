@@ -23,7 +23,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
     private lazy var getReceiptSwitch = SwitchView()
-    private lazy var emailView = EmailView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
     private lazy var otherPaymentMethodsHeader = UILabel()
 
@@ -62,6 +61,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.register(
             MainFormOrderDetailsTableCell.self,
             SavedCardTableCell.self,
+            EmailTableCell.self,
             ContainerTableViewCell.self,
             AvatarTableViewCell.self
         )
@@ -78,7 +78,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     private func setupHeights() {
         NSLayoutConstraint.activate([
             getReceiptSwitch.heightAnchor.constraint(equalToConstant: .getReceiptSwitchHeight),
-            emailView.heightAnchor.constraint(equalToConstant: .emailHeight),
         ])
     }
 }
@@ -142,9 +141,9 @@ extension MainFormViewController: UITableViewDataSource {
             cell.setContent(getReceiptSwitch, insets: .getReceiptSwitchInsets)
             return cell
         case let .email(emailPresenter):
-            emailView.presenter = emailPresenter
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(emailView, insets: .emailInsets)
+            let cell = tableView.dequeue(cellType: EmailTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = emailPresenter
+            cell.insets = .emailInsets
             return cell
         case .payButton:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
