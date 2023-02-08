@@ -33,18 +33,7 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private lazy var cellTypes: [MainFormCellType] = [
-        .orderDetails,
-        .savedCard(savedCardPresenter),
-        .getReceiptSwitch(getReceiptSwitchPresenter),
-        .email(emailPresenter),
-        .payButton,
-        .otherPaymentMethodsHeader,
-        .otherPaymentMethod(.tinkoffPay),
-        .otherPaymentMethod(.card),
-        .otherPaymentMethod(.sbp),
-    ]
-
+    private lazy var cellTypes: [MainFormCellType] = []
     private var loadedCards: [PaymentCard] = []
 
     // MARK: Init
@@ -100,6 +89,18 @@ final class MainFormPresenter {
 
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
+        cellTypes = [
+            .orderDetails,
+            .savedCard(savedCardPresenter),
+            .getReceiptSwitch(getReceiptSwitchPresenter),
+            .email(emailPresenter),
+            .payButton,
+            .otherPaymentMethodsHeader,
+            .otherPaymentMethod(.tinkoffPay),
+            .otherPaymentMethod(.card),
+            .otherPaymentMethod(.sbp),
+        ]
+
         let orderDetails = MainFormOrderDetailsViewModel(
             amountDescription: "К оплате",
             amount: "10 500 ₽",
