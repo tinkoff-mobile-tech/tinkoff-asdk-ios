@@ -300,7 +300,7 @@ extension PaymentController: PaymentProcessDelegate {
             paymentProcess: paymentProcess,
             cardId: cardId,
             rebillId: rebillId,
-            isRequestRepeatAllowed: true
+            isRequestRepeatAllowed: requestRepeatCount > 0
         )
     }
 
