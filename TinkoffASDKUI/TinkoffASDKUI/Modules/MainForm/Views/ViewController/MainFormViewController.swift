@@ -100,13 +100,13 @@ extension MainFormViewController: IMainFormViewController {
 
     func insertRows(at indexPaths: [IndexPath]) {
         tableView.beginUpdates()
-        tableView.insertRows(at: indexPaths, with: .automatic)
+        tableView.insertRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
     }
 
     func deleteRows(at indexPaths: [IndexPath]) {
         tableView.beginUpdates()
-        tableView.deleteRows(at: indexPaths, with: .automatic)
+        tableView.deleteRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
     }
 }
