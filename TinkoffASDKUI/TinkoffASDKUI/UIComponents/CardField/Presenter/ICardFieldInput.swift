@@ -6,6 +6,8 @@
 //
 
 protocol ICardFieldInput: AnyObject {
+    var cardData: CardData { get }
+
     var cardNumber: String { get }
     var expiration: String { get }
     var cvc: String { get }
