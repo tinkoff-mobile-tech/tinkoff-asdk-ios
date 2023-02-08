@@ -12,11 +12,17 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
 
     // MARK: ICardPaymentAssembly
 
-    func build(activeCards: [PaymentCard], paymentFlow: PaymentFlow, amount: Int64) -> UIViewController {
+    func build(
+        activeCards: [PaymentCard],
+        paymentFlow: PaymentFlow,
+        amount: Int64,
+        output: ICardPaymentPresenterModuleOutput?
+    ) -> UIViewController {
         let router = CardPaymentRouter()
         let moneyFormatter = MoneyFormatter()
         let presenter = CardPaymentPresenter(
             router: router,
+            output: output,
             moneyFormatter: moneyFormatter,
             activeCards: activeCards,
             paymentFlow: paymentFlow,

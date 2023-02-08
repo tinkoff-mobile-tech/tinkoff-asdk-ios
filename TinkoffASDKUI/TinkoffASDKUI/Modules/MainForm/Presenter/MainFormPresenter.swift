@@ -105,7 +105,7 @@ extension MainFormPresenter: IMainFormPresenter {
     func viewDidTapPayButton() {
         switch stub.primaryPayMethod {
         case .card:
-            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards, output: self)
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:
@@ -124,7 +124,7 @@ extension MainFormPresenter: IMainFormPresenter {
     func didSelectRow(at indexPath: IndexPath) {
         switch cellType(at: indexPath) {
         case .otherPaymentMethod(.card):
-            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards, output: self)
         case .otherPaymentMethod(.tinkoffPay):
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .otherPaymentMethod(.sbp):
@@ -132,6 +132,14 @@ extension MainFormPresenter: IMainFormPresenter {
         default:
             break
         }
+    }
+}
+
+// MARK: - ICardPaymentPresenterModuleOutput
+
+extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
+    func cardPaymentPayButtonDidPressed(cardData: CardData, email: String?) {
+        // логика с PaymentController
     }
 }
 

@@ -27,11 +27,12 @@ final class MainFormRouter: IMainFormRouter {
 
     // MARK: IMainFormRouter
 
-    func openCardPaymentForm(paymentFlow: PaymentFlow, cards: [PaymentCard]) {
+    func openCardPaymentForm(paymentFlow: PaymentFlow, cards: [PaymentCard], output: ICardPaymentPresenterModuleOutput?) {
         let cardPaymentViewController = cardPaymentAssembly.build(
             activeCards: cards,
             paymentFlow: paymentFlow,
-            amount: configuration.amount
+            amount: configuration.amount,
+            output: output
         )
 
         let navVC = UINavigationController(rootViewController: cardPaymentViewController)

@@ -14,6 +14,8 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
+    private weak var output: ICardPaymentPresenterModuleOutput?
+
     private let moneyFormatter: IMoneyFormatter
 
     // MARK: Properties
@@ -29,18 +31,20 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let activeCards: [PaymentCard]
     private let paymentFlow: PaymentFlow
     private let amount: Int
-    private lazy var customerEmail = paymentFlow.customerOptions?.email ?? ""
+    private let customerEmail: String
 
     // MARK: Initialization
 
     init(
         router: ICardPaymentRouter,
+        output: ICardPaymentPresenterModuleOutput?,
         moneyFormatter: IMoneyFormatter,
         activeCards: [PaymentCard],
         paymentFlow: PaymentFlow,
         amount: Int
     ) {
         self.router = router
+        self.output = output
         self.moneyFormatter = moneyFormatter
         self.activeCards = Int.random(in: 0 ... 100) % 2 == 0 ? activeCards : []
         self.paymentFlow = paymentFlow
@@ -69,10 +73,7 @@ extension CardPaymentPresenter {
         view?.hideKeyboard()
         view?.startLoadingPayButton()
 
-        // Удалить при появлении логики оплаты
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.view?.stopLoadingPayButton()
-        }
+        output?.cardPaymentPayButtonDidPressed(cardData: cardFieldPresenter.cardData, email: emailPresenter.currentEmail)
     }
 
     func numberOfRows() -> Int {
