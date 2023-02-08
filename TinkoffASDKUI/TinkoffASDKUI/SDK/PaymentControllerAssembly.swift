@@ -58,7 +58,8 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
             paymentStatusService: paymentStatusService,
             repeatedRequestHelper: repeatedRequestHelper,
-            acquiringUISDK: uiSDK
+            acquiringUISDK: uiSDK,
+            requestRepeatCount: uiSDKConfiguration.paymentStatusRetriesCount
         )
     }
 }
