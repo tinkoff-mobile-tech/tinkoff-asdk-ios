@@ -12,20 +12,19 @@ public struct UISDKConfiguration {
     /// Запрашивает данные и способ аутентификация для `WKWebView`
     let webViewAuthChallengeService: IWebViewAuthChallengeService?
     
-    /// Отвечает за максимальное количество запросов на обновление статуса, можно установить любое значение
+    /// Отвечает за максимальное количество запросов на обновление статуса платежа, можно установить любое значение
     ///
-    /// При выборе банка, при оплате через СБП, осуществляется переход в приложение банка.
-    /// В  этот момент будет отображаться шторка с информацией о статусе оплаты юзером.
     /// Запросы обновления статуса осуществляются с минимальным интервалом в 3 секунды между друг другом
-    /// По умолчанию будет осуществлено 10 запросов, по истечении которых юзер получит уведомление об истечении времени,
-    /// отведенного на оплату
+    /// По умолчанию будет осуществлено 10 запросов, по истечении которых юзер получит уведомление об истечении времени, отведенного на оплату
     let paymentStatusRetriesCount: Int
 
     /// Инициалищация конфигурации `TinkoffASDKUI`
     /// - Parameter webViewAuthChallengeService: Запрашивает данные и способ аутентификация для `WKWebView`
     /// - Parameter paymentStatusRetriesCount: Максимальное количество запросов на обновление статуса платежа
-    public init(webViewAuthChallengeService: IWebViewAuthChallengeService? = nil,
-                paymentStatusRetriesCount: Int = 10) {
+    public init(
+        webViewAuthChallengeService: IWebViewAuthChallengeService? = nil,
+        paymentStatusRetriesCount: Int = 10
+    ) {
         self.webViewAuthChallengeService = webViewAuthChallengeService
         self.paymentStatusRetriesCount = paymentStatusRetriesCount
     }
