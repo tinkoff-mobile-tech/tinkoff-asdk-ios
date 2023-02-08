@@ -21,8 +21,15 @@ final class MainFormPresenter {
     // MARK: Child Presenters
 
     private lazy var savedCardPresenter = SavedCardPresenter(output: self)
-    private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(title: "Получить квитанцию")
-    private lazy var emailPresenter = EmailViewPresenter(customerEmail: paymentFlow.customerOptions?.email ?? "", output: self)
+    private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
+        title: "Получить квитанцию",
+        isOn: true,
+        actionBlock: { [weak self] in self?.getReceiptSwitch(didChange: $0) }
+    )
+    private lazy var emailPresenter = EmailViewPresenter(
+        customerEmail: paymentFlow.customerOptions?.email ?? "",
+        output: self
+    )
 
     // MARK: State
 
@@ -161,6 +168,25 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         isValid: Bool
     ) {
 //        view?.setButtonEnabled(isValid)
+    }
+}
+
+// MARK: - SwitchViewOutput
+
+extension MainFormPresenter {
+    func getReceiptSwitch(didChange isOn: Bool) {
+        guard let switchIndex = cellTypes.firstIndex(where: \.isGetReceiptSwitch) else { return }
+        let emailIndex = switchIndex + 1
+
+        if isOn {
+            assert(!cellTypes.contains(where: \.isEmail))
+            cellTypes.insert(.email(emailPresenter), at: emailIndex)
+        } else {
+            assert(cellTypes.firstIndex(where: \.isEmail) == emailIndex)
+            cellTypes.remove(at: emailIndex)
+        }
+
+        view?.reloadData()
     }
 }
 

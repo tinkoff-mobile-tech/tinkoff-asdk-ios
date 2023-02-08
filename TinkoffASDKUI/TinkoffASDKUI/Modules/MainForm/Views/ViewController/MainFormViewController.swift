@@ -103,6 +103,10 @@ extension MainFormViewController: IMainFormViewController {
     func setButtonEnabled(_ enabled: Bool) {
         payButton.isEnabled = enabled
     }
+
+    func reloadData() {
+        tableView.reloadData()
+    }
 }
 
 // MARK: - PullableContainerContent Methods

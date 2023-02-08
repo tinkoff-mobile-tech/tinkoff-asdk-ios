@@ -16,3 +16,23 @@ enum MainFormCellType {
     case otherPaymentMethodsHeader
     case otherPaymentMethod(MainFormPaymentMethod)
 }
+
+extension MainFormCellType {
+    var isGetReceiptSwitch: Bool {
+        switch self {
+        case .getReceiptSwitch:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isEmail: Bool {
+        switch self {
+        case .email:
+            return true
+        default:
+            return false
+        }
+    }
+}
