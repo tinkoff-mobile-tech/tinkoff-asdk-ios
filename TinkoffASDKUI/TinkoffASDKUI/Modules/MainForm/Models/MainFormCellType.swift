@@ -13,7 +13,7 @@ enum MainFormCellType {
     case getReceiptSwitch(ISwitchViewOutput)
     case email(IEmailViewOutput)
     case payButton(IPayButtonViewOutput)
-    case otherPaymentMethodsHeader
+    case otherPaymentMethodsHeader(ITextHeaderViewOutput)
     case otherPaymentMethod(MainFormPaymentMethod)
 }
 

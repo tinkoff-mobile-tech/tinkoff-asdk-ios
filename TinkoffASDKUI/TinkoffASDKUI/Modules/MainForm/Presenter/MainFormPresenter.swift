@@ -100,7 +100,7 @@ extension MainFormPresenter: IMainFormPresenter {
             .getReceiptSwitch(getReceiptSwitchPresenter),
             .email(emailPresenter),
             .payButton(payButtonPresenter),
-            .otherPaymentMethodsHeader,
+            .otherPaymentMethodsHeader(TextHeaderViewPresenter(title: "Оплатить другим способом")),
             .otherPaymentMethod(.tinkoffPay),
             .otherPaymentMethod(.card),
             .otherPaymentMethod(.sbp),

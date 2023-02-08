@@ -22,7 +22,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var otherPaymentMethodsHeader = UILabel()
 
     // MARK: Init
 
@@ -41,7 +40,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
-        setupOtherPaymentMethodsHeader()
         presenter.viewDidLoad()
     }
 
@@ -61,17 +59,11 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             SwitchTableCell.self,
             EmailTableCell.self,
             PayButtonTableCell.self,
-            ContainerTableViewCell.self,
+            TextHeaderCell.self,
             AvatarTableViewCell.self
         )
         tableView.dataSource = self
         tableView.delegate = self
-    }
-
-    private func setupOtherPaymentMethodsHeader() {
-        otherPaymentMethodsHeader.font = .headingMedium
-        otherPaymentMethodsHeader.textColor = ASDKColors.Text.primary.color
-        otherPaymentMethodsHeader.text = "Оплатить другим способом"
     }
 }
 
@@ -139,9 +131,10 @@ extension MainFormViewController: UITableViewDataSource {
             cell.containedView.presenter = presenter
             cell.insets = .payButtonInsets
             return cell
-        case .otherPaymentMethodsHeader:
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(otherPaymentMethodsHeader, insets: .otherPaymentMethodsHeader)
+        case let .otherPaymentMethodsHeader(presenter):
+            let cell = tableView.dequeue(cellType: TextHeaderCell.self, indexPath: indexPath)
+            cell.containedView.presenter = presenter
+            cell.insets = .otherPaymentMethodsHeaderInsets
             return cell
         case let .otherPaymentMethod(paymentMethod):
             let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
@@ -168,7 +161,7 @@ private extension UIEdgeInsets {
     static let getReceiptSwitchInsets = UIEdgeInsets(vertical: 8, horizontal: 20)
     static let emailInsets = UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 16)
     static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
-    static let otherPaymentMethodsHeader = UIEdgeInsets(vertical: 12, horizontal: 16)
+    static let otherPaymentMethodsHeaderInsets = UIEdgeInsets(vertical: 12, horizontal: 16)
 }
 
 private extension CGRect {
