@@ -29,7 +29,7 @@ final class MainFormOrderDetailsView: UIView {
 
     private lazy var amountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.font = .numbersExtraLarge
         label.textAlignment = .center
         return label
     }()
