@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+import Foundation
 import TinkoffASDKCore
 
 protocol IPaymentControllerAssembly {
@@ -45,6 +46,9 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             uiSDKConfiguration: uiSDKConfiguration
         )
 
+        let paymentStatusService = PaymentStatusService(acquiringSdk: coreSDK)
+        let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
+
         return PaymentController(
             paymentFactory: paymentFactory(acquiringSDK: coreSDK),
             threeDSService: coreSDK,
@@ -52,6 +56,8 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             tdsController: uiSDK.tdsController,
             webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
+            paymentStatusService: paymentStatusService,
+            repeatedRequestHelper: repeatedRequestHelper,
             acquiringUISDK: uiSDK
         )
     }
@@ -66,4 +72,10 @@ private extension PaymentControllerAssembly {
             ipProvider: acquiringSDK.ipAddressProvider
         )
     }
+}
+
+// MARK: - Constants
+
+private extension TimeInterval {
+    static let paymentStatusRequestDelay: TimeInterval = 3
 }
