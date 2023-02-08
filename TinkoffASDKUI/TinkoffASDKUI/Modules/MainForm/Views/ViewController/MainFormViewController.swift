@@ -22,7 +22,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
     private lazy var otherPaymentMethodsHeader = UILabel()
 
     // MARK: Init
@@ -61,6 +60,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             SavedCardTableCell.self,
             SwitchTableCell.self,
             EmailTableCell.self,
+            PayButtonTableCell.self,
             ContainerTableViewCell.self,
             AvatarTableViewCell.self
         )
@@ -78,22 +78,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func setButtonPrimaryAppearance() {
-        payButton.configure(.cardPayment)
-    }
-
-    func setButtonTinkoffPayAppearance() {
-        payButton.configure(.tinkoffPay)
-    }
-
-    func setButtonSBPAppearance() {
-        payButton.configure(.sbp)
-    }
-
-    func setButtonEnabled(_ enabled: Bool) {
-        payButton.isEnabled = enabled
-    }
-
     func reloadData() {
         tableView.reloadData()
     }
@@ -150,9 +134,10 @@ extension MainFormViewController: UITableViewDataSource {
             cell.containedView.presenter = presenter
             cell.insets = .emailInsets
             return cell
-        case .payButton:
-            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
-            cell.setContent(payButton, insets: .payButtonInsets)
+        case let .payButton(presenter):
+            let cell = tableView.dequeue(cellType: PayButtonTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = presenter
+            cell.insets = .payButtonInsets
             return cell
         case .otherPaymentMethodsHeader:
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
@@ -188,43 +173,6 @@ private extension UIEdgeInsets {
 
 private extension CGRect {
     static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
-}
-
-// MARK: - Button.Configuration + Helpers
-
-private extension Button.Configuration {
-    static var cardPayment: Button.Configuration {
-        Button.Configuration(
-            title: "Оплатить",
-            style: .primaryTinkoff,
-            contentSize: .basicLarge
-        )
-    }
-
-    static var tinkoffPay: Button.Configuration {
-        Button.Configuration(
-            title: "Оплатить с Тинькофф",
-            image: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image,
-            style: .primaryTinkoff,
-            contentSize: .basicLarge,
-            imagePlacement: .trailing
-        )
-    }
-
-    // Кнопка СБП не может быть в состоянии disabled, поэтому корректные цвета для этого не заданы.
-    // Если появится необходимость, попросить дизайнера отрисовать это состояние, а затем положить цвет в `Button.Style`
-    static var sbp: Button.Configuration {
-        Button.Configuration(
-            title: "Оплатить",
-            image: Asset.Sbp.sbpLogoLight.image,
-            style: Button.Style(
-                foregroundColor: Button.InteractiveColor(normal: .white),
-                backgroundColor: Button.InteractiveColor(normal: UIColor(hex: "#1D1346") ?? .clear)
-            ),
-            contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
-            imagePlacement: .trailing
-        )
-    }
 }
 
 // MARK: - AvatarTableViewCellModel + Helpers

@@ -24,17 +24,17 @@ final class MainFormPresenter {
         amount: configuration.amount,
         orderDescription: configuration.orderDescription
     )
-
     private lazy var savedCardPresenter = SavedCardPresenter(output: self)
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
         title: "Получить квитанцию",
-        isOn: true,
+        isOn: paymentFlow.customerOptions?.email?.isEmpty == false,
         actionBlock: { [weak self] in self?.getReceiptSwitch(didChange: $0) }
     )
     private lazy var emailPresenter = EmailViewPresenter(
         customerEmail: paymentFlow.customerOptions?.email ?? "",
         output: self
     )
+    private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
 
     // MARK: State
 
@@ -81,11 +81,11 @@ final class MainFormPresenter {
     private func setupButtonAppearance() {
         switch stub.primaryPayMethod {
         case .card:
-            view?.setButtonPrimaryAppearance()
+            payButtonPresenter.presentationState = .pay
         case .tinkoffPay:
-            view?.setButtonTinkoffPayAppearance()
+            payButtonPresenter.presentationState = .tinkoffPay
         case .sbp:
-            view?.setButtonSBPAppearance()
+            payButtonPresenter.presentationState = .sbp
         }
     }
 }
@@ -99,7 +99,7 @@ extension MainFormPresenter: IMainFormPresenter {
             .savedCard(savedCardPresenter),
             .getReceiptSwitch(getReceiptSwitchPresenter),
             .email(emailPresenter),
-//            .payButton,
+            .payButton(payButtonPresenter),
             .otherPaymentMethodsHeader,
             .otherPaymentMethod(.tinkoffPay),
             .otherPaymentMethod(.card),
@@ -111,16 +111,7 @@ extension MainFormPresenter: IMainFormPresenter {
 
     func viewWasClosed() {}
 
-    func viewDidTapPayButton() {
-        switch stub.primaryPayMethod {
-        case .card:
-            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards, output: self)
-        case .tinkoffPay:
-            router.openTinkoffPay(paymentFlow: paymentFlow)
-        case .sbp:
-            router.openSBP(paymentFlow: paymentFlow)
-        }
-    }
+    func viewDidTapPayButton() {}
 
     func numberOfRows() -> Int {
         cellTypes.count
@@ -164,16 +155,17 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didUpdateCVC cvc: String,
         isValid: Bool
-    ) {
-//        view?.setButtonEnabled(isValid)
-    }
+    ) {}
 }
 
 // MARK: - SwitchViewOutput
 
 extension MainFormPresenter {
     func getReceiptSwitch(didChange isOn: Bool) {
-        guard let switchIndex = cellTypes.firstIndex(where: \.isGetReceiptSwitch) else { return }
+        guard let switchIndex = cellTypes.firstIndex(where: \.isGetReceiptSwitch) else {
+            return assertionFailure()
+        }
+
         let emailIndex = switchIndex + 1
         let emailIndexPath = IndexPath(row: emailIndex, section: .zero)
 
@@ -185,6 +177,21 @@ extension MainFormPresenter {
             assert(cellTypes.firstIndex(where: \.isEmail) == emailIndex)
             cellTypes.remove(at: emailIndex)
             view?.deleteRow(at: emailIndexPath)
+        }
+    }
+}
+
+// MARK: - IPayButtonViewPresenterOutput
+
+extension MainFormPresenter: IPayButtonViewPresenterOutput {
+    func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
+        switch stub.primaryPayMethod {
+        case .card:
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+        case .tinkoffPay:
+            router.openTinkoffPay(paymentFlow: paymentFlow)
+        case .sbp:
+            router.openSBP(paymentFlow: paymentFlow)
         }
     }
 }

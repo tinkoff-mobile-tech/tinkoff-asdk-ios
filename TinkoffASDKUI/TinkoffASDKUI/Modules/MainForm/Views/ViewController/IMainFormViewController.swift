@@ -8,10 +8,6 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
-    func setButtonPrimaryAppearance()
-    func setButtonTinkoffPayAppearance()
-    func setButtonSBPAppearance()
-    func setButtonEnabled(_ enabled: Bool)
     func reloadData()
     func insertRows(at indexPaths: [IndexPath])
     func deleteRows(at indexPaths: [IndexPath])

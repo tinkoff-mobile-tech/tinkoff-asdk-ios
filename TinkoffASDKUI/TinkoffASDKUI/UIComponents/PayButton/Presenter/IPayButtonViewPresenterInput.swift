@@ -8,6 +8,7 @@
 import Foundation
 
 protocol IPayButtonViewPresenterInput {
+    var presentationState: PayButtonViewPresentationState { get set }
     var isLoading: Bool { get }
     var isEnabled: Bool { get }
 
