@@ -212,21 +212,21 @@ extension DynamicIconCardView.Icon {
         var image: UIImage {
             switch self {
             case .tinkoff:
-                return Asset.Cards.cardTinkoff.image
+                return Asset.PaymentCard.Bank.tinkoff.image
             case .alpha:
-                return Asset.Cards.cardAlpha.image
+                return Asset.PaymentCard.Bank.alpha.image
             case .raiffaisen:
-                return Asset.Cards.cardRaiffaisen.image
+                return Asset.PaymentCard.Bank.raiffaisen.image
             case .vtb:
-                return Asset.Cards.cardVtb.image
+                return Asset.PaymentCard.Bank.vtb.image
             case .gazprom:
-                return Asset.Cards.cardGazprom.image
+                return Asset.PaymentCard.Bank.gazprom.image
             case .ozon:
-                return Asset.Cards.cardOzon.image
+                return Asset.PaymentCard.Bank.ozon.image
             case .sber:
-                return Asset.Cards.cardSber.image
+                return Asset.PaymentCard.Bank.sber.image
             case .other:
-                return Asset.Cards.cardOther.image
+                return Asset.PaymentCard.Bank.other.image
             }
         }
     }
@@ -255,24 +255,24 @@ extension DynamicIconCardView.Icon {
             case .mir:
                 switch style {
                 case .white:
-                    return Asset.PaymentSystem.paymentSystemMirWhite.image
+                    return Asset.PaymentCard.PaymentSystem.mirWhite.image
                 case .plain:
-                    return Asset.PaymentSystem.paymentSystemMir.image
+                    return Asset.PaymentCard.PaymentSystem.mir.image
                 }
 
             case .visa:
                 switch style {
                 case .white:
-                    return Asset.PaymentSystem.paymentSystemVisaWhite.image
+                    return Asset.PaymentCard.PaymentSystem.visaWhite.image
                 case .plain:
-                    return Asset.PaymentSystem.paymentSystemVisa.image
+                    return Asset.PaymentCard.PaymentSystem.visa.image
                 }
             case .maestro:
-                return Asset.PaymentSystem.paymentSystemMaestro.image
+                return Asset.PaymentCard.PaymentSystem.maestro.image
             case .uninonPay:
-                return Asset.PaymentSystem.paymentSystemUnionpay.image
+                return Asset.PaymentCard.PaymentSystem.unionpay.image
             case .masterCard:
-                return Asset.PaymentSystem.paymentSystemMastercard.image
+                return Asset.PaymentCard.PaymentSystem.mastercard.image
             }
         }
     }

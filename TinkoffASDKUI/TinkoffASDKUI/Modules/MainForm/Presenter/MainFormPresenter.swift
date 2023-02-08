@@ -28,6 +28,10 @@ final class MainFormPresenter {
         .orderDetails,
         .savedCard(savedCardPresenter),
         .payButton,
+        .otherPaymentMethodsHeader,
+        .otherPaymentMethod(.tinkoffPay),
+        .otherPaymentMethod(.card),
+        .otherPaymentMethod(.sbp),
     ]
 
     private var loadedCards: [PaymentCard] = []
@@ -115,6 +119,19 @@ extension MainFormPresenter: IMainFormPresenter {
 
     func cellType(at indexPath: IndexPath) -> MainFormCellType {
         cellTypes[indexPath.row]
+    }
+
+    func didSelectRow(at indexPath: IndexPath) {
+        switch cellType(at: indexPath) {
+        case .otherPaymentMethod(.card):
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+        case .otherPaymentMethod(.tinkoffPay):
+            router.openTinkoffPay(paymentFlow: paymentFlow)
+        case .otherPaymentMethod(.sbp):
+            router.openSBP(paymentFlow: paymentFlow)
+        default:
+            break
+        }
     }
 }
 

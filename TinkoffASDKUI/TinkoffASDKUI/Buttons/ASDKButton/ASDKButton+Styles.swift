@@ -28,7 +28,7 @@ extension ASDKButton.Style {
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             icon: Icon(
-                image: Asset.buttonIconSBP.image,
+                image: Asset.Sbp.sbpLogoUniversal.image,
                 transform: CGAffineTransform(scaleX: -1.0, y: 1.0)
             ),
             border: Border(cornerRadius: 4, width: 1, color: .sbpBorder),

@@ -160,11 +160,11 @@ final class CommonSheetView: UIView {
             activityIndicator.isHidden = false
             iconView.isHidden = true
         case .succeeded:
-            iconView.image = Asset.TuiIcMedium.checkCirclePositive.image
+            iconView.image = Asset.Illustrations.checkCirclePositive.image
             iconView.isHidden = false
             activityIndicator.isHidden = true
         case .failed:
-            iconView.image = Asset.TuiIcMedium.crossCircle.image
+            iconView.image = Asset.Illustrations.crossCircle.image
             iconView.isHidden = false
             activityIndicator.isHidden = true
         }

@@ -1,5 +1,5 @@
 //
-//  MainFormPayMethod.swift
+//  MainFormPaymentMethod.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 01.02.2023.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum MainFormPayMethod {
-    case newCard
-    case savedCard
+enum MainFormPaymentMethod {
+    case card
+    case tinkoffPay
     case sbp
 }

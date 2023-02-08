@@ -21,21 +21,12 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
 
     // MARK: Subviews
 
-    private lazy var headerView = MainFormHeaderView(frame: .headerInitialFrame)
+    private lazy var tableView = UITableView(frame: view.bounds)
+    private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
     private lazy var orderDetailsView = MainFormOrderDetailsView()
     private lazy var savedCardView = SavedCardView()
     private lazy var payButton = Button { [presenter] in presenter.viewDidTapPayButton() }
-
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: view.bounds)
-        tableView.separatorStyle = .none
-        tableView.register(ContainerTableViewCell.self)
-        tableView.keyboardDismissMode = .onDrag
-        tableView.delaysContentTouches = false
-        tableView.dataSource = self
-
-        return tableView
-    }()
+    private lazy var otherPaymentMethodsHeader = UILabel()
 
     // MARK: Init
 
@@ -54,6 +45,7 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupOtherPaymentMethodsHeader()
         presenter.viewDidLoad()
     }
 
@@ -62,7 +54,20 @@ final class MainFormViewController: UIViewController, PullableContainerScrollabl
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
-        tableView.tableHeaderView = headerView
+
+        tableView.tableHeaderView = tableHeaderView
+        tableView.separatorStyle = .none
+        tableView.keyboardDismissMode = .onDrag
+        tableView.delaysContentTouches = false
+        tableView.register(ContainerTableViewCell.self, AvatarTableViewCell.self)
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+
+    private func setupOtherPaymentMethodsHeader() {
+        otherPaymentMethodsHeader.font = .headingMedium
+        otherPaymentMethodsHeader.textColor = ASDKColors.Text.primary.color
+        otherPaymentMethodsHeader.text = "Оплатить другим способом"
     }
 }
 
@@ -122,7 +127,24 @@ extension MainFormViewController: UITableViewDataSource {
             let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
             cell.setContent(payButton, insets: .payButtonInsets)
             return cell
+        case .otherPaymentMethodsHeader:
+            let cell = tableView.dequeue(cellType: ContainerTableViewCell.self, indexPath: indexPath)
+            cell.setContent(otherPaymentMethodsHeader, insets: .otherPaymentMethodsHeader)
+            return cell
+        case let .otherPaymentMethod(paymentMethod):
+            let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
+            cell.update(with: .from(paymentMethod))
+            return cell
         }
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension MainFormViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presenter.didSelectRow(at: indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
@@ -131,11 +153,12 @@ extension MainFormViewController: UITableViewDataSource {
 private extension UIEdgeInsets {
     static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 24, right: 16)
     static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
-    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 36, right: 16)
+    static let payButtonInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 16)
+    static let otherPaymentMethodsHeader = UIEdgeInsets(vertical: 12, horizontal: 16)
 }
 
 private extension CGRect {
-    static let headerInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
+    static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
 }
 
 // MARK: - Button.Configuration + Helpers
@@ -152,24 +175,22 @@ private extension Button.Configuration {
     static var tinkoffPay: Button.Configuration {
         Button.Configuration(
             title: "Оплатить с Тинькофф",
-            image: Asset.Icons.tinkoffPayIcon.image,
+            image: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image,
             style: .primaryTinkoff,
             contentSize: .basicLarge,
             imagePlacement: .trailing
         )
     }
 
+    // Кнопка СБП не может быть в состоянии disabled, поэтому корректные цвета для этого не заданы.
+    // Если появится необходимость, попросить дизайнера отрисовать это состояние, а затем положить цвет в `Button.Style`
     static var sbp: Button.Configuration {
         Button.Configuration(
             title: "Оплатить",
-            image: .sbpImage,
+            image: Asset.Sbp.sbpLogoLight.image,
             style: Button.Style(
-                foregroundColor: Button.InteractiveColor(
-                    normal: .white
-                ),
-                backgroundColor: Button.InteractiveColor(
-                    normal: UIColor(hex: "#1D1346") ?? .clear
-                )
+                foregroundColor: Button.InteractiveColor(normal: .white),
+                backgroundColor: Button.InteractiveColor(normal: UIColor(hex: "#1D1346") ?? .clear)
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
             imagePlacement: .trailing
@@ -177,20 +198,28 @@ private extension Button.Configuration {
     }
 }
 
-// MARK: - UIImage + Helpers
+// MARK: - AvatarTableViewCellModel + Helpers
 
-private extension UIImage {
-    /// Извлекает иконку для светлой темы из динамического ассета
-    static var sbpImage: UIImage {
-        let imageAsset = UIImageAsset()
-        let lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
-        let lightImage = Asset.buttonIconSBP.image(compatibleWith: lightTraitCollection)
-
-        imageAsset.register(
-            lightImage,
-            with: UITraitCollection(traitsFrom: [lightTraitCollection, UIScreen.main.traitCollection])
-        )
-
-        return imageAsset.image(with: UIScreen.main.traitCollection)
+private extension AvatarTableViewCellModel {
+    static func from(_ paymentMethod: MainFormPaymentMethod) -> AvatarTableViewCellModel {
+        switch paymentMethod {
+        case .card:
+            return AvatarTableViewCellModel(
+                title: "Картой",
+                avatarImage: Asset.PaymentCard.cardFrontsideAvatar.image
+            )
+        case .tinkoffPay:
+            return AvatarTableViewCellModel(
+                title: "Tinkoff Pay",
+                description: "В приложении Тинькофф",
+                avatarImage: Asset.TinkoffPay.tinkoffPayAvatar.image
+            )
+        case .sbp:
+            return AvatarTableViewCellModel(
+                title: "СБП",
+                description: "В приложении любого банка",
+                avatarImage: Asset.Sbp.sbpAvatar.image
+            )
+        }
     }
 }

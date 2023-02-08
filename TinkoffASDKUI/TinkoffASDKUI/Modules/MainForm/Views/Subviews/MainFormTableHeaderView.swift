@@ -1,5 +1,5 @@
 //
-//  MainFormHeaderView.swift
+//  MainFormTableHeaderView.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 19.01.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class MainFormHeaderView: UIView {
+final class MainFormTableHeaderView: UIView {
     // MARK: Subviews
 
     private lazy var logoImageView: UIImageView = {
