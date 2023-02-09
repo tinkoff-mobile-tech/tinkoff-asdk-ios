@@ -10,5 +10,5 @@ import TinkoffASDKCore
 typealias PaymentStatusServiceCompletion = (Result<GetPaymentStatePayload, Error>) -> Void
 
 protocol IPaymentStatusService {
-    func getPaymentStatus(paymentId: String, completion: @escaping PaymentStatusServiceCompletion)
+    func getPaymentState(paymentId: String, completion: @escaping PaymentStatusServiceCompletion)
 }

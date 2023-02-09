@@ -19,13 +19,13 @@ final class PaymentStatusService: IPaymentStatusService {
         self.acquiringSdk = acquiringSdk
     }
 
-    // MARK: ISBPPaymentStatusService
+    // MARK: IPaymentStatusService
 
     /// Запрос на получение статуса платежа
     /// - Parameters:
     ///   - paymentId: платежный идентификатор
     ///   - completion: в случае success выдает статус платежа
-    func getPaymentStatus(paymentId: String, completion: @escaping PaymentStatusServiceCompletion) {
+    func getPaymentState(paymentId: String, completion: @escaping PaymentStatusServiceCompletion) {
         let stateData = GetPaymentStateData(paymentId: paymentId)
         acquiringSdk.getPaymentState(data: stateData, completion: completion)
     }
