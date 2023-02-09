@@ -111,8 +111,6 @@ extension MainFormPresenter: IMainFormPresenter {
 
     func viewWasClosed() {}
 
-    func viewDidTapPayButton() {}
-
     func numberOfRows() -> Int {
         cellTypes.count
     }
@@ -187,7 +185,7 @@ extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
         switch stub.primaryPayMethod {
         case .card:
-            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards)
+            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: loadedCards, output: self)
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:
