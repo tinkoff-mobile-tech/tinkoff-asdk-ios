@@ -77,7 +77,7 @@ extension SBPPaymentSheetPresenter {
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentStatus(paymentId: self.paymentId) { result in
+            self.paymentStatusService.getPaymentState(paymentId: self.paymentId) { result in
                 DispatchQueue.main.async {
                     switch result {
                     case let .success(payload):
