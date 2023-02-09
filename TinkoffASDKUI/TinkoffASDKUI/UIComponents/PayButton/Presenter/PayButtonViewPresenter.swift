@@ -7,18 +7,16 @@
 
 import UIKit
 
-final class PayButtonViewPresenter: IPayButtonViewOutput {
-    // MARK: Output
-
-    weak var output: IPayButtonViewPresenterOutput?
-
+final class PayButtonViewPresenter: IPayButtonViewOutput, IPayButtonViewPresenterInput {
     // MARK: IPayButtonView Properties
 
     var view: IPayButtonViewInput? {
         didSet { setupView() }
     }
 
-    // MARK: State
+    // MARK: IPayButtonViewPresenterInput Properties
+
+    weak var output: IPayButtonViewPresenterOutput?
 
     var presentationState: PayButtonViewPresentationState {
         didSet {
@@ -46,34 +44,8 @@ final class PayButtonViewPresenter: IPayButtonViewOutput {
         self.output = output
     }
 
-    // MARK: IPayButtonViewOutput Methods
+    // MARK: IPayButtonViewPresenterInput Methods
 
-    func payButtonTapped() {
-        output?.payButtonViewTapped(self)
-    }
-
-    // MARK: View Reloading
-
-    private func setupView() {
-        switch presentationState {
-        case .pay:
-            view?.set(configuration: .pay())
-        case let .payWithAmount(amount):
-            view?.set(configuration: .pay(amount: moneyFormatter.formatAmount(amount)))
-        case .tinkoffPay:
-            view?.set(configuration: .tinkoffPay())
-        case .sbp:
-            view?.set(configuration: .sbp())
-        }
-
-        view?.set(enabled: isEnabled)
-        isLoading ? view?.startLoading() : view?.stopLoading()
-    }
-}
-
-// MARK: - IPayButtonViewPresenterInput
-
-extension PayButtonViewPresenter: IPayButtonViewPresenterInput {
     func startLoading() {
         isLoading = true
         view?.startLoading()
@@ -88,14 +60,40 @@ extension PayButtonViewPresenter: IPayButtonViewPresenterInput {
         isEnabled = enabled
         view?.set(enabled: enabled)
     }
+
+    // MARK: IPayButtonViewOutput Methods
+
+    func payButtonTapped() {
+        output?.payButtonViewTapped(self)
+    }
+
+    // MARK: View Reloading
+
+    private func setupView() {
+        switch presentationState {
+        case .pay:
+            view?.set(configuration: .pay(title: "Оплатить"))
+        case .payByCard:
+            view?.set(configuration: .pay(title: "Оплатить по карте"))
+        case let .payWithAmount(amount):
+            view?.set(configuration: .pay(title: "Оплатить \(moneyFormatter.formatAmount(amount))"))
+        case .tinkoffPay:
+            view?.set(configuration: .tinkoffPay())
+        case .sbp:
+            view?.set(configuration: .sbp())
+        }
+
+        view?.set(enabled: isEnabled)
+        isLoading ? view?.startLoading() : view?.stopLoading()
+    }
 }
 
 // MARK: - Button.Configuration + Helpers
 
 private extension Button.Configuration {
-    static func pay(amount: String? = nil) -> Button.Configuration {
+    static func pay(title: String) -> Button.Configuration {
         Button.Configuration(
-            title: ["Оплатить", amount].compactMap { $0 }.joined(separator: " "),
+            title: title,
             style: .primaryTinkoff,
             contentSize: .basicLarge
         )
