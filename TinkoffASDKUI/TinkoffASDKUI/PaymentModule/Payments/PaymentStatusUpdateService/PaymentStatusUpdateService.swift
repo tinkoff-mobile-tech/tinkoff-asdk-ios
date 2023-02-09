@@ -47,7 +47,7 @@ extension PaymentStatusUpdateService {
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentStatus(paymentId: data.payload.paymentId) { result in
+            self.paymentStatusService.getPaymentState(paymentId: data.payload.paymentId) { result in
                 switch result {
                 case let .success(payload):
                     self.handleSuccessGetStatus(data: data.update(payload: payload))
