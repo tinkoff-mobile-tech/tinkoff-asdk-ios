@@ -61,7 +61,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             SwitchTableCell.self,
             EmailTableCell.self,
             PayButtonTableCell.self,
-            TextHeaderCell.self,
+            TextHeaderTableCell.self,
             AvatarTableViewCell.self
         )
     }
@@ -132,7 +132,7 @@ extension MainFormViewController: UITableViewDataSource {
             cell.insets = .payButtonInsets
             return cell
         case let .otherPaymentMethodsHeader(presenter):
-            let cell = tableView.dequeue(cellType: TextHeaderCell.self, indexPath: indexPath)
+            let cell = tableView.dequeue(cellType: TextHeaderTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
             cell.insets = .otherPaymentMethodsHeaderInsets
             return cell
