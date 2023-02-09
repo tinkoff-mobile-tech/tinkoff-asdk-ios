@@ -103,6 +103,6 @@ extension SwitchView {
 // MARK: - Constants
 
 private extension CGFloat {
-    static let minimalHeight: CGFloat = 56
+    static let minimalHeight: CGFloat = 40
     static let nameLabelRightInset: CGFloat = 8
 }

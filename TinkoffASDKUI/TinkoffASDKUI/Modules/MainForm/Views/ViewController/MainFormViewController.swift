@@ -48,11 +48,13 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     private func setupTableView() {
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
-
         tableView.tableHeaderView = tableHeaderView
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
+        tableView.dataSource = self
+        tableView.delegate = self
+
         tableView.register(
             MainFormOrderDetailsTableCell.self,
             SavedCardTableCell.self,
@@ -62,8 +64,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             TextHeaderCell.self,
             AvatarTableViewCell.self
         )
-        tableView.dataSource = self
-        tableView.delegate = self
     }
 }
 
@@ -157,9 +157,9 @@ extension MainFormViewController: UITableViewDelegate {
 
 private extension UIEdgeInsets {
     static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 28, right: 16)
-    static let savedCardInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
-    static let getReceiptSwitchInsets = UIEdgeInsets(vertical: 8, horizontal: 20)
-    static let emailInsets = UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 16)
+    static let savedCardInsets = UIEdgeInsets(top: 8, left: 16, bottom: 20, right: 16)
+    static let getReceiptSwitchInsets = UIEdgeInsets(top: .zero, left: 20, bottom: 12, right: 20)
+    static let emailInsets = UIEdgeInsets(top: .zero, left: 16, bottom: 8, right: 16)
     static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
     static let otherPaymentMethodsHeaderInsets = UIEdgeInsets(vertical: 12, horizontal: 16)
 }
