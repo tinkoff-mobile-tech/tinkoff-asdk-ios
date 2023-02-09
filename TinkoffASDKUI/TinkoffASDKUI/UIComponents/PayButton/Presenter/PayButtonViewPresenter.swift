@@ -10,7 +10,7 @@ import UIKit
 final class PayButtonViewPresenter: IPayButtonViewOutput, IPayButtonViewPresenterInput {
     // MARK: IPayButtonView Properties
 
-    var view: IPayButtonViewInput? {
+    weak var view: IPayButtonViewInput? {
         didSet { setupView() }
     }
 

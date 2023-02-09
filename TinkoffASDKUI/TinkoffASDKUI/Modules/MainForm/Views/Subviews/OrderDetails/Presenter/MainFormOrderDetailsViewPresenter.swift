@@ -10,7 +10,7 @@ import Foundation
 final class MainFormOrderDetailsViewPresenter: IMainFormOrderDetailsViewOutput {
     // MARK: IMainFormOrderDetailsViewOutput Properties
 
-    var view: IMainFormOrderDetailsViewInput? {
+    weak var view: IMainFormOrderDetailsViewInput? {
         didSet { setupView() }
     }
 
