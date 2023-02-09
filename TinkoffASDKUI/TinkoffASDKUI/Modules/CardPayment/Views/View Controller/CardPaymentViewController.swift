@@ -80,13 +80,13 @@ extension CardPaymentViewController {
 
     func insert(row: Int) {
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        tableView.insertRows(at: [IndexPath(row: row, section: 0)], with: .fade)
         tableView.endUpdates()
     }
 
     func delete(row: Int) {
         tableView.beginUpdates()
-        tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .fade)
         tableView.endUpdates()
     }
 }
