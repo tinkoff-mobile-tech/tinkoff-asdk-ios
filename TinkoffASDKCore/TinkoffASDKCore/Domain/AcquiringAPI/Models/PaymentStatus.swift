@@ -47,6 +47,8 @@ public enum PaymentStatus: String, Decodable, Equatable {
     case unknown = "UNKNOWN"
     /// Ожидаем оплату по QR-коду
     case formShowed = "FORM_SHOWED"
+    /// Время отведенное на оплату закончилось
+    case deadlineExpired = "DEADLINE_EXPIRED"
 
     public init(rawValue: String) {
         switch rawValue {
@@ -72,6 +74,7 @@ public enum PaymentStatus: String, Decodable, Equatable {
         case "NEW": self = .new
         case "UNKNOWN": self = .unknown
         case "FORM_SHOWED": self = .formShowed
+        case "DEADLINE_EXPIRED": self = .deadlineExpired
         default: self = .unknown
         }
     }
