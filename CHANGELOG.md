@@ -27,6 +27,7 @@
 * [MIC-7827] MainForm - Extend cvc field's touch area
 * [MIC-7705] MainForm - Update Button for configuring
 * [MIC-7706] MainForm - Other Payment Methods
+* [MIC-7952] MainForm - UI elements with own cells
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 
 ## [2.16.0] - 2023-01-19Z
