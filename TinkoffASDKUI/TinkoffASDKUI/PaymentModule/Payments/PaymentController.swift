@@ -106,9 +106,7 @@ public final class PaymentController: IPaymentController {
     // App based threeDS
     private let tdsController: TDSController
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
-
-    private let paymentStatusService: IPaymentStatusService
-    private let repeatedRequestHelper: IRepeatedRequestHelper
+    private let paymentStatusUpdateService: IPaymentStatusUpdateService
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -118,8 +116,6 @@ public final class PaymentController: IPaymentController {
 
     private var paymentProcess: PaymentProcess?
     private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
-
-    private var requestRepeatCount: Int
 
     // MARK: - Temporary until refactor PaymentView!
 
@@ -134,10 +130,8 @@ public final class PaymentController: IPaymentController {
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         tdsController: TDSController,
         webViewAuthChallengeService: IWebViewAuthChallengeService,
-        paymentStatusService: IPaymentStatusService,
-        repeatedRequestHelper: IRepeatedRequestHelper,
-        acquiringUISDK: AcquiringUISDK, /* temporary*/
-        requestRepeatCount: Int
+        paymentStatusUpdateService: IPaymentStatusUpdateService,
+        acquiringUISDK: AcquiringUISDK /* temporary*/
     ) {
         self.threeDSService = threeDSService
         self.paymentFactory = paymentFactory
@@ -145,10 +139,10 @@ public final class PaymentController: IPaymentController {
         self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.tdsController = tdsController
         self.webViewAuthChallengeService = webViewAuthChallengeService
-        self.paymentStatusService = paymentStatusService
-        self.repeatedRequestHelper = repeatedRequestHelper
+        self.paymentStatusUpdateService = paymentStatusUpdateService
         self.acquiringUISDK = acquiringUISDK
-        self.requestRepeatCount = requestRepeatCount
+
+        paymentStatusUpdateService.delegate = self
     }
 
     deinit {
@@ -295,13 +289,8 @@ extension PaymentController: PaymentProcessDelegate {
         rebillId: String?
     ) {
 
-        handleGetStatusOrPaymentDidFinish(
-            payload: state,
-            paymentProcess: paymentProcess,
-            cardId: cardId,
-            rebillId: rebillId,
-            isRequestRepeatAllowed: requestRepeatCount > 0
-        )
+        let data = FullPaymentData(paymentProcess: paymentProcess, payload: state, cardId: cardId, rebillId: rebillId)
+        paymentStatusUpdateService.startUpdateStatusIfNeeded(data: data)
     }
 
     func paymentDidFailed(
@@ -516,127 +505,49 @@ extension PaymentController: PaymentProcessDelegate {
     }
 }
 
-// MARK: - Private
+// MARK: - IPaymentStatusUpdateServiceDelegate
 
-extension PaymentController {
-    private func getPaymentStatus(
-        _ paymentProcess: PaymentProcess,
-        with state: GetPaymentStatePayload,
-        cardId: String?,
-        rebillId: String?
-    ) {
-        repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
-            guard let self = self else { return }
-
-            self.paymentStatusService.getPaymentStatus(paymentId: state.paymentId) { result in
-                switch result {
-                case let .success(payload):
-                    self.handleSuccessGetStatus(
-                        payload: payload,
-                        paymentProcess: paymentProcess,
-                        cardId: cardId,
-                        rebillId: rebillId
-                    )
-                case let .failure(error):
-                    self.handleFailureGetPaymentStatus(
-                        payload: state,
-                        paymentProcess: paymentProcess,
-                        cardId: cardId,
-                        rebillId: rebillId,
-                        error: error
-                    )
-                }
-            }
-        }
-    }
-
-    private func handleSuccessGetStatus(
-        payload: GetPaymentStatePayload,
-        paymentProcess: PaymentProcess,
-        cardId: String?,
-        rebillId: String?
-    ) {
-        requestRepeatCount -= 1
-        let isRequestRepeatAllowed = requestRepeatCount > 0
-
-        handleGetStatusOrPaymentDidFinish(
-            payload: payload,
-            paymentProcess: paymentProcess,
-            cardId: cardId,
-            rebillId: rebillId,
-            isRequestRepeatAllowed: isRequestRepeatAllowed
-        )
-    }
-
-    private func handleGetStatusOrPaymentDidFinish(
-        payload: GetPaymentStatePayload,
-        paymentProcess: PaymentProcess,
-        cardId: String?,
-        rebillId: String?,
-        isRequestRepeatAllowed: Bool
-    ) {
-        switch payload.status {
-        case .authorized, .confirmed, .rejected, .deadlineExpired:
-            dismissThreeDSIfNeeded { [weak self] in
-                guard let self = self else { return }
-
-                self.delegate?.paymentController(
-                    self,
-                    didFinishPayment: paymentProcess,
-                    with: payload,
-                    cardId: cardId,
-                    rebillId: rebillId
-                )
-            }
-            return
-        case .cancelled:
-            delegatePaymentWasCancelled(paymentProcess: paymentProcess, cardId: cardId, rebillId: rebillId)
-            return
-        default: break
-        }
-
-        if isRequestRepeatAllowed {
-            getPaymentStatus(paymentProcess, with: payload, cardId: cardId, rebillId: rebillId)
-        } else {
-            delegatePaymentWasCancelled(paymentProcess: paymentProcess, cardId: cardId, rebillId: rebillId)
-        }
-    }
-
-    private func handleFailureGetPaymentStatus(
-        payload: GetPaymentStatePayload,
-        paymentProcess: PaymentProcess,
-        cardId: String?,
-        rebillId: String?,
-        error: Error
-    ) {
-        requestRepeatCount -= 1
-        let isRequestRepeatAllowed = requestRepeatCount > 0
-
-        if isRequestRepeatAllowed {
-            getPaymentStatus(paymentProcess, with: payload, cardId: cardId, rebillId: rebillId)
-        } else {
-            paymentDidFailed(paymentProcess, with: error, cardId: cardId, rebillId: rebillId)
-        }
-    }
-
-    private func dismissThreeDSIfNeeded(completion: @escaping () -> Void) {
-        DispatchQueue.main.async {
-            self.dismissThreeDSViewControllerIfNeeded(completion: completion)
-            self.threeDSViewController = nil
-            self.paymentProcess = nil
-        }
-    }
-
-    private func delegatePaymentWasCancelled(paymentProcess: PaymentProcess, cardId: String?, rebillId: String?) {
+extension PaymentController: IPaymentStatusUpdateServiceDelegate {
+    func paymentFinalStatusRecieved(data: FullPaymentData) {
         dismissThreeDSIfNeeded { [weak self] in
             guard let self = self else { return }
 
             self.delegate?.paymentController(
                 self,
-                paymentWasCancelled: paymentProcess,
-                cardId: cardId,
-                rebillId: rebillId
+                didFinishPayment: data.paymentProcess,
+                with: data.payload,
+                cardId: data.cardId,
+                rebillId: data.rebillId
             )
+        }
+    }
+
+    func paymentCancelStatusRecieved(data: FullPaymentData) {
+        dismissThreeDSIfNeeded { [weak self] in
+            guard let self = self else { return }
+
+            self.delegate?.paymentController(
+                self,
+                paymentWasCancelled: data.paymentProcess,
+                cardId: data.cardId,
+                rebillId: data.rebillId
+            )
+        }
+    }
+
+    func paymentFailureStatusRecieved(data: FullPaymentData, error: Error) {
+        paymentDidFailed(data.paymentProcess, with: error, cardId: data.cardId, rebillId: data.rebillId)
+    }
+}
+
+// MARK: - Private
+
+extension PaymentController {
+    private func dismissThreeDSIfNeeded(completion: @escaping () -> Void) {
+        DispatchQueue.main.async {
+            self.dismissThreeDSViewControllerIfNeeded(completion: completion)
+            self.threeDSViewController = nil
+            self.paymentProcess = nil
         }
     }
 }
