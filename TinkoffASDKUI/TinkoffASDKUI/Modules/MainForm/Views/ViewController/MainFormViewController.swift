@@ -138,7 +138,7 @@ extension MainFormViewController: UITableViewDataSource {
             return cell
         case let .otherPaymentMethod(paymentMethod):
             let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
-            cell.update(with: .from(paymentMethod))
+            cell.update(with: .viewModel(from: paymentMethod))
             return cell
         }
     }
@@ -166,30 +166,4 @@ private extension UIEdgeInsets {
 
 private extension CGRect {
     static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
-}
-
-// MARK: - AvatarTableViewCellModel + Helpers
-
-private extension AvatarTableViewCellModel {
-    static func from(_ paymentMethod: MainFormPaymentMethod) -> AvatarTableViewCellModel {
-        switch paymentMethod {
-        case .card:
-            return AvatarTableViewCellModel(
-                title: "Картой",
-                avatarImage: Asset.PaymentCard.cardFrontsideAvatar.image
-            )
-        case .tinkoffPay:
-            return AvatarTableViewCellModel(
-                title: "Tinkoff Pay",
-                description: "В приложении Тинькофф",
-                avatarImage: Asset.TinkoffPay.tinkoffPayAvatar.image
-            )
-        case .sbp:
-            return AvatarTableViewCellModel(
-                title: "СБП",
-                description: "В приложении любого банка",
-                avatarImage: Asset.Sbp.sbpAvatar.image
-            )
-        }
-    }
 }
