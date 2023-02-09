@@ -11,7 +11,7 @@ import Foundation
 public struct UISDKConfiguration {
     /// Запрашивает данные и способ аутентификация для `WKWebView`
     let webViewAuthChallengeService: IWebViewAuthChallengeService?
-    
+
     /// Отвечает за максимальное количество запросов на обновление статуса платежа, можно установить любое значение
     ///
     /// Запросы обновления статуса осуществляются с минимальным интервалом в 3 секунды между друг другом
