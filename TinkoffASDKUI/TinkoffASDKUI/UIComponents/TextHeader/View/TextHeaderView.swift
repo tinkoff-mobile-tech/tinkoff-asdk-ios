@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 08.02.2023.
 //
 
-import Foundation
+import UIKit
 
 typealias TextHeaderTableCell = TableCell<TextHeaderView>
 
