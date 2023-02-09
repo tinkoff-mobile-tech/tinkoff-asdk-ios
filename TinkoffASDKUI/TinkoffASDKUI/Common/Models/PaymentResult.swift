@@ -13,13 +13,13 @@ public enum PaymentResult {
     /// Информация о проведенном платеже
     public struct PaymentInfo {
         /// Идентификатор платежа
-        public let paymentId: String?
+        public let paymentId: String
         /// Идентификатор заказа в системе продавца
-        public let orderId: String?
+        public let orderId: String
         /// Сумма заказа в копейках
-        public let amount: Int64?
+        public let amount: Int64
         // Последний детальный статус о платеже
-        public let paymentStatus: PaymentStatus?
+        public let paymentStatus: PaymentStatus
 
         /// Инициализация параметров
         /// - Parameters:
@@ -27,10 +27,10 @@ public enum PaymentResult {
         ///   - orderId: Идентификатор заказа в системе продавца
         ///   - amount: Сумма заказа в копейках
         init(
-            paymentId: String? = nil,
-            orderId: String? = nil,
-            amount: Int64? = nil,
-            paymentStatus: PaymentStatus? = nil
+            paymentId: String,
+            orderId: String,
+            amount: Int64,
+            paymentStatus: PaymentStatus
         ) {
             self.paymentId = paymentId
             self.orderId = orderId

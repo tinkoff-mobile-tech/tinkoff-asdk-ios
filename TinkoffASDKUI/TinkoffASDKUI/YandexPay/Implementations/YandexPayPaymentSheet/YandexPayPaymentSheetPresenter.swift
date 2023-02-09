@@ -89,7 +89,8 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         let paymentInfo = PaymentResult.PaymentInfo(
             paymentId: state.paymentId,
             orderId: state.orderId,
-            amount: state.amount
+            amount: state.amount,
+            paymentStatus: state.status
         )
 
         paymentResult = .succeeded(paymentInfo)

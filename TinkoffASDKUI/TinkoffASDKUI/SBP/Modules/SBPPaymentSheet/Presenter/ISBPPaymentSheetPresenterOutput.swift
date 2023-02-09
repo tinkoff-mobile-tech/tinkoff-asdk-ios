@@ -6,5 +6,5 @@
 //
 
 protocol ISBPPaymentSheetPresenterOutput: AnyObject {
-    func sbpPaymentActivity(completedWith result: PaymentResult)
+    func sbpPaymentSheet(completedWith result: PaymentResult)
 }

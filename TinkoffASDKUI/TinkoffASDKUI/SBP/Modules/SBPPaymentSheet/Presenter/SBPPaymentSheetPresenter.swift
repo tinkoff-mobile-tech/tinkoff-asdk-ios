@@ -31,7 +31,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
     private var canDismissView = true
 
     private var currentViewState: CommonSheetState = .waiting
-    private var lastPaymentInfo = PaymentResult.PaymentInfo()
+    private var lastPaymentInfo: PaymentResult.PaymentInfo?
     private var lastGetPaymentStatusError: Error?
 
     // MARK: Initialization
@@ -74,13 +74,18 @@ extension SBPPaymentSheetPresenter {
     func viewWasClosed() {
         switch currentViewState {
         case .paid:
-            output?.sbpPaymentActivity(completedWith: .succeeded(lastPaymentInfo))
+            guard let lastPaymentInfo = lastPaymentInfo else {
+                output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .unknown)))
+                return
+            }
+
+            output?.sbpPaymentSheet(completedWith: .succeeded(lastPaymentInfo))
         case .waiting:
-            output?.sbpPaymentActivity(completedWith: .cancelled(lastPaymentInfo))
+            output?.sbpPaymentSheet(completedWith: .cancelled(lastPaymentInfo))
         case .paymentFailed:
-            output?.sbpPaymentActivity(completedWith: .failed(ASDKErrors.rejected.error))
+            output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .rejected)))
         case .timeout:
-            output?.sbpPaymentActivity(completedWith: .failed(ASDKErrors.timeout(nestedError: lastGetPaymentStatusError).error))
+            output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .timeout, underlyingError: lastGetPaymentStatusError)))
         default:
             // во всех остальных кейсах, закрытие шторки должно быть невозможно
             break
@@ -135,7 +140,9 @@ extension SBPPaymentSheetPresenter {
         case .deadlineExpired:
             canDismissView = true
             viewUpdateStateIfNeeded(newState: .timeout)
-        default: break
+        default:
+            canDismissView = true
+            viewUpdateStateIfNeeded(newState: .paymentFailed)
         }
     }
 
