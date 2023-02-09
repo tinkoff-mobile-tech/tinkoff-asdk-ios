@@ -48,6 +48,11 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
 
         let paymentStatusService = PaymentStatusService(acquiringSdk: coreSDK)
         let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
+        let paymentStatusUpdateService = PaymentStatusUpdateService(
+            paymentStatusService: paymentStatusService,
+            repeatedRequestHelper: repeatedRequestHelper,
+            maxRequestRepeatCount: uiSDKConfiguration.paymentStatusRetriesCount
+        )
 
         return PaymentController(
             paymentFactory: paymentFactory(acquiringSDK: coreSDK),
@@ -56,10 +61,8 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             tdsController: uiSDK.tdsController,
             webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
-            paymentStatusService: paymentStatusService,
-            repeatedRequestHelper: repeatedRequestHelper,
-            acquiringUISDK: uiSDK,
-            requestRepeatCount: uiSDKConfiguration.paymentStatusRetriesCount
+            paymentStatusUpdateService: paymentStatusUpdateService,
+            acquiringUISDK: uiSDK
         )
     }
 }
