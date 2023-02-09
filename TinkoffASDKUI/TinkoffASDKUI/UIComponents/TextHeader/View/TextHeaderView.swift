@@ -7,6 +7,8 @@
 
 import Foundation
 
+typealias TextHeaderTableCell = TableCell<TextHeaderView>
+
 final class TextHeaderView: UIView {
     // MARK: Dependencies
 

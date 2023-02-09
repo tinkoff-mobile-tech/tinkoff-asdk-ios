@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias SwitchTableCell = TableCell<SwitchView>
+
 final class SwitchView: UIView, ISwitchViewInput {
 
     // MARK: Dependencies

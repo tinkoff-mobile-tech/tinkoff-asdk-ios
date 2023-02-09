@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias MainFormOrderDetailsTableCell = TableCell<MainFormOrderDetailsView>
+
 final class MainFormOrderDetailsView: UIView {
     // MARK: Dependencies
 

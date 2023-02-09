@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias EmailTableCell = TableCell<EmailView>
+
 final class EmailView: UIView, IEmailViewInput {
 
     // MARK: Dependencies

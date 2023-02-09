@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias PayButtonTableCell = TableCell<PayButtonView>
+
 final class PayButtonView: UIView {
     // MARK: Dependencies
 
