@@ -72,8 +72,10 @@ extension PaymentStatusUpdateService {
             return
         case .rejected:
             delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
+            return
         case .deadlineExpired:
             delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
+            return
         case .cancelled:
             delegate?.paymentCancelStatusRecieved(data: data)
             return
