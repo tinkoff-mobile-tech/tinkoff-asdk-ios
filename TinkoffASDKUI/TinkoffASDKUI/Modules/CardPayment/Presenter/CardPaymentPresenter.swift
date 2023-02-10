@@ -16,6 +16,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let router: ICardPaymentRouter
     private weak var output: ICardPaymentPresenterModuleOutput?
 
+    private let paymentController: IPaymentController
     private let moneyFormatter: IMoneyFormatter
 
     // MARK: Properties
@@ -38,6 +39,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
+        paymentController: IPaymentController,
         moneyFormatter: IMoneyFormatter,
         activeCards: [PaymentCard],
         paymentFlow: PaymentFlow,
@@ -45,6 +47,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     ) {
         self.router = router
         self.output = output
+        self.paymentController = paymentController
         self.moneyFormatter = moneyFormatter
         self.activeCards = Int.random(in: 0 ... 100) % 2 == 0 ? activeCards : []
         self.paymentFlow = paymentFlow
@@ -71,9 +74,10 @@ extension CardPaymentPresenter {
 
     func payButtonPressed() {
         view?.hideKeyboard()
+        view?.startIgnoringInteractionEvents()
         view?.startLoadingPayButton()
 
-        output?.cardPaymentPayButtonDidPressed(cardData: cardFieldPresenter.cardData, email: emailPresenter.currentEmail)
+        startPaymentProcess()
     }
 
     func numberOfRows() -> Int {
@@ -119,6 +123,51 @@ extension CardPaymentPresenter: ISavedCardPresenterOutput {
 
     func savedCardPresenter(_ presenter: SavedCardPresenter, didUpdateCVC cvc: String, isValid: Bool) {
         activatePayButtonIfNeeded()
+    }
+}
+
+// MARK: - PaymentControllerDelegate
+
+extension CardPaymentPresenter: PaymentControllerDelegate {
+    func paymentController(
+        _ controller: PaymentController,
+        didFinishPayment: PaymentProcess,
+        with state: TinkoffASDKCore.GetPaymentStatePayload,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        view?.stopIgnoringInteractionEvents()
+        let paymentData = FullPaymentData(paymentProcess: didFinishPayment, payload: state, cardId: cardId, rebillId: rebillId)
+        output?.cardPaymentWillCloseAfterFinishedPayment(with: paymentData)
+        router.closeScreen { [weak self] in
+            self?.output?.cardPaymentDidCloseAfterFinishedPayment(with: paymentData)
+        }
+    }
+
+    func paymentController(
+        _ controller: PaymentController,
+        paymentWasCancelled: PaymentProcess,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        view?.stopIgnoringInteractionEvents()
+        output?.cardPaymentWillCloseAfterCancelledPayment(with: paymentWasCancelled, cardId: cardId, rebillId: rebillId)
+        router.closeScreen { [weak self] in
+            self?.output?.cardPaymentDidCloseAfterCancelledPayment(with: paymentWasCancelled, cardId: cardId, rebillId: rebillId)
+        }
+    }
+
+    func paymentController(
+        _ controller: PaymentController,
+        didFailed error: Error,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        view?.stopIgnoringInteractionEvents()
+        output?.cardPaymentWillCloseAfterFailedPayment(with: error, cardId: cardId, rebillId: rebillId)
+        router.closeScreen { [weak self] in
+            self?.output?.cardPaymentDidCloseAfterFailedPayment(with: error, cardId: cardId, rebillId: rebillId)
+        }
     }
 }
 
@@ -191,5 +240,33 @@ extension CardPaymentPresenter {
 
         let isPayButtonEnabled = isCardValid && isEmailValid
         view?.setPayButton(isEnabled: isPayButtonEnabled)
+    }
+
+    private func startPaymentProcess() {
+        let cardSourceData = PaymentSourceData.cardNumber(
+            number: cardFieldPresenter.cardNumber,
+            expDate: cardFieldPresenter.expiration,
+            cvv: cardFieldPresenter.cvc
+        )
+        let savedCardSourceData = PaymentSourceData.savedCard(
+            cardId: savedCardPresenter?.cardId ?? "",
+            cvv: savedCardPresenter?.cvc
+        )
+
+        let sourceData: PaymentSourceData = activeCards.isEmpty ? cardSourceData : savedCardSourceData
+
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            paymentController.performInitPayment(
+                paymentOptions: paymentOptions,
+                paymentSource: sourceData
+            )
+        case let .finish(paymentId, customerOptions):
+            paymentController.performFinishPayment(
+                paymentId: paymentId,
+                paymentSource: sourceData,
+                customerOptions: customerOptions
+            )
+        }
     }
 }

@@ -17,7 +17,7 @@ final class CardPaymentRouter: ICardPaymentRouter {
 // MARK: - ICardPaymentRouter
 
 extension CardPaymentRouter {
-    func closeScreen() {
-        transitionHandler?.dismiss(animated: true)
+    func closeScreen(completion: VoidBlock?) {
+        transitionHandler?.dismiss(animated: true, completion: completion)
     }
 }

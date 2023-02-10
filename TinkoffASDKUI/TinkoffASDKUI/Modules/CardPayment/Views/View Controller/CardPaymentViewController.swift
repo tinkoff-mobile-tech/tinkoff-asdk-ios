@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WebKit
 
 final class CardPaymentViewController: UIViewController, ICardPaymentViewControllerInput {
 
@@ -24,6 +25,8 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
         action: { [presenter] in presenter.payButtonPressed() }
     )
+
+    private lazy var webView = WKWebView()
 
     // MARK: Initialization
 
@@ -62,12 +65,22 @@ extension CardPaymentViewController {
 
     func startLoadingPayButton() {
         payButton.startLoading()
-        UIApplication.shared.beginIgnoringInteractionEvents()
     }
 
     func stopLoadingPayButton() {
         payButton.stopLoading()
-        UIApplication.shared.endIgnoringInteractionEvents()
+    }
+
+    func startIgnoringInteractionEvents() {
+        if #available(iOS 13.0, *) { isModalInPresentation = true }
+        navigationController?.navigationBar.isUserInteractionEnabled = false
+        view.isUserInteractionEnabled = false
+    }
+
+    func stopIgnoringInteractionEvents() {
+        if #available(iOS 13.0, *) { isModalInPresentation = false }
+        navigationController?.navigationBar.isUserInteractionEnabled = true
+        view.isUserInteractionEnabled = true
     }
 
     func hideKeyboard() {
@@ -129,6 +142,13 @@ extension CardPaymentViewController: UITableViewDataSource {
 
         return cell
     }
+}
+
+// MARK: - PaymentControllerUIProvider
+
+extension CardPaymentViewController: PaymentControllerUIProvider {
+    func hiddenWebViewToCollect3DSData() -> WKWebView { webView }
+    func sourceViewControllerToPresent() -> UIViewController? { self }
 }
 
 // MARK: - Private

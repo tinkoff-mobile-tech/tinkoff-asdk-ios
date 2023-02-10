@@ -9,18 +9,29 @@ import TinkoffASDKCore
 import UIKit
 
 final class MainFormAssembly: IMainFormAssembly {
-    private let coreSDK: AcquiringSdk
+    // MARK: Dependencies
 
-    init(coreSDK: AcquiringSdk) {
+    private let coreSDK: AcquiringSdk
+    private let paymentControllerAssembly: IPaymentControllerAssembly
+
+    // MARK: Initialization
+
+    init(
+        coreSDK: AcquiringSdk,
+        paymentControllerAssembly: IPaymentControllerAssembly
+    ) {
         self.coreSDK = coreSDK
+        self.paymentControllerAssembly = paymentControllerAssembly
     }
+
+    // MARK: IMainFormAssembly
 
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
         stub: MainFormStub
     ) -> UIViewController {
-        let cardPaymentAssembly = CardPaymentAssembly()
+        let cardPaymentAssembly = CardPaymentAssembly(paymentControllerAssembly: paymentControllerAssembly)
         let router = MainFormRouter(
             configuration: configuration,
             cardPaymentAssembly: cardPaymentAssembly

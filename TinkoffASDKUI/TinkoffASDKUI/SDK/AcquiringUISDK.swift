@@ -251,7 +251,7 @@ public class AcquiringUISDK: NSObject {
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
         webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
-        mainFormAssembly = MainFormAssembly(coreSDK: coreSDK)
+        mainFormAssembly = MainFormAssembly(coreSDK: coreSDK, paymentControllerAssembly: paymentControllerAssembly)
     }
 
     /// Вызывается когда пользователь привязывает карту.
