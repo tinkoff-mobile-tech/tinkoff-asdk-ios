@@ -67,8 +67,14 @@ extension PaymentStatusUpdateService {
 
     private func handleStatus(data: FullPaymentData, isRequestRepeatAllowed: Bool) {
         switch data.payload.status {
-        case .authorized, .confirmed, .rejected, .deadlineExpired:
+        case .authorized, .confirmed:
             delegate?.paymentFinalStatusRecieved(data: data)
+            return
+        case .rejected:
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
+            return
+        case .deadlineExpired:
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
             return
         case .cancelled:
             delegate?.paymentCancelStatusRecieved(data: data)
