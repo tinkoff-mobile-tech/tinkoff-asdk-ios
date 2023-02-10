@@ -23,3 +23,16 @@ public struct MainFormStub {
         self.primaryPayMethod = primaryPayMethod
     }
 }
+
+extension MainFormStub.PayMethod {
+    var domainModel: MainFormPaymentMethod {
+        switch self {
+        case .card:
+            return .card
+        case .sbp:
+            return .sbp
+        case .tinkoffPay:
+            return .tinkoffPay
+        }
+    }
+}
