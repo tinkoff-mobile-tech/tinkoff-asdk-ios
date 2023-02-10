@@ -19,7 +19,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 
     private weak var output: ISBPPaymentSheetPresenterOutput?
 
-    private let paymentStatusService: ISBPPaymentStatusService
+    private let paymentStatusService: IPaymentStatusService
     private let repeatedRequestHelper: IRepeatedRequestHelper
     private let sbpConfiguration: SBPConfiguration
 
@@ -38,7 +38,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 
     init(
         output: ISBPPaymentSheetPresenterOutput?,
-        paymentStatusService: ISBPPaymentStatusService,
+        paymentStatusService: IPaymentStatusService,
         repeatedRequestHelper: IRepeatedRequestHelper,
         sbpConfiguration: SBPConfiguration,
         paymentId: String
@@ -100,7 +100,7 @@ extension SBPPaymentSheetPresenter {
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentStatus(paymentId: self.paymentId) { result in
+            self.paymentStatusService.getPaymentState(paymentId: self.paymentId) { result in
                 DispatchQueue.main.async {
                     switch result {
                     case let .success(payload):

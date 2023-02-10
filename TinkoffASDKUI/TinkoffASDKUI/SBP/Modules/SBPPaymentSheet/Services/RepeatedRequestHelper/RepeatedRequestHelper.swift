@@ -39,7 +39,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
     /// А вот следующий будет исполнен только после задержки. Когда пройдет установленное время.
     /// Важно! Если накидать несколько операций подряд, то будет выполнена только последняя с соблюдением условий задержки.
     /// - Parameter action: Блок который должен быть выполнен
-    func executeWithWaitingIfNeeded(action: @escaping VoidBlock) {
+    func executeWithWaitingIfNeeded(action: @escaping () -> Void) {
         timer?.invalidate()
 
         let currentTime = Date()

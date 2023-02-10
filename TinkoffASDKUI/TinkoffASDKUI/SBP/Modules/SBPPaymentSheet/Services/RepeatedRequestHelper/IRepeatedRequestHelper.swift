@@ -6,5 +6,5 @@
 //
 
 protocol IRepeatedRequestHelper {
-    func executeWithWaitingIfNeeded(action: @escaping VoidBlock)
+    func executeWithWaitingIfNeeded(action: @escaping () -> Void)
 }
