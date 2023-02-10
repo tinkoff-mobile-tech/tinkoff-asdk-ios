@@ -34,7 +34,7 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
 // MARK: - IYandexPayPaymentSheetOutput
 
 extension YandexPayPaymentFlow: IYandexPayPaymentSheetOutput {
-    func yandexPayPaymentActivity(completedWith result: YandexPayPaymentResult) {
+    func yandexPayPaymentActivity(completedWith result: PaymentResult) {
         delegate?.yandexPayPaymentFlow(self, didCompleteWith: result)
     }
 }

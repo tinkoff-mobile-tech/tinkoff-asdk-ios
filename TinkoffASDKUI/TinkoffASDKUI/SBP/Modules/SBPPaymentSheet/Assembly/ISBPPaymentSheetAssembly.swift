@@ -8,5 +8,5 @@
 import UIKit
 
 protocol ISBPPaymentSheetAssembly {
-    func build(paymentId: String) -> UIViewController
+    func build(paymentId: String, output: ISBPPaymentSheetPresenterOutput?) -> UIViewController
 }

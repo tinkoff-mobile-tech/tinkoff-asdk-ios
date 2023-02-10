@@ -8,5 +8,5 @@
 import Foundation
 
 protocol IYandexPayPaymentSheetOutput: AnyObject {
-    func yandexPayPaymentActivity(completedWith result: YandexPayPaymentResult)
+    func yandexPayPaymentActivity(completedWith result: PaymentResult)
 }

@@ -17,6 +17,8 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 
     weak var view: ICommonSheetView?
 
+    private weak var output: ISBPPaymentSheetPresenterOutput?
+
     private let paymentStatusService: ISBPPaymentStatusService
     private let repeatedRequestHelper: IRepeatedRequestHelper
     private let sbpConfiguration: SBPConfiguration
@@ -29,15 +31,19 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
     private var canDismissView = true
 
     private var currentViewState: CommonSheetState = .waiting
+    private var lastPaymentInfo: PaymentResult.PaymentInfo?
+    private var lastGetPaymentStatusError: Error?
 
     // MARK: Initialization
 
     init(
+        output: ISBPPaymentSheetPresenterOutput?,
         paymentStatusService: ISBPPaymentStatusService,
         repeatedRequestHelper: IRepeatedRequestHelper,
         sbpConfiguration: SBPConfiguration,
         paymentId: String
     ) {
+        self.output = output
         self.paymentStatusService = paymentStatusService
         self.repeatedRequestHelper = repeatedRequestHelper
         self.sbpConfiguration = sbpConfiguration
@@ -54,11 +60,11 @@ extension SBPPaymentSheetPresenter {
     }
 
     func primaryButtonTapped() {
-        view?.close() // закрываем до шторки выбора оплат если Ошибка при оплате. В других случаях закрываем сдк
+        view?.close()
     }
 
     func secondaryButtonTapped() {
-        view?.close() // закрываем сдк
+        view?.close()
     }
 
     func canDismissViewByUserInteraction() -> Bool {
@@ -66,7 +72,24 @@ extension SBPPaymentSheetPresenter {
     }
 
     func viewWasClosed() {
-        // уведомить о закрытии, передаем в родительское приложение последний статус платежа и как оно закрылось
+        switch currentViewState {
+        case .paid:
+            guard let lastPaymentInfo = lastPaymentInfo else {
+                output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .unknown)))
+                return
+            }
+
+            output?.sbpPaymentSheet(completedWith: .succeeded(lastPaymentInfo))
+        case .waiting:
+            output?.sbpPaymentSheet(completedWith: .cancelled(lastPaymentInfo))
+        case .paymentFailed:
+            output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .rejected)))
+        case .timeout:
+            output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .timeout, underlyingError: lastGetPaymentStatusError)))
+        default:
+            // во всех остальных кейсах, закрытие шторки должно быть невозможно
+            break
+        }
     }
 }
 
@@ -80,21 +103,23 @@ extension SBPPaymentSheetPresenter {
             self.paymentStatusService.getPaymentStatus(paymentId: self.paymentId) { result in
                 DispatchQueue.main.async {
                     switch result {
-                    case let .success(paymentStatus):
-                        self.handleSuccessGet(paymentStatus: paymentStatus)
-                    case .failure:
-                        self.handleFailureGetPaymentStatus()
+                    case let .success(payload):
+                        self.handleSuccessGet(payloadInfo: payload)
+                    case let .failure(error):
+                        self.handleFailureGetPaymentStatus(error)
                     }
                 }
             }
         }
     }
 
-    private func handleSuccessGet(paymentStatus: PaymentStatus) {
+    private func handleSuccessGet(payloadInfo: GetPaymentStatePayload) {
+        lastPaymentInfo = payloadInfo.toPaymentInfo()
+
         requestRepeatCount -= 1
         let isRequestRepeatAllowed = requestRepeatCount > 0
 
-        switch paymentStatus {
+        switch payloadInfo.status {
         case .formShowed where isRequestRepeatAllowed:
             canDismissView = true
             getPaymentStatus()
@@ -115,17 +140,20 @@ extension SBPPaymentSheetPresenter {
         case .deadlineExpired:
             canDismissView = true
             viewUpdateStateIfNeeded(newState: .timeout)
-        default: break
+        default:
+            canDismissView = true
+            viewUpdateStateIfNeeded(newState: .paymentFailed)
         }
     }
 
-    private func handleFailureGetPaymentStatus() {
+    private func handleFailureGetPaymentStatus(_ error: Error) {
         requestRepeatCount -= 1
         let isRequestRepeatAllowed = requestRepeatCount > 0
         if isRequestRepeatAllowed {
             getPaymentStatus()
         } else {
             canDismissView = true
+            lastGetPaymentStatusError = error
             viewUpdateStateIfNeeded(newState: .timeout)
         }
     }
