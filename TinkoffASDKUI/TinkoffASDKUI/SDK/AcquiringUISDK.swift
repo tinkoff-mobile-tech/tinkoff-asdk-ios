@@ -1256,7 +1256,6 @@ public class AcquiringUISDK: NSObject {
                                 data.savingAsParentPayment = true
                                 DispatchQueue.main.async {
                                     var chargePaymentId = successInitResponse.paymentId
-
                                     self.presentAcquiringPaymentView(
                                         presentingViewController: presentingViewController,
                                         customerKey: paymentData.customerKey,
