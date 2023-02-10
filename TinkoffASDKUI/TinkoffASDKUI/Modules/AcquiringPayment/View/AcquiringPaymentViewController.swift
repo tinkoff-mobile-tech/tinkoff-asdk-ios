@@ -305,12 +305,9 @@ class AcquiringPaymentViewController: PopUpViewContoller {
             tableViewCells.append(.qrCodeStatic(qrCode: qrCode, title: title))
 
         case .paymentWainingCVC:
-            userTableViewCells.forEach { item in
-                if case AcquiringViewTableViewCells.buttonPaySBP = item {
-                } else {
-                    tableViewCells.append(item)
-                }
-            }
+            userTableViewCells
+                .filter { !$0.isSBP && !$0.isTinkoffPay }
+                .forEach { tableViewCells.append($0) }
 
             tableViewCells.append(.cardList)
             tableViewCells.append(.buttonPay)
@@ -815,5 +812,23 @@ private extension AcquiringViewTableViewCells {
         }
 
         return true
+    }
+
+    var isSBP: Bool {
+        switch self {
+        case .buttonPaySBP:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isTinkoffPay: Bool {
+        switch self {
+        case .tinkoffPay:
+            return true
+        default:
+            return false
+        }
     }
 }
