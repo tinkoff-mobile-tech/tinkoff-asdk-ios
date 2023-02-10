@@ -1256,6 +1256,12 @@ public class AcquiringUISDK: NSObject {
                                 data.savingAsParentPayment = true
                                 DispatchQueue.main.async {
                                     var chargePaymentId = successInitResponse.paymentId
+
+                                    // На экране подтверждения CVC кода при рекуррентном платеже не может и не должна располагаться кнопка `TinkoffPay`
+                                    // Временное решение, исправляющее баг. Экран ввода cvc будет полностью переписан в ASDK v3
+                                    var configuration = configuration
+                                    configuration.featuresOptions.tinkoffPayEnabled = false
+
                                     self.presentAcquiringPaymentView(
                                         presentingViewController: presentingViewController,
                                         customerKey: paymentData.customerKey,
