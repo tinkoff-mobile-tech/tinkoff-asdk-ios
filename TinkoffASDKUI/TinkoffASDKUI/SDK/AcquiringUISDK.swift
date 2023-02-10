@@ -1259,13 +1259,13 @@ public class AcquiringUISDK: NSObject {
 
                                     // На экране подтверждения CVC кода при рекуррентном платеже не может и не должна располагаться кнопка `TinkoffPay`
                                     // Временное решение, исправляющее баг. Экран ввода cvc будет полностью переписан в ASDK v3
-                                    var configuration = configuration
-                                    configuration.featuresOptions.tinkoffPayEnabled = false
+                                    var modifiedConfiguration = configuration
+                                    modifiedConfiguration.featuresOptions.tinkoffPayEnabled = false
 
                                     self.presentAcquiringPaymentView(
                                         presentingViewController: presentingViewController,
                                         customerKey: paymentData.customerKey,
-                                        configuration: configuration
+                                        configuration: modifiedConfiguration
                                     ) { _ in
                                         self.acquiringView?.changedStatus(.initWaiting)
                                         self.initPay(paymentData: data, completionHandler: { initResponse in
