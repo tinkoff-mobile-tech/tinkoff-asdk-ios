@@ -8,11 +8,16 @@
 protocol ISBPBanksAssembly {
 
     /// Формирует модуль, когда уже есть пре загруженная платежная информация
+    /// - Parameter paymentSheetOutput: делегат ответов от платежной шторки
     /// - Returns: Возвращает сформированный модуль
-    func buildPreparedModule() -> SBPBanksModule
+    func buildPreparedModule(paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) -> SBPBanksModule
 
     /// Формирует модуль, когда нет загруженной платежной информации и требуется ее загрузить внутри модуля
     /// - Parameter paymentConfiguration: необходимые данные для загрузки платежной информации
+    /// - Parameter paymentSheetOutput: делегат ответов от платежной шторки
     /// - Returns: Возвращает сформированный модуль
-    func buildInitialModule(paymentConfiguration: AcquiringPaymentStageConfiguration) -> SBPBanksModule
+    func buildInitialModule(
+        paymentConfiguration: AcquiringPaymentStageConfiguration,
+        paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
+    ) -> SBPBanksModule
 }

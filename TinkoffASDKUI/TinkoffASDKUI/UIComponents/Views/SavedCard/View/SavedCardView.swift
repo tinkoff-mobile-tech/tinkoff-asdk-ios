@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias SavedCardTableCell = TableCell<SavedCardView>
+
 final class SavedCardView: UIView {
     // MARK: Dependencies
 

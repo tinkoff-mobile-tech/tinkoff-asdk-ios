@@ -8,9 +8,31 @@
 import Foundation
 
 enum MainFormCellType {
-    case orderDetails
+    case orderDetails(IMainFormOrderDetailsViewOutput)
     case savedCard(ISavedCardViewOutput)
-    case payButton
-    case otherPaymentMethodsHeader
+    case getReceiptSwitch(ISwitchViewOutput)
+    case email(IEmailViewOutput)
+    case payButton(IPayButtonViewOutput)
+    case otherPaymentMethodsHeader(ITextHeaderViewOutput)
     case otherPaymentMethod(MainFormPaymentMethod)
+}
+
+extension MainFormCellType {
+    var isGetReceiptSwitch: Bool {
+        switch self {
+        case .getReceiptSwitch:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isEmail: Bool {
+        switch self {
+        case .email:
+            return true
+        default:
+            return false
+        }
+    }
 }

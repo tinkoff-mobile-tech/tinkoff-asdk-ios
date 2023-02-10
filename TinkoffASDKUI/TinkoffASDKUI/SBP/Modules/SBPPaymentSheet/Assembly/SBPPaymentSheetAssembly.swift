@@ -27,10 +27,11 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
 
     // MARK: ISBPPaymentSheetAssembly
 
-    func build(paymentId: String) -> UIViewController {
+    func build(paymentId: String, output: ISBPPaymentSheetPresenterOutput?) -> UIViewController {
         let paymentStatusService = PaymentStatusService(acquiringSdk: acquiringSdk)
         let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
         let presenter = SBPPaymentSheetPresenter(
+            output: output,
             paymentStatusService: paymentStatusService,
             repeatedRequestHelper: repeatedRequestHelper,
             sbpConfiguration: sbpConfiguration,

@@ -815,7 +815,7 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
-        didCompletePaymentWithResult result: YandexPayPaymentResult
+        didCompletePaymentWithResult result: PaymentResult
     ) {
         let message: String = {
             switch result {

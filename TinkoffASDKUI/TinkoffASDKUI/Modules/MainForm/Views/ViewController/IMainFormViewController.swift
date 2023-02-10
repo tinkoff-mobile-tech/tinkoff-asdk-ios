@@ -8,9 +8,19 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
-    func updateOrderDetails(with model: MainFormOrderDetailsViewModel)
-    func setButtonPrimaryAppearance()
-    func setButtonTinkoffPayAppearance()
-    func setButtonSBPAppearance()
-    func setButtonEnabled(_ enabled: Bool)
+    func reloadData()
+    func insertRows(at indexPaths: [IndexPath])
+    func deleteRows(at indexPaths: [IndexPath])
+}
+
+// MARK: - IMainFormViewController + Helpers
+
+extension IMainFormViewController {
+    func insertRow(at indexPath: IndexPath) {
+        insertRows(at: [indexPath])
+    }
+
+    func deleteRow(at indexPath: IndexPath) {
+        deleteRows(at: [indexPath])
+    }
 }

@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias SwitchTableCell = TableCell<SwitchView>
+
 final class SwitchView: UIView, ISwitchViewInput {
 
     // MARK: Dependencies
@@ -88,6 +90,8 @@ extension SwitchView {
         switchButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
+            heightAnchor.constraint(greaterThanOrEqualToConstant: .minimalHeight),
+
             nameLabel.leftAnchor.constraint(equalTo: leftAnchor),
             nameLabel.rightAnchor.constraint(equalTo: switchButton.leftAnchor, constant: .nameLabelRightInset),
             nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -101,5 +105,6 @@ extension SwitchView {
 // MARK: - Constants
 
 private extension CGFloat {
+    static let minimalHeight: CGFloat = 40
     static let nameLabelRightInset: CGFloat = 8
 }

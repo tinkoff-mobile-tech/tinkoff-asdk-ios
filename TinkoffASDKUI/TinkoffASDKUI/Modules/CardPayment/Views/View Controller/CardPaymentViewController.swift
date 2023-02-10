@@ -44,7 +44,6 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         setupView()
         setupNavigationBar()
         setupTableView()
-        setupViewsHeights()
 
         presenter.viewDidLoad()
     }
@@ -81,13 +80,13 @@ extension CardPaymentViewController {
 
     func insert(row: Int) {
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        tableView.insertRows(at: [IndexPath(row: row, section: 0)], with: .fade)
         tableView.endUpdates()
     }
 
     func delete(row: Int) {
         tableView.beginUpdates()
-        tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .fade)
         tableView.endUpdates()
     }
 }
@@ -169,28 +168,11 @@ extension CardPaymentViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = .commonCellHeight
     }
-
-    private func setupViewsHeights() {
-        [emailView, payButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-
-            NSLayoutConstraint.activate([
-                $0.heightAnchor.constraint(equalToConstant: .commonCellHeight),
-            ])
-        }
-
-        switchView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            switchView.heightAnchor.constraint(equalToConstant: .switchCellHeight),
-        ])
-    }
 }
 
-// MARK: - Constanst
+// MARK: - Constants
 
 private extension CGFloat {
-    static let switchCellHeight: CGFloat = 40
     static let commonCellHeight: CGFloat = 56
 }
 

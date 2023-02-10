@@ -19,6 +19,8 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     weak var view: ISBPBanksViewController?
     private let router: ISBPBanksRouter
 
+    private weak var paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
+
     private let paymentService: ISBPPaymentServiceNew?
     private let banksService: ISBPBanksService
     private let bankAppChecker: ISBPBankAppChecker
@@ -42,6 +44,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
 
     init(
         router: ISBPBanksRouter,
+        paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
         paymentService: ISBPPaymentServiceNew?,
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
@@ -50,6 +53,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         dispatchGroup: DispatchGroup
     ) {
         self.router = router
+        self.paymentSheetOutput = paymentSheetOutput
         self.paymentService = paymentService
         self.banksService = banksService
         self.bankAppChecker = bankAppChecker
@@ -195,7 +199,7 @@ extension SBPBanksPresenter {
                 guard let self = self else { return }
 
                 let otherBanks = self.getNotPreferredBanks()
-                self.router.show(banks: otherBanks, qrPayload: self.qrPayload)
+                self.router.show(banks: otherBanks, qrPayload: self.qrPayload, paymentSheetOutput: self.paymentSheetOutput)
             })
             allBanksCellPresenters = createCellPresenters(from: preferredBanks)
             allBanksCellPresenters.append(otherBankCellPresenter)
@@ -227,7 +231,9 @@ extension SBPBanksPresenter {
         return banks.map { bank in
             cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
                 self?.bankAppOpener.openBankApp(url: paymentUrl, bank, completion: { isOpened in
-                    isOpened ? self?.router.showPaymentSheet(paymentId: paymentId) : self?.router.showDidNotFindBankAppAlert()
+                    isOpened ?
+                        self?.router.showPaymentSheet(paymentId: paymentId, output: self?.paymentSheetOutput) :
+                        self?.router.showDidNotFindBankAppAlert()
                 })
             })
         }

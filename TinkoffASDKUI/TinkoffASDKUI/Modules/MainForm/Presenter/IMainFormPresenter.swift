@@ -10,7 +10,6 @@ import Foundation
 protocol IMainFormPresenter {
     func viewDidLoad()
     func viewWasClosed()
-    func viewDidTapPayButton()
     func numberOfRows() -> Int
     func cellType(at indexPath: IndexPath) -> MainFormCellType
     func didSelectRow(at indexPath: IndexPath)

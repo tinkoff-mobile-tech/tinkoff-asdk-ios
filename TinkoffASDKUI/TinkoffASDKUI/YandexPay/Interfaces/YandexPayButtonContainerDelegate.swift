@@ -15,7 +15,7 @@ public protocol YandexPayButtonContainerDelegate: AnyObject {
     ///   - result: Результат оплаты
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
-        didCompletePaymentWithResult result: YandexPayPaymentResult
+        didCompletePaymentWithResult result: PaymentResult
     )
 
     /// Запрашивает `UIViewController`, поверх которого будет отображаться UI для оплаты с помощью `YandexPay`
