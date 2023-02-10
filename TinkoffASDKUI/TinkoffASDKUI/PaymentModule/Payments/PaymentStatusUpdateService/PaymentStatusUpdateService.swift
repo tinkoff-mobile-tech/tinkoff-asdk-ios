@@ -79,7 +79,7 @@ extension PaymentStatusUpdateService {
         if isRequestRepeatAllowed {
             getPaymentStatus(data: data)
         } else {
-            delegate?.paymentCancelStatusRecieved(data: data)
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
         }
     }
 
