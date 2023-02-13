@@ -11,8 +11,15 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeight: CGFloat { 900 }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
+
+    var pullableContainerContentHeight: CGFloat {
+        if commonSheetView.isHidden {
+            return tableView.contentSize.height
+        } else {
+            return commonSheetView.estimatedHeight
+        }
+    }
 
     // MARK: Dependencies
 
@@ -22,6 +29,11 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
+    private lazy var commonSheetView = CommonSheetView(delegate: self)
+
+    // MARK: State
+
+    private var tableViewContentSizeObservation: NSKeyValueObservation?
 
     // MARK: Init
 
@@ -40,6 +52,8 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupCommonSheetView()
+        setupTableViewObservers()
         presenter.viewDidLoad()
     }
 
@@ -52,6 +66,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
+        tableView.alwaysBounceVertical = false
         tableView.dataSource = self
         tableView.delegate = self
 
@@ -65,11 +80,33 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             AvatarTableViewCell.self
         )
     }
+
+    private func setupCommonSheetView() {
+        view.addSubview(commonSheetView)
+        commonSheetView.pinEdgesToSuperview()
+        commonSheetView.backgroundColor = ASDKColors.Background.elevation1.color
+    }
+
+    private func setupTableViewObservers() {
+        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
+            guard let self = self, change.oldValue != change.newValue else { return }
+            self.pullableContainerContentHeightDidChange?(self)
+        }
+    }
 }
 
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
+    func showCommonSheet(state: CommonSheetState) {
+        commonSheetView.update(state: state)
+        commonSheetView.isHidden = false
+    }
+
+    func hideCommonSheet() {
+        commonSheetView.isHidden = true
+    }
+
     func reloadData() {
         tableView.reloadData()
     }
@@ -150,6 +187,18 @@ extension MainFormViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: - CommonSheetViewDelegate
+
+extension MainFormViewController: CommonSheetViewDelegate {
+    func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {}
+
+    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
+
+    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
+        pullableContainerContentHeightDidChange?(self)
     }
 }
 

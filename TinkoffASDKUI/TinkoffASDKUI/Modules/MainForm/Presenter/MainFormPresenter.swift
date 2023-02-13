@@ -68,12 +68,17 @@ final class MainFormPresenter {
 
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
+        view?.showCommonSheet(state: CommonSheetState(status: .processing, title: ""))
+
         loadCardsIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.setupButtonAppearance()
-            self.setupRows()
-            self.view?.reloadData()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.setupButtonAppearance()
+                self.setupRows()
+                self.view?.reloadData()
+                self.view?.hideCommonSheet()
+            }
         }
     }
 
