@@ -171,20 +171,20 @@ extension CardPaymentViewController {
 
         navigationItem.leftBarButtonItem = leftItem
     }
-    
+
     /// Не удалять, необходимо для корректной работы WebView
     private func setupWebView() {
         view.addSubview(webView)
-        
+
         webView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalTo: view.topAnchor, constant: -.webViewTopInset),
             webView.leftAnchor.constraint(equalTo: view.leftAnchor),
             webView.heightAnchor.constraint(equalToConstant: .webViewSideSize),
-            webView.widthAnchor.constraint(equalToConstant: .webViewSideSize)
+            webView.widthAnchor.constraint(equalToConstant: .webViewSideSize),
         ])
-        
+
         webView.isHidden = true
     }
 
@@ -211,7 +211,7 @@ extension CardPaymentViewController {
 
 private extension CGFloat {
     static let commonCellHeight: CGFloat = 56
-    
+
     static let webViewTopInset: CGFloat = 200
     static let webViewSideSize: CGFloat = 1
 }
