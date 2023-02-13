@@ -30,6 +30,16 @@
 * [MIC-7952] MainForm - UI elements with own cells
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 
+## [2.17.0] - 2023-02-13Z
+
+### Changed
+
+* [MIC-7945] PaymentController work improvements
+
+### Fixed
+
+* [MIC-7956] Fix Tinkoff Pay button availability on recurrent payments
+
 ## [2.16.0] - 2023-01-19Z
 
 ### Added

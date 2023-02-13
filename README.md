@@ -66,6 +66,8 @@ File -> Add packages -> `https://github.com/Tinkoff/AcquiringSdk_IOS.git`
 
 Данные выдаются в личном кабинете после подключения к [Интернет-Эквайрингу][acquiring].
 
+Подробнее о настройке Личного кабинета можно прочитать [тут](./PersonalAccountSettings.md)
+
 ## Начало работы
 
 В начале нужно создать конфигурацию, используем объект AcquiringSdkConfiguration, обязательные параметры:
