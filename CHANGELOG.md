@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.17.0] - 2023-02-13Z
+
 ### Changed
 
 * [MIC-7945] PaymentController work improvements
