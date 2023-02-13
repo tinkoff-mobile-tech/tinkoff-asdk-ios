@@ -36,7 +36,7 @@ final class CommonSheetView: UIView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = ASDKColors.Text.primary.color
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .headingMedium
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -45,7 +45,7 @@ final class CommonSheetView: UIView {
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = ASDKColors.Text.secondary.color
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .bodyLarge
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -71,7 +71,7 @@ final class CommonSheetView: UIView {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .fill
-        stack.spacing = .contentStackInterItemSpacing
+        stack.spacing = .contentInterItemSpacing
         return stack
     }()
 
@@ -89,6 +89,12 @@ final class CommonSheetView: UIView {
         stack.spacing = .buttonsStackInterItemSpacing
         return stack
     }()
+
+    // MARK: Constraints
+
+    private lazy var contentTopConstraint = contentStack.topAnchor.constraint(equalTo: topAnchor)
+    private lazy var contentBottomConstraint = contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+        .with(priority: .fittingSizeLevel)
 
     // MARK: Init
 
@@ -118,9 +124,7 @@ final class CommonSheetView: UIView {
 
     func update(state: CommonSheetState) {
         showOverlay { [self] _ in
-            updateStatusViews(with: state)
-            updateLabels(with: state)
-            updateButtons(with: state)
+            updateViews(with: state)
             layoutIfNeeded()
             delegate?.commonSheetView(self, didUpdateWithState: state)
             hideOverlay()
@@ -130,9 +134,12 @@ final class CommonSheetView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
+        setupLayout()
+        updateViews(with: CommonSheetState(status: .processing))
+    }
+
+    private func setupLayout() {
         contentStack.addArrangedSubviews([iconView, activityIndicator, labelsStack, buttonsStack])
-        contentStack.setCustomSpacing(.statusBottomSpacing, after: iconView)
-        contentStack.setCustomSpacing(.statusBottomSpacing, after: activityIndicator)
         labelsStack.addArrangedSubviews([titleLabel, descriptionLabel])
         buttonsStack.addArrangedSubviews([primaryButton, secondaryButton])
 
@@ -140,19 +147,23 @@ final class CommonSheetView: UIView {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            primaryButton.heightAnchor.constraint(equalToConstant: .buttonsHeight),
-            secondaryButton.heightAnchor.constraint(equalToConstant: .buttonsHeight),
-            contentStack.topAnchor.constraint(equalTo: topAnchor, constant: .contentStackVerticalInset),
-            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .contentStackHorizontalInset),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentStackHorizontalInset),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.contentStackVerticalInset)
-                .with(priority: .fittingSizeLevel),
+            contentTopConstraint,
+            contentBottomConstraint,
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .contentHorizontalInset),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentHorizontalInset),
         ])
 
         addSubview(overlayView)
     }
 
     // MARK: Subviews Updating
+
+    private func updateViews(with state: CommonSheetState) {
+        updateStatusViews(with: state)
+        updateLabels(with: state)
+        updateButtons(with: state)
+        updateContentLayout(with: state)
+    }
 
     private func updateStatusViews(with state: CommonSheetState) {
         switch state.status {
@@ -172,15 +183,35 @@ final class CommonSheetView: UIView {
 
     private func updateLabels(with state: CommonSheetState) {
         titleLabel.text = state.title
+        titleLabel.isHidden = !state.title.hasText
         descriptionLabel.text = state.description
+        descriptionLabel.isHidden = !state.description.hasText
+        labelsStack.isHidden = labelsStack.arrangedSubviews.allSatisfy(\.isHidden)
     }
 
     private func updateButtons(with state: CommonSheetState) {
         primaryButton.setTitle(state.primaryButtonTitle)
-        primaryButton.isHidden = state.primaryButtonTitle == nil
+        primaryButton.isHidden = !state.primaryButtonTitle.hasText
         secondaryButton.setTitle(state.secondaryButtonTitle)
-        secondaryButton.isHidden = state.secondaryButtonTitle == nil
+        secondaryButton.isHidden = !state.secondaryButtonTitle.hasText
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
+    }
+
+    private func updateContentLayout(with state: CommonSheetState) {
+        let hasContentAfterStatusViews = [
+            state.title,
+            state.description,
+            state.primaryButtonTitle,
+            state.secondaryButtonTitle,
+        ].contains(where: \.hasText)
+
+        let statusBottomSpacing: CGFloat = hasContentAfterStatusViews ? .statusBottomSpacing : .zero
+
+        contentStack.setCustomSpacing(statusBottomSpacing, after: iconView)
+        contentStack.setCustomSpacing(statusBottomSpacing, after: activityIndicator)
+
+        contentTopConstraint.constant = hasContentAfterStatusViews ? .defaultContentVerticalInset : .emptyContentTopInset
+        contentBottomConstraint.constant = hasContentAfterStatusViews ? -.defaultContentVerticalInset : -.emptyContentBottomInset
     }
 
     // MARK: Overlay Animation
@@ -221,16 +252,26 @@ extension CommonSheetView {
 // MARK: - Constants
 
 private extension CGFloat {
-    static let contentStackVerticalInset: CGFloat = 24
-    static let contentStackHorizontalInset: CGFloat = 16
-    static let contentStackInterItemSpacing: CGFloat = 24
+    static let defaultContentVerticalInset: CGFloat = 24
+    static let emptyContentTopInset: CGFloat = 36
+    static let emptyContentBottomInset: CGFloat = 32
+    static let contentHorizontalInset: CGFloat = 16
+    static let contentInterItemSpacing: CGFloat = 24
     static let statusBottomSpacing: CGFloat = 20
     static let labelsStackInterItemSpacing: CGFloat = 8
     static let labelsStackBottomSpacing: CGFloat = 24
     static let buttonsStackInterItemSpacing: CGFloat = 12
-    static let buttonsHeight: CGFloat = 56
 }
 
 private extension TimeInterval {
     static let animationDuration: TimeInterval = 0.3
+}
+
+// MARK: Optional + Helpers
+
+private extension String? {
+    var hasText: Bool {
+        guard let self = self else { return false }
+        return !self.isEmpty
+    }
 }
