@@ -41,6 +41,7 @@
 * [MIC-6821] Added Snackbar for presenting snacks
 * [MIC-7349] Ability to provide dismissing behavior to PullableContainer
 * [MIC-4762] YandexPayButton integration
+* [MIC-7945] PaymentController work improvements
 
 ### Fixed
 

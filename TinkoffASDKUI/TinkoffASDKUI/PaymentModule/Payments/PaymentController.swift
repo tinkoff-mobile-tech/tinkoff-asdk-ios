@@ -106,6 +106,7 @@ public final class PaymentController: IPaymentController {
     // App based threeDS
     private let tdsController: TDSController
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
+    private let paymentStatusUpdateService: IPaymentStatusUpdateService
 
     weak var uiProvider: PaymentControllerUIProvider?
     weak var delegate: PaymentControllerDelegate?
@@ -129,6 +130,7 @@ public final class PaymentController: IPaymentController {
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         tdsController: TDSController,
         webViewAuthChallengeService: IWebViewAuthChallengeService,
+        paymentStatusUpdateService: IPaymentStatusUpdateService,
         acquiringUISDK: AcquiringUISDK /* temporary*/
     ) {
         self.threeDSService = threeDSService
@@ -137,7 +139,10 @@ public final class PaymentController: IPaymentController {
         self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.tdsController = tdsController
         self.webViewAuthChallengeService = webViewAuthChallengeService
+        self.paymentStatusUpdateService = paymentStatusUpdateService
         self.acquiringUISDK = acquiringUISDK
+
+        paymentStatusUpdateService.delegate = self
     }
 
     deinit {
@@ -283,29 +288,9 @@ extension PaymentController: PaymentProcessDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        DispatchQueue.main.async {
-            self.dismissThreeDSViewControllerIfNeeded { [weak self] in
-                guard let self = self else { return }
-
-                if state.status == .cancelled {
-                    self.delegate?.paymentController(
-                        self,
-                        paymentWasCancelled: paymentProcess,
-                        cardId: cardId,
-                        rebillId: rebillId
-                    )
-                } else {
-                    self.delegate?.paymentController(
-                        self,
-                        didFinishPayment: paymentProcess,
-                        with: state,
-                        cardId: cardId,
-                        rebillId: rebillId
-                    )
-                }
-            }
-            self.threeDSViewController = nil
-            self.paymentProcess = nil
+        dismissThreeDSIfNeeded { [weak self] in
+            let data = FullPaymentData(paymentProcess: paymentProcess, payload: state, cardId: cardId, rebillId: rebillId)
+            self?.paymentStatusUpdateService.startUpdateStatusIfNeeded(data: data)
         }
     }
 
@@ -315,19 +300,15 @@ extension PaymentController: PaymentProcessDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        DispatchQueue.main.async {
-            self.dismissThreeDSViewControllerIfNeeded { [weak self] in
-                guard let self = self else { return }
-                guard !self.interceptError(error, for: paymentProcess) else { return }
-                self.delegate?.paymentController(
-                    self,
-                    didFailed: error,
-                    cardId: cardId,
-                    rebillId: rebillId
-                )
-            }
-            self.threeDSViewController = nil
-            self.paymentProcess = nil
+        dismissThreeDSIfNeeded { [weak self] in
+            guard let self = self else { return }
+            guard !self.interceptError(error, for: paymentProcess) else { return }
+            self.delegate?.paymentController(
+                self,
+                didFailed: error,
+                cardId: cardId,
+                rebillId: rebillId
+            )
         }
     }
 
@@ -522,5 +503,52 @@ extension PaymentController: PaymentProcessDelegate {
                 }
             }
         )
+    }
+}
+
+// MARK: - IPaymentStatusUpdateServiceDelegate
+
+extension PaymentController: IPaymentStatusUpdateServiceDelegate {
+    func paymentFinalStatusRecieved(data: FullPaymentData) {
+        dismissThreeDSIfNeeded { [weak self] in
+            guard let self = self else { return }
+
+            self.delegate?.paymentController(
+                self,
+                didFinishPayment: data.paymentProcess,
+                with: data.payload,
+                cardId: data.cardId,
+                rebillId: data.rebillId
+            )
+        }
+    }
+
+    func paymentCancelStatusRecieved(data: FullPaymentData) {
+        dismissThreeDSIfNeeded { [weak self] in
+            guard let self = self else { return }
+
+            self.delegate?.paymentController(
+                self,
+                paymentWasCancelled: data.paymentProcess,
+                cardId: data.cardId,
+                rebillId: data.rebillId
+            )
+        }
+    }
+
+    func paymentFailureStatusRecieved(data: FullPaymentData, error: Error) {
+        paymentDidFailed(data.paymentProcess, with: error, cardId: data.cardId, rebillId: data.rebillId)
+    }
+}
+
+// MARK: - Private
+
+extension PaymentController {
+    private func dismissThreeDSIfNeeded(completion: @escaping () -> Void) {
+        DispatchQueue.main.async {
+            self.dismissThreeDSViewControllerIfNeeded(completion: completion)
+            self.threeDSViewController = nil
+            self.paymentProcess = nil
+        }
     }
 }
