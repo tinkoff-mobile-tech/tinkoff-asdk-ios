@@ -288,9 +288,10 @@ extension PaymentController: PaymentProcessDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-
-        let data = FullPaymentData(paymentProcess: paymentProcess, payload: state, cardId: cardId, rebillId: rebillId)
-        paymentStatusUpdateService.startUpdateStatusIfNeeded(data: data)
+        dismissThreeDSIfNeeded { [weak self] in
+            let data = FullPaymentData(paymentProcess: paymentProcess, payload: state, cardId: cardId, rebillId: rebillId)
+            self?.paymentStatusUpdateService.startUpdateStatusIfNeeded(data: data)
+        }
     }
 
     func paymentDidFailed(
