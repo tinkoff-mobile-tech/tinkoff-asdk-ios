@@ -10,5 +10,6 @@ import Foundation
 protocol ISavedCardPresenterInput: AnyObject {
     var presentationState: SavedCardPresentationState { get set }
     var isValid: Bool { get }
+    var cardId: String? { get }
     var cvc: String? { get }
 }

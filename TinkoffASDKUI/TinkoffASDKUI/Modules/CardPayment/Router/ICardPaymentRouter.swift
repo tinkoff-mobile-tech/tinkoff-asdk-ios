@@ -6,5 +6,12 @@
 //
 
 protocol ICardPaymentRouter {
-    func closeScreen()
+    func closeScreen(completion: VoidBlock?)
+}
+
+extension ICardPaymentRouter {
+    /// Для удобства / красоты
+    func closeScreen() {
+        closeScreen(completion: nil)
+    }
 }

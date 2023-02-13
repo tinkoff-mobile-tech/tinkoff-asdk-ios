@@ -11,6 +11,9 @@ protocol ICardPaymentViewControllerInput: AnyObject {
     func startLoadingPayButton()
     func stopLoadingPayButton()
 
+    func startIgnoringInteractionEvents()
+    func stopIgnoringInteractionEvents()
+
     func hideKeyboard()
 
     func reloadTableView()

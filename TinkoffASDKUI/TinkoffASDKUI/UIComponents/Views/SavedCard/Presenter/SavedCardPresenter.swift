@@ -23,6 +23,13 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
         validator.validate(inputCVC: cvcInputText)
     }
 
+    var cardId: String? {
+        switch presentationState {
+        case let .selected(card, _): return card.cardId
+        default: return nil
+        }
+    }
+
     var cvc: String? {
         isValid ? cvcInputText : nil
     }

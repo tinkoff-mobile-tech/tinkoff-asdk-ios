@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WebKit
 
 final class CardPaymentViewController: UIViewController, ICardPaymentViewControllerInput {
 
@@ -25,6 +26,8 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         action: { [presenter] in presenter.payButtonPressed() }
     )
 
+    private lazy var webView = WKWebView()
+
     // MARK: Initialization
 
     init(presenter: ICardPaymentViewControllerOutput) {
@@ -43,6 +46,7 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
         super.viewDidLoad()
         setupView()
         setupNavigationBar()
+        setupWebView()
         setupTableView()
 
         presenter.viewDidLoad()
@@ -62,12 +66,22 @@ extension CardPaymentViewController {
 
     func startLoadingPayButton() {
         payButton.startLoading()
-        UIApplication.shared.beginIgnoringInteractionEvents()
     }
 
     func stopLoadingPayButton() {
         payButton.stopLoading()
-        UIApplication.shared.endIgnoringInteractionEvents()
+    }
+
+    func startIgnoringInteractionEvents() {
+        if #available(iOS 13.0, *) { isModalInPresentation = true }
+        navigationController?.navigationBar.isUserInteractionEnabled = false
+        view.isUserInteractionEnabled = false
+    }
+
+    func stopIgnoringInteractionEvents() {
+        if #available(iOS 13.0, *) { isModalInPresentation = false }
+        navigationController?.navigationBar.isUserInteractionEnabled = true
+        view.isUserInteractionEnabled = true
     }
 
     func hideKeyboard() {
@@ -131,6 +145,13 @@ extension CardPaymentViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - PaymentControllerUIProvider
+
+extension CardPaymentViewController: PaymentControllerUIProvider {
+    func hiddenWebViewToCollect3DSData() -> WKWebView { webView }
+    func sourceViewControllerToPresent() -> UIViewController? { self }
+}
+
 // MARK: - Private
 
 extension CardPaymentViewController {
@@ -149,6 +170,13 @@ extension CardPaymentViewController {
         )
 
         navigationItem.leftBarButtonItem = leftItem
+    }
+
+    /// Не удалять, необходимо для корректной работы WebView
+    private func setupWebView() {
+        view.addSubview(webView)
+        webView.pinEdgesToSuperview()
+        webView.isHidden = true
     }
 
     private func setupTableView() {
