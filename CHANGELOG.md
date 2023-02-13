@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Changed
+
+* [MIC-7945] PaymentController work improvements
+
 ### Fixed
 
 * [MIC-7956] Fix Tinkoff Pay button availability on recurrent payments
@@ -41,7 +45,6 @@
 * [MIC-6821] Added Snackbar for presenting snacks
 * [MIC-7349] Ability to provide dismissing behavior to PullableContainer
 * [MIC-4762] YandexPayButton integration
-* [MIC-7945] PaymentController work improvements
 
 ### Fixed
 
