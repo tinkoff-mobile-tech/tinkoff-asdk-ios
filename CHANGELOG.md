@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-7956] Fix Tinkoff Pay button availability on recurrent payments
+
 ## [2.16.0] - 2023-01-19Z
 
 ### Added
