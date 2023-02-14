@@ -15,7 +15,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     var pullableContainerContentHeight: CGFloat {
         if commonSheetView.isHidden {
-            return tableView.contentSize.height
+            return keyboardVisible ? UIScreen.main.bounds.height : tableView.contentSize.height
         } else {
             return commonSheetView.estimatedHeight
         }
@@ -24,6 +24,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: Dependencies
 
     private let presenter: IMainFormPresenter
+    private let keyboardService = KeyboardService()
 
     // MARK: Subviews
 
@@ -34,6 +35,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: State
 
     private var tableViewContentSizeObservation: NSKeyValueObservation?
+    private var keyboardVisible = false
 
     // MARK: Init
 
@@ -53,7 +55,8 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         super.viewDidLoad()
         setupTableView()
         setupCommonSheetView()
-        setupTableViewObservers()
+        setupTableContentSizeObservation()
+        setupKeyboardObserving()
         presenter.viewDidLoad()
     }
 
@@ -87,9 +90,18 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         commonSheetView.backgroundColor = ASDKColors.Background.elevation1.color
     }
 
-    private func setupTableViewObservers() {
+    private func setupTableContentSizeObservation() {
         tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
             guard let self = self, change.oldValue != change.newValue else { return }
+            self.pullableContainerContentHeightDidChange?(self)
+        }
+    }
+
+    private func setupKeyboardObserving() {
+        keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
+            guard let self = self else { return }
+            self.keyboardVisible = keyboardHeight > 0
+            self.tableView.contentInset.bottom = keyboardHeight
             self.pullableContainerContentHeightDidChange?(self)
         }
     }
@@ -105,6 +117,7 @@ extension MainFormViewController: IMainFormViewController {
 
     func hideCommonSheet() {
         commonSheetView.isHidden = true
+        pullableContainerContentHeightDidChange?(self)
     }
 
     func reloadData() {

@@ -68,7 +68,7 @@ final class MainFormPresenter {
 
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
-        view?.showCommonSheet(state: CommonSheetState(status: .processing, title: ""))
+        view?.showCommonSheet(state: .processing)
 
         loadCardsIfNeeded { [weak self] in
             guard let self = self else { return }
@@ -258,5 +258,15 @@ private extension PayButtonViewPresentationState {
         case .sbp:
             return .sbp
         }
+    }
+}
+
+private extension CommonSheetState {
+    static var processing: CommonSheetState {
+        CommonSheetState(status: .processing)
+    }
+
+    static var succeeded: CommonSheetState {
+        CommonSheetState(status: .succeeded, title: "Оплачено", primaryButtonTitle: "Понятно")
     }
 }
