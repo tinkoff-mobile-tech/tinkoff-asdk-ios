@@ -274,7 +274,7 @@ private extension TimeInterval {
 
 // MARK: Optional + Helpers
 
-private extension String? {
+private extension Optional where Wrapped == String {
     var hasText: Bool {
         guard let self = self else { return false }
         return !self.isEmpty
