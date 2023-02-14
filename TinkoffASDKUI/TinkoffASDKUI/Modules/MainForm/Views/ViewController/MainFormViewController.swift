@@ -30,7 +30,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var commonSheetView = CommonSheetView(delegate: self)
+    private lazy var commonSheetView = CommonSheetView()
 
     // MARK: State
 
@@ -111,8 +111,9 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
 extension MainFormViewController: IMainFormViewController {
     func showCommonSheet(state: CommonSheetState) {
-        commonSheetView.update(state: state)
+        commonSheetView.update(state: state, animated: false)
         commonSheetView.isHidden = false
+        pullableContainerContentHeightDidChange?(self)
     }
 
     func hideCommonSheet() {
@@ -200,18 +201,6 @@ extension MainFormViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-// MARK: - CommonSheetViewDelegate
-
-extension MainFormViewController: CommonSheetViewDelegate {
-    func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {}
-
-    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
-
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
-        pullableContainerContentHeightDidChange?(self)
     }
 }
 

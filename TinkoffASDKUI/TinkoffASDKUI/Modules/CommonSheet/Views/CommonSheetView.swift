@@ -122,12 +122,17 @@ final class CommonSheetView: UIView {
 
     // MARK: CommonSheetView Updating
 
-    func update(state: CommonSheetState) {
-        showOverlay { [self] _ in
+    func update(state: CommonSheetState, animated: Bool = true) {
+        if animated {
+            showOverlay { [self] _ in
+                updateViews(with: state)
+                layoutIfNeeded()
+                delegate?.commonSheetView(self, didUpdateWithState: state)
+                hideOverlay()
+            }
+        } else {
             updateViews(with: state)
-            layoutIfNeeded()
             delegate?.commonSheetView(self, didUpdateWithState: state)
-            hideOverlay()
         }
     }
 
