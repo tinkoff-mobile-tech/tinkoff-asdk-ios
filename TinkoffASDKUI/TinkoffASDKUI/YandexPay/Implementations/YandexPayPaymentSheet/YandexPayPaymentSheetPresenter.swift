@@ -46,19 +46,10 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
         view?.update(state: .processing)
 
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            paymentController.performInitPayment(
-                paymentOptions: paymentOptions,
-                paymentSource: .yandexPay(base64Token: base64Token)
-            )
-        case let .finish(paymentId, customerOptions):
-            paymentController.performFinishPayment(
-                paymentId: paymentId,
-                paymentSource: .yandexPay(base64Token: base64Token),
-                customerOptions: customerOptions
-            )
-        }
+        paymentController.performPayment(
+            paymentFlow: paymentFlow,
+            paymentSource: .yandexPay(base64Token: base64Token)
+        )
     }
 
     func primaryButtonTapped() {
