@@ -58,7 +58,8 @@ final class MainFormPresenter {
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub
+        stub: MainFormStub,
+        moduleCompletion: @escaping (PaymentResult) -> Void
     ) {
         self.router = router
         self.coreSDK = coreSDK
@@ -66,6 +67,7 @@ final class MainFormPresenter {
         self.paymentFlow = paymentFlow
         self.configuration = configuration
         self.stub = stub
+        self.moduleCompletion = moduleCompletion
     }
 }
 

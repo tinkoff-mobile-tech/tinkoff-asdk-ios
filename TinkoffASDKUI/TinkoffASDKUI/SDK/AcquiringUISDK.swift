@@ -2147,12 +2147,14 @@ public extension AcquiringUISDK {
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub
+        stub: MainFormStub,
+        completion: @escaping (PaymentResult) -> Void
     ) {
         let viewController = mainFormAssembly.build(
             paymentFlow: paymentFlow,
             configuration: configuration,
-            stub: stub
+            stub: stub,
+            moduleCompletion: completion
         )
 
         presentingViewController.present(viewController, animated: true)
