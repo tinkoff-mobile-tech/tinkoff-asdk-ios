@@ -16,14 +16,14 @@ struct CommonSheetState: Equatable {
     }
 
     let status: Status
-    let title: String
+    let title: String?
     let description: String?
     let primaryButtonTitle: String?
     let secondaryButtonTitle: String?
 
     init(
         status: Status,
-        title: String,
+        title: String? = nil,
         description: String? = nil,
         primaryButtonTitle: String? = nil,
         secondaryButtonTitle: String? = nil

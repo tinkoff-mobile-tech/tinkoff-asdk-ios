@@ -8,6 +8,8 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
+    func showCommonSheet(state: CommonSheetState)
+    func hideCommonSheet()
     func reloadData()
     func insertRows(at indexPaths: [IndexPath])
     func deleteRows(at indexPaths: [IndexPath])

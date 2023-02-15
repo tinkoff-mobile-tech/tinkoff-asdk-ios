@@ -11,17 +11,31 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeight: CGFloat { 900 }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
+
+    var pullableContainerContentHeight: CGFloat {
+        if commonSheetView.isHidden {
+            return keyboardVisible ? UIScreen.main.bounds.height : tableView.contentSize.height
+        } else {
+            return commonSheetView.estimatedHeight
+        }
+    }
 
     // MARK: Dependencies
 
     private let presenter: IMainFormPresenter
+    private let keyboardService = KeyboardService()
 
     // MARK: Subviews
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
+    private lazy var commonSheetView = CommonSheetView()
+
+    // MARK: State
+
+    private var tableViewContentSizeObservation: NSKeyValueObservation?
+    private var keyboardVisible = false
 
     // MARK: Init
 
@@ -40,6 +54,9 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupCommonSheetView()
+        setupTableContentSizeObservation()
+        setupKeyboardObserving()
         presenter.viewDidLoad()
     }
 
@@ -52,6 +69,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
+        tableView.alwaysBounceVertical = false
         tableView.dataSource = self
         tableView.delegate = self
 
@@ -65,11 +83,44 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             AvatarTableViewCell.self
         )
     }
+
+    private func setupCommonSheetView() {
+        view.addSubview(commonSheetView)
+        commonSheetView.pinEdgesToSuperview()
+        commonSheetView.backgroundColor = ASDKColors.Background.elevation1.color
+    }
+
+    private func setupTableContentSizeObservation() {
+        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
+            guard let self = self, change.oldValue != change.newValue else { return }
+            self.pullableContainerContentHeightDidChange?(self)
+        }
+    }
+
+    private func setupKeyboardObserving() {
+        keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
+            guard let self = self else { return }
+            self.keyboardVisible = keyboardHeight > 0
+            self.tableView.contentInset.bottom = keyboardHeight
+            self.pullableContainerContentHeightDidChange?(self)
+        }
+    }
 }
 
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
+    func showCommonSheet(state: CommonSheetState) {
+        commonSheetView.update(state: state, animated: false)
+        commonSheetView.isHidden = false
+        pullableContainerContentHeightDidChange?(self)
+    }
+
+    func hideCommonSheet() {
+        commonSheetView.isHidden = true
+        pullableContainerContentHeightDidChange?(self)
+    }
+
     func reloadData() {
         tableView.reloadData()
     }
