@@ -63,7 +63,7 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     }
 
     func viewWasClosed() {
-        output?.yandexPayPaymentActivity(completedWith: paymentResult)
+        output?.yandexPayPaymentSheet(completedWith: paymentResult)
     }
 }
 
