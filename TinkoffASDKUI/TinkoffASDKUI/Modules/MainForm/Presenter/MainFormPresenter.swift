@@ -192,14 +192,18 @@ extension MainFormPresenter: PaymentControllerDelegate {
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
-    ) {}
+    ) {
+        view?.showCommonSheet(state: .paid)
+    }
 
     func paymentController(
         _ controller: PaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?
-    ) {}
+    ) {
+        view?.showCommonSheet(state: .failed)
+    }
 
     func paymentController(
         _ controller: PaymentController,
@@ -364,7 +368,15 @@ private extension CommonSheetState {
         CommonSheetState(status: .processing)
     }
 
-    static var succeeded: CommonSheetState {
+    static var paid: CommonSheetState {
         CommonSheetState(status: .succeeded, title: "Оплачено", primaryButtonTitle: "Понятно")
+    }
+
+    static var failed: CommonSheetState {
+        CommonSheetState(
+            status: .failed,
+            title: "Не получилось оплатить",
+            primaryButtonTitle: "Понятно"
+        )
     }
 }
