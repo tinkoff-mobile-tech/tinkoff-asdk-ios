@@ -161,7 +161,13 @@ extension MainFormPresenter {
 
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
-        routeTo(paymentMethod: primaryPaymentMethod)
+        switch primaryPaymentMethod {
+        case .card where !activeCards.isEmpty:
+            startPaymentWithSavedCard()
+            presenter.startLoading()
+        case .card, .tinkoffPay, .sbp:
+            routeTo(paymentMethod: primaryPaymentMethod)
+        }
     }
 }
 
@@ -238,6 +244,44 @@ extension MainFormPresenter {
         let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
 
         payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
+    }
+
+    private func startPaymentWithSavedCard() {
+        guard let cardId = savedCardPresenter.cardId,
+              let cvc = savedCardPresenter.cvc else { return }
+
+        let paymentSource = PaymentSourceData.savedCard(
+            cardId: cardId,
+            cvv: cvc
+        )
+
+        let newCustomerOptions = paymentFlow.customerOptions.map {
+            CustomerOptions(
+                customerKey: $0.customerKey,
+                email: getReceiptSwitchPresenter.isOn ? emailPresenter.currentEmail : nil
+            )
+        }
+
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            let newPaymentOptions = PaymentOptions(
+                orderOptions: paymentOptions.orderOptions,
+                customerOptions: newCustomerOptions,
+                failedPaymentId: paymentOptions.failedPaymentId,
+                paymentData: paymentOptions.paymentData
+            )
+
+            paymentController.performInitPayment(
+                paymentOptions: newPaymentOptions,
+                paymentSource: paymentSource
+            )
+        case let .finish(paymentId, _):
+            paymentController.performFinishPayment(
+                paymentId: paymentId,
+                paymentSource: paymentSource,
+                customerOptions: newCustomerOptions
+            )
+        }
     }
 }
 
