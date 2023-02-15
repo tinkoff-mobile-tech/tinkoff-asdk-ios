@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WebKit
 
 final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: PullableContainer Properties
@@ -31,6 +32,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
     private lazy var commonSheetView = CommonSheetView()
+    private lazy var hiddenWebView = WKWebView()
 
     // MARK: State
 
@@ -53,6 +55,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewsHierarchy()
         setupTableView()
         setupCommonSheetView()
         setupTableContentSizeObservation()
@@ -62,9 +65,19 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     // MARK: Initial Configuration
 
-    private func setupTableView() {
+    private func setupViewsHierarchy() {
+        view.addSubview(hiddenWebView)
+        hiddenWebView.pinEdgesToSuperview()
+        hiddenWebView.isHidden = true
+
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
+
+        view.addSubview(commonSheetView)
+        commonSheetView.pinEdgesToSuperview()
+    }
+
+    private func setupTableView() {
         tableView.tableHeaderView = tableHeaderView
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
@@ -85,8 +98,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     }
 
     private func setupCommonSheetView() {
-        view.addSubview(commonSheetView)
-        commonSheetView.pinEdgesToSuperview()
         commonSheetView.backgroundColor = ASDKColors.Background.elevation1.color
     }
 
@@ -201,6 +212,18 @@ extension MainFormViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: - PaymentControllerUIProvider
+
+extension MainFormViewController: PaymentControllerUIProvider {
+    func hiddenWebViewToCollect3DSData() -> WKWebView {
+        hiddenWebView
+    }
+
+    func sourceViewControllerToPresent() -> UIViewController? {
+        self
     }
 }
 
