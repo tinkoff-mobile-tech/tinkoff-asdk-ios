@@ -258,38 +258,12 @@ extension MainFormPresenter {
         guard let cardId = savedCardPresenter.cardId,
               let cvc = savedCardPresenter.cvc else { return }
 
-        let paymentSource = PaymentSourceData.savedCard(
-            cardId: cardId,
-            cvv: cvc
+        let email = getReceiptSwitchPresenter.isOn ? emailPresenter.currentEmail : nil
+
+        paymentController.performPayment(
+            paymentFlow: paymentFlow.replacing(customerEmail: email),
+            paymentSource: .savedCard(cardId: cardId, cvv: cvc)
         )
-
-        let newCustomerOptions = paymentFlow.customerOptions.map {
-            CustomerOptions(
-                customerKey: $0.customerKey,
-                email: getReceiptSwitchPresenter.isOn ? emailPresenter.currentEmail : nil
-            )
-        }
-
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            let newPaymentOptions = PaymentOptions(
-                orderOptions: paymentOptions.orderOptions,
-                customerOptions: newCustomerOptions,
-                failedPaymentId: paymentOptions.failedPaymentId,
-                paymentData: paymentOptions.paymentData
-            )
-
-            paymentController.performInitPayment(
-                paymentOptions: newPaymentOptions,
-                paymentSource: paymentSource
-            )
-        case let .finish(paymentId, _):
-            paymentController.performFinishPayment(
-                paymentId: paymentId,
-                paymentSource: paymentSource,
-                customerOptions: newCustomerOptions
-            )
-        }
     }
 }
 
