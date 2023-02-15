@@ -11,7 +11,7 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
     // MARK: PullableContainerContent Properties
 
     var pullableContainerContentHeight: CGFloat {
-        paymentActivityView.estimatedHeight
+        commonSheetView.estimatedHeight
     }
 
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
@@ -22,7 +22,7 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 
     // MARK: UI
 
-    private lazy var paymentActivityView = CommonSheetView(delegate: self)
+    private lazy var commonSheetView = CommonSheetView(delegate: self)
 
     // MARK: Init
 
@@ -39,7 +39,7 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
     // MARK: Life Cycle
 
     override func loadView() {
-        view = paymentActivityView
+        view = commonSheetView
     }
 
     override func viewDidLoad() {
@@ -52,7 +52,7 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 
 extension CommonSheetViewController: ICommonSheetView {
     func update(state: CommonSheetState) {
-        paymentActivityView.update(state: state)
+        commonSheetView.update(state: state)
     }
 
     func close() {

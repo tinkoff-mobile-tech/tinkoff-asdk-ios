@@ -57,7 +57,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         super.viewDidLoad()
         setupViewsHierarchy()
         setupTableView()
-        setupCommonSheetView()
         setupTableContentSizeObservation()
         setupKeyboardObserving()
         presenter.viewDidLoad()
@@ -95,10 +94,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             TextHeaderTableCell.self,
             AvatarTableViewCell.self
         )
-    }
-
-    private func setupCommonSheetView() {
-        commonSheetView.backgroundColor = ASDKColors.Background.elevation1.color
     }
 
     private func setupTableContentSizeObservation() {

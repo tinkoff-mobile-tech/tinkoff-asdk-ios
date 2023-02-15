@@ -140,6 +140,8 @@ final class CommonSheetView: UIView {
     // MARK: Initial Configuration
 
     private func setupView() {
+        backgroundColor = ASDKColors.Background.elevation1.color
+
         setupLayout()
         updateViews(with: CommonSheetState(status: .processing))
     }
