@@ -118,14 +118,6 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 }
 
-// MARK: - ICardPaymentPresenterModuleOutput
-
-extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
-    func cardPaymentPayButtonDidPressed(cardData: CardData, email: String?) {
-        // логика с PaymentController
-    }
-}
-
 // MARK: - ISavedCardPresenterOutput
 
 extension MainFormPresenter: ISavedCardPresenterOutput {
@@ -224,6 +216,25 @@ extension MainFormPresenter: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
+        moduleResult = .cancelled()
+        view?.closeView()
+    }
+}
+
+// MARK: - ICardPaymentPresenterModuleOutput
+
+extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
+    func cardPaymentWillCloseAfterFinishedPayment(with paymentData: FullPaymentData) {
+        moduleResult = .succeeded(paymentData.payload.toPaymentInfo())
+        view?.showCommonSheet(state: .paid)
+    }
+
+    func cardPaymentWillCloseAfterFailedPayment(with error: Error, cardId: String?, rebillId: String?) {
+        moduleResult = .failed(error)
+        view?.showCommonSheet(state: .failed)
+    }
+
+    func cardPaymentDidCloseAfterCancelledPayment(with paymentProcess: PaymentProcess, cardId: String?, rebillId: String?) {
         moduleResult = .cancelled()
         view?.closeView()
     }
