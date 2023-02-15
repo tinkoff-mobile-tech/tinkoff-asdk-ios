@@ -105,6 +105,10 @@ extension MainFormPresenter: IMainFormPresenter {
             break
         }
     }
+
+    func commonSheetViewDidTapPrimaryButton() {
+        view?.closeView()
+    }
 }
 
 // MARK: - ICardPaymentPresenterModuleOutput

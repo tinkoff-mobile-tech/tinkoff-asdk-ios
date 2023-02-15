@@ -31,7 +31,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var commonSheetView = CommonSheetView()
+    private lazy var commonSheetView = CommonSheetView(delegate: self)
     private lazy var hiddenWebView = WKWebView()
 
     // MARK: State
@@ -147,6 +147,22 @@ extension MainFormViewController: IMainFormViewController {
         tableView.deleteRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
     }
+
+    func closeView() {
+        dismiss(animated: true, completion: presenter.viewWasClosed)
+    }
+}
+
+// MARK: - CommonSheetViewDelegate
+
+extension MainFormViewController: CommonSheetViewDelegate {
+    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
+
+    func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
+        presenter.commonSheetViewDidTapPrimaryButton()
+    }
+
+    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
 }
 
 // MARK: - PullableContainerContent Methods
