@@ -18,6 +18,7 @@ final class MainFormPresenter {
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
     private let stub: MainFormStub
+    private var moduleCompletion: ((PaymentResult) -> Void)?
 
     // MARK: Child Presenters
 
@@ -47,6 +48,7 @@ final class MainFormPresenter {
     private var activeCards: [PaymentCard] = []
     private var availablePaymentMethods: [MainFormPaymentMethod] = MainFormPaymentMethod.allCases
     private lazy var primaryPaymentMethod = stub.primaryPayMethod.domainModel
+    private var moduleResult: PaymentResult = .cancelled()
 
     // MARK: Init
 
@@ -87,7 +89,10 @@ extension MainFormPresenter: IMainFormPresenter {
         }
     }
 
-    func viewWasClosed() {}
+    func viewWasClosed() {
+        moduleCompletion?(moduleResult)
+        moduleCompletion = nil
+    }
 
     func numberOfRows() -> Int {
         cellTypes.count
@@ -192,11 +197,12 @@ extension MainFormPresenter: IEmailViewPresenterOutput {
 extension MainFormPresenter: PaymentControllerDelegate {
     func paymentController(
         _ controller: PaymentController,
-        didFinishPayment: PaymentProcess,
+        didFinishPayment paymentProcess: PaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
     ) {
+        moduleResult = .succeeded(state.toPaymentInfo())
         view?.showCommonSheet(state: .paid)
     }
 
@@ -206,15 +212,19 @@ extension MainFormPresenter: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
+        moduleResult = .failed(error)
         view?.showCommonSheet(state: .failed)
     }
 
     func paymentController(
         _ controller: PaymentController,
-        paymentWasCancelled: PaymentProcess,
+        paymentWasCancelled paymentProcess: PaymentProcess,
         cardId: String?,
         rebillId: String?
-    ) {}
+    ) {
+        moduleResult = .cancelled()
+        view?.closeView()
+    }
 }
 
 // MARK: - MainFormPresenter + Helpers

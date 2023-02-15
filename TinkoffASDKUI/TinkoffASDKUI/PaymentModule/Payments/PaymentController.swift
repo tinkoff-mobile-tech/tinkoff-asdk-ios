@@ -39,7 +39,7 @@ public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата прошла успешно
     func paymentController(
         _ controller: PaymentController,
-        didFinishPayment: PaymentProcess,
+        didFinishPayment paymentProcess: PaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -48,7 +48,7 @@ public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата была отменена
     func paymentController(
         _ controller: PaymentController,
-        paymentWasCancelled: PaymentProcess,
+        paymentWasCancelled paymentProcess: PaymentProcess,
         cardId: String?,
         rebillId: String?
     )

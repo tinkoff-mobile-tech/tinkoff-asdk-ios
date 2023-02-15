@@ -20,7 +20,7 @@ final class YandexPayPaymentSheetPresenter {
 
     // MARK: State
 
-    private var paymentResult: PaymentResult = .cancelled(nil)
+    private var paymentResult: PaymentResult = .cancelled()
     private var canDismissView = false
 
     // MARK: Init
@@ -95,7 +95,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        paymentResult = .cancelled(nil)
+        paymentResult = .cancelled()
         canDismissView = true
         view?.close()
     }
