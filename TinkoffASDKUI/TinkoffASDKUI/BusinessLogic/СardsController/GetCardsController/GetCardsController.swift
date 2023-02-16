@@ -14,7 +14,6 @@ final class GetCardsController: IGetCardsController {
     private let coreSDK: AcquiringSdk
     private let customerKey: String
     private let availableCardStatuses: Set<PaymentCardStatus>
-    
 
     // MARK: Init
 
@@ -38,7 +37,9 @@ final class GetCardsController: IGetCardsController {
                 cards.filter { availableCardStatuses.contains($0.status) }
             }
 
-            completion(filteredCardsResult)
+            DispatchQueue.performOnMain {
+                completion(filteredCardsResult)
+            }
         }
     }
 }
