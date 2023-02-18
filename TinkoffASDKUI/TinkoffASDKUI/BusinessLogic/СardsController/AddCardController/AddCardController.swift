@@ -14,7 +14,13 @@ struct AddingCardOptions {
     let cvc: String
 }
 
-typealias AddCardCompletion = (AddNewCardResult) -> Void
+typealias AddCardCompletion = (AddCardStateResult) -> Void
+
+enum AddCardStateResult {
+    case succeded(GetAddCardStatePayload)
+    case failed(Error)
+    case cancelled
+}
 
 final class AddCardController {
     enum Error: Swift.Error {
@@ -72,7 +78,7 @@ extension AddCardController {
             case let .success(payload):
                 self.check3DSIfNeededAndAttachCard(payload: payload, options: options, completion: completionDecorator)
             case let .failure(error):
-                completionDecorator(.failure(error: error))
+                completionDecorator(.failed(error))
             }
         }
     }
@@ -89,7 +95,7 @@ extension AddCardController {
         switch checkType {
         case .check3DS, .hold3DS:
             guard let paymentId = payload.paymentId else {
-                return completion(.failure(error: Error.missingPaymentId))
+                return completion(.failed(Error.missingPaymentId))
             }
 
             check3DSVersionAndAttachCard(
@@ -142,7 +148,7 @@ extension AddCardController {
                     )
                 }
             case let .failure(error):
-                completion(.failure(error: error))
+                completion(.failed(error))
             }
         }
     }
@@ -168,7 +174,7 @@ extension AddCardController {
                     completion: completion
                 )
             } catch {
-                completion(.failure(error: error))
+                completion(.failed(error))
             }
         }
     }
@@ -193,7 +199,7 @@ extension AddCardController {
             case let .success(payload):
                 self?.confirm3DSIfNeededAndGetState(payload: payload, messageVersion: messageVersion, completion: completion)
             case let .failure(error):
-                completion(.failure(error: error))
+                completion(.failed(error))
             }
         }
     }
@@ -211,7 +217,7 @@ extension AddCardController {
         case .done:
             getState(requestKey: payload.requestKey, completion: completion)
         case .needConfirmationRandomAmount:
-            completion(.failure(error: Error.unsupportedResponseStatus))
+            completion(.failed(Error.unsupportedResponseStatus))
         }
     }
 
@@ -243,13 +249,22 @@ extension AddCardController {
         case .finished(payload: .success):
             break
         case let .finished(payload: .failure(error)):
-            completion(.failure(error: error))
+            completion(.failed(error))
         case .cancelled:
             completion(.cancelled)
         }
     }
 
-    private func getState(requestKey: String, completion: @escaping AddCardCompletion) {}
+    private func getState(requestKey: String, completion: @escaping AddCardCompletion) {
+        coreSDK.getAddCardState(data: GetAddCardStateData(requestKey: requestKey)) { result in
+            switch result {
+            case let .success(payload):
+                completion(.succeded(payload))
+            case let .failure(error):
+                completion(.failed(error))
+            }
+        }
+    }
 }
 
 // MARK: - Check3DSVersionData + Helpers
