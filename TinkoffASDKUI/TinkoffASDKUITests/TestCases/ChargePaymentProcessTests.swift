@@ -44,7 +44,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_when_paymentFlow_full_InitPayment_success_Charge_success() {
 
-        let paymentStatus = PaymentStatus.authorized
+        let paymentStatus = AcquiringStatus.authorized
 
         let getPaymentStatePayload = GetPaymentStatePayload(
             paymentId: "2222",
@@ -98,7 +98,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_when_paymentFlow_full_InitPayment_success_Charge_failure() {
 
-        let paymentStatus = PaymentStatus.authorized
+        let paymentStatus = AcquiringStatus.authorized
 
         let initPayload = InitPayload(
             amount: 324,

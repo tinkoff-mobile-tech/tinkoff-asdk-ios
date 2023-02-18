@@ -34,13 +34,13 @@ public struct AttachCardPayload: Decodable {
         }
     }
 
-    public let status: PaymentStatus
+    public let status: AcquiringStatus
     public let requestKey: String
     public let cardId: String?
     public let attachCardStatus: AttachCardStatus
 
     public init(
-        status: PaymentStatus,
+        status: AcquiringStatus,
         requestKey: String,
         cardId: String?,
         attachCardStatus: AttachCardStatus
@@ -53,7 +53,7 @@ public struct AttachCardPayload: Decodable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        status = try container.decodeIfPresent(PaymentStatus.self, forKey: .status) ?? .unknown
+        status = try container.decodeIfPresent(AcquiringStatus.self, forKey: .status) ?? .unknown
         requestKey = try container.decode(String.self, forKey: .requestKey)
         cardId = try container.decodeIfPresent(String.self, forKey: .cardId)
 

@@ -906,7 +906,7 @@ public class AcquiringUISDK: NSObject {
     }
 
     private func sbpWaitingIncominPayment(paymentId: Int64, source: String, sourceType: PaymentInvoiceSBPSourceType) {
-        let completionStatus: [PaymentStatus] = [.confirmed, .checked3ds, .refunded, .reversed, .rejected]
+        let completionStatus: [AcquiringStatus] = [.confirmed, .checked3ds, .refunded, .reversed, .rejected]
         let completionHandler = onPaymentCompletionHandler
 
         checkPaymentStatus = PaymentStatusServiceProvider(sdk: acquiringSdk, paymentId: paymentId)

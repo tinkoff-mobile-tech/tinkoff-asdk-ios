@@ -249,9 +249,7 @@ extension AddCardController {
         }
     }
 
-    private func getState(requestKey: String, completion: @escaping AddCardCompletion) {
-        
-    }
+    private func getState(requestKey: String, completion: @escaping AddCardCompletion) {}
 }
 
 // MARK: - Check3DSVersionData + Helpers

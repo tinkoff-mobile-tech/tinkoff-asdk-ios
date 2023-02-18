@@ -17,6 +17,7 @@ protocol IAcquiringRequestBuilder {
     func getCardList(data: GetCardListData) -> AcquiringRequest
     func addCard(data: AddCardData) -> AcquiringRequest
     func attachCard(data: AttachCardData) -> AcquiringRequest
+    func getAddCardState(data: GetAddCardStateData) -> AcquiringRequest
     func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest
     func removeCard(data: RemoveCardData) -> AcquiringRequest
     func getQR(data: GetQRData) -> AcquiringRequest
@@ -114,6 +115,10 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
             publicKey: publicKeyProvider.publicKey,
             baseURL: baseURLProvider.url
         )
+    }
+
+    func getAddCardState(data: GetAddCardStateData) -> AcquiringRequest {
+        GetAddCardStateRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest {

@@ -46,7 +46,7 @@ public struct PaymentFinishResponse: ResponseOperation {
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
-    public var paymentStatus: PaymentStatus
+    public var paymentStatus: AcquiringStatus
     // Поля для удачного статуса, совершенного платежа, завершаем процесс оплаты
     public var responseStatus: PaymentFinishResponseStatus
 
@@ -60,7 +60,7 @@ public struct PaymentFinishResponse: ResponseOperation {
         //
         paymentStatus = .unknown
         if let statusValue = try? container.decode(String.self, forKey: .paymentStatus) {
-            paymentStatus = PaymentStatus(rawValue: statusValue)
+            paymentStatus = AcquiringStatus(rawValue: statusValue)
         }
 
         responseStatus = .unknown

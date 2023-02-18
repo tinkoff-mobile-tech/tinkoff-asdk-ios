@@ -391,7 +391,7 @@ extension CardPaymentProcessTests {
         let orderAmount: Int64 = 324
         let paymentId: Int64 = 111
         let orderId = "234244"
-        let paymentStatus = PaymentStatus.authorized
+        let paymentStatus = AcquiringStatus.authorized
 
         let finishAuthorizePayload = FinishAuthorizePayload(
             status: .authorized,

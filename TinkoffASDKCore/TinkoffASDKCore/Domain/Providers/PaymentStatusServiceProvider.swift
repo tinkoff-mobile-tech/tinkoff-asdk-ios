@@ -49,7 +49,9 @@ public final class PaymentStatusServiceProvider: FetchServiceProtocol {
     /// Запустить проверку статуса платежа
     /// - Parameter completionStatus: `[PaymentStatus]`статусы для которых проверка завршается, конечные статусы
     ///   по умолчанию выставлены [.cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]
-    public func fetchStatus(completionStatus: [PaymentStatus] = [.confirmed, .cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]) {
+    public func fetchStatus(
+        completionStatus: [AcquiringStatus] = [.confirmed, .cancelled, .authorized, .checked3ds, .refunded, .reversed, .rejected]
+    ) {
         if case .loading = fetchStatus { return }
 
         fetch(startHandler: nil) { [weak self] payment, _ in
