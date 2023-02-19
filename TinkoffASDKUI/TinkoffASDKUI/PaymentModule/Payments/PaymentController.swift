@@ -116,7 +116,7 @@ public final class PaymentController: IPaymentController {
     // MARK: - State
 
     private var paymentProcess: PaymentProcess?
-    private var threeDSViewController: ThreeDSViewController<GetPaymentStatePayload>?
+    private var threeDSViewController: ThreeDSWebViewController<GetPaymentStatePayload>?
 
     // MARK: - Temporary until refactor PaymentView!
 
@@ -252,7 +252,7 @@ private extension PaymentController {
         completion: (() -> Void)? = nil
     ) {
         dismissThreeDSViewControllerIfNeeded {
-            let threeDSViewController = ThreeDSViewController<GetPaymentStatePayload>(
+            let threeDSViewController = ThreeDSWebViewController<GetPaymentStatePayload>(
                 urlRequest: urlRequest,
                 handler: self.threeDSHandler,
                 authChallengeService: self.webViewAuthChallengeService,

@@ -28,7 +28,7 @@ final class ThreeDSWebViewAssembly: IThreeDSWebViewAssembly {
         urlRequest: URLRequest,
         resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) -> UIViewController {
-        ThreeDSViewController<Payload>(
+        ThreeDSWebViewController<Payload>(
             urlRequest: urlRequest,
             handler: coreSDK.threeDSWebViewSHandler(),
             authChallengeService: authChallengeService,

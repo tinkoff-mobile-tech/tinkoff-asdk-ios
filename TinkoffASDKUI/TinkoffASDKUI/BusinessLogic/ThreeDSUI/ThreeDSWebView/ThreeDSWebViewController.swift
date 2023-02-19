@@ -1,6 +1,6 @@
 //
 //
-//  ThreeDSViewController.swift
+//  ThreeDSWebViewController.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -21,7 +21,7 @@ import TinkoffASDKCore
 import UIKit
 import WebKit
 
-final class ThreeDSViewController<Payload: Decodable>: UIViewController, WKNavigationDelegate {
+final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNavigationDelegate {
     // MARK: Dependencies
 
     private let urlRequest: URLRequest
