@@ -9,7 +9,7 @@ import Foundation
 import TinkoffASDKCore
 
 protocol IThreeDSWebFlowController: AnyObject {
-    var uiProvider: PaymentControllerUIProvider? { get set }
+    var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
 
     func complete3DSMethod(checking3DSURLData: Checking3DSURLData) throws
 

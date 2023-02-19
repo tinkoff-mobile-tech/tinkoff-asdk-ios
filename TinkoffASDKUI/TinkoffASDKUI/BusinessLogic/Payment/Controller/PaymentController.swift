@@ -18,95 +18,19 @@
 //
 
 import TinkoffASDKCore
-import WebKit
-
-protocol IPaymentController {
-    func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData)
-    func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData)
-    func performFinishPayment(paymentId: String, paymentSource: PaymentSourceData, customerOptions: CustomerOptions?)
-}
-
-/// Объект, предоставляющий для `PaymentController` UI-компоненты для совершения платежа
-public protocol PaymentControllerUIProvider: AnyObject {
-    /// webView, в котором выполнится запрос для прохождения 3DSChecking
-    func hiddenWebViewToCollect3DSData() -> WKWebView
-    /// viewController для модального показа экранов, необходимость в которых может возникнуть в процессе оплаты
-    func sourceViewControllerToPresent() -> UIViewController?
-}
-
-/// Делегат событий для `PaymentController`
-public protocol PaymentControllerDelegate: AnyObject {
-    /// Оплата прошла успешно
-    func paymentController(
-        _ controller: PaymentController,
-        didFinishPayment paymentProcess: PaymentProcess,
-        with state: GetPaymentStatePayload,
-        cardId: String?,
-        rebillId: String?
-    )
-
-    /// Оплата была отменена
-    func paymentController(
-        _ controller: PaymentController,
-        paymentWasCancelled paymentProcess: PaymentProcess,
-        cardId: String?,
-        rebillId: String?
-    )
-
-    /// Возникла ошибка в процессе оплаты
-    func paymentController(
-        _ controller: PaymentController,
-        didFailed error: Error,
-        cardId: String?,
-        rebillId: String?
-    )
-}
-
-/// Объект, предоставляющий дополнительный данные для `PaymentController`
-public protocol PaymentControllerDataSource: AnyObject {}
-
-/// Объект, предоставляющий дополнительный данные для `PaymentController` в случае, если запрос `Charge` вернул ошибку `104`
-public protocol ChargePaymentControllerDataSource: PaymentControllerDataSource {
-    /// `AcquiringViewConfiguration` для отображения экрана оплаты с возможность ввести `CVC`
-    func paymentController(
-        _ controller: PaymentController,
-        viewConfigurationToRetry paymentProcess: PaymentProcess
-    ) -> AcquiringViewConfiguration
-    /// вызовется, если при инициации оплаты с `PaymentSourceData.parentPayment` не был предоставлен `CustomerKey` в `CustomerOptions`
-    func paymentController(
-        _ controller: PaymentController,
-        customerKeyToRetry chargePaymentProcess: PaymentProcess
-    ) -> String?
-    /// вызовется, если оплата была была инициирована через метод `performFinishPayment`
-    func paymentController(
-        _ controller: PaymentController,
-        paymentOptionsToRetry chargePaymentProcess: PaymentProcess
-    ) -> PaymentOptions?
-}
-
-public extension ChargePaymentControllerDataSource {
-    func paymentController(
-        _ controller: PaymentController,
-        customerKeyToRetry chargePaymentProcess: PaymentProcess
-    ) -> String? { return nil }
-    func paymentController(
-        _ controller: PaymentController,
-        paymentOptionsToRetry chargePaymentProcess: PaymentProcess
-    ) -> PaymentOptions? { return nil }
-}
 
 /// Контроллер с помощью которого можно совершать оплату
 public final class PaymentController: IPaymentController {
 
-    // MARK: - Dependencies
-
-    var uiProvider: PaymentControllerUIProvider? {
-        get { threeDSWebFlowController.uiProvider }
-        set { threeDSWebFlowController.uiProvider = newValue }
-    }
+    // MARK: Dependencies
 
     weak var delegate: PaymentControllerDelegate?
     weak var dataSource: PaymentControllerDataSource?
+
+    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+        get { threeDSWebFlowController.webFlowDelegate }
+        set { threeDSWebFlowController.webFlowDelegate = newValue }
+    }
 
     private let threeDSService: IAcquiringThreeDSService
     private let paymentFactory: IPaymentFactory
@@ -115,15 +39,15 @@ public final class PaymentController: IPaymentController {
     private let tdsController: TDSController
     private let paymentStatusUpdateService: IPaymentStatusUpdateService
 
-    // MARK: - State
+    // MARK: State
 
     private var paymentProcess: PaymentProcess?
 
-    // MARK: - Temporary until refactor PaymentView!
+    // MARK: Temporary until refactor PaymentView!
 
     private let acquiringUISDK: AcquiringUISDK
 
-    // MARK: - Init
+    // MARK: Init
 
     init(
         paymentFactory: PaymentFactory,
@@ -150,7 +74,7 @@ public final class PaymentController: IPaymentController {
         paymentProcess = nil
     }
 
-    // MARK: - Payments
+    // MARK: Payments
 
     public func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData) {
         paymentProcess?.cancel()
@@ -180,7 +104,7 @@ public final class PaymentController: IPaymentController {
     }
 }
 
-// MARK: - PaymentProcessDelegate
+// MARK: PaymentProcessDelegate
 
 extension PaymentController: PaymentProcessDelegate {
     func paymentDidFinish(
@@ -230,22 +154,6 @@ extension PaymentController: PaymentProcessDelegate {
 
             try? self.threeDSWebFlowController.complete3DSMethod(checking3DSURLData: checking3DSURLData)
             completion(self.threeDSDeviceInfoProvider.deviceInfo)
-        }
-    }
-
-    private func handle(
-        webViewResult: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>,
-        onCancel: @escaping VoidBlock,
-        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
-    ) {
-        switch webViewResult {
-        case let .succeded(payload):
-            completion(.success(payload))
-        case let .failed(error):
-            completion(.failure(error))
-        case .cancelled:
-            paymentProcess?.cancel()
-            onCancel()
         }
     }
 
@@ -314,8 +222,63 @@ extension PaymentController: PaymentProcessDelegate {
         tdsController.cancelHandler = confirmationCancelled
         tdsController.doChallenge(with: data)
     }
+}
 
-    func interceptError(_ error: Error, for paymentProcess: PaymentProcess) -> Bool {
+// MARK: - IPaymentStatusUpdateServiceDelegate
+
+extension PaymentController: IPaymentStatusUpdateServiceDelegate {
+    func paymentFinalStatusRecieved(data: FullPaymentData) {
+        DispatchQueue.performOnMain { [weak self] in
+            guard let self = self else { return }
+
+            self.delegate?.paymentController(
+                self,
+                didFinishPayment: data.paymentProcess,
+                with: data.payload,
+                cardId: data.cardId,
+                rebillId: data.rebillId
+            )
+        }
+    }
+
+    func paymentCancelStatusRecieved(data: FullPaymentData) {
+        DispatchQueue.performOnMain { [weak self] in
+            guard let self = self else { return }
+
+            self.delegate?.paymentController(
+                self,
+                paymentWasCancelled: data.paymentProcess,
+                cardId: data.cardId,
+                rebillId: data.rebillId
+            )
+        }
+    }
+
+    func paymentFailureStatusRecieved(data: FullPaymentData, error: Error) {
+        paymentDidFailed(data.paymentProcess, with: error, cardId: data.cardId, rebillId: data.rebillId)
+    }
+}
+
+// MARK: - Helpers
+
+extension PaymentController {
+    private func handle(
+        webViewResult: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>,
+        onCancel: @escaping VoidBlock,
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
+    ) {
+        switch webViewResult {
+        case let .succeded(payload):
+            completion(.success(payload))
+        case let .failed(error):
+            completion(.failure(error))
+        case .cancelled:
+            paymentProcess?.cancel()
+            onCancel()
+        }
+    }
+
+    private func interceptError(_ error: Error, for paymentProcess: PaymentProcess) -> Bool {
         let errorCode = (error as NSError).code
         switch errorCode {
         case 104:
@@ -325,8 +288,8 @@ extension PaymentController: PaymentProcessDelegate {
         }
     }
 
-    func handleChargeRequireCVCInput(paymentProcess: PaymentProcess) -> Bool {
-        guard let sourceViewController = uiProvider?.sourceViewControllerToPresent(),
+    private func handleChargeRequireCVCInput(paymentProcess: PaymentProcess) -> Bool {
+        guard let sourceViewController = webFlowDelegate?.sourceViewControllerToPresent(),
               let chargePaymentDataSource = dataSource as? ChargePaymentControllerDataSource else {
             return false
         }
@@ -370,7 +333,7 @@ extension PaymentController: PaymentProcessDelegate {
         return true
     }
 
-    func getCustomerKey(for paymentProcess: PaymentProcess, customerOptions: CustomerOptions?) -> String? {
+    private func getCustomerKey(for paymentProcess: PaymentProcess, customerOptions: CustomerOptions?) -> String? {
         let customerKey: String?
         if let key = customerOptions?.customerKey {
             customerKey = key
@@ -383,7 +346,7 @@ extension PaymentController: PaymentProcessDelegate {
         return customerKey
     }
 
-    func repeatChargeWithCVCInput(
+    private func repeatChargeWithCVCInput(
         paymentOptions: PaymentOptions,
         sourceViewController: UIViewController,
         viewConfiguration: AcquiringViewConfiguration,
@@ -424,40 +387,5 @@ extension PaymentController: PaymentProcessDelegate {
                 }
             }
         )
-    }
-}
-
-// MARK: - IPaymentStatusUpdateServiceDelegate
-
-extension PaymentController: IPaymentStatusUpdateServiceDelegate {
-    func paymentFinalStatusRecieved(data: FullPaymentData) {
-        DispatchQueue.performOnMain { [weak self] in
-            guard let self = self else { return }
-
-            self.delegate?.paymentController(
-                self,
-                didFinishPayment: data.paymentProcess,
-                with: data.payload,
-                cardId: data.cardId,
-                rebillId: data.rebillId
-            )
-        }
-    }
-
-    func paymentCancelStatusRecieved(data: FullPaymentData) {
-        DispatchQueue.performOnMain { [weak self] in
-            guard let self = self else { return }
-
-            self.delegate?.paymentController(
-                self,
-                paymentWasCancelled: data.paymentProcess,
-                cardId: data.cardId,
-                rebillId: data.rebillId
-            )
-        }
-    }
-
-    func paymentFailureStatusRecieved(data: FullPaymentData, error: Error) {
-        paymentDidFailed(data.paymentProcess, with: error, cardId: data.cardId, rebillId: data.rebillId)
     }
 }

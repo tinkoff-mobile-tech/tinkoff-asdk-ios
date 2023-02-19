@@ -11,7 +11,7 @@ import TinkoffASDKCore
 typealias AddCardStateCompletion = (AddCardStateResult) -> Void
 
 protocol IAddCardController: AnyObject {
-    var uiProvider: PaymentControllerUIProvider? { get set }
+    var uiProvider: ThreeDSWebFlowDelegate? { get set }
 
     func addCard(options: AddCardOptions, completion: @escaping AddCardStateCompletion)
 }

@@ -145,9 +145,9 @@ extension CardPaymentViewController: UITableViewDataSource {
     }
 }
 
-// MARK: - PaymentControllerUIProvider
+// MARK: - ThreeDSWebFlowDelegate
 
-extension CardPaymentViewController: PaymentControllerUIProvider {
+extension CardPaymentViewController: ThreeDSWebFlowDelegate {
     func hiddenWebViewToCollect3DSData() -> WKWebView { webView }
     func sourceViewControllerToPresent() -> UIViewController? { self }
 }

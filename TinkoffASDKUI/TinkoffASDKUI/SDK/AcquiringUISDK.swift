@@ -1991,12 +1991,12 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     // MARK: - PaymentController
 
     public func paymentController(
-        uiProvider: PaymentControllerUIProvider,
+        uiProvider: ThreeDSWebFlowDelegate,
         delegate: PaymentControllerDelegate,
         dataSource: PaymentControllerDataSource? = nil
     ) -> PaymentController {
         let paymentController = paymentControllerAssembly.paymentController()
-        paymentController.uiProvider = uiProvider
+        paymentController.webFlowDelegate = uiProvider
         paymentController.delegate = delegate
         paymentController.dataSource = dataSource
         return paymentController

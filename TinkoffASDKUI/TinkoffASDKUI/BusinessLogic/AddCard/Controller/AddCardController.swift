@@ -53,9 +53,9 @@ final class AddCardController {
 // MARK: - IAddCardController
 
 extension AddCardController: IAddCardController {
-    var uiProvider: PaymentControllerUIProvider? {
-        get { webFlowController.uiProvider }
-        set { webFlowController.uiProvider = newValue }
+    var uiProvider: ThreeDSWebFlowDelegate? {
+        get { webFlowController.webFlowDelegate }
+        set { webFlowController.webFlowDelegate = newValue }
     }
 
     func addCard(options: AddCardOptions, completion: @escaping AddCardStateCompletion) {

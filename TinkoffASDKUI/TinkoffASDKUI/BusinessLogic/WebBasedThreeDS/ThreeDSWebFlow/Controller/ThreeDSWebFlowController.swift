@@ -19,7 +19,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     // MARK: Dependencies
 
-    weak var uiProvider: PaymentControllerUIProvider?
+    weak var webFlowDelegate: ThreeDSWebFlowDelegate?
     private let threeDSService: IAcquiringThreeDSService
     private let threeDSWebViewAssembly: IThreeDSWebViewAssembly
 
@@ -58,7 +58,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     func complete3DSMethod(checking3DSURLData: Checking3DSURLData) throws {
         let request = try threeDSService.createChecking3DSURL(data: checking3DSURLData)
-        let uiProvider = try uiProvider.orThrow(Error.missingUIProvider)
+        let uiProvider = try webFlowDelegate.orThrow(Error.missingUIProvider)
         uiProvider.hiddenWebViewToCollect3DSData().load(request)
     }
 
@@ -69,7 +69,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
         completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         do {
-            let uiProvider = try uiProvider.orThrow(Error.missingUIProvider)
+            let uiProvider = try webFlowDelegate.orThrow(Error.missingUIProvider)
             let sourceViewController = try uiProvider.sourceViewControllerToPresent()
                 .orThrow(Error.missingSourceViewController)
 

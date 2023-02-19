@@ -42,7 +42,7 @@ final class CardsController {
 // MARK: - ICardsController
 
 extension CardsController: ICardsController {
-    var uiProvider: PaymentControllerUIProvider? {
+    var uiProvider: ThreeDSWebFlowDelegate? {
         get { addCardController.uiProvider }
         set { addCardController.uiProvider = newValue }
     }

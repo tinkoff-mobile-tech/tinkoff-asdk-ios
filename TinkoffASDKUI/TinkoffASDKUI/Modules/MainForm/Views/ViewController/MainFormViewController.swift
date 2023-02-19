@@ -226,9 +226,9 @@ extension MainFormViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - PaymentControllerUIProvider
+// MARK: - ThreeDSWebFlowDelegate
 
-extension MainFormViewController: PaymentControllerUIProvider {
+extension MainFormViewController: ThreeDSWebFlowDelegate {
     func hiddenWebViewToCollect3DSData() -> WKWebView {
         hiddenWebView
     }
