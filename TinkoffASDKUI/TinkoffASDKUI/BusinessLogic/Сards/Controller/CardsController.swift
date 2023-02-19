@@ -23,7 +23,6 @@ final class CardsController {
     private let customerKey: String
     private let availableCardStatuses: Set<PaymentCardStatus>
 
-
     // MARK: Init
 
     init(
@@ -58,22 +57,7 @@ extension CardsController: ICardsController {
 
             switch result {
             case let .succeded(payload):
-                guard let cardId = payload.cardId else {
-                    return completionDecorator(.failure(error: Error.missingCardId))
-                }
-
-                self.getCards { cardsResult in
-                    switch cardsResult {
-                    case let .success(cards):
-                        guard let addedCard = cards.first(where: { $0.cardId == cardId }) else {
-                            return completionDecorator(.failure(error: Error.couldNotFindAddedCard))
-                        }
-
-                        completionDecorator(.success(card: addedCard))
-                    case let .failure(error):
-                        completionDecorator(.failure(error: error))
-                    }
-                }
+                self.resolveAddedCard(payload: payload, completion: completionDecorator)
             case let .failed(error):
                 completionDecorator(.failure(error: error))
             case .cancelled:
@@ -86,9 +70,7 @@ extension CardsController: ICardsController {
         let data = RemoveCardData(cardId: cardId, customerKey: customerKey)
 
         coreSDK.removeCard(data: data) { result in
-            DispatchQueue.performOnMain {
-                completion(result)
-            }
+            DispatchQueue.performOnMain { completion(result) }
         }
     }
 
@@ -100,8 +82,28 @@ extension CardsController: ICardsController {
                 cards.filter { availableCardStatuses.contains($0.status) }
             }
 
-            DispatchQueue.performOnMain {
-                completion(filteredCardsResult)
+            DispatchQueue.performOnMain { completion(filteredCardsResult) }
+        }
+    }
+}
+
+// MARK: - Helpers
+
+extension CardsController {
+    private func resolveAddedCard(payload: GetAddCardStatePayload, completion: @escaping (AddNewCardResult) -> Void) {
+        guard let cardId = payload.cardId else {
+            return completion(.failure(error: Error.missingCardId))
+        }
+
+        getCards { result in
+            switch result {
+            case let .success(cards):
+                guard let addedCard = cards.first(where: { $0.cardId == cardId }) else {
+                    return completion(.failure(error: Error.couldNotFindAddedCard))
+                }
+                completion(.success(card: addedCard))
+            case let .failure(error):
+                completion(.failure(error: error))
             }
         }
     }
