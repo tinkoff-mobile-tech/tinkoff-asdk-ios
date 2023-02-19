@@ -13,8 +13,8 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
     // MARK: Error
 
     enum Error: Swift.Error {
-        case uiProviderDoesNotExist
-        case sourceViewControllerDoesNotExist
+        case missingUIProvider
+        case missingSourceViewController
     }
 
     // MARK: Dependencies
@@ -37,28 +37,28 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     func confirm3DS<Payload: Decodable>(
         data: Confirmation3DSData,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         present3DSWebView(
             urlRequest: try threeDSService.createConfirmation3DSRequest(data: data),
-            resultHandler: resultHandler
+            completion: completion
         )
     }
 
     func confirm3DSACS<Payload: Decodable>(
         data: Confirmation3DSDataACS,
         messageVersion: String,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         present3DSWebView(
             urlRequest: try threeDSService.createConfirmation3DSRequestACS(data: data, messageVersion: messageVersion),
-            resultHandler: resultHandler
+            completion: completion
         )
     }
 
     func complete3DSMethod(checking3DSURLData: Checking3DSURLData) throws {
         let request = try threeDSService.createChecking3DSURL(data: checking3DSURLData)
-        let uiProvider = try uiProvider.orThrow(Error.uiProviderDoesNotExist)
+        let uiProvider = try uiProvider.orThrow(Error.missingUIProvider)
         uiProvider.hiddenWebViewToCollect3DSData().load(request)
     }
 
@@ -66,23 +66,23 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     private func present3DSWebView<Payload: Decodable>(
         urlRequest: @autoclosure () throws -> URLRequest,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         do {
-            let uiProvider = try uiProvider.orThrow(Error.uiProviderDoesNotExist)
+            let uiProvider = try uiProvider.orThrow(Error.missingUIProvider)
             let sourceViewController = try uiProvider.sourceViewControllerToPresent()
-                .orThrow(Error.sourceViewControllerDoesNotExist)
+                .orThrow(Error.missingSourceViewController)
 
             let urlRequest = try urlRequest()
 
             let navigationController = threeDSWebViewAssembly.threeDSWebViewNavigationController(
                 urlRequest: urlRequest,
-                resultHandler: resultHandler
+                resultHandler: completion
             )
 
             sourceViewController.present(navigationController, animated: true)
         } catch {
-            resultHandler(.finished(payload: .failure(error)))
+            completion(.failed(error))
         }
     }
 }
@@ -92,10 +92,10 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 extension ThreeDSWebFlowController.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .uiProviderDoesNotExist:
-            return "You should set `UIProvider` for correct handling 3DS Web Flow"
-        case .sourceViewControllerDoesNotExist:
-            return "You should provide `sourceViewControllerToPresent` for correct handling 3DS Web Flow"
+        case .missingUIProvider:
+            return "You should set `ThreeDSUIProvider` for correct handling 3DS Web Flow"
+        case .missingSourceViewController:
+            return "You should provide `sourceViewControllerToPresent` in `IThreeDSUIProvider` implementation for correct handling 3DS Web Flow"
         }
     }
 }

@@ -228,8 +228,10 @@ private extension PaymentController {
 
         let onResult = { (result: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) in
             switch result {
-            case let .finished(payloadResult):
-                completion(payloadResult)
+            case let .succeded(payload):
+                completion(.success(payload))
+            case let .failed(error):
+                completion(.failure(error))
             case .cancelled:
                 paymentProcess.cancel()
                 confirmationCancelled()

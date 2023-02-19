@@ -15,13 +15,13 @@ protocol IThreeDSWebFlowController: AnyObject {
 
     func confirm3DS<Payload: Decodable>(
         data: Confirmation3DSData,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     )
 
     func confirm3DSACS<Payload: Decodable>(
         data: Confirmation3DSDataACS,
         messageVersion: String,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     )
 }
 
@@ -32,7 +32,7 @@ extension IThreeDSWebFlowController {
         paymentConfirmationData: Confirmation3DSData,
         completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void
     ) {
-        confirm3DS(data: paymentConfirmationData, resultHandler: completion)
+        confirm3DS(data: paymentConfirmationData, completion: completion)
     }
 
     func confirm3DSACS(
@@ -40,7 +40,7 @@ extension IThreeDSWebFlowController {
         messageVersion: String,
         completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void
     ) {
-        confirm3DSACS(data: paymentConfirmationData, messageVersion: messageVersion, resultHandler: completion)
+        confirm3DSACS(data: paymentConfirmationData, messageVersion: messageVersion, completion: completion)
     }
 }
 
@@ -49,16 +49,16 @@ extension IThreeDSWebFlowController {
 extension IThreeDSWebFlowController {
     func confirm3DS(
         addCardConfirmationData: Confirmation3DSData,
-        completion: @escaping (ThreeDSWebViewHandlingResult<AddCardStatusResponse>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<GetAddCardStatePayload>) -> Void
     ) {
-        confirm3DS(data: addCardConfirmationData, resultHandler: completion)
+        confirm3DS(data: addCardConfirmationData, completion: completion)
     }
 
     func confirm3DSACS(
         addCardConfirmationData: Confirmation3DSDataACS,
         messageVersion: String,
-        completion: @escaping (ThreeDSWebViewHandlingResult<AddCardStatusResponse>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<GetAddCardStatePayload>) -> Void
     ) {
-        confirm3DSACS(data: addCardConfirmationData, messageVersion: messageVersion, resultHandler: completion)
+        confirm3DSACS(data: addCardConfirmationData, messageVersion: messageVersion, completion: completion)
     }
 }
