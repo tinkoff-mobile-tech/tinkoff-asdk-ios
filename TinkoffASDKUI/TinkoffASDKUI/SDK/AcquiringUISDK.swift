@@ -214,8 +214,19 @@ public class AcquiringUISDK: NSObject {
         acquiringSdk = coreSDK
         self.style = style
 
+        let threeDSWebViewAssembly = ThreeDSWebViewAssembly(
+            coreSDK: coreSDK,
+            authChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+        )
+
+        let threeDSWebFlowAssembly = ThreeDSWebFlowControllerAssembly(
+            coreSDK: coreSDK,
+            threeDSWebViewAssembly: threeDSWebViewAssembly
+        )
+
         paymentControllerAssembly = PaymentControllerAssembly(
             coreSDK: coreSDK,
+            threeDSWebFlowAssembly: threeDSWebFlowAssembly,
             sdkConfiguration: configuration,
             uiSDKConfiguration: uiSDKConfiguration
         )
