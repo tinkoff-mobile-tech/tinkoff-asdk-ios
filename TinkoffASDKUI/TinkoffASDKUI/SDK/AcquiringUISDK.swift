@@ -184,6 +184,8 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let addCardControllerAssembly: IAddCardControllerAssembly
+    private let cardsControllerAssembly: ICardsControllerAssembly
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
@@ -229,6 +231,17 @@ public class AcquiringUISDK: NSObject {
             threeDSWebFlowAssembly: threeDSWebFlowAssembly,
             sdkConfiguration: configuration,
             uiSDKConfiguration: uiSDKConfiguration
+        )
+
+        addCardControllerAssembly = AddCardControllerAssembly(
+            coreSDK: coreSDK,
+            webFlowControllerAssembly: threeDSWebFlowAssembly,
+            configuration: uiSDKConfiguration
+        )
+
+        cardsControllerAssembly = CardsControllerAssembly(
+            coreSDK: coreSDK,
+            addCardControllerAssembly: addCardControllerAssembly
         )
 
         sbpBanksAssembly = SBPBanksAssembly(
