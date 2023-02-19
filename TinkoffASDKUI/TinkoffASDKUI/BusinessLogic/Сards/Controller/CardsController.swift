@@ -42,9 +42,9 @@ final class CardsController {
 // MARK: - ICardsController
 
 extension CardsController: ICardsController {
-    var uiProvider: ThreeDSWebFlowDelegate? {
-        get { addCardController.uiProvider }
-        set { addCardController.uiProvider = newValue }
+    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+        get { addCardController.webFlowDelegate }
+        set { addCardController.webFlowDelegate = newValue }
     }
 
     func addCard(options: AddCardOptions, completion: @escaping (AddNewCardResult) -> Void) {

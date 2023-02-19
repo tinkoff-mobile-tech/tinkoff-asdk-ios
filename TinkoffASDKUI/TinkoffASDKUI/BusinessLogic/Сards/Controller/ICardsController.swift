@@ -9,7 +9,7 @@ import Foundation
 import TinkoffASDKCore
 
 protocol ICardsController: AnyObject {
-    var uiProvider: ThreeDSWebFlowDelegate? { get set }
+    var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
 
     func addCard(options: AddCardOptions, completion: @escaping (AddNewCardResult) -> Void)
     func removeCard(cardId: String, completion: @escaping (Result<RemoveCardPayload, Error>) -> Void)
