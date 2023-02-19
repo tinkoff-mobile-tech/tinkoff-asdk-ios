@@ -71,7 +71,7 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
 
 extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFinishPayment: PaymentProcess,
         with state: TinkoffASDKCore.GetPaymentStatePayload,
         cardId: String?,
@@ -90,7 +90,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         paymentWasCancelled: PaymentProcess,
         cardId: String?,
         rebillId: String?
@@ -101,7 +101,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?

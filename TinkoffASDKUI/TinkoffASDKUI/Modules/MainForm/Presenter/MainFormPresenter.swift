@@ -190,7 +190,7 @@ extension MainFormPresenter: IEmailViewPresenterOutput {
 
 extension MainFormPresenter: PaymentControllerDelegate {
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFinishPayment paymentProcess: PaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
@@ -201,7 +201,7 @@ extension MainFormPresenter: PaymentControllerDelegate {
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?
@@ -211,7 +211,7 @@ extension MainFormPresenter: PaymentControllerDelegate {
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         paymentWasCancelled paymentProcess: PaymentProcess,
         cardId: String?,
         rebillId: String?

@@ -21,7 +21,7 @@ import Foundation
 import TinkoffASDKCore
 
 protocol IPaymentControllerAssembly {
-    func paymentController() -> PaymentController
+    func paymentController() -> IPaymentController
 }
 
 final class PaymentControllerAssembly: IPaymentControllerAssembly {
@@ -42,7 +42,7 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
         self.uiSDKConfiguration = uiSDKConfiguration
     }
 
-    func paymentController() -> PaymentController {
+    func paymentController() -> IPaymentController {
         let uiSDK = AcquiringUISDK(
             coreSDK: coreSDK,
             configuration: sdkConfiguration,

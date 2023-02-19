@@ -20,9 +20,8 @@
 import TinkoffASDKCore
 
 /// Контроллер с помощью которого можно совершать оплату
-public final class PaymentController: IPaymentController {
-
-    // MARK: Dependencies
+final class PaymentController: IPaymentController {
+    // MARK: IPaymentController Properties
 
     weak var delegate: PaymentControllerDelegate?
     weak var dataSource: PaymentControllerDataSource?
@@ -32,6 +31,8 @@ public final class PaymentController: IPaymentController {
         set { threeDSWebFlowController.webFlowDelegate = newValue }
     }
 
+    // MARK: Dependencies
+
     private let threeDSService: IAcquiringThreeDSService
     private let paymentFactory: IPaymentFactory
     private let threeDSWebFlowController: IThreeDSWebFlowController
@@ -39,13 +40,13 @@ public final class PaymentController: IPaymentController {
     private let tdsController: TDSController
     private let paymentStatusUpdateService: IPaymentStatusUpdateService
 
-    // MARK: State
-
-    private var paymentProcess: PaymentProcess?
-
     // MARK: Temporary until refactor PaymentView!
 
     private let acquiringUISDK: AcquiringUISDK
+
+    // MARK: State
+
+    private var paymentProcess: PaymentProcess?
 
     // MARK: Init
 
@@ -74,9 +75,9 @@ public final class PaymentController: IPaymentController {
         paymentProcess = nil
     }
 
-    // MARK: Payments
+    // MARK: IPaymentController
 
-    public func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData) {
+    func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData) {
         paymentProcess?.cancel()
 
         paymentProcess = paymentFactory.createPayment(
@@ -86,21 +87,6 @@ public final class PaymentController: IPaymentController {
         )
 
         paymentProcess?.start()
-    }
-
-    public func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData) {
-        performPayment(paymentFlow: .full(paymentOptions: paymentOptions), paymentSource: paymentSource)
-    }
-
-    public func performFinishPayment(
-        paymentId: String,
-        paymentSource: PaymentSourceData,
-        customerOptions: CustomerOptions?
-    ) {
-        performPayment(
-            paymentFlow: .finish(paymentId: paymentId, customerOptions: customerOptions),
-            paymentSource: paymentSource
-        )
     }
 }
 
