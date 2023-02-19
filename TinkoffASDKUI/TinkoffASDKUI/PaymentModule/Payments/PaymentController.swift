@@ -256,7 +256,7 @@ private extension PaymentController {
                 urlRequest: urlRequest,
                 handler: self.threeDSHandler,
                 authChallengeService: self.webViewAuthChallengeService,
-                onResultReceived: onResult
+                completion: onResult
             )
             let navigationController = UINavigationController(rootViewController: threeDSViewController)
             navigationController.modalPresentationStyle = .overFullScreen

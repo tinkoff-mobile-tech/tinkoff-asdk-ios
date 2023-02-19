@@ -27,7 +27,7 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
     private let urlRequest: URLRequest
     private let handler: IThreeDSWebViewHandler
     private let authChallengeService: IWebViewAuthChallengeService
-    private var onResultReceived: ((ThreeDSWebViewHandlingResult<Payload>) -> Void)?
+    private var completion: ((ThreeDSWebViewHandlingResult<Payload>) -> Void)?
 
     // MARK: Subviews
 
@@ -39,12 +39,12 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
         urlRequest: URLRequest,
         handler: IThreeDSWebViewHandler,
         authChallengeService: IWebViewAuthChallengeService,
-        onResultReceived: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         self.urlRequest = urlRequest
         self.handler = handler
         self.authChallengeService = authChallengeService
-        self.onResultReceived = onResultReceived
+        self.completion = completion
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -134,7 +134,11 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
     }
 
     private func callbackResult(_ result: ThreeDSWebViewHandlingResult<Payload>) {
-        onResultReceived?(result)
-        onResultReceived = nil
+        guard let completion = completion else { return }
+        self.completion = nil
+
+        dismiss(animated: true) {
+            completion(result)
+        }
     }
 }

@@ -26,21 +26,21 @@ final class ThreeDSWebViewAssembly: IThreeDSWebViewAssembly {
 
     func threeDSWebViewController<Payload: Decodable>(
         urlRequest: URLRequest,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) -> UIViewController {
         ThreeDSWebViewController<Payload>(
             urlRequest: urlRequest,
             handler: coreSDK.threeDSWebViewSHandler(),
             authChallengeService: authChallengeService,
-            onResultReceived: resultHandler
+            completion: completion
         )
     }
 
     func threeDSWebViewNavigationController<Payload: Decodable>(
         urlRequest: URLRequest,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) -> UINavigationController {
-        let viewController = threeDSWebViewController(urlRequest: urlRequest, resultHandler: resultHandler)
+        let viewController = threeDSWebViewController(urlRequest: urlRequest, completion: completion)
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.modalPresentationStyle = .overFullScreen
         return navigationController

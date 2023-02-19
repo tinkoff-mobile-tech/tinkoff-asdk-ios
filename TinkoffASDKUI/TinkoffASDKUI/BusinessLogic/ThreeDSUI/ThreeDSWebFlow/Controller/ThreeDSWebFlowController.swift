@@ -77,7 +77,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
             let navigationController = threeDSWebViewAssembly.threeDSWebViewNavigationController(
                 urlRequest: urlRequest,
-                resultHandler: completion
+                completion: completion
             )
 
             sourceViewController.present(navigationController, animated: true)

@@ -12,11 +12,11 @@ import UIKit
 protocol IThreeDSWebViewAssembly {
     func threeDSWebViewController<Payload: Decodable>(
         urlRequest: URLRequest,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) -> UIViewController
 
     func threeDSWebViewNavigationController<Payload: Decodable>(
         urlRequest: URLRequest,
-        resultHandler: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) -> UINavigationController
 }
