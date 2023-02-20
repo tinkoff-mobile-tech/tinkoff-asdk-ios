@@ -32,8 +32,11 @@ final class MainFormAssembly: IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub
+        stub: MainFormStub,
+        moduleCompletion: @escaping (PaymentResult) -> Void
     ) -> UIViewController {
+        let paymentController = paymentControllerAssembly.paymentController()
+
         let router = MainFormRouter(
             configuration: configuration,
             cardPaymentAssembly: cardPaymentAssembly
@@ -42,17 +45,22 @@ final class MainFormAssembly: IMainFormAssembly {
         let presenter = MainFormPresenter(
             router: router,
             coreSDK: coreSDK,
+            paymentController: paymentController,
             paymentFlow: paymentFlow,
             configuration: configuration,
-            stub: stub
+            stub: stub,
+            moduleCompletion: moduleCompletion
         )
 
-        let viewController = MainFormViewController(presenter: presenter)
+        let view = MainFormViewController(presenter: presenter)
 
-        router.transitionHandler = viewController
-        presenter.view = viewController
+        router.transitionHandler = view
+        presenter.view = view
 
-        let pullableContainerViewController = PullableContainerViewController(content: viewController)
+        paymentController.delegate = presenter
+        paymentController.uiProvider = view
+
+        let pullableContainerViewController = PullableContainerViewController(content: view)
         return pullableContainerViewController
     }
 }

@@ -254,19 +254,11 @@ extension CardPaymentPresenter {
         )
 
         let sourceData: PaymentSourceData = activeCards.isEmpty ? cardSourceData : savedCardSourceData
+        let email = receiptSwitchViewPresenter.isOn ? emailPresenter.currentEmail : nil
 
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            paymentController.performInitPayment(
-                paymentOptions: paymentOptions,
-                paymentSource: sourceData
-            )
-        case let .finish(paymentId, customerOptions):
-            paymentController.performFinishPayment(
-                paymentId: paymentId,
-                paymentSource: sourceData,
-                customerOptions: customerOptions
-            )
-        }
+        paymentController.performPayment(
+            paymentFlow: paymentFlow.replacing(customerEmail: email),
+            paymentSource: sourceData
+        )
     }
 }

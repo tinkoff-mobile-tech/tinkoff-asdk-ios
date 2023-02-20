@@ -14,9 +14,11 @@ final class MainFormPresenter {
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
     private let coreSDK: AcquiringSdk
+    private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
     private let stub: MainFormStub
+    private var moduleCompletion: ((PaymentResult) -> Void)?
 
     // MARK: Child Presenters
 
@@ -46,21 +48,26 @@ final class MainFormPresenter {
     private var activeCards: [PaymentCard] = []
     private var availablePaymentMethods: [MainFormPaymentMethod] = MainFormPaymentMethod.allCases
     private lazy var primaryPaymentMethod = stub.primaryPayMethod.domainModel
+    private var moduleResult: PaymentResult = .cancelled()
 
     // MARK: Init
 
     init(
         router: IMainFormRouter,
         coreSDK: AcquiringSdk,
+        paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub
+        stub: MainFormStub,
+        moduleCompletion: @escaping (PaymentResult) -> Void
     ) {
         self.router = router
         self.coreSDK = coreSDK
+        self.paymentController = paymentController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
         self.stub = stub
+        self.moduleCompletion = moduleCompletion
     }
 }
 
@@ -84,7 +91,10 @@ extension MainFormPresenter: IMainFormPresenter {
         }
     }
 
-    func viewWasClosed() {}
+    func viewWasClosed() {
+        moduleCompletion?(moduleResult)
+        moduleCompletion = nil
+    }
 
     func numberOfRows() -> Int {
         cellTypes.count
@@ -102,13 +112,9 @@ extension MainFormPresenter: IMainFormPresenter {
             break
         }
     }
-}
 
-// MARK: - ICardPaymentPresenterModuleOutput
-
-extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
-    func cardPaymentPayButtonDidPressed(cardData: CardData, email: String?) {
-        // логика с PaymentController
+    func commonSheetViewDidTapPrimaryButton() {
+        view?.closeView()
     }
 }
 
@@ -158,7 +164,13 @@ extension MainFormPresenter {
 
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
-        routeTo(paymentMethod: primaryPaymentMethod)
+        switch primaryPaymentMethod {
+        case .card where !activeCards.isEmpty:
+            startPaymentWithSavedCard()
+            presenter.startLoading()
+        case .card, .tinkoffPay, .sbp:
+            routeTo(paymentMethod: primaryPaymentMethod)
+        }
     }
 }
 
@@ -171,6 +183,60 @@ extension MainFormPresenter: IEmailViewPresenterOutput {
         isValid: Bool
     ) {
         activatePayButtonIfNeeded()
+    }
+}
+
+// MARK: - PaymentControllerDelegate
+
+extension MainFormPresenter: PaymentControllerDelegate {
+    func paymentController(
+        _ controller: PaymentController,
+        didFinishPayment paymentProcess: PaymentProcess,
+        with state: GetPaymentStatePayload,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        moduleResult = .succeeded(state.toPaymentInfo())
+        view?.showCommonSheet(state: .paid)
+    }
+
+    func paymentController(
+        _ controller: PaymentController,
+        didFailed error: Error,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        moduleResult = .failed(error)
+        view?.showCommonSheet(state: .failed)
+    }
+
+    func paymentController(
+        _ controller: PaymentController,
+        paymentWasCancelled paymentProcess: PaymentProcess,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        moduleResult = .cancelled()
+        view?.closeView()
+    }
+}
+
+// MARK: - ICardPaymentPresenterModuleOutput
+
+extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
+    func cardPaymentWillCloseAfterFinishedPayment(with paymentData: FullPaymentData) {
+        moduleResult = .succeeded(paymentData.payload.toPaymentInfo())
+        view?.showCommonSheet(state: .paid)
+    }
+
+    func cardPaymentWillCloseAfterFailedPayment(with error: Error, cardId: String?, rebillId: String?) {
+        moduleResult = .failed(error)
+        view?.showCommonSheet(state: .failed)
+    }
+
+    func cardPaymentDidCloseAfterCancelledPayment(with paymentProcess: PaymentProcess, cardId: String?, rebillId: String?) {
+        moduleResult = .cancelled()
+        view?.closeView()
     }
 }
 
@@ -210,6 +276,18 @@ extension MainFormPresenter {
 
         payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
     }
+
+    private func startPaymentWithSavedCard() {
+        guard let cardId = savedCardPresenter.cardId,
+              let cvc = savedCardPresenter.cvc else { return }
+
+        let email = getReceiptSwitchPresenter.isOn ? emailPresenter.currentEmail : nil
+
+        paymentController.performPayment(
+            paymentFlow: paymentFlow.replacing(customerEmail: email),
+            paymentSource: .savedCard(cardId: cardId, cvv: cvc)
+        )
+    }
 }
 
 // MARK: - MainFormPresenter + Routing
@@ -218,7 +296,7 @@ extension MainFormPresenter {
     private func routeTo(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
-            router.openCardPaymentForm(paymentFlow: paymentFlow, cards: activeCards, output: self)
+            router.openCardPayment(paymentFlow: paymentFlow, cards: activeCards, output: self)
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:
@@ -291,7 +369,15 @@ private extension CommonSheetState {
         CommonSheetState(status: .processing)
     }
 
-    static var succeeded: CommonSheetState {
+    static var paid: CommonSheetState {
         CommonSheetState(status: .succeeded, title: "Оплачено", primaryButtonTitle: "Понятно")
+    }
+
+    static var failed: CommonSheetState {
+        CommonSheetState(
+            status: .failed,
+            title: "Не получилось оплатить",
+            primaryButtonTitle: "Понятно"
+        )
     }
 }

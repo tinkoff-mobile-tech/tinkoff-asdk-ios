@@ -26,4 +26,23 @@ extension PaymentFlow {
             return customerOptions
         }
     }
+
+    func replacing(customerEmail: String?) -> PaymentFlow {
+        let newCustomerOptions = customerOptions.map {
+            CustomerOptions(customerKey: $0.customerKey, email: customerEmail)
+        }
+
+        switch self {
+        case let .full(paymentOptions):
+            let newPaymentOptions = PaymentOptions(
+                orderOptions: paymentOptions.orderOptions,
+                customerOptions: newCustomerOptions,
+                failedPaymentId: paymentOptions.failedPaymentId,
+                paymentData: paymentOptions.paymentData
+            )
+            return .full(paymentOptions: newPaymentOptions)
+        case let .finish(paymentId, _):
+            return .finish(paymentId: paymentId, customerOptions: newCustomerOptions)
+        }
+    }
 }

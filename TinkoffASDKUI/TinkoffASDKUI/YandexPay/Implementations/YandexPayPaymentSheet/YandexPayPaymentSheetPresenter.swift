@@ -20,7 +20,7 @@ final class YandexPayPaymentSheetPresenter {
 
     // MARK: State
 
-    private var paymentResult: PaymentResult = .cancelled(nil)
+    private var paymentResult: PaymentResult = .cancelled()
     private var canDismissView = false
 
     // MARK: Init
@@ -46,19 +46,10 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
         view?.update(state: .processing)
 
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            paymentController.performInitPayment(
-                paymentOptions: paymentOptions,
-                paymentSource: .yandexPay(base64Token: base64Token)
-            )
-        case let .finish(paymentId, customerOptions):
-            paymentController.performFinishPayment(
-                paymentId: paymentId,
-                paymentSource: .yandexPay(base64Token: base64Token),
-                customerOptions: customerOptions
-            )
-        }
+        paymentController.performPayment(
+            paymentFlow: paymentFlow,
+            paymentSource: .yandexPay(base64Token: base64Token)
+        )
     }
 
     func primaryButtonTapped() {
@@ -72,7 +63,7 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     }
 
     func viewWasClosed() {
-        output?.yandexPayPaymentActivity(completedWith: paymentResult)
+        output?.yandexPayPaymentSheet(completedWith: paymentResult)
     }
 }
 
@@ -104,7 +95,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        paymentResult = .cancelled(nil)
+        paymentResult = .cancelled()
         canDismissView = true
         view?.close()
     }

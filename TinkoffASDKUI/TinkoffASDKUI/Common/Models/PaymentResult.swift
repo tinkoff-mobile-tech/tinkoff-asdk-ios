@@ -44,7 +44,7 @@ public enum PaymentResult {
     /// Произошла ошибка на этапе оплаты
     case failed(Error)
     /// Оплата отменена пользователем
-    case cancelled(PaymentInfo?)
+    case cancelled(PaymentInfo? = nil)
 }
 
 extension GetPaymentStatePayload {

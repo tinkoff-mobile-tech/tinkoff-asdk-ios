@@ -21,6 +21,7 @@ import TinkoffASDKCore
 import WebKit
 
 protocol IPaymentController {
+    func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData)
     func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData)
     func performFinishPayment(paymentId: String, paymentSource: PaymentSourceData, customerOptions: CustomerOptions?)
 }
@@ -38,7 +39,7 @@ public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата прошла успешно
     func paymentController(
         _ controller: PaymentController,
-        didFinishPayment: PaymentProcess,
+        didFinishPayment paymentProcess: PaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -47,7 +48,7 @@ public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата была отменена
     func paymentController(
         _ controller: PaymentController,
-        paymentWasCancelled: PaymentProcess,
+        paymentWasCancelled paymentProcess: PaymentProcess,
         cardId: String?,
         rebillId: String?
     )
@@ -151,6 +152,15 @@ public final class PaymentController: IPaymentController {
     }
 
     // MARK: - Payments
+
+    public func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData) {
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            performInitPayment(paymentOptions: paymentOptions, paymentSource: paymentSource)
+        case let .finish(paymentId, customerOptions):
+            performFinishPayment(paymentId: paymentId, paymentSource: paymentSource, customerOptions: customerOptions)
+        }
+    }
 
     public func performInitPayment(
         paymentOptions: PaymentOptions,

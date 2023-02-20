@@ -29,6 +29,7 @@
 * [MIC-7706] MainForm - Other Payment Methods
 * [MIC-7952] MainForm - UI elements with own cells
 * [MIC-7707] MainForm - State changes handling
+* [MIC-8013] MainForm - Card payment logic
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 
 ## [2.17.0] - 2023-02-13Z

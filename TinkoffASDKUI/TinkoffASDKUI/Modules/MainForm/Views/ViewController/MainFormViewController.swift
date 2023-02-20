@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WebKit
 
 final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: PullableContainer Properties
@@ -30,7 +31,8 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
-    private lazy var commonSheetView = CommonSheetView()
+    private lazy var commonSheetView = CommonSheetView(delegate: self)
+    private lazy var hiddenWebView = WKWebView()
 
     // MARK: State
 
@@ -53,8 +55,8 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewsHierarchy()
         setupTableView()
-        setupCommonSheetView()
         setupTableContentSizeObservation()
         setupKeyboardObserving()
         presenter.viewDidLoad()
@@ -62,9 +64,19 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 
     // MARK: Initial Configuration
 
-    private func setupTableView() {
+    private func setupViewsHierarchy() {
+        view.addSubview(hiddenWebView)
+        hiddenWebView.pinEdgesToSuperview()
+        hiddenWebView.isHidden = true
+
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
+
+        view.addSubview(commonSheetView)
+        commonSheetView.pinEdgesToSuperview()
+    }
+
+    private func setupTableView() {
         tableView.tableHeaderView = tableHeaderView
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
@@ -82,12 +94,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             TextHeaderTableCell.self,
             AvatarTableViewCell.self
         )
-    }
-
-    private func setupCommonSheetView() {
-        view.addSubview(commonSheetView)
-        commonSheetView.pinEdgesToSuperview()
-        commonSheetView.backgroundColor = ASDKColors.Background.elevation1.color
     }
 
     private func setupTableContentSizeObservation() {
@@ -136,6 +142,22 @@ extension MainFormViewController: IMainFormViewController {
         tableView.deleteRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
     }
+
+    func closeView() {
+        dismiss(animated: true, completion: presenter.viewWasClosed)
+    }
+}
+
+// MARK: - CommonSheetViewDelegate
+
+extension MainFormViewController: CommonSheetViewDelegate {
+    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
+
+    func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
+        presenter.commonSheetViewDidTapPrimaryButton()
+    }
+
+    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
 }
 
 // MARK: - PullableContainerContent Methods
@@ -201,6 +223,18 @@ extension MainFormViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: - PaymentControllerUIProvider
+
+extension MainFormViewController: PaymentControllerUIProvider {
+    func hiddenWebViewToCollect3DSData() -> WKWebView {
+        hiddenWebView
+    }
+
+    func sourceViewControllerToPresent() -> UIViewController? {
+        self
     }
 }
 

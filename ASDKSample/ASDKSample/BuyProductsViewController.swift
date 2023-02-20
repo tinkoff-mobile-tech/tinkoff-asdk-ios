@@ -403,7 +403,8 @@ class BuyProductsViewController: UIViewController {
                 on: self,
                 paymentFlow: paymentFlow,
                 configuration: configuration,
-                stub: stub
+                stub: stub,
+                completion: { [weak self] result in self?.showAlert(with: result) }
             )
         }
 
@@ -428,6 +429,18 @@ class BuyProductsViewController: UIViewController {
             .forEach(alert.addAction(_:))
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func showAlert(with result: PaymentResult) {
+        let alert = UIAlertController(
+            title: result.alertTitle,
+            message: result.alertMessage,
+            preferredStyle: .alert
+        )
+
+        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
+        alert.addAction(action)
         present(alert, animated: true)
     }
 }
@@ -778,7 +791,7 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         _ container: IYandexPayButtonContainer,
         didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
     ) {
-        guard var initData = paymentData else { return }
+        guard let initData = paymentData else { return }
 
         switch container {
         case fullPaymentFlowYandexPayButton as UIView?:
@@ -817,26 +830,7 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         _ container: IYandexPayButtonContainer,
         didCompletePaymentWithResult result: PaymentResult
     ) {
-        let message: String = {
-            switch result {
-            case .cancelled:
-                return "\(Loc.Text.payment) \(Loc.Text.paymentStatusCancel)"
-            case let .succeeded(info):
-                return "\(Loc.Text.paymentStatusAmount) \(info.amount) \(Loc.Text.paymentStatusSuccess)"
-            case let .failed(error):
-                return "\(error)"
-            }
-        }()
-
-        let alert = UIAlertController(
-            title: "YandexPay",
-            message: message,
-            preferredStyle: .alert
-        )
-
-        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
-        alert.addAction(action)
-        present(alert, animated: true)
+        showAlert(with: result)
     }
 }
 
@@ -863,5 +857,31 @@ private extension PaymentOptions {
             customerOptions: customerOptions,
             paymentData: initData.paymentFormData ?? [:]
         )
+    }
+}
+
+// MARK: - PaymentResult + Helpers
+
+private extension PaymentResult {
+    var alertTitle: String {
+        switch self {
+        case .succeeded:
+            return "Payment was successful"
+        case .failed:
+            return "An error occurred during payment"
+        case .cancelled:
+            return "Payment canceled by user"
+        }
+    }
+
+    var alertMessage: String {
+        switch self {
+        case let .succeeded(paymentInfo):
+            return "\(paymentInfo)"
+        case let .failed(error):
+            return "\(error)"
+        case let .cancelled(paymentInfo):
+            return paymentInfo.map { "\($0)" } ?? ""
+        }
     }
 }
