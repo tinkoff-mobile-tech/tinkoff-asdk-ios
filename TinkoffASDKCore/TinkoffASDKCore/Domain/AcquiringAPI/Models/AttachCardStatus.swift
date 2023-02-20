@@ -24,6 +24,7 @@ public enum AttachCardStatus {
     case needConfirmation3DS(Confirmation3DSData)
     /// Требуется подтверждение 3DS v2.0
     case needConfirmation3DSACS(Confirmation3DSDataACS)
+    // TODO: MIC-8072 Удалить неподдерживаемый статус
     /// Требуется подтвердить оплату указать сумму из смс для `requestKey`
     case needConfirmationRandomAmount(String)
     /// Успешная оплата
