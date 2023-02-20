@@ -281,7 +281,8 @@ public class AcquiringUISDK: NSObject {
         mainFormAssembly = MainFormAssembly(
             coreSDK: coreSDK,
             paymentControllerAssembly: paymentControllerAssembly,
-            cardPaymentAssembly: cardPaymentAssembly
+            cardPaymentAssembly: cardPaymentAssembly,
+            sbpBanksAssembly: sbpBanksAssembly
         )
     }
 
@@ -416,26 +417,19 @@ public class AcquiringUISDK: NSObject {
 
         acquiringView?.onTouchButtonSBP = { [weak self] paymentViewController in
             guard let self = self else { return }
-//            let urlSBPViewController = self.urlSBPPaymentViewController(
-//                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-//                configuration: configuration,
-//                completionHandler: { [weak paymentViewController] result in
-//                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
-//                    paymentViewController?.dismiss(animated: true, completion: {
-//                        // Закрываем AcquiringPaymentViewController
-//                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
-//                            completionHandler(result)
-//                        })
-//                    })
-//                }
-//            )
-
-            let sbpModule = self.sbpBanksAssembly.buildInitialModule(
-                paymentConfiguration: acquiringPaymentStageConfiguration,
-                paymentSheetOutput: nil
+            let urlSBPViewController = self.urlSBPPaymentViewController(
+                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
+                configuration: configuration,
+                completionHandler: { [weak paymentViewController] result in
+                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
+                    paymentViewController?.dismiss(animated: true, completion: {
+                        // Закрываем AcquiringPaymentViewController
+                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
+                            completionHandler(result)
+                        })
+                    })
+                }
             )
-            let navVC = UINavigationController(rootViewController: sbpModule.view)
-            paymentViewController.present(navVC, animated: true, completion: nil)
         }
     }
 

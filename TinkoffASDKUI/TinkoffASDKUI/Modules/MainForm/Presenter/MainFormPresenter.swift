@@ -240,6 +240,15 @@ extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
     }
 }
 
+// MARK: - ISBPPaymentSheetPresenterOutput
+
+extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
+    func sbpPaymentSheet(completedWith result: PaymentResult) {
+        moduleResult = result
+        view?.closeView()
+    }
+}
+
 // MARK: - MainFormPresenter + Helpers
 
 extension MainFormPresenter {
@@ -300,7 +309,7 @@ extension MainFormPresenter {
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:
-            router.openSBP(paymentFlow: paymentFlow)
+            router.openSBP(paymentFlow: paymentFlow, paymentSheetOutput: self)
         }
     }
 }

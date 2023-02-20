@@ -14,17 +14,20 @@ final class MainFormAssembly: IMainFormAssembly {
     private let coreSDK: AcquiringSdk
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
+    private let sbpBanksAssembly: ISBPBanksAssembly
 
     // MARK: Initialization
 
     init(
         coreSDK: AcquiringSdk,
         paymentControllerAssembly: IPaymentControllerAssembly,
-        cardPaymentAssembly: ICardPaymentAssembly
+        cardPaymentAssembly: ICardPaymentAssembly,
+        sbpBanksAssembly: ISBPBanksAssembly
     ) {
         self.coreSDK = coreSDK
         self.paymentControllerAssembly = paymentControllerAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
+        self.sbpBanksAssembly = sbpBanksAssembly
     }
 
     // MARK: IMainFormAssembly
@@ -39,7 +42,9 @@ final class MainFormAssembly: IMainFormAssembly {
 
         let router = MainFormRouter(
             configuration: configuration,
-            cardPaymentAssembly: cardPaymentAssembly
+            cardPaymentAssembly: cardPaymentAssembly,
+            sbpBanksAssembly: sbpBanksAssembly,
+            paymentFlow: paymentFlow
         )
 
         let presenter = MainFormPresenter(
