@@ -13,7 +13,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
     // MARK: Error
 
     enum Error: Swift.Error {
-        case missingUIProvider
+        case missingWebFlowDelegate
         case missingSourceViewController
     }
 
@@ -58,7 +58,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     func complete3DSMethod(checking3DSURLData: Checking3DSURLData) throws {
         let request = try threeDSService.createChecking3DSURL(data: checking3DSURLData)
-        let uiProvider = try webFlowDelegate.orThrow(Error.missingUIProvider)
+        let uiProvider = try webFlowDelegate.orThrow(Error.missingWebFlowDelegate)
         uiProvider.hiddenWebViewToCollect3DSData().load(request)
     }
 
@@ -69,7 +69,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
         completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
     ) {
         do {
-            let uiProvider = try webFlowDelegate.orThrow(Error.missingUIProvider)
+            let uiProvider = try webFlowDelegate.orThrow(Error.missingWebFlowDelegate)
             let sourceViewController = try uiProvider.sourceViewControllerToPresent()
                 .orThrow(Error.missingSourceViewController)
 
@@ -92,10 +92,10 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 extension ThreeDSWebFlowController.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .missingUIProvider:
-            return "You should set `ThreeDSUIProvider` for correct handling 3DS Web Flow"
+        case .missingWebFlowDelegate:
+            return "You should set `ThreeDSWebFlowDelegate` for correct handling 3DS Web Flow"
         case .missingSourceViewController:
-            return "You should provide `sourceViewControllerToPresent` in `IThreeDSUIProvider` implementation for correct handling 3DS Web Flow"
+            return "You should provide `sourceViewControllerToPresent` in `ThreeDSWebFlowDelegate` implementation for correct handling 3DS Web Flow"
         }
     }
 }

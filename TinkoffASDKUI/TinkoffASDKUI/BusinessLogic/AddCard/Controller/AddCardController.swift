@@ -18,7 +18,7 @@ final class AddCardController {
         case missingPaymentIdFor3DSFlow
         case missingMessageVersionFor3DS
         case unsupportedResponseStatus
-        case invalidAttachStatus
+        case invalidAttachStatus(AcquiringStatus)
     }
 
     // MARK: Dependencies
@@ -308,10 +308,27 @@ extension AddCardController {
     /// Валидирует статус привязки карты. При неуспешном статусе возвращает ошибку
     private func validate(statePayload: GetAddCardStatePayload, completion: @escaping Completion) {
         guard successfulStatuses.contains(statePayload.status) else {
-            return completion(.failed(Error.invalidAttachStatus))
+            return completion(.failed(Error.invalidAttachStatus(statePayload.status)))
         }
 
         completion(.succeded(statePayload))
+    }
+}
+
+// MARK: - AddCardController.Error + LocalizedError
+
+extension AddCardController.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .missingPaymentIdFor3DSFlow:
+            return "Unexpected nil for `paymentId` in `AddCard` response while using 3DS Flow"
+        case .missingMessageVersionFor3DS:
+            return "Unexpected nil for `messageVersion` while using 3DS v2 Flow"
+        case .unsupportedResponseStatus:
+            return "`LOOP_CHECKING` status is deprecated and not handling in Acquiring SDK"
+        case let .invalidAttachStatus(status):
+            return "Something went wrong while attaching card. \(status.rawValue) isn't valid final status"
+        }
     }
 }
 

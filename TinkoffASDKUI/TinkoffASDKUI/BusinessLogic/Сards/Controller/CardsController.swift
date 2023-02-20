@@ -13,7 +13,7 @@ final class CardsController {
 
     enum Error: Swift.Error {
         case missingCardId
-        case couldNotFindAddedCard
+        case couldNotFindAddedCard(cardId: String)
     }
 
     // MARK: Dependencies
@@ -96,12 +96,25 @@ extension CardsController {
             switch result {
             case let .success(cards):
                 guard let addedCard = cards.first(where: { $0.cardId == cardId }) else {
-                    return completion(.failed(Error.couldNotFindAddedCard))
+                    return completion(.failed(Error.couldNotFindAddedCard(cardId: cardId)))
                 }
                 completion(.succeded(addedCard))
             case let .failure(error):
                 completion(.failed(error))
             }
+        }
+    }
+}
+
+// MARK: - CardsController.Error + LocalizedError
+
+extension CardsController.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .missingCardId:
+            return "Unexpected nil for `cardId` after adding new card"
+        case let .couldNotFindAddedCard(cardId):
+            return "Unexpected behavior of Acquiring API. Could not find added card with id \(cardId) in `GetCardList` response"
         }
     }
 }
