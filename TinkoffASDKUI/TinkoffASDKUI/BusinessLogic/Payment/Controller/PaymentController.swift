@@ -19,7 +19,6 @@
 
 import TinkoffASDKCore
 
-/// Контроллер с помощью которого можно совершать оплату
 final class PaymentController: IPaymentController {
     // MARK: IPaymentController Properties
 

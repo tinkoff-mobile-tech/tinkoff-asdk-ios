@@ -13,6 +13,6 @@ import WebKit
 public protocol ThreeDSWebFlowDelegate: AnyObject {
     /// webView, в котором выполнится запрос для прохождения 3DSChecking
     func hiddenWebViewToCollect3DSData() -> WKWebView
-    /// viewController для модального показа экранов, необходимость в которых может возникнуть в процессе оплаты
+    /// viewController для модального показа экрана с webView, необходимость в котором может возникнуть в процессе оплаты
     func sourceViewControllerToPresent() -> UIViewController?
 }

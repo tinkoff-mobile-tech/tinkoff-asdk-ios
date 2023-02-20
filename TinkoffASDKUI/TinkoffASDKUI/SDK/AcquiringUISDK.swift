@@ -1990,12 +1990,17 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
 
     // MARK: PaymentController
 
+    /// Создает новый `IPaymentController`, с помощью которого можно совершить оплату с прохождением проверки `3DS`
+    /// - Returns: IPaymentController
     public func paymentController() -> IPaymentController {
         paymentControllerAssembly.paymentController()
     }
 
     // MARK: AddCardController
 
+    /// Создает новый `IAddCardController`, с помощью которого можно привязать новую карту с прохождением проверки 3DS
+    /// - Parameter customerKey: Идентификатор покупателя в системе продавца
+    /// - Returns: IAddCardController
     public func addCardController(customerKey: String) -> IAddCardController {
         addCardControllerAssembly.addCardController(customerKey: customerKey)
     }

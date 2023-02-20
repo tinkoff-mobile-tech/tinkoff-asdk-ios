@@ -47,7 +47,7 @@ extension CardsController: ICardsController {
         set { addCardController.webFlowDelegate = newValue }
     }
 
-    func addCard(options: AddCardOptions, completion: @escaping (AddCardResult) -> Void) {
+    func addCard(options: CardOptions, completion: @escaping (AddCardResult) -> Void) {
         let completionDecorator: (AddCardResult) -> Void = { result in
             DispatchQueue.performOnMain { completion(result) }
         }

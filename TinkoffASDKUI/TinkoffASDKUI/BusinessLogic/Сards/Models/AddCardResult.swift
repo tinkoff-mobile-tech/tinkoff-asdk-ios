@@ -8,8 +8,13 @@
 import Foundation
 import TinkoffASDKCore
 
+/// Результат привязки и определения привязанной карты
 public enum AddCardResult {
+    /// Привязка карты произошла успешно.
+    /// В этом случае возвращается модель с подробной информацией о карте
     case succeded(PaymentCard)
+    /// В процессе привязки карты произошла ошибка
     case failed(Error)
+    /// Пользователь отменил привязку новой карты
     case cancelled
 }
