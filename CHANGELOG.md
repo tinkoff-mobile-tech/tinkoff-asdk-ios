@@ -31,6 +31,7 @@
 * [MIC-7707] MainForm - State changes handling
 * [MIC-8013] MainForm - Card payment logic
 * [MIC-7699] CardPayment - Add common functionality of payment by card
+* [MIC-8068] SBP - Opening from main form 
 
 ## [2.17.0] - 2023-02-13Z
 
