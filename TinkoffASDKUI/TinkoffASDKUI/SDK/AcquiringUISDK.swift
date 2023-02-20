@@ -189,6 +189,7 @@ public class AcquiringUISDK: NSObject {
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
+    private let addNewCardAssembly: IAddNewCardAssembly
 
     // MARK: Init
 
@@ -284,6 +285,8 @@ public class AcquiringUISDK: NSObject {
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly
         )
+
+        addNewCardAssembly = AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
     }
 
     /// Вызывается когда пользователь привязывает карту.
@@ -1780,11 +1783,9 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         customerKey: String,
         output: IAddNewCardOutput?
     ) {
-        self.presentingViewController = presentingViewController
-        setupCardListDataProvider(for: customerKey)
-
-        let flow = AddCardListFlow(assembly: AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly))
-        flow.start(presentingViewController: presentingViewController, customerKey: customerKey, output: output)
+        let viewController = addNewCardAssembly.assemble(customerKey: customerKey, output: output)
+        let navigationController = UINavigationController(rootViewController: viewController)
+        presentingViewController.present(navigationController, animated: true)
     }
 
     // MARK: AcquiringPaymentCardLidtDataSourceDelegate

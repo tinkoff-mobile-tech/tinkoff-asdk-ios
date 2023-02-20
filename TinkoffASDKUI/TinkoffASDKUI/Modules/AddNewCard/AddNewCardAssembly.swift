@@ -17,9 +17,13 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     private let cardsControllerAssembly: ICardsControllerAssembly
 
+    // MARK: Init
+
     init(cardsControllerAssembly: ICardsControllerAssembly) {
         self.cardsControllerAssembly = cardsControllerAssembly
     }
+
+    // MARK: IAddNewCardAssembly
 
     func assemble(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController {
         let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
