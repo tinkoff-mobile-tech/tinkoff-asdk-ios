@@ -11,8 +11,8 @@ final class MockAddNewCardOutput: IAddNewCardOutput {
 
     var addingNewCardCompletedCallCounter = 0
 
-    var addingNewCardCompletedStub: (AddNewCardResult) -> Void = { _ in }
-    func addingNewCardCompleted(result: AddNewCardResult) {
+    var addingNewCardCompletedStub: (AddCardResult) -> Void = { _ in }
+    func addingNewCardCompleted(result: AddCardResult) {
         addingNewCardCompletedCallCounter += 1
         addingNewCardCompletedStub(result)
     }

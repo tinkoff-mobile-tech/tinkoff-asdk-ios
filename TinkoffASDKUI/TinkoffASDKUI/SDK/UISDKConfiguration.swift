@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
 /// Конфигурация `TinkoffASDKUI`
 public struct UISDKConfiguration {
@@ -21,6 +22,11 @@ public struct UISDKConfiguration {
     /// По умолчанию будет осуществлено 10 запросов, по истечении которых юзер получит уведомление об истечении времени, отведенного на оплату
     let paymentStatusRetriesCount: Int
 
+    /// Тип проверки при привязке карты
+    ///
+    /// По умолчанию `no`
+    let addCardCheckType: PaymentCardCheckType
+
     /// Инициалищация конфигурации `TinkoffASDKUI`
     /// - Parameter webViewAuthChallengeService: Запрашивает данные и способ аутентификация для `WKWebView`
     /// - Parameter sbpConfiguration: конфигурация раздела системы быстрых платежей (СБП)
@@ -28,11 +34,13 @@ public struct UISDKConfiguration {
     public init(
         webViewAuthChallengeService: IWebViewAuthChallengeService? = nil,
         sbpConfiguration: SBPConfiguration = SBPConfiguration(),
-        paymentStatusRetriesCount: Int = 10
+        paymentStatusRetriesCount: Int = 10,
+        addCardCheckType: PaymentCardCheckType = .no
     ) {
         self.webViewAuthChallengeService = webViewAuthChallengeService
         self.sbpConfiguration = sbpConfiguration
         self.paymentStatusRetriesCount = paymentStatusRetriesCount
+        self.addCardCheckType = addCardCheckType
     }
 }
 

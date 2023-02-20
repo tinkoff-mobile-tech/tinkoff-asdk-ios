@@ -24,16 +24,10 @@ enum AddNewCardSection {
     case cardField
 }
 
-public enum AddNewCardResult {
-    case cancelled
-    case success(card: PaymentCard)
-    case failure(error: Error)
-}
-
 // MARK: - AddNewCardOutput
 
 public protocol IAddNewCardOutput: AnyObject {
-    func addingNewCardCompleted(result: AddNewCardResult)
+    func addingNewCardCompleted(result: AddCardResult)
 }
 
 // MARK: - AddNewCardView

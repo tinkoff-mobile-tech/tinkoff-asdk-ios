@@ -20,11 +20,11 @@
 import Foundation
 
 public struct ChargePayload: Decodable {
-    public let status: PaymentStatus
+    public let status: AcquiringStatus
     public let paymentState: GetPaymentStatePayload
 
     public init(
-        status: PaymentStatus,
+        status: AcquiringStatus,
         paymentState: GetPaymentStatePayload
     ) {
         self.status = status

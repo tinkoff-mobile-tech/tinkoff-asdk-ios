@@ -56,7 +56,7 @@ public struct PaymentStatusResponse: ResponseOperation {
     public var orderId: String
     public var paymentId: Int64
     public var amount: NSDecimalNumber
-    public var status: PaymentStatus
+    public var status: AcquiringStatus
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -82,7 +82,7 @@ public struct PaymentStatusResponse: ResponseOperation {
 
         // status
         if let statusValue = try? container.decode(String.self, forKey: .status) {
-            status = PaymentStatus(rawValue: statusValue)
+            status = AcquiringStatus(rawValue: statusValue)
         } else {
             status = .unknown
         }
@@ -95,7 +95,7 @@ public struct PaymentStatusResponse: ResponseOperation {
         orderId: String,
         paymentId: Int64,
         amount: Int64,
-        status: PaymentStatus
+        status: AcquiringStatus
     ) {
         self.success = success
         self.errorCode = errorCode

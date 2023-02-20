@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class YandexPayPaymentSheetUIProvider: PaymentControllerUIProvider {
+final class YandexPayPaymentSheetUIProvider: ThreeDSWebFlowDelegate {
     weak var view: UIViewController?
     private let webView = WKWebView()
 

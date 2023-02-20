@@ -47,7 +47,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         router.transitionHandler = view
 
         paymentController.delegate = presenter
-        paymentController.uiProvider = view
+        paymentController.webFlowDelegate = view
 
         return view
     }

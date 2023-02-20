@@ -88,11 +88,11 @@ extension AddNewCardPresenter {
                 self.view?.hideLoadingState()
 
                 switch result {
-                case let .success(card):
+                case let .succeded(card):
                     self.view?.closeScreen()
                     self.didAddCard = true
-                    self.output?.addingNewCardCompleted(result: .success(card: card))
-                case let .failure(error):
+                    self.output?.addingNewCardCompleted(result: .succeded(card))
+                case let .failed(error):
                     self.didReceviedError = true
                     self.handleAddCard(error: error)
                 case .cancelled:
@@ -107,10 +107,10 @@ extension AddNewCardPresenter {
 
         if (error as NSError).code == alreadyHasSuchCardErrorCode {
             view?.showOkNativeAlert(data: .alreadyHasSuchCardError)
-            output?.addingNewCardCompleted(result: .failure(error: error))
+            output?.addingNewCardCompleted(result: .failed(error))
         } else {
             view?.showOkNativeAlert(data: .genericError)
-            output?.addingNewCardCompleted(result: .failure(error: error))
+            output?.addingNewCardCompleted(result: .failed(error))
         }
     }
 }

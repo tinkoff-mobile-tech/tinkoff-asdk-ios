@@ -30,13 +30,13 @@ public struct FinishAuthorizePayload: Decodable {
         }
     }
 
-    public let status: PaymentStatus
+    public let status: AcquiringStatus
     public let paymentState: GetPaymentStatePayload
     public var responseStatus: PaymentFinishResponseStatus
     public let rebillId: String?
 
     public init(
-        status: PaymentStatus,
+        status: AcquiringStatus,
         paymentState: GetPaymentStatePayload,
         responseStatus: PaymentFinishResponseStatus,
         rebillId: String? = nil

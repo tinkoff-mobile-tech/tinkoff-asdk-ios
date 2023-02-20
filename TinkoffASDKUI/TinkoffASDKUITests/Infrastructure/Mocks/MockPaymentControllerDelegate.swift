@@ -9,11 +9,10 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class MockPaymentControllerDelegate: PaymentControllerDelegate {
-
     // MARK: - paymentController
 
     struct DidFinishPaymentPassedArguments {
-        let controller: PaymentController
+        let controller: IPaymentController
         let didFinishPayment: PaymentProcess
         let state: GetPaymentStatePayload
         let cardId: String?
@@ -24,7 +23,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     var paymentControllerDidFinishPaymentReturnStub: (DidFinishPaymentPassedArguments) -> Void = { _ in }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFinishPayment: PaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
@@ -44,7 +43,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     // MARK: - paymentController
 
     struct WasCancelledPassedArguments {
-        let controller: PaymentController
+        let controller: IPaymentController
         let paymentWasCancelled: PaymentProcess
         let cardId: String?
         let rebillId: String?
@@ -54,7 +53,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     var paymentControllerPaymentWasCancelledReturnStub: (WasCancelledPassedArguments) -> Void = { _ in }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         paymentWasCancelled: PaymentProcess,
         cardId: String?,
         rebillId: String?
@@ -73,7 +72,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     // MARK: - paymentController
 
     struct DidFailedPassedArguments {
-        let controller: PaymentController
+        let controller: IPaymentController
         let didFailedError: Error
         let cardId: String?
         let rebillId: String?
@@ -83,7 +82,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     var paymentControllerDidFailedReturnStub: (DidFailedPassedArguments) -> Void = { _ in }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?
