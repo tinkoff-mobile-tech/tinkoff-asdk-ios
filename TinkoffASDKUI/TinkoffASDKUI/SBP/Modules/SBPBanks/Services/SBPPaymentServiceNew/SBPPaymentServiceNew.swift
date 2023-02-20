@@ -12,16 +12,16 @@ final class SBPPaymentServiceNew: ISBPPaymentServiceNew {
     // MARK: Dependencies
 
     private let acquiringSdk: AcquiringSdk
-    private let paymentConfiguration: AcquiringPaymentStageConfiguration
+    private let paymentFlow: PaymentFlow
 
     // MARK: Initialization
 
     init(
         acquiringSdk: AcquiringSdk,
-        paymentConfiguration: AcquiringPaymentStageConfiguration
+        paymentFlow: PaymentFlow
     ) {
         self.acquiringSdk = acquiringSdk
-        self.paymentConfiguration = paymentConfiguration
+        self.paymentFlow = paymentFlow
     }
 }
 
@@ -29,9 +29,9 @@ final class SBPPaymentServiceNew: ISBPPaymentServiceNew {
 
 extension SBPPaymentServiceNew {
     func loadPaymentQr(completion: @escaping SBPPaymentServiceNewCompletion) {
-        switch paymentConfiguration.paymentStage {
-        case let .`init`(paymentData):
-            acquiringSdk.initPayment(data: paymentData, completion: { [weak self] result in
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            acquiringSdk.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
                 switch result {
                 case let .success(initPayload):
                     self?.getPaymentQrData(paymentId: initPayload.paymentId, completion: completion)
@@ -39,7 +39,7 @@ extension SBPPaymentServiceNew {
                     completion(.failure(error))
                 }
             })
-        case let .finish(paymentId):
+        case let .finish(paymentId, _):
             getPaymentQrData(paymentId: String(paymentId), completion: completion)
         }
     }

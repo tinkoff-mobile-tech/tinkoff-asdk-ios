@@ -33,12 +33,12 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
     }
 
     func buildInitialModule(
-        paymentConfiguration: AcquiringPaymentStageConfiguration,
+        paymentFlow: PaymentFlow,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) -> SBPBanksModule {
         let paymentService = SBPPaymentServiceNew(
             acquiringSdk: acquiringSdk,
-            paymentConfiguration: paymentConfiguration
+            paymentFlow: paymentFlow
         )
         return build(paymentService: paymentService, paymentSheetOutput: paymentSheetOutput)
     }
