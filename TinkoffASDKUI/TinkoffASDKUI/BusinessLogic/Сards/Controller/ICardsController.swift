@@ -29,5 +29,5 @@ public protocol ICardsController: AnyObject {
     ///
     /// В данном методе возвращаются только карты со статусом `Active`
     /// - Parameter completion: Замыкание с результатом получения списка карт, вызывающееся на главном потоке
-    func getCards(completion: @escaping (Result<[PaymentCard], Error>) -> Void)
+    func getActiveCards(completion: @escaping (Result<[PaymentCard], Error>) -> Void)
 }

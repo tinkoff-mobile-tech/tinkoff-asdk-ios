@@ -21,21 +21,18 @@ final class CardsController {
     private let coreSDK: AcquiringSdk
     private let addCardController: IAddCardController
     private let customerKey: String
-    private let availableCardStatuses: Set<PaymentCardStatus>
 
     // MARK: Init
 
     init(
         coreSDK: AcquiringSdk,
         addCardController: IAddCardController,
-        customerKey: String,
-        availableCardStatuses: Set<PaymentCardStatus> = [.active]
+        customerKey: String
 
     ) {
         self.coreSDK = coreSDK
         self.addCardController = addCardController
         self.customerKey = customerKey
-        self.availableCardStatuses = availableCardStatuses
     }
 }
 
@@ -74,12 +71,12 @@ extension CardsController: ICardsController {
         }
     }
 
-    func getCards(completion: @escaping (Result<[PaymentCard], Swift.Error>) -> Void) {
+    func getActiveCards(completion: @escaping (Result<[PaymentCard], Swift.Error>) -> Void) {
         let getCardListData = GetCardListData(customerKey: customerKey)
 
-        coreSDK.getCardList(data: getCardListData) { [availableCardStatuses] result in
+        coreSDK.getCardList(data: getCardListData) { result in
             let filteredCardsResult = result.map { cards in
-                cards.filter { availableCardStatuses.contains($0.status) }
+                cards.filter { $0.status == .active }
             }
 
             DispatchQueue.performOnMain { completion(filteredCardsResult) }
@@ -95,7 +92,7 @@ extension CardsController {
             return completion(.failed(Error.missingCardId))
         }
 
-        getCards { result in
+        getActiveCards { result in
             switch result {
             case let .success(cards):
                 guard let addedCard = cards.first(where: { $0.cardId == cardId }) else {

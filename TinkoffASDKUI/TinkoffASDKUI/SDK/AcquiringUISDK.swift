@@ -216,9 +216,11 @@ public class AcquiringUISDK: NSObject {
         acquiringSdk = coreSDK
         self.style = style
 
+        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+
         let threeDSWebViewAssembly = ThreeDSWebViewAssembly(
             coreSDK: coreSDK,
-            authChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+            authChallengeService: webViewAuthChallengeService
         )
 
         let threeDSWebFlowAssembly = ThreeDSWebFlowControllerAssembly(
@@ -274,7 +276,6 @@ public class AcquiringUISDK: NSObject {
             ),
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
-        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
 
         let cardPaymentAssembly = CardPaymentAssembly(paymentControllerAssembly: paymentControllerAssembly)
         mainFormAssembly = MainFormAssembly(
