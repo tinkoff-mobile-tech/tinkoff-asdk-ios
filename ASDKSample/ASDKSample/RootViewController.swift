@@ -250,7 +250,7 @@ private extension RootViewController {
 
 extension RootViewController: IAddNewCardOutput {
 
-    func addingNewCardCompleted(result: AddNewCardResult) {
+    func addingNewCardCompleted(result: AddCardResult) {
         switch result {
         case .cancelled, .failed:
             let alert = UIAlertController.okAlert(

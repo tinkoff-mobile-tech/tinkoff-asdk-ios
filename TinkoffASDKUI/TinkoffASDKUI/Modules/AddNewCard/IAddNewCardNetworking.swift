@@ -15,6 +15,6 @@ protocol IAddNewCardNetworking {
         number: String,
         expiration: String,
         cvc: String,
-        resultCompletion: @escaping (AddNewCardResult) -> Void
+        resultCompletion: @escaping (AddCardResult) -> Void
     )
 }

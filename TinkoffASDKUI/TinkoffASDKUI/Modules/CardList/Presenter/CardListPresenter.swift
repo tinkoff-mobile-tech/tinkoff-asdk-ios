@@ -190,7 +190,7 @@ extension CardListPresenter: ICardListViewOutput {
 
 extension CardListPresenter: IAddNewCardOutput {
 
-    func addingNewCardCompleted(result: AddNewCardResult) {
+    func addingNewCardCompleted(result: AddCardResult) {
         switch result {
         case .cancelled, .failed:
             break

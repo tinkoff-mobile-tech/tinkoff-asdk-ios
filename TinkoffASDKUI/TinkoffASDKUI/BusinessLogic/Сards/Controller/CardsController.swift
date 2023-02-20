@@ -47,8 +47,8 @@ extension CardsController: ICardsController {
         set { addCardController.webFlowDelegate = newValue }
     }
 
-    func addCard(options: AddCardOptions, completion: @escaping (AddNewCardResult) -> Void) {
-        let completionDecorator: (AddNewCardResult) -> Void = { result in
+    func addCard(options: AddCardOptions, completion: @escaping (AddCardResult) -> Void) {
+        let completionDecorator: (AddCardResult) -> Void = { result in
             DispatchQueue.performOnMain { completion(result) }
         }
 
@@ -90,7 +90,7 @@ extension CardsController: ICardsController {
 // MARK: - Helpers
 
 extension CardsController {
-    private func resolveAddedCard(payload: GetAddCardStatePayload, completion: @escaping (AddNewCardResult) -> Void) {
+    private func resolveAddedCard(payload: GetAddCardStatePayload, completion: @escaping (AddCardResult) -> Void) {
         guard let cardId = payload.cardId else {
             return completion(.failed(Error.missingCardId))
         }

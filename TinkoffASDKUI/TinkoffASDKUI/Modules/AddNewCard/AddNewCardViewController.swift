@@ -27,7 +27,7 @@ enum AddNewCardSection {
 // MARK: - AddNewCardOutput
 
 public protocol IAddNewCardOutput: AnyObject {
-    func addingNewCardCompleted(result: AddNewCardResult)
+    func addingNewCardCompleted(result: AddCardResult)
 }
 
 // MARK: - AddNewCardView
