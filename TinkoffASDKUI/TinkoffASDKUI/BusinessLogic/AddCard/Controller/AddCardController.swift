@@ -245,7 +245,11 @@ extension AddCardController {
                 completion: completion
             )
         case .done:
-            getState(requestKey: attachCardPayload.requestKey, completion: completion)
+            getState(
+                requestKey: attachCardPayload.requestKey,
+                cardId: attachCardPayload.cardId,
+                completion: completion
+            )
         case .needConfirmationRandomAmount:
             completion(.failed(Error.unsupportedResponseStatus))
         }
@@ -292,13 +296,13 @@ extension AddCardController {
     }
 
     /// Запрашивает статус привзяки карты
-    private func getState(requestKey: String, completion: @escaping Completion) {
+    private func getState(requestKey: String, cardId: String?, completion: @escaping Completion) {
         coreSDK.getAddCardState(data: GetAddCardStateData(requestKey: requestKey)) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
             case let .success(payload):
-                self.validate(statePayload: payload, completion: completion)
+                self.validate(statePayload: payload.replacingCardIdIfNil(cardId: cardId), completion: completion)
             case let .failure(error):
                 completion(.failed(error))
             }
@@ -343,6 +347,22 @@ private extension Check3DSVersionData {
                 expDate: options.validThru,
                 cvv: options.cvc
             )
+        )
+    }
+}
+
+private extension GetAddCardStatePayload {
+    /// Заменяет `cardId` переданным значением, если собственный `cardId == nil`
+    ///
+    /// При привязке карты без использования 3DS `cardId` не возвращается в запросе `GetAddCardState`,
+    /// но зато возвращается в запросе `AttachCard`.
+    /// Этот костыль лечит отсутствие `cardId` в completion `AddCardController`
+    func replacingCardIdIfNil(cardId: String?) -> GetAddCardStatePayload {
+        GetAddCardStatePayload(
+            requestKey: requestKey,
+            status: status,
+            cardId: self.cardId ?? cardId,
+            rebillId: rebillId
         )
     }
 }
