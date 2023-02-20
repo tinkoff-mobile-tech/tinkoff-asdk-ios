@@ -21,25 +21,28 @@ import Foundation
 import TinkoffASDKCore
 
 protocol IPaymentControllerAssembly {
-    func paymentController() -> PaymentController
+    func paymentController() -> IPaymentController
 }
 
 final class PaymentControllerAssembly: IPaymentControllerAssembly {
     private let coreSDK: AcquiringSdk
+    private let threeDSWebFlowAssembly: IThreeDSWebFlowControllerAssembly
     private let sdkConfiguration: AcquiringSdkConfiguration
     private let uiSDKConfiguration: UISDKConfiguration
 
     init(
         coreSDK: AcquiringSdk,
+        threeDSWebFlowAssembly: IThreeDSWebFlowControllerAssembly,
         sdkConfiguration: AcquiringSdkConfiguration,
         uiSDKConfiguration: UISDKConfiguration
     ) {
         self.coreSDK = coreSDK
+        self.threeDSWebFlowAssembly = threeDSWebFlowAssembly
         self.sdkConfiguration = sdkConfiguration
         self.uiSDKConfiguration = uiSDKConfiguration
     }
 
-    func paymentController() -> PaymentController {
+    func paymentController() -> IPaymentController {
         let uiSDK = AcquiringUISDK(
             coreSDK: coreSDK,
             configuration: sdkConfiguration,
@@ -56,11 +59,10 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
 
         return PaymentController(
             paymentFactory: paymentFactory(acquiringSDK: coreSDK),
+            threeDSWebFlowController: threeDSWebFlowAssembly.threeDSWebFlowController(),
             threeDSService: coreSDK,
-            threeDSHandler: coreSDK.threeDSWebViewSHandler(),
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             tdsController: uiSDK.tdsController,
-            webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
             paymentStatusUpdateService: paymentStatusUpdateService,
             acquiringUISDK: uiSDK
         )

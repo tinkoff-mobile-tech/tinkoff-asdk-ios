@@ -50,7 +50,7 @@ public struct FinishAddCardResponse: ResponseOperation {
     public var errorMessage: String?
     public var errorDetails: String?
     public var terminalKey: String?
-    public var paymentStatus: PaymentStatus
+    public var paymentStatus: AcquiringStatus
     public var responseStatus: AddCardFinishResponseStatus
     //
     var cardId: String?
@@ -65,7 +65,7 @@ public struct FinishAddCardResponse: ResponseOperation {
 
         paymentStatus = .unknown
         if let statusValue = try? container.decode(String.self, forKey: .paymentStatus) {
-            paymentStatus = PaymentStatus(rawValue: statusValue)
+            paymentStatus = AcquiringStatus(rawValue: statusValue)
         }
 
         responseStatus = .unknown

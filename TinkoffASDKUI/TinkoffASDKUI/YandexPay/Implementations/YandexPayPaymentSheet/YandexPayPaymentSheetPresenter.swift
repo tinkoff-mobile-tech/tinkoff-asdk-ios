@@ -14,7 +14,7 @@ final class YandexPayPaymentSheetPresenter {
     weak var view: ICommonSheetView?
     private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
-    private let paymentControllerUIProvider: PaymentControllerUIProvider
+    private let paymentControllerUIProvider: ThreeDSWebFlowDelegate
     private let paymentFlow: PaymentFlow
     private let base64Token: String
 
@@ -27,7 +27,7 @@ final class YandexPayPaymentSheetPresenter {
 
     init(
         paymentController: IPaymentController,
-        paymentControllerUIProvider: PaymentControllerUIProvider,
+        paymentControllerUIProvider: ThreeDSWebFlowDelegate,
         paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
@@ -71,7 +71,7 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
 
 extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFinishPayment: PaymentProcess,
         with state: TinkoffASDKCore.GetPaymentStatePayload,
         cardId: String?,
@@ -90,7 +90,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         paymentWasCancelled: PaymentProcess,
         cardId: String?,
         rebillId: String?
@@ -101,7 +101,7 @@ extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?

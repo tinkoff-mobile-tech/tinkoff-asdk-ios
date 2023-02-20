@@ -39,13 +39,13 @@ public struct InitPayload: Decodable, Equatable {
     public let amount: Int64
     public let orderId: String
     public let paymentId: String
-    public let status: PaymentStatus
+    public let status: AcquiringStatus
 
     public init(
         amount: Int64,
         orderId: String,
         paymentId: String,
-        status: PaymentStatus
+        status: AcquiringStatus
     ) {
         self.amount = amount
         self.orderId = orderId
@@ -58,6 +58,6 @@ public struct InitPayload: Decodable, Equatable {
         paymentId = try container.decode(String.self, forKey: .paymentId)
         amount = try container.decode(Int64.self, forKey: .amount)
         orderId = try container.decode(String.self, forKey: .orderId)
-        status = try container.decodeIfPresent(PaymentStatus.self, forKey: .status) ?? .unknown
+        status = try container.decodeIfPresent(AcquiringStatus.self, forKey: .status) ?? .unknown
     }
 }

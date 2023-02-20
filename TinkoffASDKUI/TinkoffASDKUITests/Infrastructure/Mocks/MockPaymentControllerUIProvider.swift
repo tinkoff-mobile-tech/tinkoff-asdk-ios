@@ -10,7 +10,7 @@ import TinkoffASDKCore
 import class UIKit.UIViewController
 import WebKit
 
-final class MockPaymentControllerUIProvider: PaymentControllerUIProvider {
+final class MockPaymentControllerUIProvider: ThreeDSWebFlowDelegate {
 
     // MARK: - hiddenWebViewToCollect3DSData
 

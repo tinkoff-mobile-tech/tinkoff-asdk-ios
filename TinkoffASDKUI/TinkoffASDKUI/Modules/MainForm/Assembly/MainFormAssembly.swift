@@ -58,7 +58,7 @@ final class MainFormAssembly: IMainFormAssembly {
         presenter.view = view
 
         paymentController.delegate = presenter
-        paymentController.uiProvider = view
+        paymentController.webFlowDelegate = view
 
         let pullableContainerViewController = PullableContainerViewController(content: view)
         return pullableContainerViewController

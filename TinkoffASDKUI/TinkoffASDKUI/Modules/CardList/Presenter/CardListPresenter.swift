@@ -190,11 +190,11 @@ extension CardListPresenter: ICardListViewOutput {
 
 extension CardListPresenter: IAddNewCardOutput {
 
-    func addingNewCardCompleted(result: AddNewCardResult) {
+    func addingNewCardCompleted(result: AddCardResult) {
         switch result {
-        case .cancelled, .failure:
+        case .cancelled, .failed:
             break
-        case let .success(card):
+        case let .succeded(card):
             screenState = .showingCards
             activeCardsCache.append(card)
             view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))

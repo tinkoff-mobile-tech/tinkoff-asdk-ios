@@ -184,6 +184,8 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let addCardControllerAssembly: IAddCardControllerAssembly
+    private let cardsControllerAssembly: ICardsControllerAssembly
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
@@ -214,10 +216,34 @@ public class AcquiringUISDK: NSObject {
         acquiringSdk = coreSDK
         self.style = style
 
+        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+
+        let threeDSWebViewAssembly = ThreeDSWebViewAssembly(
+            coreSDK: coreSDK,
+            authChallengeService: webViewAuthChallengeService
+        )
+
+        let threeDSWebFlowAssembly = ThreeDSWebFlowControllerAssembly(
+            coreSDK: coreSDK,
+            threeDSWebViewAssembly: threeDSWebViewAssembly
+        )
+
         paymentControllerAssembly = PaymentControllerAssembly(
             coreSDK: coreSDK,
+            threeDSWebFlowAssembly: threeDSWebFlowAssembly,
             sdkConfiguration: configuration,
             uiSDKConfiguration: uiSDKConfiguration
+        )
+
+        addCardControllerAssembly = AddCardControllerAssembly(
+            coreSDK: coreSDK,
+            webFlowControllerAssembly: threeDSWebFlowAssembly,
+            configuration: uiSDKConfiguration
+        )
+
+        cardsControllerAssembly = CardsControllerAssembly(
+            coreSDK: coreSDK,
+            addCardControllerAssembly: addCardControllerAssembly
         )
 
         sbpBanksAssembly = SBPBanksAssembly(
@@ -250,7 +276,6 @@ public class AcquiringUISDK: NSObject {
             ),
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
-        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
 
         let cardPaymentAssembly = CardPaymentAssembly(paymentControllerAssembly: paymentControllerAssembly)
         mainFormAssembly = MainFormAssembly(
@@ -906,7 +931,7 @@ public class AcquiringUISDK: NSObject {
     }
 
     private func sbpWaitingIncominPayment(paymentId: Int64, source: String, sourceType: PaymentInvoiceSBPSourceType) {
-        let completionStatus: [PaymentStatus] = [.confirmed, .checked3ds, .refunded, .reversed, .rejected]
+        let completionStatus: [AcquiringStatus] = [.confirmed, .checked3ds, .refunded, .reversed, .rejected]
         let completionHandler = onPaymentCompletionHandler
 
         checkPaymentStatus = PaymentStatusServiceProvider(sdk: acquiringSdk, paymentId: paymentId)
@@ -1964,18 +1989,27 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
         }
     }
 
-    // MARK: - PaymentController
+    // MARK: PaymentController
 
-    public func paymentController(
-        uiProvider: PaymentControllerUIProvider,
-        delegate: PaymentControllerDelegate,
-        dataSource: PaymentControllerDataSource? = nil
-    ) -> PaymentController {
-        let paymentController = paymentControllerAssembly.paymentController()
-        paymentController.uiProvider = uiProvider
-        paymentController.delegate = delegate
-        paymentController.dataSource = dataSource
-        return paymentController
+    /// Создает новый `IPaymentController`, с помощью которого можно совершить оплату с прохождением проверки `3DS`
+    /// - Returns: IPaymentController
+    public func paymentController() -> IPaymentController {
+        paymentControllerAssembly.paymentController()
+    }
+
+    // MARK: AddCardController
+
+    /// Создает новый `IAddCardController`, с помощью которого можно привязать новую карту с прохождением проверки 3DS
+    /// - Parameter customerKey: Идентификатор покупателя в системе продавца
+    /// - Returns: IAddCardController
+    public func addCardController(customerKey: String) -> IAddCardController {
+        addCardControllerAssembly.addCardController(customerKey: customerKey)
+    }
+
+    // MARK: CardsController
+
+    public func cardsController(customerKey: String) -> ICardsController {
+        cardsControllerAssembly.cardsController(customerKey: customerKey)
     }
 }
 
@@ -2118,7 +2152,7 @@ extension AcquiringUISDK: IAddNewCardNetworking {
         number: String,
         expiration: String,
         cvc: String,
-        resultCompletion: @escaping (AddNewCardResult) -> Void
+        resultCompletion: @escaping (AddCardResult) -> Void
     ) {
         cardListToAddCard(
             number: number,
@@ -2129,13 +2163,13 @@ extension AcquiringUISDK: IAddNewCardNetworking {
                 switch result {
                 case let .success(card):
                     if let card = card {
-                        resultCompletion(.success(card: card))
+                        resultCompletion(.succeded(card))
                     } else {
                         resultCompletion(.cancelled)
                     }
 
                 case let .failure(error):
-                    resultCompletion(.failure(error: error))
+                    resultCompletion(.failed(error))
                 }
             }
         )

@@ -1,5 +1,5 @@
 //
-//  PaymentStatus.swift
+//  AcquiringStatus.swift
 //  TinkoffASDKCore
 //
 //  Created by r.akhmadeev on 07.10.2022.
@@ -7,8 +7,11 @@
 
 import Foundation
 
-/// Cостояния платежа, подробнее [Двухстадийная форма оплаты](https://oplata.tinkoff.ru/landing/develop/documentation/processing_payment).
-public enum PaymentStatus: String, Decodable, Equatable {
+@available(*, deprecated, renamed: "AcquiringStatus")
+public typealias PaymentStatus = AcquiringStatus
+
+/// Состояние операции API эквайринга
+public enum AcquiringStatus: String, Decodable, Equatable {
     /// Платёж создан
     case new = "NEW"
     /// Отмена платежа

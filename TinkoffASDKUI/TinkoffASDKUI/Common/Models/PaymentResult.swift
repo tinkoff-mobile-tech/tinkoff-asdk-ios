@@ -19,7 +19,7 @@ public enum PaymentResult {
         /// Сумма заказа в копейках
         public let amount: Int64
         // Последний детальный статус о платеже
-        public let paymentStatus: PaymentStatus
+        public let paymentStatus: AcquiringStatus
 
         /// Инициализация параметров
         /// - Parameters:
@@ -30,7 +30,7 @@ public enum PaymentResult {
             paymentId: String,
             orderId: String,
             amount: Int64,
-            paymentStatus: PaymentStatus
+            paymentStatus: AcquiringStatus
         ) {
             self.paymentId = paymentId
             self.orderId = orderId
