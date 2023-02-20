@@ -35,9 +35,9 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     // MARK: IThreeDSUIHandler
 
-    func confirm3DS<Payload: Decodable>(
+    func confirm3DS(
         data: Confirmation3DSData,
-        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void
     ) {
         present3DSWebView(
             urlRequest: try threeDSService.createConfirmation3DSRequest(data: data),
@@ -45,10 +45,10 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
         )
     }
 
-    func confirm3DSACS<Payload: Decodable>(
+    func confirm3DSACS(
         data: Confirmation3DSDataACS,
         messageVersion: String,
-        completion: @escaping (ThreeDSWebViewHandlingResult<Payload>) -> Void
+        completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void
     ) {
         present3DSWebView(
             urlRequest: try threeDSService.createConfirmation3DSRequestACS(data: data, messageVersion: messageVersion),

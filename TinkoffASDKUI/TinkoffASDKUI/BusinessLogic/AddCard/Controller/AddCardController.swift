@@ -270,7 +270,7 @@ extension AddCardController {
         completion: @escaping Completion
     ) {
         DispatchQueue.performOnMain { [weak self] in
-            self?.webFlowController.confirm3DS(paymentConfirmationData: confirmationData) { webViewResult in
+            self?.webFlowController.confirm3DS(data: confirmationData) { webViewResult in
                 self?.validate(
                     webViewResult: webViewResult,
                     attachPayload: attachPayload,
@@ -288,10 +288,7 @@ extension AddCardController {
         completion: @escaping Completion
     ) {
         DispatchQueue.performOnMain { [weak self] in
-            self?.webFlowController.confirm3DSACS(
-                paymentConfirmationData: confirmationData,
-                messageVersion: messageVersion
-            ) { webViewResult in
+            self?.webFlowController.confirm3DSACS(data: confirmationData, messageVersion: messageVersion) { webViewResult in
                 self?.validate(
                     webViewResult: webViewResult,
                     attachPayload: attachPayload,
