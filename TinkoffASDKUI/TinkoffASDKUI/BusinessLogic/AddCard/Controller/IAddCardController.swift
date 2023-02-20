@@ -8,10 +8,8 @@
 import Foundation
 import TinkoffASDKCore
 
-typealias AddCardStateCompletion = (AddCardStateResult) -> Void
-
-protocol IAddCardController: AnyObject {
+public protocol IAddCardController: AnyObject {
     var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
 
-    func addCard(options: AddCardOptions, completion: @escaping AddCardStateCompletion)
+    func addCard(options: AddCardOptions, completion: @escaping (AddCardStateResult) -> Void)
 }

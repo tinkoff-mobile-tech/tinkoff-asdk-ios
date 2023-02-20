@@ -1993,6 +1993,18 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     public func paymentController() -> IPaymentController {
         paymentControllerAssembly.paymentController()
     }
+
+    // MARK: AddCardController
+
+    public func addCardController(customerKey: String) -> IAddCardController {
+        addCardControllerAssembly.addCardController(customerKey: customerKey)
+    }
+
+    // MARK: CardsController
+
+    public func cardsController(customerKey: String) -> ICardsController {
+        cardsControllerAssembly.cardsController(customerKey: customerKey)
+    }
 }
 
 // MARK: WKNavigationDelegate
@@ -2145,13 +2157,13 @@ extension AcquiringUISDK: IAddNewCardNetworking {
                 switch result {
                 case let .success(card):
                     if let card = card {
-                        resultCompletion(.success(card: card))
+                        resultCompletion(.succeded(card))
                     } else {
                         resultCompletion(.cancelled)
                     }
 
                 case let .failure(error):
-                    resultCompletion(.failure(error: error))
+                    resultCompletion(.failed(error))
                 }
             }
         )

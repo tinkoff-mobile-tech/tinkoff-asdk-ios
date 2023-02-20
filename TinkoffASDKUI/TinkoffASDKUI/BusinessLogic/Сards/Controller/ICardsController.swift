@@ -8,7 +8,7 @@
 import Foundation
 import TinkoffASDKCore
 
-protocol ICardsController: AnyObject {
+public protocol ICardsController: AnyObject {
     var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
 
     func addCard(options: AddCardOptions, completion: @escaping (AddNewCardResult) -> Void)

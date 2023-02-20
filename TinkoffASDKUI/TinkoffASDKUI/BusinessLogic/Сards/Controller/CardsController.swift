@@ -59,7 +59,7 @@ extension CardsController: ICardsController {
             case let .succeded(payload):
                 self.resolveAddedCard(payload: payload, completion: completionDecorator)
             case let .failed(error):
-                completionDecorator(.failure(error: error))
+                completionDecorator(.failed(error))
             case .cancelled:
                 completionDecorator(.cancelled)
             }
@@ -92,18 +92,18 @@ extension CardsController: ICardsController {
 extension CardsController {
     private func resolveAddedCard(payload: GetAddCardStatePayload, completion: @escaping (AddNewCardResult) -> Void) {
         guard let cardId = payload.cardId else {
-            return completion(.failure(error: Error.missingCardId))
+            return completion(.failed(Error.missingCardId))
         }
 
         getCards { result in
             switch result {
             case let .success(cards):
                 guard let addedCard = cards.first(where: { $0.cardId == cardId }) else {
-                    return completion(.failure(error: Error.couldNotFindAddedCard))
+                    return completion(.failed(Error.couldNotFindAddedCard))
                 }
-                completion(.success(card: addedCard))
+                completion(.succeded(addedCard))
             case let .failure(error):
-                completion(.failure(error: error))
+                completion(.failed(error))
             }
         }
     }

@@ -252,7 +252,7 @@ extension RootViewController: IAddNewCardOutput {
 
     func addingNewCardCompleted(result: AddNewCardResult) {
         switch result {
-        case .cancelled, .failure:
+        case .cancelled, .failed:
             let alert = UIAlertController.okAlert(
                 title: nil,
                 message: String(describing: result),
@@ -261,7 +261,7 @@ extension RootViewController: IAddNewCardOutput {
 
             present(alert, animated: true)
 
-        case let .success(card):
+        case let .succeded(card):
             let alert = UIAlertController.okAlert(
                 title: nil,
                 message: Loc.AddCard.Alert.message(String.format(pan: card.pan)),

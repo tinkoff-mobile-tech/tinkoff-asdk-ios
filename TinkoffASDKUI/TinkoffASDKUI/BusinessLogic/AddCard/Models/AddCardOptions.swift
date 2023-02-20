@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AddCardOptions {
+public struct AddCardOptions {
     let pan: String
     let validThru: String
     let cvc: String

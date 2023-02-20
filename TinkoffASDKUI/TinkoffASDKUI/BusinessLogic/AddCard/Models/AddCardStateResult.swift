@@ -8,7 +8,7 @@
 import Foundation
 import TinkoffASDKCore
 
-enum AddCardStateResult {
+public enum AddCardStateResult {
     case succeded(GetAddCardStatePayload)
     case failed(Error)
     case cancelled

@@ -10,7 +10,9 @@ import TinkoffASDKCore
 
 /// Объект, отвечающий за процесс привязки новой карты с прохождением проверки 3DS при необходимости
 final class AddCardController {
-    // MARK: Error
+    // MARK: Internal Types
+
+    typealias Completion = (AddCardStateResult) -> Void
 
     enum Error: Swift.Error {
         case missingPaymentIdFor3DSFlow
@@ -58,8 +60,8 @@ extension AddCardController: IAddCardController {
         set { webFlowController.webFlowDelegate = newValue }
     }
 
-    func addCard(options: AddCardOptions, completion: @escaping AddCardStateCompletion) {
-        let completionDecorator: AddCardStateCompletion = { result in
+    func addCard(options: AddCardOptions, completion: @escaping (AddCardStateResult) -> Void) {
+        let completionDecorator: Completion = { result in
             DispatchQueue.performOnMain { completion(result) }
         }
 
@@ -87,7 +89,7 @@ extension AddCardController {
     private func check3DSVersionIfNeeded(
         options: AddCardOptions,
         addCardPayload: AddCardPayload,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         switch checkType {
         case .check3DS, .hold3DS:
@@ -115,7 +117,7 @@ extension AddCardController {
         options: AddCardOptions,
         paymentId: String,
         requestKey: String,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         coreSDK.check3DSVersion(data: .data(with: paymentId, options: options)) { [weak self] result in
             guard let self = self else { return }
@@ -141,7 +143,7 @@ extension AddCardController {
         options: AddCardOptions,
         check3DSPayload: Check3DSVersionPayload,
         requestKey: String,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         if let tdsServerTransID = check3DSPayload.tdsServerTransID,
            let threeDSMethodURL = check3DSPayload.threeDSMethodURL {
@@ -170,7 +172,7 @@ extension AddCardController {
         checking3DSURLData: Checking3DSURLData,
         requestKey: String,
         messageVersion: String,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
@@ -197,7 +199,7 @@ extension AddCardController {
         options: AddCardOptions,
         deviceData: ThreeDSDeviceInfo? = nil,
         messageVersion: String? = nil,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         let attachData = AttachCardData(
             cardNumber: options.pan,
@@ -227,7 +229,7 @@ extension AddCardController {
     private func confirm3DSIfNeeded(
         attachCardPayload: AttachCardPayload,
         messageVersion: String?,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         switch attachCardPayload.attachCardStatus {
         case let .needConfirmation3DS(confirmation3DSData):
@@ -250,7 +252,7 @@ extension AddCardController {
     }
 
     /// Подтверждает привязку карты с помощью `Web Flow 3DS v1`
-    private func confirm3DS(confirmationData: Confirmation3DSData, completion: @escaping AddCardStateCompletion) {
+    private func confirm3DS(confirmationData: Confirmation3DSData, completion: @escaping Completion) {
         DispatchQueue.performOnMain { [weak self] in
             self?.webFlowController.confirm3DS(addCardConfirmationData: confirmationData) { webViewResult in
                 self?.handle(webViewResult: webViewResult, completion: completion)
@@ -262,7 +264,7 @@ extension AddCardController {
     private func confirm3DSACS(
         confirmationData: Confirmation3DSDataACS,
         messageVersion: String,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         DispatchQueue.performOnMain { [weak self] in
             self?.webFlowController.confirm3DSACS(
@@ -277,7 +279,7 @@ extension AddCardController {
     /// Обрабатывает результат работы `3DS WebView`
     private func handle(
         webViewResult: ThreeDSWebViewHandlingResult<GetAddCardStatePayload>,
-        completion: @escaping AddCardStateCompletion
+        completion: @escaping Completion
     ) {
         switch webViewResult {
         case let .succeded(payload):
@@ -290,7 +292,7 @@ extension AddCardController {
     }
 
     /// Запрашивает статус привзяки карты
-    private func getState(requestKey: String, completion: @escaping AddCardStateCompletion) {
+    private func getState(requestKey: String, completion: @escaping Completion) {
         coreSDK.getAddCardState(data: GetAddCardStateData(requestKey: requestKey)) { [weak self] result in
             guard let self = self else { return }
 
@@ -304,7 +306,7 @@ extension AddCardController {
     }
 
     /// Валидирует статус привязки карты. При неуспешном статусе возвращает ошибку
-    private func validate(statePayload: GetAddCardStatePayload, completion: @escaping AddCardStateCompletion) {
+    private func validate(statePayload: GetAddCardStatePayload, completion: @escaping Completion) {
         guard successfulStatuses.contains(statePayload.status) else {
             return completion(.failed(Error.invalidAttachStatus))
         }
