@@ -17,7 +17,9 @@
 //  limitations under the License.
 //
 
+import Foundation
 import TinkoffASDKCore
+import UIKit
 
 final class PaymentController: IPaymentController {
     // MARK: IPaymentController Properties
