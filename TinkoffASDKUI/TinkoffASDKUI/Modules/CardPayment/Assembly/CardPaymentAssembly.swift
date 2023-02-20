@@ -12,18 +12,23 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
 
     // MARK: Dependencies
 
+    private let coreSDK: AcquiringSdk
     private let paymentControllerAssembly: IPaymentControllerAssembly
 
     // MARK: Initialization
 
-    init(paymentControllerAssembly: IPaymentControllerAssembly) {
+    init(
+        coreSDK: AcquiringSdk,
+        paymentControllerAssembly: IPaymentControllerAssembly
+    ) {
+        self.coreSDK = coreSDK
         self.paymentControllerAssembly = paymentControllerAssembly
     }
 
     // MARK: ICardPaymentAssembly
 
     func build(
-        activeCards: [PaymentCard],
+        activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
         output: ICardPaymentPresenterModuleOutput?
@@ -31,12 +36,11 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let paymentController = paymentControllerAssembly.paymentController()
 
         let router = CardPaymentRouter()
-        let moneyFormatter = MoneyFormatter()
         let presenter = CardPaymentPresenter(
             router: router,
             output: output,
+            coreSDK: coreSDK,
             paymentController: paymentController,
-            moneyFormatter: moneyFormatter,
             activeCards: activeCards,
             paymentFlow: paymentFlow,
             amount: Int(amount)

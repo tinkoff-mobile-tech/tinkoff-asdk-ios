@@ -9,7 +9,6 @@ protocol ICardPaymentViewControllerOutput {
     func viewDidLoad()
 
     func closeButtonPressed()
-    func payButtonPressed()
 
     func numberOfRows() -> Int
     func cellType(for row: Int) -> CardPaymentCellType

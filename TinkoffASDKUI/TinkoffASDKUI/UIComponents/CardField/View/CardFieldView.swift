@@ -7,6 +7,8 @@
 
 import UIKit
 
+typealias CardFieldTableCell = TableCell<CardFieldView>
+
 final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Dependencies
@@ -18,7 +20,7 @@ final class CardFieldView: UIView, ICardFieldViewInput {
         }
     }
 
-    private let maskingFactory: ICardFieldMaskingFactory
+    private let maskingFactory = CardFieldMaskingFactory()
 
     private lazy var cardNumberDelegate = maskingFactory.buildMaskingDelegate(for: .cardNumber, listener: self)
     private lazy var expirationDelegate = maskingFactory.buildMaskingDelegate(for: .expiration, listener: self)
@@ -36,9 +38,8 @@ final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Initialization
 
-    init(maskingFactory: ICardFieldMaskingFactory = CardFieldMaskingFactory()) {
-        self.maskingFactory = maskingFactory
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupViews()
         setupConstraints()
     }

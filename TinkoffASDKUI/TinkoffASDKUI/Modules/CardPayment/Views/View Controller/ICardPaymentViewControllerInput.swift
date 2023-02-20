@@ -6,11 +6,6 @@
 //
 
 protocol ICardPaymentViewControllerInput: AnyObject {
-    func setPayButton(title: String)
-    func setPayButton(isEnabled: Bool)
-    func startLoadingPayButton()
-    func stopLoadingPayButton()
-
     func startIgnoringInteractionEvents()
     func stopIgnoringInteractionEvents()
 

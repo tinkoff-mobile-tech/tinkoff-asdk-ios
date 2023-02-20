@@ -16,8 +16,8 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let router: ICardPaymentRouter
     private weak var output: ICardPaymentPresenterModuleOutput?
 
+    private let coreSDK: AcquiringSdk
     private let paymentController: IPaymentController
-    private let moneyFormatter: IMoneyFormatter
 
     // MARK: Properties
 
@@ -26,10 +26,12 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private lazy var cardFieldPresenter = createCardFieldViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
     private lazy var emailPresenter = createEmailViewPresenter()
+    private lazy var payButtonPresenter = createPayButtonViewPresenter()
 
     private var isCardFieldValid = false
 
-    private let activeCards: [PaymentCard]
+    private var initialActiveCards: [PaymentCard]?
+    private var activeCards: [PaymentCard] { initialActiveCards ?? [] }
     private let paymentFlow: PaymentFlow
     private let amount: Int
     private let customerEmail: String
@@ -39,17 +41,17 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
+        coreSDK: AcquiringSdk,
         paymentController: IPaymentController,
-        moneyFormatter: IMoneyFormatter,
-        activeCards: [PaymentCard],
+        activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int
     ) {
         self.router = router
         self.output = output
+        self.coreSDK = coreSDK
         self.paymentController = paymentController
-        self.moneyFormatter = moneyFormatter
-        self.activeCards = Int.random(in: 0 ... 100) % 2 == 0 ? activeCards : []
+        initialActiveCards = Int.random(in: 0 ... 100) % 2 == 0 ? nil : []
         self.paymentFlow = paymentFlow
         self.amount = amount
 
@@ -61,23 +63,15 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
 extension CardPaymentPresenter {
     func viewDidLoad() {
-        createSavedCardViewPresenterIfNeeded()
-
-        viewSetupPayButton()
-        setupCellTypes()
-        view?.reloadTableView()
+        if initialActiveCards != nil {
+            setupInitialStateScreen()
+        } else {
+            loadCards()
+        }
     }
 
     func closeButtonPressed() {
         router.closeScreen()
-    }
-
-    func payButtonPressed() {
-        view?.hideKeyboard()
-        view?.startIgnoringInteractionEvents()
-        view?.startLoadingPayButton()
-
-        startPaymentProcess()
     }
 
     func numberOfRows() -> Int {
@@ -123,6 +117,18 @@ extension CardPaymentPresenter: ISavedCardPresenterOutput {
 
     func savedCardPresenter(_ presenter: SavedCardPresenter, didUpdateCVC cvc: String, isValid: Bool) {
         activatePayButtonIfNeeded()
+    }
+}
+
+// MARK: - IPayButtonViewPresenterOutput
+
+extension CardPaymentPresenter: IPayButtonViewPresenterOutput {
+    func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
+        view?.hideKeyboard()
+        view?.startIgnoringInteractionEvents()
+        payButtonPresenter.startLoading()
+
+        startPaymentProcess()
     }
 }
 
@@ -174,6 +180,42 @@ extension CardPaymentPresenter: PaymentControllerDelegate {
 // MARK: - Private
 
 extension CardPaymentPresenter {
+    private func loadCards() {
+        guard let customerKey = paymentFlow.customerOptions?.customerKey else {
+            setupInitialStateScreen()
+            return
+        }
+
+        coreSDK.getCardList(data: GetCardListData(customerKey: customerKey)) { [weak self] result in
+            guard let self = self else { return }
+
+            DispatchQueue.main.async {
+                switch result {
+                case let .success(cards):
+                    self.handleSuccessLoadCards(cards)
+                case .failure:
+                    self.handleFailureLoadCards()
+                }
+            }
+        }
+    }
+
+    private func handleSuccessLoadCards(_ cards: [PaymentCard]) {
+        initialActiveCards = cards.filter { $0.status == .active }
+        setupInitialStateScreen()
+    }
+
+    private func handleFailureLoadCards() {
+        setupInitialStateScreen()
+    }
+
+    private func setupInitialStateScreen() {
+        createSavedCardViewPresenterIfNeeded()
+
+        setupCellTypes()
+        view?.reloadTableView()
+    }
+
     private func createSavedCardViewPresenterIfNeeded() {
         guard let activeCard = activeCards.first else { return }
 
@@ -210,10 +252,10 @@ extension CardPaymentPresenter {
         EmailViewPresenter(customerEmail: customerEmail, output: self)
     }
 
-    private func viewSetupPayButton() {
-        let stringAmount = moneyFormatter.formatAmount(amount)
-        view?.setPayButton(title: "\(Loc.Acquiring.PaymentNewCard.paymentButton) \(stringAmount)")
-        view?.setPayButton(isEnabled: false)
+    private func createPayButtonViewPresenter() -> PayButtonViewPresenter {
+        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: amount), output: self)
+        presenter.set(enabled: false)
+        return presenter
     }
 
     private func setupCellTypes() {
@@ -226,7 +268,7 @@ extension CardPaymentPresenter {
             cellTypes.append(.emailField(emailPresenter))
         }
 
-        cellTypes.append(.payButton)
+        cellTypes.append(.payButton(payButtonPresenter))
     }
 
     private func activatePayButtonIfNeeded() {
@@ -239,7 +281,7 @@ extension CardPaymentPresenter {
         let isEmailValid = isEmailFieldOn ? isEmailFieldValid : true
 
         let isPayButtonEnabled = isCardValid && isEmailValid
-        view?.setPayButton(isEnabled: isPayButtonEnabled)
+        payButtonPresenter.set(enabled: isPayButtonEnabled)
     }
 
     private func startPaymentProcess() {

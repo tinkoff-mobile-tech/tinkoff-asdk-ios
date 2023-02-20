@@ -10,7 +10,7 @@ enum CardPaymentCellType: Equatable {
     case cardField(ICardFieldViewOutput)
     case getReceipt(ISwitchViewOutput)
     case emailField(IEmailViewOutput)
-    case payButton
+    case payButton(IPayButtonViewOutput)
 
     static func == (lhs: CardPaymentCellType, rhs: CardPaymentCellType) -> Bool {
         switch (lhs, rhs) {
