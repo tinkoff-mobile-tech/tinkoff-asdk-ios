@@ -152,14 +152,6 @@ class RootViewController: UITableViewController {
     // MARK: - Navigation
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
-        let cardListViewConfigration = AcquiringViewConfiguration()
-        cardListViewConfigration.viewTitle = Loc.Title.paymentCardList
-        cardListViewConfigration.scaner = self
-
-        if AppSetting.shared.acquiring {
-            cardListViewConfigration.alertViewHelper = self
-        }
-
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
             sdk.addCardNeedSetCheckTypeHandler = {
                 AppSetting.shared.addCardChekType
@@ -167,8 +159,7 @@ class RootViewController: UITableViewController {
 
             sdk.presentCardList(
                 on: self,
-                customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
-                configuration: cardListViewConfigration
+                customerKey: AppSetting.shared.activeSdkCredentials.customerKey
             )
         }
     }

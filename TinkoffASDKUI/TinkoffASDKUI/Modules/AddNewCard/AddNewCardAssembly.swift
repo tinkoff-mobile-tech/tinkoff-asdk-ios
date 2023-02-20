@@ -6,23 +6,27 @@
 //
 
 import Foundation
+import UIKit
 
 protocol IAddNewCardAssembly {
-
-    func assemble(
-        addNewCardOutput: IAddNewCardOutput?,
-        networking: IAddNewCardNetworking
-    ) -> AddNewCardViewController
+    func assemble(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController
 }
 
 final class AddNewCardAssembly: IAddNewCardAssembly {
+    // MARK: Dependencies
 
-    func assemble(
-        addNewCardOutput: IAddNewCardOutput?,
-        networking: IAddNewCardNetworking
-    ) -> AddNewCardViewController {
+    private let cardsControllerAssembly: ICardsControllerAssembly
 
-        let presenter = AddNewCardPresenter(networking: networking, output: addNewCardOutput)
+    init(cardsControllerAssembly: ICardsControllerAssembly) {
+        self.cardsControllerAssembly = cardsControllerAssembly
+    }
+
+    func assemble(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController {
+        let presenter = AddNewCardPresenter(
+            cardsController: cardsControllerAssembly.cardsController(customerKey: customerKey),
+            output: output
+        )
+
         let viewController = AddNewCardViewController(presenter: presenter)
         presenter.view = viewController
         return viewController

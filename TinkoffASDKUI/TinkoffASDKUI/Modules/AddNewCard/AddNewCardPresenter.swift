@@ -27,13 +27,13 @@ final class AddNewCardPresenter {
     private lazy var cardFieldPresenter = CardFieldPresenter(output: self)
 
     private weak var output: IAddNewCardOutput?
-    private let networking: IAddNewCardNetworking
+    private let cardsController: ICardsController
 
     private var didAddCard = false
-    private var didReceviedError = false
+    private var didReceivedError = false
 
-    init(networking: IAddNewCardNetworking, output: IAddNewCardOutput?) {
-        self.networking = networking
+    init(cardsController: ICardsController, output: IAddNewCardOutput?) {
+        self.cardsController = cardsController
         self.output = output
     }
 }
@@ -43,8 +43,13 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     func cardFieldViewAddCardTapped() {
         guard cardFieldPresenter.validateWholeForm().isValid else { return }
 
-        let cardData = CardData(cardNumber: cardFieldPresenter.cardNumber, expiration: cardFieldPresenter.expiration, cvc: cardFieldPresenter.cvc)
-        addCard(cardData: cardData)
+        let cardOptions = CardOptions(
+            pan: cardFieldPresenter.cardNumber,
+            validThru: cardFieldPresenter.expiration,
+            cvc: cardFieldPresenter.cvc
+        )
+
+        addCard(options: cardOptions)
     }
 
     func viewDidLoad() {
@@ -58,7 +63,7 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 
     func viewUserClosedTheScreen() {
         // проверка что мы не сами закрываем экран после успешного добавления карты
-        guard !didAddCard, !didReceviedError else { return }
+        guard !didAddCard, !didReceivedError else { return }
         output?.addingNewCardCompleted(result: .cancelled)
     }
 
@@ -77,29 +82,26 @@ extension AddNewCardPresenter: ICardFieldOutput {
 
 extension AddNewCardPresenter {
 
-    private func addCard(cardData: CardData) {
+    private func addCard(options: CardOptions) {
         view?.showLoadingState()
-        networking.addCard(
-            number: cardData.cardNumber,
-            expiration: cardData.expiration,
-            cvc: cardData.cvc,
-            resultCompletion: { [weak self] result in
-                guard let self = self else { return }
-                self.view?.hideLoadingState()
 
-                switch result {
-                case let .succeded(card):
-                    self.view?.closeScreen()
-                    self.didAddCard = true
-                    self.output?.addingNewCardCompleted(result: .succeded(card))
-                case let .failed(error):
-                    self.didReceviedError = true
-                    self.handleAddCard(error: error)
-                case .cancelled:
-                    self.view?.closeScreen()
-                }
+        cardsController.addCard(options: options) { [weak self] result in
+            guard let self = self else { return }
+
+            self.view?.hideLoadingState()
+
+            switch result {
+            case let .succeded(paymentCard):
+                self.view?.closeScreen()
+                self.didAddCard = true
+                self.output?.addingNewCardCompleted(result: .succeded(paymentCard))
+            case let .failed(error):
+                self.didReceivedError = true
+                self.handleAddCard(error: error)
+            case .cancelled:
+                self.view?.closeScreen()
             }
-        )
+        }
     }
 
     private func handleAddCard(error: Error) {

@@ -266,7 +266,7 @@ public class AcquiringUISDK: NSObject {
         )
 
         logger = configuration.logger
-        cardListAssembly = CardListAssembly()
+        cardListAssembly = CardListAssembly(cardsControllerAssembly: cardsControllerAssembly)
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
@@ -1093,11 +1093,14 @@ public class AcquiringUISDK: NSObject {
             selectedCardId = cardId
         }
 
-        let context = ChoosePaymentCardListContext(
-            baseContext: CardListContext(
-                presentingViewController: presentingViewController,
-                customerKey: customerKey
-            ),
+        let flow = ChoosePaymentCardListFlow(
+            cardListAssembly: cardListAssembly,
+            cardListDataProvider: cardListDataProvider
+        )
+
+        flow.start(
+            presentingViewController: presentingViewController,
+            customerKey: customerKey,
             selectedCardId: selectedCardId,
             setOutputEvents: { [weak modalViewController, weak presentingViewController] cardListOutput in
 
@@ -1120,13 +1123,6 @@ public class AcquiringUISDK: NSObject {
                 }
             }
         )
-
-        let chooseCardFlow = ChoosePaymentCardListFlow(
-            cardListAssembly: cardListAssembly,
-            cardListDataProvider: cardListDataProvider
-        )
-
-        chooseCardFlow.start(context: context)
     }
 
     // MARK: Payment
@@ -1787,14 +1783,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         self.presentingViewController = presentingViewController
         setupCardListDataProvider(for: customerKey)
 
-        let flow: IAddCardFlow = AddCardListFlow(assembly: AddNewCardAssembly(), networking: self)
-        flow.start(
-            context: AddCardListFlowContext(
-                presentingViewController: presentingViewController,
-                customerKey: customerKey,
-                output: output
-            )
-        )
+        let flow = AddCardListFlow(assembly: AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly))
+        flow.start(presentingViewController: presentingViewController, customerKey: customerKey, output: output)
     }
 
     // MARK: AcquiringPaymentCardLidtDataSourceDelegate
@@ -1904,14 +1894,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     ///   - configuration: конфигурация сдк
     public func presentCardList(
         on presentingViewController: UIViewController,
-        customerKey: String,
-        configuration: AcquiringViewConfiguration
+        customerKey: String
     ) {
-
-        if acquiringViewConfiguration == nil {
-            acquiringViewConfiguration = configuration
-        }
-
         if self.presentingViewController == nil {
             self.presentingViewController = presentingViewController
         }
@@ -1919,18 +1903,12 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
 
         let flow = CardListFlow(
-            cardListAssembly: CardListAssembly(),
+            cardListAssembly: cardListAssembly,
             cardListDataProvider: cardListProvider,
-            addCardAssembly: AddNewCardAssembly(),
-            addCardNetworking: self
+            addCardAssembly: AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
         )
 
-        flow.start(
-            context: CardListContext(
-                presentingViewController: presentingViewController,
-                customerKey: customerKey
-            )
-        )
+        flow.start(presentingViewController: presentingViewController, customerKey: customerKey)
     }
 }
 

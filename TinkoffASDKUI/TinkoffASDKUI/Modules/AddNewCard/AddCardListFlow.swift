@@ -9,32 +9,32 @@ import TinkoffASDKCore
 import UIKit
 
 protocol IAddCardFlow {
-    func start(context: AddCardListFlowContext)
-}
-
-public struct AddCardListFlowContext {
-    let presentingViewController: UIViewController
-    let customerKey: String
-    let output: IAddNewCardOutput?
+    func start(
+        presentingViewController: UIViewController,
+        customerKey: String,
+        output: IAddNewCardOutput?
+    )
 }
 
 final class AddCardListFlow {
 
     // Dependencies
     private let assembly: IAddNewCardAssembly
-    private let networking: IAddNewCardNetworking
 
-    init(assembly: IAddNewCardAssembly, networking: IAddNewCardNetworking) {
+    init(assembly: IAddNewCardAssembly) {
         self.assembly = assembly
-        self.networking = networking
     }
 }
 
 extension AddCardListFlow: IAddCardFlow {
-
-    func start(context: AddCardListFlowContext) {
-        let addCardViewController = assembly.assemble(addNewCardOutput: context.output, networking: networking)
+    func start(
+        presentingViewController: UIViewController,
+        customerKey: String,
+        output: IAddNewCardOutput?
+    ) {
+        let addCardViewController = assembly.assemble(customerKey: customerKey, output: output)
         let navigationController = UINavigationController(rootViewController: addCardViewController)
-        context.presentingViewController.present(navigationController, animated: true)
+
+        presentingViewController.present(navigationController, animated: true)
     }
 }
