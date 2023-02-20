@@ -9,28 +9,32 @@ import Foundation
 import enum TinkoffASDKCore.APIError
 
 protocol IAddNewCardPresenter: AnyObject {
-
     func viewDidLoad()
     func viewDidAppear()
     func cardFieldViewAddCardTapped()
-    func viewUserClosedTheScreen()
-
+    func viewWasClosed()
     func cardFieldViewPresenter() -> ICardFieldViewOutput
 }
 
-// MARK: - Presenter
-
 final class AddNewCardPresenter {
+    // MARK: Dependencies
 
     weak var view: IAddNewCardView?
+    private let cardsController: ICardsController
+
+    // MARK: Output
+
+    private weak var output: IAddNewCardOutput?
+
+    // MARK: Child presenters
 
     private lazy var cardFieldPresenter = CardFieldPresenter(output: self)
 
-    private weak var output: IAddNewCardOutput?
-    private let cardsController: ICardsController
+    // MARK: State
 
-    private var didAddCard = false
-    private var didReceivedError = false
+    private var moduleResult: AddCardResult = .cancelled
+
+    // MARK: Init
 
     init(cardsController: ICardsController, output: IAddNewCardOutput?) {
         self.cardsController = cardsController
@@ -38,8 +42,9 @@ final class AddNewCardPresenter {
     }
 }
 
-extension AddNewCardPresenter: IAddNewCardPresenter {
+// MARK: - IAddNewCardPresenter
 
+extension AddNewCardPresenter: IAddNewCardPresenter {
     func cardFieldViewAddCardTapped() {
         guard cardFieldPresenter.validateWholeForm().isValid else { return }
 
@@ -61,10 +66,8 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
         view?.activateCardField()
     }
 
-    func viewUserClosedTheScreen() {
-        // проверка что мы не сами закрываем экран после успешного добавления карты
-        guard !didAddCard, !didReceivedError else { return }
-        output?.addingNewCardCompleted(result: .cancelled)
+    func viewWasClosed() {
+        output?.addingNewCardCompleted(result: moduleResult)
     }
 
     func cardFieldViewPresenter() -> ICardFieldViewOutput {
@@ -81,44 +84,31 @@ extension AddNewCardPresenter: ICardFieldOutput {
 // MARK: - Private
 
 extension AddNewCardPresenter {
-
     private func addCard(options: CardOptions) {
         view?.showLoadingState()
 
         cardsController.addCard(options: options) { [weak self] result in
             guard let self = self else { return }
-
             self.view?.hideLoadingState()
+            self.moduleResult = result
 
             switch result {
-            case let .succeded(paymentCard):
+            case .succeded:
                 self.view?.closeScreen()
-                self.didAddCard = true
-                self.output?.addingNewCardCompleted(result: .succeded(paymentCard))
-            case let .failed(error):
-                self.didReceivedError = true
-                self.handleAddCard(error: error)
+            case let .failed(error) where (error as NSError).code == 510:
+                self.view?.showOkNativeAlert(data: .alreadyHasSuchCardError)
+            case .failed:
+                self.view?.showOkNativeAlert(data: .genericError)
             case .cancelled:
                 self.view?.closeScreen()
             }
         }
     }
-
-    private func handleAddCard(error: Error) {
-        let alreadyHasSuchCardErrorCode = 510
-
-        if (error as NSError).code == alreadyHasSuchCardErrorCode {
-            view?.showOkNativeAlert(data: .alreadyHasSuchCardError)
-            output?.addingNewCardCompleted(result: .failed(error))
-        } else {
-            view?.showOkNativeAlert(data: .genericError)
-            output?.addingNewCardCompleted(result: .failed(error))
-        }
-    }
 }
 
-private extension OkAlertData {
+// MARK: - OkAlertData + Helpers
 
+private extension OkAlertData {
     static var alreadyHasSuchCardError: Self {
         OkAlertData(
             title: Loc.CommonAlert.AddCard.title,

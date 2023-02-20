@@ -89,7 +89,7 @@ final class AddNewCardViewController: UIViewController {
         let isBeingDismissed = navigationController?.isBeingDismissed == true
         // Тречит дисмисс или свайп вью контроллера
         if isBeingDismissed || isMovingFromParent {
-            presenter.viewUserClosedTheScreen()
+            presenter.viewWasClosed()
         }
     }
 }
