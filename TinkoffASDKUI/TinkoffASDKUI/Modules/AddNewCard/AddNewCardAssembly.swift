@@ -22,13 +22,17 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
     }
 
     func assemble(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController {
+        let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
+
         let presenter = AddNewCardPresenter(
-            cardsController: cardsControllerAssembly.cardsController(customerKey: customerKey),
+            cardsController: cardsController,
             output: output
         )
 
         let viewController = AddNewCardViewController(presenter: presenter)
         presenter.view = viewController
+        cardsController.webFlowDelegate = viewController
+
         return viewController
     }
 }
