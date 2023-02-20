@@ -19,6 +19,7 @@
 
 import Foundation
 
+/// Дополнительная информация о дальнейших действиях для успешной привязки карты
 public enum AttachCardStatus {
     /// Требуется подтверждение 3DS v1.0
     case needConfirmation3DS(Confirmation3DSData)
@@ -27,6 +28,6 @@ public enum AttachCardStatus {
     // TODO: MIC-8072 Удалить неподдерживаемый статус
     /// Требуется подтвердить оплату указать сумму из смс для `requestKey`
     case needConfirmationRandomAmount(String)
-    /// Успешная оплата
+    /// Карта успешно привязана
     case done
 }
