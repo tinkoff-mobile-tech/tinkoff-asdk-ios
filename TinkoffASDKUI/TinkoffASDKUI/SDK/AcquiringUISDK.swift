@@ -189,6 +189,7 @@ public class AcquiringUISDK: NSObject {
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
+    private let addNewCardAssembly: IAddNewCardAssembly
 
     // MARK: Init
 
@@ -266,7 +267,7 @@ public class AcquiringUISDK: NSObject {
         )
 
         logger = configuration.logger
-        cardListAssembly = CardListAssembly()
+        cardListAssembly = CardListAssembly(cardsControllerAssembly: cardsControllerAssembly)
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
@@ -284,6 +285,8 @@ public class AcquiringUISDK: NSObject {
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly
         )
+
+        addNewCardAssembly = AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
     }
 
     /// Вызывается когда пользователь привязывает карту.
@@ -1093,11 +1096,14 @@ public class AcquiringUISDK: NSObject {
             selectedCardId = cardId
         }
 
-        let context = ChoosePaymentCardListContext(
-            baseContext: CardListContext(
-                presentingViewController: presentingViewController,
-                customerKey: customerKey
-            ),
+        let flow = ChoosePaymentCardListFlow(
+            cardListAssembly: cardListAssembly,
+            cardListDataProvider: cardListDataProvider
+        )
+
+        flow.start(
+            presentingViewController: presentingViewController,
+            customerKey: customerKey,
             selectedCardId: selectedCardId,
             setOutputEvents: { [weak modalViewController, weak presentingViewController] cardListOutput in
 
@@ -1120,13 +1126,6 @@ public class AcquiringUISDK: NSObject {
                 }
             }
         )
-
-        let chooseCardFlow = ChoosePaymentCardListFlow(
-            cardListAssembly: cardListAssembly,
-            cardListDataProvider: cardListDataProvider
-        )
-
-        chooseCardFlow.start(context: context)
     }
 
     // MARK: Payment
@@ -1774,27 +1773,22 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         )
     }
 
-    /// Презентует экран Добавления карты
+    /// Отображает экран добавления карты
     /// - Parameters:
-    ///   - presentingViewController: контроллер на который будет совершен модальный презент
-    ///   - customerKey: ключ клиента
-    ///   - output: объект который будет обрабатывать события из экрана Добавления карты
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
+    ///   - customerKey: Идентификатор покупателя в системе Банка, к которому будет привязана карта
+    ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
-        output: IAddNewCardOutput?
+        onViewWasClosed: ((AddCardResult) -> Void)? = nil
     ) {
-        self.presentingViewController = presentingViewController
-        setupCardListDataProvider(for: customerKey)
-
-        let flow: IAddCardFlow = AddCardListFlow(assembly: AddNewCardAssembly(), networking: self)
-        flow.start(
-            context: AddCardListFlowContext(
-                presentingViewController: presentingViewController,
-                customerKey: customerKey,
-                output: output
-            )
+        let navigationController = addNewCardAssembly.addNewCardNavigationController(
+            customerKey: customerKey,
+            onViewWasClosed: onViewWasClosed
         )
+
+        presentingViewController.present(navigationController, animated: true)
     }
 
     // MARK: AcquiringPaymentCardLidtDataSourceDelegate
@@ -1904,14 +1898,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     ///   - configuration: конфигурация сдк
     public func presentCardList(
         on presentingViewController: UIViewController,
-        customerKey: String,
-        configuration: AcquiringViewConfiguration
+        customerKey: String
     ) {
-
-        if acquiringViewConfiguration == nil {
-            acquiringViewConfiguration = configuration
-        }
-
         if self.presentingViewController == nil {
             self.presentingViewController = presentingViewController
         }
@@ -1919,18 +1907,12 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
 
         let flow = CardListFlow(
-            cardListAssembly: CardListAssembly(),
+            cardListAssembly: cardListAssembly,
             cardListDataProvider: cardListProvider,
-            addCardAssembly: AddNewCardAssembly(),
-            addCardNetworking: self
+            addCardAssembly: AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
         )
 
-        flow.start(
-            context: CardListContext(
-                presentingViewController: presentingViewController,
-                customerKey: customerKey
-            )
-        )
+        flow.start(presentingViewController: presentingViewController, customerKey: customerKey)
     }
 }
 
@@ -2136,36 +2118,6 @@ public extension AcquiringUISDK {
             with: configuration,
             initializer: initializer,
             completion: completion
-        )
-    }
-}
-
-extension AcquiringUISDK: IAddNewCardNetworking {
-
-    func addCard(
-        number: String,
-        expiration: String,
-        cvc: String,
-        resultCompletion: @escaping (AddCardResult) -> Void
-    ) {
-        cardListToAddCard(
-            number: number,
-            expDate: expiration,
-            cvc: cvc,
-            alertViewHelper: nil,
-            completeHandler: { result in
-                switch result {
-                case let .success(card):
-                    if let card = card {
-                        resultCompletion(.succeded(card))
-                    } else {
-                        resultCompletion(.cancelled)
-                    }
-
-                case let .failure(error):
-                    resultCompletion(.failed(error))
-                }
-            }
         )
     }
 }

@@ -19,36 +19,58 @@
 
 import Foundation
 
-public struct AttachCardPayload: Decodable {
+/// Ответ сервера на запрос `AttachCard`
+public struct AttachCardPayload {
+    /// Статус привзязки карты
+    public let status: AcquiringStatus
+    /// Идентификатор запроса на привязку карты
+    public let requestKey: String
+    /// Идентификатор карты в системе банка
+    public let cardId: String?
+    /// Идентификатор рекуррентного платежа
+    public let rebillId: String?
+    /// Дополнительная информация о дальнейших действиях для успешной привязки карты
+    public let attachCardStatus: AttachCardStatus
+
+    /// Ответ сервера на запрос `AttachCard`
+    /// - Parameters:
+    ///   - status: Статус привзязки карты
+    ///   - requestKey: Идентификатор запроса на привязку карты
+    ///   - cardId: Идентификатор карты в системе банка
+    ///   - rebillId: Идентификатор рекуррентного платежа
+    ///   - attachCardStatus: Дополнительная информация о дальнейших действиях для успешной привязки карты
+    public init(
+        status: AcquiringStatus,
+        requestKey: String,
+        cardId: String?,
+        rebillId: String?,
+        attachCardStatus: AttachCardStatus
+    ) {
+        self.status = status
+        self.requestKey = requestKey
+        self.cardId = cardId
+        self.rebillId = rebillId
+        self.attachCardStatus = attachCardStatus
+    }
+}
+
+// MARK: - Decodable
+
+extension AttachCardPayload: Decodable {
     private enum CodingKeys: CodingKey {
         case status
         case requestKey
         case cardId
+        case rebillId
 
         var stringValue: String {
             switch self {
             case .status: return Constants.Keys.status
             case .requestKey: return Constants.Keys.requestKey
             case .cardId: return Constants.Keys.cardId
+            case .rebillId: return Constants.Keys.rebillId
             }
         }
-    }
-
-    public let status: AcquiringStatus
-    public let requestKey: String
-    public let cardId: String?
-    public let attachCardStatus: AttachCardStatus
-
-    public init(
-        status: AcquiringStatus,
-        requestKey: String,
-        cardId: String?,
-        attachCardStatus: AttachCardStatus
-    ) {
-        self.status = status
-        self.requestKey = requestKey
-        self.cardId = cardId
-        self.attachCardStatus = attachCardStatus
     }
 
     public init(from decoder: Decoder) throws {
@@ -56,6 +78,7 @@ public struct AttachCardPayload: Decodable {
         status = try container.decodeIfPresent(AcquiringStatus.self, forKey: .status) ?? .unknown
         requestKey = try container.decode(String.self, forKey: .requestKey)
         cardId = try container.decodeIfPresent(String.self, forKey: .cardId)
+        rebillId = try container.decodeIfPresent(String.self, forKey: .rebillId)
 
         switch status {
         case .checking3ds, .hold3ds:

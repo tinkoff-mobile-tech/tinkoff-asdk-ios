@@ -11,44 +11,35 @@ import UIKit
 // MARK: - ICardListFlow
 
 protocol ICardListFlow {
-    func start(context: CardListContext)
-}
-
-struct CardListContext {
-    let presentingViewController: UIViewController
-    let customerKey: String
+    func start(presentingViewController: UIViewController, customerKey: String)
 }
 
 final class CardListFlow {
-
     private let cardListAssembly: ICardListAssembly
     private let cardListDataProvider: CardListDataProvider
     private let addCardAssembly: IAddNewCardAssembly
-    private let addCardNetworking: IAddNewCardNetworking
 
     init(
         cardListAssembly: ICardListAssembly,
         cardListDataProvider: CardListDataProvider,
-        addCardAssembly: IAddNewCardAssembly,
-        addCardNetworking: IAddNewCardNetworking
+        addCardAssembly: IAddNewCardAssembly
     ) {
         self.cardListAssembly = cardListAssembly
         self.cardListDataProvider = cardListDataProvider
         self.addCardAssembly = addCardAssembly
-        self.addCardNetworking = addCardNetworking
     }
 }
 
 extension CardListFlow: ICardListFlow {
-
-    func start(context: CardListContext) {
+    func start(presentingViewController: UIViewController, customerKey: String) {
         let (cardListViewController, module) = cardListAssembly.cardsPresentingModule(cardListProvider: cardListDataProvider)
 
-        module.onAddNewCardTap = { [weak cardListViewController, addCardAssembly, addCardNetworking] in
+        module.onAddNewCardTap = { [weak cardListViewController, addCardAssembly] in
             guard let cardListViewController = cardListViewController else { return }
-            let addCardViewController = addCardAssembly.assemble(
-                addNewCardOutput: cardListViewController.getAddNewCardOutput(),
-                networking: addCardNetworking
+
+            let addCardViewController = addCardAssembly.addNewCardView(
+                customerKey: customerKey,
+                output: cardListViewController.getAddNewCardOutput()
             )
 
             addCardViewController.extendedLayoutIncludesOpaqueBars = true
@@ -61,7 +52,7 @@ extension CardListFlow: ICardListFlow {
         let navigationController = UINavigationController(rootViewController: cardListViewController)
         cardListViewController.extendedLayoutIncludesOpaqueBars = true
         handleAppearanceOf(navigationController: navigationController)
-        context.presentingViewController.present(navigationController, animated: true)
+        presentingViewController.present(navigationController, animated: true)
     }
 
     private func handleAppearanceOf(navigationController: UINavigationController) {

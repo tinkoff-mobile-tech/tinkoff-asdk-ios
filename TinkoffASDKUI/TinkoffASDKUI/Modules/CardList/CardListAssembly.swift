@@ -39,6 +39,15 @@ protocol ICardListAssembly {
 }
 
 final class CardListAssembly: ICardListAssembly {
+    // MARK: Dependencies
+
+    private let cardsControllerAssembly: ICardsControllerAssembly
+
+    // MARK: Init
+
+    init(cardsControllerAssembly: ICardsControllerAssembly) {
+        self.cardsControllerAssembly = cardsControllerAssembly
+    }
 
     // MARK: ICardListAssembly
 
