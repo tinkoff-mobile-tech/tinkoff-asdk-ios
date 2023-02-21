@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class CardPaymentViewController: UIViewController, ICardPaymentViewControllerInput {
+final class CardPaymentViewController: UIViewController, ICardPaymentViewControllerInput, ActivityIndicatorDisplayable {
 
     // MARK: Dependencies
 

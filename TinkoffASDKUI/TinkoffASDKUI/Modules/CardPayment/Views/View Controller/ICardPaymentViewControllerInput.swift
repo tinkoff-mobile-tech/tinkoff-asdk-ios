@@ -9,6 +9,9 @@ protocol ICardPaymentViewControllerInput: AnyObject {
     func startIgnoringInteractionEvents()
     func stopIgnoringInteractionEvents()
 
+    func showActivityIndicator(with style: ActivityIndicatorView.Style)
+    func hideActivityIndicator()
+
     func hideKeyboard()
 
     func reloadTableView()

@@ -66,6 +66,7 @@ extension CardPaymentPresenter {
         if initialActiveCards != nil {
             setupInitialStateScreen()
         } else {
+            view?.showActivityIndicator(with: .xlYellow)
             loadCards()
         }
     }
@@ -201,11 +202,13 @@ extension CardPaymentPresenter {
     }
 
     private func handleSuccessLoadCards(_ cards: [PaymentCard]) {
+        view?.hideActivityIndicator()
         initialActiveCards = cards.filter { $0.status == .active }
         setupInitialStateScreen()
     }
 
     private func handleFailureLoadCards() {
+        view?.hideActivityIndicator()
         setupInitialStateScreen()
     }
 

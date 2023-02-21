@@ -53,8 +53,12 @@ extension PayButtonView: IPayButtonViewInput {
         button.configure(configuration)
     }
 
-    func set(enabled: Bool) {
-        button.isEnabled = enabled
+    func set(enabled: Bool, animated: Bool) {
+        if animated {
+            button.isEnabled = enabled
+        } else {
+            UIView.performWithoutAnimation { self.button.isEnabled = enabled }
+        }
     }
 
     func startLoading() {

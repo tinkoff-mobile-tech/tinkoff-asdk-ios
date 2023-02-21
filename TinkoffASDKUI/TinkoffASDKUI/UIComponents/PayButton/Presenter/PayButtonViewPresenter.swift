@@ -83,7 +83,7 @@ final class PayButtonViewPresenter: IPayButtonViewOutput, IPayButtonViewPresente
             view?.set(configuration: .sbp())
         }
 
-        view?.set(enabled: isEnabled)
+        view?.set(enabled: isEnabled, animated: false)
         isLoading ? view?.startLoading() : view?.stopLoading()
     }
 }
