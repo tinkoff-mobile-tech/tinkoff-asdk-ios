@@ -16,7 +16,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let router: ICardPaymentRouter
     private weak var output: ICardPaymentPresenterModuleOutput?
 
-    private let coreSDK: AcquiringSdk
+    private let cardsController: ICardsController
     private let paymentController: IPaymentController
 
     // MARK: Properties
@@ -41,7 +41,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
-        coreSDK: AcquiringSdk,
+        cardsController: ICardsController,
         paymentController: IPaymentController,
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
@@ -49,7 +49,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     ) {
         self.router = router
         self.output = output
-        self.coreSDK = coreSDK
+        self.cardsController = cardsController
         self.paymentController = paymentController
         initialActiveCards = Int.random(in: 0 ... 100) % 2 == 0 ? nil : []
         self.paymentFlow = paymentFlow
@@ -182,12 +182,7 @@ extension CardPaymentPresenter: PaymentControllerDelegate {
 
 extension CardPaymentPresenter {
     private func loadCards() {
-        guard let customerKey = paymentFlow.customerOptions?.customerKey else {
-            setupInitialStateScreen()
-            return
-        }
-
-        coreSDK.getCardList(data: GetCardListData(customerKey: customerKey)) { [weak self] result in
+        cardsController.getActiveCards(completion: { [weak self] result in
             guard let self = self else { return }
 
             DispatchQueue.main.async {
@@ -198,12 +193,12 @@ extension CardPaymentPresenter {
                     self.handleFailureLoadCards()
                 }
             }
-        }
+        })
     }
 
     private func handleSuccessLoadCards(_ cards: [PaymentCard]) {
         view?.hideActivityIndicator()
-        initialActiveCards = cards.filter { $0.status == .active }
+        initialActiveCards = cards
         setupInitialStateScreen()
     }
 
