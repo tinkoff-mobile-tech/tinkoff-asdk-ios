@@ -2119,36 +2119,6 @@ public extension AcquiringUISDK {
     }
 }
 
-extension AcquiringUISDK: IAddNewCardNetworking {
-
-    func addCard(
-        number: String,
-        expiration: String,
-        cvc: String,
-        resultCompletion: @escaping (AddCardResult) -> Void
-    ) {
-        cardListToAddCard(
-            number: number,
-            expDate: expiration,
-            cvc: cvc,
-            alertViewHelper: nil,
-            completeHandler: { result in
-                switch result {
-                case let .success(card):
-                    if let card = card {
-                        resultCompletion(.succeded(card))
-                    } else {
-                        resultCompletion(.cancelled)
-                    }
-
-                case let .failure(error):
-                    resultCompletion(.failed(error))
-                }
-            }
-        )
-    }
-}
-
 public extension AcquiringUISDK {
     func presentMainForm(
         on presentingViewController: UIViewController,

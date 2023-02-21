@@ -8,14 +8,6 @@
 import Foundation
 import enum TinkoffASDKCore.APIError
 
-protocol IAddNewCardPresenter: AnyObject {
-    func viewDidLoad()
-    func viewDidAppear()
-    func cardFieldViewAddCardTapped()
-    func viewWasClosed()
-    func cardFieldViewPresenter() -> ICardFieldViewOutput
-}
-
 final class AddNewCardPresenter {
     // MARK: Dependencies
 
@@ -24,7 +16,7 @@ final class AddNewCardPresenter {
 
     // MARK: Output Events Handlers
 
-    private weak var output: IAddNewCardOutput?
+    private weak var output: IAddNewCardPresenterOutput?
     private var onViewWasClosed: ((AddCardResult) -> Void)?
 
     // MARK: Child presenters
@@ -39,7 +31,7 @@ final class AddNewCardPresenter {
 
     init(
         cardsController: ICardsController,
-        output: IAddNewCardOutput?,
+        output: IAddNewCardPresenterOutput?,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) {
         self.cardsController = cardsController
@@ -82,6 +74,8 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
         cardFieldPresenter
     }
 }
+
+// MARK: - ICardFieldOutput
 
 extension AddNewCardPresenter: ICardFieldOutput {
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {

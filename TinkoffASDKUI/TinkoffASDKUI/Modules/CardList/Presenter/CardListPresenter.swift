@@ -20,7 +20,7 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewOutput: AnyObject, IAddNewCardOutput {
+protocol ICardListViewOutput: AnyObject, IAddNewCardPresenterOutput {
     func viewDidLoad()
     func view(didTapDeleteOn card: CardList.Card)
     func viewDidTapEditButton()
@@ -188,9 +188,9 @@ extension CardListPresenter: ICardListViewOutput {
     }
 }
 
-// MARK: - IAddNewCardOutput
+// MARK: - IAddNewCardPresenterOutput
 
-extension CardListPresenter: IAddNewCardOutput {
+extension CardListPresenter: IAddNewCardPresenterOutput {
     func addNewCardDidReceive(result: AddCardResult) {
         switch result {
         case .cancelled, .failed:

@@ -7,7 +7,7 @@
 
 @testable import TinkoffASDKUI
 
-final class MockAddNewCardOutput: IAddNewCardOutput {
+final class MockAddNewCardOutput: IAddNewCardPresenterOutput {
 
     var addingNewCardCompletedCallCounter = 0
 

@@ -8,11 +8,6 @@
 import Foundation
 import UIKit
 
-protocol IAddNewCardAssembly {
-    func addNewCard(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController
-    func addNewCard(customerKey: String, onViewWasClosed: ((AddCardResult) -> Void)?) -> AddNewCardViewController
-}
-
 final class AddNewCardAssembly: IAddNewCardAssembly {
     // MARK: Dependencies
 
@@ -26,7 +21,7 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     // MARK: IAddNewCardAssembly
 
-    func addNewCard(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController {
+    func addNewCard(customerKey: String, output: IAddNewCardPresenterOutput?) -> AddNewCardViewController {
         createModule(customerKey: customerKey, output: output, onViewWasClosed: nil)
     }
 
@@ -38,7 +33,7 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     private func createModule(
         customerKey: String,
-        output: IAddNewCardOutput?,
+        output: IAddNewCardPresenterOutput?,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> AddNewCardViewController {
         let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
