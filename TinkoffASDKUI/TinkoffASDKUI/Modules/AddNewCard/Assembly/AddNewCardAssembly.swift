@@ -21,12 +21,17 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     // MARK: IAddNewCardAssembly
 
-    func addNewCard(customerKey: String, output: IAddNewCardPresenterOutput?) -> AddNewCardViewController {
+    func addNewCardView(customerKey: String, output: IAddNewCardPresenterOutput?) -> AddNewCardViewController {
         createModule(customerKey: customerKey, output: output, onViewWasClosed: nil)
     }
 
-    func addNewCard(customerKey: String, onViewWasClosed: ((AddCardResult) -> Void)?) -> AddNewCardViewController {
-        createModule(customerKey: customerKey, output: nil, onViewWasClosed: onViewWasClosed)
+    func addNewCardNavigationController(
+        customerKey: String,
+        onViewWasClosed: ((AddCardResult) -> Void)?
+    ) -> UINavigationController {
+        let viewController = createModule(customerKey: customerKey, output: nil, onViewWasClosed: onViewWasClosed)
+        let navigationController = UINavigationController(rootViewController: viewController)
+        return navigationController
     }
 
     // MARK: Helpers

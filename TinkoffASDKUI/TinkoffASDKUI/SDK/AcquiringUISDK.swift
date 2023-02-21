@@ -1773,18 +1773,21 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         )
     }
 
-    /// Презентует экран Добавления карты
+    /// Отображает экран добавления карты
     /// - Parameters:
-    ///   - presentingViewController: контроллер на который будет совершен модальный презент
-    ///   - customerKey: ключ клиента
-    ///   - output: объект который будет обрабатывать события из экрана Добавления карты
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
+    ///   - customerKey: Идентификатор покупателя в системе Банка, к которому будет привязана карта
+    ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
-        completion: ((AddCardResult) -> Void)? = nil
+        onViewWasClosed: ((AddCardResult) -> Void)? = nil
     ) {
-        let viewController = addNewCardAssembly.addNewCard(customerKey: customerKey, onViewWasClosed: completion)
-        let navigationController = UINavigationController(rootViewController: viewController)
+        let navigationController = addNewCardAssembly.addNewCardNavigationController(
+            customerKey: customerKey,
+            onViewWasClosed: onViewWasClosed
+        )
+
         presentingViewController.present(navigationController, animated: true)
     }
 
