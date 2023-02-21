@@ -25,14 +25,21 @@ struct SdkAssembly {
         credential: SdkCredentials,
         style: Style = DefaultStyle()
     ) throws -> AcquiringUISDK {
-        try AcquiringUISDK(configuration: createConfiguration(credential: credential), style: style)
+        let coreConfiguration = createCoreConfiguration(credential: credential)
+        let uiConfiguration = UISDKConfiguration(addCardCheckType: AppSetting.shared.addCardChekType)
+
+        return try AcquiringUISDK(
+            configuration: coreConfiguration,
+            uiSDKConfiguration: uiConfiguration,
+            style: style
+        )
     }
 
     static func assembleCoreSDK(credential: SdkCredentials) throws -> AcquiringSdk {
-        try AcquiringSdk(configuration: createConfiguration(credential: credential))
+        try AcquiringSdk(configuration: createCoreConfiguration(credential: credential))
     }
 
-    private static func createConfiguration(credential: SdkCredentials) -> AcquiringSdkConfiguration {
+    private static func createCoreConfiguration(credential: SdkCredentials) -> AcquiringSdkConfiguration {
         let sdkCredential = AcquiringSdkCredential(
             terminalKey: credential.terminalKey,
             publicKey: credential.publicKey

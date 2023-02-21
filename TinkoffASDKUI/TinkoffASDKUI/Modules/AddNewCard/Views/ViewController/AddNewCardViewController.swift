@@ -19,45 +19,20 @@
 
 import TinkoffASDKCore
 import UIKit
-
-enum AddNewCardSection {
-    case cardField
-}
-
-// MARK: - AddNewCardOutput
-
-public protocol IAddNewCardOutput: AnyObject {
-    func addingNewCardCompleted(result: AddCardResult)
-}
-
-// MARK: - AddNewCardView
-
-protocol IAddNewCardView: AnyObject {
-    func reloadCollection(sections: [AddNewCardSection])
-    func showLoadingState()
-    func hideLoadingState()
-    func closeScreen()
-    func disableAddButton()
-    func enableAddButton()
-    func activateCardField()
-    func showOkNativeAlert(data: OkAlertData)
-}
-
-// MARK: - AddNewCardViewController
+import WebKit
 
 final class AddNewCardViewController: UIViewController {
 
-    // MARK: Dependecies
+    // MARK: Dependencies
 
     private let presenter: IAddNewCardPresenter
 
     // MARK: Properties
 
     private lazy var addCardView = AddNewCardView(delegate: self)
+    private lazy var hiddenWebViewFor3DS = WKWebView()
 
-    private var didAddCard = false
-
-    // MARK: - Inits
+    // MARK: Init
 
     init(presenter: IAddNewCardPresenter) {
         self.presenter = presenter
@@ -69,15 +44,13 @@ final class AddNewCardViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
-
-    override func loadView() {
-        view = addCardView
-    }
+    // MARK: Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationItem()
+        setupHiddenWebView()
+        setupAddNewCardView()
         presenter.viewDidLoad()
     }
 
@@ -91,7 +64,7 @@ final class AddNewCardViewController: UIViewController {
         let isBeingDismissed = navigationController?.isBeingDismissed == true
         // Тречит дисмисс или свайп вью контроллера
         if isBeingDismissed || isMovingFromParent {
-            presenter.viewUserClosedTheScreen()
+            presenter.viewWasClosed()
         }
     }
 }
@@ -99,7 +72,6 @@ final class AddNewCardViewController: UIViewController {
 // MARK: - IAddNewCardView
 
 extension AddNewCardViewController: IAddNewCardView {
-
     func reloadCollection(sections: [AddNewCardSection]) {
         addCardView.reloadCollection(sections: sections)
     }
@@ -117,9 +89,10 @@ extension AddNewCardViewController: IAddNewCardView {
     }
 
     func closeScreen() {
-        let popedViewController = navigationController?.popViewController(animated: true)
-        if popedViewController == nil {
-            presentingViewController?.dismiss(animated: true)
+        let poppedViewController = navigationController?.popViewController(animated: true)
+
+        if poppedViewController == nil {
+            dismiss(animated: true)
         }
     }
 
@@ -137,10 +110,21 @@ extension AddNewCardViewController: IAddNewCardView {
     }
 }
 
-// MARK: - Navigation Controller Setup
+// MARK: - ThreeDSWebFlowDelegate
+
+extension AddNewCardViewController: ThreeDSWebFlowDelegate {
+    func hiddenWebViewToCollect3DSData() -> WKWebView {
+        hiddenWebViewFor3DS
+    }
+
+    func sourceViewControllerToPresent() -> UIViewController? {
+        self
+    }
+}
+
+// MARK: - Private Helpers
 
 extension AddNewCardViewController {
-
     private func setupNavigationItem() {
         navigationItem.title = Loc.Acquiring.AddNewCard.screenTitle
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -151,15 +135,25 @@ extension AddNewCardViewController {
         )
     }
 
+    private func setupHiddenWebView() {
+        view.addSubview(hiddenWebViewFor3DS)
+        hiddenWebViewFor3DS.pinEdgesToSuperview()
+        hiddenWebViewFor3DS.isHidden = true
+    }
+
+    private func setupAddNewCardView() {
+        view.addSubview(addCardView)
+        addCardView.pinEdgesToSuperview()
+    }
+
     @objc private func closeButtonTapped() {
-        closeScreen()
+        dismiss(animated: true)
     }
 }
 
 // MARK: - AddNewCardViewDelegate
 
 extension AddNewCardViewController: AddNewCardViewDelegate {
-
     func cardFieldViewAddCardTapped() {
         presenter.cardFieldViewAddCardTapped()
     }

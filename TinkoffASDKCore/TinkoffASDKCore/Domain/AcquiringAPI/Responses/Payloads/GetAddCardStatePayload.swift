@@ -17,6 +17,24 @@ public struct GetAddCardStatePayload {
     public let cardId: String?
     /// Идентификатор рекуррентного платежа
     public let rebillId: String?
+
+    /// Статус привязки карты
+    /// - Parameters:
+    ///   - requestKey: Идентификатор запроса на привязку карты
+    ///   - status: Статус привязки карты
+    ///   - cardId: Идентификатор карты в системе Банка
+    ///   - rebillId: Идентификатор рекуррентного платежа
+    public init(
+        requestKey: String,
+        status: AcquiringStatus,
+        cardId: String?,
+        rebillId: String?
+    ) {
+        self.requestKey = requestKey
+        self.status = status
+        self.cardId = cardId
+        self.rebillId = rebillId
+    }
 }
 
 // MARK: - Decodable

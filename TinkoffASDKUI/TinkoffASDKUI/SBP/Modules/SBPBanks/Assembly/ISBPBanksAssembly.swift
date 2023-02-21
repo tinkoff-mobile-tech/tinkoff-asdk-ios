@@ -17,7 +17,7 @@ protocol ISBPBanksAssembly {
     /// - Parameter paymentSheetOutput: делегат ответов от платежной шторки
     /// - Returns: Возвращает сформированный модуль
     func buildInitialModule(
-        paymentConfiguration: AcquiringPaymentStageConfiguration,
+        paymentFlow: PaymentFlow,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) -> SBPBanksModule
 }

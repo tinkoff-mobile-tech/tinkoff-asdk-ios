@@ -11,23 +11,12 @@ import UIKit
 // MARK: - ICardListFlow
 
 protocol IChoosePaymentCardListFlow {
-    func start(context: ChoosePaymentCardListContext)
-}
-
-final class ChoosePaymentCardListContext {
-    let baseContext: CardListContext
-    var selectedCardId: String
-    let setOutputEvents: (ICardListModule) -> Void
-
-    init(
-        baseContext: CardListContext,
+    func start(
+        presentingViewController: UIViewController,
+        customerKey: String,
         selectedCardId: String,
-        setOutputEvents: @escaping (ICardListModule) -> Void
-    ) {
-        self.baseContext = baseContext
-        self.setOutputEvents = setOutputEvents
-        self.selectedCardId = selectedCardId
-    }
+        setOutputEvents: (ICardListModule) -> Void
+    )
 }
 
 final class ChoosePaymentCardListFlow {
@@ -45,15 +34,20 @@ final class ChoosePaymentCardListFlow {
 }
 
 extension ChoosePaymentCardListFlow: IChoosePaymentCardListFlow {
-
-    func start(context: ChoosePaymentCardListContext) {
+    func start(
+        presentingViewController: UIViewController,
+        customerKey: String,
+        selectedCardId: String,
+        setOutputEvents: (ICardListModule) -> Void
+    ) {
         let (cardListViewController, module) = cardListAssembly.cardSelectionModule(
             cardListProvider: cardListDataProvider,
-            selectedCardId: context.selectedCardId
+            selectedCardId: selectedCardId
         )
-        context.setOutputEvents(module)
+
+        setOutputEvents(module)
         let navigationController = UINavigationController(rootViewController: cardListViewController)
         cardListViewController.extendedLayoutIncludesOpaqueBars = true
-        context.baseContext.presentingViewController.present(navigationController, animated: true)
+        presentingViewController.present(navigationController, animated: true)
     }
 }

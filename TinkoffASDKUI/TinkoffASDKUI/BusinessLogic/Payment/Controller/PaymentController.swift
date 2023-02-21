@@ -153,7 +153,7 @@ extension PaymentController: PaymentProcessDelegate {
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
 
-            self.threeDSWebFlowController.confirm3DS(paymentConfirmationData: data) { webViewResult in
+            self.threeDSWebFlowController.confirm3DS(data: data) { webViewResult in
                 self.handle(
                     webViewResult: webViewResult,
                     onCancel: confirmationCancelled,
@@ -173,10 +173,7 @@ extension PaymentController: PaymentProcessDelegate {
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
 
-            self.threeDSWebFlowController.confirm3DSACS(
-                paymentConfirmationData: data,
-                messageVersion: version
-            ) { webViewResult in
+            self.threeDSWebFlowController.confirm3DSACS(data: data, messageVersion: version) { webViewResult in
                 self.handle(
                     webViewResult: webViewResult,
                     onCancel: confirmationCancelled,

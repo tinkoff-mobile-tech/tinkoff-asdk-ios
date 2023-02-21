@@ -14,15 +14,22 @@ final class MainFormRouter: IMainFormRouter {
     weak var transitionHandler: UIViewController?
     private let configuration: MainFormUIConfiguration
     private let cardPaymentAssembly: ICardPaymentAssembly
+    private let sbpBanksAssembly: ISBPBanksAssembly
+
+    private let paymentFlow: PaymentFlow
 
     // MARK: Init
 
     init(
         configuration: MainFormUIConfiguration,
-        cardPaymentAssembly: ICardPaymentAssembly
+        cardPaymentAssembly: ICardPaymentAssembly,
+        sbpBanksAssembly: ISBPBanksAssembly,
+        paymentFlow: PaymentFlow
     ) {
         self.configuration = configuration
         self.cardPaymentAssembly = cardPaymentAssembly
+        self.sbpBanksAssembly = sbpBanksAssembly
+        self.paymentFlow = paymentFlow
     }
 
     // MARK: IMainFormRouter
@@ -39,7 +46,15 @@ final class MainFormRouter: IMainFormRouter {
         transitionHandler?.present(navVC, animated: true)
     }
 
-    func openSBP(paymentFlow: PaymentFlow) {}
-
     func openTinkoffPay(paymentFlow: PaymentFlow) {}
+
+    func openSBP(paymentFlow: PaymentFlow, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) {
+        let sbpModule = sbpBanksAssembly.buildInitialModule(
+            paymentFlow: paymentFlow,
+            paymentSheetOutput: paymentSheetOutput
+        )
+
+        let navVC = UINavigationController(rootViewController: sbpModule.view)
+        transitionHandler?.present(navVC, animated: true)
+    }
 }
