@@ -34,7 +34,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         output: ICardPaymentPresenterModuleOutput?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
-        let cardsController = cardsControllerAssembly.cardsController(customerKey: paymentFlow.customerOptions?.customerKey ?? "")
+        let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
         let router = CardPaymentRouter()
         let presenter = CardPaymentPresenter(

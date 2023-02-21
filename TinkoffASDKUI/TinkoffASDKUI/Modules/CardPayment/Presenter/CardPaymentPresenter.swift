@@ -16,7 +16,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let router: ICardPaymentRouter
     private weak var output: ICardPaymentPresenterModuleOutput?
 
-    private let cardsController: ICardsController
+    private let cardsController: ICardsController?
     private let paymentController: IPaymentController
 
     // MARK: Properties
@@ -41,7 +41,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
-        cardsController: ICardsController,
+        cardsController: ICardsController?,
         paymentController: IPaymentController,
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
@@ -182,6 +182,11 @@ extension CardPaymentPresenter: PaymentControllerDelegate {
 
 extension CardPaymentPresenter {
     private func loadCards() {
+        guard let cardsController = cardsController else {
+            setupInitialStateScreen()
+            return
+        }
+
         cardsController.getActiveCards(completion: { [weak self] result in
             guard let self = self else { return }
 
