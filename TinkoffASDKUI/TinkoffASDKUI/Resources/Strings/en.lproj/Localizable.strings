@@ -61,22 +61,6 @@
 "TinkoffAcquiring.view.title.payQRCode" = "Payment by QR-code";
 "TinkoffAcquiring.view.title.confimration" = "Confirmation";
 
-// SBP Banks List
-"SBP.BanksList.Header.Title" = "Choose bank app";
-"SBP.BanksList.Header.Subtitle" = "Chosen app will be opened in order to confirm the purchase";
-"SBP.BanksList.Button.Title" = "Continue";
-
-"SBP.EmptyBanks.Title" = "No bank app is installed on your device";
-"SBP.EmptyBanks.Description" = "Install bank app that supports FPS to confirm the purchase";
-"SBP.EmptyBanks.ConfirmationButton.Title" = "OK";
-"SBP.EmptyBanks.InformationButton.Title" = "Check details on website";
-
-"SBP.Error.Title" = "Error occured during transaction";
-"SBP.Error.Description" = "Try again";
-
-"SBP.OpenApplication.Error" = "Failed to open application";
-"SBP.LoadingStatus.Title" = "Payment confirmation awaiting";
-
 // Acquiring
 "Acquiring.SBP.ScreenTitle" = "Bank selection";
 "Acquiring.SBPBanks.ButtonClose" = "Close";
@@ -89,15 +73,7 @@
 "CommonAlert.Button" = "Ok";
 
 // Tinkoff Pay
-"TP.Error.Title" = "Error occured during transaction";
-"TP.Error.Description" = "Try again";
-
 "TP.LoadingStatus.Title" = "Payment confirmation awaiting";
-
-"TP.NoTinkoffBankApp.Title" = "Tinkoff Bank is not installed";
-"TP.NoTinkoffBankApp.Description" = "Download the app or choose another payment method";
-"TP.NoTinkoffBankApp.Button.Install" = "Install";
-"TP.NoTinkoffBankApp.Button.Сancel" = "Cancel";
 
 // 3ds app-based
 "TinkoffAcquiring.threeds.cancelAuth" = "Cancel";

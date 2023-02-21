@@ -216,70 +216,10 @@ internal enum Loc {
       internal static let title = Loc.tr("Localizable", "CommonStub.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
     }
   }
-  internal enum Sbp {
-    internal enum BanksList {
-      internal enum Button {
-        /// Продолжить
-        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Button.Title", fallback: "Продолжить")
-      }
-      internal enum Header {
-        /// Мы откроем приложение этого банка для подтверждения оплаты
-        internal static let subtitle = Loc.tr("Localizable", "SBP.BanksList.Header.Subtitle", fallback: "Мы откроем приложение этого банка для подтверждения оплаты")
-        /// Выбор банка
-        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Header.Title", fallback: "Выбор банка")
-      }
-    }
-    internal enum EmptyBanks {
-      /// Для оплаты через СБП необходимо иметь установленными банковские приложения
-      internal static let description = Loc.tr("Localizable", "SBP.EmptyBanks.Description", fallback: "Для оплаты через СБП необходимо иметь установленными банковские приложения")
-      /// Не найдено ни одного банковского приложения
-      internal static let title = Loc.tr("Localizable", "SBP.EmptyBanks.Title", fallback: "Не найдено ни одного банковского приложения")
-      internal enum ConfirmationButton {
-        /// Понятно
-        internal static let title = Loc.tr("Localizable", "SBP.EmptyBanks.ConfirmationButton.Title", fallback: "Понятно")
-      }
-      internal enum InformationButton {
-        /// Информация на сайте СБП
-        internal static let title = Loc.tr("Localizable", "SBP.EmptyBanks.InformationButton.Title", fallback: "Информация на сайте СБП")
-      }
-    }
-    internal enum Error {
-      /// Попробуйте еще раз
-      internal static let description = Loc.tr("Localizable", "SBP.Error.Description", fallback: "Попробуйте еще раз")
-      /// Не удалось выполнить оплату через СБП
-      internal static let title = Loc.tr("Localizable", "SBP.Error.Title", fallback: "Не удалось выполнить оплату через СБП")
-    }
-    internal enum LoadingStatus {
-      /// Ожидаем подтверждения платежа
-      internal static let title = Loc.tr("Localizable", "SBP.LoadingStatus.Title", fallback: "Ожидаем подтверждения платежа")
-    }
-    internal enum OpenApplication {
-      /// Не удалось открыть приложение
-      internal static let error = Loc.tr("Localizable", "SBP.OpenApplication.Error", fallback: "Не удалось открыть приложение")
-    }
-  }
   internal enum Tp {
-    internal enum Error {
-      /// Попробуйте еще раз
-      internal static let description = Loc.tr("Localizable", "TP.Error.Description", fallback: "Попробуйте еще раз")
-      /// Не удалось выполнить оплату через Tinkoff Pay
-      internal static let title = Loc.tr("Localizable", "TP.Error.Title", fallback: "Не удалось выполнить оплату через Tinkoff Pay")
-    }
     internal enum LoadingStatus {
       /// Ожидаем подтверждения платежа
       internal static let title = Loc.tr("Localizable", "TP.LoadingStatus.Title", fallback: "Ожидаем подтверждения платежа")
-    }
-    internal enum NoTinkoffBankApp {
-      /// Скачайте приложение или выберите другой способ оплаты
-      internal static let description = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Description", fallback: "Скачайте приложение или выберите другой способ оплаты")
-      /// У вас не установлено Tinkoff
-      internal static let title = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Title", fallback: "У вас не установлено Tinkoff")
-      internal enum Button {
-        /// Установить
-        internal static let install = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Button.Install", fallback: "Установить")
-        /// Отменить
-        internal static let сancel = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Button.Сancel", fallback: "Отменить")
-      }
     }
   }
   internal enum TinkoffAcquiring {
