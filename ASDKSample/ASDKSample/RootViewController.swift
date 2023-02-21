@@ -170,11 +170,11 @@ class RootViewController: UITableViewController {
                 AppSetting.shared.addCardChekType
             }
 
-            sdk.presentAddCard(
-                on: self,
-                customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
-                output: self
-            )
+            let customerKey = AppSetting.shared.activeSdkCredentials.customerKey
+
+            sdk.presentAddCard(on: self, customerKey: customerKey) { [weak self] result in
+                self?.addingNewCardCompleted(result: result)
+            }
         }
     }
 }
@@ -239,9 +239,8 @@ private extension RootViewController {
     }
 }
 
-extension RootViewController: IAddNewCardOutput {
-
-    func addingNewCardCompleted(result: AddCardResult) {
+extension RootViewController {
+    private func addingNewCardCompleted(result: AddCardResult) {
         switch result {
         case .cancelled, .failed:
             let alert = UIAlertController.okAlert(
@@ -255,17 +254,10 @@ extension RootViewController: IAddNewCardOutput {
         case let .succeded(card):
             let alert = UIAlertController.okAlert(
                 title: nil,
-                message: Loc.AddCard.Alert.message(String.format(pan: card.pan)),
+                message: "\(card)",
                 buttonTitle: Loc.Button.ok
             )
             present(alert, animated: true)
         }
-    }
-}
-
-private extension String {
-
-    static func format(pan: String) -> String {
-        "•" + pan.suffix(4)
     }
 }

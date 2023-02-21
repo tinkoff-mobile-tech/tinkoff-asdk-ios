@@ -1781,9 +1781,9 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     public func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
-        output: IAddNewCardOutput?
+        completion: ((AddCardResult) -> Void)? = nil
     ) {
-        let viewController = addNewCardAssembly.assemble(customerKey: customerKey, output: output)
+        let viewController = addNewCardAssembly.addNewCard(customerKey: customerKey, onViewWasClosed: completion)
         let navigationController = UINavigationController(rootViewController: viewController)
         presentingViewController.present(navigationController, animated: true)
     }

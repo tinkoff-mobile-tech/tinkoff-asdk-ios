@@ -22,9 +22,10 @@ final class AddNewCardPresenter {
     weak var view: IAddNewCardView?
     private let cardsController: ICardsController
 
-    // MARK: Output
+    // MARK: Output Events Handlers
 
     private weak var output: IAddNewCardOutput?
+    private var onViewWasClosed: ((AddCardResult) -> Void)?
 
     // MARK: Child presenters
 
@@ -36,9 +37,14 @@ final class AddNewCardPresenter {
 
     // MARK: Init
 
-    init(cardsController: ICardsController, output: IAddNewCardOutput?) {
+    init(
+        cardsController: ICardsController,
+        output: IAddNewCardOutput?,
+        onViewWasClosed: ((AddCardResult) -> Void)?
+    ) {
         self.cardsController = cardsController
         self.output = output
+        self.onViewWasClosed = onViewWasClosed
     }
 }
 
@@ -67,7 +73,9 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     }
 
     func viewWasClosed() {
-        output?.addingNewCardCompleted(result: moduleResult)
+        output?.addNewCardWasClosed(with: moduleResult)
+        onViewWasClosed?(moduleResult)
+        onViewWasClosed = nil
     }
 
     func cardFieldViewPresenter() -> ICardFieldViewOutput {

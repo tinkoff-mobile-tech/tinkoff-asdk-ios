@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 protocol IAddNewCardAssembly {
-    func assemble(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController
+    func addNewCard(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController
+    func addNewCard(customerKey: String, onViewWasClosed: ((AddCardResult) -> Void)?) -> AddNewCardViewController
 }
 
 final class AddNewCardAssembly: IAddNewCardAssembly {
@@ -25,12 +26,27 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     // MARK: IAddNewCardAssembly
 
-    func assemble(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController {
+    func addNewCard(customerKey: String, output: IAddNewCardOutput?) -> AddNewCardViewController {
+        createModule(customerKey: customerKey, output: output, onViewWasClosed: nil)
+    }
+
+    func addNewCard(customerKey: String, onViewWasClosed: ((AddCardResult) -> Void)?) -> AddNewCardViewController {
+        createModule(customerKey: customerKey, output: nil, onViewWasClosed: onViewWasClosed)
+    }
+
+    // MARK: Helpers
+
+    private func createModule(
+        customerKey: String,
+        output: IAddNewCardOutput?,
+        onViewWasClosed: ((AddCardResult) -> Void)?
+    ) -> AddNewCardViewController {
         let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
 
         let presenter = AddNewCardPresenter(
             cardsController: cardsController,
-            output: output
+            output: output,
+            onViewWasClosed: onViewWasClosed
         )
 
         let viewController = AddNewCardViewController(presenter: presenter)

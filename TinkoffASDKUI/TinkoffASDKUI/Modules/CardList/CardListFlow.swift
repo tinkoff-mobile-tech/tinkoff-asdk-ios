@@ -37,7 +37,7 @@ extension CardListFlow: ICardListFlow {
         module.onAddNewCardTap = { [weak cardListViewController, addCardAssembly] in
             guard let cardListViewController = cardListViewController else { return }
 
-            let addCardViewController = addCardAssembly.assemble(
+            let addCardViewController = addCardAssembly.addNewCard(
                 customerKey: customerKey,
                 output: cardListViewController.getAddNewCardOutput()
             )

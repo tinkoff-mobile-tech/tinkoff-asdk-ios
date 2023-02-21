@@ -188,9 +188,10 @@ extension CardListPresenter: ICardListViewOutput {
     }
 }
 
-extension CardListPresenter: IAddNewCardOutput {
+// MARK: - IAddNewCardOutput
 
-    func addingNewCardCompleted(result: AddCardResult) {
+extension CardListPresenter: IAddNewCardOutput {
+    func addNewCardDidReceive(result: AddCardResult) {
         switch result {
         case .cancelled, .failed:
             break
