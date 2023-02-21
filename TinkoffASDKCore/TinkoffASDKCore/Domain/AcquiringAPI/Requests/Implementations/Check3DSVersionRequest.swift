@@ -68,10 +68,6 @@ private extension HTTPParameters {
             if let encryptedCardData = encryptor.encrypt(string: formattedCardData, publicKey: publicKey) {
                 parameters[Constants.Keys.cardData] = encryptedCardData
             }
-        case let .applePay(data):
-            parameters[Constants.Keys.encryptedPaymentData] = data
-            parameters[Constants.Keys.route] = Constants.Values.acq
-            parameters[Constants.Keys.source] = Constants.Values.applePaySource
         default: break
         }
 

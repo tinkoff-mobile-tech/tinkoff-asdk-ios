@@ -51,7 +51,7 @@ struct PaymentFactory: IPaymentFactory {
         paymentDelegate: PaymentProcessDelegate
     ) -> PaymentProcess? {
         switch paymentSource {
-        case .cardNumber, .savedCard, .applePay:
+        case .cardNumber, .savedCard:
             return CardPaymentProcess(
                 paymentsService: paymentsService,
                 threeDsService: threeDsService,
