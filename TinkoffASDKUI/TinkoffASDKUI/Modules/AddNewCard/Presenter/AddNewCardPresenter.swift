@@ -91,6 +91,7 @@ extension AddNewCardPresenter {
 
         cardsController.addCard(options: options) { [weak self] result in
             guard let self = self else { return }
+            self.output?.addNewCardDidReceive(result: result)
             self.view?.hideLoadingState()
             self.moduleResult = result
 

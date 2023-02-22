@@ -30,8 +30,7 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> UINavigationController {
         let viewController = createModule(customerKey: customerKey, output: nil, onViewWasClosed: onViewWasClosed)
-        let navigationController = UINavigationController(rootViewController: viewController)
-        return navigationController
+        return UINavigationController.withASDKBar(rootViewController: viewController)
     }
 
     // MARK: Helpers
@@ -49,10 +48,11 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
             onViewWasClosed: onViewWasClosed
         )
 
-        let viewController = AddNewCardViewController(presenter: presenter)
-        presenter.view = viewController
-        cardsController.webFlowDelegate = viewController
+        let view = AddNewCardViewController(presenter: presenter)
 
-        return viewController
+        presenter.view = view
+        cardsController.webFlowDelegate = view
+
+        return view
     }
 }

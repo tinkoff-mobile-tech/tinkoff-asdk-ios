@@ -84,7 +84,7 @@ final class MockCardListViewInput: ICardListViewInput {
 
     var showLoadingSnackbarCallCounter = 0
     var showLoadingSnackbarStub: (String?) -> Void = { _ in }
-    func showLoadingSnackbar(text: String?) {
+    func showRemovingCardSnackBar(text: String?) {
         showLoadingSnackbarCallCounter += 1
         showLoadingSnackbarStub(text)
     }

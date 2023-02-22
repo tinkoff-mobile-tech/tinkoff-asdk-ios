@@ -12,7 +12,7 @@ protocol IAddNewCardAssembly {
     ///
     /// Используется в кач-ве экрана, который пушится в `UINavigationController` с экрана списка карт
     /// - Parameters:
-    ///   - customerKey: Идентификатор покупателя в системе банка
+    ///   - customerKey: Идентификатор покупателя в системе Продавца
     ///   - output: Объект, который будет получать события из экрана добавления карты
     /// - Returns: `UIViewController`
     func addNewCardView(
@@ -24,7 +24,7 @@ protocol IAddNewCardAssembly {
     ///
     /// Используется в кач-ве самостоятельного экрана, открываемого из родительского приложения
     /// - Parameters:
-    ///   - customerKey: Идентификатор покупателя в системе банка
+    ///   - customerKey: Идентификатор покупателя в системе Продавца
     ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     /// - Returns: `UINavigationController`
     func addNewCardNavigationController(

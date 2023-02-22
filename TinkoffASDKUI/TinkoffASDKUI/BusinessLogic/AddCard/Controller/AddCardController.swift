@@ -22,6 +22,10 @@ final class AddCardController {
         case invalidCardStatus(AcquiringStatus)
     }
 
+    // MARK: IAddCardController Properties
+
+    let customerKey: String
+
     // MARK: Dependencies
 
     private let coreSDK: AcquiringSdk
@@ -29,7 +33,6 @@ final class AddCardController {
     private let webFlowController: IThreeDSWebFlowController
     private let threeDSService: IAcquiringThreeDSService
     private let checkType: PaymentCardCheckType
-    private let customerKey: String
     private let cardStateSuccessfulStatuses: Set<AcquiringStatus>
     private let paymentStateSuccessfulStatuses: Set<AcquiringStatus>
 
