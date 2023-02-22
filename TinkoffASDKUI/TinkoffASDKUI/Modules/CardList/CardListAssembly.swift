@@ -25,16 +25,15 @@ protocol ICardListAssembly {
     /// Отображение списка карт в качестве самостоятельного экрана
     ///
     /// Доступные операции: добавление, удаление
-    func cardsPresentingModule(
-        cardListProvider: CardListDataProvider
-    ) -> (view: CardListViewController, module: ICardListModule)
+    func cardsPresentingModule(customerKey: String) -> (view: CardListViewController, module: ICardListModule)
 
     /// Отображение списка карт, вызываемого с платежной формы
     ///
     /// Доступные операции: добавление, удаление, выбор карты
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
-        selectedCardId: String
+        customerKey: String,
+        selectedCardId: String,
+        cards: [PaymentCard]
     ) -> (view: CardListViewController, module: ICardListModule)
 }
 
@@ -52,20 +51,21 @@ final class CardListAssembly: ICardListAssembly {
     // MARK: ICardListAssembly
 
     func cardsPresentingModule(
-        cardListProvider: CardListDataProvider
+        customerKey: String
     ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
-            provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
+            customerKey: customerKey,
             configuration: .cardList()
         )
     }
 
     func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
-        selectedCardId: String
+        customerKey: String,
+        selectedCardId: String,
+        cards: [PaymentCard]
     ) -> (view: CardListViewController, module: ICardListModule) {
         buildModule(
-            provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
+            customerKey: customerKey,
             configuration: .choosePaymentCardList(selectedCardId: selectedCardId)
         )
     }
@@ -73,15 +73,17 @@ final class CardListAssembly: ICardListAssembly {
     // MARK: Building
 
     private func buildModule(
-        provider: IPaymentCardsProvider,
-        configuration: CardListScreenConfiguration
+        customerKey: String,
+        configuration: CardListScreenConfiguration,
+        cards: [PaymentCard] = []
     ) -> (view: CardListViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
             screenConfiguration: configuration,
+            cardsController: cardsControllerAssembly.cardsController(customerKey: customerKey),
             imageResolver: PaymentSystemImageResolver(),
-            provider: provider,
             bankResolver: BankResolver(),
-            paymentSystemResolver: PaymentSystemResolver()
+            paymentSystemResolver: PaymentSystemResolver(),
+            cards: cards
         )
 
         let view = CardListViewController(

@@ -41,8 +41,9 @@ extension ChoosePaymentCardListFlow: IChoosePaymentCardListFlow {
         setOutputEvents: (ICardListModule) -> Void
     ) {
         let (cardListViewController, module) = cardListAssembly.cardSelectionModule(
-            cardListProvider: cardListDataProvider,
-            selectedCardId: selectedCardId
+            customerKey: customerKey,
+            selectedCardId: selectedCardId,
+            cards: []
         )
 
         setOutputEvents(module)

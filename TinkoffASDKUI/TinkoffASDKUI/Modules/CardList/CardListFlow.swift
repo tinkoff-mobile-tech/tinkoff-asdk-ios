@@ -16,23 +16,20 @@ protocol ICardListFlow {
 
 final class CardListFlow {
     private let cardListAssembly: ICardListAssembly
-    private let cardListDataProvider: CardListDataProvider
     private let addCardAssembly: IAddNewCardAssembly
 
     init(
         cardListAssembly: ICardListAssembly,
-        cardListDataProvider: CardListDataProvider,
         addCardAssembly: IAddNewCardAssembly
     ) {
         self.cardListAssembly = cardListAssembly
-        self.cardListDataProvider = cardListDataProvider
         self.addCardAssembly = addCardAssembly
     }
 }
 
 extension CardListFlow: ICardListFlow {
     func start(presentingViewController: UIViewController, customerKey: String) {
-        let (cardListViewController, module) = cardListAssembly.cardsPresentingModule(cardListProvider: cardListDataProvider)
+        let (cardListViewController, module) = cardListAssembly.cardsPresentingModule(customerKey: customerKey)
 
         module.onAddNewCardTap = { [weak cardListViewController, addCardAssembly] in
             guard let cardListViewController = cardListViewController else { return }

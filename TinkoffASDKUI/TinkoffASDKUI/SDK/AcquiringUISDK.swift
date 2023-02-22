@@ -1630,8 +1630,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
 
         let flow = CardListFlow(
             cardListAssembly: cardListAssembly,
-            cardListDataProvider: cardListProvider,
-            addCardAssembly: AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
+            addCardAssembly: addNewCardAssembly
         )
 
         flow.start(presentingViewController: presentingViewController, customerKey: customerKey)

@@ -34,7 +34,7 @@ protocol ICardListViewInput: AnyObject {
     func showEditButton()
     func hideRightBarButton()
     func showNativeAlert(data: OkAlertData)
-    func showLoadingSnackbar(text: String?)
+    func showRemovingCardSnackBar(text: String?)
     func hideLoadingSnackbar()
     func showAddedCardSnackbar(cardMaskedPan: String)
     func closeScreen()
@@ -199,7 +199,7 @@ extension CardListViewController: ICardListViewInput {
         present(alert, animated: true)
     }
 
-    func showLoadingSnackbar(text: String?) {
+    func showRemovingCardSnackBar(text: String?) {
         let config = SnackbarView.Configuration(
             content: .loader(
                 configuration: LoaderTitleView.Configuration(
@@ -217,7 +217,7 @@ extension CardListViewController: ICardListViewInput {
         snackBarViewController?.hideSnackView(
             animated: true,
             completion: { [weak self] _ in
-                self?.presenter.viewDidHideLoadingSnackbar()
+                self?.presenter.viewDidHideRemovingCardSnackBar()
                 self?.snackBarViewController = nil
             }
         )

@@ -25,7 +25,7 @@ protocol ICardListViewOutput: AnyObject, IAddNewCardPresenterOutput {
     func view(didTapDeleteOn card: CardList.Card)
     func viewDidTapEditButton()
     func viewDidTapDoneEditingButton()
-    func viewDidHideLoadingSnackbar()
+    func viewDidHideRemovingCardSnackBar()
     func viewDidTapCard(cardIndex: Int)
     func viewDidTapAddCardCell()
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
@@ -54,34 +54,36 @@ final class CardListPresenter: ICardListModule {
 
     weak var view: ICardListViewInput?
     private let imageResolver: IPaymentSystemImageResolver
-    private let provider: IPaymentCardsProvider
     private let bankResolver: IBankResolver
     private let paymentSystemResolver: IPaymentSystemResolver
     private var screenConfiguration: CardListScreenConfiguration
+    private let cardsController: ICardsController
 
     // MARK: State
 
-    private var activeCardsCache: [PaymentCard] = []
+    private var cards: [PaymentCard]
     private var isLoading = false
-    private var hasVisualContent: Bool { !activeCardsCache.isEmpty }
+    private var hasVisualContent: Bool { !cards.isEmpty }
     private var screenState = CardListScreenState.initial
-    private var deactivateCardResult: Result<Void, Error>?
+    private var deactivateCardResult: Result<RemoveCardPayload, Error>?
     private var sections: [CardListSection] { getSections() }
 
     // MARK: Init
 
     init(
         screenConfiguration: CardListScreenConfiguration,
+        cardsController: ICardsController,
         imageResolver: IPaymentSystemImageResolver,
-        provider: IPaymentCardsProvider,
         bankResolver: IBankResolver,
-        paymentSystemResolver: IPaymentSystemResolver
+        paymentSystemResolver: IPaymentSystemResolver,
+        cards: [PaymentCard] = []
     ) {
         self.screenConfiguration = screenConfiguration
         self.imageResolver = imageResolver
-        self.provider = provider
         self.bankResolver = bankResolver
         self.paymentSystemResolver = paymentSystemResolver
+        self.cardsController = cardsController
+        self.cards = cards
     }
 
     // MARK: ICardListModule Methods
@@ -122,11 +124,11 @@ extension CardListPresenter: ICardListViewOutput {
 
     func viewDidLoad() {
         view?.showShimmer()
-        fetchActiveCards()
+        fetchCardsIfNeeded()
     }
 
     func viewDidTapCard(cardIndex: Int) {
-        onSelectCard?(activeCardsCache[cardIndex])
+        onSelectCard?(cards[cardIndex])
     }
 
     func viewDidTapAddCardCell() {
@@ -144,11 +146,11 @@ extension CardListPresenter: ICardListViewOutput {
     func view(didTapDeleteOn card: CardList.Card) {
         isLoading = true
         view?.disableViewUserInteraction()
-        view?.showLoadingSnackbar(
+        view?.showRemovingCardSnackBar(
             text: Loc.Acquiring.CardList.deleteSnackBar + " " + card.pan
         )
 
-        provider.deactivateCard(cardId: card.id) { [weak self] result in
+        cardsController.removeCard(cardId: card.id) { [weak self] result in
             guard let self = self else { return }
             self.isLoading = false
             self.deactivateCardResult = result
@@ -170,13 +172,14 @@ extension CardListPresenter: ICardListViewOutput {
         reloadCollection()
     }
 
-    func viewDidHideLoadingSnackbar() {
+    func viewDidHideRemovingCardSnackBar() {
         if let result = deactivateCardResult {
             deactivateCardResult = nil
 
             switch result {
-            case .success:
-                fetchActiveCards()
+            case let .success(payload):
+                cards.removeAll { $0.cardId == payload.cardId }
+                handleFetchedActiveCard(result: .success(cards))
             case .failure:
                 if hasVisualContent {
                     showRemoveCardErrorAlert()
@@ -197,7 +200,7 @@ extension CardListPresenter: IAddNewCardPresenterOutput {
             break
         case let .succeded(card):
             screenState = .showingCards
-            activeCardsCache.append(card)
+            cards.append(card)
             view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
         }
     }
@@ -207,10 +210,17 @@ extension CardListPresenter {
 
     // MARK: - Private
 
-    private func fetchActiveCards() {
+    private func fetchCardsIfNeeded() {
+        guard cards.isEmpty else {
+            view?.hideShimmer(fetchCardsResult: .success(cards))
+            return
+        }
+
         isLoading = true
-        provider.fetchActiveCards { [weak self] result in
+
+        cardsController.getActiveCards { [weak self] result in
             self?.isLoading = false
+
             self?.view?.hideShimmer(fetchCardsResult: result)
         }
     }
@@ -220,7 +230,7 @@ extension CardListPresenter {
 
         switch result {
         case let .success(paymentCards):
-            activeCardsCache = paymentCards
+            cards = paymentCards
             if paymentCards.isEmpty {
                 viewDidTapDoneEditingButton()
                 reloadCollection()
@@ -292,7 +302,7 @@ extension CardListPresenter {
 
     private func getSections() -> [CardListSection] {
         var result: [CardListSection] = [
-            .cards(data: transform(activeCardsCache)),
+            .cards(data: transform(cards)),
         ]
 
         if screenState != .editingCards {

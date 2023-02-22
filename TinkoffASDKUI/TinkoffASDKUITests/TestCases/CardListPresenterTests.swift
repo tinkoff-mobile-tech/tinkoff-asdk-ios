@@ -128,7 +128,7 @@ final class CardListPresenterTests: XCTestCase {
         sutAsProtocol.view(didTapDeleteOn: buildCardList())
 
         // when
-        sutAsProtocol.viewDidHideLoadingSnackbar()
+        sutAsProtocol.viewDidHideRemovingCardSnackBar()
 
         // then
         XCTAssertEqual(mockView.enableViewUserInteractionCallCounter, 1)
@@ -145,7 +145,7 @@ final class CardListPresenterTests: XCTestCase {
         sutAsProtocol.view(didTapDeleteOn: buildCardList())
 
         // when
-        sutAsProtocol.viewDidHideLoadingSnackbar()
+        sutAsProtocol.viewDidHideRemovingCardSnackBar()
 
         // then
         XCTAssertEqual(mockView.enableViewUserInteractionCallCounter, 2)
