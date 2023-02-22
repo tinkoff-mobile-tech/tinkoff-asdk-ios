@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class CardPaymentViewController: UIViewController, ICardPaymentViewControllerInput {
+final class CardPaymentViewController: UIViewController, ICardPaymentViewControllerInput, ActivityIndicatorDisplayable {
 
     // MARK: Dependencies
 
@@ -17,14 +17,6 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
     // MARK: Properties
 
     private lazy var tableView = UITableView()
-    private lazy var savedCardView = SavedCardView()
-    private lazy var cardFieldView = CardFieldView()
-    private lazy var switchView = SwitchView()
-    private lazy var emailView = EmailView()
-    private lazy var payButton = Button(
-        configuration: Button.Configuration(style: .primaryTinkoff, contentSize: .basicLarge),
-        action: { [presenter] in presenter.payButtonPressed() }
-    )
 
     private lazy var webView = WKWebView()
 
@@ -56,22 +48,6 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 // MARK: - ICardPaymentViewControllerInput
 
 extension CardPaymentViewController {
-    func setPayButton(title: String) {
-        payButton.setTitle(title)
-    }
-
-    func setPayButton(isEnabled: Bool) {
-        payButton.isEnabled = isEnabled
-    }
-
-    func startLoadingPayButton() {
-        payButton.startLoading()
-    }
-
-    func stopLoadingPayButton() {
-        payButton.stopLoading()
-    }
-
     func startIgnoringInteractionEvents() {
         if #available(iOS 13.0, *) { isModalInPresentation = true }
         navigationController?.navigationBar.isUserInteractionEnabled = false
@@ -122,26 +98,34 @@ extension CardPaymentViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellType = presenter.cellType(for: indexPath.row)
-        let cell = tableView.dequeue(cellType: ContainerTableViewCell.self)
 
         switch cellType {
         case let .savedCard(cellPresenter):
-            savedCardView.presenter = cellPresenter
-            cell.setContent(savedCardView, insets: .cardCellsInsets)
+            let cell = tableView.dequeue(cellType: SavedCardTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = cellPresenter
+            cell.insets = .cardCellsInsets
+            return cell
         case let .cardField(cellPresenter):
-            cardFieldView.presenter = cellPresenter
-            cell.setContent(cardFieldView, insets: .cardCellsInsets)
+            let cell = tableView.dequeue(cellType: CardFieldTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = cellPresenter
+            cell.insets = .cardCellsInsets
+            return cell
         case let .getReceipt(cellPresenter):
-            switchView.presenter = cellPresenter
-            cell.setContent(switchView, insets: .switchViewInsets)
+            let cell = tableView.dequeue(cellType: SwitchTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = cellPresenter
+            cell.insets = .switchViewInsets
+            return cell
         case let .emailField(cellPresenter):
-            emailView.presenter = cellPresenter
-            cell.setContent(emailView, insets: .commonCellInsets)
-        case .payButton:
-            cell.setContent(payButton, insets: .payButtonInsets)
+            let cell = tableView.dequeue(cellType: EmailTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = cellPresenter
+            cell.insets = .commonCellInsets
+            return cell
+        case let .payButton(cellPresenter):
+            let cell = tableView.dequeue(cellType: PayButtonTableCell.self, indexPath: indexPath)
+            cell.containedView.presenter = cellPresenter
+            cell.insets = .payButtonInsets
+            return cell
         }
-
-        return cell
     }
 }
 
@@ -190,7 +174,14 @@ extension CardPaymentViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
-        tableView.register(ContainerTableViewCell.self)
+        tableView.register(
+            SavedCardTableCell.self,
+            CardFieldTableCell.self,
+            SwitchTableCell.self,
+            EmailTableCell.self,
+            PayButtonTableCell.self
+        )
+
         tableView.dataSource = self
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension

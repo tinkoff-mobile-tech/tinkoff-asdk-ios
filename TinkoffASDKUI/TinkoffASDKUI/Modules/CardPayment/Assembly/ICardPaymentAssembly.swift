@@ -10,7 +10,7 @@ import UIKit
 
 protocol ICardPaymentAssembly {
     func build(
-        activeCards: [PaymentCard],
+        activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
         output: ICardPaymentPresenterModuleOutput?

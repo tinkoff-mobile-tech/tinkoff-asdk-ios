@@ -271,7 +271,10 @@ public class AcquiringUISDK: NSObject {
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
 
-        let cardPaymentAssembly = CardPaymentAssembly(paymentControllerAssembly: paymentControllerAssembly)
+        let cardPaymentAssembly = CardPaymentAssembly(
+            cardsControllerAssembly: cardsControllerAssembly,
+            paymentControllerAssembly: paymentControllerAssembly
+        )
         mainFormAssembly = MainFormAssembly(
             coreSDK: coreSDK,
             paymentControllerAssembly: paymentControllerAssembly,
