@@ -23,7 +23,6 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
   internal enum Sbp {
-    internal static let emptyBanks = ImageAsset(name: "empty_banks")
     internal static let sbpAvatar = ImageAsset(name: "sbp-avatar")
     internal static let sbpLogoLight = ImageAsset(name: "sbp-logo-light")
     internal static let sbpLogoUniversal = ImageAsset(name: "sbp-logo-universal")
@@ -90,7 +89,6 @@ internal enum Asset {
   }
   internal static let scan = ImageAsset(name: "scan")
   internal static let share = ImageAsset(name: "share")
-  internal static let tick24 = ImageAsset(name: "tick_24")
   internal static let tuiIcServiceCross24 = ImageAsset(name: "tui_ic_service_cross_24")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

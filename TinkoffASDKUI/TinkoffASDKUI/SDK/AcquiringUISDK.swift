@@ -173,8 +173,6 @@ public class AcquiringUISDK: NSObject {
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
     private let sbpBanksAssembly: ISBPBanksAssembly
-    private let sbpAssembly: SBPAssembly
-    private let tinkoffPayAssembly: TinkoffPayAssembly
     private let cardListAssembly: ICardListAssembly
 
     // App based threeDS
@@ -250,11 +248,6 @@ public class AcquiringUISDK: NSObject {
         sbpBanksAssembly = SBPBanksAssembly(
             acquiringSdk: acquiringSdk,
             sbpConfiguration: uiSDKConfiguration.sbpConfiguration
-        )
-        sbpAssembly = SBPAssembly(coreSDK: acquiringSdk, style: style)
-        tinkoffPayAssembly = TinkoffPayAssembly(
-            coreSDK: acquiringSdk,
-            tinkoffPayStatusCacheLifeTime: configuration.tinkoffPayStatusCacheLifeTime
         )
         let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
         let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
@@ -400,40 +393,8 @@ public class AcquiringUISDK: NSObject {
             }
         }
 
-        acquiringView?.onTinkoffPayButton = { [weak self] version, paymentViewController in
-            guard let self = self else { return }
-            let tinkoffPayViewController = self.tinkoffPayViewController(
-                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-                configuration: configuration,
-                version: version
-            ) { [weak paymentViewController] result in
-                // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
-                paymentViewController?.dismiss(animated: true, completion: {
-                    // Закрываем AcquiringPaymentViewController
-                    (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
-                        completionHandler(result)
-                    })
-                })
-            }
-            paymentViewController.present(tinkoffPayViewController, animated: true)
-        }
-
-        acquiringView?.onTouchButtonSBP = { [weak self] paymentViewController in
-            guard let self = self else { return }
-            let urlSBPViewController = self.urlSBPPaymentViewController(
-                acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-                configuration: configuration,
-                completionHandler: { [weak paymentViewController] result in
-                    // Закрываем модально показанный экран-плашку с ожиданием оплаты, показанный поверх AcquiringPaymentViewController
-                    paymentViewController?.dismiss(animated: true, completion: {
-                        // Закрываем AcquiringPaymentViewController
-                        (paymentViewController as? AcquiringPaymentViewController)?.closeVC(animated: true, completion: {
-                            completionHandler(result)
-                        })
-                    })
-                }
-            )
-        }
+        acquiringView?.onTinkoffPayButton = nil
+        acquiringView?.onTouchButtonSBP = nil
     }
 
     /// Оплатить на основе родительского платежа, регулярный платеж
@@ -591,67 +552,6 @@ public class AcquiringUISDK: NSObject {
                 } // switch response
             } // getStaticQRCode
         }
-    }
-
-    public func urlSBPPaymentViewController(
-        acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
-        configuration: AcquiringViewConfiguration,
-        completionHandler: PaymentCompletionHandler? = nil
-    ) -> UIViewController {
-        let bankListViewController = sbpAssembly.banksListViewController(
-            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-            configuration: configuration
-        )
-        let paymentPollingViewController = sbpAssembly.paymentPollingViewController(
-            content: bankListViewController,
-            configuration: configuration,
-            completionHandler: completionHandler
-        )
-        let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
-
-        bankListViewController.noBanksAppAvailable = { [weak pullableContainerViewController] _, paymentStatusResponse in
-            let presentingViewController = pullableContainerViewController?.presentingViewController
-            pullableContainerViewController?.dismiss(animated: true, completion: { [weak self] in
-                guard let self = self else { return }
-                let emptyViewController = self.sbpAssembly.noAvailableBanksViewController(
-                    paymentStatusResponse: paymentStatusResponse,
-                    paymentCompletionHandler: completionHandler
-                )
-                if #available(iOS 13.0, *) {
-                    emptyViewController.isModalInPresentation = true
-                }
-                let navigationController = UINavigationController(rootViewController: emptyViewController)
-                navigationController.navigationBar.applyStyle(
-                    titleColor: ASDKColors.Text.primary.color,
-                    backgroundColor: ASDKColors.Background.elevation1.color
-                )
-                presentingViewController?.present(navigationController, animated: true, completion: nil)
-            })
-        }
-
-        return pullableContainerViewController
-    }
-
-    // MARK: - TinkoffPay
-
-    public func tinkoffPayViewController(
-        acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
-        configuration: AcquiringViewConfiguration,
-        version: GetTinkoffPayStatusResponse.Status.Version,
-        completionHandler: PaymentCompletionHandler? = nil
-    ) -> UIViewController {
-        let tinkoffPayViewController = tinkoffPayAssembly.tinkoffPayPaymentViewController(
-            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-            tinkoffPayVersion: version
-        )
-        let paymentPollingViewController = tinkoffPayAssembly.paymentPollingViewController(
-            content: tinkoffPayViewController,
-            configuration: configuration,
-            completionHandler: completionHandler
-        )
-
-        let pullableContainerViewController = PullableContainerViewController(content: paymentPollingViewController)
-        return pullableContainerViewController
     }
 
     // MARK: ApplePay
@@ -1042,8 +942,6 @@ public class AcquiringUISDK: NSObject {
         if let acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration {
             let acquiringPaymentController = AcquiringPaymentController(
                 acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-                tinkoffPayController: tinkoffPayAssembly.tinkoffPayController,
-                payController: PayController(sdk: acquiringSdk),
                 cardListDataProvider: injectableCardListProvider
             )
             acquiringPaymentController.delegate = modalViewController
