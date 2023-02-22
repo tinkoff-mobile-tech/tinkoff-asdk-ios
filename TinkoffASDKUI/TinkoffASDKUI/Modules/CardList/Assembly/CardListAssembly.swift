@@ -43,6 +43,21 @@ final class CardListAssembly: ICardListAssembly {
         return UINavigationController.withASDKBar(rootViewController: view)
     }
 
+    func cardSelectionNavigationController(
+        customerKey: String,
+        cards: [PaymentCard],
+        selectedCard: PaymentCard,
+        paymentFlow: PaymentFlow
+    ) -> UINavigationController {
+        let view = createModule(
+            customerKey: customerKey,
+            configuration: .choosePaymentCardList(selectedCardId: selectedCard.cardId),
+            cards: cards
+        )
+
+        return UINavigationController.withASDKBar(rootViewController: view)
+    }
+
     // MARK: Helpers
 
     private func createModule(

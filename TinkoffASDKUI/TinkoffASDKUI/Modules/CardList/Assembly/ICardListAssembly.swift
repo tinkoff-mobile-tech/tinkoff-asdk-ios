@@ -5,6 +5,7 @@
 //  Created by r.akhmadeev on 22.02.2023.
 //
 
+import TinkoffASDKCore
 import UIKit
 
 /// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
@@ -17,4 +18,10 @@ protocol ICardListAssembly {
     func cardsPresentingNavigationController(customerKey: String) -> UINavigationController
 
     // TODO: MIC-8030 Добавить точку входа для оплаты по сохраненной карте
+    func cardSelectionNavigationController(
+        customerKey: String,
+        cards: [PaymentCard],
+        selectedCard: PaymentCard,
+        paymentFlow: PaymentFlow
+    ) -> UINavigationController
 }

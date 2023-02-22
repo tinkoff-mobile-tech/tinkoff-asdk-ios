@@ -40,8 +40,11 @@ final class MainFormRouter: IMainFormRouter {
     func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard) {
         guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
 
-        let navigationController = cardListAssembly.cardsPresentingNavigationController(
-            customerKey: customerKey
+        let navigationController = cardListAssembly.cardSelectionNavigationController(
+            customerKey: customerKey,
+            cards: cards,
+            selectedCard: selectedCard,
+            paymentFlow: paymentFlow
         )
 
         transitionHandler?.present(navigationController, animated: true)
