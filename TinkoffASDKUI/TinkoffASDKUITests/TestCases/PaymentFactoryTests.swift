@@ -121,24 +121,6 @@ final class PaymentFactoryTests: XCTestCase {
         XCTAssertEqual(paymentProcess?.paymentSource, paymentSourceData)
     }
 
-    func testCreatePayment_when_PaymentSource_PaymentData() throws {
-        // given
-        let paymentSourceData = PaymentSourceData.applePay(base64Token: "234234")
-        let paymentFlow: PaymentFlow = .full(paymentOptions: UIASDKTestsAssembly.makePaymentOptions())
-
-        // when
-        let paymentProcess = sut.createPayment(
-            paymentSource: paymentSourceData,
-            paymentFlow: paymentFlow,
-            paymentDelegate: paymentDelegateMock
-        )
-
-        // then
-        XCTAssertTrue(paymentProcess is CardPaymentProcess)
-        XCTAssertEqual(paymentProcess?.paymentFlow, paymentFlow)
-        XCTAssertEqual(paymentProcess?.paymentSource, paymentSourceData)
-    }
-
     func testCreatePayment_when_PaymentSource_ParentPayment() throws {
         // given
         let paymentSourceData: PaymentSourceData = .parentPayment(rebuidId: "2423424")

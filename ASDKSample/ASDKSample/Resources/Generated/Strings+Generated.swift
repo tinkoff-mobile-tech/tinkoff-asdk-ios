@@ -194,8 +194,6 @@ internal enum Loc {
     internal static let pay = Loc.tr("Localizable", "title.pay", fallback: "Оплата")
     /// Оплатить, начать регулярный платеж
     internal static let payAndSaveAsParent = Loc.tr("Localizable", "title.payAndSaveAsParent", fallback: "Оплатить, начать регулярный платеж")
-    /// Оплатить с помощью ApplePay
-    internal static let payByApplePay = Loc.tr("Localizable", "title.payByApplePay", fallback: "Оплатить с помощью ApplePay")
     /// Оплатить с помощью Системы Быстрых Платежей
     internal static let payBySBP = Loc.tr("Localizable", "title.payBySBP", fallback: "Оплатить с помощью Системы Быстрых Платежей")
     /// Список карт

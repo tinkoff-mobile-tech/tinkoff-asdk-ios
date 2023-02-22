@@ -30,12 +30,6 @@ public enum PaymentSourceData: Equatable {
     ///   - rebuidId: идентификатор родительского платежа
     case parentPayment(rebuidId: String)
 
-    /// При оплате с помощью **ApplePay**
-    ///
-    /// - Parameters:
-    ///   - base64Token: UTF-8 encoded JSON dictionary of encrypted payment data from `PKPaymentToken.paymentData`
-    case applePay(base64Token: String)
-
     /// При оплате с помощью **YandexPay**
     ///
     /// - Parameters:
