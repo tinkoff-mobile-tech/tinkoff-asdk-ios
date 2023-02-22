@@ -42,7 +42,7 @@ final class MainFormRouter: IMainFormRouter {
             output: output
         )
 
-        let navVC = UINavigationController(rootViewController: cardPaymentViewController)
+        let navVC = UINavigationController.withASDKBar(rootViewController: cardPaymentViewController)
         transitionHandler?.present(navVC, animated: true)
     }
 
@@ -54,7 +54,7 @@ final class MainFormRouter: IMainFormRouter {
             paymentSheetOutput: paymentSheetOutput
         )
 
-        let navVC = UINavigationController(rootViewController: sbpModule.view)
+        let navVC = UINavigationController.withASDKBar(rootViewController: sbpModule.view)
         transitionHandler?.present(navVC, animated: true)
     }
 }

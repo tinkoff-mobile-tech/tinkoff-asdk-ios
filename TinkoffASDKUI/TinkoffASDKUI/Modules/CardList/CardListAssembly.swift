@@ -50,19 +50,7 @@ final class CardListAssembly: ICardListAssembly {
 
     func cardsPresentingNavigationController(customerKey: String) -> UINavigationController {
         let view = createModule(customerKey: customerKey, configuration: .cardList())
-        let navigationController = UINavigationController(rootViewController: view)
-
-        if #available(iOS 13.0, *) {
-            // Fixes flickering of nav bar when using pushing transitioning animation
-            let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.configureWithTransparentBackground()
-            navBarAppearance.backgroundColor = ASDKColors.Background.elevation1.color
-            navigationController.navigationBar.standardAppearance = navBarAppearance
-            navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
-            navigationController.navigationBar.compactAppearance = navBarAppearance
-        }
-
-        return navigationController
+        return UINavigationController.withASDKBar(rootViewController: view)
     }
 
     // MARK: Building
@@ -88,8 +76,6 @@ final class CardListAssembly: ICardListAssembly {
             configuration: configuration,
             presenter: presenter
         )
-
-        view.extendedLayoutIncludesOpaqueBars = true
 
         router.transitionHandler = view
         presenter.view = view
