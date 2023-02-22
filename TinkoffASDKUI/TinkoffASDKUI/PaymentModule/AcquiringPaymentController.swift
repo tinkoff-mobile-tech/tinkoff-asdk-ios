@@ -26,8 +26,6 @@ protocol AcquiringPaymentControllerDelegate: AnyObject {
 
 final class AcquiringPaymentController {
     private let acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration
-    private let tinkoffPayController: TinkoffPayController
-    private let payController: PayController
     private let cardListDataProvider: CardListDataProvider?
 
     weak var delegate: AcquiringPaymentControllerDelegate?
@@ -35,24 +33,14 @@ final class AcquiringPaymentController {
 
     init(
         acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration,
-        tinkoffPayController: TinkoffPayController,
-        payController: PayController,
         cardListDataProvider: CardListDataProvider?
     ) {
         self.acquiringPaymentStageConfiguration = acquiringPaymentStageConfiguration
-        self.tinkoffPayController = tinkoffPayController
-        self.payController = payController
         self.cardListDataProvider = cardListDataProvider
     }
 
     func loadCardsAndCheckTinkoffPayAvailability() {
         let dispatchGroup = DispatchGroup()
-
-        dispatchGroup.enter()
-        _ = tinkoffPayController.checkIfTinkoffPayAvailable { [weak self] result in
-            self?.handleTinkoffPayAvailabilityCheck(result: result)
-            dispatchGroup.leave()
-        }
 
         dispatchGroup.enter()
         cardListDataProvider?.fetch(startHandler: nil, completeHandler: { [weak self] _, _ in
@@ -69,13 +57,8 @@ final class AcquiringPaymentController {
     func performPayment() {
         switch acquiringPaymentStageConfiguration.paymentStage {
         case let .`init`(paymentData):
-            payController.initPayment(with: paymentData) { [weak self] result in
-                guard let self = self else { return }
-                self.delegate?.acquiringPaymentController(
-                    self,
-                    didPaymentInitWith: result
-                )
-            }
+            // не используется
+            break
         case let .finish(paymentId):
             delegate?.acquiringPaymentController(
                 self,

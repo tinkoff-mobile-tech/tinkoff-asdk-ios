@@ -83,9 +83,6 @@ public class AcquiringSdkConfiguration: NSObject {
     /// Логгер сетевых запросов. Реализация - `ASDKApiLoggerDelegate`
     public var logger: LoggerDelegate?
 
-    /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
-    public var tinkoffPayStatusCacheLifeTime: TimeInterval
-
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     let tokenProvider: ITokenProvider?
 
@@ -98,7 +95,6 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, значение по-умолчанию - 40 секунд
-    ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
     ///   - tokenProvider: Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     ///   - urlSessionAuthChallengeService: Запрашивает данные и способ аутентификация для `URLSession`.
     ///   При nil используется реализация на усмотрение `AcquiringSDK`
@@ -107,13 +103,11 @@ public class AcquiringSdkConfiguration: NSObject {
         credential: AcquiringSdkCredential,
         server: AcquiringSdkEnvironment = .test,
         requestsTimeoutInterval: TimeInterval = 40,
-        tinkoffPayStatusCacheLifeTime: TimeInterval = 300,
         tokenProvider: ITokenProvider? = nil,
         urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
-        self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
         serverEnvironment = server
         configEnvironment = server == .test ? .test : .prod
         self.tokenProvider = tokenProvider

@@ -341,14 +341,7 @@ class BuyProductsViewController: UIViewController {
     }
 
     func generateSbpUrl() {
-        let acquiringPaymentStageConfiguration = AcquiringPaymentStageConfiguration(
-            paymentStage: .`init`(paymentData: createPaymentData())
-        )
-        let viewController = uiSDK.urlSBPPaymentViewController(
-            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-            configuration: acquiringViewConfiguration()
-        )
-        present(viewController, animated: true, completion: nil)
+        // открыть сбп
     }
 
     // TODO: MIC-7708 Удалить заглушку состояний
