@@ -124,16 +124,9 @@ private extension CardPaymentProcess {
         switch paymentSource {
         case .cardNumber, .savedCard:
             check3DSVersion(data: Check3DSVersionData(paymentId: payload.paymentId, paymentSource: paymentSource))
-        case .applePay:
-            let data = FinishAuthorizeData(
-                paymentId: payload.paymentId,
-                paymentSource: paymentSource,
-                infoEmail: paymentFlow.customerOptions?.email
-            )
-            finishAuthorize(data: data)
         case .parentPayment, .yandexPay:
             // Log error
-            assertionFailure("Only cardNumber, savedCard or applePay PaymentSourceData available")
+            assertionFailure("Only cardNumber or savedCard PaymentSourceData available")
         }
     }
 

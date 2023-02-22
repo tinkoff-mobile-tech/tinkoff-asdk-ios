@@ -9,7 +9,13 @@ import Foundation
 
 protocol IPayButtonViewInput: AnyObject {
     func set(configuration: Button.Configuration)
-    func set(enabled: Bool)
+    func set(enabled: Bool, animated: Bool)
     func startLoading()
     func stopLoading()
+}
+
+extension IPayButtonViewInput {
+    func set(enabled: Bool) {
+        set(enabled: enabled, animated: true)
+    }
 }

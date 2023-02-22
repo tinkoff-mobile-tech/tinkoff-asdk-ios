@@ -34,7 +34,7 @@ final class MainFormRouter: IMainFormRouter {
 
     // MARK: IMainFormRouter
 
-    func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard], output: ICardPaymentPresenterModuleOutput?) {
+    func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {
         let cardPaymentViewController = cardPaymentAssembly.build(
             activeCards: cards,
             paymentFlow: paymentFlow,

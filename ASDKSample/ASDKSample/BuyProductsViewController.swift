@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-import PassKit
 import TinkoffASDKCore
 import TinkoffASDKUI
 import TinkoffASDKYandexPay
@@ -36,8 +35,6 @@ class BuyProductsViewController: UIViewController {
         case payAndSaveAsParent
         /// оплатить
         case payRequrent
-        /// оплатить с помощью `ApplePay`
-        case payApplePay
         /// оплатить с помощью `Системы Быстрых Платежей`
         /// сгенерировать QR-код для оплаты
         case paySbpQrCode
@@ -57,7 +54,6 @@ class BuyProductsViewController: UIViewController {
     var customerEmail: String?
     weak var scaner: AcquiringScanerProtocol?
 
-    lazy var paymentApplePayConfiguration = AcquiringUISDK.ApplePayConfiguration()
     var paymentCardId: PaymentCard?
     var paymentCardParentPaymentId: PaymentCard?
 
@@ -75,7 +71,6 @@ class BuyProductsViewController: UIViewController {
         .mainFormPayment,
         .payAndSaveAsParent,
         .payRequrent,
-        .payApplePay,
         .paySbpQrCode,
         .paySbpUrl,
     ]
@@ -314,35 +309,6 @@ class BuyProductsViewController: UIViewController {
         }
     }
 
-    func payByApplePay() {
-
-        let paymentData = createPaymentData()
-
-        let request = PKPaymentRequest()
-        request.merchantIdentifier = paymentApplePayConfiguration.merchantIdentifier
-        request.supportedNetworks = paymentApplePayConfiguration.supportedNetworks
-        request.merchantCapabilities = paymentApplePayConfiguration.capabilties
-        request.countryCode = paymentApplePayConfiguration.countryCode
-        request.currencyCode = paymentApplePayConfiguration.currencyCode
-        request.shippingContact = paymentApplePayConfiguration.shippingContact
-        request.billingContact = paymentApplePayConfiguration.billingContact
-
-        request.paymentSummaryItems = [
-            PKPaymentSummaryItem(
-                label: paymentData.description ?? "",
-                amount: NSDecimalNumber(value: Double(paymentData.amount) / Double(100.0))
-            ),
-        ]
-
-        guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
-            return
-        }
-
-        viewController.delegate = self
-
-        present(viewController, animated: true, completion: nil)
-    }
-
     func payAndSaveAsParent() {
         var paymentData = createPaymentData()
         paymentData.savingAsParentPayment = true
@@ -498,7 +464,6 @@ extension BuyProductsViewController: UITableViewDataSource {
         return result
     }
 
-    // swiftlint:disable:next function_body_length
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableViewCells[indexPath.section] {
         case .products:
@@ -582,20 +547,6 @@ extension BuyProductsViewController: UITableViewDataSource {
                 return cell
             }
 
-        case .payApplePay:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                cell.button.setTitle(nil, for: .normal)
-                cell.button.backgroundColor = .clear
-                cell.button.setImage(Asset.buttonApplePay.image, for: .normal)
-                cell.button.isEnabled = uiSDK.canMakePaymentsApplePay(with: paymentApplePayConfiguration)
-
-                cell.onButtonTouch = { [weak self] in
-                    self?.payByApplePay()
-                }
-
-                return cell
-            }
-
         case .paySbpQrCode:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
@@ -650,8 +601,6 @@ extension BuyProductsViewController: UITableViewDataSource {
             return Loc.Title.payAndSaveAsParent
         case .payRequrent:
             return Loc.Title.paymentTryAgain
-        case .payApplePay:
-            return Loc.Title.payByApplePay
         case .paySbpUrl, .paySbpQrCode:
             return Loc.Title.payBySBP
         case .yandexPayFull, .yandexPayFinish:
@@ -686,13 +635,6 @@ extension BuyProductsViewController: UITableViewDataSource {
             }
 
             return "нет доступных родительских платежей"
-
-        case .payApplePay:
-            if uiSDK.canMakePaymentsApplePay(with: paymentApplePayConfiguration) {
-                return "оплатить с помощью ApplePay"
-            }
-
-            return "оплата с помощью ApplePay недоступна"
 
         case .paySbpUrl:
             if uiSDK.canMakePaymentsSBP() {
@@ -731,33 +673,6 @@ extension BuyProductsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {}
-}
-
-extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegate {
-
-    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        controller.dismiss(animated: true, completion: nil)
-    }
-
-    func paymentAuthorizationViewController(
-        _ controller: PKPaymentAuthorizationViewController,
-        didAuthorizePayment payment: PKPayment,
-        handler completion: @escaping (PKPaymentAuthorizationResult) -> Void
-    ) {
-        let initData = createPaymentData()
-        uiSDK.performPaymentWithApplePay(
-            paymentData: initData,
-            paymentToken: payment.token,
-            acquiringConfiguration: AcquiringConfiguration(paymentStage: .none)
-        ) { result in
-            switch result {
-            case let .failure(error):
-                completion(PKPaymentAuthorizationResult(status: .failure, errors: [error]))
-            case .success:
-                completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
-            }
-        }
-    }
 }
 
 // MARK: - IYandexPayButtonContainerDelegate

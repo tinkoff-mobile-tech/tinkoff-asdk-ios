@@ -19,7 +19,6 @@
 
 import UIKit
 
-import PassKit
 import TinkoffASDKCore
 import TinkoffASDKUI
 

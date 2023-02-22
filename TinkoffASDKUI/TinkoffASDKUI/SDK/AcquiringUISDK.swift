@@ -17,7 +17,6 @@
 //  limitations under the License.
 //
 
-import PassKit
 import ThreeDSWrapper
 import TinkoffASDKCore
 import UIKit
@@ -271,7 +270,10 @@ public class AcquiringUISDK: NSObject {
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
 
-        let cardPaymentAssembly = CardPaymentAssembly(paymentControllerAssembly: paymentControllerAssembly)
+        let cardPaymentAssembly = CardPaymentAssembly(
+            cardsControllerAssembly: cardsControllerAssembly,
+            paymentControllerAssembly: paymentControllerAssembly
+        )
         mainFormAssembly = MainFormAssembly(
             coreSDK: coreSDK,
             paymentControllerAssembly: paymentControllerAssembly,
@@ -554,185 +556,7 @@ public class AcquiringUISDK: NSObject {
         }
     }
 
-    // MARK: ApplePay
-
-    public struct ApplePayConfiguration {
-        public var merchantIdentifier: String = "merchant.tcsbank.ApplePayTestMerchantId"
-        public var supportedNetworks: [PKPaymentNetwork] {
-            if #available(iOS 14.5, *) {
-                return [.masterCard, .visa, .mir]
-            } else {
-                return [.masterCard, .visa]
-            }
-        }
-
-        public var capabilties = PKMerchantCapability(arrayLiteral: .capability3DS, .capabilityCredit, .capabilityDebit)
-
-        public var countryCode: String = "RU"
-        public var currencyCode: String = "RUB"
-        public var shippingContact: PKContact?
-        public var billingContact: PKContact?
-
-        public init() {}
-    }
-
-    public func canMakePaymentsApplePay(with configuration: ApplePayConfiguration) -> Bool {
-        return PKPaymentAuthorizationViewController.canMakePayments(
-            usingNetworks: configuration.supportedNetworks,
-            capabilities: configuration.capabilties
-        )
-    }
-
-    /// 'Creating Payment Requests' https://developer.apple.com/library/archive/ApplePay_Guide/CreateRequest.html#//apple_ref/doc/uid/TP40014764-CH3-SW2
-    public func presentPaymentApplePay(
-        on presentingViewController: UIViewController,
-        paymentData data: PaymentInitData,
-        viewConfiguration: AcquiringViewConfiguration,
-        acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-        paymentConfiguration: AcquiringUISDK.ApplePayConfiguration,
-        completionHandler: @escaping PaymentCompletionHandler
-    ) {
-        let request = PKPaymentRequest()
-        request.merchantIdentifier = paymentConfiguration.merchantIdentifier
-        request.supportedNetworks = paymentConfiguration.supportedNetworks
-        request.merchantCapabilities = paymentConfiguration.capabilties
-        request.countryCode = paymentConfiguration.countryCode
-        request.currencyCode = paymentConfiguration.currencyCode
-        request.shippingContact = paymentConfiguration.shippingContact
-        request.billingContact = paymentConfiguration.billingContact
-
-        request.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: data.description ?? "", amount: NSDecimalNumber(value: Double(data.amount) / Double(100.0))),
-        ]
-
-        self.presentingViewController = presentingViewController
-        onPaymentCompletionHandler = completionHandler
-        self.acquiringConfiguration = acquiringConfiguration
-        viewConfiguration.startViewHeight = 120
-
-        let presentApplePayActivity: (Int64) -> Void = { [weak self] paymentId in
-            self?.paymentInitResponseData = PaymentInitResponseData(
-                amount: data.amount,
-                orderId: data.orderId,
-                paymentId: paymentId
-            )
-            self?.presentApplePayActivity(request)
-        }
-
-        presentAcquiringPaymentView(
-            presentingViewController: presentingViewController,
-            customerKey: nil,
-            configuration: viewConfiguration
-        ) { [weak self] _ in
-            switch acquiringConfiguration.paymentStage {
-            case .none:
-                self?.initPay(paymentData: data) { [weak self] response in
-                    switch response {
-                    case let .success(initResponse):
-                        self?.paymentInitResponseData = PaymentInitResponseData(paymentInitResponse: initResponse)
-                        DispatchQueue.main.async {
-                            presentApplePayActivity(initResponse.paymentId)
-                        }
-
-                    case let .failure(error):
-                        self?.paymentInitResponseData = nil
-                        DispatchQueue.main.async {
-                            self?.acquiringView?.closeVC(animated: true) {
-                                completionHandler(.failure(error))
-                            }
-                        }
-                    }
-                }
-            case let .paymentId(paymentId):
-                presentApplePayActivity(paymentId)
-            }
-        }
-    }
-
-    // MARK: - Apple Pay Experimental
-
-    public func performPaymentWithApplePay(
-        paymentData: PaymentInitData,
-        paymentToken: PKPaymentToken,
-        acquiringConfiguration: AcquiringConfiguration = AcquiringConfiguration(),
-        completionHandler: @escaping PaymentCompletionHandler
-    ) {
-        switch acquiringConfiguration.paymentStage {
-        case .none:
-            initPay(paymentData: paymentData) { [weak self] result in
-                switch result {
-                case let .failure(error):
-                    completionHandler(.failure(error))
-                case let .success(initResponse):
-                    self?.finishAuthorizeWithApplePayPaymentToken(
-                        paymentToken: paymentToken,
-                        paymentId: initResponse.paymentId,
-                        completionHandler: completionHandler
-                    )
-                }
-            }
-        case let .paymentId(paymentId):
-            finishAuthorizeWithApplePayPaymentToken(
-                paymentToken: paymentToken,
-                paymentId: paymentId,
-                completionHandler: completionHandler
-            )
-        }
-    }
-
-    private func finishAuthorizeWithApplePayPaymentToken(
-        paymentToken: PKPaymentToken,
-        paymentId: Int64,
-        completionHandler: @escaping PaymentCompletionHandler
-    ) {
-        let sourceData = PaymentSourceData.applePay(base64Token: paymentToken.paymentData.base64EncodedString())
-        let finishAuthorizeData = PaymentFinishRequestData(
-            paymentId: paymentId,
-            paymentSource: sourceData,
-            source: "ApplePay",
-            route: "ACQ"
-        )
-
-        finishAuthorize(
-            requestData: finishAuthorizeData,
-            treeDSmessageVersion: "1"
-        ) { result in
-            switch result {
-            case let .failure(error):
-                DispatchQueue.main.async {
-                    completionHandler(.failure(error))
-                }
-            case let .success(response):
-                DispatchQueue.main.async {
-                    completionHandler(.success(response))
-                }
-            }
-        }
-    }
-
     // MARK: -
-
-    private func presentApplePayActivity(_ request: PKPaymentRequest) {
-        guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
-            acquiringView?.closeVC(animated: true) {
-                let error = NSError(
-                    domain: Loc.TinkoffAcquiring.Unknown.Response.status,
-                    code: 0,
-                    userInfo: nil
-                )
-
-                self.onPaymentCompletionHandler?(.failure(error))
-            }
-
-            return
-        }
-
-        viewController.delegate = self
-
-        acquiringView?.presentVC(viewController, animated: true) { [] in
-            // self?.acquiringView.setViewHeight(viewController.view.frame.height)
-        }
-    }
 
     private func getStaticQRCode(completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void) {
         _ = acquiringSdk.paymentInvoiceQRCodeCollector(data: PaymentInvoiceSBPSourceType.imageSVG, completionHandler: { response in
@@ -1814,60 +1638,13 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     }
 }
 
-extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
-    // MARK: PKPaymentAuthorizationViewControllerDelegate
-
-    public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        controller.dismiss(animated: true) { [weak self] in
-            if let result = self?.finishPaymentStatusResponse {
-                self?.acquiringView?.closeVC(animated: true) {
-                    self?.onPaymentCompletionHandler?(result)
-                }
-            } else {
-                self?.acquiringView?.closeVC(animated: true) {
-                    self?.cancelPayment()
-                }
-            }
-        }
-    }
-
-    public func paymentAuthorizationViewController(
-        _: PKPaymentAuthorizationViewController,
-        didAuthorizePayment payment: PKPayment,
-        handler completion: @escaping (PKPaymentAuthorizationResult) -> Void
-    ) {
-        if let paymentId = paymentInitResponseData?.paymentId {
-            let paymentDataSource = PaymentSourceData.applePay(base64Token: payment.token.paymentData.base64EncodedString())
-            let data = PaymentFinishRequestData(
-                paymentId: paymentId,
-                paymentSource: paymentDataSource,
-                source: "ApplePay",
-                route: "ACQ"
-            )
-
-            finishAuthorize(requestData: data, treeDSmessageVersion: "1") { [weak self] finishResponse in
-                switch finishResponse {
-                case let .failure(error):
-                    DispatchQueue.main.async {
-                        completion(PKPaymentAuthorizationResult(status: .failure, errors: [error]))
-                    }
-
-                case .success:
-                    DispatchQueue.main.async {
-                        completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
-                    }
-                }
-
-                self?.finishPaymentStatusResponse = finishResponse
-            } // self.finishAuthorize
-        }
-    }
+public extension AcquiringUISDK {
 
     // MARK: PaymentController
 
     /// Создает новый `IPaymentController`, с помощью которого можно совершить оплату с прохождением проверки `3DS`
     /// - Returns: IPaymentController
-    public func paymentController() -> IPaymentController {
+    func paymentController() -> IPaymentController {
         paymentControllerAssembly.paymentController()
     }
 
@@ -1876,13 +1653,13 @@ extension AcquiringUISDK: PKPaymentAuthorizationViewControllerDelegate {
     /// Создает новый `IAddCardController`, с помощью которого можно привязать новую карту с прохождением проверки 3DS
     /// - Parameter customerKey: Идентификатор покупателя в системе продавца
     /// - Returns: IAddCardController
-    public func addCardController(customerKey: String) -> IAddCardController {
+    func addCardController(customerKey: String) -> IAddCardController {
         addCardControllerAssembly.addCardController(customerKey: customerKey)
     }
 
     // MARK: CardsController
 
-    public func cardsController(customerKey: String) -> ICardsController {
+    func cardsController(customerKey: String) -> ICardsController {
         cardsControllerAssembly.cardsController(customerKey: customerKey)
     }
 }

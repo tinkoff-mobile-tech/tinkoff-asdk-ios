@@ -87,7 +87,6 @@ enum Constants {
 
     enum Values {
         static let acq = "ACQ"
-        static let applePaySource = "ApplePay"
         static let yandexPaySource = "YandexPay"
     }
 }
