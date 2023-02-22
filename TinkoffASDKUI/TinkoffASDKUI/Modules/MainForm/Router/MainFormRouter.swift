@@ -37,14 +37,15 @@ final class MainFormRouter: IMainFormRouter {
 
     // MARK: IMainFormRouter
 
-    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard) {
+    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, output: ICardListPresenterOutput?) {
         guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
 
         let navigationController = cardListAssembly.cardSelectionNavigationController(
             customerKey: customerKey,
             cards: cards,
             selectedCard: selectedCard,
-            paymentFlow: paymentFlow
+            paymentFlow: paymentFlow,
+            output: output
         )
 
         transitionHandler?.present(navigationController, animated: true)

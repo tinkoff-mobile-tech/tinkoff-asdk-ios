@@ -47,12 +47,14 @@ final class CardListAssembly: ICardListAssembly {
         customerKey: String,
         cards: [PaymentCard],
         selectedCard: PaymentCard,
-        paymentFlow: PaymentFlow
+        paymentFlow: PaymentFlow,
+        output: ICardListPresenterOutput?
     ) -> UINavigationController {
         let view = createModule(
             customerKey: customerKey,
             configuration: .choosePaymentCardList(selectedCardId: selectedCard.cardId),
-            cards: cards
+            cards: cards,
+            output: output
         )
 
         return UINavigationController.withASDKBar(rootViewController: view)
@@ -63,7 +65,8 @@ final class CardListAssembly: ICardListAssembly {
     private func createModule(
         customerKey: String,
         configuration: CardListScreenConfiguration,
-        cards: [PaymentCard] = []
+        cards: [PaymentCard] = [],
+        output: ICardListPresenterOutput? = nil
     ) -> UIViewController {
         let router = CardListRouter(addNewCardAssembly: addNewCardAssembly)
 
@@ -74,7 +77,8 @@ final class CardListAssembly: ICardListAssembly {
             imageResolver: PaymentSystemImageResolver(),
             bankResolver: BankResolver(),
             paymentSystemResolver: PaymentSystemResolver(),
-            cards: cards
+            cards: cards,
+            output: output
         )
 
         let view = CardListViewController(

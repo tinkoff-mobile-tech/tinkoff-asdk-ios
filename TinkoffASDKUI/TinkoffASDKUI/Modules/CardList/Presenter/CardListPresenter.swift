@@ -33,6 +33,7 @@ final class CardListPresenter {
     // MARK: Dependencies
 
     weak var view: ICardListViewInput?
+    private weak var output: ICardListPresenterOutput?
     private let imageResolver: IPaymentSystemImageResolver
     private let bankResolver: IBankResolver
     private let paymentSystemResolver: IPaymentSystemResolver
@@ -58,7 +59,8 @@ final class CardListPresenter {
         imageResolver: IPaymentSystemImageResolver,
         bankResolver: IBankResolver,
         paymentSystemResolver: IPaymentSystemResolver,
-        cards: [PaymentCard] = []
+        cards: [PaymentCard] = [],
+        output: ICardListPresenterOutput? = nil
     ) {
         self.screenConfiguration = screenConfiguration
         self.imageResolver = imageResolver
@@ -67,6 +69,7 @@ final class CardListPresenter {
         self.cardsController = cardsController
         self.router = router
         self.cards = cards
+        self.output = output
     }
 
     // MARK: Helpers
@@ -108,6 +111,8 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapCard(cardIndex: Int) {
+        let selectedCard = cards[cardIndex]
+        output?.cardList(didSelect: selectedCard)
         // TODO: MIC-8030 Совершить переход на экран оплаты картой
     }
 
@@ -124,6 +129,8 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func view(didTapDeleteOn card: CardList.Card) {
+        guard let removingCard = cards.first(where: { $0.cardId == card.id }) else { return }
+
         isLoading = true
         view?.disableViewUserInteraction()
         view?.showRemovingCardSnackBar(
@@ -135,6 +142,13 @@ extension CardListPresenter: ICardListViewOutput {
             self.isLoading = false
             self.deactivateCardResult = result
             self.view?.hideLoadingSnackbar()
+
+            switch result {
+            case .success:
+                self.output?.cardList(didRemoveCard: removingCard)
+            case .failure:
+                break
+            }
         }
     }
 

@@ -118,6 +118,26 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 }
 
+// MARK: - ICardListPresenterOutput
+
+extension MainFormPresenter: ICardListPresenterOutput {
+    func cardList(didSelect card: PaymentCard) {
+        savedCardPresenter.presentationState = .selected(card: card, hasAnotherCards: cards.count > 1)
+    }
+
+    func cardList(didRemoveCard card: PaymentCard) {
+        cards.removeAll { $0.cardId == card.cardId }
+
+        if cards.isEmpty {
+            savedCardPresenter.presentationState = .idle
+            cellTypes = createRows()
+            view?.reloadData()
+        } else if savedCardPresenter.cardId == card.cardId, let newSelectedCard = cards.first {
+            savedCardPresenter.presentationState = .selected(card: newSelectedCard, hasAnotherCards: cards.count > 1)
+        }
+    }
+}
+
 // MARK: - ISavedCardPresenterOutput
 
 extension MainFormPresenter: ISavedCardPresenterOutput {
@@ -125,7 +145,7 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
-        router.openCardList(paymentFlow: paymentFlow, cards: cards, selectedCard: paymentCard)
+        router.openCardList(paymentFlow: paymentFlow, cards: cards, selectedCard: paymentCard, output: self)
     }
 
     func savedCardPresenter(

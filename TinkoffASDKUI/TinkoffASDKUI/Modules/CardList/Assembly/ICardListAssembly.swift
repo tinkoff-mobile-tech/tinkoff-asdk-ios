@@ -22,6 +22,7 @@ protocol ICardListAssembly {
         customerKey: String,
         cards: [PaymentCard],
         selectedCard: PaymentCard,
-        paymentFlow: PaymentFlow
+        paymentFlow: PaymentFlow,
+        output: ICardListPresenterOutput?
     ) -> UINavigationController
 }
