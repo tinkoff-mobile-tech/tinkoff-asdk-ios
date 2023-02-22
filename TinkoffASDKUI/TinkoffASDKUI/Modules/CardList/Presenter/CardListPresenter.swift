@@ -58,6 +58,7 @@ final class CardListPresenter: ICardListModule {
     private let paymentSystemResolver: IPaymentSystemResolver
     private var screenConfiguration: CardListScreenConfiguration
     private let cardsController: ICardsController
+    private let router: ICardListRouter
 
     // MARK: State
 
@@ -73,6 +74,7 @@ final class CardListPresenter: ICardListModule {
     init(
         screenConfiguration: CardListScreenConfiguration,
         cardsController: ICardsController,
+        router: ICardListRouter,
         imageResolver: IPaymentSystemImageResolver,
         bankResolver: IBankResolver,
         paymentSystemResolver: IPaymentSystemResolver,
@@ -83,6 +85,7 @@ final class CardListPresenter: ICardListModule {
         self.bankResolver = bankResolver
         self.paymentSystemResolver = paymentSystemResolver
         self.cardsController = cardsController
+        self.router = router
         self.cards = cards
     }
 

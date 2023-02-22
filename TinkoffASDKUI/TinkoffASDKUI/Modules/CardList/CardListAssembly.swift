@@ -41,11 +41,16 @@ final class CardListAssembly: ICardListAssembly {
     // MARK: Dependencies
 
     private let cardsControllerAssembly: ICardsControllerAssembly
+    private let addNewCardAssembly: IAddNewCardAssembly
 
     // MARK: Init
 
-    init(cardsControllerAssembly: ICardsControllerAssembly) {
+    init(
+        cardsControllerAssembly: ICardsControllerAssembly,
+        addNewCardAssembly: IAddNewCardAssembly
+    ) {
         self.cardsControllerAssembly = cardsControllerAssembly
+        self.addNewCardAssembly = addNewCardAssembly
     }
 
     // MARK: ICardListAssembly
@@ -77,9 +82,13 @@ final class CardListAssembly: ICardListAssembly {
         configuration: CardListScreenConfiguration,
         cards: [PaymentCard] = []
     ) -> (view: CardListViewController, module: ICardListModule) {
+
+        let router = CardListRouter(addNewCardAssembly: addNewCardAssembly)
+
         let presenter = CardListPresenter(
             screenConfiguration: configuration,
             cardsController: cardsControllerAssembly.cardsController(customerKey: customerKey),
+            router: router,
             imageResolver: PaymentSystemImageResolver(),
             bankResolver: BankResolver(),
             paymentSystemResolver: PaymentSystemResolver(),
@@ -91,7 +100,9 @@ final class CardListAssembly: ICardListAssembly {
             presenter: presenter
         )
 
+        router.transitionHandler = view
         presenter.view = view
+
         return (view, presenter)
     }
 }

@@ -259,7 +259,6 @@ public class AcquiringUISDK: NSObject {
         )
 
         logger = configuration.logger
-        cardListAssembly = CardListAssembly(cardsControllerAssembly: cardsControllerAssembly)
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
@@ -282,6 +281,11 @@ public class AcquiringUISDK: NSObject {
         )
 
         addNewCardAssembly = AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
+
+        cardListAssembly = CardListAssembly(
+            cardsControllerAssembly: cardsControllerAssembly,
+            addNewCardAssembly: addNewCardAssembly
+        )
     }
 
     /// Вызывается когда пользователь привязывает карту.
