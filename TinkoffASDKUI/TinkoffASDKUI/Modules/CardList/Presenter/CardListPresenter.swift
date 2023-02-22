@@ -164,10 +164,9 @@ extension CardListPresenter: ICardListViewOutput {
                 if hasVisualContent {
                     showRemoveCardErrorAlert()
                 }
+                view?.enableViewUserInteraction()
             }
         }
-
-        view?.enableViewUserInteraction()
     }
 }
 
