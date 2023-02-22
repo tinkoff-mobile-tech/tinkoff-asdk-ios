@@ -28,6 +28,8 @@ protocol ICardListAssembly {
     /// - Parameter customerKey: Идентификатор покупателя в системе Продавца
     /// - Returns: `UINavigationController`
     func cardsPresentingNavigationController(customerKey: String) -> UINavigationController
+
+    // TODO: MIC-8030 Добавить точку входа для оплаты по сохраненной карте
 }
 
 final class CardListAssembly: ICardListAssembly {
