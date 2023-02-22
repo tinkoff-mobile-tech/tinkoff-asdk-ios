@@ -89,8 +89,6 @@ final class CardListPresenter: ICardListModule {
         self.cards = cards
     }
 
-    // MARK: ICardListModule Methods
-
     // MARK: Helpers
 
     private func transform(_ paymentCards: [PaymentCard]) -> [CardList.Card] {
@@ -124,7 +122,6 @@ final class CardListPresenter: ICardListModule {
 // MARK: - ICardListViewOutput
 
 extension CardListPresenter: ICardListViewOutput {
-
     func viewDidLoad() {
         view?.showShimmer()
         fetchCardsIfNeeded()
@@ -135,7 +132,7 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapAddCardCell() {
-        onAddNewCardTap?()
+        router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
     }
 
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
@@ -278,7 +275,7 @@ extension CardListPresenter {
         screenState = .showingStub
         view?.hideRightBarButton()
         view?.showStub(mode: .noCards { [weak self] in
-            self?.onAddNewCardTap?()
+            self?.viewDidTapAddCardCell()
         })
     }
 
