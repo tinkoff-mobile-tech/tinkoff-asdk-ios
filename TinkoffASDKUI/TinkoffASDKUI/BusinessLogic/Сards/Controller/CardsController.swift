@@ -20,19 +20,15 @@ final class CardsController {
 
     private let coreSDK: AcquiringSdk
     private let addCardController: IAddCardController
-    private let customerKey: String
 
     // MARK: Init
 
     init(
         coreSDK: AcquiringSdk,
-        addCardController: IAddCardController,
-        customerKey: String
-
+        addCardController: IAddCardController
     ) {
         self.coreSDK = coreSDK
         self.addCardController = addCardController
-        self.customerKey = customerKey
     }
 }
 
@@ -43,6 +39,8 @@ extension CardsController: ICardsController {
         get { addCardController.webFlowDelegate }
         set { addCardController.webFlowDelegate = newValue }
     }
+
+    var customerKey: String { addCardController.customerKey }
 
     func addCard(options: CardOptions, completion: @escaping (AddCardResult) -> Void) {
         let completionDecorator: (AddCardResult) -> Void = { result in

@@ -20,68 +20,46 @@
 import TinkoffASDKCore
 import UIKit
 
-/// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
-protocol ICardListAssembly {
-    /// Отображение списка карт в качестве самостоятельного экрана
-    ///
-    /// Доступные операции: добавление, удаление
-    func cardsPresentingModule(
-        cardListProvider: CardListDataProvider
-    ) -> (view: CardListViewController, module: ICardListModule)
-
-    /// Отображение списка карт, вызываемого с платежной формы
-    ///
-    /// Доступные операции: добавление, удаление, выбор карты
-    func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
-        selectedCardId: String
-    ) -> (view: CardListViewController, module: ICardListModule)
-}
-
 final class CardListAssembly: ICardListAssembly {
     // MARK: Dependencies
 
     private let cardsControllerAssembly: ICardsControllerAssembly
+    private let addNewCardAssembly: IAddNewCardAssembly
 
     // MARK: Init
 
-    init(cardsControllerAssembly: ICardsControllerAssembly) {
+    init(
+        cardsControllerAssembly: ICardsControllerAssembly,
+        addNewCardAssembly: IAddNewCardAssembly
+    ) {
         self.cardsControllerAssembly = cardsControllerAssembly
+        self.addNewCardAssembly = addNewCardAssembly
     }
 
     // MARK: ICardListAssembly
 
-    func cardsPresentingModule(
-        cardListProvider: CardListDataProvider
-    ) -> (view: CardListViewController, module: ICardListModule) {
-        buildModule(
-            provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .backendOnly),
-            configuration: .cardList()
-        )
+    func cardsPresentingNavigationController(customerKey: String) -> UINavigationController {
+        let view = createModule(customerKey: customerKey, configuration: .cardList())
+        return UINavigationController.withASDKBar(rootViewController: view)
     }
 
-    func cardSelectionModule(
-        cardListProvider: CardListDataProvider,
-        selectedCardId: String
-    ) -> (view: CardListViewController, module: ICardListModule) {
-        buildModule(
-            provider: PaymentCardsProvider(dataProvider: cardListProvider, fetchingStrategy: .cacheOnly),
-            configuration: .choosePaymentCardList(selectedCardId: selectedCardId)
-        )
-    }
+    // MARK: Helpers
 
-    // MARK: Building
+    private func createModule(
+        customerKey: String,
+        configuration: CardListScreenConfiguration,
+        cards: [PaymentCard] = []
+    ) -> UIViewController {
+        let router = CardListRouter(addNewCardAssembly: addNewCardAssembly)
 
-    private func buildModule(
-        provider: IPaymentCardsProvider,
-        configuration: CardListScreenConfiguration
-    ) -> (view: CardListViewController, module: ICardListModule) {
         let presenter = CardListPresenter(
             screenConfiguration: configuration,
+            cardsController: cardsControllerAssembly.cardsController(customerKey: customerKey),
+            router: router,
             imageResolver: PaymentSystemImageResolver(),
-            provider: provider,
             bankResolver: BankResolver(),
-            paymentSystemResolver: PaymentSystemResolver()
+            paymentSystemResolver: PaymentSystemResolver(),
+            cards: cards
         )
 
         let view = CardListViewController(
@@ -89,8 +67,10 @@ final class CardListAssembly: ICardListAssembly {
             presenter: presenter
         )
 
+        router.transitionHandler = view
         presenter.view = view
-        return (view, presenter)
+
+        return view
     }
 }
 

@@ -259,7 +259,6 @@ public class AcquiringUISDK: NSObject {
         )
 
         logger = configuration.logger
-        cardListAssembly = CardListAssembly(cardsControllerAssembly: cardsControllerAssembly)
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
@@ -282,6 +281,11 @@ public class AcquiringUISDK: NSObject {
         )
 
         addNewCardAssembly = AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
+
+        cardListAssembly = CardListAssembly(
+            cardsControllerAssembly: cardsControllerAssembly,
+            addNewCardAssembly: addNewCardAssembly
+        )
     }
 
     /// Вызывается когда пользователь привязывает карту.
@@ -772,15 +776,6 @@ public class AcquiringUISDK: NSObject {
             modalViewController.acquiringPaymentController = acquiringPaymentController
         }
 
-        modalViewController.onTouchButtonShowCardList = { [injectableCardListProvider, weak self] in
-            guard let cardListProvider = injectableCardListProvider else { return }
-            self?.startChoosePaymentCardFlow(
-                cardListDataProvider: cardListProvider,
-                modalViewController: modalViewController,
-                customerKey: customerKey
-            )
-        }
-
         modalViewController.onCancelPayment = { [weak self] in
             self?.cancelPayment()
         }
@@ -797,55 +792,6 @@ public class AcquiringUISDK: NSObject {
             completion: {
                 _ = presentationController
                 onPresenting?(modalViewController)
-            }
-        )
-    }
-
-    private func startChoosePaymentCardFlow(
-        cardListDataProvider: CardListDataProvider,
-        modalViewController: AcquiringPaymentViewController?,
-        customerKey: String?
-    ) {
-        let presentingViewController = modalViewController == nil
-            ? self.presentingViewController
-            : modalViewController
-
-        guard let presentingViewController = presentingViewController, let customerKey = customerKey
-        else { return }
-
-        var selectedCardId = ""
-        if case let .savedCard(cardId, _) = modalViewController?.cardRequisites() {
-            selectedCardId = cardId
-        }
-
-        let flow = ChoosePaymentCardListFlow(
-            cardListAssembly: cardListAssembly,
-            cardListDataProvider: cardListDataProvider
-        )
-
-        flow.start(
-            presentingViewController: presentingViewController,
-            customerKey: customerKey,
-            selectedCardId: selectedCardId,
-            setOutputEvents: { [weak modalViewController, weak presentingViewController] cardListOutput in
-
-                let dismissDelayed: () -> Void = {
-                    let presentedModalViewController = presentingViewController?.presentedViewController
-                    presentedModalViewController?.view.isUserInteractionEnabled = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        presentedModalViewController?.dismiss(animated: true)
-                    }
-                }
-
-                cardListOutput.onAddNewCardTap = {
-                    modalViewController?.selectRequisitesInput()
-                    dismissDelayed()
-                }
-
-                cardListOutput.onSelectCard = { selectedCard in
-                    modalViewController?.selectCard(withId: selectedCard.cardId)
-                    dismissDelayed()
-                }
             }
         )
     }
@@ -1498,7 +1444,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     /// Отображает экран добавления карты
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
-    ///   - customerKey: Идентификатор покупателя в системе Банка, к которому будет привязана карта
+    ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
     ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentAddCard(
         on presentingViewController: UIViewController,
@@ -1613,28 +1559,19 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    /// Презентует список карт
+    /// Отображает экран со списком карт
+    ///
+    /// На этом экране пользователь может ознакомиться со списком привязанных карт, удалить или добавить новую карту
     /// - Parameters:
-    ///   - presentingViewController: Вью контроллер на котором будет презентован экран
-    ///   - customerKey: ключ клиента сдк
-    ///   - configuration: конфигурация сдк
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
+    ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
+    ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String
     ) {
-        if self.presentingViewController == nil {
-            self.presentingViewController = presentingViewController
-        }
-
-        let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
-
-        let flow = CardListFlow(
-            cardListAssembly: cardListAssembly,
-            cardListDataProvider: cardListProvider,
-            addCardAssembly: AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
-        )
-
-        flow.start(presentingViewController: presentingViewController, customerKey: customerKey)
+        let navigationController = cardListAssembly.cardsPresentingNavigationController(customerKey: customerKey)
+        presentingViewController.present(navigationController, animated: true)
     }
 }
 

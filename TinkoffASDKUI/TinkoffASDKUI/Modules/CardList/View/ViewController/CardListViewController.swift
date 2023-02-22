@@ -20,26 +20,6 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewInput: AnyObject {
-    func reload(sections: [CardListSection])
-    func deleteItems(at: [IndexPath])
-    func disableViewUserInteraction()
-    func enableViewUserInteraction()
-    func showShimmer()
-    func hideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
-    func showStub(mode: StubMode)
-    func hideStub()
-    func dismiss()
-    func showDoneEditingButton()
-    func showEditButton()
-    func hideRightBarButton()
-    func showNativeAlert(data: OkAlertData)
-    func showLoadingSnackbar(text: String?)
-    func hideLoadingSnackbar()
-    func showAddedCardSnackbar(cardMaskedPan: String)
-    func closeScreen()
-}
-
 final class CardListViewController: UIViewController {
     // MARK: Dependencies
 
@@ -199,7 +179,7 @@ extension CardListViewController: ICardListViewInput {
         present(alert, animated: true)
     }
 
-    func showLoadingSnackbar(text: String?) {
+    func showRemovingCardSnackBar(text: String?) {
         let config = SnackbarView.Configuration(
             content: .loader(
                 configuration: LoaderTitleView.Configuration(
@@ -217,7 +197,7 @@ extension CardListViewController: ICardListViewInput {
         snackBarViewController?.hideSnackView(
             animated: true,
             completion: { [weak self] _ in
-                self?.presenter.viewDidHideLoadingSnackbar()
+                self?.presenter.viewDidHideRemovingCardSnackBar()
                 self?.snackBarViewController = nil
             }
         )
@@ -266,14 +246,6 @@ extension CardListViewController: CardListViewDelegate {
 }
 
 extension CardListViewController: ISnackBarPresentable, ISnackBarViewProvider {
-
     var viewProvider: ISnackBarViewProvider? { self }
     func viewToAddSnackBarTo() -> UIView { view }
-}
-
-extension CardListViewController {
-
-    func getAddNewCardOutput() -> IAddNewCardPresenterOutput {
-        presenter
-    }
 }
