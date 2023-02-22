@@ -21,18 +21,18 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
 
     private weak var paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
 
-    private let paymentService: ISBPPaymentServiceNew?
+    private let paymentService: ISBPPaymentService?
     private let banksService: ISBPBanksService
     private let bankAppChecker: ISBPBankAppChecker
     private let bankAppOpener: ISBPBankAppOpener
-    private let cellPresentersAssembly: ISBPBankCellPresenterNewAssembly
+    private let cellPresentersAssembly: ISBPBankCellPresenterAssembly
     private let dispatchGroup: DispatchGroup
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
     private var allBanks = [SBPBank]()
-    private var allBanksCellPresenters = [ISBPBankCellNewPresenter]()
-    private var filteredBanksCellPresenters = [ISBPBankCellNewPresenter]()
+    private var allBanksCellPresenters = [ISBPBankCellPresenter]()
+    private var filteredBanksCellPresenters = [ISBPBankCellPresenter]()
 
     private var lastSearchedText = ""
     private var qrPayload: GetQRPayload?
@@ -45,11 +45,11 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     init(
         router: ISBPBanksRouter,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
-        paymentService: ISBPPaymentServiceNew?,
+        paymentService: ISBPPaymentService?,
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
         bankAppOpener: ISBPBankAppOpener,
-        cellPresentersAssembly: ISBPBankCellPresenterNewAssembly,
+        cellPresentersAssembly: ISBPBankCellPresenterAssembly,
         dispatchGroup: DispatchGroup
     ) {
         self.router = router
@@ -101,7 +101,7 @@ extension SBPBanksPresenter {
         filteredBanksCellPresenters.count
     }
 
-    func cellPresenter(for row: Int) -> ISBPBankCellNewPresenter {
+    func cellPresenter(for row: Int) -> ISBPBankCellPresenter {
         return filteredBanksCellPresenters[row]
     }
 
@@ -132,7 +132,7 @@ extension SBPBanksPresenter {
 
 extension SBPBanksPresenter {
     private func prepareAndShowSkeletonModels() {
-        allBanksCellPresenters = [SBPBankCellNewPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: .skeletonsCount))
+        allBanksCellPresenters = [SBPBankCellPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: .skeletonsCount))
         filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
@@ -191,7 +191,7 @@ extension SBPBanksPresenter {
             view?.showSearchBar()
             allBanksCellPresenters = createCellPresenters(from: allBanks)
         } else {
-            let bankButtonCellType: SBPBankCellNewType = .bankButton(
+            let bankButtonCellType: SBPBankCellType = .bankButton(
                 imageAsset: Asset.Sbp.sbpLogo,
                 name: Loc.Acquiring.SBPBanks.anotherBank
             )
@@ -224,7 +224,7 @@ extension SBPBanksPresenter {
         view?.reloadTableView()
     }
 
-    private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellNewPresenter] {
+    private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellPresenter] {
         guard let paymentUrl = URL(string: qrPayload?.qrCodeData ?? ""),
               let paymentId = qrPayload?.paymentId else { return [] }
 

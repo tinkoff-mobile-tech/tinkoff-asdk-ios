@@ -1,5 +1,5 @@
 //
-//  SBPBankCellNewPresenter.swift
+//  SBPBankCellPresenter.swift
 //  TinkoffASDKUI
 //
 //  Created by Aleksandr Pravosudov on 29.12.2022.
@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 import UIKit
 
-enum SBPBankCellNewType {
+enum SBPBankCellType {
     case bank(SBPBank)
     case bankButton(imageAsset: ImageAsset, name: String)
     case skeleton
@@ -22,10 +22,10 @@ private enum SBPCellImageLoadingStatus {
     case loaded(UIImage)
 }
 
-final class SBPBankCellNewPresenter: ISBPBankCellNewPresenter {
+final class SBPBankCellPresenter: ISBPBankCellPresenter {
 
     // Dependencies
-    weak var cell: ISBPBankCellNew? {
+    weak var cell: ISBPBankCell? {
         didSet {
             setupCell()
         }
@@ -34,7 +34,7 @@ final class SBPBankCellNewPresenter: ISBPBankCellNewPresenter {
     private let cellImageLoader: ICellImageLoader
 
     // Properties
-    let cellType: SBPBankCellNewType
+    let cellType: SBPBankCellType
     let action: VoidBlock
 
     var bankName: String { bank?.name ?? "" }
@@ -50,7 +50,7 @@ final class SBPBankCellNewPresenter: ISBPBankCellNewPresenter {
 
     // MARK: - Initialization
 
-    init(cellType: SBPBankCellNewType, action: @escaping VoidBlock, cellImageLoader: ICellImageLoader) {
+    init(cellType: SBPBankCellType, action: @escaping VoidBlock, cellImageLoader: ICellImageLoader) {
         self.cellType = cellType
         self.action = action
         self.cellImageLoader = cellImageLoader
@@ -59,7 +59,7 @@ final class SBPBankCellNewPresenter: ISBPBankCellNewPresenter {
 
 // MARK: - Public
 
-extension SBPBankCellNewPresenter {
+extension SBPBankCellPresenter {
     func startLoadingCellImageIfNeeded() {
         switch imageLoadingStatus {
         case .notLoaded:
@@ -79,7 +79,7 @@ extension SBPBankCellNewPresenter {
 
 // MARK: - Private
 
-extension SBPBankCellNewPresenter {
+extension SBPBankCellPresenter {
     private func setupCell() {
         switch cellType {
         case let .bank(bank):

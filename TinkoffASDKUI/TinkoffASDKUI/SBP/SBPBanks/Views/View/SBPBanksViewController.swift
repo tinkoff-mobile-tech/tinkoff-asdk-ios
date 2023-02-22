@@ -112,7 +112,7 @@ extension SBPBanksViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellPresenter = presenter.cellPresenter(for: indexPath.row)
 
-        let bankCell = tableView.dequeue(cellType: SBPBankCellNew.self)
+        let bankCell = tableView.dequeue(cellType: SBPBankCell.self)
         bankCell.presenter = cellPresenter
 
         return bankCell
@@ -168,7 +168,7 @@ extension SBPBanksViewController {
 
         tableView.layoutIfNeeded()
 
-        tableView.register(SBPBankCellNew.self)
+        tableView.register(SBPBankCell.self)
         tableView.prefetchDataSource = self
         tableView.dataSource = self
         tableView.delegate = self
