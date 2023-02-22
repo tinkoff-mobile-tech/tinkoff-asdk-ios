@@ -1626,18 +1626,8 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         on presentingViewController: UIViewController,
         customerKey: String
     ) {
-        if self.presentingViewController == nil {
-            self.presentingViewController = presentingViewController
-        }
-
-        let cardListProvider = resolveCardListDataProvider(customerKey: customerKey)
-
-        let flow = CardListFlow(
-            cardListAssembly: cardListAssembly,
-            addCardAssembly: addNewCardAssembly
-        )
-
-        flow.start(presentingViewController: presentingViewController, customerKey: customerKey)
+        let navigationController = cardListAssembly.cardListNavigationController(customerKey: customerKey)
+        presentingViewController.present(navigationController, animated: true)
     }
 }
 

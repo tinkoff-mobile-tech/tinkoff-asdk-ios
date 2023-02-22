@@ -49,10 +49,12 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
             onViewWasClosed: onViewWasClosed
         )
 
-        let viewController = AddNewCardViewController(presenter: presenter)
-        presenter.view = viewController
-        cardsController.webFlowDelegate = viewController
+        let view = AddNewCardViewController(presenter: presenter)
+        view.extendedLayoutIncludesOpaqueBars = true
 
-        return viewController
+        presenter.view = view
+        cardsController.webFlowDelegate = view
+
+        return view
     }
 }

@@ -35,6 +35,8 @@ protocol ICardListAssembly {
         selectedCardId: String,
         cards: [PaymentCard]
     ) -> (view: CardListViewController, module: ICardListModule)
+
+    func cardListNavigationController(customerKey: String) -> UINavigationController
 }
 
 final class CardListAssembly: ICardListAssembly {
@@ -75,6 +77,23 @@ final class CardListAssembly: ICardListAssembly {
         )
     }
 
+    func cardListNavigationController(customerKey: String) -> UINavigationController {
+        let batch = buildModule(customerKey: customerKey, configuration: .cardList())
+        let navigationController = UINavigationController(rootViewController: batch.view)
+
+        if #available(iOS 13.0, *) {
+            // Fixes flickering of nav bar when using pushing transitioning animation
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithTransparentBackground()
+            navBarAppearance.backgroundColor = ASDKColors.Background.elevation1.color
+            navigationController.navigationBar.standardAppearance = navBarAppearance
+            navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
+            navigationController.navigationBar.compactAppearance = navBarAppearance
+        }
+
+        return navigationController
+    }
+
     // MARK: Building
 
     private func buildModule(
@@ -99,6 +118,8 @@ final class CardListAssembly: ICardListAssembly {
             configuration: configuration,
             presenter: presenter
         )
+
+        view.extendedLayoutIncludesOpaqueBars = true
 
         router.transitionHandler = view
         presenter.view = view
