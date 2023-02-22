@@ -22,7 +22,12 @@ import UIKit
 
 /// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
 protocol ICardListAssembly {
-    func cardListNavigationController(customerKey: String) -> UINavigationController
+    /// Создает экран со списком карт, обернутый в `UINavigationController`
+    ///
+    /// Используется для отображения списка карт в сценарии управления картами, доступного при открытии из родительского приложения
+    /// - Parameter customerKey: Идентификатор покупателя в системе Продавца
+    /// - Returns: `UINavigationController`
+    func cardsPresentingNavigationController(customerKey: String) -> UINavigationController
 }
 
 final class CardListAssembly: ICardListAssembly {
@@ -43,7 +48,7 @@ final class CardListAssembly: ICardListAssembly {
 
     // MARK: ICardListAssembly
 
-    func cardListNavigationController(customerKey: String) -> UINavigationController {
+    func cardsPresentingNavigationController(customerKey: String) -> UINavigationController {
         let view = createModule(customerKey: customerKey, configuration: .cardList())
         let navigationController = UINavigationController(rootViewController: view)
 

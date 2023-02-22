@@ -1444,7 +1444,7 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
     /// Отображает экран добавления карты
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
-    ///   - customerKey: Идентификатор покупателя в системе Банка, к которому будет привязана карта
+    ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
     ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentAddCard(
         on presentingViewController: UIViewController,
@@ -1559,16 +1559,18 @@ extension AcquiringUISDK: AcquiringCardListDataSourceDelegate {
         }
     }
 
-    /// Презентует список карт
+    /// Отображает экран со списком карт
+    ///
+    /// На этом экране пользователь может ознакомиться со списком привязанных карт, удалить или добавить новую карту
     /// - Parameters:
-    ///   - presentingViewController: Вью контроллер на котором будет презентован экран
-    ///   - customerKey: ключ клиента сдк
-    ///   - configuration: конфигурация сдк
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
+    ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
+    ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String
     ) {
-        let navigationController = cardListAssembly.cardListNavigationController(customerKey: customerKey)
+        let navigationController = cardListAssembly.cardsPresentingNavigationController(customerKey: customerKey)
         presentingViewController.present(navigationController, animated: true)
     }
 }
