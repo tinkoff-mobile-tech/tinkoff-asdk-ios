@@ -1,5 +1,5 @@
 //
-//  SBPBankCellNew.swift
+//  SBPBankCell.swift
 //  TinkoffASDKUI
 //
 //  Created by Aleksandr Pravosudov on 22.12.2022.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-final class SBPBankCellNew: UITableViewCell, ISBPBankCellNew {
+final class SBPBankCell: UITableViewCell, ISBPBankCell {
 
     // Dependencies
-    var presenter: ISBPBankCellNewPresenter? {
+    var presenter: ISBPBankCellPresenter? {
         didSet {
             if oldValue?.cell === self { oldValue?.cell = nil }
             presenter?.cell = self
@@ -57,9 +57,9 @@ final class SBPBankCellNew: UITableViewCell, ISBPBankCellNew {
     }
 }
 
-// MARK: - ISBPBankCellNew
+// MARK: - ISBPBankCell
 
-extension SBPBankCellNew {
+extension SBPBankCell {
     func showSkeletonViews() {
         selectionStyle = .none
 
@@ -90,7 +90,7 @@ extension SBPBankCellNew {
 
 // MARK: - Private
 
-extension SBPBankCellNew {
+extension SBPBankCell {
     private func setupCell() {
         selectionStyle = .default
     }

@@ -13,7 +13,7 @@ protocol ISBPBanksPresenter {
     func prefetch(for rows: [Int])
 
     func numberOfRows() -> Int
-    func cellPresenter(for row: Int) -> ISBPBankCellNewPresenter
+    func cellPresenter(for row: Int) -> ISBPBankCellPresenter
 
     func searchTextDidChange(to text: String)
 

@@ -1,5 +1,5 @@
 //
-//  SBPBanksServiceNew.swift
+//  SBPBanksService.swift
 //  TinkoffASDKUI
 //
 //  Created by Aleksandr Pravosudov on 21.12.2022.
@@ -7,7 +7,7 @@
 
 import TinkoffASDKCore
 
-final class SBPBanksServiceNew: ISBPBanksService {
+final class SBPBanksService: ISBPBanksService {
 
     // Dependencies
     private let acquiringSdk: AcquiringSdk

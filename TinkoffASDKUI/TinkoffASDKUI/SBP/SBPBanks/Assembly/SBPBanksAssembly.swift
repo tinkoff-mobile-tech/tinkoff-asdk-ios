@@ -36,7 +36,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
         paymentFlow: PaymentFlow,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) -> SBPBanksModule {
-        let paymentService = SBPPaymentServiceNew(
+        let paymentService = SBPPaymentService(
             acquiringSdk: acquiringSdk,
             paymentFlow: paymentFlow
         )
@@ -47,20 +47,20 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 // MARK: - Private
 
 extension SBPBanksAssembly {
-    private func build(paymentService: SBPPaymentServiceNew?, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) -> SBPBanksModule {
+    private func build(paymentService: SBPPaymentService?, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) -> SBPBanksModule {
         let sbpPaymentSheetAssembly = SBPPaymentSheetAssembly(
             acquiringSdk: acquiringSdk,
             sbpConfiguration: sbpConfiguration
         )
         let router = SBPBanksRouter(sbpBanksAssembly: self, sbpPaymentSheetAssembly: sbpPaymentSheetAssembly)
 
-        let banksService = SBPBanksServiceNew(acquiringSdk: acquiringSdk)
+        let banksService = SBPBanksService(acquiringSdk: acquiringSdk)
         let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
         let bankAppOpener = SBPBankAppOpener(application: UIApplication.shared)
 
         let cellImageLoader = CellImageLoader(imageLoader: ImageLoader(urlDataLoader: acquiringSdk))
         cellImageLoader.set(type: .roundAndSize(.logoImageSize))
-        let cellPresentersAssembly = SBPBankCellPresenterNewAssembly(cellImageLoader: cellImageLoader)
+        let cellPresentersAssembly = SBPBankCellPresenterAssembly(cellImageLoader: cellImageLoader)
 
         let presenter = SBPBanksPresenter(
             router: router,

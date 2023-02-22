@@ -1,5 +1,5 @@
 //
-//  ISBPBankCellNew.swift
+//  ISBPBankCell.swift
 //  TinkoffASDKUI
 //
 //  Created by Aleksandr Pravosudov on 29.12.2022.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-protocol ISBPBankCellNew: NSObject {
-    var presenter: ISBPBankCellNewPresenter? { get set }
+protocol ISBPBankCell: NSObject {
+    var presenter: ISBPBankCellPresenter? { get set }
 
     func showSkeletonViews()
     func setNameLabel(text: String)

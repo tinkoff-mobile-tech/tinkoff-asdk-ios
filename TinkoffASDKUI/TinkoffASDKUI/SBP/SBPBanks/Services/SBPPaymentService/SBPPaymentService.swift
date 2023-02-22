@@ -1,5 +1,5 @@
 //
-//  SBPPaymentServiceNew.swift
+//  SBPPaymentService.swift
 //  TinkoffASDKUI
 //
 //  Created by Aleksandr Pravosudov on 16.01.2023.
@@ -7,7 +7,7 @@
 
 import TinkoffASDKCore
 
-final class SBPPaymentServiceNew: ISBPPaymentServiceNew {
+final class SBPPaymentService: ISBPPaymentService {
 
     // MARK: Dependencies
 
@@ -25,10 +25,10 @@ final class SBPPaymentServiceNew: ISBPPaymentServiceNew {
     }
 }
 
-// MARK: - ISBPPaymentServiceNew
+// MARK: - ISBPPaymentService
 
-extension SBPPaymentServiceNew {
-    func loadPaymentQr(completion: @escaping SBPPaymentServiceNewCompletion) {
+extension SBPPaymentService {
+    func loadPaymentQr(completion: @escaping SBPPaymentServiceCompletion) {
         switch paymentFlow {
         case let .full(paymentOptions):
             acquiringSdk.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
@@ -47,8 +47,8 @@ extension SBPPaymentServiceNew {
 
 // MARK: - Private
 
-extension SBPPaymentServiceNew {
-    private func getPaymentQrData(paymentId: String, completion: @escaping SBPPaymentServiceNewCompletion) {
+extension SBPPaymentService {
+    private func getPaymentQrData(paymentId: String, completion: @escaping SBPPaymentServiceCompletion) {
         let qrData = GetQRData(paymentId: paymentId, paymentInvoiceType: .url)
         acquiringSdk.getQR(data: qrData, completion: completion)
     }
