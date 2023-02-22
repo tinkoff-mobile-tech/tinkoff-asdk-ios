@@ -20,26 +20,16 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewOutput: AnyObject, IAddNewCardPresenterOutput {
-    func viewDidLoad()
-    func view(didTapDeleteOn card: CardList.Card)
-    func viewDidTapEditButton()
-    func viewDidTapDoneEditingButton()
-    func viewDidHideRemovingCardSnackBar()
-    func viewDidTapCard(cardIndex: Int)
-    func viewDidTapAddCardCell()
-    func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
-    func viewDidShowAddedCardSnackbar()
-}
-
-enum CardListScreenState {
-    case initial
-    case showingCards
-    case editingCards
-    case showingStub
-}
-
 final class CardListPresenter {
+    // MARK: Internal Types
+
+    private enum ScreenState {
+        case initial
+        case showingCards
+        case editingCards
+        case showingStub
+    }
+
     // MARK: Dependencies
 
     weak var view: ICardListViewInput?
@@ -55,7 +45,7 @@ final class CardListPresenter {
     private var cards: [PaymentCard]
     private var isLoading = false
     private var hasVisualContent: Bool { !cards.isEmpty }
-    private var screenState = CardListScreenState.initial
+    private var screenState = ScreenState.initial
     private var deactivateCardResult: Result<RemoveCardPayload, Error>?
     private var sections: [CardListSection] { getSections() }
 

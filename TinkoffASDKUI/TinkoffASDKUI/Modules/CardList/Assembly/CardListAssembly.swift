@@ -20,18 +20,6 @@
 import TinkoffASDKCore
 import UIKit
 
-/// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
-protocol ICardListAssembly {
-    /// Создает экран со списком карт, обернутый в `UINavigationController`
-    ///
-    /// Используется для отображения списка карт в сценарии управления картами, доступного при открытии из родительского приложения
-    /// - Parameter customerKey: Идентификатор покупателя в системе Продавца
-    /// - Returns: `UINavigationController`
-    func cardsPresentingNavigationController(customerKey: String) -> UINavigationController
-
-    // TODO: MIC-8030 Добавить точку входа для оплаты по сохраненной карте
-}
-
 final class CardListAssembly: ICardListAssembly {
     // MARK: Dependencies
 
@@ -55,7 +43,7 @@ final class CardListAssembly: ICardListAssembly {
         return UINavigationController.withASDKBar(rootViewController: view)
     }
 
-    // MARK: Building
+    // MARK: Helpers
 
     private func createModule(
         customerKey: String,

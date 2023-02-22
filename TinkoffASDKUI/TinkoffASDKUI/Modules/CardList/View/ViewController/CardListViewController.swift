@@ -20,26 +20,6 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewInput: AnyObject {
-    func reload(sections: [CardListSection])
-    func deleteItems(at: [IndexPath])
-    func disableViewUserInteraction()
-    func enableViewUserInteraction()
-    func showShimmer()
-    func hideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
-    func showStub(mode: StubMode)
-    func hideStub()
-    func dismiss()
-    func showDoneEditingButton()
-    func showEditButton()
-    func hideRightBarButton()
-    func showNativeAlert(data: OkAlertData)
-    func showRemovingCardSnackBar(text: String?)
-    func hideLoadingSnackbar()
-    func showAddedCardSnackbar(cardMaskedPan: String)
-    func closeScreen()
-}
-
 final class CardListViewController: UIViewController {
     // MARK: Dependencies
 
