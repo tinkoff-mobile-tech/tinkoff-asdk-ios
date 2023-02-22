@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 22.02.2023.
 //
 
-import Foundation
+import UIKit
 
 /// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
 protocol ICardListAssembly {
