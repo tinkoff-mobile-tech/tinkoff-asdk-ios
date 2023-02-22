@@ -26,8 +26,7 @@ final class CardsControllerAssembly: ICardsControllerAssembly {
     func cardsController(customerKey: String) -> ICardsController {
         CardsController(
             coreSDK: coreSDK,
-            addCardController: addCardControllerAssembly.addCardController(customerKey: customerKey),
-            customerKey: customerKey
+            addCardController: addCardControllerAssembly.addCardController(customerKey: customerKey)
         )
     }
 }
