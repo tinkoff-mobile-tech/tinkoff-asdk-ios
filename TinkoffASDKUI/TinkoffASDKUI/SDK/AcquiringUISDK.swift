@@ -22,6 +22,8 @@ import TinkoffASDKCore
 import UIKit
 import WebKit
 
+public typealias PaymentResultCompletion = (PaymentResult) -> Void
+
 public protocol TinkoffPayDelegate: AnyObject {
     func tinkoffPayIsNotAllowed()
 }
@@ -1740,7 +1742,7 @@ public extension AcquiringUISDK {
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
         stub: MainFormStub,
-        completion: @escaping (PaymentResult) -> Void
+        completion: @escaping PaymentResultCompletion
     ) {
         let viewController = mainFormAssembly.build(
             paymentFlow: paymentFlow,
@@ -1750,5 +1752,15 @@ public extension AcquiringUISDK {
         )
 
         presentingViewController.present(viewController, animated: true)
+    }
+
+    func presentSBPModule(
+        on presentingViewController: UIViewController,
+        paymentFlow: PaymentFlow,
+        completion: @escaping PaymentResultCompletion
+    ) {
+        let module = sbpBanksAssembly.buildInitialModule(paymentFlow: paymentFlow, completion: completion)
+        let navigation = UINavigationController.withASDKBar(rootViewController: module.view)
+        presentingViewController.present(navigation, animated: true)
     }
 }

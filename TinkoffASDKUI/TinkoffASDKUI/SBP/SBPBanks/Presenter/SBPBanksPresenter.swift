@@ -19,6 +19,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     weak var view: ISBPBanksViewController?
     private let router: ISBPBanksRouter
 
+    private var moduleCompletion: PaymentResultCompletion?
     private weak var paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
 
     private let paymentService: ISBPPaymentService?
@@ -45,6 +46,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     init(
         router: ISBPBanksRouter,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
+        moduleCompletion: PaymentResultCompletion?,
         paymentService: ISBPPaymentService?,
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
@@ -54,6 +56,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     ) {
         self.router = router
         self.paymentSheetOutput = paymentSheetOutput
+        self.moduleCompletion = moduleCompletion
         self.paymentService = paymentService
         self.banksService = banksService
         self.bankAppChecker = bankAppChecker
@@ -128,6 +131,17 @@ extension SBPBanksPresenter {
     }
 }
 
+// MARK: - ISBPPaymentSheetPresenterOutput
+
+extension SBPBanksPresenter: ISBPPaymentSheetPresenterOutput {
+    func sbpPaymentSheet(completedWith result: PaymentResult) {
+        router.closeScreen { [weak self] in
+            self?.moduleCompletion?(result)
+            self?.paymentSheetOutput?.sbpPaymentSheet(completedWith: result)
+        }
+    }
+}
+
 // MARK: - Private methods
 
 extension SBPBanksPresenter {
@@ -199,7 +213,7 @@ extension SBPBanksPresenter {
                 guard let self = self else { return }
 
                 let otherBanks = self.getNotPreferredBanks()
-                self.router.show(banks: otherBanks, qrPayload: self.qrPayload, paymentSheetOutput: self.paymentSheetOutput)
+                self.router.show(banks: otherBanks, qrPayload: self.qrPayload, paymentSheetOutput: self)
             })
             allBanksCellPresenters = createCellPresenters(from: preferredBanks)
             allBanksCellPresenters.append(otherBankCellPresenter)
@@ -232,7 +246,7 @@ extension SBPBanksPresenter {
             cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
                 self?.bankAppOpener.openBankApp(url: paymentUrl, bank, completion: { isOpened in
                     isOpened ?
-                        self?.router.showPaymentSheet(paymentId: paymentId, output: self?.paymentSheetOutput) :
+                        self?.router.showPaymentSheet(paymentId: paymentId, output: self) :
                         self?.router.showDidNotFindBankAppAlert()
                 })
             })
