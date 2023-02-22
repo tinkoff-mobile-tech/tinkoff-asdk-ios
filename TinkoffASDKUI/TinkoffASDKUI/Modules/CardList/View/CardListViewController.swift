@@ -266,14 +266,6 @@ extension CardListViewController: CardListViewDelegate {
 }
 
 extension CardListViewController: ISnackBarPresentable, ISnackBarViewProvider {
-
     var viewProvider: ISnackBarViewProvider? { self }
     func viewToAddSnackBarTo() -> UIView { view }
-}
-
-extension CardListViewController {
-
-    func getAddNewCardOutput() -> IAddNewCardPresenterOutput {
-        presenter
-    }
 }

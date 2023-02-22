@@ -776,15 +776,6 @@ public class AcquiringUISDK: NSObject {
             modalViewController.acquiringPaymentController = acquiringPaymentController
         }
 
-        modalViewController.onTouchButtonShowCardList = { [injectableCardListProvider, weak self] in
-            guard let cardListProvider = injectableCardListProvider else { return }
-            self?.startChoosePaymentCardFlow(
-                cardListDataProvider: cardListProvider,
-                modalViewController: modalViewController,
-                customerKey: customerKey
-            )
-        }
-
         modalViewController.onCancelPayment = { [weak self] in
             self?.cancelPayment()
         }
@@ -801,55 +792,6 @@ public class AcquiringUISDK: NSObject {
             completion: {
                 _ = presentationController
                 onPresenting?(modalViewController)
-            }
-        )
-    }
-
-    private func startChoosePaymentCardFlow(
-        cardListDataProvider: CardListDataProvider,
-        modalViewController: AcquiringPaymentViewController?,
-        customerKey: String?
-    ) {
-        let presentingViewController = modalViewController == nil
-            ? self.presentingViewController
-            : modalViewController
-
-        guard let presentingViewController = presentingViewController, let customerKey = customerKey
-        else { return }
-
-        var selectedCardId = ""
-        if case let .savedCard(cardId, _) = modalViewController?.cardRequisites() {
-            selectedCardId = cardId
-        }
-
-        let flow = ChoosePaymentCardListFlow(
-            cardListAssembly: cardListAssembly,
-            cardListDataProvider: cardListDataProvider
-        )
-
-        flow.start(
-            presentingViewController: presentingViewController,
-            customerKey: customerKey,
-            selectedCardId: selectedCardId,
-            setOutputEvents: { [weak modalViewController, weak presentingViewController] cardListOutput in
-
-                let dismissDelayed: () -> Void = {
-                    let presentedModalViewController = presentingViewController?.presentedViewController
-                    presentedModalViewController?.view.isUserInteractionEnabled = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        presentedModalViewController?.dismiss(animated: true)
-                    }
-                }
-
-                cardListOutput.onAddNewCardTap = {
-                    modalViewController?.selectRequisitesInput()
-                    dismissDelayed()
-                }
-
-                cardListOutput.onSelectCard = { selectedCard in
-                    modalViewController?.selectCard(withId: selectedCard.cardId)
-                    dismissDelayed()
-                }
             }
         )
     }

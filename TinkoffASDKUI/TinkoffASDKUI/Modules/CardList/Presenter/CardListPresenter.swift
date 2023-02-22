@@ -32,11 +32,6 @@ protocol ICardListViewOutput: AnyObject, IAddNewCardPresenterOutput {
     func viewDidShowAddedCardSnackbar()
 }
 
-protocol ICardListModule: AnyObject {
-    var onSelectCard: ((PaymentCard) -> Void)? { get set }
-    var onAddNewCardTap: (() -> Void)? { get set }
-}
-
 enum CardListScreenState {
     case initial
     case showingCards
@@ -44,12 +39,7 @@ enum CardListScreenState {
     case showingStub
 }
 
-final class CardListPresenter: ICardListModule {
-    // MARK: ICardListModule Event Handlers
-
-    var onSelectCard: ((PaymentCard) -> Void)?
-    var onAddNewCardTap: (() -> Void)?
-
+final class CardListPresenter {
     // MARK: Dependencies
 
     weak var view: ICardListViewInput?
@@ -128,7 +118,7 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapCard(cardIndex: Int) {
-        onSelectCard?(cards[cardIndex])
+        // TODO: MIC-8030 Совершить переход на экран оплаты картой
     }
 
     func viewDidTapAddCardCell() {

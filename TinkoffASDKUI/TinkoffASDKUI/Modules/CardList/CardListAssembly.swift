@@ -22,20 +22,6 @@ import UIKit
 
 /// Объект, осуществляющий сборку модуля `CardList` для различных пользовательских сценариев
 protocol ICardListAssembly {
-    /// Отображение списка карт в качестве самостоятельного экрана
-    ///
-    /// Доступные операции: добавление, удаление
-    func cardsPresentingModule(customerKey: String) -> (view: CardListViewController, module: ICardListModule)
-
-    /// Отображение списка карт, вызываемого с платежной формы
-    ///
-    /// Доступные операции: добавление, удаление, выбор карты
-    func cardSelectionModule(
-        customerKey: String,
-        selectedCardId: String,
-        cards: [PaymentCard]
-    ) -> (view: CardListViewController, module: ICardListModule)
-
     func cardListNavigationController(customerKey: String) -> UINavigationController
 }
 
@@ -57,29 +43,9 @@ final class CardListAssembly: ICardListAssembly {
 
     // MARK: ICardListAssembly
 
-    func cardsPresentingModule(
-        customerKey: String
-    ) -> (view: CardListViewController, module: ICardListModule) {
-        buildModule(
-            customerKey: customerKey,
-            configuration: .cardList()
-        )
-    }
-
-    func cardSelectionModule(
-        customerKey: String,
-        selectedCardId: String,
-        cards: [PaymentCard]
-    ) -> (view: CardListViewController, module: ICardListModule) {
-        buildModule(
-            customerKey: customerKey,
-            configuration: .choosePaymentCardList(selectedCardId: selectedCardId)
-        )
-    }
-
     func cardListNavigationController(customerKey: String) -> UINavigationController {
-        let batch = buildModule(customerKey: customerKey, configuration: .cardList())
-        let navigationController = UINavigationController(rootViewController: batch.view)
+        let view = createModule(customerKey: customerKey, configuration: .cardList())
+        let navigationController = UINavigationController(rootViewController: view)
 
         if #available(iOS 13.0, *) {
             // Fixes flickering of nav bar when using pushing transitioning animation
@@ -96,12 +62,11 @@ final class CardListAssembly: ICardListAssembly {
 
     // MARK: Building
 
-    private func buildModule(
+    private func createModule(
         customerKey: String,
         configuration: CardListScreenConfiguration,
         cards: [PaymentCard] = []
-    ) -> (view: CardListViewController, module: ICardListModule) {
-
+    ) -> UIViewController {
         let router = CardListRouter(addNewCardAssembly: addNewCardAssembly)
 
         let presenter = CardListPresenter(
@@ -124,7 +89,7 @@ final class CardListAssembly: ICardListAssembly {
         router.transitionHandler = view
         presenter.view = view
 
-        return (view, presenter)
+        return view
     }
 }
 
