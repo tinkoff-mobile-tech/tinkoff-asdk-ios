@@ -13,7 +13,7 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
-    private let coreSDK: AcquiringSdk
+    private let cardsController: ICardsController?
     private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
@@ -45,7 +45,7 @@ final class MainFormPresenter {
     // MARK: State
 
     private lazy var cellTypes: [MainFormCellType] = []
-    private var activeCards: [PaymentCard] = []
+    private var cards: [PaymentCard] = []
     private var availablePaymentMethods: [MainFormPaymentMethod] = MainFormPaymentMethod.allCases
     private lazy var primaryPaymentMethod = stub.primaryPayMethod.domainModel
     private var moduleResult: PaymentResult = .cancelled()
@@ -54,7 +54,7 @@ final class MainFormPresenter {
 
     init(
         router: IMainFormRouter,
-        coreSDK: AcquiringSdk,
+        cardsController: ICardsController?,
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
@@ -62,7 +62,7 @@ final class MainFormPresenter {
         moduleCompletion: @escaping (PaymentResult) -> Void
     ) {
         self.router = router
-        self.coreSDK = coreSDK
+        self.cardsController = cardsController
         self.paymentController = paymentController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
@@ -124,7 +124,9 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
     func savedCardPresenter(
         _ presenter: SavedCardPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
-    ) {}
+    ) {
+        router.openCardList(paymentFlow: paymentFlow, cards: cards, selectedCard: paymentCard)
+    }
 
     func savedCardPresenter(
         _ presenter: SavedCardPresenter,
@@ -165,7 +167,7 @@ extension MainFormPresenter {
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
         switch primaryPaymentMethod {
-        case .card where !activeCards.isEmpty:
+        case .card where !cards.isEmpty:
             startPaymentWithSavedCard()
             presenter.startLoading()
         case .card, .tinkoffPay, .sbp:
@@ -261,24 +263,23 @@ extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
 
 extension MainFormPresenter {
     private func loadCardsIfNeeded(completion: @escaping VoidBlock) {
-        guard let customerKey = paymentFlow.customerOptions?.customerKey else {
+        guard let cardsController = cardsController else {
             return completion()
         }
 
-        coreSDK.getCardList(data: GetCardListData(customerKey: customerKey)) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let cards = try? result.get() else { return completion() }
-                let activeCards = cards.filter { $0.status == .active }
+        cardsController.getActiveCards { [weak self] result in
+            guard let self = self else { return }
+            defer { completion() }
 
-                guard let selectedCard = activeCards.first else { return completion() }
+            guard let cards = try? result.get(),
+                  let selectedCard = cards.first else { return }
 
-                self?.activeCards = activeCards
-                self?.savedCardPresenter.presentationState = .selected(
-                    card: selectedCard,
-                    hasAnotherCards: activeCards.count > 1
-                )
-                completion()
-            }
+            self.cards = cards
+
+            self.savedCardPresenter.presentationState = .selected(
+                card: selectedCard,
+                hasAnotherCards: cards.count > 1
+            )
         }
     }
 
@@ -288,7 +289,7 @@ extension MainFormPresenter {
             return
         }
 
-        let isCvcValid = activeCards.isEmpty ? true : savedCardPresenter.isValid
+        let isCvcValid = cards.isEmpty ? true : savedCardPresenter.isValid
         let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
 
         payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
@@ -313,7 +314,7 @@ extension MainFormPresenter {
     private func routeTo(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
-            router.openCardPayment(paymentFlow: paymentFlow, cards: activeCards, output: self)
+            router.openCardPayment(paymentFlow: paymentFlow, cards: cards, output: self)
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:
@@ -333,7 +334,7 @@ extension MainFormPresenter {
         var rows: [MainFormCellType] = [.orderDetails(orderDetailsPresenter)]
 
         switch primaryPaymentMethod {
-        case .card where !activeCards.isEmpty:
+        case .card where !cards.isEmpty:
             rows.append(.savedCard(savedCardPresenter))
             rows.append(.getReceiptSwitch(getReceiptSwitchPresenter))
 

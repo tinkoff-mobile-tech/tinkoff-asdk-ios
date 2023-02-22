@@ -275,18 +275,21 @@ public class AcquiringUISDK: NSObject {
             cardsControllerAssembly: cardsControllerAssembly,
             paymentControllerAssembly: paymentControllerAssembly
         )
-        mainFormAssembly = MainFormAssembly(
-            coreSDK: coreSDK,
-            paymentControllerAssembly: paymentControllerAssembly,
-            cardPaymentAssembly: cardPaymentAssembly,
-            sbpBanksAssembly: sbpBanksAssembly
-        )
 
         addNewCardAssembly = AddNewCardAssembly(cardsControllerAssembly: cardsControllerAssembly)
 
         cardListAssembly = CardListAssembly(
             cardsControllerAssembly: cardsControllerAssembly,
             addNewCardAssembly: addNewCardAssembly
+        )
+
+        mainFormAssembly = MainFormAssembly(
+            coreSDK: coreSDK,
+            paymentControllerAssembly: paymentControllerAssembly,
+            cardsControllerAssembly: cardsControllerAssembly,
+            cardListAssembly: cardListAssembly,
+            cardPaymentAssembly: cardPaymentAssembly,
+            sbpBanksAssembly: sbpBanksAssembly
         )
     }
 

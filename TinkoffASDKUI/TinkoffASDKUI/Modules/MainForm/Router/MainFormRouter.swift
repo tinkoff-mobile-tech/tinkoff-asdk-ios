@@ -13,6 +13,7 @@ final class MainFormRouter: IMainFormRouter {
 
     weak var transitionHandler: UIViewController?
     private let configuration: MainFormUIConfiguration
+    private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
 
@@ -22,17 +23,29 @@ final class MainFormRouter: IMainFormRouter {
 
     init(
         configuration: MainFormUIConfiguration,
+        cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
         sbpBanksAssembly: ISBPBanksAssembly,
         paymentFlow: PaymentFlow
     ) {
         self.configuration = configuration
+        self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
         self.paymentFlow = paymentFlow
     }
 
     // MARK: IMainFormRouter
+
+    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard) {
+        guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
+
+        let navigationController = cardListAssembly.cardsPresentingNavigationController(
+            customerKey: customerKey
+        )
+
+        transitionHandler?.present(navigationController, animated: true)
+    }
 
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {
         let cardPaymentViewController = cardPaymentAssembly.build(

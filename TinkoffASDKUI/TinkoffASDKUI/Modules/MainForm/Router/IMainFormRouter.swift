@@ -9,6 +9,7 @@ import Foundation
 import TinkoffASDKCore
 
 protocol IMainFormRouter {
+    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard)
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?)
     func openTinkoffPay(paymentFlow: PaymentFlow)
     func openSBP(paymentFlow: PaymentFlow, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?)

@@ -13,6 +13,8 @@ final class MainFormAssembly: IMainFormAssembly {
 
     private let coreSDK: AcquiringSdk
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let cardsControllerAssembly: ICardsControllerAssembly
+    private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
 
@@ -21,11 +23,15 @@ final class MainFormAssembly: IMainFormAssembly {
     init(
         coreSDK: AcquiringSdk,
         paymentControllerAssembly: IPaymentControllerAssembly,
+        cardsControllerAssembly: ICardsControllerAssembly,
+        cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
         sbpBanksAssembly: ISBPBanksAssembly
     ) {
         self.coreSDK = coreSDK
         self.paymentControllerAssembly = paymentControllerAssembly
+        self.cardsControllerAssembly = cardsControllerAssembly
+        self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
     }
@@ -39,9 +45,11 @@ final class MainFormAssembly: IMainFormAssembly {
         moduleCompletion: @escaping PaymentResultCompletion
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
+        let cardsController = paymentFlow.customerKey.map(cardsControllerAssembly.cardsController(customerKey:))
 
         let router = MainFormRouter(
             configuration: configuration,
+            cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly,
             paymentFlow: paymentFlow
@@ -49,7 +57,7 @@ final class MainFormAssembly: IMainFormAssembly {
 
         let presenter = MainFormPresenter(
             router: router,
-            coreSDK: coreSDK,
+            cardsController: cardsController,
             paymentController: paymentController,
             paymentFlow: paymentFlow,
             configuration: configuration,
