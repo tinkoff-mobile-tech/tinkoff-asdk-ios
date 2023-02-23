@@ -57,6 +57,7 @@ final class CardListView: UIView, StubViewPresentable {
         )
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.delaysContentTouches = false
         collectionView.register(cellClasses: PaymentCardRemovableView.Cell.self, IconTitleView.Cell.self, UICollectionViewCell.self)
         return collectionView
     }()

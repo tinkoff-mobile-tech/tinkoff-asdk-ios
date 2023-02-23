@@ -113,7 +113,6 @@ extension CardListPresenter: ICardListViewOutput {
     func viewDidTapCard(cardIndex: Int) {
         let selectedCard = cards[cardIndex]
         output?.cardList(didSelect: selectedCard)
-        // TODO: MIC-8030 Совершить переход на экран оплаты картой
     }
 
     func viewDidTapAddCardCell() {
