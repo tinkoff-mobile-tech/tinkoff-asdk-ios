@@ -51,8 +51,7 @@ final class MainFormAssembly: IMainFormAssembly {
             configuration: configuration,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
-            sbpBanksAssembly: sbpBanksAssembly,
-            paymentFlow: paymentFlow
+            sbpBanksAssembly: sbpBanksAssembly
         )
 
         let presenter = MainFormPresenter(

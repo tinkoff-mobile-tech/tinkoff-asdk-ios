@@ -117,7 +117,11 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapAddCardCell() {
-        router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
+        if output == nil {
+            router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
+        } else {
+            output?.cardListDidSelectNewCard()
+        }
     }
 
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {

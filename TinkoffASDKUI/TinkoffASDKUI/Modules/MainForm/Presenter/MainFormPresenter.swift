@@ -77,16 +77,13 @@ extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
         view?.showCommonSheet(state: .processing)
 
-        // Временно
         loadCardsIfNeeded { [weak self] in
             guard let self = self else { return }
 
+            // Временно
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.payButtonPresenter.presentationState = .presentationState(from: self.primaryPaymentMethod)
-                self.activatePayButtonIfNeeded()
-                self.cellTypes = self.createRows()
                 self.view?.hideCommonSheet()
-                self.view?.reloadData()
+                self.reloadContent()
             }
         }
     }
@@ -123,18 +120,16 @@ extension MainFormPresenter: IMainFormPresenter {
 extension MainFormPresenter: ICardListPresenterOutput {
     func cardList(didSelect card: PaymentCard) {
         savedCardPresenter.presentationState = .selected(card: card, hasAnotherCards: cards.count > 1)
+        router.closeCardSelection()
     }
 
     func cardList(didRemoveCard card: PaymentCard) {
         cards.removeAll { $0.cardId == card.cardId }
+        reloadContent()
+    }
 
-        if cards.isEmpty {
-            savedCardPresenter.presentationState = .idle
-            cellTypes = createRows()
-            view?.reloadData()
-        } else if savedCardPresenter.cardId == card.cardId, let newSelectedCard = cards.first {
-            savedCardPresenter.presentationState = .selected(card: newSelectedCard, hasAnotherCards: cards.count > 1)
-        }
+    func cardListDidSelectNewCard() {
+        router.pushNewCardPaymentToCardSelection(paymentFlow: paymentFlow, output: self)
     }
 }
 
@@ -145,7 +140,11 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
-        router.openCardList(paymentFlow: paymentFlow, cards: cards, selectedCard: paymentCard, output: self)
+        router.openCardSelection(
+            paymentFlow: paymentFlow,
+            cards: cards,
+            selectedCard: paymentCard, output: self
+        )
     }
 
     func savedCardPresenter(
@@ -346,8 +345,11 @@ extension MainFormPresenter {
 // MARK: - MainFormPresenter + Rows Creations
 
 extension MainFormPresenter {
-    private func createRows() -> [MainFormCellType] {
-        createPrimaryPaymentMethodRows() + createOtherPaymentMethodsRows()
+    private func reloadContent() {
+        payButtonPresenter.presentationState = .presentationState(from: primaryPaymentMethod)
+        activatePayButtonIfNeeded()
+        cellTypes = createPrimaryPaymentMethodRows() + createOtherPaymentMethodsRows()
+        view?.reloadData()
     }
 
     private func createPrimaryPaymentMethodRows() -> [MainFormCellType] {

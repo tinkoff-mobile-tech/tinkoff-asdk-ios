@@ -17,7 +17,9 @@ final class MainFormRouter: IMainFormRouter {
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
 
-    private let paymentFlow: PaymentFlow
+    // MARK: State
+
+    private weak var cardSelectionNavigationController: UINavigationController?
 
     // MARK: Init
 
@@ -25,22 +27,20 @@ final class MainFormRouter: IMainFormRouter {
         configuration: MainFormUIConfiguration,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
-        sbpBanksAssembly: ISBPBanksAssembly,
-        paymentFlow: PaymentFlow
+        sbpBanksAssembly: ISBPBanksAssembly
     ) {
         self.configuration = configuration
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
-        self.paymentFlow = paymentFlow
     }
 
     // MARK: IMainFormRouter
 
-    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, output: ICardListPresenterOutput?) {
+    func openCardSelection(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, output: ICardListPresenterOutput?) {
         guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
 
-        let navigationController = cardListAssembly.cardSelectionNavigationController(
+        let cardSelectionNavigationController = cardListAssembly.cardSelectionNavigationController(
             customerKey: customerKey,
             cards: cards,
             selectedCard: selectedCard,
@@ -48,7 +48,29 @@ final class MainFormRouter: IMainFormRouter {
             output: output
         )
 
-        transitionHandler?.present(navigationController, animated: true)
+        self.cardSelectionNavigationController = cardSelectionNavigationController
+
+        transitionHandler?.present(cardSelectionNavigationController, animated: true)
+    }
+
+    func pushNewCardPaymentToCardSelection(paymentFlow: PaymentFlow, output: ICardPaymentPresenterModuleOutput?) {
+        let cardPaymentViewController = cardPaymentAssembly.build(
+            activeCards: [],
+            paymentFlow: paymentFlow,
+            amount: configuration.amount,
+            output: output
+        )
+
+        cardSelectionNavigationController?.pushViewController(cardPaymentViewController, animated: true)
+    }
+
+    func closeCardSelection(completion: VoidBlock?) {
+        guard let cardSelectionNavigationController = cardSelectionNavigationController else {
+            completion?()
+            return
+        }
+
+        cardSelectionNavigationController.dismiss(animated: true, completion: completion)
     }
 
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {
