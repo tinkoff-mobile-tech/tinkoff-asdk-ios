@@ -9,8 +9,12 @@ import Foundation
 
 /// Метод оплаты, доступный для данного терминала
 public enum TerminalPayMethod {
-    /// Оплата с помощью YandexPay
+    /// Оплата с помощью `YandexPay`
     case yandexPay(YandexPayMethod)
+    /// Оплата с помощью `СБП`
+    case sbp
+    /// Оплата с помощью `TinkoffPay`
+    case tinkoffPay(version: String)
 }
 
 // MARK: - TerminalPayMethod + Decodable
@@ -19,10 +23,13 @@ extension TerminalPayMethod: Decodable {
     private enum CodingKeys: String, CodingKey {
         case payMethod = "PayMethod"
         case params = "Params"
+        case version = "Version"
     }
 
     private enum MethodType: String, Decodable {
         case yandexPay = "YandexPay"
+        case sbp = "SBP"
+        case tinkoffPay = "TinkoffPay"
     }
 
     public init(from decoder: Decoder) throws {
@@ -32,6 +39,10 @@ extension TerminalPayMethod: Decodable {
         switch methodType {
         case .yandexPay:
             self = .yandexPay(try container.decode(YandexPayMethod.self, forKey: .params))
+        case .sbp:
+            self = .sbp
+        case .tinkoffPay:
+            self = .tinkoffPay(version: try container.decode(String.self, forKey: .version))
         }
     }
 }
