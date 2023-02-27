@@ -93,7 +93,11 @@ extension SBPBanksPresenter {
     }
 
     func closeButtonPressed() {
-        router.closeScreen()
+        routerClose(with: .cancelled())
+    }
+
+    func controllerDidDismissManually() {
+        sayToOutput(.cancelled())
     }
 
     func prefetch(for rows: [Int]) {
@@ -135,10 +139,7 @@ extension SBPBanksPresenter {
 
 extension SBPBanksPresenter: ISBPPaymentSheetPresenterOutput {
     func sbpPaymentSheet(completedWith result: PaymentResult) {
-        router.closeScreen { [weak self] in
-            self?.moduleCompletion?(result)
-            self?.paymentSheetOutput?.sbpPaymentSheet(completedWith: result)
-        }
+        routerClose(with: result)
     }
 }
 
@@ -276,6 +277,16 @@ extension SBPBanksPresenter {
         view?.showStubView(mode: .serverError { [weak self] in
             self?.router.closeScreen()
         })
+    }
+
+    private func routerClose(with result: PaymentResult) {
+        router.closeScreen { [weak self] in self?.sayToOutput(result)
+        }
+    }
+
+    private func sayToOutput(_ result: PaymentResult) {
+        moduleCompletion?(result)
+        paymentSheetOutput?.sbpPaymentSheet(completedWith: result)
     }
 }
 

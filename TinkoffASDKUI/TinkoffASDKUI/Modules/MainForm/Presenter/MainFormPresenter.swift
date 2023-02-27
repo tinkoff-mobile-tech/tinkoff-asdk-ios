@@ -244,8 +244,16 @@ extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
 
 extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
     func sbpPaymentSheet(completedWith result: PaymentResult) {
-        moduleResult = result
-        view?.closeView()
+        switch result {
+        case .succeeded, .failed:
+            moduleResult = result
+            view?.closeView()
+        case let .cancelled(paymentInfo) where paymentInfo != nil:
+            moduleResult = result
+            view?.closeView()
+        case .cancelled:
+            break
+        }
     }
 }
 
