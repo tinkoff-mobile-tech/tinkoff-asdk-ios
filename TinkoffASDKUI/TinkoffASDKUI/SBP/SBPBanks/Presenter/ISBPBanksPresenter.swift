@@ -9,6 +9,7 @@ protocol ISBPBanksPresenter {
     func viewDidLoad()
 
     func closeButtonPressed()
+    func controllerDidDismissManually()
 
     func prefetch(for rows: [Int])
 

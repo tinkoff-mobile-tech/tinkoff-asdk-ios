@@ -341,7 +341,12 @@ class BuyProductsViewController: UIViewController {
     }
 
     func generateSbpUrl() {
-        // открыть сбп
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        uiSDK.presentSBPBanksList(on: self, paymentFlow: paymentFlow) { [weak self] result in
+            self?.showAlert(with: result)
+        }
     }
 
     // TODO: MIC-7708 Удалить заглушку состояний
@@ -551,7 +556,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.isEnabled = uiSDK.canMakePaymentsSBP()
+                cell.button.isEnabled = AppSetting.shared.paySBP
                 cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpQrImage()
@@ -564,7 +569,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.isEnabled = uiSDK.canMakePaymentsSBP()
+                cell.button.isEnabled = AppSetting.shared.paySBP
                 cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpUrl()

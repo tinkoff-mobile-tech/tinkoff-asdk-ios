@@ -52,6 +52,12 @@ final class SBPBanksViewController: UIViewController, ISBPBanksViewController, S
 
         presenter.viewDidLoad()
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        setupDismissDelegate()
+    }
 }
 
 // MARK: - ISBPBanksViewController
@@ -91,6 +97,14 @@ extension SBPBanksViewController {
 extension SBPBanksViewController {
     @objc private func closeButtonAction(_ sender: UIBarButtonItem) {
         presenter.closeButtonPressed()
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension SBPBanksViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        presenter.controllerDidDismissManually()
     }
 }
 
@@ -153,6 +167,10 @@ extension SBPBanksViewController {
 
     private func setupNavigationBar() {
         navigationItem.title = Loc.Acquiring.Sbp.screenTitle
+    }
+
+    private func setupDismissDelegate() {
+        navigationController?.presentationController?.delegate = self
     }
 
     private func setupTableView() {

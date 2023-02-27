@@ -29,7 +29,19 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
     // MARK: - ISBPBanksAssembly
 
     func buildPreparedModule(paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) -> SBPBanksModule {
-        build(paymentService: nil, paymentSheetOutput: paymentSheetOutput)
+        build(paymentService: nil, paymentSheetOutput: paymentSheetOutput, completion: nil)
+    }
+
+    func buildInitialModule(
+        paymentFlow: PaymentFlow,
+        completion: PaymentResultCompletion?
+    ) -> SBPBanksModule {
+        let paymentService = SBPPaymentService(
+            acquiringSdk: acquiringSdk,
+            paymentFlow: paymentFlow
+        )
+
+        return build(paymentService: paymentService, paymentSheetOutput: nil, completion: completion)
     }
 
     func buildInitialModule(
@@ -40,14 +52,18 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
             acquiringSdk: acquiringSdk,
             paymentFlow: paymentFlow
         )
-        return build(paymentService: paymentService, paymentSheetOutput: paymentSheetOutput)
+        return build(paymentService: paymentService, paymentSheetOutput: paymentSheetOutput, completion: nil)
     }
 }
 
 // MARK: - Private
 
 extension SBPBanksAssembly {
-    private func build(paymentService: SBPPaymentService?, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) -> SBPBanksModule {
+    private func build(
+        paymentService: SBPPaymentService?,
+        paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
+        completion: PaymentResultCompletion?
+    ) -> SBPBanksModule {
         let sbpPaymentSheetAssembly = SBPPaymentSheetAssembly(
             acquiringSdk: acquiringSdk,
             sbpConfiguration: sbpConfiguration
@@ -65,6 +81,7 @@ extension SBPBanksAssembly {
         let presenter = SBPBanksPresenter(
             router: router,
             paymentSheetOutput: paymentSheetOutput,
+            moduleCompletion: completion,
             paymentService: paymentService,
             banksService: banksService,
             bankAppChecker: bankAppChecker,

@@ -30,8 +30,8 @@ final class SBPBanksRouter: ISBPBanksRouter {
 // MARK: - ISBPBanksRouter
 
 extension SBPBanksRouter {
-    func closeScreen() {
-        transitionHandler?.dismiss(animated: true)
+    func closeScreen(completion: VoidBlock?) {
+        transitionHandler?.dismiss(animated: true, completion: completion)
     }
 
     func show(banks: [SBPBank], qrPayload: GetQRPayload?, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) {
