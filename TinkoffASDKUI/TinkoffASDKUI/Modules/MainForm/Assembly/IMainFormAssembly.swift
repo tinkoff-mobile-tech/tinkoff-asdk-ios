@@ -13,6 +13,6 @@ protocol IMainFormAssembly {
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
         stub: MainFormStub,
-        moduleCompletion: @escaping (PaymentResult) -> Void
+        moduleCompletion: @escaping PaymentResultCompletion
     ) -> UIViewController
 }

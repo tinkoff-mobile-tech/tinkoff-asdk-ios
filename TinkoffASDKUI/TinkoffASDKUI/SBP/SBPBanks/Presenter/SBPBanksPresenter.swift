@@ -19,6 +19,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     weak var view: ISBPBanksViewController?
     private let router: ISBPBanksRouter
 
+    private var moduleCompletion: PaymentResultCompletion?
     private weak var paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
 
     private let paymentService: ISBPPaymentService?
@@ -45,6 +46,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     init(
         router: ISBPBanksRouter,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
+        moduleCompletion: PaymentResultCompletion?,
         paymentService: ISBPPaymentService?,
         banksService: ISBPBanksService,
         bankAppChecker: ISBPBankAppChecker,
@@ -54,6 +56,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     ) {
         self.router = router
         self.paymentSheetOutput = paymentSheetOutput
+        self.moduleCompletion = moduleCompletion
         self.paymentService = paymentService
         self.banksService = banksService
         self.bankAppChecker = bankAppChecker
@@ -90,7 +93,11 @@ extension SBPBanksPresenter {
     }
 
     func closeButtonPressed() {
-        router.closeScreen()
+        routerClose(with: .cancelled())
+    }
+
+    func controllerDidDismissManually() {
+        sayToOutput(.cancelled())
     }
 
     func prefetch(for rows: [Int]) {
@@ -125,6 +132,14 @@ extension SBPBanksPresenter {
 
     func didSelectRow(at index: Int) {
         cellPresenter(for: index).action()
+    }
+}
+
+// MARK: - ISBPPaymentSheetPresenterOutput
+
+extension SBPBanksPresenter: ISBPPaymentSheetPresenterOutput {
+    func sbpPaymentSheet(completedWith result: PaymentResult) {
+        routerClose(with: result)
     }
 }
 
@@ -199,7 +214,7 @@ extension SBPBanksPresenter {
                 guard let self = self else { return }
 
                 let otherBanks = self.getNotPreferredBanks()
-                self.router.show(banks: otherBanks, qrPayload: self.qrPayload, paymentSheetOutput: self.paymentSheetOutput)
+                self.router.show(banks: otherBanks, qrPayload: self.qrPayload, paymentSheetOutput: self)
             })
             allBanksCellPresenters = createCellPresenters(from: preferredBanks)
             allBanksCellPresenters.append(otherBankCellPresenter)
@@ -232,7 +247,7 @@ extension SBPBanksPresenter {
             cellPresentersAssembly.build(cellType: .bank(bank), action: { [weak self] in
                 self?.bankAppOpener.openBankApp(url: paymentUrl, bank, completion: { isOpened in
                     isOpened ?
-                        self?.router.showPaymentSheet(paymentId: paymentId, output: self?.paymentSheetOutput) :
+                        self?.router.showPaymentSheet(paymentId: paymentId, output: self) :
                         self?.router.showDidNotFindBankAppAlert()
                 })
             })
@@ -262,6 +277,17 @@ extension SBPBanksPresenter {
         view?.showStubView(mode: .serverError { [weak self] in
             self?.router.closeScreen()
         })
+    }
+
+    private func routerClose(with result: PaymentResult) {
+        router.closeScreen { [weak self] in self?.sayToOutput(result)
+        }
+    }
+
+    private func sayToOutput(_ result: PaymentResult) {
+        moduleCompletion?(result)
+        moduleCompletion = nil
+        paymentSheetOutput?.sbpPaymentSheet(completedWith: result)
     }
 }
 
