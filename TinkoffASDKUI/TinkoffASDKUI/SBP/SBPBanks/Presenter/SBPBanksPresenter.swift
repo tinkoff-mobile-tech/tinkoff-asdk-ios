@@ -286,6 +286,7 @@ extension SBPBanksPresenter {
 
     private func sayToOutput(_ result: PaymentResult) {
         moduleCompletion?(result)
+        moduleCompletion = nil
         paymentSheetOutput?.sbpPaymentSheet(completedWith: result)
     }
 }

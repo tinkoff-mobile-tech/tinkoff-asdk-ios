@@ -344,7 +344,7 @@ class BuyProductsViewController: UIViewController {
         let paymentOptions = PaymentOptions.create(from: createPaymentData())
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
-        uiSDK.presentSBPModule(on: self, paymentFlow: paymentFlow) { [weak self] result in
+        uiSDK.presentSBPBanksList(on: self, paymentFlow: paymentFlow) { [weak self] result in
             self?.showAlert(with: result)
         }
     }

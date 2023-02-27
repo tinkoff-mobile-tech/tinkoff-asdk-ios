@@ -1754,7 +1754,7 @@ public extension AcquiringUISDK {
         presentingViewController.present(viewController, animated: true)
     }
 
-    func presentSBPModule(
+    func presentSBPBanksList(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         completion: @escaping PaymentResultCompletion
