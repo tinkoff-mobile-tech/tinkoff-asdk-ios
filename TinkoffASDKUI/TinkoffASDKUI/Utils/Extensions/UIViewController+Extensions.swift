@@ -1,6 +1,6 @@
 //
 //
-//  UIViewController+TopPresented.swift
+//  UIViewController+Extensions.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -20,6 +20,10 @@
 import UIKit
 
 extension UIViewController {
+    var isFirstInNavigationStack: Bool {
+        navigationController?.viewControllers.first === self
+    }
+
     var topPresentedViewControllerOrSelfIfNotPresenting: UIViewController {
         if let presentedViewController = presentedViewController {
             return presentedViewController.topPresentedViewControllerOrSelfIfNotPresenting
@@ -38,5 +42,25 @@ extension UIViewController {
             animated: animated,
             completion: completion
         )
+    }
+
+    func dismissPresentedIfNeeded(animated: Bool = true, then completion: (() -> Void)? = nil) {
+        if let presentedViewController = presentedViewController {
+            if presentedViewController.isBeingPresented {
+                transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+                    self.dismiss(animated: animated, completion: completion)
+                })
+            } else if presentedViewController.isBeingDismissed {
+                transitionCoordinator?.animate(alongsideTransition: nil, completion: { _ in
+                    completion?()
+                })
+            } else {
+                dismiss(animated: animated) {
+                    completion?()
+                }
+            }
+        } else {
+            completion?()
+        }
     }
 }

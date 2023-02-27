@@ -127,12 +127,15 @@ extension AddNewCardViewController: ThreeDSWebFlowDelegate {
 extension AddNewCardViewController {
     private func setupNavigationItem() {
         navigationItem.title = Loc.Acquiring.AddNewCard.screenTitle
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: Loc.Acquiring.AddNewCard.buttonClose,
-            style: .plain,
-            target: self,
-            action: #selector(closeButtonTapped)
-        )
+
+        if isFirstInNavigationStack {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: Loc.Acquiring.AddNewCard.buttonClose,
+                style: .plain,
+                target: self,
+                action: #selector(closeButtonTapped)
+            )
+        }
     }
 
     private func setupHiddenWebView() {
