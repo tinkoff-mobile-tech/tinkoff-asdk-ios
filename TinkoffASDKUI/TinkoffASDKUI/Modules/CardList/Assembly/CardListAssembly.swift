@@ -23,15 +23,18 @@ import UIKit
 final class CardListAssembly: ICardListAssembly {
     // MARK: Dependencies
 
+    private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
     private let addNewCardAssembly: IAddNewCardAssembly
 
     // MARK: Init
 
     init(
+        paymentControllerAssembly: IPaymentControllerAssembly,
         cardsControllerAssembly: ICardsControllerAssembly,
         addNewCardAssembly: IAddNewCardAssembly
     ) {
+        self.paymentControllerAssembly = paymentControllerAssembly
         self.cardsControllerAssembly = cardsControllerAssembly
         self.addNewCardAssembly = addNewCardAssembly
     }
@@ -68,7 +71,20 @@ final class CardListAssembly: ICardListAssembly {
         cards: [PaymentCard] = [],
         output: ICardListPresenterOutput? = nil
     ) -> UIViewController {
-        let router = CardListRouter(addNewCardAssembly: addNewCardAssembly)
+        // `CardPaymentAssembly` создается здесь, а не передается в кач-ве зависимости в `init`
+        // из-за циклической связи зависимостей `CardPaymentAssembly` и `CardListAssembly`
+        // Переход на навигацию через координаторы может исправить эту проблему
+        // TODO: MIC-8101 Рассмотреть возможность и необходимость перехода на координаторы в навигации
+        let cardPaymentAssembly = CardPaymentAssembly(
+            cardsControllerAssembly: cardsControllerAssembly,
+            paymentControllerAssembly: paymentControllerAssembly,
+            cardListAssembly: self
+        )
+
+        let router = CardListRouter(
+            addNewCardAssembly: addNewCardAssembly,
+            cardPaymentAssembly: cardPaymentAssembly
+        )
 
         let presenter = CardListPresenter(
             screenConfiguration: configuration,

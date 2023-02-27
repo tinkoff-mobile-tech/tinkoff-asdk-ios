@@ -12,11 +12,13 @@ final class CardListRouter: ICardListRouter {
 
     weak var transitionHandler: UIViewController?
     private let addNewCardAssembly: IAddNewCardAssembly
+    private let cardPaymentAssembly: ICardPaymentAssembly
 
     // MARK: Init
 
-    init(addNewCardAssembly: IAddNewCardAssembly) {
+    init(addNewCardAssembly: IAddNewCardAssembly, cardPaymentAssembly: ICardPaymentAssembly) {
         self.addNewCardAssembly = addNewCardAssembly
+        self.cardPaymentAssembly = cardPaymentAssembly
     }
 
     // MARK: ICardListRouter

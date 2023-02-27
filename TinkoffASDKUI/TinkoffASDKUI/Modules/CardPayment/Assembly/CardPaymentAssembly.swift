@@ -14,15 +14,18 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
 
     private let cardsControllerAssembly: ICardsControllerAssembly
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let cardListAssembly: ICardListAssembly
 
     // MARK: Initialization
 
     init(
         cardsControllerAssembly: ICardsControllerAssembly,
-        paymentControllerAssembly: IPaymentControllerAssembly
+        paymentControllerAssembly: IPaymentControllerAssembly,
+        cardListAssembly: ICardListAssembly
     ) {
         self.cardsControllerAssembly = cardsControllerAssembly
         self.paymentControllerAssembly = paymentControllerAssembly
+        self.cardListAssembly = cardListAssembly
     }
 
     // MARK: ICardPaymentAssembly
