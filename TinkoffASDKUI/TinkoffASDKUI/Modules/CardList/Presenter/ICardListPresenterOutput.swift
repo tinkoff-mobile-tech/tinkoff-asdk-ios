@@ -11,5 +11,4 @@ import TinkoffASDKCore
 protocol ICardListPresenterOutput: AnyObject {
     func cardList(didUpdate cards: [PaymentCard])
     func cardList(didSelect card: PaymentCard)
-    func cardListDidSelectNewCard()
 }

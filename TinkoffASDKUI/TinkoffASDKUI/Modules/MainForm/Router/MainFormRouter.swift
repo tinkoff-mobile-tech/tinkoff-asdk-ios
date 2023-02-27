@@ -17,10 +17,6 @@ final class MainFormRouter: IMainFormRouter {
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
 
-    // MARK: State
-
-    private weak var cardSelectionNavigationController: UINavigationController?
-
     // MARK: Init
 
     init(
@@ -37,7 +33,7 @@ final class MainFormRouter: IMainFormRouter {
 
     // MARK: IMainFormRouter
 
-    func openCardSelection(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, output: ICardListPresenterOutput?) {
+    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, output: ICardListPresenterOutput?) {
         guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
 
         let cardSelectionNavigationController = cardListAssembly.cardSelectionNavigationController(
@@ -48,29 +44,7 @@ final class MainFormRouter: IMainFormRouter {
             output: output
         )
 
-        self.cardSelectionNavigationController = cardSelectionNavigationController
-
         transitionHandler?.present(cardSelectionNavigationController, animated: true)
-    }
-
-    func pushNewCardPaymentToCardSelection(paymentFlow: PaymentFlow, output: ICardPaymentPresenterModuleOutput?) {
-        let cardPaymentViewController = cardPaymentAssembly.build(
-            activeCards: [],
-            paymentFlow: paymentFlow,
-            amount: configuration.amount,
-            output: output
-        )
-
-        cardSelectionNavigationController?.pushViewController(cardPaymentViewController, animated: true)
-    }
-
-    func closeCardSelection(completion: VoidBlock?) {
-        guard let cardSelectionNavigationController = cardSelectionNavigationController else {
-            completion?()
-            return
-        }
-
-        cardSelectionNavigationController.dismiss(animated: true, completion: completion)
     }
 
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {

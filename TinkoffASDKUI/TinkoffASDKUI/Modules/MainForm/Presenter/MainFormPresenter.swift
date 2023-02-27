@@ -126,11 +126,6 @@ extension MainFormPresenter: ICardListPresenterOutput {
 
     func cardList(didSelect card: PaymentCard) {
         savedCardPresenter.presentationState = .selected(card: card)
-        router.closeCardSelection()
-    }
-
-    func cardListDidSelectNewCard() {
-        router.pushNewCardPaymentToCardSelection(paymentFlow: paymentFlow, output: self)
     }
 }
 
@@ -141,7 +136,7 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
-        router.openCardSelection(
+        router.openCardList(
             paymentFlow: paymentFlow,
             cards: cards,
             selectedCard: paymentCard,

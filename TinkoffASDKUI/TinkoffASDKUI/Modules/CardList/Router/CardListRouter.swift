@@ -27,4 +27,6 @@ final class CardListRouter: ICardListRouter {
         let viewController = addNewCardAssembly.addNewCardView(customerKey: customerKey, output: output)
         transitionHandler?.navigationController?.pushViewController(viewController, animated: true)
     }
+
+    func openCardPayment() {}
 }

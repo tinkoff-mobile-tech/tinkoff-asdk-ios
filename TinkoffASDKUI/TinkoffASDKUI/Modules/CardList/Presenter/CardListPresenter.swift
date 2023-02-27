@@ -124,7 +124,7 @@ extension CardListPresenter: ICardListViewOutput {
         if output == nil {
             router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
         } else {
-            output?.cardListDidSelectNewCard()
+            router.openCardPayment()
         }
     }
 

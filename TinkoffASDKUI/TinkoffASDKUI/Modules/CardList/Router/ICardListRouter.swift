@@ -9,4 +9,5 @@ import Foundation
 
 protocol ICardListRouter {
     func openAddNewCard(customerKey: String, output: IAddNewCardPresenterOutput?)
+    func openCardPayment()
 }
