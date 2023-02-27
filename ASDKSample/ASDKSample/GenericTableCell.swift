@@ -21,7 +21,7 @@ import UIKit
 
 final class GenericTableCell<View>: UITableViewCell, ReusableIdentifier where View: UIView & ConfigurableAndReusable {
 
-    private let innerView = View()
+    let innerView = View()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: Self.reusableId)

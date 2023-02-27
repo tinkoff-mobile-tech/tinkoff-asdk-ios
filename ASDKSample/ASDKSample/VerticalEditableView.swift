@@ -19,6 +19,8 @@
 
 import UIKit
 
+typealias VerticalEditableTableCell = GenericTableCell<VerticalEditableView>
+
 final class VerticalEditableView: UIView, ConfigurableAndReusable, Stylable {
 
     struct Model {
@@ -47,7 +49,7 @@ final class VerticalEditableView: UIView, ConfigurableAndReusable, Stylable {
     }
 
     private let label = UILabel()
-    private let textField = UITextField()
+    let textField = UITextField()
 
     private func setupViews(style: Style) {
         addSubview(label)

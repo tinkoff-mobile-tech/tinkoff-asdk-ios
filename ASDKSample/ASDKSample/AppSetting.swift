@@ -88,6 +88,18 @@ final class AppSetting {
         }
     }
 
+    var serverType: AcquiringSdkEnvironment = .test {
+        didSet {
+            UserDefaults.standard.set(serverType.rawValue, forKey: .keyServerType)
+        }
+    }
+
+    var customServer: String? {
+        didSet {
+            UserDefaults.standard.set(customServer, forKey: .keyCustomServer)
+        }
+    }
+
     var languageId: String? {
         didSet {
             UserDefaults.standard.set(languageId, forKey: .keyLanguageId)
@@ -106,6 +118,12 @@ final class AppSetting {
         if let value = userDefaults.string(forKey: .keyAddCardCheckType) {
             addCardChekType = PaymentCardCheckType(rawValue: value)
         }
+
+        if let value = userDefaults.string(forKey: .keyServerType) {
+            serverType = AcquiringSdkEnvironment(rawValue: value)
+        }
+
+        customServer = userDefaults.string(forKey: .keyCustomServer)
 
         languageId = userDefaults.string(forKey: .keyLanguageId)
     }
@@ -151,6 +169,8 @@ private extension String {
     static let keyShowEmailField = "SettingKeyShowEmailField"
     static let keyKindForAlertView = "KindForAlertView"
     static let keyAddCardCheckType = "AddCardChekType"
+    static let keyServerType = "ServerType"
+    static let keyCustomServer = "CustomServer"
     static let keyLanguageId = "LanguageId"
     static let keySdkCredentials = "keySdkCredentials"
     static let keyListSdkCredentials = "keyListSdkCredentials"
