@@ -12,3 +12,23 @@ enum SavedCardPresentationState: Equatable {
     case idle
     case selected(card: PaymentCard)
 }
+
+extension SavedCardPresentationState {
+    var isIdle: Bool {
+        switch self {
+        case .idle:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isSelected: Bool {
+        switch self {
+        case .selected:
+            return true
+        default:
+            return false
+        }
+    }
+}

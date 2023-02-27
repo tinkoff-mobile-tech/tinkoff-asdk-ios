@@ -9,7 +9,7 @@ import Foundation
 import TinkoffASDKCore
 
 protocol ICardListPresenterOutput: AnyObject {
-    func cardList(didRemoveCard card: PaymentCard)
+    func cardList(didUpdate cards: [PaymentCard])
     func cardList(didSelect card: PaymentCard)
     func cardListDidSelectNewCard()
 }

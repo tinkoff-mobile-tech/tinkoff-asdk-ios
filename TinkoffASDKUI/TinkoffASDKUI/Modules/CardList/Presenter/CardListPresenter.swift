@@ -43,12 +43,17 @@ final class CardListPresenter {
 
     // MARK: State
 
-    private var cards: [PaymentCard]
     private var isLoading = false
     private var hasVisualContent: Bool { !cards.isEmpty }
     private var screenState = ScreenState.initial
     private var deactivateCardResult: Result<RemoveCardPayload, Error>?
     private var sections: [CardListSection] { getSections() }
+    private var cards: [PaymentCard] {
+        didSet {
+            guard cards != oldValue else { return }
+            output?.cardList(didUpdate: cards)
+        }
+    }
 
     // MARK: Init
 
@@ -132,8 +137,6 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func view(didTapDeleteOn card: CardList.Card) {
-        guard let removingCard = cards.first(where: { $0.cardId == card.id }) else { return }
-
         isLoading = true
         view?.disableViewUserInteraction()
         view?.showRemovingCardSnackBar(
@@ -145,13 +148,6 @@ extension CardListPresenter: ICardListViewOutput {
             self.isLoading = false
             self.deactivateCardResult = result
             self.view?.hideLoadingSnackbar()
-
-            switch result {
-            case .success:
-                self.output?.cardList(didRemoveCard: removingCard)
-            case .failure:
-                break
-            }
         }
     }
 
