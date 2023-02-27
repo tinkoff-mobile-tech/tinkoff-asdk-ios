@@ -146,14 +146,14 @@ extension CardPaymentViewController {
     private func setupNavigationBar() {
         navigationItem.title = Loc.Acquiring.PaymentNewCard.screenTitle
 
-        let leftItem = UIBarButtonItem(
-            title: Loc.Acquiring.PaymentNewCard.buttonClose,
-            style: .plain,
-            target: self,
-            action: #selector(closeButtonAction(_:))
-        )
-
-        navigationItem.leftBarButtonItem = leftItem
+        if isFirstInNavigationStack {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: Loc.Acquiring.PaymentNewCard.buttonClose,
+                style: .plain,
+                target: self,
+                action: #selector(closeButtonAction(_:))
+            )
+        }
     }
 
     /// Не удалять, необходимо для корректной работы WebView
