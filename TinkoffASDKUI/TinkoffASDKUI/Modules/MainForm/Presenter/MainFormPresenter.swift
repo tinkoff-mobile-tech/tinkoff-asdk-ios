@@ -119,7 +119,7 @@ extension MainFormPresenter: IMainFormPresenter {
 
 extension MainFormPresenter: ICardListPresenterOutput {
     func cardList(didSelect card: PaymentCard) {
-        savedCardPresenter.presentationState = .selected(card: card, hasAnotherCards: cards.count > 1)
+        savedCardPresenter.presentationState = .selected(card: card)
         router.closeCardSelection()
     }
 
@@ -295,10 +295,7 @@ extension MainFormPresenter {
 
             self.cards = cards
 
-            self.savedCardPresenter.presentationState = .selected(
-                card: selectedCard,
-                hasAnotherCards: cards.count > 1
-            )
+            self.savedCardPresenter.presentationState = .selected(card: selectedCard)
         }
     }
 
