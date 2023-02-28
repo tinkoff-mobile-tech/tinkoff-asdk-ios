@@ -189,7 +189,7 @@ final class CardListPresenterTests: XCTestCase {
         var isNoCardsMode = false
 
         mockView.showStubStub = { mode in
-            if case StubMode.noCards = mode {
+            if case StubMode.noCardsInCardList = mode {
                 isNoCardsMode = true
             }
         }

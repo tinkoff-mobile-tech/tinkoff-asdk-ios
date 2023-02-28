@@ -121,9 +121,10 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapAddCardCell() {
-        if output == nil {
+        switch screenConfiguration.useCase {
+        case .cardList:
             router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
-        } else {
+        case .cardPaymentList:
             router.openCardPayment()
         }
     }
@@ -266,9 +267,14 @@ extension CardListPresenter {
     private func showNoCardsStub() {
         screenState = .showingStub
         view?.hideRightBarButton()
-        view?.showStub(mode: .noCards { [weak self] in
-            self?.viewDidTapAddCardCell()
-        })
+
+        let buttonAction: VoidBlock = { [weak self] in self?.viewDidTapAddCardCell() }
+
+        let stubMode: StubMode = screenConfiguration.useCase == .cardList
+            ? .noCardsInCardList(buttonAction: buttonAction)
+            : .noCardsInCardPaymentList(buttonAction: buttonAction)
+
+        view?.showStub(mode: stubMode)
     }
 
     private func reloadCollection() {
@@ -305,7 +311,7 @@ extension CardListPresenter {
 
     private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
         return [
-            (icon: Asset.Icons.addCard, title: screenConfiguration.addNewCardCellTitle),
+            (icon: Asset.Icons.addCard, title: screenConfiguration.newCardTitle),
         ]
     }
 }

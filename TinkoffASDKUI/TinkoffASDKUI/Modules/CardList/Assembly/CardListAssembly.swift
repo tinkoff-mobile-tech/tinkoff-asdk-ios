@@ -57,7 +57,7 @@ final class CardListAssembly: ICardListAssembly {
     ) -> UIViewController {
         createModule(
             customerKey: customerKey,
-            configuration: .choosePaymentCardList(selectedCardId: selectedCard.cardId),
+            configuration: .cardPaymentList(selectedCardId: selectedCard.cardId),
             cards: cards,
             paymentFlow: paymentFlow,
             amount: amount,
@@ -123,19 +123,14 @@ final class CardListAssembly: ICardListAssembly {
 private extension CardListScreenConfiguration {
     static func cardList() -> Self {
         Self(
-            listItemsAreSelectable: false,
-            navigationTitle: Loc.Acquiring.CardList.screenTitle,
-            addNewCardCellTitle: Loc.Acquiring.CardList.addCard,
+            useCase: .cardList,
             selectedCardId: nil
         )
     }
 
-    static func choosePaymentCardList(selectedCardId: String) -> Self {
-        // заменить строки на ключи после добавления на странице локализации в спеке
+    static func cardPaymentList(selectedCardId: String) -> Self {
         Self(
-            listItemsAreSelectable: true,
-            navigationTitle: Loc.CardList.Screen.Title.paymentByCard,
-            addNewCardCellTitle: Loc.CardList.Button.anotherCard,
+            useCase: .cardPaymentList,
             selectedCardId: selectedCardId
         )
     }

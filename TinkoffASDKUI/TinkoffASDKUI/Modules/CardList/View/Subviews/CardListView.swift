@@ -30,15 +30,6 @@ protocol CardListViewDelegate: AnyObject {
     func didSelectCell(at: IndexPath)
 }
 
-// MARK: - Screen Configuration
-
-struct CardListScreenConfiguration {
-    let listItemsAreSelectable: Bool
-    let navigationTitle: String
-    let addNewCardCellTitle: String
-    let selectedCardId: String?
-}
-
 final class CardListView: UIView, StubViewPresentable {
 
     // MARK: Dependencies
