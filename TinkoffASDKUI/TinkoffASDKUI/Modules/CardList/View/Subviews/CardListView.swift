@@ -46,6 +46,7 @@ final class CardListView: UIView, StubViewPresentable {
             frame: .zero,
             collectionViewLayout: collectionViewLayout
         )
+        collectionView.backgroundColor = ASDKColors.Background.elevation1.color
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.delaysContentTouches = false

@@ -161,6 +161,7 @@ extension AddNewCardView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = ASDKColors.Background.elevation1.color
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.contentInset.top = Constants.CollectionView.topInset
