@@ -25,6 +25,7 @@ final class CardListPresenterTests: XCTestCase {
     var mockView: MockCardListViewInput!
     var cardsController: CardsControllerMock!
     var router: CardListRouterMock!
+    var output: CardListPresenterOutputMock!
 
     // MARK: - Setup
 
@@ -36,6 +37,7 @@ final class CardListPresenterTests: XCTestCase {
         mockView = MockCardListViewInput()
         cardsController = CardsControllerMock()
         router = CardListRouterMock()
+        output = CardListPresenterOutputMock()
 
         sut = CardListPresenter(
             screenConfiguration: buildScreenConfiguration(),
@@ -43,7 +45,8 @@ final class CardListPresenterTests: XCTestCase {
             router: router,
             imageResolver: mockPaymentSystemImageResolver,
             bankResolver: mockBankResolver,
-            paymentSystemResolver: mockPaymentSystemResolver
+            paymentSystemResolver: mockPaymentSystemResolver,
+            output: output
         )
 
         sut.view = mockView
@@ -216,43 +219,26 @@ final class CardListPresenterTests: XCTestCase {
         XCTAssertEqual(mockView.hideStubCallCounter, 1)
     }
 
-    // TODO: MIC-8030 Раскоментировать и актуализировать тест
-//    func test_viewDidTapCard_cardIndex() throws {
-//        // given
-//        var onSelectCardCalled = false
-//        let expectation = expectation(description: #function)
-//        sut.onSelectCard = { card in
-//            onSelectCardCalled = true
-//            expectation.fulfill()
-//        }
-//
-//        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
-//
-//        // when
-//        sutAsProtocol.viewDidTapCard(cardIndex: 0)
-//        wait(for: [expectation], timeout: 1)
-//
-//        // then
-//        XCTAssertEqual(onSelectCardCalled, true)
-//    }
+    func test_viewDidTapCard_withCardListUseCase_shouldDoNothing() throws {
+        // given
+        let cards = buildActiveCardsCache()
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
 
-    // TODO: MIC-8030 Раскоментировать и актуализировать тест
-//    func test_viewDidTapCard_viewDidTapAddCardCell() throws {
-//        // given
-//        var onAddNewCardTapCalled = false
-//        let expectation = expectation(description: #function)
-//        sut.onAddNewCardTap = {
-//            onAddNewCardTapCalled = true
-//            expectation.fulfill()
-//        }
-//
-//        // when
-//        sutAsProtocol.viewDidTapAddCardCell()
-//        wait(for: [expectation], timeout: 1)
-//
-//        // then
-//        XCTAssertEqual(onAddNewCardTapCalled, true)
-//    }
+        // when
+        sutAsProtocol.viewDidTapCard(cardIndex: 0)
+
+        // then
+        XCTAssertEqual(output.cardListWillCloseAfterSelectingCalls.count, 0)
+        XCTAssertEqual(mockView.dismissCallCounter, 0)
+    }
+
+    func test_viewDidTapAddCardCell_shouldOpenAddNewCard() throws {
+        // when
+        sutAsProtocol.viewDidTapAddCardCell()
+
+        // then
+        XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
+    }
 }
 
 // MARK: - Helpers
@@ -283,11 +269,9 @@ extension CardListPresenterTests {
         )
     }
 
-    func buildScreenConfiguration() -> CardListScreenConfiguration {
+    func buildScreenConfiguration(useCase: CardListScreenConfiguration.UseCase = .cardList) -> CardListScreenConfiguration {
         CardListScreenConfiguration(
-            listItemsAreSelectable: true,
-            navigationTitle: "",
-            addNewCardCellTitle: "",
+            useCase: useCase,
             selectedCardId: nil
         )
     }
