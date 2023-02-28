@@ -25,7 +25,7 @@ public enum AcquiringSdkLanguage: String {
     case en
 }
 
-public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible {
+public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible, RawRepresentable {
     case test
     case preProd
     case prod
@@ -138,7 +138,12 @@ public class AcquiringSdkConfiguration: NSObject {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         serverEnvironment = server
-        configEnvironment = server == .prod ? .prod : .test
+        configEnvironment = {
+            switch server {
+            case .prod, .custom: return .prod
+            case .test, .preProd: return .test
+            }
+        }()
         self.tokenProvider = tokenProvider
         self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
     }

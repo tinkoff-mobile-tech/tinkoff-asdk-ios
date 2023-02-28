@@ -100,7 +100,14 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func setupYandexPayButton() {
-        let configuration = YandexPaySDKConfiguration(environment: .sandbox, locale: .system)
+        let environment: YandexPaySDKConfiguration.Environment = {
+            switch AppSetting.shared.serverType {
+            case .prod, .custom: return .production
+            case .test, .preProd: return .sandbox
+            }
+        }()
+
+        let configuration = YandexPaySDKConfiguration(environment: environment, locale: .system)
 
         uiSDK.yandexPayButtonContainerFactory(with: configuration) { [weak self] result in
             guard let self = self else { return }
