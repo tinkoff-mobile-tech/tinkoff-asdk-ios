@@ -124,7 +124,7 @@ extension MainFormPresenter: ICardListPresenterOutput {
         reloadContent()
     }
 
-    func cardList(didSelect card: PaymentCard) {
+    func cardList(willCloseAfterSelecting card: PaymentCard) {
         savedCardPresenter.presentationState = .selected(card: card)
     }
 }

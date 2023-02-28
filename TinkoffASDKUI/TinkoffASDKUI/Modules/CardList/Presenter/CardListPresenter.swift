@@ -116,8 +116,11 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapCard(cardIndex: Int) {
+        guard screenConfiguration.useCase == .cardPaymentList else { return }
+
         let selectedCard = cards[cardIndex]
-        output?.cardList(didSelect: selectedCard)
+        output?.cardList(willCloseAfterSelecting: selectedCard)
+        view?.dismiss()
     }
 
     func viewDidTapAddCardCell() {
