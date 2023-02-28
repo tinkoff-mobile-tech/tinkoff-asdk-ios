@@ -136,11 +136,12 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
         _ presenter: SavedCardPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
-        router.openCardList(
+        router.openCardPaymentList(
             paymentFlow: paymentFlow,
             cards: cards,
             selectedCard: paymentCard,
-            output: self
+            cardListOutput: self,
+            cardPaymentOutput: self
         )
     }
 

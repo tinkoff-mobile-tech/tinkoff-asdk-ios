@@ -33,22 +33,32 @@ final class MainFormRouter: IMainFormRouter {
 
     // MARK: IMainFormRouter
 
-    func openCardList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, output: ICardListPresenterOutput?) {
+    func openCardPaymentList(
+        paymentFlow: PaymentFlow,
+        cards: [PaymentCard],
+        selectedCard: PaymentCard,
+        cardListOutput: ICardListPresenterOutput?,
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+    ) {
         guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
 
-        let cardSelectionNavigationController = cardListAssembly.cardSelectionNavigationController(
+        let cardPaymentList = cardListAssembly.cardPaymentList(
             customerKey: customerKey,
             cards: cards,
             selectedCard: selectedCard,
             paymentFlow: paymentFlow,
-            output: output
+            amount: configuration.amount,
+            output: cardListOutput,
+            cardPaymentOutput: cardPaymentOutput
         )
 
-        transitionHandler?.present(cardSelectionNavigationController, animated: true)
+        let navigationController = UINavigationController.withASDKBar(rootViewController: cardPaymentList)
+
+        transitionHandler?.present(navigationController, animated: true)
     }
 
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {
-        let cardPaymentViewController = cardPaymentAssembly.build(
+        let cardPaymentViewController = cardPaymentAssembly.anyCardPayment(
             activeCards: cards,
             paymentFlow: paymentFlow,
             amount: configuration.amount,

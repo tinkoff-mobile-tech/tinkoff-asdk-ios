@@ -46,21 +46,24 @@ final class CardListAssembly: ICardListAssembly {
         return UINavigationController.withASDKBar(rootViewController: view)
     }
 
-    func cardSelectionNavigationController(
+    func cardPaymentList(
         customerKey: String,
         cards: [PaymentCard],
         selectedCard: PaymentCard,
         paymentFlow: PaymentFlow,
-        output: ICardListPresenterOutput?
-    ) -> UINavigationController {
-        let view = createModule(
+        amount: Int64,
+        output: ICardListPresenterOutput?,
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+    ) -> UIViewController {
+        createModule(
             customerKey: customerKey,
             configuration: .choosePaymentCardList(selectedCardId: selectedCard.cardId),
             cards: cards,
-            output: output
+            paymentFlow: paymentFlow,
+            amount: amount,
+            output: output,
+            cardPaymentOutput: cardPaymentOutput
         )
-
-        return UINavigationController.withASDKBar(rootViewController: view)
     }
 
     // MARK: Helpers
@@ -69,7 +72,10 @@ final class CardListAssembly: ICardListAssembly {
         customerKey: String,
         configuration: CardListScreenConfiguration,
         cards: [PaymentCard] = [],
-        output: ICardListPresenterOutput? = nil
+        paymentFlow: PaymentFlow? = nil,
+        amount: Int64? = nil,
+        output: ICardListPresenterOutput? = nil,
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput? = nil
     ) -> UIViewController {
         // `CardPaymentAssembly` создается здесь, а не передается в кач-ве зависимости в `init`
         // из-за циклической связи зависимостей `CardPaymentAssembly` и `CardListAssembly`
@@ -83,7 +89,10 @@ final class CardListAssembly: ICardListAssembly {
 
         let router = CardListRouter(
             addNewCardAssembly: addNewCardAssembly,
-            cardPaymentAssembly: cardPaymentAssembly
+            cardPaymentAssembly: cardPaymentAssembly,
+            paymentFlow: paymentFlow,
+            amount: amount,
+            cardPaymentOutput: cardPaymentOutput
         )
 
         let presenter = CardListPresenter(

@@ -30,7 +30,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
 
     // MARK: ICardPaymentAssembly
 
-    func build(
+    func anyCardPayment(
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
@@ -40,6 +40,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
         let router = CardPaymentRouter()
+
         let presenter = CardPaymentPresenter(
             router: router,
             output: output,
