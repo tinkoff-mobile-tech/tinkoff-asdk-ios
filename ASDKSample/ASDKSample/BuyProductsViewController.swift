@@ -356,51 +356,17 @@ class BuyProductsViewController: UIViewController {
         }
     }
 
-    // TODO: MIC-7708 Удалить заглушку состояний
     private func payWithMainForm() {
-        let actionHandler: (MainFormStub.PayMethod) -> Void = { [weak self] method in
-            guard let self = self else { return }
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
-            let stub = MainFormStub(primaryPayMethod: method)
-            let paymentOptions = PaymentOptions.create(from: self.createPaymentData())
-            let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+        let configuration = MainFormUIConfiguration(
+            amount: paymentOptions.orderOptions.amount,
+            orderDescription: paymentOptions.orderOptions.description
+        )
 
-            let configuration = MainFormUIConfiguration(
-                amount: paymentOptions.orderOptions.amount,
-                orderDescription: paymentOptions.orderOptions.description
-            )
-
-            self.uiSDK.presentMainForm(
-                on: self,
-                paymentFlow: paymentFlow,
-                configuration: configuration,
-                stub: stub,
-                completion: { [weak self] result in self?.showAlert(with: result) }
-            )
+        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
         }
-
-        let actionTitle: (MainFormStub.PayMethod) -> String = { method in
-            switch method {
-            case .card: return "По карте"
-            case .sbp: return "СБП"
-            case .tinkoffPay: return "Tinkoff Pay"
-            }
-        }
-
-        let alert = UIAlertController(title: "Выберите приоритетный метод оплаты", message: nil, preferredStyle: .actionSheet)
-
-        MainFormStub.PayMethod.allCases
-            .map { method in
-                UIAlertAction(
-                    title: actionTitle(method),
-                    style: .default,
-                    handler: { _ in actionHandler(method) }
-                )
-            }
-            .forEach(alert.addAction(_:))
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true)
     }
 
     private func showAlert(with result: PaymentResult) {

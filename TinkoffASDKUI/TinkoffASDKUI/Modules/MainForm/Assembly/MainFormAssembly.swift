@@ -41,7 +41,6 @@ final class MainFormAssembly: IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub,
         moduleCompletion: @escaping PaymentResultCompletion
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
@@ -60,7 +59,6 @@ final class MainFormAssembly: IMainFormAssembly {
             paymentController: paymentController,
             paymentFlow: paymentFlow,
             configuration: configuration,
-            stub: stub,
             moduleCompletion: moduleCompletion
         )
 

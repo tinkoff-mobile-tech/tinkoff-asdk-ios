@@ -17,7 +17,6 @@ final class MainFormPresenter {
     private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
-    private let stub: MainFormStub
     private var moduleCompletion: ((PaymentResult) -> Void)?
 
     // MARK: Child Presenters
@@ -47,7 +46,7 @@ final class MainFormPresenter {
     private lazy var cellTypes: [MainFormCellType] = []
     private var cards: [PaymentCard] = []
     private var availablePaymentMethods: [MainFormPaymentMethod] = []
-    private lazy var primaryPaymentMethod = stub.primaryPayMethod.domainModel
+    private lazy var primaryPaymentMethod: MainFormPaymentMethod = .card
     private var moduleResult: PaymentResult = .cancelled()
 
     // MARK: Init
@@ -58,7 +57,6 @@ final class MainFormPresenter {
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub,
         moduleCompletion: @escaping (PaymentResult) -> Void
     ) {
         self.router = router
@@ -66,7 +64,6 @@ final class MainFormPresenter {
         self.paymentController = paymentController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
-        self.stub = stub
         self.moduleCompletion = moduleCompletion
     }
 }
