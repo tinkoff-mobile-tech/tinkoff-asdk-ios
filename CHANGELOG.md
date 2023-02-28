@@ -36,6 +36,7 @@
 * [MIC-4650] CardsController & AddCardController for working with payment cards with own UI
 * [MIC-8027] Integrate CardsController to AddNewCard module
 * [MIC-8026] Integrate CardsController to CardList module
+* [MIC-8050] Change add card icon
 
 ## [2.17.0] - 2023-02-13Z
 
