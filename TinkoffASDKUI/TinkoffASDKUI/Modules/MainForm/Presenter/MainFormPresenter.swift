@@ -46,7 +46,7 @@ final class MainFormPresenter {
 
     private lazy var cellTypes: [MainFormCellType] = []
     private var cards: [PaymentCard] = []
-    private var availablePaymentMethods: [MainFormPaymentMethod] = MainFormPaymentMethod.allCases
+    private var availablePaymentMethods: [MainFormPaymentMethod] = []
     private lazy var primaryPaymentMethod = stub.primaryPayMethod.domainModel
     private var moduleResult: PaymentResult = .cancelled()
 
@@ -371,17 +371,18 @@ extension MainFormPresenter {
     }
 
     private func createOtherPaymentMethodsRows() -> [MainFormCellType] {
-        let otherPaymentMethods = MainFormPaymentMethod
-            .allCases
-            .filter(availablePaymentMethods.contains)
-            .filter { $0 != primaryPaymentMethod }
-            .sorted(by: <)
-            .map(MainFormCellType.otherPaymentMethod)
-
-        guard !otherPaymentMethods.isEmpty else { return [] }
-        let header: MainFormCellType = .otherPaymentMethodsHeader(otherPaymentMethodsHeaderPresenter)
-
-        return CollectionOfOne(header) + otherPaymentMethods
+        return []
+//        let otherPaymentMethods = MainFormPaymentMethod
+//            .allCases
+//            .filter(availablePaymentMethods.contains)
+//            .filter { $0 != primaryPaymentMethod }
+//            .sorted(by: <)
+//            .map(MainFormCellType.otherPaymentMethod)
+//
+//        guard !otherPaymentMethods.isEmpty else { return [] }
+//        let header: MainFormCellType = .otherPaymentMethodsHeader(otherPaymentMethodsHeaderPresenter)
+//
+//        return CollectionOfOne(header) + otherPaymentMethods
     }
 }
 

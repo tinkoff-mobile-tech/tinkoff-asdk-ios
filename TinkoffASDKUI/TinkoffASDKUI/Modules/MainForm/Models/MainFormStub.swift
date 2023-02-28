@@ -32,7 +32,7 @@ extension MainFormStub.PayMethod {
         case .sbp:
             return .sbp
         case .tinkoffPay:
-            return .tinkoffPay
+            return .tinkoffPay(version: "")
         }
     }
 }
