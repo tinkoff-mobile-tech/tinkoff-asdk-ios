@@ -314,7 +314,7 @@ extension CardListPresenter {
 
     private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
         return [
-            (icon: Asset.Icons.addCard, title: screenConfiguration.newCardTitle),
+            (icon: Asset.Icons.cardPlus, title: screenConfiguration.newCardTitle),
         ]
     }
 }
