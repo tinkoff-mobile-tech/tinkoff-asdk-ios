@@ -39,8 +39,8 @@ enum StubMode {
             return Data(
                 icon: Asset.Illustrations.cardCross.image,
                 title: "",
-                subtitle: Texts.NoCards.description,
-                buttonTitle: Texts.NoCards.button,
+                subtitle: Texts.NoCardsToPay.description,
+                buttonTitle: Texts.NoCardsToPay.button,
                 buttonAction: action
             )
         case let .serverError(action):

@@ -150,9 +150,11 @@
 "CommonStub.SomeProblem.Description" = "Попробуйте снова через пару минут";
 "CommonStub.NoNetwork.Description" = "Проверьте доступ к интернету и попробуйте еще раз";
 "CommonStub.NoCards.Description" = "Здесь будут ваши карты";
+"CommonStub.NoCardsToPay.Description" = "Нет карт для оплаты";
 "CommonStub.SomeProblem.Button" = "Понятно";
 "CommonStub.NoNetwork.Button" = "Обновить";
 "CommonStub.NoCards.Button" = "Добавить";
+"CommonStub.NoCardsToPay.Button" = "Оплатить новой";
 
 // CommonSheet
 "CommonSheet.Processing.Title" = "Обрабатываем платеж";
