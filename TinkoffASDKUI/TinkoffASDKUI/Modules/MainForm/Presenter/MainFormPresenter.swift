@@ -43,10 +43,8 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private lazy var cellTypes: [MainFormCellType] = []
-    private var cards: [PaymentCard] = []
-    private var availablePaymentMethods: [MainFormPaymentMethod] = []
-    private lazy var primaryPaymentMethod: MainFormPaymentMethod = .card
+    private var dataState: MainFormDataState = .initial
+    private var cellTypes: [MainFormCellType] = []
     private var moduleResult: PaymentResult = .cancelled()
 
     // MARK: Init
@@ -116,7 +114,7 @@ extension MainFormPresenter: IMainFormPresenter {
 
 extension MainFormPresenter: ICardListPresenterOutput {
     func cardList(didUpdate cards: [PaymentCard]) {
-        self.cards = cards
+        dataState.cards = cards
         savedCardPresenter.updatePresentationState(for: cards)
         reloadContent()
     }
@@ -135,7 +133,7 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
     ) {
         router.openCardPaymentList(
             paymentFlow: paymentFlow,
-            cards: cards,
+            cards: dataState.cards ?? [],
             selectedCard: paymentCard,
             cardListOutput: self,
             cardPaymentOutput: self
@@ -180,11 +178,11 @@ extension MainFormPresenter {
 
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
-        switch primaryPaymentMethod {
+        switch dataState.primaryPaymentMethod {
         case .card where savedCardPresenter.presentationState.isSelected:
             startPaymentWithSavedCard()
         case .card, .tinkoffPay, .sbp:
-            routeTo(paymentMethod: primaryPaymentMethod)
+            routeTo(paymentMethod: dataState.primaryPaymentMethod)
         }
     }
 }
@@ -286,18 +284,18 @@ extension MainFormPresenter {
 
             guard let cards = try? result.get() else { return }
 
-            self.cards = cards
+            self.dataState.cards = cards
             self.savedCardPresenter.updatePresentationState(for: cards)
         }
     }
 
     private func activatePayButtonIfNeeded() {
-        guard primaryPaymentMethod == .card else {
+        guard dataState.primaryPaymentMethod == .card else {
             payButtonPresenter.set(enabled: true)
             return
         }
 
-        let isCvcValid = cards.isEmpty ? true : savedCardPresenter.isValid
+        let isCvcValid = dataState.hasCards ? savedCardPresenter.isValid : true
         let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
 
         payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
@@ -306,7 +304,8 @@ extension MainFormPresenter {
     private func startPaymentWithSavedCard() {
         guard let cardId = savedCardPresenter.cardId,
               let cvc = savedCardPresenter.cvc,
-              primaryPaymentMethod == .card, savedCardPresenter.presentationState.isSelected
+              dataState.primaryPaymentMethod == .card,
+              savedCardPresenter.presentationState.isSelected
         else {
             return assertionFailure("Something went wrong in presenter's logic")
         }
@@ -328,7 +327,7 @@ extension MainFormPresenter {
     private func routeTo(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
-            router.openCardPayment(paymentFlow: paymentFlow, cards: cards, output: self)
+            router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self)
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:
@@ -341,7 +340,7 @@ extension MainFormPresenter {
 
 extension MainFormPresenter {
     private func reloadContent() {
-        payButtonPresenter.presentationState = .presentationState(from: primaryPaymentMethod)
+        payButtonPresenter.presentationState = .presentationState(from: dataState.primaryPaymentMethod)
         activatePayButtonIfNeeded()
         cellTypes = createPrimaryPaymentMethodRows() + createOtherPaymentMethodsRows()
         view?.reloadData()
@@ -350,7 +349,7 @@ extension MainFormPresenter {
     private func createPrimaryPaymentMethodRows() -> [MainFormCellType] {
         var rows: [MainFormCellType] = [.orderDetails(orderDetailsPresenter)]
 
-        switch primaryPaymentMethod {
+        switch dataState.primaryPaymentMethod {
         case .card where savedCardPresenter.presentationState.isSelected:
             rows.append(.savedCard(savedCardPresenter))
             rows.append(.getReceiptSwitch(getReceiptSwitchPresenter))
@@ -368,18 +367,10 @@ extension MainFormPresenter {
     }
 
     private func createOtherPaymentMethodsRows() -> [MainFormCellType] {
-        return []
-//        let otherPaymentMethods = MainFormPaymentMethod
-//            .allCases
-//            .filter(availablePaymentMethods.contains)
-//            .filter { $0 != primaryPaymentMethod }
-//            .sorted(by: <)
-//            .map(MainFormCellType.otherPaymentMethod)
-//
-//        guard !otherPaymentMethods.isEmpty else { return [] }
-//        let header: MainFormCellType = .otherPaymentMethodsHeader(otherPaymentMethodsHeaderPresenter)
-//
-//        return CollectionOfOne(header) + otherPaymentMethods
+        guard !dataState.otherPaymentMethods.isEmpty else { return [] }
+
+        let header: MainFormCellType = .otherPaymentMethodsHeader(otherPaymentMethodsHeaderPresenter)
+        return CollectionOfOne(header) + dataState.otherPaymentMethods.map(MainFormCellType.otherPaymentMethod)
     }
 }
 

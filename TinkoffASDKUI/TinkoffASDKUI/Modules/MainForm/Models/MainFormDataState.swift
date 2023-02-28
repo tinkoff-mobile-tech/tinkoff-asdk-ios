@@ -24,4 +24,8 @@ extension MainFormDataState {
             sbpBanks: nil
         )
     }
+
+    var hasCards: Bool {
+        cards?.isEmpty == false
+    }
 }
