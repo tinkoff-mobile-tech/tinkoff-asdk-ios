@@ -30,15 +30,6 @@ protocol CardListViewDelegate: AnyObject {
     func didSelectCell(at: IndexPath)
 }
 
-// MARK: - Screen Configuration
-
-struct CardListScreenConfiguration {
-    let listItemsAreSelectable: Bool
-    let navigationTitle: String
-    let addNewCardCellTitle: String
-    let selectedCardId: String?
-}
-
 final class CardListView: UIView, StubViewPresentable {
 
     // MARK: Dependencies
@@ -55,8 +46,10 @@ final class CardListView: UIView, StubViewPresentable {
             frame: .zero,
             collectionViewLayout: collectionViewLayout
         )
+        collectionView.backgroundColor = ASDKColors.Background.elevation1.color
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.delaysContentTouches = false
         collectionView.register(cellClasses: PaymentCardRemovableView.Cell.self, IconTitleView.Cell.self, UICollectionViewCell.self)
         return collectionView
     }()

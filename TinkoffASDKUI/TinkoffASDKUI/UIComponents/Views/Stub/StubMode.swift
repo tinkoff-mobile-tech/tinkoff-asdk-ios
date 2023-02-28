@@ -10,9 +10,10 @@ import Foundation
 enum StubMode {
     private typealias Data = BaseStubViewBuilder.InputData
 
-    case noNetwork(buttonAction: () -> Void)
-    case noCards(buttonAction: () -> Void)
-    case serverError(buttonAction: () -> Void)
+    case noNetwork(buttonAction: VoidBlock)
+    case noCardsInCardList(buttonAction: VoidBlock)
+    case noCardsInCardPaymentList(buttonAction: VoidBlock)
+    case serverError(buttonAction: VoidBlock)
 
     func convertToInfoInputData() -> BaseStubViewBuilder.InputData {
         typealias Texts = Loc.CommonStub
@@ -26,12 +27,20 @@ enum StubMode {
                 buttonTitle: Texts.NoNetwork.button,
                 buttonAction: action
             )
-        case let .noCards(action):
+        case let .noCardsInCardList(action):
             return Data(
                 icon: Asset.Illustrations.cardCross.image,
                 title: "",
                 subtitle: Texts.NoCards.description,
                 buttonTitle: Texts.NoCards.button,
+                buttonAction: action
+            )
+        case let .noCardsInCardPaymentList(action):
+            return Data(
+                icon: Asset.Illustrations.cardCross.image,
+                title: "",
+                subtitle: Texts.NoCardsToPay.description,
+                buttonTitle: Texts.NoCardsToPay.button,
                 buttonAction: action
             )
         case let .serverError(action):

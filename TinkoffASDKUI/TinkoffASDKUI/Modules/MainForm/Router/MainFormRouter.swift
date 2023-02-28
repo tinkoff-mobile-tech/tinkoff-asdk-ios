@@ -13,29 +13,52 @@ final class MainFormRouter: IMainFormRouter {
 
     weak var transitionHandler: UIViewController?
     private let configuration: MainFormUIConfiguration
+    private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
-
-    private let paymentFlow: PaymentFlow
 
     // MARK: Init
 
     init(
         configuration: MainFormUIConfiguration,
+        cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
-        sbpBanksAssembly: ISBPBanksAssembly,
-        paymentFlow: PaymentFlow
+        sbpBanksAssembly: ISBPBanksAssembly
     ) {
         self.configuration = configuration
+        self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
-        self.paymentFlow = paymentFlow
     }
 
     // MARK: IMainFormRouter
 
+    func openCardPaymentList(
+        paymentFlow: PaymentFlow,
+        cards: [PaymentCard],
+        selectedCard: PaymentCard,
+        cardListOutput: ICardListPresenterOutput?,
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+    ) {
+        guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
+
+        let cardPaymentList = cardListAssembly.cardPaymentList(
+            customerKey: customerKey,
+            cards: cards,
+            selectedCard: selectedCard,
+            paymentFlow: paymentFlow,
+            amount: configuration.amount,
+            output: cardListOutput,
+            cardPaymentOutput: cardPaymentOutput
+        )
+
+        let navigationController = UINavigationController.withASDKBar(rootViewController: cardPaymentList)
+
+        transitionHandler?.present(navigationController, animated: true)
+    }
+
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {
-        let cardPaymentViewController = cardPaymentAssembly.build(
+        let cardPaymentViewController = cardPaymentAssembly.anyCardPayment(
             activeCards: cards,
             paymentFlow: paymentFlow,
             amount: configuration.amount,

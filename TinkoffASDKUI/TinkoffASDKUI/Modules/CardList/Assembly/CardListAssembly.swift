@@ -23,15 +23,18 @@ import UIKit
 final class CardListAssembly: ICardListAssembly {
     // MARK: Dependencies
 
+    private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
     private let addNewCardAssembly: IAddNewCardAssembly
 
     // MARK: Init
 
     init(
+        paymentControllerAssembly: IPaymentControllerAssembly,
         cardsControllerAssembly: ICardsControllerAssembly,
         addNewCardAssembly: IAddNewCardAssembly
     ) {
+        self.paymentControllerAssembly = paymentControllerAssembly
         self.cardsControllerAssembly = cardsControllerAssembly
         self.addNewCardAssembly = addNewCardAssembly
     }
@@ -43,14 +46,54 @@ final class CardListAssembly: ICardListAssembly {
         return UINavigationController.withASDKBar(rootViewController: view)
     }
 
+    func cardPaymentList(
+        customerKey: String,
+        cards: [PaymentCard],
+        selectedCard: PaymentCard,
+        paymentFlow: PaymentFlow,
+        amount: Int64,
+        output: ICardListPresenterOutput?,
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+    ) -> UIViewController {
+        createModule(
+            customerKey: customerKey,
+            configuration: .cardPaymentList(selectedCardId: selectedCard.cardId),
+            cards: cards,
+            paymentFlow: paymentFlow,
+            amount: amount,
+            output: output,
+            cardPaymentOutput: cardPaymentOutput
+        )
+    }
+
     // MARK: Helpers
 
     private func createModule(
         customerKey: String,
         configuration: CardListScreenConfiguration,
-        cards: [PaymentCard] = []
+        cards: [PaymentCard] = [],
+        paymentFlow: PaymentFlow? = nil,
+        amount: Int64? = nil,
+        output: ICardListPresenterOutput? = nil,
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput? = nil
     ) -> UIViewController {
-        let router = CardListRouter(addNewCardAssembly: addNewCardAssembly)
+        // `CardPaymentAssembly` создается здесь, а не передается в кач-ве зависимости в `init`
+        // из-за циклической связи зависимостей `CardPaymentAssembly` и `CardListAssembly`
+        // Переход на навигацию через координаторы может исправить эту проблему
+        // TODO: MIC-8101 Рассмотреть возможность и необходимость перехода на координаторы в навигации
+        let cardPaymentAssembly = CardPaymentAssembly(
+            cardsControllerAssembly: cardsControllerAssembly,
+            paymentControllerAssembly: paymentControllerAssembly,
+            cardListAssembly: self
+        )
+
+        let router = CardListRouter(
+            addNewCardAssembly: addNewCardAssembly,
+            cardPaymentAssembly: cardPaymentAssembly,
+            paymentFlow: paymentFlow,
+            amount: amount,
+            cardPaymentOutput: cardPaymentOutput
+        )
 
         let presenter = CardListPresenter(
             screenConfiguration: configuration,
@@ -59,7 +102,8 @@ final class CardListAssembly: ICardListAssembly {
             imageResolver: PaymentSystemImageResolver(),
             bankResolver: BankResolver(),
             paymentSystemResolver: PaymentSystemResolver(),
-            cards: cards
+            cards: cards,
+            output: output
         )
 
         let view = CardListViewController(
@@ -79,19 +123,14 @@ final class CardListAssembly: ICardListAssembly {
 private extension CardListScreenConfiguration {
     static func cardList() -> Self {
         Self(
-            listItemsAreSelectable: false,
-            navigationTitle: Loc.Acquiring.CardList.screenTitle,
-            addNewCardCellTitle: Loc.Acquiring.CardList.addCard,
+            useCase: .cardList,
             selectedCardId: nil
         )
     }
 
-    static func choosePaymentCardList(selectedCardId: String) -> Self {
-        // заменить строки на ключи после добавления на странице локализации в спеке
+    static func cardPaymentList(selectedCardId: String) -> Self {
         Self(
-            listItemsAreSelectable: true,
-            navigationTitle: Loc.CardList.Screen.Title.paymentByCard,
-            addNewCardCellTitle: Loc.CardList.Button.anotherCard,
+            useCase: .cardPaymentList,
             selectedCardId: selectedCardId
         )
     }

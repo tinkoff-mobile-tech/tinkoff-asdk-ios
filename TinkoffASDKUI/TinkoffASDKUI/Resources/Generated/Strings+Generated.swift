@@ -199,6 +199,12 @@ internal enum Loc {
       /// Здесь будут ваши карты
       internal static let description = Loc.tr("Localizable", "CommonStub.NoCards.Description", fallback: "Здесь будут ваши карты")
     }
+    internal enum NoCardsToPay {
+      /// Оплатить новой
+      internal static let button = Loc.tr("Localizable", "CommonStub.NoCardsToPay.Button", fallback: "Оплатить новой")
+      /// Нет карт для оплаты
+      internal static let description = Loc.tr("Localizable", "CommonStub.NoCardsToPay.Description", fallback: "Нет карт для оплаты")
+    }
     internal enum NoNetwork {
       /// Обновить
       internal static let button = Loc.tr("Localizable", "CommonStub.NoNetwork.Button", fallback: "Обновить")

@@ -35,7 +35,6 @@ internal enum Asset {
     internal static let tinkoffPayLogoBlack = ImageAsset(name: "tinkoff_pay_logo_black")
     internal static let tinkoffPayLogoWhite = ImageAsset(name: "tinkoff_pay_logo_white")
   }
-  internal static let add = ImageAsset(name: "add")
   internal static let cancel = ImageAsset(name: "cancel")
   internal enum CardRequisites {
     internal static let maestroLogo = ImageAsset(name: "maestro_logo")
@@ -45,8 +44,8 @@ internal enum Asset {
   }
   internal static let done = ImageAsset(name: "done")
   internal enum Icons {
-    internal static let addCard = ImageAsset(name: "add-card")
     internal static let addedCard = ImageAsset(name: "added-card")
+    internal static let cardPlus = ImageAsset(name: "cardPlus")
     internal static let check = ImageAsset(name: "check")
     internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "tui-avatar.pdf",
+      "filename" : "CardPlus-light.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Frame 12343471.pdf",
+      "filename" : "CardPlus-dark.pdf",
       "idiom" : "universal"
     }
   ],

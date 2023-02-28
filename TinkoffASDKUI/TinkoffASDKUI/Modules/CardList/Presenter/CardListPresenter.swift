@@ -33,6 +33,7 @@ final class CardListPresenter {
     // MARK: Dependencies
 
     weak var view: ICardListViewInput?
+    private weak var output: ICardListPresenterOutput?
     private let imageResolver: IPaymentSystemImageResolver
     private let bankResolver: IBankResolver
     private let paymentSystemResolver: IPaymentSystemResolver
@@ -42,12 +43,17 @@ final class CardListPresenter {
 
     // MARK: State
 
-    private var cards: [PaymentCard]
     private var isLoading = false
     private var hasVisualContent: Bool { !cards.isEmpty }
     private var screenState = ScreenState.initial
     private var deactivateCardResult: Result<RemoveCardPayload, Error>?
     private var sections: [CardListSection] { getSections() }
+    private var cards: [PaymentCard] {
+        didSet {
+            guard cards != oldValue else { return }
+            output?.cardList(didUpdate: cards)
+        }
+    }
 
     // MARK: Init
 
@@ -58,7 +64,8 @@ final class CardListPresenter {
         imageResolver: IPaymentSystemImageResolver,
         bankResolver: IBankResolver,
         paymentSystemResolver: IPaymentSystemResolver,
-        cards: [PaymentCard] = []
+        cards: [PaymentCard] = [],
+        output: ICardListPresenterOutput? = nil
     ) {
         self.screenConfiguration = screenConfiguration
         self.imageResolver = imageResolver
@@ -67,6 +74,7 @@ final class CardListPresenter {
         self.cardsController = cardsController
         self.router = router
         self.cards = cards
+        self.output = output
     }
 
     // MARK: Helpers
@@ -108,11 +116,20 @@ extension CardListPresenter: ICardListViewOutput {
     }
 
     func viewDidTapCard(cardIndex: Int) {
-        // TODO: MIC-8030 Совершить переход на экран оплаты картой
+        guard screenConfiguration.useCase == .cardPaymentList else { return }
+
+        let selectedCard = cards[cardIndex]
+        output?.cardList(willCloseAfterSelecting: selectedCard)
+        view?.dismiss()
     }
 
     func viewDidTapAddCardCell() {
-        router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
+        switch screenConfiguration.useCase {
+        case .cardList:
+            router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
+        case .cardPaymentList:
+            router.openCardPayment()
+        }
     }
 
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
@@ -253,9 +270,14 @@ extension CardListPresenter {
     private func showNoCardsStub() {
         screenState = .showingStub
         view?.hideRightBarButton()
-        view?.showStub(mode: .noCards { [weak self] in
-            self?.viewDidTapAddCardCell()
-        })
+
+        let buttonAction: VoidBlock = { [weak self] in self?.viewDidTapAddCardCell() }
+
+        let stubMode: StubMode = screenConfiguration.useCase == .cardList
+            ? .noCardsInCardList(buttonAction: buttonAction)
+            : .noCardsInCardPaymentList(buttonAction: buttonAction)
+
+        view?.showStub(mode: stubMode)
     }
 
     private func reloadCollection() {
@@ -292,7 +314,7 @@ extension CardListPresenter {
 
     private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
         return [
-            (icon: Asset.Icons.addCard, title: screenConfiguration.addNewCardCellTitle),
+            (icon: Asset.Icons.cardPlus, title: screenConfiguration.newCardTitle),
         ]
     }
 }

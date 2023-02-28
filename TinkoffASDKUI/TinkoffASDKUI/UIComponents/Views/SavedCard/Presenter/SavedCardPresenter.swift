@@ -25,7 +25,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
 
     var cardId: String? {
         switch presentationState {
-        case let .selected(card, _): return card.cardId
+        case let .selected(card): return card.cardId
         default: return nil
         }
     }
@@ -79,8 +79,8 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
         view?.deactivateCVCField()
 
         switch presentationState {
-        case let .selected(card, hasAnotherCards):
-            let viewModel = createViewModel(card: card, hasAnotherCards: hasAnotherCards)
+        case let .selected(card):
+            let viewModel = createViewModel(card: card)
             view?.update(with: viewModel)
             view?.showCVCField()
             view?.setCVCText(cvcInputText)
@@ -98,7 +98,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
 
     // MARK: View Models Creation
 
-    private func createViewModel(card: PaymentCard, hasAnotherCards: Bool) -> SavedCardViewModel {
+    private func createViewModel(card: PaymentCard) -> SavedCardViewModel {
         let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
         let paymentSystem = paymentSystemResolver.resolve(by: card.pan).getPaymentSystem()
 
@@ -109,7 +109,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
         return SavedCardViewModel(
             iconModel: iconModel,
             cardName: .formatCardName(bankName: bank?.naming, pan: card.pan),
-            actionDescription: hasAnotherCards ? "Сменить карту" : nil
+            actionDescription: "Сменить карту"
         )
     }
 
@@ -142,9 +142,9 @@ extension SavedCardPresenter {
 
     func savedCardViewIsSelected() {
         switch presentationState {
-        case let .selected(card, hasAnotherCards) where hasAnotherCards:
+        case let .selected(card):
             output?.savedCardPresenter(self, didRequestReplacementFor: card)
-        case .selected, .idle:
+        case .idle:
             break
         }
     }

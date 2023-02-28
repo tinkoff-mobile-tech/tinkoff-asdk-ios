@@ -222,9 +222,8 @@ extension CardPaymentPresenter {
     private func createSavedCardViewPresenterIfNeeded() {
         guard let activeCard = activeCards.first else { return }
 
-        let hasAnotherCards = activeCards.count > 1
         savedCardPresenter = SavedCardPresenter(output: self)
-        savedCardPresenter?.presentationState = .selected(card: activeCard, hasAnotherCards: hasAnotherCards)
+        savedCardPresenter?.presentationState = .selected(card: activeCard)
     }
 
     private func createCardFieldViewPresenter() -> CardFieldPresenter {

@@ -13,4 +13,10 @@ final class CardListRouterMock: ICardListRouter {
     func openAddNewCard(customerKey: String, output: IAddNewCardPresenterOutput?) {
         openAddNewCardsCallsCount += 1
     }
+
+    var openCardPaymentCallsCount = 0
+
+    func openCardPayment() {
+        openCardPaymentCallsCount += 1
+    }
 }

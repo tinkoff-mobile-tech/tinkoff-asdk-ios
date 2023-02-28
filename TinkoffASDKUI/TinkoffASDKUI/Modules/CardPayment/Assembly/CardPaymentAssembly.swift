@@ -14,20 +14,23 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
 
     private let cardsControllerAssembly: ICardsControllerAssembly
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let cardListAssembly: ICardListAssembly
 
     // MARK: Initialization
 
     init(
         cardsControllerAssembly: ICardsControllerAssembly,
-        paymentControllerAssembly: IPaymentControllerAssembly
+        paymentControllerAssembly: IPaymentControllerAssembly,
+        cardListAssembly: ICardListAssembly
     ) {
         self.cardsControllerAssembly = cardsControllerAssembly
         self.paymentControllerAssembly = paymentControllerAssembly
+        self.cardListAssembly = cardListAssembly
     }
 
     // MARK: ICardPaymentAssembly
 
-    func build(
+    func anyCardPayment(
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
@@ -37,6 +40,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
         let router = CardPaymentRouter()
+
         let presenter = CardPaymentPresenter(
             router: router,
             output: output,

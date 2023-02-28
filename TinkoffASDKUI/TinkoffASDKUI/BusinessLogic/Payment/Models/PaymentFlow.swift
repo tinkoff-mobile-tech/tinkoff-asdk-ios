@@ -27,6 +27,10 @@ extension PaymentFlow {
         }
     }
 
+    var customerKey: String? {
+        customerOptions?.customerKey
+    }
+
     func replacing(customerEmail: String?) -> PaymentFlow {
         let newCustomerOptions = customerOptions.map {
             CustomerOptions(customerKey: $0.customerKey, email: customerEmail)
