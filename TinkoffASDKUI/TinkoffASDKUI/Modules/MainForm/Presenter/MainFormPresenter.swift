@@ -17,7 +17,7 @@ final class MainFormPresenter {
     private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
-    private var moduleCompletion: ((PaymentResult) -> Void)?
+    private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
 
@@ -57,7 +57,7 @@ final class MainFormPresenter {
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        moduleCompletion: @escaping (PaymentResult) -> Void
+        moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
         self.cardsController = cardsController

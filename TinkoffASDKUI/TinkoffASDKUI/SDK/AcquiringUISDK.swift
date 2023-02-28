@@ -1746,7 +1746,7 @@ public extension AcquiringUISDK {
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        completion: @escaping PaymentResultCompletion
+        completion: PaymentResultCompletion? = nil
     ) {
         let viewController = mainFormAssembly.build(
             paymentFlow: paymentFlow,

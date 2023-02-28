@@ -14,7 +14,7 @@ final class MainFormDataStateLoader {
     private typealias NextMethod = () -> MainFormPaymentMethod?
     private typealias ReceiveCards = (_ cards: [PaymentCard]) -> Void
     private typealias ReceiveSBPBanks = (_ allBanks: [SBPBank], _ preferredBanks: [SBPBank]) -> Void
-    private typealias CanBecomePrimaryMethodCompletion = (_ canBecomePrimaryMethod: Bool) -> Void
+    private typealias CanBecomeCompletion = (_ canBecomePrimaryMethod: Bool) -> Void
     private typealias PrimaryMethodCompletion = (_ primaryMethod: MainFormPaymentMethod) -> Void
 
     // MARK: Dependencies
@@ -116,7 +116,7 @@ extension MainFormDataStateLoader {
             return completion(.card)
         }
 
-        let canBecomeCompletion: CanBecomePrimaryMethodCompletion = { [weak self] canBecomePrimaryMethod in
+        let canBecomeCompletion: CanBecomeCompletion = { [weak self] canBecomePrimaryMethod in
             guard let self = self else { return }
 
             if canBecomePrimaryMethod {
@@ -144,7 +144,7 @@ extension MainFormDataStateLoader {
 
     // MARK: Tinkoff Pay
 
-    private func canTinkoffPayBecomePrimaryMethod(completion: @escaping CanBecomePrimaryMethodCompletion) {
+    private func canTinkoffPayBecomePrimaryMethod(completion: @escaping CanBecomeCompletion) {
         // TODO: MIC-7902 Добавить проверку возможности использовать `TinkoffPay` в кач-ве главного платежного метода
         completion(false)
     }
@@ -154,7 +154,7 @@ extension MainFormDataStateLoader {
     private func canSavedCardBecomePrimaryMethod(
         terminalInfo: TerminalInfo,
         receiveCards: @escaping ReceiveCards,
-        completion: @escaping CanBecomePrimaryMethodCompletion
+        completion: @escaping CanBecomeCompletion
     ) {
         guard terminalInfo.addCardScheme,
               let cardsController = cardsController else {
@@ -176,7 +176,7 @@ extension MainFormDataStateLoader {
 
     private func canSBPBecomePrimaryMethod(
         receiveSBPBanks: @escaping ReceiveSBPBanks,
-        completion: @escaping CanBecomePrimaryMethodCompletion
+        completion: @escaping CanBecomeCompletion
     ) {
         sbpBanksService.loadBanks { [weak self] result in
             DispatchQueue.performOnMain {

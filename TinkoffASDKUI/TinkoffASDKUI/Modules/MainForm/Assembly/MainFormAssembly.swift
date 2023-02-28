@@ -41,7 +41,7 @@ final class MainFormAssembly: IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        moduleCompletion: @escaping PaymentResultCompletion
+        moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = paymentFlow.customerKey.map(cardsControllerAssembly.cardsController(customerKey:))
