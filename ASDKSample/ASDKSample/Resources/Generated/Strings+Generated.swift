@@ -141,6 +141,10 @@ internal enum Loc {
     }
   }
   internal enum Text {
+    /// Изменение сервера к которому будут обращаться все запросы СДК
+    internal static let chooseServerDescription = Loc.tr("Localizable", "text.chooseServerDescription", fallback: "Изменение сервера к которому будут обращаться все запросы СДК")
+    /// Кастомный адрес будет использован когда выбран тип сервака custom
+    internal static let customServerDescription = Loc.tr("Localizable", "text.customServerDescription", fallback: "Кастомный адрес будет использован когда выбран тип сервака custom")
     /// Родительский платеж
     internal static let parentPayment = Loc.tr("Localizable", "text.parentPayment", fallback: "Родительский платеж")
     /// Покупка
@@ -184,6 +188,10 @@ internal enum Loc {
     internal static let aquaringAlertView = Loc.tr("Localizable", "title.aquaringAlertView", fallback: "AlertView")
     /// Корзина
     internal static let cart = Loc.tr("Localizable", "title.cart", fallback: "Корзина")
+    /// Выбор сервера
+    internal static let chooseServer = Loc.tr("Localizable", "title.chooseServer", fallback: "Выбор сервера")
+    /// Кастомный сервер
+    internal static let customServer = Loc.tr("Localizable", "title.customServer", fallback: "Кастомный сервер")
     /// Система Быстрых Платежей
     internal static let fasterPayments = Loc.tr("Localizable", "title.fasterPayments", fallback: "Система Быстрых Платежей")
     /// Товары

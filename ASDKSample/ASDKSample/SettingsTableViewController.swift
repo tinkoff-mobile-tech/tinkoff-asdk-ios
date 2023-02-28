@@ -33,6 +33,10 @@ final class SettingsTableViewController: UITableViewController {
         case acquiring
         /// какой тип проверки использоваться при сохранении карты
         case addCardCheckType
+        /// какой тип сервера будет использоваться при запросах
+        case server
+        /// адрес кастомного сервера
+        case customServer
         /// на каком языке показыват форму оплаты
         case language
         /// изменить sdk credentials
@@ -41,6 +45,7 @@ final class SettingsTableViewController: UITableViewController {
 
     private var tableViewCells: [TableViewCellType] = []
     private var availableCardChekType: [String] = []
+    private var availableServers: [AcquiringSdkEnvironment] = []
     private var availableLanguage: [String] = []
 
     override func viewDidLoad() {
@@ -50,6 +55,7 @@ final class SettingsTableViewController: UITableViewController {
 
         tableView.registerCells(types: [SwitchTableViewCell.self, SegmentedTabeViewCell.self])
         tableView.register(ButtonTableCell.self, forCellReuseIdentifier: ButtonTableCell.reusableId)
+        tableView.register(VerticalEditableTableCell.self, forCellReuseIdentifier: VerticalEditableTableCell.reusableId)
 
         updateTableViewCells()
     }
@@ -70,11 +76,17 @@ final class SettingsTableViewController: UITableViewController {
         availableCardChekType.append(PaymentCardCheckType.hold3DS.rawValue)
         availableCardChekType.append(PaymentCardCheckType.hold.rawValue)
 
+        availableServers = []
+        availableServers.append(.test)
+        availableServers.append(.preProd)
+        availableServers.append(.prod)
+        availableServers.append(.custom(""))
+
         availableLanguage.append("auto")
         availableLanguage.append("ru")
         availableLanguage.append("en")
 
-        tableViewCells = [.credentials, .paySBP, .tinkoffPay, .showEmail, .acquiring, .addCardCheckType, .language]
+        tableViewCells = [.credentials, .paySBP, .tinkoffPay, .showEmail, .acquiring, .addCardCheckType, .server, .customServer, .language]
     }
 
     // MARK: - Table view data source
@@ -186,7 +198,44 @@ final class SettingsTableViewController: UITableViewController {
 
                 return cell
             }
+        case .server:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: SegmentedTabeViewCell.nibName) as? SegmentedTabeViewCell {
+                cell.segmentedControl.removeAllSegments()
+                for (index, type) in availableServers.enumerated() {
+                    cell.segmentedControl.insertSegment(withTitle: type.description, at: index, animated: false)
+                    if AppSetting.shared.serverType.description == type.description {
+                        cell.segmentedControl.selectedSegmentIndex = index
+                    }
+                }
 
+                cell.onSegmentedChanged = { [weak self] index in
+                    if let value = self?.availableServers[index] {
+                        switch value {
+                        case .custom:
+                            let customServer = self?.getCustomServerFromField() ?? ""
+                            AppSetting.shared.serverType = .custom(customServer)
+                        default:
+                            AppSetting.shared.serverType = value
+                        }
+                    }
+                }
+
+                return cell
+            }
+        case .customServer:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: VerticalEditableTableCell.reusableId)
+                as? VerticalEditableTableCell {
+                let model = VerticalEditableView.Model(
+                    labelText: "",
+                    textFieldText: AppSetting.shared.customServer ?? ""
+                )
+                cell.configure(model: model)
+                cell.apply(style: .basic)
+                cell.innerView.textField.placeholder = "Fill me"
+                cell.innerView.textField.removeTarget(nil, action: nil, for: .allEvents)
+                cell.innerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+                return cell
+            }
         case .language:
             if let cell = tableView.dequeueReusableCell(withIdentifier: SegmentedTabeViewCell.nibName) as? SegmentedTabeViewCell {
                 cell.segmentedControl.removeAllSegments()
@@ -249,6 +298,10 @@ final class SettingsTableViewController: UITableViewController {
             return Loc.Name.acquiring
         case .addCardCheckType:
             return Loc.Title.savingCard
+        case .server:
+            return Loc.Title.chooseServer
+        case .customServer:
+            return Loc.Title.customServer
         case .language:
             return Loc.Title.paymentFormLanguage
         case .credentials:
@@ -264,17 +317,45 @@ final class SettingsTableViewController: UITableViewController {
             return ""
         case .showEmail:
             return Loc.Text.showEmailField
-
         case .acquiring:
             return Loc.Text.Acquiring.description
-
         case .addCardCheckType:
             return Loc.Text.AddCardCheckType.description
-
+        case .server:
+            return Loc.Text.chooseServerDescription
+        case .customServer:
+            return Loc.Text.customServerDescription
         case .language:
             return Loc.Text.Language.description
         case .credentials:
             return nil
+        }
+    }
+
+    private func getCustomServerFromField() -> String {
+        if let customServerIndex = tableViewCells.firstIndex(where: { $0 == .customServer }),
+           let customServerCell = tableView.cellForRow(at: IndexPath(row: 0, section: customServerIndex)) as? VerticalEditableTableCell {
+
+            let currentCustomServer = customServerCell.innerView.getTextFieldText()
+            return currentCustomServer
+        } else {
+            return ""
+        }
+    }
+}
+
+// MARK: - Actions
+
+extension SettingsTableViewController {
+    @objc private func textFieldDidChange(_ sender: UITextField) {
+        let customServer = getCustomServerFromField()
+        AppSetting.shared.customServer = customServer
+
+        switch AppSetting.shared.serverType {
+        case .custom:
+            AppSetting.shared.serverType = .custom(customServer)
+        default:
+            break
         }
     }
 }

@@ -50,6 +50,7 @@ struct SdkAssembly {
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
+            server: AppSetting.shared.serverType,
             tokenProvider: tokenProvider
         )
         acquiringSDKConfiguration.logger = logger

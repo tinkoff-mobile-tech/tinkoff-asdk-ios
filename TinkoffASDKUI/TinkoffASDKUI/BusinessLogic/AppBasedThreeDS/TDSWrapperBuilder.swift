@@ -53,9 +53,17 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
             uiCustomization: buildUICustomization(),
             locale: locale
         )
+
+        let environment: ThreeDSWrapper.TDSWrapper.Environment = {
+            switch env {
+            case .prod, .custom: return .production
+            case .test, .preProd: return .test
+            }
+        }()
+
         return TDSWrapper(
             sdkConfiguration: sdkConfiguration,
-            wrapperConfiguration: TDSWrapper.WrapperConfiguration(environment: env == .test ? .test : .production)
+            wrapperConfiguration: TDSWrapper.WrapperConfiguration(environment: environment)
         )
     }
 

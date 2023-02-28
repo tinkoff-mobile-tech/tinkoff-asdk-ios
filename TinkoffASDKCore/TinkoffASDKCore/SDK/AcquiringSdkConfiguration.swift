@@ -25,9 +25,38 @@ public enum AcquiringSdkLanguage: String {
     case en
 }
 
-public enum AcquiringSdkEnvironment: String {
-    case test = "rest-api-test.tinkoff.ru"
-    case prod = "securepay.tinkoff.ru"
+public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible, RawRepresentable {
+    case test
+    case preProd
+    case prod
+    case custom(String)
+
+    public var rawValue: String {
+        switch self {
+        case .test: return "rest-api-test.tinkoff.ru"
+        case .preProd: return "qa-mapi.tcsbank.ru"
+        case .prod: return "securepay.tinkoff.ru"
+        case let .custom(address): return address
+        }
+    }
+
+    public init(rawValue: String) {
+        switch rawValue {
+        case "rest-api-test.tinkoff.ru": self = .test
+        case "qa-mapi.tcsbank.ru": self = .preProd
+        case "securepay.tinkoff.ru": self = .prod
+        default: self = .custom(rawValue)
+        }
+    }
+
+    public var description: String {
+        switch self {
+        case .test: return "test"
+        case .preProd: return "preProd"
+        case .prod: return "prod"
+        case .custom: return "custom"
+        }
+    }
 }
 
 struct ConfigSdkEnvironment: RawRepresentable {
@@ -101,7 +130,7 @@ public class AcquiringSdkConfiguration: NSObject {
     /// - Returns: AcquiringSdkConfiguration
     public init(
         credential: AcquiringSdkCredential,
-        server: AcquiringSdkEnvironment = .test,
+        server: AcquiringSdkEnvironment,
         requestsTimeoutInterval: TimeInterval = 40,
         tokenProvider: ITokenProvider? = nil,
         urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
@@ -109,7 +138,12 @@ public class AcquiringSdkConfiguration: NSObject {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
         serverEnvironment = server
-        configEnvironment = server == .test ? .test : .prod
+        configEnvironment = {
+            switch server {
+            case .prod, .custom: return .prod
+            case .test, .preProd: return .test
+            }
+        }()
         self.tokenProvider = tokenProvider
         self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
     }
