@@ -12,7 +12,6 @@ protocol IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub,
-        moduleCompletion: @escaping PaymentResultCompletion
+        moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController
 }

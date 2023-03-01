@@ -30,6 +30,8 @@
 * [MIC-7952] MainForm - UI elements with own cells
 * [MIC-7707] MainForm - State changes handling
 * [MIC-8030] MainForm - Saved card selection
+* [MIC-8093] MainForm - Add primary payment method resolving logic
+* [MIC-7708] MainForm - Remove stub for primary payment method
 * [MIC-8013] MainForm - Card payment logic
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 * [MIC-8068] SBP - Opening from main form
