@@ -57,12 +57,18 @@ final class MainFormRouter: IMainFormRouter {
         transitionHandler?.present(navigationController, animated: true)
     }
 
-    func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?) {
+    func openCardPayment(
+        paymentFlow: PaymentFlow,
+        cards: [PaymentCard]?,
+        output: ICardPaymentPresenterModuleOutput?,
+        cardListOutput: ICardListPresenterOutput?
+    ) {
         let cardPaymentViewController = cardPaymentAssembly.anyCardPayment(
             activeCards: cards,
             paymentFlow: paymentFlow,
             amount: configuration.amount,
-            output: output
+            output: output,
+            cardListOutput: cardListOutput
         )
 
         let navVC = UINavigationController.withASDKBar(rootViewController: cardPaymentViewController)

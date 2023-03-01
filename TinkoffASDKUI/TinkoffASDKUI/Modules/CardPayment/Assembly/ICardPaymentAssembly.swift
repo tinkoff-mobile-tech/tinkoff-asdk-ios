@@ -17,7 +17,8 @@ protocol ICardPaymentAssembly {
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
-        output: ICardPaymentPresenterModuleOutput?
+        output: ICardPaymentPresenterModuleOutput?,
+        cardListOutput: ICardListPresenterOutput?
     ) -> UIViewController
 }
 
@@ -33,7 +34,8 @@ extension ICardPaymentAssembly {
             activeCards: [],
             paymentFlow: paymentFlow,
             amount: amount,
-            output: output
+            output: output,
+            cardListOutput: nil
         )
     }
 }

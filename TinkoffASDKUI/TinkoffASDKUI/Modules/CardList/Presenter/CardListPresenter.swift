@@ -120,7 +120,7 @@ extension CardListPresenter: ICardListViewOutput {
 
         let selectedCard = cards[cardIndex]
         output?.cardList(willCloseAfterSelecting: selectedCard)
-        view?.dismiss()
+        view?.closeScreen()
     }
 
     func viewDidTapAddCardCell() {
@@ -254,7 +254,7 @@ extension CardListPresenter {
         screenState = .showingStub
         view?.hideRightBarButton()
         view?.showStub(mode: .serverError { [weak self] in
-            self?.view?.dismiss()
+            self?.view?.closeScreen()
         })
     }
 

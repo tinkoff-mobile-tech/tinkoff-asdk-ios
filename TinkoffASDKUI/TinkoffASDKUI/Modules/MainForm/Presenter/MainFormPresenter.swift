@@ -331,7 +331,7 @@ extension MainFormPresenter {
     private func routeTo(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
-            router.openCardPayment(paymentFlow: paymentFlow, cards: cards, output: self)
+            router.openCardPayment(paymentFlow: paymentFlow, cards: cards, output: self, cardListOutput: self)
         case .tinkoffPay:
             router.openTinkoffPay(paymentFlow: paymentFlow)
         case .sbp:

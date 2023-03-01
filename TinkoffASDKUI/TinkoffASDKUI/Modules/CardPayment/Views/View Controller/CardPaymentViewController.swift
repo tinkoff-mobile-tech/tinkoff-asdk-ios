@@ -145,6 +145,7 @@ extension CardPaymentViewController {
 
     private func setupNavigationBar() {
         navigationItem.title = Loc.Acquiring.PaymentNewCard.screenTitle
+        navigationItem.backButtonTitle = ""
 
         if isFirstInNavigationStack {
             navigationItem.leftBarButtonItem = UIBarButtonItem(

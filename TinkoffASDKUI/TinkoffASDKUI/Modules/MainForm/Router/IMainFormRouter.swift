@@ -17,7 +17,13 @@ protocol IMainFormRouter {
         cardPaymentOutput: ICardPaymentPresenterModuleOutput?
     )
 
-    func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?)
+    func openCardPayment(
+        paymentFlow: PaymentFlow,
+        cards: [PaymentCard]?,
+        output: ICardPaymentPresenterModuleOutput?,
+        cardListOutput: ICardListPresenterOutput?
+    )
+
     func openTinkoffPay(paymentFlow: PaymentFlow)
     func openSBP(paymentFlow: PaymentFlow, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?)
 }
