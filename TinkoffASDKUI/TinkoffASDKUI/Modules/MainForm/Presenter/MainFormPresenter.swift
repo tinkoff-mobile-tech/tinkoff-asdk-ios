@@ -318,9 +318,10 @@ extension MainFormPresenter {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self)
         case .tinkoffPay:
-            router.openTinkoffPay(paymentFlow: paymentFlow)
+            // TODO: MIC-7902 Реализовать логику оплаты Tinkoff Pay
+            break
         case .sbp:
-            router.openSBP(paymentFlow: paymentFlow, paymentSheetOutput: self)
+            router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, paymentSheetOutput: self)
         }
     }
 }
