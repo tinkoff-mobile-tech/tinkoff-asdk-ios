@@ -258,6 +258,14 @@ extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
     }
 }
 
+// MARK: - ISBPBanksModuleOutput
+
+extension MainFormPresenter: ISBPBanksModuleOutput {
+    func didLoaded(sbpBanks: [SBPBank]) {
+        dataState.sbpBanks = sbpBanks
+    }
+}
+
 // MARK: - ISBPPaymentSheetPresenterOutput
 
 extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
@@ -321,7 +329,7 @@ extension MainFormPresenter {
             // TODO: MIC-7902 Реализовать логику оплаты Tinkoff Pay
             break
         case .sbp:
-            router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, paymentSheetOutput: self)
+            router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
         }
     }
 }

@@ -27,6 +27,7 @@ protocol IMainFormRouter {
     func openSBP(
         paymentFlow: PaymentFlow,
         banks: [SBPBank]?,
+        output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     )
 }

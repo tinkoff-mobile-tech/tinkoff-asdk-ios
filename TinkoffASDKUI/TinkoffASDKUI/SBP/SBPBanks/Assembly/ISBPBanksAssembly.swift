@@ -24,10 +24,12 @@ protocol ISBPBanksAssembly {
 
     /// Формирует модуль, когда нет загруженной платежной информации и требуется ее загрузить внутри модуля
     /// - Parameter paymentConfiguration: необходимые данные для загрузки платежной информации
+    /// - Parameter output: необходим для передачи загруженных внутри модуля списка банков
     /// - Parameter paymentSheetOutput: делегат ответов от платежной шторки
     /// - Returns: Возвращает сформированный модуль
     func buildInitialModule(
         paymentFlow: PaymentFlow,
+        output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) -> SBPBanksModule
 }
