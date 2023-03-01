@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum MainFormPaymentMethod: CaseIterable, Comparable {
-    case tinkoffPay
+enum MainFormPaymentMethod: Comparable, Hashable {
+    case tinkoffPay(version: String)
     case card
     case sbp
 }

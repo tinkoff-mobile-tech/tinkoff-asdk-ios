@@ -75,9 +75,11 @@ final class MainFormRouter: IMainFormRouter {
         transitionHandler?.present(navVC, animated: true)
     }
 
-    func openTinkoffPay(paymentFlow: PaymentFlow) {}
-
-    func openSBP(paymentFlow: PaymentFlow, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) {
+    func openSBP(
+        paymentFlow: PaymentFlow,
+        banks: [SBPBank]?,
+        paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
+    ) {
         let sbpModule = sbpBanksAssembly.buildInitialModule(
             paymentFlow: paymentFlow,
             paymentSheetOutput: paymentSheetOutput

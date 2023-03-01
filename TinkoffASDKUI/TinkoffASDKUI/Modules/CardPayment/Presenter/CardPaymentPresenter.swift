@@ -23,7 +23,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     // MARK: Properties
 
     private var cellTypes = [CardPaymentCellType]()
-    private var savedCardPresenter: SavedCardPresenter?
+    private var savedCardPresenter: SavedCardViewPresenter?
     private lazy var cardFieldPresenter = createCardFieldViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
     private lazy var emailPresenter = createEmailViewPresenter()
@@ -117,10 +117,10 @@ extension CardPaymentPresenter: IEmailViewPresenterOutput {
     }
 }
 
-// MARK: - ISavedCardPresenterOutput
+// MARK: - ISavedCardViewPresenterOutput
 
-extension CardPaymentPresenter: ISavedCardPresenterOutput {
-    func savedCardPresenter(_ presenter: SavedCardPresenter, didRequestReplacementFor paymentCard: PaymentCard) {
+extension CardPaymentPresenter: ISavedCardViewPresenterOutput {
+    func savedCardPresenter(_ presenter: SavedCardViewPresenter, didRequestReplacementFor paymentCard: PaymentCard) {
         router.openCardPaymentList(
             paymentFlow: paymentFlow,
             amount: amount,
@@ -131,7 +131,7 @@ extension CardPaymentPresenter: ISavedCardPresenterOutput {
         )
     }
 
-    func savedCardPresenter(_ presenter: SavedCardPresenter, didUpdateCVC cvc: String, isValid: Bool) {
+    func savedCardPresenter(_ presenter: SavedCardViewPresenter, didUpdateCVC cvc: String, isValid: Bool) {
         activatePayButtonIfNeeded()
     }
 }
@@ -253,7 +253,7 @@ extension CardPaymentPresenter {
     private func createSavedCardViewPresenterIfNeeded() {
         guard let activeCard = activeCards.first else { return }
 
-        savedCardPresenter = SavedCardPresenter(output: self)
+        savedCardPresenter = SavedCardViewPresenter(output: self)
         savedCardPresenter?.presentationState = .selected(card: activeCard)
     }
 

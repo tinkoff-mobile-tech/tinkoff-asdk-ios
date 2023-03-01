@@ -1,5 +1,5 @@
 //
-//  SavedCardPresenter.swift
+//  SavedCardViewPresenter.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 24.01.2023.
@@ -8,8 +8,8 @@
 import Foundation
 import TinkoffASDKCore
 
-final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
-    // MARK: ISavedCardPresenterInput Properties
+final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresenterInput {
+    // MARK: ISavedCardViewPresenterInput Properties
 
     var presentationState: SavedCardPresentationState = .idle {
         didSet {
@@ -47,7 +47,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
     private let validator: ICardRequisitesValidator
     private let paymentSystemResolver: IPaymentSystemResolver
     private let bankResolver: IBankResolver
-    private weak var output: ISavedCardPresenterOutput?
+    private weak var output: ISavedCardViewPresenterOutput?
 
     // MARK: State
 
@@ -65,7 +65,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver(),
-        output: ISavedCardPresenterOutput
+        output: ISavedCardViewPresenterOutput
     ) {
         self.validator = validator
         self.paymentSystemResolver = paymentSystemResolver
@@ -121,7 +121,7 @@ final class SavedCardPresenter: ISavedCardViewOutput, ISavedCardPresenterInput {
 
 // MARK: - ISavedCardViewOutput Methods
 
-extension SavedCardPresenter {
+extension SavedCardViewPresenter {
     func savedCardView(didChangeCVC cvcInputText: String) {
         guard self.cvcInputText != cvcInputText else { return }
 

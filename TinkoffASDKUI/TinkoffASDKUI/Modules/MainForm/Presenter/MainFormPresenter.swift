@@ -13,12 +13,11 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
-    private let cardsController: ICardsController?
+    private let dataStateLoader: IMainFormDataStateLoader
     private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
-    private let stub: MainFormStub
-    private var moduleCompletion: ((PaymentResult) -> Void)?
+    private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
 
@@ -27,7 +26,7 @@ final class MainFormPresenter {
         orderDescription: configuration.orderDescription
     )
 
-    private lazy var savedCardPresenter = SavedCardPresenter(output: self)
+    private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
 
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
         title: "Получить квитанцию",
@@ -44,29 +43,25 @@ final class MainFormPresenter {
 
     // MARK: State
 
-    private lazy var cellTypes: [MainFormCellType] = []
-    private var cards: [PaymentCard] = []
-    private var availablePaymentMethods: [MainFormPaymentMethod] = MainFormPaymentMethod.allCases
-    private lazy var primaryPaymentMethod = stub.primaryPayMethod.domainModel
+    private var dataState: MainFormDataState = .initial
+    private var cellTypes: [MainFormCellType] = []
     private var moduleResult: PaymentResult = .cancelled()
 
     // MARK: Init
 
     init(
         router: IMainFormRouter,
-        cardsController: ICardsController?,
+        dataStateLoader: IMainFormDataStateLoader,
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub,
-        moduleCompletion: @escaping (PaymentResult) -> Void
+        moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
-        self.cardsController = cardsController
+        self.dataStateLoader = dataStateLoader
         self.paymentController = paymentController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
-        self.stub = stub
         self.moduleCompletion = moduleCompletion
     }
 }
@@ -77,13 +72,18 @@ extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
         view?.showCommonSheet(state: .processing)
 
-        loadCardsIfNeeded { [weak self] in
+        dataStateLoader.loadState(for: paymentFlow) { [weak self] result in
             guard let self = self else { return }
 
-            // Временно
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.view?.hideCommonSheet()
+            switch result {
+            case let .success(dataState):
+                self.dataState = dataState
+                self.savedCardPresenter.updatePresentationState(for: dataState.cards ?? [])
                 self.reloadContent()
+                self.view?.hideCommonSheet()
+            case let .failure(error):
+                self.moduleResult = .failed(error)
+                self.view?.showCommonSheet(state: .failed)
             }
         }
     }
@@ -115,30 +115,16 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 }
 
-// MARK: - ICardListPresenterOutput
+// MARK: - ISavedCardViewPresenterOutput
 
-extension MainFormPresenter: ICardListPresenterOutput {
-    func cardList(didUpdate cards: [PaymentCard]) {
-        self.cards = cards
-        savedCardPresenter.updatePresentationState(for: cards)
-        reloadContent()
-    }
-
-    func cardList(willCloseAfterSelecting card: PaymentCard) {
-        savedCardPresenter.presentationState = .selected(card: card)
-    }
-}
-
-// MARK: - ISavedCardPresenterOutput
-
-extension MainFormPresenter: ISavedCardPresenterOutput {
+extension MainFormPresenter: ISavedCardViewPresenterOutput {
     func savedCardPresenter(
-        _ presenter: SavedCardPresenter,
+        _ presenter: SavedCardViewPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
         router.openCardPaymentList(
             paymentFlow: paymentFlow,
-            cards: cards,
+            cards: dataState.cards ?? [],
             selectedCard: paymentCard,
             cardListOutput: self,
             cardPaymentOutput: self
@@ -146,7 +132,7 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
     }
 
     func savedCardPresenter(
-        _ presenter: SavedCardPresenter,
+        _ presenter: SavedCardViewPresenter,
         didUpdateCVC cvc: String,
         isValid: Bool
     ) {
@@ -183,11 +169,11 @@ extension MainFormPresenter {
 
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
-        switch primaryPaymentMethod {
+        switch dataState.primaryPaymentMethod {
         case .card where savedCardPresenter.presentationState.isSelected:
             startPaymentWithSavedCard()
         case .card, .tinkoffPay, .sbp:
-            routeTo(paymentMethod: primaryPaymentMethod)
+            routeTo(paymentMethod: dataState.primaryPaymentMethod)
         }
     }
 }
@@ -239,6 +225,20 @@ extension MainFormPresenter: PaymentControllerDelegate {
     }
 }
 
+// MARK: - ICardListPresenterOutput
+
+extension MainFormPresenter: ICardListPresenterOutput {
+    func cardList(didUpdate cards: [PaymentCard]) {
+        dataState.cards = cards
+        savedCardPresenter.updatePresentationState(for: cards)
+        reloadContent()
+    }
+
+    func cardList(willCloseAfterSelecting card: PaymentCard) {
+        savedCardPresenter.presentationState = .selected(card: card)
+    }
+}
+
 // MARK: - ICardPaymentPresenterModuleOutput
 
 extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
@@ -278,29 +278,13 @@ extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
 // MARK: - MainFormPresenter + Helpers
 
 extension MainFormPresenter {
-    private func loadCardsIfNeeded(completion: @escaping VoidBlock) {
-        guard let cardsController = cardsController else {
-            return completion()
-        }
-
-        cardsController.getActiveCards { [weak self] result in
-            guard let self = self else { return }
-            defer { completion() }
-
-            guard let cards = try? result.get() else { return }
-
-            self.cards = cards
-            self.savedCardPresenter.updatePresentationState(for: cards)
-        }
-    }
-
     private func activatePayButtonIfNeeded() {
-        guard primaryPaymentMethod == .card else {
+        guard dataState.primaryPaymentMethod == .card else {
             payButtonPresenter.set(enabled: true)
             return
         }
 
-        let isCvcValid = cards.isEmpty ? true : savedCardPresenter.isValid
+        let isCvcValid = dataState.hasCards ? savedCardPresenter.isValid : true
         let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
 
         payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
@@ -309,7 +293,8 @@ extension MainFormPresenter {
     private func startPaymentWithSavedCard() {
         guard let cardId = savedCardPresenter.cardId,
               let cvc = savedCardPresenter.cvc,
-              primaryPaymentMethod == .card, savedCardPresenter.presentationState.isSelected
+              dataState.primaryPaymentMethod == .card,
+              savedCardPresenter.presentationState.isSelected
         else {
             return assertionFailure("Something went wrong in presenter's logic")
         }
@@ -331,11 +316,12 @@ extension MainFormPresenter {
     private func routeTo(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
-            router.openCardPayment(paymentFlow: paymentFlow, cards: cards, output: self, cardListOutput: self)
+            router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case .tinkoffPay:
-            router.openTinkoffPay(paymentFlow: paymentFlow)
+            // TODO: MIC-7902 Реализовать логику оплаты Tinkoff Pay
+            break
         case .sbp:
-            router.openSBP(paymentFlow: paymentFlow, paymentSheetOutput: self)
+            router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, paymentSheetOutput: self)
         }
     }
 }
@@ -344,16 +330,16 @@ extension MainFormPresenter {
 
 extension MainFormPresenter {
     private func reloadContent() {
-        payButtonPresenter.presentationState = .presentationState(from: primaryPaymentMethod)
+        payButtonPresenter.presentationState = .presentationState(from: dataState.primaryPaymentMethod)
         activatePayButtonIfNeeded()
-        cellTypes = createPrimaryPaymentMethodRows() + createOtherPaymentMethodsRows()
+        cellTypes = primaryPaymentMethodRows() + otherPaymentMethodsRows()
         view?.reloadData()
     }
 
-    private func createPrimaryPaymentMethodRows() -> [MainFormCellType] {
+    private func primaryPaymentMethodRows() -> [MainFormCellType] {
         var rows: [MainFormCellType] = [.orderDetails(orderDetailsPresenter)]
 
-        switch primaryPaymentMethod {
+        switch dataState.primaryPaymentMethod {
         case .card where savedCardPresenter.presentationState.isSelected:
             rows.append(.savedCard(savedCardPresenter))
             rows.append(.getReceiptSwitch(getReceiptSwitchPresenter))
@@ -370,18 +356,11 @@ extension MainFormPresenter {
         return rows
     }
 
-    private func createOtherPaymentMethodsRows() -> [MainFormCellType] {
-        let otherPaymentMethods = MainFormPaymentMethod
-            .allCases
-            .filter(availablePaymentMethods.contains)
-            .filter { $0 != primaryPaymentMethod }
-            .sorted(by: <)
-            .map(MainFormCellType.otherPaymentMethod)
+    private func otherPaymentMethodsRows() -> [MainFormCellType] {
+        guard !dataState.otherPaymentMethods.isEmpty else { return [] }
 
-        guard !otherPaymentMethods.isEmpty else { return [] }
         let header: MainFormCellType = .otherPaymentMethodsHeader(otherPaymentMethodsHeaderPresenter)
-
-        return CollectionOfOne(header) + otherPaymentMethods
+        return CollectionOfOne(header) + dataState.otherPaymentMethods.map(MainFormCellType.otherPaymentMethod)
     }
 }
 

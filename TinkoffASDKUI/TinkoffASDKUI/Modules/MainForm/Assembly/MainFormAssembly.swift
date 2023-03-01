@@ -41,11 +41,17 @@ final class MainFormAssembly: IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
-        stub: MainFormStub,
-        moduleCompletion: @escaping PaymentResultCompletion
+        moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = paymentFlow.customerKey.map(cardsControllerAssembly.cardsController(customerKey:))
+
+        let dataStateLoader = MainFormDataStateLoader(
+            terminalService: coreSDK,
+            cardsController: cardsController,
+            sbpBanksService: SBPBanksService(acquiringSdk: coreSDK),
+            sbpBankAppChecker: SBPBankAppChecker(application: UIApplication.shared)
+        )
 
         let router = MainFormRouter(
             configuration: configuration,
@@ -56,11 +62,10 @@ final class MainFormAssembly: IMainFormAssembly {
 
         let presenter = MainFormPresenter(
             router: router,
-            cardsController: cardsController,
+            dataStateLoader: dataStateLoader,
             paymentController: paymentController,
             paymentFlow: paymentFlow,
             configuration: configuration,
-            stub: stub,
             moduleCompletion: moduleCompletion
         )
 
