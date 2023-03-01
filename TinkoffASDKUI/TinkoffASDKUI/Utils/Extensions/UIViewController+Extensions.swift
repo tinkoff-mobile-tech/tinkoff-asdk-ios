@@ -24,6 +24,17 @@ extension UIViewController {
         navigationController?.viewControllers.first === self
     }
 
+    func popOrDismiss(animated: Bool = true, completion: VoidBlock? = nil) {
+        if let navigationController = navigationController, !isFirstInNavigationStack {
+            CATransaction.begin()
+            CATransaction.setCompletionBlock(completion)
+            navigationController.popViewController(animated: animated)
+            CATransaction.commit()
+        } else {
+            dismiss(animated: animated, completion: completion)
+        }
+    }
+
     var topPresentedViewControllerOrSelfIfNotPresenting: UIViewController {
         if let presentedViewController = presentedViewController {
             return presentedViewController.topPresentedViewControllerOrSelfIfNotPresenting

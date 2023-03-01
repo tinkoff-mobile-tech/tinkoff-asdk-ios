@@ -17,7 +17,7 @@ protocol ICardListViewInput: AnyObject {
     func hideShimmer(fetchCardsResult: Result<[PaymentCard], Error>)
     func showStub(mode: StubMode)
     func hideStub()
-    func dismiss()
+    func closeScreen()
     func showDoneEditingButton()
     func showEditButton()
     func hideRightBarButton()
@@ -25,5 +25,4 @@ protocol ICardListViewInput: AnyObject {
     func showRemovingCardSnackBar(text: String?)
     func hideLoadingSnackbar()
     func showAddedCardSnackbar(cardMaskedPan: String)
-    func closeScreen()
 }

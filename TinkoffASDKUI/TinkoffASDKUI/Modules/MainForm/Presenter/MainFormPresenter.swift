@@ -316,7 +316,7 @@ extension MainFormPresenter {
     private func routeTo(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
-            router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self)
+            router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case .tinkoffPay:
             // TODO: MIC-7902 Реализовать логику оплаты Tinkoff Pay
             break

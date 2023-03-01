@@ -15,6 +15,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
     private weak var output: ICardPaymentPresenterModuleOutput?
+    private weak var cardListOutput: ICardListPresenterOutput?
 
     private let cardsController: ICardsController?
     private let paymentController: IPaymentController
@@ -30,10 +31,16 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     private var isCardFieldValid = false
 
-    private var initialActiveCards: [PaymentCard]?
+    private var initialActiveCards: [PaymentCard]? {
+        didSet {
+            guard initialActiveCards != oldValue, let cards = initialActiveCards else { return }
+            cardListOutput?.cardList(didUpdate: cards)
+        }
+    }
+
     private var activeCards: [PaymentCard] { initialActiveCards ?? [] }
     private let paymentFlow: PaymentFlow
-    private let amount: Int
+    private let amount: Int64
     private let customerEmail: String
 
     // MARK: Initialization
@@ -41,21 +48,22 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
+        cardListOutput: ICardListPresenterOutput?,
         cardsController: ICardsController?,
         paymentController: IPaymentController,
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
-        amount: Int
+        amount: Int64
     ) {
         self.router = router
         self.output = output
+        self.cardListOutput = cardListOutput
         self.cardsController = cardsController
         self.paymentController = paymentController
-        initialActiveCards = Int.random(in: 0 ... 100) % 2 == 0 ? nil : []
+        initialActiveCards = activeCards
         self.paymentFlow = paymentFlow
         self.amount = amount
-
-        customerEmail = Int.random(in: 0 ... 100) % 2 == 0 ? paymentFlow.customerOptions?.email ?? "" : ""
+        customerEmail = paymentFlow.customerOptions?.email ?? ""
     }
 }
 
@@ -113,7 +121,14 @@ extension CardPaymentPresenter: IEmailViewPresenterOutput {
 
 extension CardPaymentPresenter: ISavedCardViewPresenterOutput {
     func savedCardPresenter(_ presenter: SavedCardViewPresenter, didRequestReplacementFor paymentCard: PaymentCard) {
-        // логика открытия экрана со спиком карт
+        router.openCardPaymentList(
+            paymentFlow: paymentFlow,
+            amount: amount,
+            cards: activeCards,
+            selectedCard: paymentCard,
+            cardListOutput: self,
+            cardPaymentOutput: output
+        )
     }
 
     func savedCardPresenter(_ presenter: SavedCardViewPresenter, didUpdateCVC cvc: String, isValid: Bool) {
@@ -130,6 +145,22 @@ extension CardPaymentPresenter: IPayButtonViewPresenterOutput {
         payButtonPresenter.startLoading()
 
         startPaymentProcess()
+    }
+}
+
+// MARK: - ICardListPresenterOutput
+
+extension CardPaymentPresenter: ICardListPresenterOutput {
+    func cardList(didUpdate cards: [PaymentCard]) {
+        initialActiveCards = cards
+        savedCardPresenter?.updatePresentationState(for: cards)
+        setupInitialStateScreen()
+        activatePayButtonIfNeeded()
+    }
+
+    func cardList(willCloseAfterSelecting card: PaymentCard) {
+        savedCardPresenter?.presentationState = .selected(card: card)
+        activatePayButtonIfNeeded()
     }
 }
 
@@ -255,12 +286,13 @@ extension CardPaymentPresenter {
     }
 
     private func createPayButtonViewPresenter() -> PayButtonViewPresenter {
-        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: amount), output: self)
+        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: Int(amount)), output: self)
         presenter.set(enabled: false)
         return presenter
     }
 
     private func setupCellTypes() {
+        cellTypes = []
         activeCards.isEmpty ? cellTypes.append(.cardField(cardFieldPresenter)) : cellTypes.append(.savedCard(savedCardPresenter))
 
         if customerEmail.isEmpty {

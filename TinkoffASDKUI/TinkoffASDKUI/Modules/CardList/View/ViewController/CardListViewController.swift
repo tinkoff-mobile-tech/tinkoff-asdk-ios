@@ -69,16 +69,18 @@ final class CardListViewController: UIViewController {
     // MARK: Initial Configuration
 
     private func setupNavigationItem() {
-        title = configuration.navigationTitle
+        navigationItem.title = configuration.navigationTitle
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.backButtonTitle = ""
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: Loc.TinkoffAcquiring.Button.close,
-            style: .plain,
-            target: self,
-            action: #selector(closeButtonTapped)
-        )
+        if isFirstInNavigationStack {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: Loc.TinkoffAcquiring.Button.close,
+                style: .plain,
+                target: self,
+                action: #selector(closeButtonTapped)
+            )
+        }
     }
 
     private func buildEditBarButton() -> UIBarButtonItem {
@@ -158,8 +160,8 @@ extension CardListViewController: ICardListViewInput {
         cardListView.hideStubView()
     }
 
-    func dismiss() {
-        dismiss(animated: true)
+    func closeScreen() {
+        popOrDismiss()
     }
 
     func showDoneEditingButton() {
@@ -220,10 +222,6 @@ extension CardListViewController: ICardListViewInput {
             didShowCompletion: nil,
             didHideCompletion: nil
         )
-    }
-
-    func closeScreen() {
-        closeButtonTapped()
     }
 }
 

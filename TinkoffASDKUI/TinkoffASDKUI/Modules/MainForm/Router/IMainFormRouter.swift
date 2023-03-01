@@ -20,7 +20,8 @@ protocol IMainFormRouter {
     func openCardPayment(
         paymentFlow: PaymentFlow,
         cards: [PaymentCard]?,
-        output: ICardPaymentPresenterModuleOutput?
+        output: ICardPaymentPresenterModuleOutput?,
+        cardListOutput: ICardListPresenterOutput?
     )
 
     func openSBP(
