@@ -8,10 +8,16 @@
 import Foundation
 import TinkoffASDKCore
 
+/// Состояние данных главной платежной формы
 struct MainFormDataState {
+    /// Приоритетный метод оплаты, отображаемый в верхней части формы
     let primaryPaymentMethod: MainFormPaymentMethod
+    /// Альтернативные способы оплаты, отображаемые в нижней части формы
     let otherPaymentMethods: [MainFormPaymentMethod]
+    /// Карты, которые получили на этапе определения методов оплаты или после открытия оплаты по карте
+    /// Также список будет изменяться при удалении карты пользователем
     var cards: [PaymentCard]?
+    /// Список банков СБП, которые получили на этапе определения методов оплаты или после открытия оплаты по СБП
     var sbpBanks: (allBanks: [SBPBank], preferredBanks: [SBPBank])?
 }
 
