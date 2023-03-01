@@ -13,7 +13,7 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
-    private let cardsController: ICardsController?
+    private let dataStateLoader: IMainFormDataStateLoader
     private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
@@ -51,14 +51,14 @@ final class MainFormPresenter {
 
     init(
         router: IMainFormRouter,
-        cardsController: ICardsController?,
+        dataStateLoader: IMainFormDataStateLoader,
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
-        self.cardsController = cardsController
+        self.dataStateLoader = dataStateLoader
         self.paymentController = paymentController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
@@ -72,13 +72,18 @@ extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
         view?.showCommonSheet(state: .processing)
 
-        loadCardsIfNeeded { [weak self] in
+        dataStateLoader.loadState(for: paymentFlow) { [weak self] result in
             guard let self = self else { return }
 
-            // Временно
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.view?.hideCommonSheet()
+            switch result {
+            case let .success(dataState):
+                self.dataState = dataState
+                self.savedCardPresenter.updatePresentationState(for: dataState.cards ?? [])
                 self.reloadContent()
+                self.view?.hideCommonSheet()
+            case let .failure(error):
+                self.moduleResult = .failed(error)
+                self.view?.showCommonSheet(state: .failed)
             }
         }
     }
@@ -273,22 +278,6 @@ extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
 // MARK: - MainFormPresenter + Helpers
 
 extension MainFormPresenter {
-    private func loadCardsIfNeeded(completion: @escaping VoidBlock) {
-        guard let cardsController = cardsController else {
-            return completion()
-        }
-
-        cardsController.getActiveCards { [weak self] result in
-            guard let self = self else { return }
-            defer { completion() }
-
-            guard let cards = try? result.get() else { return }
-
-            self.dataState.cards = cards
-            self.savedCardPresenter.updatePresentationState(for: cards)
-        }
-    }
-
     private func activatePayButtonIfNeeded() {
         guard dataState.primaryPaymentMethod == .card else {
             payButtonPresenter.set(enabled: true)
