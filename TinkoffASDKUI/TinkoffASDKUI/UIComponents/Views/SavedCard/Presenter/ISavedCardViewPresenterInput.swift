@@ -1,5 +1,5 @@
 //
-//  ISavedCardPresenterInput.swift
+//  ISavedCardViewPresenterInput.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 26.01.2023.
@@ -8,14 +8,14 @@
 import Foundation
 import TinkoffASDKCore
 
-protocol ISavedCardPresenterInput: AnyObject {
+protocol ISavedCardViewPresenterInput: AnyObject {
     var presentationState: SavedCardPresentationState { get set }
     var isValid: Bool { get }
     var cardId: String? { get }
     var cvc: String? { get }
 }
 
-extension ISavedCardPresenterInput {
+extension ISavedCardViewPresenterInput {
     /// Обновляет состояние на основе полученного или измененного списка карта
     func updatePresentationState(for cards: [PaymentCard]) {
         guard let firstCard = cards.first else {

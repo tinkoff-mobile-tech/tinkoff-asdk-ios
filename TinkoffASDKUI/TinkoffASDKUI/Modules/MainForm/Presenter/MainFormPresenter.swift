@@ -26,7 +26,7 @@ final class MainFormPresenter {
         orderDescription: configuration.orderDescription
     )
 
-    private lazy var savedCardPresenter = SavedCardPresenter(output: self)
+    private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
 
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
         title: "Получить квитанцию",
@@ -129,11 +129,11 @@ extension MainFormPresenter: ICardListPresenterOutput {
     }
 }
 
-// MARK: - ISavedCardPresenterOutput
+// MARK: - ISavedCardViewPresenterOutput
 
-extension MainFormPresenter: ISavedCardPresenterOutput {
+extension MainFormPresenter: ISavedCardViewPresenterOutput {
     func savedCardPresenter(
-        _ presenter: SavedCardPresenter,
+        _ presenter: SavedCardViewPresenter,
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
         router.openCardPaymentList(
@@ -146,7 +146,7 @@ extension MainFormPresenter: ISavedCardPresenterOutput {
     }
 
     func savedCardPresenter(
-        _ presenter: SavedCardPresenter,
+        _ presenter: SavedCardViewPresenter,
         didUpdateCVC cvc: String,
         isValid: Bool
     ) {
