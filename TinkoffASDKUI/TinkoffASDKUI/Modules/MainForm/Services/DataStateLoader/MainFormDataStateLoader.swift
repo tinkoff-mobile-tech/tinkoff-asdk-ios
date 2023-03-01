@@ -13,7 +13,7 @@ final class MainFormDataStateLoader {
 
     private typealias NextMethod = () -> MainFormPaymentMethod?
     private typealias ReceiveCards = (_ cards: [PaymentCard]) -> Void
-    private typealias ReceiveSBPBanks = (_ allBanks: [SBPBank], _ preferredBanks: [SBPBank]) -> Void
+    private typealias ReceiveSBPBanks = (_ allBanks: [SBPBank]) -> Void
     private typealias CanBecomeCompletion = (_ canBecomePrimaryMethod: Bool) -> Void
     private typealias PrimaryMethodCompletion = (_ primaryMethod: MainFormPaymentMethod) -> Void
 
@@ -77,11 +77,11 @@ extension MainFormDataStateLoader {
 
         var methodsIterator = availableMethods.makeIterator()
         var receivedCards: [PaymentCard]?
-        var receivedSBPBanks: (allBanks: [SBPBank], preferredBanks: [SBPBank])?
+        var receivedSBPBanks: [SBPBank]?
 
         let nextMethod: NextMethod = { methodsIterator.next() }
         let receiveCards: ReceiveCards = { receivedCards = $0 }
-        let receiveSBPBanks: ReceiveSBPBanks = { receivedSBPBanks = ($0, $1) }
+        let receiveSBPBanks: ReceiveSBPBanks = { receivedSBPBanks = $0 }
 
         let primaryMethodCompletion: PrimaryMethodCompletion = { primaryMethod in
             let state = MainFormDataState(
@@ -185,7 +185,7 @@ extension MainFormDataStateLoader {
                 switch result {
                 case let .success(allBanks):
                     let preferredBanks = self.sbpBankAppChecker.bankAppsPreferredByMerchant(from: allBanks)
-                    receiveSBPBanks(allBanks, preferredBanks)
+                    receiveSBPBanks(allBanks)
                     completion(!preferredBanks.isEmpty)
                 case .failure:
                     completion(false)

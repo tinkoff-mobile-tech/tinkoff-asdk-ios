@@ -18,7 +18,7 @@ struct MainFormDataState {
     /// Также список будет изменяться при удалении карты пользователем
     var cards: [PaymentCard]?
     /// Список банков СБП, которые получили на этапе определения методов оплаты или после открытия оплаты по СБП
-    var sbpBanks: (allBanks: [SBPBank], preferredBanks: [SBPBank])?
+    var sbpBanks: [SBPBank]?
 }
 
 extension MainFormDataState {
