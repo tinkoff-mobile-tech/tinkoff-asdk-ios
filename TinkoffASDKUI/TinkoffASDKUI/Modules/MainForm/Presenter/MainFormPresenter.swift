@@ -115,20 +115,6 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 }
 
-// MARK: - ICardListPresenterOutput
-
-extension MainFormPresenter: ICardListPresenterOutput {
-    func cardList(didUpdate cards: [PaymentCard]) {
-        dataState.cards = cards
-        savedCardPresenter.updatePresentationState(for: cards)
-        reloadContent()
-    }
-
-    func cardList(willCloseAfterSelecting card: PaymentCard) {
-        savedCardPresenter.presentationState = .selected(card: card)
-    }
-}
-
 // MARK: - ISavedCardViewPresenterOutput
 
 extension MainFormPresenter: ISavedCardViewPresenterOutput {
@@ -239,6 +225,20 @@ extension MainFormPresenter: PaymentControllerDelegate {
     }
 }
 
+// MARK: - ICardListPresenterOutput
+
+extension MainFormPresenter: ICardListPresenterOutput {
+    func cardList(didUpdate cards: [PaymentCard]) {
+        dataState.cards = cards
+        savedCardPresenter.updatePresentationState(for: cards)
+        reloadContent()
+    }
+
+    func cardList(willCloseAfterSelecting card: PaymentCard) {
+        savedCardPresenter.presentationState = .selected(card: card)
+    }
+}
+
 // MARK: - ICardPaymentPresenterModuleOutput
 
 extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
@@ -331,11 +331,11 @@ extension MainFormPresenter {
     private func reloadContent() {
         payButtonPresenter.presentationState = .presentationState(from: dataState.primaryPaymentMethod)
         activatePayButtonIfNeeded()
-        cellTypes = createPrimaryPaymentMethodRows() + createOtherPaymentMethodsRows()
+        cellTypes = primaryPaymentMethodRows() + otherPaymentMethodsRows()
         view?.reloadData()
     }
 
-    private func createPrimaryPaymentMethodRows() -> [MainFormCellType] {
+    private func primaryPaymentMethodRows() -> [MainFormCellType] {
         var rows: [MainFormCellType] = [.orderDetails(orderDetailsPresenter)]
 
         switch dataState.primaryPaymentMethod {
@@ -355,7 +355,7 @@ extension MainFormPresenter {
         return rows
     }
 
-    private func createOtherPaymentMethodsRows() -> [MainFormCellType] {
+    private func otherPaymentMethodsRows() -> [MainFormCellType] {
         guard !dataState.otherPaymentMethods.isEmpty else { return [] }
 
         let header: MainFormCellType = .otherPaymentMethodsHeader(otherPaymentMethodsHeaderPresenter)
