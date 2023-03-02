@@ -78,12 +78,15 @@ final class MainFormRouter: IMainFormRouter {
     func openSBP(
         paymentFlow: PaymentFlow,
         banks: [SBPBank]?,
+        output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) {
         let sbpModule = sbpBanksAssembly.buildInitialModule(
             paymentFlow: paymentFlow,
+            output: output,
             paymentSheetOutput: paymentSheetOutput
         )
+        sbpModule.input.set(banks: banks)
 
         let navVC = UINavigationController.withASDKBar(rootViewController: sbpModule.view)
         transitionHandler?.present(navVC, animated: true)

@@ -10,7 +10,8 @@ import TinkoffASDKCore
 
 private enum SBPBanksScreenType {
     case startEmpty
-    case startWithData
+    case startWithBanks
+    case startWithFullData
 }
 
 final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
@@ -18,6 +19,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     // Dependencies
     weak var view: ISBPBanksViewController?
     private let router: ISBPBanksRouter
+    private weak var output: ISBPBanksModuleOutput?
 
     private var moduleCompletion: PaymentResultCompletion?
     private weak var paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
@@ -45,6 +47,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
 
     init(
         router: ISBPBanksRouter,
+        output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
         moduleCompletion: PaymentResultCompletion?,
         paymentService: ISBPPaymentService?,
@@ -55,6 +58,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         dispatchGroup: DispatchGroup
     ) {
         self.router = router
+        self.output = output
         self.paymentSheetOutput = paymentSheetOutput
         self.moduleCompletion = moduleCompletion
         self.paymentService = paymentService
@@ -69,10 +73,17 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
 // MARK: - ISBPBanksModuleInput
 
 extension SBPBanksPresenter {
+    func set(banks: [SBPBank]?) {
+        if let banks = banks {
+            allBanks = banks
+            screenType = .startWithBanks
+        }
+    }
+
     func set(qrPayload: GetQRPayload?, banks: [SBPBank]) {
         self.qrPayload = qrPayload
         allBanks = banks
-        screenType = .startWithData
+        screenType = .startWithFullData
     }
 }
 
@@ -86,7 +97,12 @@ extension SBPBanksPresenter {
             prepareAndShowSkeletonModels()
             loadQrPayloadAndBanks()
             view?.setupNavigationWithCloseButton()
-        case .startWithData:
+        case .startWithBanks:
+            view?.hideSearchBar()
+            prepareAndShowSkeletonModels()
+            loadQrPayloadWhenBanksPreloaded()
+            view?.setupNavigationWithCloseButton()
+        case .startWithFullData:
             setupScreen(with: allBanks)
             view?.setupNavigationWithBackButton()
         }
@@ -169,6 +185,7 @@ extension SBPBanksPresenter {
             case let (.success(banks), .success(qrPayload)):
                 self.qrPayload = qrPayload
                 self.handleSuccessLoaded(banks: banks)
+                self.output?.didLoaded(sbpBanks: banks)
             case let (.failure(error), _), let (_, .failure(error)):
                 self.handleFailureLoad(error: error)
             default:
@@ -186,6 +203,22 @@ extension SBPBanksPresenter {
         paymentService?.loadPaymentQr(completion: { [weak self] result in
             self?.tempQrPayloadResult = result
             self?.dispatchGroup.leave()
+        })
+    }
+
+    private func loadQrPayloadWhenBanksPreloaded() {
+        paymentService?.loadPaymentQr(completion: { [weak self] result in
+            guard let self = self else { return }
+
+            DispatchQueue.main.async {
+                switch result {
+                case let .success(qrPayload):
+                    self.qrPayload = qrPayload
+                    self.handleSuccessLoaded(banks: self.allBanks)
+                case let .failure(error):
+                    self.handleFailureLoad(error: error)
+                }
+            }
         })
     }
 

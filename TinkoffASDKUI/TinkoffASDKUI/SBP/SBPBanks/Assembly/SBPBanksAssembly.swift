@@ -29,7 +29,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
     // MARK: - ISBPBanksAssembly
 
     func buildPreparedModule(paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) -> SBPBanksModule {
-        build(paymentService: nil, paymentSheetOutput: paymentSheetOutput, completion: nil)
+        build(paymentService: nil, output: nil, paymentSheetOutput: paymentSheetOutput, completion: nil)
     }
 
     func buildInitialModule(
@@ -41,18 +41,19 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
             paymentFlow: paymentFlow
         )
 
-        return build(paymentService: paymentService, paymentSheetOutput: nil, completion: completion)
+        return build(paymentService: paymentService, output: nil, paymentSheetOutput: nil, completion: completion)
     }
 
     func buildInitialModule(
         paymentFlow: PaymentFlow,
+        output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) -> SBPBanksModule {
         let paymentService = SBPPaymentService(
             acquiringSdk: acquiringSdk,
             paymentFlow: paymentFlow
         )
-        return build(paymentService: paymentService, paymentSheetOutput: paymentSheetOutput, completion: nil)
+        return build(paymentService: paymentService, output: output, paymentSheetOutput: paymentSheetOutput, completion: nil)
     }
 }
 
@@ -61,6 +62,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 extension SBPBanksAssembly {
     private func build(
         paymentService: SBPPaymentService?,
+        output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?,
         completion: PaymentResultCompletion?
     ) -> SBPBanksModule {
@@ -80,6 +82,7 @@ extension SBPBanksAssembly {
 
         let presenter = SBPBanksPresenter(
             router: router,
+            output: output,
             paymentSheetOutput: paymentSheetOutput,
             moduleCompletion: completion,
             paymentService: paymentService,

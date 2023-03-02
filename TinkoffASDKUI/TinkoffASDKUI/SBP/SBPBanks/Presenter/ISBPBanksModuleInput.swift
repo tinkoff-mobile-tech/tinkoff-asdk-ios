@@ -8,5 +8,6 @@
 import TinkoffASDKCore
 
 protocol ISBPBanksModuleInput {
+    func set(banks: [SBPBank]?)
     func set(qrPayload: GetQRPayload?, banks: [SBPBank])
 }
