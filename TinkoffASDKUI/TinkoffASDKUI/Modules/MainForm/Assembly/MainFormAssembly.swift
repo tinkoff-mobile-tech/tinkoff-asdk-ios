@@ -46,11 +46,13 @@ final class MainFormAssembly: IMainFormAssembly {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = paymentFlow.customerKey.map(cardsControllerAssembly.cardsController(customerKey:))
 
+        let appChecker = AppChecker()
+
         let dataStateLoader = MainFormDataStateLoader(
             terminalService: coreSDK,
             cardsController: cardsController,
             sbpBanksService: SBPBanksService(acquiringSdk: coreSDK),
-            sbpBankAppChecker: SBPBankAppChecker(application: UIApplication.shared)
+            sbpBankAppChecker: SBPBankAppChecker(appChecker: appChecker)
         )
 
         let router = MainFormRouter(
