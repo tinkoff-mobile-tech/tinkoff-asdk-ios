@@ -52,7 +52,8 @@ final class MainFormAssembly: IMainFormAssembly {
             terminalService: coreSDK,
             cardsController: cardsController,
             sbpBanksService: SBPBanksService(acquiringSdk: coreSDK),
-            sbpBankAppChecker: SBPBankAppChecker(appChecker: appChecker)
+            sbpBankAppChecker: SBPBankAppChecker(appChecker: appChecker),
+            tinkoffPayAppChecker: TinkoffPayAppChecker(appChecker: appChecker)
         )
 
         let router = MainFormRouter(
