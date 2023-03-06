@@ -75,14 +75,7 @@ final class PaymentCardRemovableView: UIView {
         buttonContainer.configure(
             with: ViewContainer.Configuration(
                 content: acessoryRightButton,
-                layoutStrategy: .custom { view in
-                    view.makeConstraints { view in
-                        [
-                            view.centerYAnchor.constraint(equalTo: view.forcedSuperview.centerYAnchor),
-                            view.rightAnchor.constraint(equalTo: view.forcedSuperview.rightAnchor),
-                        ]
-                    }
-                }
+                layoutStrategy: .custom { $0.makeEqualToSuperview() }
             )
         )
 
@@ -214,12 +207,11 @@ extension PaymentCardRemovableView: Reusable {
 // MARK: - Constants
 
 private extension CGFloat {
-    static let removeButtonWidth: CGFloat = 48
     static let normalInset: CGFloat = 16
     static let cardViewTopInset: CGFloat = 7
-    static let accessoryContainerWidth: CGFloat = 32
+    static let accessoryContainerWidth: CGFloat = 48
 }
 
 extension PaymentCardRemovableView {
-    static var contentInsets: UIEdgeInsets { UIEdgeInsets(vertical: 8, horizontal: 16) }
+    static var contentInsets: UIEdgeInsets { UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 0) }
 }

@@ -299,7 +299,4 @@ extension CardListView: UICollectionViewDelegateFlowLayout {
 
 private extension CGFloat {
     static let itemHeight: CGFloat = 56
-    static let buttonBottomInset: CGFloat = 40
-    static let buttonHorizontalInsets: CGFloat = 16
-    static let contentAdditionalSpaceFromButton: CGFloat = 16
 }
