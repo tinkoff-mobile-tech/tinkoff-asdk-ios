@@ -11,8 +11,8 @@ import UIKit
 protocol IRecurrentPaymentAssembly {
     func build(
         paymentFlow: PaymentFlow,
-        paymentSource: PaymentSourceData,
-        configuration: MainFormUIConfiguration,
+        amount: Int64,
+        rebuilId: String,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController
 }

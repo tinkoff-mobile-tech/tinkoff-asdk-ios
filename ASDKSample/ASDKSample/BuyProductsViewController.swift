@@ -324,16 +324,34 @@ class BuyProductsViewController: UIViewController {
     }
 
     func charge(_ complete: @escaping (() -> Void)) {
-        if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
-            uiSDK.presentPaymentView(
-                on: self,
-                paymentData: createPaymentData(),
-                parentPatmentId: parentPaymentId,
-                configuration: acquiringViewConfiguration()
-            ) { [weak self] response in
-                complete()
-                self?.responseReviewing(response)
-            }
+//        if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
+//            uiSDK.presentPaymentView(
+//                on: self,
+//                paymentData: createPaymentData(),
+//                parentPatmentId: parentPaymentId,
+//                configuration: acquiringViewConfiguration()
+//            ) { [weak self] response in
+//                complete()
+//                self?.responseReviewing(response)
+//            }
+//        }
+
+        let rebuilId = String(paymentCardParentPaymentId?.parentPaymentId ?? 2_423_424)
+        let failedRebuilId = "1333111"
+        let randomRebuilId = Int.random(in: 0 ... 1) == 0 ? rebuilId : failedRebuilId
+
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+        let amount = paymentOptions.orderOptions.amount
+
+        uiSDK.presentRecurrentPayment(
+            on: self,
+            paymentFlow: paymentFlow,
+            amount: amount,
+            rebuilId: randomRebuilId
+        ) { [weak self] result in
+            complete()
+            self?.showAlert(with: result)
         }
     }
 
@@ -500,11 +518,8 @@ extension BuyProductsViewController: UITableViewDataSource {
                     cell.button.setTitle(Loc.Button.paymentTryAgain, for: .normal)
                     cell.button.backgroundColor = yellowButtonColor()
                     cell.button.setImage(nil, for: .normal)
-                    if let card = paymentCardParentPaymentId {
-                        cell.button.isEnabled = (card.parentPaymentId != nil)
-                    } else {
-                        cell.button.isEnabled = false
-                    }
+
+                    cell.button.isEnabled = true
 
                     cell.onButtonTouch = { [weak self, weak cell] in
                         cell?.activityIndicator.startAnimating()

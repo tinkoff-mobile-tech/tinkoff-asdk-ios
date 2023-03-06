@@ -6,7 +6,7 @@
 //
 
 final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentViewInput, PullableContainerContent {
-    
+
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
@@ -19,22 +19,22 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
             return commonSheetView.estimatedHeight
         }
     }
-    
+
     // MARK: Dependencies
 
     private let presenter: IRecurrentPaymentViewOutput
     private let keyboardService = KeyboardService()
-    
+
     // MARK: Properties
-    
+
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var commonSheetView = CommonSheetView(delegate: self)
-    
+
     // MARK: State
 
     private var tableViewContentSizeObservation: NSKeyValueObservation?
     private var keyboardVisible = false
-    
+
     // MARK: Initialization
 
     init(presenter: IRecurrentPaymentViewOutput) {
@@ -46,7 +46,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: Overrides
 
     override func viewDidLoad() {
@@ -55,7 +55,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
         setupTableView()
         setupTableContentSizeObservation()
         setupKeyboardObserving()
-        
+
         presenter.viewDidLoad()
     }
 }
@@ -77,7 +77,7 @@ extension RecurrentPaymentViewController {
     func reloadData() {
         tableView.reloadData()
     }
-    
+
     func closeView() {
         dismiss(animated: true, completion: presenter.viewWasClosed)
     }
@@ -138,7 +138,7 @@ extension RecurrentPaymentViewController {
         view.addSubview(commonSheetView)
         commonSheetView.pinEdgesToSuperview()
     }
-    
+
     private func setupTableView() {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
@@ -148,7 +148,7 @@ extension RecurrentPaymentViewController {
 
         tableView.register(SavedCardTableCell.self, PayButtonTableCell.self)
     }
-    
+
     private func setupTableContentSizeObservation() {
         tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
             guard let self = self, change.oldValue != change.newValue else { return }

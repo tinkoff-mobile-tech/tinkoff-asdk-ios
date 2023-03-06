@@ -9,7 +9,7 @@ import TinkoffASDKCore
 import UIKit
 
 final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
-    
+
     // MARK: Dependencies
 
     private let acquiringSdk: AcquiringSdk
@@ -29,16 +29,16 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
 
     func build(
         paymentFlow: PaymentFlow,
-        paymentSource: PaymentSourceData,
-        configuration: MainFormUIConfiguration,
+        amount: Int64,
+        rebuilId: String,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
-        
+
         let presenter = RecurrentPaymentPresenter(
             paymentController: paymentController,
             paymentFlow: paymentFlow,
-            paymentSource: paymentSource,
+            rebuilId: rebuilId,
             moduleCompletion: moduleCompletion
         )
 

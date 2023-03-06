@@ -8,18 +8,18 @@
 import TinkoffASDKCore
 
 final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
-    
+
     // MARK: Dependencies
-    
+
     weak var view: IRecurrentPaymentViewInput?
-    
+
     private let paymentController: IPaymentController
     private let paymentFlow: PaymentFlow
-    private let paymentSource: PaymentSourceData
+    private let rebuilId: String
     private var moduleCompletion: PaymentResultCompletion?
-    
+
     // MARK: Child Presenters
-    
+
     private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
     private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
 
@@ -27,18 +27,18 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     private var cellTypes: [RecurrentPaymentCellType] = []
     private var moduleResult: PaymentResult = .cancelled()
-    
+
     // MARK: Initialization
 
     init(
         paymentController: IPaymentController,
         paymentFlow: PaymentFlow,
-        paymentSource: PaymentSourceData,
+        rebuilId: String,
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.paymentController = paymentController
         self.paymentFlow = paymentFlow
-        self.paymentSource = paymentSource
+        self.rebuilId = rebuilId
         self.moduleCompletion = moduleCompletion
     }
 }
@@ -48,7 +48,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 extension RecurrentPaymentPresenter {
     func viewDidLoad() {
         view?.showCommonSheet(state: .processing)
-        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: paymentSource)
+        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .parentPayment(rebuidId: rebuilId))
     }
 
     func viewWasClosed() {
@@ -63,7 +63,7 @@ extension RecurrentPaymentPresenter {
     func cellType(at indexPath: IndexPath) -> RecurrentPaymentCellType {
         cellTypes[indexPath.row]
     }
-    
+
     func commonSheetViewDidTapPrimaryButton() {
         view?.closeView()
     }
@@ -132,8 +132,12 @@ extension RecurrentPaymentPresenter {
     }
 
     private func startPaymentWithSavedCard() {
+        guard let cardId = savedCardPresenter.cardId, let cvc = savedCardPresenter.cvc else {
+            return
+        }
+
         payButtonPresenter.startLoading()
-        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: paymentSource)
+        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .savedCard(cardId: cardId, cvv: cvc))
     }
 }
 
