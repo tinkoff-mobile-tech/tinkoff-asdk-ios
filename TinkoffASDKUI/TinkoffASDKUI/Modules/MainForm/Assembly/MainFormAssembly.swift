@@ -56,6 +56,13 @@ final class MainFormAssembly: IMainFormAssembly {
             tinkoffPayAppChecker: TinkoffPayAppChecker(appChecker: appChecker)
         )
 
+        let tinkoffPayController = TinkoffPayController(
+            paymentService: coreSDK,
+            tinkoffPayService: coreSDK,
+            applicationOpener: UIApplication.shared,
+            paymentStatusService: PaymentStatusService(acquiringSdk: coreSDK)
+        )
+
         let router = MainFormRouter(
             configuration: configuration,
             cardListAssembly: cardListAssembly,
@@ -67,6 +74,7 @@ final class MainFormAssembly: IMainFormAssembly {
             router: router,
             dataStateLoader: dataStateLoader,
             paymentController: paymentController,
+            tinkoffPayController: tinkoffPayController,
             paymentFlow: paymentFlow,
             configuration: configuration,
             moduleCompletion: moduleCompletion
@@ -79,6 +87,7 @@ final class MainFormAssembly: IMainFormAssembly {
 
         paymentController.delegate = presenter
         paymentController.webFlowDelegate = view
+        tinkoffPayController.delegate = presenter
 
         let pullableContainerViewController = PullableContainerViewController(content: view)
         return pullableContainerViewController

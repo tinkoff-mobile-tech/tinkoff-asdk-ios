@@ -15,6 +15,7 @@ final class MainFormPresenter {
     private let router: IMainFormRouter
     private let dataStateLoader: IMainFormDataStateLoader
     private let paymentController: IPaymentController
+    private let tinkoffPayController: ITinkoffPayController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
     private var moduleCompletion: PaymentResultCompletion?
@@ -53,6 +54,7 @@ final class MainFormPresenter {
         router: IMainFormRouter,
         dataStateLoader: IMainFormDataStateLoader,
         paymentController: IPaymentController,
+        tinkoffPayController: ITinkoffPayController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
         moduleCompletion: PaymentResultCompletion?
@@ -60,6 +62,7 @@ final class MainFormPresenter {
         self.router = router
         self.dataStateLoader = dataStateLoader
         self.paymentController = paymentController
+        self.tinkoffPayController = tinkoffPayController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
         self.moduleCompletion = moduleCompletion
@@ -104,7 +107,7 @@ extension MainFormPresenter: IMainFormPresenter {
     func didSelectRow(at indexPath: IndexPath) {
         switch cellType(at: indexPath) {
         case let .otherPaymentMethod(paymentMethod):
-            routeTo(paymentMethod: paymentMethod)
+            startPayment(paymentMethod: paymentMethod)
         default:
             break
         }
@@ -173,7 +176,7 @@ extension MainFormPresenter: IPayButtonViewPresenterOutput {
         case .card where savedCardPresenter.presentationState.isSelected:
             startPaymentWithSavedCard()
         case .card, .tinkoffPay, .sbp:
-            routeTo(paymentMethod: dataState.primaryPaymentMethod)
+            startPayment(paymentMethod: dataState.primaryPaymentMethod)
         }
     }
 }
@@ -223,6 +226,20 @@ extension MainFormPresenter: PaymentControllerDelegate {
         moduleResult = .cancelled()
         view?.closeView()
     }
+}
+
+// MARK: - TinkoffPayControllerDelegate
+
+extension MainFormPresenter: TinkoffPayControllerDelegate {
+    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, didReceive payload: GetPaymentStatePayload) {}
+
+    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, failedWith error: Error) {}
+
+    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, succededWith payload: GetPaymentStatePayload) {}
+
+    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, failedToOpenBankAppWith error: Error) {}
+
+    func tinkoffPayControllerOpenedBankApp(_ tinkoffPayController: ITinkoffPayController) {}
 }
 
 // MARK: - ICardListPresenterOutput
@@ -321,13 +338,12 @@ extension MainFormPresenter {
 // MARK: - MainFormPresenter + Routing
 
 extension MainFormPresenter {
-    private func routeTo(paymentMethod: MainFormPaymentMethod) {
+    private func startPayment(paymentMethod: MainFormPaymentMethod) {
         switch paymentMethod {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
-        case .tinkoffPay:
-            // TODO: MIC-7902 Реализовать логику оплаты Tinkoff Pay
-            break
+        case let .tinkoffPay(version):
+            tinkoffPayController.performPayment(paymentFlow: paymentFlow, version: version)
         case .sbp:
             router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
         }
