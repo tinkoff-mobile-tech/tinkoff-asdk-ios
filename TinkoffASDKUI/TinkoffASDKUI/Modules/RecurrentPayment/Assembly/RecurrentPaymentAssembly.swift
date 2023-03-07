@@ -14,15 +14,18 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
 
     private let acquiringSdk: AcquiringSdk
     private let paymentControllerAssembly: IPaymentControllerAssembly
+    private let cardsControllerAssembly: ICardsControllerAssembly
 
     // MARK: Initialization
 
     init(
         acquiringSdk: AcquiringSdk,
-        paymentControllerAssembly: IPaymentControllerAssembly
+        paymentControllerAssembly: IPaymentControllerAssembly,
+        cardsControllerAssembly: ICardsControllerAssembly
     ) {
         self.acquiringSdk = acquiringSdk
         self.paymentControllerAssembly = paymentControllerAssembly
+        self.cardsControllerAssembly = cardsControllerAssembly
     }
 
     // MARK: ISBPPaymentSheetAssembly
@@ -31,14 +34,19 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
         paymentFlow: PaymentFlow,
         amount: Int64,
         rebuilId: String,
+        failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
+        let cardsController = paymentFlow.customerKey.map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
         let presenter = RecurrentPaymentPresenter(
             paymentController: paymentController,
+            cardsController: cardsController,
             paymentFlow: paymentFlow,
             rebuilId: rebuilId,
+            amount: amount,
+            failureDelegate: failureDelegate,
             moduleCompletion: moduleCompletion
         )
 
@@ -46,6 +54,7 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
         presenter.view = view
 
         paymentController.delegate = presenter
+        paymentController.webFlowDelegate = view
 
         let pullableContainerViewController = PullableContainerViewController(content: view)
         return pullableContainerViewController

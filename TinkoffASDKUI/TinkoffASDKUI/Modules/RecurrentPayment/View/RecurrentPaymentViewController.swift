@@ -5,6 +5,9 @@
 //  Created by Aleksandr Pravosudov on 03.03.2023.
 //
 
+import UIKit
+import WebKit
+
 final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentViewInput, PullableContainerContent {
 
     // MARK: PullableContainer Properties
@@ -30,6 +33,8 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var commonSheetView = CommonSheetView(delegate: self)
 
+    private lazy var webView = WKWebView()
+
     // MARK: State
 
     private var tableViewContentSizeObservation: NSKeyValueObservation?
@@ -52,6 +57,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewsHierarchy()
+        setupWebView()
         setupTableView()
         setupTableContentSizeObservation()
         setupKeyboardObserving()
@@ -128,15 +134,29 @@ extension RecurrentPaymentViewController: CommonSheetViewDelegate {
     func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
 }
 
+// MARK: - ThreeDSWebFlowDelegate
+
+extension RecurrentPaymentViewController: ThreeDSWebFlowDelegate {
+    func hiddenWebViewToCollect3DSData() -> WKWebView { webView }
+    func sourceViewControllerToPresent() -> UIViewController? { self }
+}
+
 // MARK: - Private
 
 extension RecurrentPaymentViewController {
     private func setupViewsHierarchy() {
+        view.addSubview(webView)
+        webView.pinEdgesToSuperview()
+
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
 
         view.addSubview(commonSheetView)
         commonSheetView.pinEdgesToSuperview()
+    }
+
+    private func setupWebView() {
+        webView.isHidden = true
     }
 
     private func setupTableView() {

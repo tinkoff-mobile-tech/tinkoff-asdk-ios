@@ -49,4 +49,19 @@ extension PaymentFlow {
             return .finish(paymentId: paymentId, customerOptions: newCustomerOptions)
         }
     }
+
+    func replacingPaymentDataIfNeeded(paymentData: [String: String]?) -> PaymentFlow {
+        switch self {
+        case let .full(paymentOptions):
+            let newPaymentOptions = PaymentOptions(
+                orderOptions: paymentOptions.orderOptions,
+                customerOptions: paymentOptions.customerOptions,
+                failedPaymentId: paymentOptions.failedPaymentId,
+                paymentData: paymentData
+            )
+            return .full(paymentOptions: newPaymentOptions)
+        case .finish:
+            return self
+        }
+    }
 }

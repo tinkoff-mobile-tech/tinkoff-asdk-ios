@@ -63,8 +63,7 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             threeDSService: coreSDK,
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             tdsController: uiSDK.tdsController,
-            paymentStatusUpdateService: paymentStatusUpdateService,
-            acquiringUISDK: uiSDK
+            paymentStatusUpdateService: paymentStatusUpdateService
         )
     }
 }

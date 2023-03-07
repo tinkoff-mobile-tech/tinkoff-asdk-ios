@@ -14,14 +14,17 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
     weak var view: IRecurrentPaymentViewInput?
 
     private let paymentController: IPaymentController
-    private let paymentFlow: PaymentFlow
+    private let cardsController: ICardsController?
+    private var paymentFlow: PaymentFlow
     private let rebuilId: String
+    private let amount: Int64
+    private weak var failureDelegate: IRecurrentPaymentFailiureDelegate?
     private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
 
     private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
-    private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
+    private lazy var payButtonPresenter = createPayButtonViewPresenter()
 
     // MARK: State
 
@@ -32,13 +35,19 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     init(
         paymentController: IPaymentController,
+        cardsController: ICardsController?,
         paymentFlow: PaymentFlow,
         rebuilId: String,
+        amount: Int64,
+        failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.paymentController = paymentController
+        self.cardsController = cardsController
         self.paymentFlow = paymentFlow
         self.rebuilId = rebuilId
+        self.amount = amount
+        self.failureDelegate = failureDelegate
         self.moduleCompletion = moduleCompletion
     }
 }
@@ -89,9 +98,9 @@ extension RecurrentPaymentPresenter: IPayButtonViewPresenterOutput {
     }
 }
 
-// MARK: - PaymentControllerDelegate
+// MARK: - ChargePaymentControllerDelegate
 
-extension RecurrentPaymentPresenter: PaymentControllerDelegate {
+extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
         didFinishPayment paymentProcess: PaymentProcess,
@@ -122,11 +131,64 @@ extension RecurrentPaymentPresenter: PaymentControllerDelegate {
         moduleResult = .cancelled()
         view?.closeView()
     }
+
+    func paymentController(
+        _ controller: IPaymentController,
+        shouldRepeatWithRebillId rebillId: String,
+        failedPaymentProcess: PaymentProcess,
+        error: Error
+    ) {
+        moduleResult = .failed(error)
+
+        switch failedPaymentProcess.paymentFlow {
+        case let .full(paymentOptions):
+            paymentFlow = paymentFlow.replacingPaymentDataIfNeeded(paymentData: paymentOptions.paymentData)
+        case .finish:
+            break
+        }
+
+        getSavedCard(with: rebillId)
+    }
 }
 
 // MARK: - Private
 
 extension RecurrentPaymentPresenter {
+    private func createPayButtonViewPresenter() -> PayButtonViewPresenter {
+        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: Int(amount)), output: self)
+        presenter.set(enabled: false)
+        return presenter
+    }
+
+    private func getSavedCard(with rebillId: String) {
+        guard let cardsController = cardsController else {
+            // как то дополнительно уведомить, что надо было передавать customerKey, для корректной работы
+            view?.showCommonSheet(state: .failed)
+            return
+        }
+
+        cardsController.getActiveCards { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case var .success(activeCards):
+                var activeCard = activeCards.first
+                activeCard?.parentPaymentId = Int64(rebillId) // временно для тестов
+                activeCards[0] = activeCard!
+                if let savedCard = activeCards.first(where: { $0.parentPaymentId == Int64(rebillId) }) {
+                    self.savedCardPresenter.presentationState = .selected(card: savedCard, hasAnotherCards: false)
+                    self.cellTypes = [.savedCard(self.savedCardPresenter), .payButton(self.payButtonPresenter)]
+                    self.view?.reloadData()
+                    self.view?.hideCommonSheet()
+                } else {
+                    self.view?.showCommonSheet(state: .failed)
+                }
+            case .failure:
+                self.view?.showCommonSheet(state: .failed)
+            }
+        }
+    }
+
     private func activatePayButtonIfNeeded() {
         payButtonPresenter.set(enabled: savedCardPresenter.isValid)
     }
@@ -136,8 +198,32 @@ extension RecurrentPaymentPresenter {
             return
         }
 
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            paymentController.performInitPayment(
+                paymentOptions: paymentOptions,
+                paymentSource: .savedCard(cardId: cardId, cvv: cvc)
+            )
+        case let .finish(_, customerOptions):
+            failureDelegate?.recurrentPaymentNeedRepeatInit(completion: { [weak self] result in
+                guard let self = self else { return }
+
+                DispatchQueue.performOnMain {
+                    switch result {
+                    case let .success(paymentId):
+                        self.paymentController.performFinishPayment(
+                            paymentId: paymentId,
+                            paymentSource: .savedCard(cardId: cardId, cvv: cvc),
+                            customerOptions: customerOptions
+                        )
+                    case .failure:
+                        self.view?.showCommonSheet(state: .failed)
+                    }
+                }
+            })
+        }
+
         payButtonPresenter.startLoading()
-        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .savedCard(cardId: cardId, cvv: cvc))
     }
 }
 

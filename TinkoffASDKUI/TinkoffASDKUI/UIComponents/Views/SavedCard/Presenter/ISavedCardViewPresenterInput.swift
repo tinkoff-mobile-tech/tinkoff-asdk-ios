@@ -24,7 +24,7 @@ extension ISavedCardViewPresenterInput {
         }
 
         switch presentationState {
-        case let .selected(selectedCard) where cards.contains(selectedCard):
+        case let .selected(selectedCard, _) where cards.contains(selectedCard):
             // выбранная карта по-прежнему находится в списке, поэтому ничего не меняется
             break
         case .selected, .idle:

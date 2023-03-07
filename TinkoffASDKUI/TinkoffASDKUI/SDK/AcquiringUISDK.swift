@@ -281,7 +281,8 @@ public class AcquiringUISDK: NSObject {
 
         recurrentPaymentAssembly = RecurrentPaymentAssembly(
             acquiringSdk: coreSDK,
-            paymentControllerAssembly: paymentControllerAssembly
+            paymentControllerAssembly: paymentControllerAssembly,
+            cardsControllerAssembly: cardsControllerAssembly
         )
 
         let cardPaymentAssembly = CardPaymentAssembly(
@@ -1777,12 +1778,14 @@ public extension AcquiringUISDK {
         paymentFlow: PaymentFlow,
         amount: Int64,
         rebuilId: String,
+        failureDelegate: IRecurrentPaymentFailiureDelegate?,
         completion: @escaping PaymentResultCompletion
     ) {
         let viewController = recurrentPaymentAssembly.build(
             paymentFlow: paymentFlow,
             amount: amount,
             rebuilId: rebuilId,
+            failureDelegate: failureDelegate,
             moduleCompletion: completion
         )
 

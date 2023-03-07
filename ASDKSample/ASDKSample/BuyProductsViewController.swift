@@ -348,7 +348,8 @@ class BuyProductsViewController: UIViewController {
             on: self,
             paymentFlow: paymentFlow,
             amount: amount,
-            rebuilId: randomRebuilId
+            rebuilId: randomRebuilId,
+            failureDelegate: self
         ) { [weak self] result in
             complete()
             self?.showAlert(with: result)
@@ -426,6 +427,20 @@ extension BuyProductsViewController: CardListDataSourceStatusListener {
         }
 
         tableView.reloadData()
+    }
+}
+
+extension BuyProductsViewController: IRecurrentPaymentFailiureDelegate {
+    func recurrentPaymentNeedRepeatInit(completion: @escaping (Result<PaymentId, Error>) -> Void) {
+        guard let initData = paymentData else { return }
+
+        coreSDK.initPayment(data: initData) { result in
+            if let paymentId = try? result.map({ $0.paymentId }).get() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    completion(.success(paymentId))
+                }
+            }
+        }
     }
 }
 

@@ -13,6 +13,7 @@ protocol IRecurrentPaymentAssembly {
         paymentFlow: PaymentFlow,
         amount: Int64,
         rebuilId: String,
+        failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController
 }

@@ -123,7 +123,9 @@ private extension ChargePaymentProcess {
 
     func handleError(error: Error) {
         let (cardId, rebillId) = paymentSource.getCardAndRebillId()
-        delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
+        let fakeError = NSError(domain: "need cvc", code: 104)
+//        let error = Int.random(in: 0...1) == 0 ? fakeError : error
+        delegate?.paymentDidFailed(self, with: fakeError, cardId: cardId, rebillId: rebillId)
     }
 
     func getRebillId() -> String {
