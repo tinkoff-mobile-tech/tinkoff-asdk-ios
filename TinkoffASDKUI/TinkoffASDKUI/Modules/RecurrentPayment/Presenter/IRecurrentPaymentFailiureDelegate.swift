@@ -10,7 +10,7 @@ public typealias PaymentId = String
 /// Используется только при PaymentFlow.finish
 public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
     /// В случае вызова этого метода делегата, необходимо совершить повторный запрос v2/Init, для получения обновленного paymentId
-    /// для этого необходимо в запросе к полю paymentFormData добавить additionalData
+    /// для этого необходимо в запросе к полю DATA добавить additionalData (в PaymentOptions поле называется paymentFormData)
     /// - Parameters:
     ///   - additionalData: содержаться два доп. поля failMapiSessionId c failedPaymentId и recurringType
     ///   - completion: после успешного выполнения запроса, необходимо передать в completion новый paymentId

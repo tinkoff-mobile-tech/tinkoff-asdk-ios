@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 03.03.2023.
 //
 
+import Foundation
+
 protocol IRecurrentPaymentViewOutput {
     func viewDidLoad()
     func viewWasClosed()

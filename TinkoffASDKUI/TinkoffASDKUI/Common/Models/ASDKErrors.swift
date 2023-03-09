@@ -12,7 +12,7 @@ public struct ASDKError: Error {
         case unknown = 123_000
         case timeout = 123_001
         case rejected = 123_002
-        case customerKey = 123_003
+        case missingCustomerKey = 123_003
     }
 
     public let code: Code
@@ -36,7 +36,7 @@ extension ASDKError: LocalizedError {
                 return "Time or retries count is over"
             case .rejected:
                 return "Payment failed"
-            case .customerKey:
+            case .missingCustomerKey:
                 return "No customer key"
             }
         }()

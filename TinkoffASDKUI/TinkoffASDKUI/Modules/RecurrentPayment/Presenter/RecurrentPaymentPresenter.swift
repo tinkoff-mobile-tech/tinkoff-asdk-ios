@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 03.03.2023.
 //
 
+import Foundation
 import TinkoffASDKCore
 
 final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
@@ -158,7 +159,7 @@ extension RecurrentPaymentPresenter {
 
     private func getSavedCard(with rebillId: String, error: Error) {
         guard let cardsController = cardsController else {
-            let customerKeyError = ASDKError(code: .customerKey, underlyingError: error)
+            let customerKeyError = ASDKError(code: .missingCustomerKey, underlyingError: error)
             moduleResult = .failed(customerKeyError)
             view?.showCommonSheet(state: .failed)
             return
@@ -168,7 +169,7 @@ extension RecurrentPaymentPresenter {
             guard let self = self else { return }
 
             switch result {
-            case var .success(activeCards):
+            case let .success(activeCards):
                 if let savedCard = activeCards.first(where: { $0.parentPaymentId == Int64(rebillId) }) {
                     self.savedCardPresenter.presentationState = .selected(card: savedCard, showChangeDescription: false)
                     self.cellTypes = [.savedCard(self.savedCardPresenter), .payButton(self.payButtonPresenter)]
