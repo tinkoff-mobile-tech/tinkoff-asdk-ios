@@ -7,15 +7,21 @@
 
 import Foundation
 
-protocol ChargePaymentControllerDelegate: PaymentControllerDelegate {
+public protocol ChargePaymentControllerDelegate: PaymentControllerDelegate {
     /// Вызывается, если запрос `Charge` вернул 104 ошибку.
     ///
-    /// В этом случае необходимо запросить у пользователя ввод cvc кода для карты с указанным rebillId и повторить платеж с указанием `PaymentSource.savedCard`,
-    /// а так же прикрепить к данным для платежа `paymentData`
+    /// В этом случае необходимо запросить у пользователя ввод cvc кода для карты с указанным rebillId и повторить платеж с указанием `PaymentSource.savedCard`
+    /// - Parameters:
+    ///   - controller: экземпляр контроллера
+    ///   - rebillId: поможет определить нужную карту из списка
+    ///   - failedPaymentProcess: полные данные не успешного платежа
+    ///   - additionalData: содержаться два доп. поля failMapiSessionId c failedPaymentId и recurringType
+    ///   - error: ошибка с бэка
     func paymentController(
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
         failedPaymentProcess: PaymentProcess,
+        additionalData: [String: String],
         error: Error
     )
 }

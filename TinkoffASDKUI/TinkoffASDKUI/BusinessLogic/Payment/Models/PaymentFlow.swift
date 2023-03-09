@@ -41,7 +41,6 @@ extension PaymentFlow {
             let newPaymentOptions = PaymentOptions(
                 orderOptions: paymentOptions.orderOptions,
                 customerOptions: newCustomerOptions,
-                failedPaymentId: paymentOptions.failedPaymentId,
                 paymentData: paymentOptions.paymentData
             )
             return .full(paymentOptions: newPaymentOptions)
@@ -50,14 +49,15 @@ extension PaymentFlow {
         }
     }
 
-    func replacingPaymentDataIfNeeded(paymentData: [String: String]?) -> PaymentFlow {
+    func mergePaymentDataIfNeeded(_ paymentData: [String: String]?) -> PaymentFlow {
+        guard let paymentData = paymentData else { return self }
+
         switch self {
         case let .full(paymentOptions):
             let newPaymentOptions = PaymentOptions(
                 orderOptions: paymentOptions.orderOptions,
                 customerOptions: paymentOptions.customerOptions,
-                failedPaymentId: paymentOptions.failedPaymentId,
-                paymentData: paymentData
+                paymentData: paymentOptions.paymentData?.merging(paymentData) { $1 }
             )
             return .full(paymentOptions: newPaymentOptions)
         case .finish:

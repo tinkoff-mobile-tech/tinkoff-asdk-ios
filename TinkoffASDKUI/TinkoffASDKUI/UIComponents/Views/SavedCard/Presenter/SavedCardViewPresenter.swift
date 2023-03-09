@@ -79,8 +79,8 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         view?.deactivateCVCField()
 
         switch presentationState {
-        case let .selected(card, hasAnotherCards):
-            let viewModel = createViewModel(card: card, hasAnotherCards: hasAnotherCards)
+        case let .selected(card, showChangeDescription):
+            let viewModel = createViewModel(card: card, showChangeDescription: showChangeDescription)
             view?.update(with: viewModel)
             view?.showCVCField()
             view?.setCVCText(cvcInputText)
@@ -98,7 +98,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
 
     // MARK: View Models Creation
 
-    private func createViewModel(card: PaymentCard, hasAnotherCards: Bool) -> SavedCardViewModel {
+    private func createViewModel(card: PaymentCard, showChangeDescription: Bool) -> SavedCardViewModel {
         let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
         let paymentSystem = paymentSystemResolver.resolve(by: card.pan).getPaymentSystem()
 
@@ -109,7 +109,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         return SavedCardViewModel(
             iconModel: iconModel,
             cardName: .formatCardName(bankName: bank?.naming, pan: card.pan),
-            actionDescription: hasAnotherCards ? "Сменить карту" : nil
+            actionDescription: showChangeDescription ? "Сменить карту" : nil
         )
     }
 
@@ -142,7 +142,7 @@ extension SavedCardViewPresenter {
 
     func savedCardViewIsSelected() {
         switch presentationState {
-        case let .selected(card, hasAnotherCards) where hasAnotherCards:
+        case let .selected(card, showChangeDescription) where showChangeDescription:
             output?.savedCardPresenter(self, didRequestReplacementFor: card)
         case .selected, .idle:
             break

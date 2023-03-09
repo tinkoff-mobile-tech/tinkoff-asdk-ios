@@ -33,8 +33,6 @@ public struct PaymentOptions: Equatable {
     /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
     public let paymentData: [String: String]?
 
-    let failedPaymentId: String?
-
     public init(
         orderOptions: OrderOptions,
         customerOptions: CustomerOptions? = nil,
@@ -42,19 +40,6 @@ public struct PaymentOptions: Equatable {
     ) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
-        self.paymentData = paymentData
-        failedPaymentId = nil
-    }
-
-    init(
-        orderOptions: OrderOptions,
-        customerOptions: CustomerOptions?,
-        failedPaymentId: String?,
-        paymentData: [String: String]? = nil
-    ) {
-        self.orderOptions = orderOptions
-        self.customerOptions = customerOptions
-        self.failedPaymentId = failedPaymentId
         self.paymentData = paymentData
     }
 }

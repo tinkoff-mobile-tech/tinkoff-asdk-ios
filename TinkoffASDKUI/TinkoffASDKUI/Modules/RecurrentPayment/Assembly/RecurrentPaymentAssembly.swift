@@ -33,7 +33,7 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
     func build(
         paymentFlow: PaymentFlow,
         amount: Int64,
-        rebuilId: String,
+        rebillId: String,
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
@@ -44,7 +44,7 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
             paymentController: paymentController,
             cardsController: cardsController,
             paymentFlow: paymentFlow,
-            rebuilId: rebuilId,
+            rebillId: rebillId,
             amount: amount,
             failureDelegate: failureDelegate,
             moduleCompletion: moduleCompletion

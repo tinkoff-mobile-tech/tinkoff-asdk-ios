@@ -43,11 +43,6 @@ extension PaymentInitData {
             initData.addPaymentData(["chargeFlag": "true"])
         }
 
-        if let failedPaymentId = paymentOptions.failedPaymentId {
-            initData.addPaymentData(["failMapiSessionId": "\(failedPaymentId)"])
-            initData.addPaymentData(["recurringType": "12"])
-        }
-
         if let paymentData = paymentOptions.paymentData {
             initData.addPaymentData(paymentData)
         }

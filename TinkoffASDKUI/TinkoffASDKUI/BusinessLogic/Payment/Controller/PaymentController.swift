@@ -260,9 +260,13 @@ extension PaymentController {
         paymentProcess: PaymentProcess,
         rebillId: String?
     ) -> Bool {
-        guard let rebillId = rebillId, let chargeDelegate = delegate as? ChargePaymentControllerDelegate else {
+        guard let rebillId = rebillId,
+              let chargeDelegate = delegate as? ChargePaymentControllerDelegate,
+              let failedPaymentId = paymentProcess.paymentId else {
             return false
         }
+
+        let additionalData = ["failMapiSessionId": "\(failedPaymentId)", "recurringType": "12"]
 
         let errorCode = (error as NSError).code
         switch errorCode {
@@ -271,6 +275,7 @@ extension PaymentController {
                 self,
                 shouldRepeatWithRebillId: rebillId,
                 failedPaymentProcess: paymentProcess,
+                additionalData: additionalData,
                 error: error
             )
             return true

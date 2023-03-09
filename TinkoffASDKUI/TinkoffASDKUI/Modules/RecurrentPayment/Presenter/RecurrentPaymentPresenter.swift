@@ -16,7 +16,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
     private let paymentController: IPaymentController
     private let cardsController: ICardsController?
     private var paymentFlow: PaymentFlow
-    private let rebuilId: String
+    private let rebillId: String
     private let amount: Int64
     private weak var failureDelegate: IRecurrentPaymentFailiureDelegate?
     private var moduleCompletion: PaymentResultCompletion?
@@ -30,6 +30,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     private var cellTypes: [RecurrentPaymentCellType] = []
     private var moduleResult: PaymentResult = .cancelled()
+    private var additionalData: [String: String] = [:]
 
     // MARK: Initialization
 
@@ -37,7 +38,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
         paymentController: IPaymentController,
         cardsController: ICardsController?,
         paymentFlow: PaymentFlow,
-        rebuilId: String,
+        rebillId: String,
         amount: Int64,
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
@@ -45,7 +46,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
         self.paymentController = paymentController
         self.cardsController = cardsController
         self.paymentFlow = paymentFlow
-        self.rebuilId = rebuilId
+        self.rebillId = rebillId
         self.amount = amount
         self.failureDelegate = failureDelegate
         self.moduleCompletion = moduleCompletion
@@ -57,7 +58,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 extension RecurrentPaymentPresenter {
     func viewDidLoad() {
         view?.showCommonSheet(state: .processing)
-        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .parentPayment(rebuidId: rebuilId))
+        paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .parentPayment(rebuidId: rebillId))
     }
 
     func viewWasClosed() {
@@ -136,18 +137,13 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
         failedPaymentProcess: PaymentProcess,
+        additionalData: [String: String],
         error: Error
     ) {
         moduleResult = .failed(error)
-
-        switch failedPaymentProcess.paymentFlow {
-        case let .full(paymentOptions):
-            paymentFlow = paymentFlow.replacingPaymentDataIfNeeded(paymentData: paymentOptions.paymentData)
-        case .finish:
-            break
-        }
-
-        getSavedCard(with: rebillId)
+        self.additionalData = additionalData
+        paymentFlow = paymentFlow.mergePaymentDataIfNeeded(additionalData)
+        getSavedCard(with: rebillId, error: error)
     }
 }
 
@@ -160,9 +156,10 @@ extension RecurrentPaymentPresenter {
         return presenter
     }
 
-    private func getSavedCard(with rebillId: String) {
+    private func getSavedCard(with rebillId: String, error: Error) {
         guard let cardsController = cardsController else {
-            // как то дополнительно уведомить, что надо было передавать customerKey, для корректной работы
+            let customerKeyError = ASDKError(code: .customerKey, underlyingError: error)
+            moduleResult = .failed(customerKeyError)
             view?.showCommonSheet(state: .failed)
             return
         }
@@ -172,18 +169,16 @@ extension RecurrentPaymentPresenter {
 
             switch result {
             case var .success(activeCards):
-                var activeCard = activeCards.first
-                activeCard?.parentPaymentId = Int64(rebillId) // временно для тестов
-                activeCards[0] = activeCard!
                 if let savedCard = activeCards.first(where: { $0.parentPaymentId == Int64(rebillId) }) {
-                    self.savedCardPresenter.presentationState = .selected(card: savedCard, hasAnotherCards: false)
+                    self.savedCardPresenter.presentationState = .selected(card: savedCard, showChangeDescription: false)
                     self.cellTypes = [.savedCard(self.savedCardPresenter), .payButton(self.payButtonPresenter)]
                     self.view?.reloadData()
                     self.view?.hideCommonSheet()
                 } else {
                     self.view?.showCommonSheet(state: .failed)
                 }
-            case .failure:
+            case let .failure(error):
+                self.moduleResult = .failed(error)
                 self.view?.showCommonSheet(state: .failed)
             }
         }
@@ -205,7 +200,7 @@ extension RecurrentPaymentPresenter {
                 paymentSource: .savedCard(cardId: cardId, cvv: cvc)
             )
         case let .finish(_, customerOptions):
-            failureDelegate?.recurrentPaymentNeedRepeatInit(completion: { [weak self] result in
+            failureDelegate?.recurrentPaymentNeedRepeatInit(additionalData: additionalData) { [weak self] result in
                 guard let self = self else { return }
 
                 DispatchQueue.performOnMain {
@@ -216,11 +211,12 @@ extension RecurrentPaymentPresenter {
                             paymentSource: .savedCard(cardId: cardId, cvv: cvc),
                             customerOptions: customerOptions
                         )
-                    case .failure:
+                    case let .failure(error):
+                        self.moduleResult = .failed(error)
                         self.view?.showCommonSheet(state: .failed)
                     }
                 }
-            })
+            }
         }
 
         payButtonPresenter.startLoading()

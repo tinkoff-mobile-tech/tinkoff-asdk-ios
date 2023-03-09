@@ -7,6 +7,12 @@
 
 public typealias PaymentId = String
 
+/// Используется только при PaymentFlow.finish
 public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
-    func recurrentPaymentNeedRepeatInit(completion: @escaping (Result<PaymentId, Error>) -> Void)
+    /// В случае вызова этого метода делегата, необходимо совершить повторный запрос v2/Init, для получения обновленного paymentId
+    /// для этого необходимо в запросе к полю paymentFormData добавить additionalData
+    /// - Parameters:
+    ///   - additionalData: содержаться два доп. поля failMapiSessionId c failedPaymentId и recurringType
+    ///   - completion: после успешного выполнения запроса, необходимо передать в completion новый paymentId
+    func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void)
 }

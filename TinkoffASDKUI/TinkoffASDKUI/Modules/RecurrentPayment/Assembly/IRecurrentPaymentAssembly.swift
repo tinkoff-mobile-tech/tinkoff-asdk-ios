@@ -12,7 +12,7 @@ protocol IRecurrentPaymentAssembly {
     func build(
         paymentFlow: PaymentFlow,
         amount: Int64,
-        rebuilId: String,
+        rebillId: String,
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController

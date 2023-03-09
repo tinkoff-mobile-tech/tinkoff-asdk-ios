@@ -1777,14 +1777,14 @@ public extension AcquiringUISDK {
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         amount: Int64,
-        rebuilId: String,
+        rebillId: String,
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         completion: @escaping PaymentResultCompletion
     ) {
         let viewController = recurrentPaymentAssembly.build(
             paymentFlow: paymentFlow,
             amount: amount,
-            rebuilId: rebuilId,
+            rebillId: rebillId,
             failureDelegate: failureDelegate,
             moduleCompletion: completion
         )
