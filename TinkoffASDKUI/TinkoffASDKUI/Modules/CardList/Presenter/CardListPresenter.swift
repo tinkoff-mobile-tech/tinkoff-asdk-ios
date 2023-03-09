@@ -176,6 +176,9 @@ extension CardListPresenter: ICardListViewOutput {
             switch result {
             case let .success(payload):
                 cards.removeAll { $0.cardId == payload.cardId }
+                if let newSelectedCardId = cards.first?.cardId {
+                    screenConfiguration.selectedCardId = newSelectedCardId
+                }
                 handleFetchedActiveCard(result: .success(cards))
             case .failure:
                 if hasVisualContent {

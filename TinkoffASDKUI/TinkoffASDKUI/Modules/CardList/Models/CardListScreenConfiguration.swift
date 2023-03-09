@@ -14,7 +14,7 @@ struct CardListScreenConfiguration {
     }
 
     let useCase: UseCase
-    let selectedCardId: String?
+    var selectedCardId: String?
 }
 
 extension CardListScreenConfiguration {
