@@ -20,3 +20,7 @@ protocol ISavedCardViewPresenterOutput: AnyObject {
         isValid: Bool
     )
 }
+
+extension ISavedCardViewPresenterOutput {
+    func savedCardPresenter(_ presenter: SavedCardViewPresenter, didRequestReplacementFor paymentCard: PaymentCard) {}
+}

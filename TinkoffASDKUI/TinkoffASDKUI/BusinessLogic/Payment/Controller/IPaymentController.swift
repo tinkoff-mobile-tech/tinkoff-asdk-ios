@@ -12,8 +12,6 @@ import TinkoffASDKCore
 public protocol IPaymentController: AnyObject {
     /// Делегат событий `IPaymentController`
     var delegate: PaymentControllerDelegate? { get set }
-    /// Объект, предоставляющий дополнительные данные для работы `IPaymentController`
-    var dataSource: PaymentControllerDataSource? { get set }
     /// Объект, предоставляющий UI-компоненты для прохождения 3DS Web Based Flow
     var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
 

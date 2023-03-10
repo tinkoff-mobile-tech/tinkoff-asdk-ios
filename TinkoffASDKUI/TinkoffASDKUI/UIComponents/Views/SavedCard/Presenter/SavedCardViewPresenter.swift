@@ -25,7 +25,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
 
     var cardId: String? {
         switch presentationState {
-        case let .selected(card): return card.cardId
+        case let .selected(card, _): return card.cardId
         default: return nil
         }
     }
@@ -79,8 +79,8 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         view?.deactivateCVCField()
 
         switch presentationState {
-        case let .selected(card):
-            let viewModel = createViewModel(card: card)
+        case let .selected(card, showChangeDescription):
+            let viewModel = createViewModel(card: card, showChangeDescription: showChangeDescription)
             view?.update(with: viewModel)
             view?.showCVCField()
             view?.setCVCText(cvcInputText)
@@ -98,7 +98,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
 
     // MARK: View Models Creation
 
-    private func createViewModel(card: PaymentCard) -> SavedCardViewModel {
+    private func createViewModel(card: PaymentCard, showChangeDescription: Bool) -> SavedCardViewModel {
         let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
         let paymentSystem = paymentSystemResolver.resolve(by: card.pan).getPaymentSystem()
 
@@ -109,7 +109,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         return SavedCardViewModel(
             iconModel: iconModel,
             cardName: .formatCardName(bankName: bank?.naming, pan: card.pan),
-            actionDescription: "Сменить карту"
+            actionDescription: showChangeDescription ? "Сменить карту" : nil
         )
     }
 
@@ -142,9 +142,9 @@ extension SavedCardViewPresenter {
 
     func savedCardViewIsSelected() {
         switch presentationState {
-        case let .selected(card):
+        case let .selected(card, showChangeDescription) where showChangeDescription:
             output?.savedCardPresenter(self, didRequestReplacementFor: card)
-        case .idle:
+        case .selected, .idle:
             break
         }
     }

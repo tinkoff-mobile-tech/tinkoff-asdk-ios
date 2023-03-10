@@ -10,7 +10,7 @@ import TinkoffASDKCore
 
 enum SavedCardPresentationState: Equatable {
     case idle
-    case selected(card: PaymentCard)
+    case selected(card: PaymentCard, showChangeDescription: Bool = true)
 }
 
 extension SavedCardPresentationState {

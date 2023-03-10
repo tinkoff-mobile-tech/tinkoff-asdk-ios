@@ -41,12 +41,27 @@ extension PaymentFlow {
             let newPaymentOptions = PaymentOptions(
                 orderOptions: paymentOptions.orderOptions,
                 customerOptions: newCustomerOptions,
-                failedPaymentId: paymentOptions.failedPaymentId,
                 paymentData: paymentOptions.paymentData
             )
             return .full(paymentOptions: newPaymentOptions)
         case let .finish(paymentId, _):
             return .finish(paymentId: paymentId, customerOptions: newCustomerOptions)
+        }
+    }
+
+    func mergePaymentDataIfNeeded(_ paymentData: [String: String]?) -> PaymentFlow {
+        guard let paymentData = paymentData else { return self }
+
+        switch self {
+        case let .full(paymentOptions):
+            let newPaymentOptions = PaymentOptions(
+                orderOptions: paymentOptions.orderOptions,
+                customerOptions: paymentOptions.customerOptions,
+                paymentData: (paymentOptions.paymentData ?? [:]).merging(paymentData) { $1 }
+            )
+            return .full(paymentOptions: newPaymentOptions)
+        case .finish:
+            return self
         }
     }
 }

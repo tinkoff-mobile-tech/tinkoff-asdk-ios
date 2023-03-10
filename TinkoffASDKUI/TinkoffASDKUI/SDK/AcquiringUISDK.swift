@@ -173,9 +173,6 @@ public class AcquiringUISDK: NSObject {
     private var cardListDataProvider: CardListDataProvider?
     private var checkPaymentStatus: PaymentStatusServiceProvider?
 
-    private let sbpBanksAssembly: ISBPBanksAssembly
-    private let cardListAssembly: ICardListAssembly
-
     // App based threeDS
     let tdsController: TDSController
     // ThreeDS feature flag
@@ -189,6 +186,9 @@ public class AcquiringUISDK: NSObject {
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
     private let addNewCardAssembly: IAddNewCardAssembly
+    private let sbpBanksAssembly: ISBPBanksAssembly
+    private let cardListAssembly: ICardListAssembly
+    private let recurrentPaymentAssembly: IRecurrentPaymentAssembly
 
     // MARK: Init
 
@@ -277,6 +277,12 @@ public class AcquiringUISDK: NSObject {
             paymentControllerAssembly: paymentControllerAssembly,
             cardsControllerAssembly: cardsControllerAssembly,
             addNewCardAssembly: addNewCardAssembly
+        )
+
+        recurrentPaymentAssembly = RecurrentPaymentAssembly(
+            acquiringSdk: coreSDK,
+            paymentControllerAssembly: paymentControllerAssembly,
+            cardsControllerAssembly: cardsControllerAssembly
         )
 
         let cardPaymentAssembly = CardPaymentAssembly(
@@ -1765,5 +1771,24 @@ public extension AcquiringUISDK {
         let module = sbpBanksAssembly.buildInitialModule(paymentFlow: paymentFlow, completion: completion)
         let navigation = UINavigationController.withASDKBar(rootViewController: module.view)
         presentingViewController.present(navigation, animated: true)
+    }
+
+    func presentRecurrentPayment(
+        on presentingViewController: UIViewController,
+        paymentFlow: PaymentFlow,
+        amount: Int64,
+        rebillId: String,
+        failureDelegate: IRecurrentPaymentFailiureDelegate?,
+        completion: @escaping PaymentResultCompletion
+    ) {
+        let viewController = recurrentPaymentAssembly.build(
+            paymentFlow: paymentFlow,
+            amount: amount,
+            rebillId: rebillId,
+            failureDelegate: failureDelegate,
+            moduleCompletion: completion
+        )
+
+        presentingViewController.present(viewController, animated: true)
     }
 }
