@@ -12,24 +12,6 @@ import TinkoffASDKCore
 ///
 /// Все методы делегата вызываются на главном потоке
 protocol TinkoffPayControllerDelegate: AnyObject {
-    /// Уведомляет об открытии приложения банка
-    /// - Parameters:
-    ///   - tinkoffPayController: Объект, способный совершать оплату с помощью `TinkoffPay`
-    ///   - url: URL открытого приложения банка
-    func tinkoffPayController(
-        _ tinkoffPayController: ITinkoffPayController,
-        didOpenBankAppWith url: URL
-    )
-
-    /// Уведомляет о завершении работы из-за невозможности открыть приложение банка
-    /// - Parameters:
-    ///   - tinkoffPayController: Объект, способный совершать оплату с помощью `TinkoffPay`
-    ///   - error: Ошибка, содержащая дополнительный контекст
-    func tinkoffPayController(
-        _ tinkoffPayController: ITinkoffPayController,
-        completedDueToInabilityToOpenBankApp error: Error
-    )
-
     /// Уведомляет о получении промежуточного статуса платежа
     ///
     ///  Данный метод может вызываться множество раз до тех пор,
@@ -40,6 +22,26 @@ protocol TinkoffPayControllerDelegate: AnyObject {
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
         didReceiveIntermediate paymentState: GetPaymentStatePayload
+    )
+
+    /// Уведомляет об открытии приложения банка
+    /// - Parameters:
+    ///   - tinkoffPayController: Объект, способный совершать оплату с помощью `TinkoffPay`
+    ///   - url: URL открытого приложения с `TinkoffPay`
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        didOpenTinkoffPayApp url: URL
+    )
+
+    /// Уведомляет о завершении работы из-за невозможности открыть приложение банка
+    /// - Parameters:
+    ///   - tinkoffPayController: Объект, способный совершать оплату с помощью `TinkoffPay`
+    ///   - url: URL приложения с `TinkoffPay`, который не удалось открыть
+    ///   - error: Ошибка, содержащая дополнительный контекст
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedDueToInabilityToOpenTinkoffPayApp url: URL,
+        error: Error
     )
 
     /// Уведомляет о завершении платежа после получения конечного успешного статуса оплаты

@@ -233,20 +233,21 @@ extension MainFormPresenter: PaymentControllerDelegate {
 extension MainFormPresenter: TinkoffPayControllerDelegate {
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        didOpenBankAppWith url: URL
-    ) {}
-
-    func tinkoffPayController(
-        _ tinkoffPayController: ITinkoffPayController,
-        completedDueToInabilityToOpenBankApp error: Error
-    ) {}
-
-    func tinkoffPayController(
-        _ tinkoffPayController: ITinkoffPayController,
         didReceiveIntermediate paymentState: GetPaymentStatePayload
     ) {
         moduleResult = .cancelled(paymentState.toPaymentInfo())
     }
+
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        didOpenTinkoffPayApp url: URL
+    ) {}
+
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedDueToInabilityToOpenTinkoffPayApp url: URL,
+        error: Error
+    ) {}
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,

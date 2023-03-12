@@ -12,8 +12,9 @@ final class TinkoffPayController: ITinkoffPayController {
     // MARK: Internal Types
 
     enum Error: Swift.Error {
-        case couldNotOpenBankApp
-        case timedOut
+        case couldNotOpenTinkoffPayApp(url: URL)
+        case didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState: GetPaymentStatePayload?, underlyingError: Swift.Error? = nil)
+        case didReceiveFailedPaymentState(GetPaymentStatePayload)
     }
 
     // MARK: Dependencies
@@ -56,6 +57,8 @@ final class TinkoffPayController: ITinkoffPayController {
     // MARK: ITinkoffPayController
 
     func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod) {
+        let paymentFlow = paymentFlow.mergePaymentDataIfNeeded(.tinkoffPayData)
+
         switch paymentFlow {
         case let .full(paymentOptions):
             performInitPayment(paymentOptions: paymentOptions, method: method)
@@ -100,16 +103,24 @@ final class TinkoffPayController: ITinkoffPayController {
 
             self.applicationOpener.open(url) { isOpened in
                 if isOpened {
-                    self.delegate?.tinkoffPayController(self, didOpenBankAppWith: url)
+                    self.delegate?.tinkoffPayController(self, didOpenTinkoffPayApp: url)
                     self.requestPaymentState(paymentId: paymentId)
                 } else {
-                    self.delegate?.tinkoffPayController(self, completedDueToInabilityToOpenBankApp: Error.couldNotOpenBankApp)
+                    self.delegate?.tinkoffPayController(
+                        self,
+                        completedDueToInabilityToOpenTinkoffPayApp: url,
+                        error: Error.couldNotOpenTinkoffPayApp(url: url)
+                    )
                 }
             }
         }
     }
 
-    private func requestPaymentState(paymentId: String, requestAttempt: Int = .zero) {
+    private func requestPaymentState(
+        paymentId: String,
+        requestAttempt: Int = .zero,
+        lastReceivedPaymentState: GetPaymentStatePayload? = nil
+    ) {
         let requestAttempt = requestAttempt + 1
         let retryingAllowed = requestAttempt <= paymentStatusRetriesCount
 
@@ -121,16 +132,21 @@ final class TinkoffPayController: ITinkoffPayController {
                 case let .success(paymentState) where self.successfulStatuses.contains(paymentState.status):
                     self.completeWithSuccessful(paymentState: paymentState)
                 case let .success(paymentState) where self.unsuccessfulStatuses.contains(paymentState.status):
-                    self.completeWithUnsuccessful(paymentState: paymentState)
+                    self.completeWithFailed(paymentState: paymentState)
                 case let .success(paymentState) where retryingAllowed:
                     self.receiveIntermediate(paymentState: paymentState)
-                    self.requestPaymentState(paymentId: paymentId, requestAttempt: requestAttempt)
+                    self.requestPaymentState(paymentId: paymentId, requestAttempt: requestAttempt, lastReceivedPaymentState: paymentState)
                 case .success:
-                    self.completeWithError(Error.timedOut)
+                    self.completeWithError(Error.didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState: lastReceivedPaymentState))
                 case .failure where retryingAllowed:
-                    self.requestPaymentState(paymentId: paymentId, requestAttempt: requestAttempt)
+                    self.requestPaymentState(paymentId: paymentId, requestAttempt: requestAttempt, lastReceivedPaymentState: lastReceivedPaymentState)
                 case let .failure(error):
-                    self.completeWithError(error)
+                    self.completeWithError(
+                        Error.didNotWaitForSuccessfulPaymentState(
+                            lastReceivedPaymentState: lastReceivedPaymentState,
+                            underlyingError: error
+                        )
+                    )
                 }
             }
         }
@@ -154,11 +170,14 @@ final class TinkoffPayController: ITinkoffPayController {
         }
     }
 
-    private func completeWithUnsuccessful(paymentState: GetPaymentStatePayload) {
+    private func completeWithFailed(paymentState: GetPaymentStatePayload) {
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
 
-            self.delegate?.tinkoffPayController(self, completedWithFailed: paymentState, error: Error.couldNotOpenBankApp)
+            self.delegate?.tinkoffPayController(
+                self, completedWithFailed: paymentState,
+                error: Error.didReceiveFailedPaymentState(paymentState)
+            )
         }
     }
 
@@ -167,6 +186,40 @@ final class TinkoffPayController: ITinkoffPayController {
             guard let self = self else { return }
 
             self.delegate?.tinkoffPayController(self, completedWith: error)
+        }
+    }
+}
+
+// MARK: - Constants
+
+private extension Dictionary where Key == String, Value == String {
+    static var tinkoffPayData: [String: String] {
+        ["TinkoffPayWeb": "true"]
+    }
+}
+
+// MARK: - TinkoffPayController.Error + LocalizedError
+
+extension TinkoffPayController.Error: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case let .couldNotOpenTinkoffPayApp(url):
+            return "Could not open TinkoffPay App with url \(url)"
+        case let .didReceiveFailedPaymentState(paymentState):
+            return "Something went wrong in the payment process: the payment was rejected. Payload: \(paymentState)"
+        case let .didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState, underlyingError):
+            return "Something went wrong in the payment process: the payment did not reach final status completed"
+                .appending(lastReceivedPaymentState.map { ". Last received payment payload: \($0)" } ?? "")
+                .appending(underlyingError.map { ". Underlying error: \($0)" } ?? "")
+        }
+    }
+
+    var recoverySuggestion: String? {
+        switch self {
+        case let .couldNotOpenTinkoffPayApp(url):
+            return url.scheme.map { "For Tinkoff Pay to work correctly, add the scheme \($0) to the list of LSApplicationQueriesSchemes at info.plist" }
+        default:
+            return nil
         }
     }
 }

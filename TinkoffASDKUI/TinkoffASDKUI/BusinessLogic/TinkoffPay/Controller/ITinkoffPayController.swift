@@ -8,6 +8,8 @@
 import Foundation
 import TinkoffASDKCore
 
-protocol ITinkoffPayController {
+protocol ITinkoffPayController: AnyObject {
+    var delegate: TinkoffPayControllerDelegate? { get set }
+
     func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod)
 }
