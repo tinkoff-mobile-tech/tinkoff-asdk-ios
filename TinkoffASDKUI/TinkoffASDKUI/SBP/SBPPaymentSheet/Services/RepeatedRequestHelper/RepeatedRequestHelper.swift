@@ -23,7 +23,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
 
     // MARK: Initialization
 
-    init(delay: TimeInterval) {
+    init(delay: TimeInterval = .paymentStatusRequestDelay) {
         self.delay = delay
     }
 
@@ -57,4 +57,10 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
             RunLoop.current.add(timer, forMode: .common)
         }
     }
+}
+
+// MARK: - Constants
+
+private extension TimeInterval {
+    static let paymentStatusRequestDelay: TimeInterval = 3
 }

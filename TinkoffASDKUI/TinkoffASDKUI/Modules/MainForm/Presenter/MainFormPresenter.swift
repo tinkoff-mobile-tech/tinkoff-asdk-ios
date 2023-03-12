@@ -231,15 +231,38 @@ extension MainFormPresenter: PaymentControllerDelegate {
 // MARK: - TinkoffPayControllerDelegate
 
 extension MainFormPresenter: TinkoffPayControllerDelegate {
-    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, didReceive payload: GetPaymentStatePayload) {}
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        didOpenBankAppWith url: URL
+    ) {}
 
-    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, failedWith error: Error) {}
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedDueToInabilityToOpenBankApp error: Error
+    ) {}
 
-    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, succededWith payload: GetPaymentStatePayload) {}
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        didReceiveIntermediate paymentState: GetPaymentStatePayload
+    ) {
+        moduleResult = .cancelled(paymentState.toPaymentInfo())
+    }
 
-    func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, failedToOpenBankAppWith error: Error) {}
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedWithSuccessful paymentState: GetPaymentStatePayload
+    ) {}
 
-    func tinkoffPayControllerOpenedBankApp(_ tinkoffPayController: ITinkoffPayController) {}
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedWithFailed paymentState: GetPaymentStatePayload,
+        error: Error
+    ) {}
+
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedWith error: Error
+    ) {}
 }
 
 // MARK: - ICardListPresenterOutput
@@ -343,7 +366,7 @@ extension MainFormPresenter {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case let .tinkoffPay(version):
-            tinkoffPayController.performPayment(paymentFlow: paymentFlow, version: version)
+            tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: version)
         case .sbp:
             router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
         }

@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
 protocol ITinkoffPayController {
-    func performPayment(paymentFlow: PaymentFlow, version: String)
+    func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod)
 }

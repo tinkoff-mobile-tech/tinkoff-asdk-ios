@@ -297,7 +297,8 @@ public class AcquiringUISDK: NSObject {
             cardsControllerAssembly: cardsControllerAssembly,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
-            sbpBanksAssembly: sbpBanksAssembly
+            sbpBanksAssembly: sbpBanksAssembly,
+            configuration: uiSDKConfiguration
         )
     }
 

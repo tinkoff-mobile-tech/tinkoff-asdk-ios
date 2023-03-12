@@ -76,7 +76,7 @@ extension MainFormDataStateLoader {
     ) {
         let availableMethods = (CollectionOfOne(.card) + terminalInfo.mainFormMethods)
             .filter { $0.isAvailable(for: paymentFlow) }
-            .sorted(by: <)
+            .sorted { $0.priority < $1.priority }
 
         var methodsIterator = availableMethods.makeIterator()
         var receivedCards: [PaymentCard]?
@@ -223,8 +223,8 @@ private extension TerminalInfo {
                 return nil
             case .sbp:
                 return .sbp
-            case let .tinkoffPay(version):
-                return .tinkoffPay(version: version)
+            case let .tinkoffPay(method):
+                return .tinkoffPay(method)
             }
         }
     }

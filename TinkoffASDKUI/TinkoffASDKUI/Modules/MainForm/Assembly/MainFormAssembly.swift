@@ -17,6 +17,7 @@ final class MainFormAssembly: IMainFormAssembly {
     private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
+    private let configuration: UISDKConfiguration
 
     // MARK: Initialization
 
@@ -26,7 +27,8 @@ final class MainFormAssembly: IMainFormAssembly {
         cardsControllerAssembly: ICardsControllerAssembly,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
-        sbpBanksAssembly: ISBPBanksAssembly
+        sbpBanksAssembly: ISBPBanksAssembly,
+        configuration: UISDKConfiguration
     ) {
         self.coreSDK = coreSDK
         self.paymentControllerAssembly = paymentControllerAssembly
@@ -34,6 +36,7 @@ final class MainFormAssembly: IMainFormAssembly {
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
+        self.configuration = configuration
     }
 
     // MARK: IMainFormAssembly
@@ -60,7 +63,9 @@ final class MainFormAssembly: IMainFormAssembly {
             paymentService: coreSDK,
             tinkoffPayService: coreSDK,
             applicationOpener: UIApplication.shared,
-            paymentStatusService: PaymentStatusService(acquiringSdk: coreSDK)
+            paymentStatusService: PaymentStatusService(acquiringSdk: coreSDK),
+            repeatedRequestHelper: RepeatedRequestHelper(),
+            paymentStatusRetriesCount: self.configuration.paymentStatusRetriesCount
         )
 
         let router = MainFormRouter(
