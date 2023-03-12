@@ -180,8 +180,9 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let paymentControllerAssembly: IPaymentControllerAssembly
-    private let addCardControllerAssembly: IAddCardControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
+    private let tinkoffPayAssembly: ITinkoffPayAssembly
+    private let addCardControllerAssembly: IAddCardControllerAssembly
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
@@ -291,14 +292,16 @@ public class AcquiringUISDK: NSObject {
             cardListAssembly: cardListAssembly
         )
 
+        tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: coreSDK, configuration: uiSDKConfiguration)
+
         mainFormAssembly = MainFormAssembly(
             coreSDK: coreSDK,
             paymentControllerAssembly: paymentControllerAssembly,
             cardsControllerAssembly: cardsControllerAssembly,
+            tinkoffPayAssembly: tinkoffPayAssembly,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
-            sbpBanksAssembly: sbpBanksAssembly,
-            configuration: uiSDKConfiguration
+            sbpBanksAssembly: sbpBanksAssembly
         )
     }
 

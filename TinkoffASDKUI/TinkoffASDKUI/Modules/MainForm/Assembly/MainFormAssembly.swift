@@ -14,10 +14,10 @@ final class MainFormAssembly: IMainFormAssembly {
     private let coreSDK: AcquiringSdk
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
+    private let tinkoffPayAssembly: ITinkoffPayAssembly
     private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
-    private let configuration: UISDKConfiguration
 
     // MARK: Initialization
 
@@ -25,18 +25,18 @@ final class MainFormAssembly: IMainFormAssembly {
         coreSDK: AcquiringSdk,
         paymentControllerAssembly: IPaymentControllerAssembly,
         cardsControllerAssembly: ICardsControllerAssembly,
+        tinkoffPayAssembly: ITinkoffPayAssembly,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
-        sbpBanksAssembly: ISBPBanksAssembly,
-        configuration: UISDKConfiguration
+        sbpBanksAssembly: ISBPBanksAssembly
     ) {
         self.coreSDK = coreSDK
         self.paymentControllerAssembly = paymentControllerAssembly
         self.cardsControllerAssembly = cardsControllerAssembly
+        self.tinkoffPayAssembly = tinkoffPayAssembly
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
-        self.configuration = configuration
     }
 
     // MARK: IMainFormAssembly
@@ -56,17 +56,10 @@ final class MainFormAssembly: IMainFormAssembly {
             cardsController: cardsController,
             sbpBanksService: SBPBanksService(acquiringSdk: coreSDK),
             sbpBankAppChecker: SBPBankAppChecker(appChecker: appChecker),
-            tinkoffPayAppChecker: TinkoffPayAppChecker(appChecker: appChecker)
+            tinkoffPayAppChecker: tinkoffPayAssembly.tinkoffPayAppChecker()
         )
 
-        let tinkoffPayController = TinkoffPayController(
-            paymentService: coreSDK,
-            tinkoffPayService: coreSDK,
-            applicationOpener: UIApplication.shared,
-            paymentStatusService: PaymentStatusService(acquiringSdk: coreSDK),
-            repeatedRequestHelper: RepeatedRequestHelper(),
-            paymentStatusRetriesCount: self.configuration.paymentStatusRetriesCount
-        )
+        let tinkoffPayController = tinkoffPayAssembly.tinkoffPayController()
 
         let router = MainFormRouter(
             configuration: configuration,
