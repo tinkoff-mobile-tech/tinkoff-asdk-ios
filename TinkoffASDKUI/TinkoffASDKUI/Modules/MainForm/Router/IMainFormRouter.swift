@@ -30,4 +30,6 @@ protocol IMainFormRouter {
         output: ISBPBanksModuleOutput?,
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     )
+
+    func openTinkoffPayLanding(completion: VoidBlock?)
 }

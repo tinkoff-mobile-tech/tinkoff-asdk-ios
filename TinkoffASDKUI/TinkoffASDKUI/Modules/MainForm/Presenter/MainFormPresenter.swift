@@ -247,7 +247,9 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         _ tinkoffPayController: ITinkoffPayController,
         completedDueToInabilityToOpenTinkoffPayApp url: URL,
         error: Error
-    ) {}
+    ) {
+        router.openTinkoffPayLanding(completion: nil)
+    }
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,

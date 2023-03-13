@@ -30,7 +30,7 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> UINavigationController {
         let viewController = createModule(customerKey: customerKey, output: nil, onViewWasClosed: onViewWasClosed)
-        return UINavigationController.withASDKBar(rootViewController: viewController)
+        return UINavigationController.withElevationBar(rootViewController: viewController)
     }
 
     // MARK: Helpers

@@ -15,6 +15,7 @@ final class MainFormAssembly: IMainFormAssembly {
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
     private let tinkoffPayAssembly: ITinkoffPayAssembly
+    private let tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
     private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
@@ -26,6 +27,7 @@ final class MainFormAssembly: IMainFormAssembly {
         paymentControllerAssembly: IPaymentControllerAssembly,
         cardsControllerAssembly: ICardsControllerAssembly,
         tinkoffPayAssembly: ITinkoffPayAssembly,
+        tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
         sbpBanksAssembly: ISBPBanksAssembly
@@ -34,6 +36,7 @@ final class MainFormAssembly: IMainFormAssembly {
         self.paymentControllerAssembly = paymentControllerAssembly
         self.cardsControllerAssembly = cardsControllerAssembly
         self.tinkoffPayAssembly = tinkoffPayAssembly
+        self.tinkoffPayLandingAssembly = tinkoffPayLandingAssembly
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
@@ -65,7 +68,8 @@ final class MainFormAssembly: IMainFormAssembly {
             configuration: configuration,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
-            sbpBanksAssembly: sbpBanksAssembly
+            sbpBanksAssembly: sbpBanksAssembly,
+            tinkoffPayLandingAssembly: tinkoffPayLandingAssembly
         )
 
         let presenter = MainFormPresenter(
