@@ -7,12 +7,12 @@
 
 import Foundation
 
-final class DefaultURLSessionAuthChallengeService: IURLSessionAuthChallengeService {
+final class DefaultURLSessionAuthChallengeService: DefaultAuthChallengeService, IURLSessionAuthChallengeService {
     func urlSession(
         _ session: URLSession,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        completionHandler(.performDefaultHandling, nil)
+        super.didReceive(challenge: challenge, completionHandler: completionHandler)
     }
 }

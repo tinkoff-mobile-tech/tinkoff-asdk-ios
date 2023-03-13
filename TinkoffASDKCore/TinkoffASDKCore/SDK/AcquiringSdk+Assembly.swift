@@ -124,7 +124,8 @@ private extension NetworkSession {
         urlSessionConfiguration.timeoutIntervalForRequest = requestsTimeout
         urlSessionConfiguration.timeoutIntervalForResource = requestsTimeout
         urlSessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        let authChallengeService = authChallengeService ?? DefaultURLSessionAuthChallengeService()
+        lazy var defaultChallengeService = DefaultURLSessionAuthChallengeService(certificateValidator: CertificateValidator.shared)
+        let authChallengeService = authChallengeService ?? defaultChallengeService
         let urlSessionDelegate = URLSessionDelegateImpl(authChallengeService: authChallengeService)
 
         let urlSession = URLSession(

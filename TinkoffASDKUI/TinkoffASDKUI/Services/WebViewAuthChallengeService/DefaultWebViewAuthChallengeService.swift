@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 import WebKit
 
-final class DefaultWebViewAuthChallengeService: IWebViewAuthChallengeService {
+final class DefaultWebViewAuthChallengeService: DefaultAuthChallengeService, IWebViewAuthChallengeService {
     func webView(
         _ webView: WKWebView,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        completionHandler(.performDefaultHandling, nil)
+        super.didReceive(challenge: challenge, completionHandler: completionHandler)
     }
 }
