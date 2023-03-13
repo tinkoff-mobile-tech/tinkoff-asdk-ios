@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 13.03.2023.
 //
 
+import Foundation
+
 open class DefaultAuthChallengeService {
     // MARK: Properties
 
