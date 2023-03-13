@@ -73,7 +73,7 @@ extension SBPBanksAssembly {
         let router = SBPBanksRouter(sbpBanksAssembly: self, sbpPaymentSheetAssembly: sbpPaymentSheetAssembly)
 
         let banksService = SBPBanksService(acquiringSdk: acquiringSdk)
-        let bankAppChecker = SBPBankAppChecker(application: UIApplication.shared)
+        let bankAppChecker = SBPBankAppChecker(appChecker: AppChecker())
         let bankAppOpener = SBPBankAppOpener(application: UIApplication.shared)
 
         let cellImageLoader = CellImageLoader(imageLoader: ImageLoader(urlDataLoader: acquiringSdk))

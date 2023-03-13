@@ -180,8 +180,9 @@ public class AcquiringUISDK: NSObject {
 
     private weak var logger: LoggerDelegate?
     private let paymentControllerAssembly: IPaymentControllerAssembly
-    private let addCardControllerAssembly: IAddCardControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
+    private let tinkoffPayAssembly: ITinkoffPayAssembly
+    private let addCardControllerAssembly: IAddCardControllerAssembly
     private let yandexPayButtonContainerFactoryProvider: IYandexPayButtonContainerFactoryProvider
     private let webViewAuthChallengeService: IWebViewAuthChallengeService
     private let mainFormAssembly: IMainFormAssembly
@@ -189,6 +190,7 @@ public class AcquiringUISDK: NSObject {
     private let sbpBanksAssembly: ISBPBanksAssembly
     private let cardListAssembly: ICardListAssembly
     private let recurrentPaymentAssembly: IRecurrentPaymentAssembly
+    private let tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
 
     // MARK: Init
 
@@ -292,10 +294,16 @@ public class AcquiringUISDK: NSObject {
             cardListAssembly: cardListAssembly
         )
 
+        tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: coreSDK, configuration: uiSDKConfiguration)
+
+        tinkoffPayLandingAssembly = TinkoffPayLandingAssembly(authChallengeService: webViewAuthChallengeService)
+
         mainFormAssembly = MainFormAssembly(
             coreSDK: coreSDK,
             paymentControllerAssembly: paymentControllerAssembly,
             cardsControllerAssembly: cardsControllerAssembly,
+            tinkoffPayAssembly: tinkoffPayAssembly,
+            tinkoffPayLandingAssembly: tinkoffPayLandingAssembly,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly
@@ -1770,7 +1778,7 @@ public extension AcquiringUISDK {
         completion: @escaping PaymentResultCompletion
     ) {
         let module = sbpBanksAssembly.buildInitialModule(paymentFlow: paymentFlow, completion: completion)
-        let navigation = UINavigationController.withASDKBar(rootViewController: module.view)
+        let navigation = UINavigationController.withElevationBar(rootViewController: module.view)
         presentingViewController.present(navigation, animated: true)
     }
 

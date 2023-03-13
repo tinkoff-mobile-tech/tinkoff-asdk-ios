@@ -12,12 +12,12 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
 
     // MARK: Dependencies
 
-    private let application: IUIApplication
+    private let appChecker: IAppChecker
 
     // MARK: Initialization
 
-    init(application: IUIApplication) {
-        self.application = application
+    init(appChecker: IAppChecker) {
+        self.appChecker = appChecker
     }
 
     // MARK: ISBPBankAppChecker
@@ -29,31 +29,6 @@ final class SBPBankAppChecker: ISBPBankAppChecker {
     /// - Parameter allBanks: Список банков из которых будет производится выборка
     /// - Returns: Список банков подходящие под условия
     func bankAppsPreferredByMerchant(from allBanks: [SBPBank]) -> [SBPBank] {
-        if let bankSchemesArray = Bundle.main.infoDictionary?[.bankSchemesKey] as? [String] {
-            var preferredBanks = allBanks.filter { bank in bankSchemesArray.contains(where: { $0 == bank.schema }) }
-            preferredBanks = preferredBanks.filter { isBankAppInstalled($0) }
-            return preferredBanks
-        } else {
-            return []
-        }
+        allBanks.filter { appChecker.checkApplication(withScheme: $0.schema) == .installed }
     }
-}
-
-// MARK: - Private
-
-extension SBPBankAppChecker {
-    /// Проверяет установленно ли приложение данного банка на девайсе
-    /// Примечание: В тестовой сборке сыпится куча системных логов о том что не может открыть ту или иную ссылку, в релизной сборке логов не будет
-    /// - Parameter bank: банк который проверяем, на наличие установленного приложения
-    /// - Returns: возращает true если приложение этого банка установленно, false если нет
-    private func isBankAppInstalled(_ bank: SBPBank) -> Bool {
-        guard let url = URL(string: "\(bank.schema)://") else { return false }
-        return application.canOpenURL(url)
-    }
-}
-
-// MARK: - Constants
-
-private extension String {
-    static let bankSchemesKey = "LSApplicationQueriesSchemes"
 }

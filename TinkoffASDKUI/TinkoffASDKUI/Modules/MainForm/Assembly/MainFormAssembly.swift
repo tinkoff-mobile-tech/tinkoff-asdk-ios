@@ -14,6 +14,8 @@ final class MainFormAssembly: IMainFormAssembly {
     private let coreSDK: AcquiringSdk
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
+    private let tinkoffPayAssembly: ITinkoffPayAssembly
+    private let tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
     private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
@@ -24,6 +26,8 @@ final class MainFormAssembly: IMainFormAssembly {
         coreSDK: AcquiringSdk,
         paymentControllerAssembly: IPaymentControllerAssembly,
         cardsControllerAssembly: ICardsControllerAssembly,
+        tinkoffPayAssembly: ITinkoffPayAssembly,
+        tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
         sbpBanksAssembly: ISBPBanksAssembly
@@ -31,6 +35,8 @@ final class MainFormAssembly: IMainFormAssembly {
         self.coreSDK = coreSDK
         self.paymentControllerAssembly = paymentControllerAssembly
         self.cardsControllerAssembly = cardsControllerAssembly
+        self.tinkoffPayAssembly = tinkoffPayAssembly
+        self.tinkoffPayLandingAssembly = tinkoffPayLandingAssembly
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
@@ -46,24 +52,31 @@ final class MainFormAssembly: IMainFormAssembly {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = paymentFlow.customerKey.map(cardsControllerAssembly.cardsController(customerKey:))
 
+        let appChecker = AppChecker()
+
         let dataStateLoader = MainFormDataStateLoader(
             terminalService: coreSDK,
             cardsController: cardsController,
             sbpBanksService: SBPBanksService(acquiringSdk: coreSDK),
-            sbpBankAppChecker: SBPBankAppChecker(application: UIApplication.shared)
+            sbpBankAppChecker: SBPBankAppChecker(appChecker: appChecker),
+            tinkoffPayAppChecker: tinkoffPayAssembly.tinkoffPayAppChecker()
         )
+
+        let tinkoffPayController = tinkoffPayAssembly.tinkoffPayController()
 
         let router = MainFormRouter(
             configuration: configuration,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
-            sbpBanksAssembly: sbpBanksAssembly
+            sbpBanksAssembly: sbpBanksAssembly,
+            tinkoffPayLandingAssembly: tinkoffPayLandingAssembly
         )
 
         let presenter = MainFormPresenter(
             router: router,
             dataStateLoader: dataStateLoader,
             paymentController: paymentController,
+            tinkoffPayController: tinkoffPayController,
             paymentFlow: paymentFlow,
             configuration: configuration,
             moduleCompletion: moduleCompletion
@@ -76,6 +89,7 @@ final class MainFormAssembly: IMainFormAssembly {
 
         paymentController.delegate = presenter
         paymentController.webFlowDelegate = view
+        tinkoffPayController.delegate = presenter
 
         let pullableContainerViewController = PullableContainerViewController(content: view)
         return pullableContainerViewController
