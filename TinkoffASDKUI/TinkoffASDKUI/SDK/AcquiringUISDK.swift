@@ -216,7 +216,8 @@ public class AcquiringUISDK: NSObject {
         acquiringSdk = coreSDK
         self.style = style
 
-        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+        lazy var defaultChallengeService = DefaultWebViewAuthChallengeService(certificateValidator: CertificateValidator.shared)
+        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? defaultChallengeService
 
         let threeDSWebViewAssembly = ThreeDSWebViewAssembly(
             coreSDK: coreSDK,
