@@ -240,32 +240,45 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        didOpenTinkoffPayApp url: URL
+        didOpenTinkoffPay url: URL
     ) {}
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        completedDueToInabilityToOpenTinkoffPayApp url: URL,
+        completedDueToInabilityToOpenTinkoffPay url: URL,
         error: Error
     ) {
-        router.openTinkoffPayLanding(completion: nil)
+        moduleResult = .failed(error)
+
+        router.openTinkoffPayLanding { [weak self] in
+            self?.view?.hideCommonSheet()
+        }
     }
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
         completedWithSuccessful paymentState: GetPaymentStatePayload
-    ) {}
+    ) {
+        moduleResult = .succeeded(paymentState.toPaymentInfo())
+        view?.showCommonSheet(state: .paid)
+    }
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
         completedWithFailed paymentState: GetPaymentStatePayload,
         error: Error
-    ) {}
+    ) {
+        moduleResult = .failed(error)
+        view?.showCommonSheet(state: .failed)
+    }
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
         completedWith error: Error
-    ) {}
+    ) {
+        moduleResult = .failed(error)
+        view?.showCommonSheet(state: .failed)
+    }
 }
 
 // MARK: - ICardListPresenterOutput
@@ -369,6 +382,7 @@ extension MainFormPresenter {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case let .tinkoffPay(version):
+            view?.showCommonSheet(state: .tinkoffPayProcessing)
             tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: version)
         case .sbp:
             router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
@@ -434,6 +448,14 @@ private extension PayButtonViewPresentationState {
 private extension CommonSheetState {
     static var processing: CommonSheetState {
         CommonSheetState(status: .processing)
+    }
+
+    static var tinkoffPayProcessing: CommonSheetState {
+        CommonSheetState(
+            status: .processing,
+            title: "Ждем оплату в приложении банка",
+            secondaryButtonTitle: "Закрыть"
+        )
     }
 
     static var paid: CommonSheetState {

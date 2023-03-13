@@ -30,7 +30,7 @@ protocol TinkoffPayControllerDelegate: AnyObject {
     ///   - url: URL открытого приложения с `TinkoffPay`
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        didOpenTinkoffPayApp url: URL
+        didOpenTinkoffPay url: URL
     )
 
     /// Уведомляет о завершении работы из-за невозможности открыть приложение банка
@@ -40,7 +40,7 @@ protocol TinkoffPayControllerDelegate: AnyObject {
     ///   - error: Ошибка, содержащая дополнительный контекст
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        completedDueToInabilityToOpenTinkoffPayApp url: URL,
+        completedDueToInabilityToOpenTinkoffPay url: URL,
         error: Error
     )
 

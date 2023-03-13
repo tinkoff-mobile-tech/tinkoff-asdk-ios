@@ -77,7 +77,9 @@ final class TinkoffPayController: ITinkoffPayController {
             case let .success(payload):
                 self.getTinkoffPayLink(paymentId: payload.paymentId, method: method)
             case let .failure(error):
-                self.completeWithError(error)
+                DispatchQueue.performOnMain {
+                    self.delegate?.tinkoffPayController(self, completedWith: error)
+                }
             }
         }
     }
@@ -88,30 +90,30 @@ final class TinkoffPayController: ITinkoffPayController {
         tinkoffPayService.getTinkoffPayLink(data: data) { [weak self] result in
             guard let self = self else { return }
 
-            switch result {
-            case let .success(payload):
-                self.openApplication(with: payload.redirectUrl, paymentId: paymentId)
-            case let .failure(error):
-                self.completeWithError(error)
+            DispatchQueue.performOnMain {
+                switch result {
+                case let .success(payload):
+                    self.openApplication(with: payload.redirectUrl, paymentId: paymentId)
+                case let .failure(error):
+                    self.delegate?.tinkoffPayController(self, completedWith: error)
+                }
             }
         }
     }
 
     private func openApplication(with url: URL, paymentId: String) {
-        DispatchQueue.performOnMain { [weak self] in
+        applicationOpener.open(url) { [weak self] isOpened in
             guard let self = self else { return }
 
-            self.applicationOpener.open(url) { isOpened in
-                if isOpened {
-                    self.delegate?.tinkoffPayController(self, didOpenTinkoffPayApp: url)
-                    self.requestPaymentState(paymentId: paymentId)
-                } else {
-                    self.delegate?.tinkoffPayController(
-                        self,
-                        completedDueToInabilityToOpenTinkoffPayApp: url,
-                        error: Error.couldNotOpenTinkoffPayApp(url: url)
-                    )
-                }
+            if isOpened {
+                self.delegate?.tinkoffPayController(self, didOpenTinkoffPay: url)
+                self.requestPaymentState(paymentId: paymentId)
+            } else {
+                self.delegate?.tinkoffPayController(
+                    self,
+                    completedDueToInabilityToOpenTinkoffPay: url,
+                    error: Error.couldNotOpenTinkoffPayApp(url: url)
+                )
             }
         }
     }
@@ -122,70 +124,49 @@ final class TinkoffPayController: ITinkoffPayController {
         lastReceivedPaymentState: GetPaymentStatePayload? = nil
     ) {
         let requestAttempt = requestAttempt + 1
-        let retryingAllowed = requestAttempt <= paymentStatusRetriesCount
+        let retryingAllowed = requestAttempt < paymentStatusRetriesCount
 
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentState(paymentId: paymentId) { result in
+            self.paymentStatusService.getPaymentState(paymentId: paymentId, receiveOn: .main) { result in
                 switch result {
                 case let .success(paymentState) where self.successfulStatuses.contains(paymentState.status):
-                    self.completeWithSuccessful(paymentState: paymentState)
+                    self.delegate?.tinkoffPayController(self, completedWithSuccessful: paymentState)
                 case let .success(paymentState) where self.unsuccessfulStatuses.contains(paymentState.status):
-                    self.completeWithFailed(paymentState: paymentState)
+                    self.delegate?.tinkoffPayController(
+                        self,
+                        completedWithFailed: paymentState,
+                        error: Error.didReceiveFailedPaymentState(paymentState)
+                    )
                 case let .success(paymentState) where retryingAllowed:
-                    self.receiveIntermediate(paymentState: paymentState)
-                    self.requestPaymentState(paymentId: paymentId, requestAttempt: requestAttempt, lastReceivedPaymentState: paymentState)
+                    self.delegate?.tinkoffPayController(self, didReceiveIntermediate: paymentState)
+                    self.requestPaymentState(
+                        paymentId: paymentId,
+                        requestAttempt: requestAttempt,
+                        lastReceivedPaymentState: paymentState
+                    )
                 case .success:
-                    self.completeWithError(Error.didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState: lastReceivedPaymentState))
+                    self.delegate?.tinkoffPayController(
+                        self,
+                        completedWith: Error.didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState: lastReceivedPaymentState)
+                    )
                 case .failure where retryingAllowed:
-                    self.requestPaymentState(paymentId: paymentId, requestAttempt: requestAttempt, lastReceivedPaymentState: lastReceivedPaymentState)
+                    self.requestPaymentState(
+                        paymentId: paymentId,
+                        requestAttempt: requestAttempt,
+                        lastReceivedPaymentState: lastReceivedPaymentState
+                    )
                 case let .failure(error):
-                    self.completeWithError(
-                        Error.didNotWaitForSuccessfulPaymentState(
+                    self.delegate?.tinkoffPayController(
+                        self,
+                        completedWith: Error.didNotWaitForSuccessfulPaymentState(
                             lastReceivedPaymentState: lastReceivedPaymentState,
                             underlyingError: error
                         )
                     )
                 }
             }
-        }
-    }
-
-    // MARK: Event Handlers
-
-    private func receiveIntermediate(paymentState: GetPaymentStatePayload) {
-        DispatchQueue.performOnMain { [weak self] in
-            guard let self = self else { return }
-
-            self.delegate?.tinkoffPayController(self, didReceiveIntermediate: paymentState)
-        }
-    }
-
-    private func completeWithSuccessful(paymentState: GetPaymentStatePayload) {
-        DispatchQueue.performOnMain { [weak self] in
-            guard let self = self else { return }
-
-            self.delegate?.tinkoffPayController(self, completedWithSuccessful: paymentState)
-        }
-    }
-
-    private func completeWithFailed(paymentState: GetPaymentStatePayload) {
-        DispatchQueue.performOnMain { [weak self] in
-            guard let self = self else { return }
-
-            self.delegate?.tinkoffPayController(
-                self, completedWithFailed: paymentState,
-                error: Error.didReceiveFailedPaymentState(paymentState)
-            )
-        }
-    }
-
-    private func completeWithError(_ error: Swift.Error) {
-        DispatchQueue.performOnMain { [weak self] in
-            guard let self = self else { return }
-
-            self.delegate?.tinkoffPayController(self, completedWith: error)
         }
     }
 }
@@ -220,6 +201,20 @@ extension TinkoffPayController.Error: LocalizedError {
             return url.scheme.map { "For Tinkoff Pay to work correctly, add the scheme \($0) to the list of LSApplicationQueriesSchemes at info.plist" }
         default:
             return nil
+        }
+    }
+}
+
+// MARK: - IPaymentStatusService + Helpers
+
+private extension IPaymentStatusService {
+    func getPaymentState(
+        paymentId: String,
+        receiveOn queue: DispatchQueue,
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
+    ) {
+        getPaymentState(paymentId: paymentId) { result in
+            queue.async { completion(result) }
         }
     }
 }
