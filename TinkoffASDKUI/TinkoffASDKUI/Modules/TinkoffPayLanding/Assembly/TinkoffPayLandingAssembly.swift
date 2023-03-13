@@ -5,7 +5,7 @@
 //  Created by r.akhmadeev on 13.03.2023.
 //
 
-import Foundation
+import UIKit
 
 final class TinkoffPayLandingAssembly: ITinkoffPayLandingAssembly {
     // MARK: Dependencies
