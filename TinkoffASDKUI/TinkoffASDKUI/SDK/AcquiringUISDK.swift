@@ -191,6 +191,7 @@ public class AcquiringUISDK: NSObject {
     private let sbpQrAssembly: ISBPQrAssembly
     private let cardListAssembly: ICardListAssembly
     private let recurrentPaymentAssembly: IRecurrentPaymentAssembly
+    private let tinkoffPaySheetAssembly: ITinkoffPaySheetAssembly
     private let tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
 
     // MARK: Init
@@ -299,8 +300,13 @@ public class AcquiringUISDK: NSObject {
         )
 
         tinkoffPayAssembly = TinkoffPayAssembly(coreSDK: coreSDK, configuration: uiSDKConfiguration)
-
         tinkoffPayLandingAssembly = TinkoffPayLandingAssembly(authChallengeService: webViewAuthChallengeService)
+
+        tinkoffPaySheetAssembly = TinkoffPaySheetAssembly(
+            coreSDK: coreSDK,
+            tinkoffPayAssembly: tinkoffPayAssembly,
+            tinkoffPayLandingAssembly: tinkoffPayLandingAssembly
+        )
 
         mainFormAssembly = MainFormAssembly(
             coreSDK: coreSDK,
@@ -1809,7 +1815,11 @@ public extension AcquiringUISDK {
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         completion: PaymentResultCompletion? = nil
-    ) {}
+    ) {
+        let viewController = tinkoffPaySheetAssembly.tinkoffPaySheet(paymentFlow: paymentFlow, completion: completion)
+
+        presentingViewController.present(viewController, animated: true)
+    }
 
     func presentStaticQr(
         on presentingViewController: UIViewController,

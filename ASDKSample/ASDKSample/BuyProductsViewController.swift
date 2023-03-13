@@ -71,6 +71,7 @@ class BuyProductsViewController: UIViewController {
         .products,
         .pay,
         .mainFormPayment,
+        .tinkoffPay,
         .payAndSaveAsParent,
         .payRequrent,
         .paySbpQrCode,
@@ -623,10 +624,10 @@ extension BuyProductsViewController: UITableViewDataSource {
             return cell
         case .tinkoffPay:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell else { break }
-            cell.button.setTitle("TinkoffPay", for: .normal)
+            cell.button.setTitle("Tinkoff Pay", for: .normal)
             cell.button.backgroundColor = yellowButtonColor()
             cell.button.setImage(nil, for: .normal)
-            cell.onButtonTouch = { [weak self] in self?.payWithMainForm() }
+            cell.onButtonTouch = { [weak self] in self?.payWithTinkoffPay() }
             return cell
         }
 
@@ -650,7 +651,7 @@ extension BuyProductsViewController: UITableViewDataSource {
         case .yandexPayFull, .yandexPayFinish:
             return Loc.Title.yandexPay
         case .tinkoffPay:
-            return "Оплатить с помощью TinkoffPay"
+            return "Оплатить с помощью Tinkoff Pay"
         }
     }
 
@@ -700,7 +701,7 @@ extension BuyProductsViewController: UITableViewDataSource {
         case .yandexPayFinish:
             return "Finish payment flow"
         case .tinkoffPay:
-            return "Открыть экран TinkoffPay и начать платеж"
+            return "Открыть экран Tinkoff Pay и начать платеж"
         }
     }
 }
