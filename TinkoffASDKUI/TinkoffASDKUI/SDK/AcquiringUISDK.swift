@@ -1805,6 +1805,12 @@ public extension AcquiringUISDK {
         presentingViewController.present(viewController, animated: true)
     }
 
+    func presentTinkoffPay(
+        on presentingViewController: UIViewController,
+        paymentFlow: PaymentFlow,
+        completion: PaymentResultCompletion? = nil
+    ) {}
+
     func presentStaticQr(
         on presentingViewController: UIViewController,
         completion: (() -> Void)? = nil
