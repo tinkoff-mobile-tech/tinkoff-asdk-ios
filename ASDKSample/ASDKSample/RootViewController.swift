@@ -203,10 +203,13 @@ private extension RootViewController {
 
     private func showSpbQrCollector() {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            let viewConfigration = AcquiringViewConfiguration()
-            viewConfigration.viewTitle = Loc.Title.qrcode
+            sdk.presentStaticQr(on: self, completion: { [weak self] result in
+                self?.showAlert(with: result)
+            })
 
-            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
+//            let viewConfigration = AcquiringViewConfiguration()
+//            viewConfigration.viewTitle = Loc.Title.qrcode
+//            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
         }
     }
 
@@ -258,5 +261,17 @@ extension RootViewController {
             )
             present(alert, animated: true)
         }
+    }
+
+    private func showAlert(with result: PaymentResult) {
+        let alert = UIAlertController(
+            title: result.alertTitle,
+            message: result.alertMessage,
+            preferredStyle: .alert
+        )
+
+        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }

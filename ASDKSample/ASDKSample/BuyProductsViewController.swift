@@ -779,7 +779,7 @@ private extension PaymentOptions {
 
 // MARK: - PaymentResult + Helpers
 
-private extension PaymentResult {
+extension PaymentResult {
     var alertTitle: String {
         switch self {
         case .succeeded:
