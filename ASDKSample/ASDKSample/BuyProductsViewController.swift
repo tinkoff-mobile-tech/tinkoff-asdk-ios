@@ -320,7 +320,18 @@ class BuyProductsViewController: UIViewController {
         var paymentData = createPaymentData()
         paymentData.savingAsParentPayment = true
 
-        presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfiguration())
+        let paymentOptions = PaymentOptions.create(from: paymentData)
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        let configuration = MainFormUIConfiguration(
+            amount: paymentOptions.orderOptions.amount,
+            orderDescription: paymentOptions.orderOptions.description
+        )
+
+        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
+        }
+
+//        presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfiguration())
     }
 
     func charge(_ complete: @escaping (() -> Void)) {
@@ -336,23 +347,22 @@ class BuyProductsViewController: UIViewController {
 //            }
 //        }
 
-        let rebuilId = String(paymentCardParentPaymentId?.parentPaymentId ?? 2_423_424)
-        let failedRebuilId = "1333111"
-        let randomRebuilId = Int.random(in: 0 ... 1) == 0 ? rebuilId : failedRebuilId
+        if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
 
-        let paymentOptions = PaymentOptions.create(from: createPaymentData())
-        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
-        let amount = paymentOptions.orderOptions.amount
+            let paymentOptions = PaymentOptions.create(from: createPaymentData())
+            let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+            let amount = paymentOptions.orderOptions.amount
 
-        uiSDK.presentRecurrentPayment(
-            on: self,
-            paymentFlow: paymentFlow,
-            amount: amount,
-            rebillId: randomRebuilId,
-            failureDelegate: self
-        ) { [weak self] result in
-            complete()
-            self?.showAlert(with: result)
+            uiSDK.presentRecurrentPayment(
+                on: self,
+                paymentFlow: paymentFlow,
+                amount: amount,
+                rebillId: String(parentPaymentId),
+                failureDelegate: self
+            ) { [weak self] result in
+                complete()
+                self?.showAlert(with: result)
+            }
         }
     }
 
