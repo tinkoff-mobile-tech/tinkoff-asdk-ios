@@ -10,7 +10,10 @@ import Foundation
 protocol ISBPQrViewOutput {
     func viewDidLoad()
     func viewWasClosed()
+
     func numberOfRows() -> Int
     func cellType(at indexPath: IndexPath) -> SBPQrCellType
+
     func commonSheetViewDidTapPrimaryButton()
+    func commonSheetViewDidTapSecondaryButton()
 }

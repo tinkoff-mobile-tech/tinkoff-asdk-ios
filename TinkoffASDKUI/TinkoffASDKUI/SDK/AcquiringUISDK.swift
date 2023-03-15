@@ -1807,7 +1807,7 @@ public extension AcquiringUISDK {
 
     func presentStaticQr(
         on presentingViewController: UIViewController,
-        completion: @escaping PaymentResultCompletion
+        completion: (() -> Void)? = nil
     ) {
         let viewController = sbpQrAssembly.buildForStaticQr(moduleCompletion: completion)
         presentingViewController.present(viewController, animated: true)

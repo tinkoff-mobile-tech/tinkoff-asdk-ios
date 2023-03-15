@@ -120,7 +120,9 @@ extension SBPQrViewController: CommonSheetViewDelegate {
         presenter.commonSheetViewDidTapPrimaryButton()
     }
 
-    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
+    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {
+        presenter.commonSheetViewDidTapSecondaryButton()
+    }
 }
 
 // MARK: - Private

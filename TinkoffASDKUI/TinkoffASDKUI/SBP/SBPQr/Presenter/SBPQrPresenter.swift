@@ -16,6 +16,8 @@ final class SBPQrPresenter: ISBPQrViewOutput {
 
     private let acquiringSdk: AcquiringSdk
     private let paymentFlow: PaymentFlow?
+    private let repeatedRequestHelper: IRepeatedRequestHelper
+    private let paymentStatusService: IPaymentStatusService
     private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
@@ -25,7 +27,9 @@ final class SBPQrPresenter: ISBPQrViewOutput {
 
     // MARK: State
 
+    private var paymentId: String?
     private var cellTypes: [SBPQrCellType] = []
+    private var currentViewState: CommonSheetState = .processing
     private var moduleResult: PaymentResult = .cancelled()
 
     // MARK: Initialization
@@ -33,10 +37,14 @@ final class SBPQrPresenter: ISBPQrViewOutput {
     init(
         acquiringSdk: AcquiringSdk,
         paymentFlow: PaymentFlow?,
+        repeatedRequestHelper: IRepeatedRequestHelper,
+        paymentStatusService: IPaymentStatusService,
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.acquiringSdk = acquiringSdk
         self.paymentFlow = paymentFlow
+        self.repeatedRequestHelper = repeatedRequestHelper
+        self.paymentStatusService = paymentStatusService
         self.moduleCompletion = moduleCompletion
     }
 }
@@ -65,6 +73,10 @@ extension SBPQrPresenter {
     func commonSheetViewDidTapPrimaryButton() {
         view?.closeView()
     }
+
+    func commonSheetViewDidTapSecondaryButton() {
+        view?.closeView()
+    }
 }
 
 // MARK: - IQrImageViewPresenterOutput
@@ -72,6 +84,12 @@ extension SBPQrPresenter {
 extension SBPQrPresenter: IQrImageViewPresenterOutput {
     func qrDidLoad() {
         view?.hideCommonSheet()
+
+        // Через 10 секунд после показа динамического QR, начинаем отслеживание статуса
+        // В случае со статическим QR отслеживания статуса не начнется
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            self.getPaymentStatus()
+        }
     }
 }
 
@@ -89,12 +107,14 @@ extension SBPQrPresenter {
             acquiringSdk.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
                 switch result {
                 case let .success(initPayload):
+                    self?.paymentId = initPayload.paymentId
                     self?.loadDynamicQr(paymentId: initPayload.paymentId)
                 case let .failure(error):
                     self?.handleFailureGetQrData(error: error)
                 }
             })
         case let .finish(paymentId, _):
+            self.paymentId = paymentId
             loadDynamicQr(paymentId: paymentId)
         }
     }
@@ -135,7 +155,56 @@ extension SBPQrPresenter {
     private func handleFailureGetQrData(error: Error) {
         DispatchQueue.performOnMain {
             self.moduleResult = .failed(error)
-            self.view?.showCommonSheet(state: .failed)
+            self.viewUpdateStateIfNeeded(newState: .failed)
+        }
+    }
+
+    private func getPaymentStatus() {
+        guard let paymentId = paymentId else { return }
+
+        repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
+            guard let self = self else { return }
+
+            self.paymentStatusService.getPaymentState(paymentId: paymentId) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case let .success(payload):
+                        self.handleSuccessGet(payloadInfo: payload)
+                    case let .failure(error):
+                        self.handleFailureGetPaymentStatus(error)
+                    }
+                }
+            }
+        }
+    }
+
+    private func handleSuccessGet(payloadInfo: GetPaymentStatePayload) {
+        switch payloadInfo.status {
+        case .formShowed:
+            getPaymentStatus()
+            viewUpdateStateIfNeeded(newState: .waiting)
+        case .authorizing, .confirming:
+            getPaymentStatus()
+            viewUpdateStateIfNeeded(newState: .processing)
+        case .authorized, .confirmed:
+            moduleResult = .succeeded(payloadInfo.toPaymentInfo())
+            viewUpdateStateIfNeeded(newState: .paid)
+        case .rejected:
+            moduleResult = .failed(ASDKError(code: .rejected))
+            viewUpdateStateIfNeeded(newState: .failed)
+        default:
+            getPaymentStatus()
+        }
+    }
+
+    private func handleFailureGetPaymentStatus(_ error: Error) {
+        getPaymentStatus()
+    }
+
+    private func viewUpdateStateIfNeeded(newState: CommonSheetState) {
+        if currentViewState != newState {
+            currentViewState = newState
+            view?.showCommonSheet(state: currentViewState)
         }
     }
 }
@@ -145,6 +214,14 @@ extension SBPQrPresenter {
 private extension CommonSheetState {
     static var processing: CommonSheetState {
         CommonSheetState(status: .processing)
+    }
+
+    static var waiting: CommonSheetState {
+        CommonSheetState(
+            status: .processing,
+            title: Loc.CommonSheet.PaymentWaiting.title,
+            secondaryButtonTitle: Loc.CommonSheet.PaymentWaiting.secondaryButton
+        )
     }
 
     static var paid: CommonSheetState {

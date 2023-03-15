@@ -8,6 +8,6 @@
 import UIKit
 
 protocol ISBPQrAssembly {
-    func buildForStaticQr(moduleCompletion: PaymentResultCompletion?) -> UIViewController
+    func buildForStaticQr(moduleCompletion: VoidBlock?) -> UIViewController
     func buildForDynamicQr(paymentFlow: PaymentFlow, moduleCompletion: PaymentResultCompletion?) -> UIViewController
 }

@@ -203,9 +203,7 @@ private extension RootViewController {
 
     private func showSpbQrCollector() {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.presentStaticQr(on: self, completion: { [weak self] result in
-                self?.showAlert(with: result)
-            })
+            sdk.presentStaticQr(on: self)
 
 //            let viewConfigration = AcquiringViewConfiguration()
 //            viewConfigration.viewTitle = Loc.Title.qrcode

@@ -21,8 +21,12 @@ final class SBPQrAssembly: ISBPQrAssembly {
 
     // MARK: ISBPQrAssembly
 
-    func buildForStaticQr(moduleCompletion: PaymentResultCompletion?) -> UIViewController {
-        build(paymentFlow: nil, moduleCompletion: moduleCompletion)
+    func buildForStaticQr(moduleCompletion: VoidBlock?) -> UIViewController {
+        let paymentResultCompletion: PaymentResultCompletion = { _ in
+            moduleCompletion?()
+        }
+
+        return build(paymentFlow: nil, moduleCompletion: paymentResultCompletion)
     }
 
     func buildForDynamicQr(paymentFlow: PaymentFlow, moduleCompletion: PaymentResultCompletion?) -> UIViewController {
@@ -34,9 +38,14 @@ final class SBPQrAssembly: ISBPQrAssembly {
 
 extension SBPQrAssembly {
     private func build(paymentFlow: PaymentFlow?, moduleCompletion: PaymentResultCompletion?) -> UIViewController {
+        let paymentStatusService = PaymentStatusService(acquiringSdk: acquiringSdk)
+        let repeatedRequestHelper = RepeatedRequestHelper()
+
         let presenter = SBPQrPresenter(
             acquiringSdk: acquiringSdk,
             paymentFlow: paymentFlow,
+            repeatedRequestHelper: repeatedRequestHelper,
+            paymentStatusService: paymentStatusService,
             moduleCompletion: moduleCompletion
         )
         let view = SBPQrViewController(presenter: presenter)
