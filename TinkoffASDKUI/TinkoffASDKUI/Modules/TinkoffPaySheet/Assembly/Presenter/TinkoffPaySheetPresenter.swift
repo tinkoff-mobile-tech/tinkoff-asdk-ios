@@ -9,6 +9,12 @@ import Foundation
 import TinkoffASDKCore
 
 final class TinkoffPaySheetPresenter {
+    // MARK: Internal Types
+
+    enum Error: Swift.Error {
+        case tinkoffPayIsNotAllowed
+    }
+
     // MARK: Dependencies
 
     weak var view: ICommonSheetView?
@@ -43,7 +49,36 @@ final class TinkoffPaySheetPresenter {
 // MARK: - ICommonSheetPresenter
 
 extension TinkoffPaySheetPresenter: ICommonSheetPresenter {
-    func viewDidLoad() {}
+    func viewDidLoad() {
+        let handleFailure: (Swift.Error) -> Void = { [weak self] error in
+            self?.moduleResult = .failed(error)
+            self?.view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
+        }
+
+        let handleSuccess: (GetTinkoffPayStatusPayload) -> Void = { [weak self] payload in
+            guard let self = self else { return }
+
+            switch payload.status {
+            case let .allowed(method):
+                self.tinkoffPayController.performPayment(paymentFlow: self.paymentFlow, method: method)
+            case .disallowed:
+                handleFailure(Error.tinkoffPayIsNotAllowed)
+            }
+        }
+
+        view?.update(state: .tinkoffPay.processing)
+
+        tinkoffPayService.getTinkoffPayStatus { result in
+            DispatchQueue.performOnMain {
+                switch result {
+                case let .success(payload):
+                    handleSuccess(payload)
+                case let .failure(error):
+                    handleFailure(error)
+                }
+            }
+        }
+    }
 
     func primaryButtonTapped() {
         view?.close()
@@ -81,11 +116,13 @@ extension TinkoffPaySheetPresenter: TinkoffPayControllerDelegate {
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
         completedDueToInabilityToOpenTinkoffPay url: URL,
-        error: Error
+        error: Swift.Error
     ) {
         moduleResult = .failed(error)
 
-        router.openTinkoffPayLanding {}
+        router.openTinkoffPayLanding { [weak self] in
+            self?.view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
+        }
     }
 
     func tinkoffPayController(
@@ -93,20 +130,23 @@ extension TinkoffPaySheetPresenter: TinkoffPayControllerDelegate {
         completedWithSuccessful paymentState: GetPaymentStatePayload
     ) {
         moduleResult = .succeeded(paymentState.toPaymentInfo())
+        view?.update(state: .tinkoffPay.paid)
     }
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
         completedWithFailed paymentState: GetPaymentStatePayload,
-        error: Error
+        error: Swift.Error
     ) {
         moduleResult = .failed(error)
+        view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
     }
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        completedWith error: Error
+        completedWith error: Swift.Error
     ) {
         moduleResult = .failed(error)
+        view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
     }
 }
