@@ -7,4 +7,6 @@
 
 protocol IQrImageViewOutput: AnyObject {
     var view: IQrImageViewInput? { get set }
+
+    func qrDidLoad()
 }

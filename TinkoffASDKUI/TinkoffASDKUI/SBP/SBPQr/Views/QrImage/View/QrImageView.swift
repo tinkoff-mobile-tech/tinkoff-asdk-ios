@@ -22,6 +22,8 @@ final class QrImageView: UIView, IQrImageViewInput {
 
     // MARK: Subviews
 
+    private lazy var stackView = UIStackView()
+    private lazy var imageView = UIImageView()
     private lazy var webView = WKWebView()
 
     // MARK: Init
@@ -39,15 +41,21 @@ final class QrImageView: UIView, IQrImageViewInput {
     // MARK: Initial Configuration
 
     private func setupView() {
-        addSubview(webView)
-        webView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        stackView.addArrangedSubview(imageView)
+        stackView.addArrangedSubview(webView)
+
+        webView.scrollView.isScrollEnabled = false
+        webView.navigationDelegate = self
+
+        stackView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            webView.leftAnchor.constraint(equalTo: leftAnchor),
-            webView.topAnchor.constraint(equalTo: topAnchor),
-            webView.rightAnchor.constraint(equalTo: rightAnchor),
-            webView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            webView.widthAnchor.constraint(equalTo: webView.heightAnchor),
+            stackView.leftAnchor.constraint(equalTo: leftAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.rightAnchor.constraint(equalTo: rightAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.widthAnchor.constraint(equalTo: stackView.heightAnchor),
         ])
     }
 }
@@ -55,49 +63,24 @@ final class QrImageView: UIView, IQrImageViewInput {
 // MARK: - IQrImageViewInput
 
 extension QrImageView {
-    func set(qrData: String) {
-        showQRCode(data: qrData)
-    }
-}
-
-// MARK: - Private
-
-extension QrImageView {
-    private func showQRCode(data: String) {
-        let qrCodeBase64String = Data(data.utf8).base64EncodedString()
-        let qrCodeHTML = qrCodeHTML(with: qrCodeBase64String)
+    func set(qrCodeHTML: String) {
+        imageView.isHidden = true
+        webView.isHidden = false
         webView.loadHTMLString(qrCodeHTML, baseURL: nil)
     }
 
-    private func qrCodeHTML(with qrData: String) -> String {
-        """
-        <!DOCTYPE html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>QR-code</title>
-            <style>
-                body {
-                    margin:0;
-                    padding:0;
-                }
-                .qr {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    height: 100vh;
-                    background-repeat: no-repeat;
-                    background-size: contain;
-                    width: 100%;
-                    background-position: center;
-                    background-image:url('data:image/svg+xml;base64,\(qrData)')
-                }
-            </style>
-        </head>
-        <body>
-            <div class="qr"/>
-        </body>
-        </html>
-        """
+    func set(qrCodeUrl: String) {
+        webView.isHidden = true
+        imageView.isHidden = false
+        imageView.image = UIImage(qr: qrCodeUrl)
+        presenter?.qrDidLoad()
+    }
+}
+
+// MARK: - WKNavigationDelegate
+
+extension QrImageView: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        presenter?.qrDidLoad()
     }
 }

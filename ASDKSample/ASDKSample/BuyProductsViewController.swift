@@ -357,13 +357,20 @@ class BuyProductsViewController: UIViewController {
     }
 
     func generateSbpQrImage() {
-        uiSDK.presentPaymentSbpQrImage(
-            on: self,
-            paymentData: createPaymentData(),
-            configuration: acquiringViewConfiguration()
-        ) { [weak self] response in
-            self?.responseReviewing(response)
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        uiSDK.presentDynamicQr(on: self, paymentFlow: paymentFlow) { [weak self] result in
+            self?.showAlert(with: result)
         }
+
+//        uiSDK.presentPaymentSbpQrImage(
+//            on: self,
+//            paymentData: createPaymentData(),
+//            configuration: acquiringViewConfiguration()
+//        ) { [weak self] response in
+//            self?.responseReviewing(response)
+//        }
     }
 
     func generateSbpUrl() {

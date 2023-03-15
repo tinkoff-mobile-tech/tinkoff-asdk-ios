@@ -21,7 +21,7 @@ final class SBPQrPresenter: ISBPQrViewOutput {
     // MARK: Child Presenters
 
     private lazy var textHeaderPresenter = TextHeaderViewPresenter(title: Loc.TinkoffAcquiring.View.Title.payQRCode)
-    private lazy var qrImagePresenter = QrImageViewPresenter()
+    private lazy var qrImagePresenter = QrImageViewPresenter(output: self)
 
     // MARK: State
 
@@ -67,6 +67,14 @@ extension SBPQrPresenter {
     }
 }
 
+// MARK: - IQrImageViewPresenterOutput
+
+extension SBPQrPresenter: IQrImageViewPresenterOutput {
+    func qrDidLoad() {
+        view?.hideCommonSheet()
+    }
+}
+
 // MARK: - Private
 
 extension SBPQrPresenter {
@@ -93,32 +101,34 @@ extension SBPQrPresenter {
 
     private func loadStaticQr() {
         acquiringSdk.getStaticQR(data: .imageSVG) { [weak self] result in
-            self?.handleQr(result: result.map { $0.qrCodeData })
+            self?.handleQr(result: result.map { .staticQr($0.qrCodeData) })
         }
     }
 
     private func loadDynamicQr(paymentId: String) {
         let qrData = GetQRData(paymentId: paymentId, paymentInvoiceType: .url)
         acquiringSdk.getQR(data: qrData) { [weak self] result in
-            self?.handleQr(result: result.map { $0.qrCodeData })
+            self?.handleQr(result: result.map { .dynamicQr($0.qrCodeData) })
         }
     }
 
-    private func handleQr(result: Result<String, Error>) {
+    private func handleQr(result: Result<QrImageType, Error>) {
         switch result {
-        case let .success(qrData):
-            handleSuccessGet(qrData: qrData)
+        case let .success(qrType):
+            handleSuccessGet(qrType: qrType)
         case let .failure(error):
             handleFailureGetQrData(error: error)
         }
     }
 
-    private func handleSuccessGet(qrData: String) {
+    private func handleSuccessGet(qrType: QrImageType) {
+        // Отображение Qr происходит после того как Qr будет загружен в WebView или ImageView. (зависит от типа)
+        // Так как у web view есть задержка отображения.
+        // Уведомление о загрузке приходит в методе qrDidLoad()
         DispatchQueue.performOnMain {
-            self.qrImagePresenter.set(qrData: qrData)
+            self.qrImagePresenter.set(qrType: qrType)
             self.cellTypes = [.textHeader(self.textHeaderPresenter), .qrImage(self.qrImagePresenter)]
             self.view?.reloadData()
-            self.view?.hideCommonSheet()
         }
     }
 

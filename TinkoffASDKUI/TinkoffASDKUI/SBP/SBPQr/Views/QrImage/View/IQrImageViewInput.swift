@@ -6,5 +6,6 @@
 //
 
 protocol IQrImageViewInput: AnyObject {
-    func set(qrData: String)
+    func set(qrCodeHTML: String)
+    func set(qrCodeUrl: String)
 }
