@@ -58,7 +58,8 @@ extension CardFieldView {
     }
 
     func updateCardNumberField(with maskFormat: String) -> Bool {
-        cardNumberDelegate.update(maskFormat: maskFormat, using: cardNumberTextField.textField)
+        return true
+//        cardNumberDelegate.update(maskFormat: maskFormat, using: cardNumberTextField.textField)
     }
 
     func setHeaderErrorFor(textFieldType: CardFieldType) {

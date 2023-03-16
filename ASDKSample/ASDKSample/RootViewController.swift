@@ -152,9 +152,9 @@ class RootViewController: UITableViewController {
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
+//            sdk.addCardNeedSetCheckTypeHandler = {
+//                AppSetting.shared.addCardChekType
+//            }
 
             sdk.presentCardList(
                 on: self,
@@ -165,9 +165,9 @@ class RootViewController: UITableViewController {
 
     @IBAction func openAddCard(_ sender: UIBarButtonItem) {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
+//            sdk.addCardNeedSetCheckTypeHandler = {
+//                AppSetting.shared.addCardChekType
+//            }
 
             let customerKey = AppSetting.shared.activeSdkCredentials.customerKey
 
@@ -175,25 +175,6 @@ class RootViewController: UITableViewController {
                 self?.addingNewCardCompleted(result: result)
             }
         }
-    }
-}
-
-extension RootViewController: AcquiringScanerProtocol {
-
-    func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController? {
-        UIAlertController.cardScannerMock(confirmationHandler: completion)
-    }
-}
-
-extension RootViewController: AcquiringAlertViewProtocol {
-
-    func presentAlertView(_ title: String?, message: String?, dismissCompletion: (() -> Void)?) -> UIViewController? {
-        let alertView = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertView.addAction(UIAlertAction(title: "ок", style: .default, handler: { _ in
-            dismissCompletion?()
-        }))
-
-        return alertView
     }
 }
 
@@ -230,7 +211,6 @@ private extension RootViewController {
             fatalError("Could not instantiate BuyProductsViewController")
         }
 
-        viewController.scaner = self
         viewController.coreSDK = coreSDK
         viewController.uiSDK = uiSDK
         viewController.customerKey = credential.customerKey
