@@ -188,6 +188,7 @@ public class AcquiringUISDK: NSObject {
     private let mainFormAssembly: IMainFormAssembly
     private let addNewCardAssembly: IAddNewCardAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
+    private let sbpQrAssembly: ISBPQrAssembly
     private let cardListAssembly: ICardListAssembly
     private let recurrentPaymentAssembly: IRecurrentPaymentAssembly
     private let tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
@@ -253,6 +254,9 @@ public class AcquiringUISDK: NSObject {
             acquiringSdk: acquiringSdk,
             sbpConfiguration: uiSDKConfiguration.sbpConfiguration
         )
+
+        sbpQrAssembly = SBPQrAssembly(acquiringSdk: acquiringSdk)
+
         let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
         let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
         let tdsTimeoutResolver = TDSTimeoutResolver()
@@ -1798,6 +1802,23 @@ public extension AcquiringUISDK {
             moduleCompletion: completion
         )
 
+        presentingViewController.present(viewController, animated: true)
+    }
+
+    func presentStaticQr(
+        on presentingViewController: UIViewController,
+        completion: (() -> Void)? = nil
+    ) {
+        let viewController = sbpQrAssembly.buildForStaticQr(moduleCompletion: completion)
+        presentingViewController.present(viewController, animated: true)
+    }
+
+    func presentDynamicQr(
+        on presentingViewController: UIViewController,
+        paymentFlow: PaymentFlow,
+        completion: @escaping PaymentResultCompletion
+    ) {
+        let viewController = sbpQrAssembly.buildForDynamicQr(paymentFlow: paymentFlow, moduleCompletion: completion)
         presentingViewController.present(viewController, animated: true)
     }
 }
