@@ -279,3 +279,22 @@ internal extension MaskedTextFieldDelegate {
         field.selectedTextRange = field.textRange(from: from, to: to)
     }
 }
+
+// MARK: - MaskedTextFieldDelegate + Mask Updating
+
+extension MaskedTextFieldDelegate {
+    /// Вспомогательный метод для обновления маски
+    ///
+    /// По-умолчанию `MaskedTextFieldDelegate` не пересчитывает расположение символов
+    /// после обновления маски. Чтобы принудить пересчет, дополнительно вызывается метод
+    /// `textField(_:shouldChangeCharactersIn:replacementString:)
+    func update(maskFormat: String, using textField: UITextField) -> Bool {
+        guard self.maskFormat != maskFormat,
+              let textRange = textField.emptyRangeAtEnd
+        else { return false }
+
+        self.maskFormat = maskFormat
+        _ = self.textField(textField, shouldChangeCharactersIn: textRange, replacementString: "")
+        return true
+    }
+}
