@@ -17,7 +17,10 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
     var pullableContainerContentHeight: CGFloat {
         if commonSheetView.isHidden {
-            return keyboardVisible ? UIScreen.main.bounds.height : tableView.contentSize.height
+            let tableViewHeight = tableView.contentSize.height
+            let bottomSafeArea = UIWindow.globalSafeAreaInsets.bottom
+            let heightWithKeyboard = tableViewHeight + keyboardHeight - bottomSafeArea
+            return keyboardVisible ? heightWithKeyboard : tableViewHeight
         } else {
             return commonSheetView.estimatedHeight
         }
@@ -38,7 +41,8 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
     // MARK: State
 
     private var tableViewContentSizeObservation: NSKeyValueObservation?
-    private var keyboardVisible = false
+    private var keyboardHeight: CGFloat = 0
+    private var keyboardVisible: Bool { keyboardHeight > 0 }
 
     // MARK: Initialization
 
@@ -78,6 +82,10 @@ extension RecurrentPaymentViewController {
     func hideCommonSheet() {
         commonSheetView.isHidden = true
         pullableContainerContentHeightDidChange?(self)
+    }
+
+    func hideKeyboard() {
+        view.endEditing(true)
     }
 
     func reloadData() {
@@ -179,7 +187,7 @@ extension RecurrentPaymentViewController {
     private func setupKeyboardObserving() {
         keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
             guard let self = self else { return }
-            self.keyboardVisible = keyboardHeight > 0
+            self.keyboardHeight = keyboardHeight
             self.tableView.contentInset.bottom = keyboardHeight
             self.pullableContainerContentHeightDidChange?(self)
         }

@@ -96,6 +96,7 @@ extension RecurrentPaymentPresenter: ISavedCardViewPresenterOutput {
 
 extension RecurrentPaymentPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
+        view?.hideKeyboard()
         startPaymentWithSavedCard()
     }
 }
