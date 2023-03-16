@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 14.03.2023.
 //
 
+import UIKit
 import TinkoffASDKCore
 
 final class SBPQrAssembly: ISBPQrAssembly {
