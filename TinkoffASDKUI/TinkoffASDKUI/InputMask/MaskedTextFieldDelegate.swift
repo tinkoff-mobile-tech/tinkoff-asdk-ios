@@ -298,3 +298,17 @@ extension MaskedTextFieldDelegate {
         return true
     }
 }
+
+// MARK: - UITextField + Helpers
+
+private extension UITextField {
+    var emptyRangeAtEnd: NSRange? {
+        textRange(from: endOfDocument, to: endOfDocument)
+            .map { uiTextRange in
+                NSRange(
+                    location: offset(from: beginningOfDocument, to: uiTextRange.start),
+                    length: offset(from: uiTextRange.start, to: uiTextRange.end)
+                )
+            }
+    }
+}
