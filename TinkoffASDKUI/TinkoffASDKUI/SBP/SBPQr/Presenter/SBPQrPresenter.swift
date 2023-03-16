@@ -87,8 +87,8 @@ extension SBPQrPresenter: IQrImageViewPresenterOutput {
 
         // Через 10 секунд после показа динамического QR, начинаем отслеживание статуса
         // В случае со статическим QR отслеживания статуса не начнется
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-            self.getPaymentStatus()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            self?.getPaymentStatus()
         }
     }
 }
@@ -180,12 +180,6 @@ extension SBPQrPresenter {
 
     private func handleSuccessGet(payloadInfo: GetPaymentStatePayload) {
         switch payloadInfo.status {
-        case .formShowed:
-            getPaymentStatus()
-            viewUpdateStateIfNeeded(newState: .waiting)
-        case .authorizing, .confirming:
-            getPaymentStatus()
-            viewUpdateStateIfNeeded(newState: .processing)
         case .authorized, .confirmed:
             moduleResult = .succeeded(payloadInfo.toPaymentInfo())
             viewUpdateStateIfNeeded(newState: .paid)
@@ -214,14 +208,6 @@ extension SBPQrPresenter {
 private extension CommonSheetState {
     static var processing: CommonSheetState {
         CommonSheetState(status: .processing)
-    }
-
-    static var waiting: CommonSheetState {
-        CommonSheetState(
-            status: .processing,
-            title: Loc.CommonSheet.PaymentWaiting.title,
-            secondaryButtonTitle: Loc.CommonSheet.PaymentWaiting.secondaryButton
-        )
     }
 
     static var paid: CommonSheetState {
