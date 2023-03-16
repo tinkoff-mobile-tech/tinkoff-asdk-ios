@@ -146,10 +146,11 @@ final class TinkoffPayController: ITinkoffPayController {
                         requestAttempt: requestAttempt,
                         lastReceivedPaymentState: paymentState
                     )
-                case .success:
+                case let .success(paymentState):
                     self.delegate?.tinkoffPayController(
                         self,
-                        completedWith: Error.didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState: lastReceivedPaymentState)
+                        completedWithTimeout: paymentState,
+                        error: Error.didNotWaitForSuccessfulPaymentState(lastReceivedPaymentState: paymentState)
                     )
                 case .failure where retryingAllowed:
                     self.requestPaymentState(

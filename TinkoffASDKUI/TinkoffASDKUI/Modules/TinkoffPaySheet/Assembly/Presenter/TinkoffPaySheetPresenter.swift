@@ -110,11 +110,6 @@ extension TinkoffPaySheetPresenter: TinkoffPayControllerDelegate {
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        didOpenTinkoffPay url: URL
-    ) {}
-
-    func tinkoffPayController(
-        _ tinkoffPayController: ITinkoffPayController,
         completedDueToInabilityToOpenTinkoffPay url: URL,
         error: Swift.Error
     ) {
@@ -140,6 +135,15 @@ extension TinkoffPaySheetPresenter: TinkoffPayControllerDelegate {
     ) {
         moduleResult = .failed(error)
         view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
+    }
+
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedWithTimeout paymentState: GetPaymentStatePayload,
+        error: Swift.Error
+    ) {
+        moduleResult = .failed(error)
+        view?.update(state: .tinkoffPay.timedOut)
     }
 
     func tinkoffPayController(
