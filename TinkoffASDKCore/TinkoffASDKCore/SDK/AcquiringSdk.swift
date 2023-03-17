@@ -656,14 +656,14 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Get TinkoffPay Status
 
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
+    /// Получить статус доступности `TinkoffPay`
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `GetTinkoffPayStatusPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
     @discardableResult
-    public func getTinkoffPayStatus(
-        completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
-    ) -> Cancellable {
+    public func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusPayload, Error>) -> Void) -> Cancellable {
         let request = acquiringRequests.getTinkoffPayStatus()
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
+        return acquiringAPI.performRequest(request, completion: completion)
     }
 
     // MARK: Get TinkoffPay Link

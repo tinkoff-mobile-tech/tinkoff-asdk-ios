@@ -45,6 +45,8 @@ class BuyProductsViewController: UIViewController {
         case yandexPayFull
         /// Кнопка `YandexPay` c завершающим флоу оплаты (платеж инициируется вне SDK)
         case yandexPayFinish
+        /// Оплатить с помощью `TinkoffPay`
+        case tinkoffPay
     }
 
     var products: [Product] = []
@@ -69,6 +71,7 @@ class BuyProductsViewController: UIViewController {
         .products,
         .pay,
         .mainFormPayment,
+        .tinkoffPay,
         .payAndSaveAsParent,
         .payRequrent,
         .paySbpQrCode,
@@ -405,6 +408,15 @@ class BuyProductsViewController: UIViewController {
         }
     }
 
+    private func payWithTinkoffPay() {
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        uiSDK.presentTinkoffPay(on: self, paymentFlow: paymentFlow) { [weak self] result in
+            self?.showAlert(with: result)
+        }
+    }
+
     private func showAlert(with result: PaymentResult) {
         let alert = UIAlertController(
             title: result.alertTitle,
@@ -610,6 +622,13 @@ extension BuyProductsViewController: UITableViewDataSource {
                 cell.setContent(button, insets: UIEdgeInsets(horizontal: 64, vertical: 8))
             }
             return cell
+        case .tinkoffPay:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell else { break }
+            cell.button.setTitle("Tinkoff Pay", for: .normal)
+            cell.button.backgroundColor = yellowButtonColor()
+            cell.button.setImage(nil, for: .normal)
+            cell.onButtonTouch = { [weak self] in self?.payWithTinkoffPay() }
+            return cell
         }
 
         return tableView.defaultCell()
@@ -631,6 +650,8 @@ extension BuyProductsViewController: UITableViewDataSource {
             return Loc.Title.payBySBP
         case .yandexPayFull, .yandexPayFinish:
             return Loc.Title.yandexPay
+        case .tinkoffPay:
+            return "Оплатить с помощью Tinkoff Pay"
         }
     }
 
@@ -679,6 +700,8 @@ extension BuyProductsViewController: UITableViewDataSource {
             return "Full payment flow"
         case .yandexPayFinish:
             return "Finish payment flow"
+        case .tinkoffPay:
+            return "Открыть экран Tinkoff Pay и начать платеж"
         }
     }
 }
