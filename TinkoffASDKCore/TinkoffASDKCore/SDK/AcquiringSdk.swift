@@ -152,22 +152,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Инициирует платежную сессию для платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentInitData` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInitResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable
-    @discardableResult
-    @available(*, deprecated, message: "Use `initPayment(data:completion:)` instead")
-    public func paymentInit(
-        data: PaymentInitData,
-        completionHandler: @escaping (_ result: Result<PaymentInitResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.initRequest(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
-    }
-
     // MARK: Finish Authorize
 
     /// Подтверждает инициированный платеж передачей карточных данных
