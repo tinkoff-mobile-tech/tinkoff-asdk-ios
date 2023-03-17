@@ -207,22 +207,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Получить статус платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentInfoData`
-    ///   - completion: результат операции `PaymentStatusResponse` в случае удачного ответа и `Error` - в случае ошибки.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `getPaymentState(data:completion:)` instead")
-    public func paymentOperationStatus(
-        data: GetPaymentStateData,
-        completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.getPaymentState(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
-    }
-
     // MARK: Charge Payment
 
     /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
@@ -238,23 +222,6 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = acquiringRequests.charge(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
-    }
-
-    /// Подтверждает инициированный платеж передачей информации о рекуррентном платеже
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentChargeRequestData`
-    ///   - completion: результат операции `PaymentStatusResponse` в случае удачного ответа и `Error` - в случае ошибки.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `charge(data:completion:)` instead")
-    public func chargePayment(
-        data: PaymentChargeRequestData,
-        completionHandler: @escaping (_ result: Result<PaymentStatusResponse, Error>) -> Void
-    ) -> Cancellable {
-        let chargeData = ChargeData(paymentId: String(data.paymentId), rebillId: String(data.parentPaymentId))
-        let request = acquiringRequests.charge(data: chargeData)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Get Card List
