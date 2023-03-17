@@ -241,31 +241,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// - Parameters:
-    ///   - data: `InitGetCardListData` информация о клиенте для получения списка сохраненных карт
-    ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `getCardList(data:completion:)` instead")
-    public func cardList(
-        data: InitGetCardListData,
-        responseDelegate: NetworkTransportResponseDelegate? = nil,
-        completion: @escaping (_ result: Result<CardListResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.getCardList(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
-    }
-
-    @discardableResult
-    @available(*, deprecated, message: "Use `getCardList(data:completion:)` instead")
-    public func сardList(
-        data: InitGetCardListData,
-        responseDelegate: NetworkTransportResponseDelegate?,
-        completionHandler: @escaping (_ result: Result<CardListResponse, Error>) -> Void
-    ) -> Cancellable {
-        cardList(data: data, responseDelegate: responseDelegate, completion: completionHandler)
-    }
-
     // MARK: Add Card
 
     /// Инициирует привязку карты к клиенту

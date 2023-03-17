@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "GetCardListData")
-public typealias InitGetCardListData = GetCardListData
-
 public struct GetCardListData: Encodable {
     private enum CodingKeys: CodingKey {
         case customerKey
