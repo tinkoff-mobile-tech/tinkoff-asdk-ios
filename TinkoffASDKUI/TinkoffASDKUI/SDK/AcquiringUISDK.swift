@@ -113,11 +113,9 @@ public class AcquiringUISDK: NSObject {
 
         sbpQrAssembly = SBPQrAssembly(acquiringSdk: acquiringSdk)
 
-        let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
         let tdsTimeoutResolver = TDSTimeoutResolver()
         tdsController = TDSController(
             acquiringSdk: acquiringSdk,
-            tdsWrapper: tdsWrapper,
             tdsTimeoutResolver: tdsTimeoutResolver
         )
 

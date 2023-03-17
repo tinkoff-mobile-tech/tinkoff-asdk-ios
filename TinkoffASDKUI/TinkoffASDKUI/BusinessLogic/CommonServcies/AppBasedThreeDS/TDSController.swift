@@ -33,7 +33,6 @@ final class TDSController: ITDSController {
     // Dependencies
 
     private let acquiringSdk: AcquiringSdk
-    private let tdsWrapper: TDSWrapper
     private let tdsTimeoutResolver: ITimeoutResolver
 
     // 3ds sdk properties
@@ -51,11 +50,9 @@ final class TDSController: ITDSController {
 
     init(
         acquiringSdk: AcquiringSdk,
-        tdsWrapper: TDSWrapper,
         tdsTimeoutResolver: ITimeoutResolver
     ) {
         self.acquiringSdk = acquiringSdk
-        self.tdsWrapper = tdsWrapper
         self.tdsTimeoutResolver = tdsTimeoutResolver
     }
 
