@@ -94,11 +94,6 @@ public class AcquiringSdkConfiguration: NSObject {
     public let credential: AcquiringSdkCredential
     public let serverEnvironment: AcquiringSdkEnvironment
     public let requestsTimeoutInterval: TimeInterval
-    @available(*, deprecated, message: "Property does not affect anything")
-    public var fpsEnabled = false
-    /// Показывать ошибки после выполнения запроса
-    @available(*, deprecated, message: "Property does not affect anything")
-    public var showErrorAlert = true
     let configEnvironment: ConfigSdkEnvironment
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту

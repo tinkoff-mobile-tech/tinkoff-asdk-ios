@@ -23,9 +23,6 @@ import UIKit
 
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
 public final class AcquiringSdk: NSObject {
-    @available(*, deprecated, message: "Property does not affect anything")
-    public var fpsEnabled = false
-
     /// Текущий IP адрес
     public var ipAddress: IPAddress? {
         ipAddressProvider.ipAddress
@@ -67,12 +64,6 @@ public final class AcquiringSdk: NSObject {
         self.threeDSFacade = threeDSFacade
         self.languageProvider = languageProvider
         self.urlDataLoader = urlDataLoader
-    }
-
-    /// Получить IP адрес
-    @available(*, deprecated, message: "Use `ipAddress` instead")
-    public func networkIpAddress() -> String? {
-        ipAddressProvider.ipAddress?.stringValue
     }
 
     // MARK: 3DS Request building
@@ -168,30 +159,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Подтверждает инициированный платеж передачей карточных данных
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `PaymentFinishResponse` в случае удачного проведения платежа и `Error` - в случае ошибки.
-    @discardableResult
-    @available(*, deprecated, message: "Use `finishAuthorize(data:completion:)` instead")
-    public func paymentFinish(
-        data: PaymentFinishRequestData,
-        completionHandler: @escaping (_ result: Result<PaymentFinishResponse, Error>) -> Void
-    ) -> Cancellable {
-        let finishData = FinishAuthorizeData(
-            paymentId: String(data.paymentId),
-            paymentSource: data.paymentSource,
-            infoEmail: data.infoEmail,
-            deviceInfo: data.deviceInfo,
-            threeDSVersion: data.threeDSVersion,
-            source: data.source,
-            route: data.route
-        )
-        let request = acquiringRequests.finishAuthorize(data: finishData)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
-    }
-
     // MARK: Check 3DS Version
 
     /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
@@ -206,22 +173,6 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = acquiringRequests.check3DSVersion(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
-    }
-
-    /// Проверяем версию 3DS перед подтверждением инициированного платежа передачей карточных данных и идентификатора платежа
-    ///
-    /// - Parameters:
-    ///   - data: `PaymentFinishRequestData`
-    ///   - completionHandler: результат операции `Check3dsVersionResponse` в случае удачного ответа и `Error` - в случае ошибки.
-    @discardableResult
-    @available(*, deprecated, message: "Use `check3DSVersion(data:completion:)` instead")
-    public func check3dsVersion(
-        data: PaymentFinishRequestData,
-        completionHandler: @escaping (_ result: Result<Check3dsVersionResponse, Error>) -> Void
-    ) -> Cancellable {
-        let check3DSData = Check3DSVersionData(paymentId: String(data.paymentId), paymentSource: data.paymentSource)
-        let request = acquiringRequests.check3DSVersion(data: check3DSData)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
     }
 
     // MARK: Submit 3DS Authorization V2
