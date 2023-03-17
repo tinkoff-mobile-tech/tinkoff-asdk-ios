@@ -343,23 +343,7 @@ public final class AcquiringSdk: NSObject {
         let request = acquiringRequests.getQR(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
-
-    /// Сгенерировать QR для оплаты
-    ///
-    /// - Parameters:
-    ///   - data: `GetQRData` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `getQR(data:completion:)` instead")
-    public func paymentInvoiceQRCode(
-        data: GetQRData,
-        completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.getQR(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
-    }
-
+    
     // MARK: Get Static QR
 
     /// Выставить счет / принять оплату, сгенерировать QR для принятия платежей
@@ -376,23 +360,7 @@ public final class AcquiringSdk: NSObject {
         let request = acquiringRequests.getStaticQR(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
-
-    /// Выставить счет / принять оплату, сгенерировать QR для принятия платежей
-    ///
-    /// - Parameters:
-    ///   - data: `GetQRDataType` информация о заказе на оплату
-    ///   - completionHandler: результат операции `PaymentInvoiceQRCodeResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `getStaticQR(data:completion:)` instead")
-    public func paymentInvoiceQRCodeCollector(
-        data: GetQRDataType,
-        completionHandler: @escaping (_ result: Result<PaymentInvoiceQRCodeCollectorResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.getStaticQR(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completionHandler)
-    }
-
+    
     // MARK: Load SBP Banks
 
     /// Загрузить список банков, через приложения которых можно совершить оплату СБП

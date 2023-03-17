@@ -1,6 +1,6 @@
 //
 //
-//  GetCertsConfigResponse.swift
+//  CertificateData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
