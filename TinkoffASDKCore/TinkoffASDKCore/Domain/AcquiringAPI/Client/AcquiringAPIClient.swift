@@ -39,20 +39,17 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
     private let requestAdapter: IAcquiringRequestAdapter
     private let networkClient: INetworkClient
     private let decoder: IAcquiringDecoder
-    private let deprecatedDecoder: IDeprecatedDecoder
 
     // MARK: Init
 
     init(
         requestAdapter: IAcquiringRequestAdapter,
         networkClient: INetworkClient,
-        decoder: IAcquiringDecoder,
-        deprecatedDecoder: IDeprecatedDecoder
+        decoder: IAcquiringDecoder
     ) {
         self.requestAdapter = requestAdapter
         self.networkClient = networkClient
         self.decoder = decoder
-        self.deprecatedDecoder = deprecatedDecoder
     }
 
     // MARK: IAcquiringAPIClient
