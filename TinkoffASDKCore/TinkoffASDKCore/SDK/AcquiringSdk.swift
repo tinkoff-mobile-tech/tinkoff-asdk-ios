@@ -177,15 +177,18 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Submit 3DS Authorization V2
 
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
+    ///
+    ///
+    /// - Parameters:
+    ///   - data: `CresData`
+    ///   - completion: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случае ошибки.
     @discardableResult
     public func submit3DSAuthorizationV2(
-        cres: String,
-        completion: @escaping (Result<PaymentStatusResponse, Error>) -> Void
+        data: CresData,
+        completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.submit3DSAuthorizationV2(data: CresData(cres: cres))
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
+        let request = acquiringRequests.submit3DSAuthorizationV2(data: data)
+        return acquiringAPI.performRequest(request, completion: completion)
     }
 
     // MARK: Get Payment State

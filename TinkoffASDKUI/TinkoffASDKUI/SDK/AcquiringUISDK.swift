@@ -23,7 +23,7 @@ import UIKit
 import WebKit
 
 public typealias PaymentResultCompletion = (PaymentResult) -> Void
-public typealias PaymentCompletionHandler = (_ result: Result<PaymentStatusResponse, Error>) -> Void
+public typealias PaymentCompletionHandler = (_ result: Result<GetPaymentStatePayload, Error>) -> Void
 
 public class AcquiringUISDK: NSObject {
 
