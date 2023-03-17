@@ -24,13 +24,6 @@ protocol IAcquiringAPIClient {
         _ request: AcquiringRequest,
         completion: @escaping (Result<Payload, Error>) -> Void
     ) -> Cancellable
-
-    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func performDeprecatedRequest<Response: ResponseOperation>(
-        _ request: AcquiringRequest,
-        delegate: NetworkTransportResponseDelegate?,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) -> Cancellable
 }
 
 final class AcquiringAPIClient: IAcquiringAPIClient {
@@ -74,41 +67,6 @@ final class AcquiringAPIClient: IAcquiringAPIClient {
                     Payload.self,
                     from: response.networkResponse.data,
                     with: response.adaptedRequest.decodingStrategy
-                )
-            }
-
-            completion(result)
-        }
-    }
-
-    @available(*, deprecated, message: "Use performRequest(_:completion:) instead")
-    func performDeprecatedRequest<Response: ResponseOperation>(
-        _ request: AcquiringRequest,
-        delegate: NetworkTransportResponseDelegate?,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) -> Cancellable {
-        performAdapting(request: request) { [deprecatedDecoder] networkResult in
-            let result: Result<Response, Error> = networkResult.tryMap { response in
-                if let delegate = delegate {
-                    guard let delegatedResponse = try? delegate.networkTransport(
-                        didCompleteRawTaskForRequest: response.networkResponse.urlRequest,
-                        withData: response.networkResponse.data,
-                        response: response.networkResponse.httpResponse,
-                        error: nil
-                    ) else {
-                        throw HTTPResponseError(
-                            body: response.networkResponse.data,
-                            response: response.networkResponse.httpResponse,
-                            kind: .invalidResponse
-                        )
-                    }
-                    // swiftlint:disable:next force_cast
-                    return delegatedResponse as! Response
-                }
-
-                return try deprecatedDecoder.decode(
-                    data: response.networkResponse.data,
-                    with: response.networkResponse.httpResponse
                 )
             }
 
