@@ -258,29 +258,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// - Parameters:
-    ///   - data: `AddCardData` информация о клиенте и типе новой карты
-    ///   - completion: результат операции `CardListResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `addCard(data:completion:)` instead")
-    public func cardListAddCardInit(
-        data: AddCardData,
-        completion: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.addCard(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
-    }
-
-    @discardableResult
-    @available(*, deprecated, message: "Use `addCard(data:completion:)` instead")
-    public func сardListAddCardInit(
-        data: AddCardData,
-        completionHandler: @escaping (_ result: Result<InitAddCardResponse, Error>) -> Void
-    ) -> Cancellable {
-        cardListAddCardInit(data: data, completion: completionHandler)
-    }
-
     // MARK: Attach Card
 
     /// Завершает привязку карты к клиенту
