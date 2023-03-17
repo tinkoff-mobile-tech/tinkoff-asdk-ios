@@ -177,8 +177,10 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Submit 3DS Authorization V2
 
+    /// Осуществляет проверку результатов прохождения 3-D Secure v2 и при успешном результате прохождения 3-D Secure v2 подтверждает инициированный платеж.
     ///
-    ///
+    /// При использовании одностадийной оплаты осуществляет списание денежных средств с карты покупателя.
+    /// При двухстадийной оплате осуществляет блокировку указанной суммы на карте покупателя.
     /// - Parameters:
     ///   - data: `CresData`
     ///   - completion: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случае ошибки.
@@ -275,43 +277,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Завершает привязку карты к клиенту
-    ///
-    /// - Parameters:
-    ///   - data: `AttachCardData` информация о клиенте и типе новой карты
-    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `finishAddCard(data:completion:)` instead")
-    public func cardListAddCardFinish(
-        data: AttachCardData,
-        responseDelegate: NetworkTransportResponseDelegate? = nil,
-        completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.attachCard(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
-    }
-
-    /// Завершает привязку карты к клиенту
-    ///
-    /// - Parameters:
-    ///   - data: `AttachCardData` информация о клиенте и типе новой карты
-    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `finishAddCard(data:completion:)` instead")
-    public func сardListAddCardFinish(
-        data: AttachCardData,
-        responseDelegate: NetworkTransportResponseDelegate?,
-        completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
-    ) -> Cancellable {
-        cardListAddCardFinish(
-            data: data,
-            responseDelegate: responseDelegate,
-            completion: completionHandler
-        )
-    }
-
     // MARK: Get Add Card State
 
     ///  Возвращает статус привязки карты
@@ -345,48 +310,6 @@ public final class AcquiringSdk: NSObject {
         return acquiringAPI.performRequest(request, completion: completion)
     }
 
-    /// Подтверждение карты путем блокировки случайной суммы
-    ///
-    /// - Parameters:
-    ///   - amount: `Double` сумма с копейками
-    ///   - requestKey: `String` ключ для привязки карты
-    ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `submitRandomAmount(data:completion:)` instead")
-    public func checkRandomAmount(
-        _ amount: Double,
-        requestKey: String,
-        responseDelegate: NetworkTransportResponseDelegate? = nil,
-        completion: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.submitRandomAmount(data: SubmitRandomAmountData(amount: Int64(amount * 100), requestKey: requestKey))
-        return acquiringAPI.performDeprecatedRequest(request, delegate: responseDelegate, completion: completion)
-    }
-
-    /// Подтверждение карты путем блокировки случайной суммы
-    ///
-    /// - Parameters:
-    ///   - amount: `Double` сумма с копейками
-    ///   - requestKey: `String` ключ для привязки карты
-    ///   - completion: результат операции `AddCardStatusResponse` в случае удачной регистрации карты и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `submitRandomAmount(data:completion:)` instead")
-    public func chechRandomAmount(
-        _ amount: Double,
-        requestKey: String,
-        responseDelegate: NetworkTransportResponseDelegate?,
-        completionHandler: @escaping (_ result: Result<AddCardStatusResponse, Error>) -> Void
-    ) -> Cancellable {
-        checkRandomAmount(
-            amount,
-            requestKey: requestKey,
-            responseDelegate: responseDelegate,
-            completion: completionHandler
-        )
-    }
-
     // MARK: Remove Card
 
     /// Удаление привязанной карты покупателя
@@ -402,36 +325,6 @@ public final class AcquiringSdk: NSObject {
     ) -> Cancellable {
         let request = acquiringRequests.removeCard(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
-    }
-
-    /// Удаление привязанной карты покупателя
-    ///
-    /// - Parameters:
-    ///   - data: `RemoveCardData`
-    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `removeCard(data:completion:)` instead")
-    public func cardListDeactivateCard(
-        data: RemoveCardData,
-        completion: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.removeCard(data: data)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
-    }
-
-    /// Удаление привязанной карты покупателя
-    ///
-    /// - Parameters:
-    ///   - completion: результат операции `FinishAddCardResponse` в случае удачной регистрации и  `Error` - ошибка.
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `removeCard(data:completion:)` instead")
-    public func сardListDeactivateCard(
-        data: RemoveCardData,
-        completionHandler: @escaping (_ result: Result<FinishAddCardResponse, Error>) -> Void
-    ) -> Cancellable {
-        cardListDeactivateCard(data: data, completion: completionHandler)
     }
 
     // MARK: Get QR
