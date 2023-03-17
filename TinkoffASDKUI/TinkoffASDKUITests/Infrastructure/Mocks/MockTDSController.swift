@@ -13,7 +13,7 @@ final class MockTDSController: ITDSController {
     var completionHandler: TinkoffASDKUI.PaymentCompletionHandler?
 
     var cancelHandler: (() -> Void)?
-    
+
     // MARK: - doChallenge
 
     struct DoChallengePassedArguments {

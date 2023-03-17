@@ -61,7 +61,8 @@ final class CardPaymentProcessTests: XCTestCase {
             paymentId: "1111",
             amount: 234,
             orderId: "324234",
-            status: .authorized)
+            status: .authorized
+        )
 
         // when
 
