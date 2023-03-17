@@ -240,11 +240,6 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
 
     func tinkoffPayController(
         _ tinkoffPayController: ITinkoffPayController,
-        didOpenTinkoffPay url: URL
-    ) {}
-
-    func tinkoffPayController(
-        _ tinkoffPayController: ITinkoffPayController,
         completedDueToInabilityToOpenTinkoffPay url: URL,
         error: Error
     ) {
@@ -260,7 +255,7 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         completedWithSuccessful paymentState: GetPaymentStatePayload
     ) {
         moduleResult = .succeeded(paymentState.toPaymentInfo())
-        view?.showCommonSheet(state: .paid)
+        view?.showCommonSheet(state: .tinkoffPay.paid)
     }
 
     func tinkoffPayController(
@@ -269,7 +264,16 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         error: Error
     ) {
         moduleResult = .failed(error)
-        view?.showCommonSheet(state: .failed)
+        view?.showCommonSheet(state: .tinkoffPay.failedPaymentOnMainFormFlow)
+    }
+
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedWithTimeout paymentState: GetPaymentStatePayload,
+        error: Error
+    ) {
+        moduleResult = .failed(error)
+        view?.showCommonSheet(state: .tinkoffPay.timedOut)
     }
 
     func tinkoffPayController(
@@ -277,7 +281,7 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         completedWith error: Error
     ) {
         moduleResult = .failed(error)
-        view?.showCommonSheet(state: .failed)
+        view?.showCommonSheet(state: .tinkoffPay.timedOut)
     }
 }
 
@@ -382,7 +386,7 @@ extension MainFormPresenter {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case let .tinkoffPay(version):
-            view?.showCommonSheet(state: .tinkoffPayProcessing)
+            view?.showCommonSheet(state: .tinkoffPay.processing)
             tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: version)
         case .sbp:
             router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
@@ -448,14 +452,6 @@ private extension PayButtonViewPresentationState {
 private extension CommonSheetState {
     static var processing: CommonSheetState {
         CommonSheetState(status: .processing)
-    }
-
-    static var tinkoffPayProcessing: CommonSheetState {
-        CommonSheetState(
-            status: .processing,
-            title: "Ждем оплату в приложении банка",
-            secondaryButtonTitle: "Закрыть"
-        )
     }
 
     static var paid: CommonSheetState {

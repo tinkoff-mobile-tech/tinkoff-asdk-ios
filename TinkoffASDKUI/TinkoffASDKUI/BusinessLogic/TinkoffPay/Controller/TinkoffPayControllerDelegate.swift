@@ -72,6 +72,17 @@ protocol TinkoffPayControllerDelegate: AnyObject {
         error: Error
     )
 
+    /// Уведомляет о завершении ожидания оплаты
+    /// - Parameters:
+    ///   - tinkoffPayController: Объект, способный совершать оплату с помощью `TinkoffPay`
+    ///   - paymentState: Информация о платеже со статусом, не являющимся конечным
+    ///   - error: Ошибка, содержащая дополнительный контекст
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        completedWithTimeout paymentState: GetPaymentStatePayload,
+        error: Error
+    )
+
     /// Уведомляет о завершении работы из-за возникшей ошибки в процессе проведения оплаты
     /// - Parameters:
     ///   - tinkoffPayController: Объект, способный совершать оплату с помощью `TinkoffPay`
@@ -80,4 +91,11 @@ protocol TinkoffPayControllerDelegate: AnyObject {
         _ tinkoffPayController: ITinkoffPayController,
         completedWith error: Error
     )
+}
+
+extension TinkoffPayControllerDelegate {
+    func tinkoffPayController(
+        _ tinkoffPayController: ITinkoffPayController,
+        didOpenTinkoffPay url: URL
+    ) {}
 }

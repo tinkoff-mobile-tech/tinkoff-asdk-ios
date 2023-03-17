@@ -20,4 +20,11 @@ protocol IAcquiringTinkoffPayService {
         data: GetTinkoffLinkData,
         completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
     ) -> Cancellable
+
+    /// Получить статус доступности `TinkoffPay`
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `GetTinkoffPayStatusPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
+    @discardableResult
+    func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusPayload, Error>) -> Void) -> Cancellable
 }
