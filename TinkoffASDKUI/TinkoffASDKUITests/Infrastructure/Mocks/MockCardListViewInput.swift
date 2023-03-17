@@ -32,7 +32,7 @@ final class MockCardListViewInput: ICardListViewInput {
         removeCallCounter += 1
         removeStub(card)
     }
-    
+
     var disableViewUserInteractionCallCounter = 0
     func disableViewUserInteraction() {
         disableViewUserInteractionCallCounter += 1
