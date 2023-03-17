@@ -74,14 +74,6 @@ final class CellImageLoader: ICellImageLoader {
 
         self.type = type
     }
-
-    func loadImage(url: URL, cell: ReusableCell) {
-        if url.isFileURL {
-            loadLocalImage(url: url, cell: cell)
-        } else {
-            loadRemoteImage(url: url, cell: cell)
-        }
-    }
 }
 
 // MARK: - ICellImageLoader
@@ -146,35 +138,5 @@ extension CellImageLoader {
 
     func cancelLoad(uuid: UUID) {
         imageLoader.cancelImageLoad(uuid: uuid)
-    }
-}
-
-// MARK: - Private
-
-private extension CellImageLoader {
-    func loadLocalImage(url: URL, imageView: UIImageView) {
-        guard let imageData = try? Data(contentsOf: url),
-              let image = UIImage(data: imageData) else {
-            return
-        }
-        imageView.image = image
-    }
-
-    func loadLocalImage(url: URL, cell: ReusableCell) {
-        guard let imageView = cell.imageView else { return }
-
-        loadLocalImage(url: url, imageView: imageView)
-    }
-
-    func loadRemoteImage(url: URL, cell: ReusableCell) {
-        guard let imageView = cell.imageView else { return }
-
-        let uuid = loadRemoteImage(url: url, imageView: imageView)
-
-        guard let cellUuid = uuid else { return }
-        cell.onReuse = { [weak self] in
-            self?.cancelLoadIfNeeded(imageView: imageView)
-            self?.imageLoader.cancelImageLoad(uuid: cellUuid)
-        }
     }
 }

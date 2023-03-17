@@ -54,7 +54,6 @@ class BuyProductsViewController: UIViewController {
     var coreSDK: AcquiringSdk!
     var customerKey: String!
     var customerEmail: String?
-    weak var scaner: AcquiringScanerProtocol?
 
     var paymentCardId: PaymentCard?
     var paymentCardParentPaymentId: PaymentCard?
@@ -90,9 +89,9 @@ class BuyProductsViewController: UIViewController {
 
         uiSDK.setupCardListDataProvider(for: customerKey, statusListener: self)
         try? uiSDK.cardListReloadData()
-        uiSDK.addCardNeedSetCheckTypeHandler = {
-            AppSetting.shared.addCardChekType
-        }
+//        uiSDK.addCardNeedSetCheckTypeHandler = {
+//            AppSetting.shared.addCardChekType
+//        }
 
         if products.count > 1 {
             buttonAddToCart.isEnabled = false
@@ -203,120 +202,8 @@ class BuyProductsViewController: UIViewController {
         return paymentData
     }
 
-    private func acquiringViewConfiguration() -> AcquiringViewConfiguration {
-        let viewConfigration = AcquiringViewConfiguration()
-        viewConfigration.scaner = scaner
-        viewConfigration.tinkoffPayButtonStyle = TinkoffPayButton.DynamicStyle(lightStyle: .whiteBordered, darkStyle: .blackBordered)
-
-        viewConfigration.fields = []
-        // InfoFields.amount
-        let title = NSAttributedString(
-            string: Loc.Title.paymeny,
-
-            attributes: [.font: UIFont.boldSystemFont(ofSize: 22)]
-        )
-        // swiftlint:disable:next compiler_protocol_init
-        let amountString = Utils.formatAmount(NSDecimalNumber(floatLiteral: productsAmount()))
-
-        let amountTitle = NSAttributedString(
-            string: "\(Loc.Text.totalAmount) \(amountString)",
-
-            attributes: [.font: UIFont.systemFont(ofSize: 17)]
-        )
-        // fields.append
-        viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.amount(title: title, amount: amountTitle))
-
-        // InfoFields.detail
-        let productsDetatils = NSMutableAttributedString()
-        productsDetatils.append(NSAttributedString(string: "Книги\n", attributes: [.font: UIFont.systemFont(ofSize: 17)]))
-
-        let productsDetails = products.map { $0.name }.joined(separator: ", ")
-        let detailsFieldTitle = NSAttributedString(
-            string: productsDetails,
-            attributes: [
-                .font: UIFont.systemFont(ofSize: 13),
-                .foregroundColor: UIColor(red: 0.573, green: 0.6, blue: 0.635, alpha: 1),
-            ]
-        )
-        viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.detail(title: detailsFieldTitle))
-
-        if AppSetting.shared.showEmailField {
-            let emailField = AcquiringViewConfiguration.InfoFields.email(
-                value: nil,
-                placeholder: Loc.Plaseholder.email
-            )
-            viewConfigration.fields.append(emailField)
-        }
-
-        viewConfigration.featuresOptions.fpsEnabled = AppSetting.shared.paySBP
-        viewConfigration.featuresOptions.tinkoffPayEnabled = AppSetting.shared.tinkoffPay
-
-        viewConfigration.viewTitle = Loc.Title.pay
-
-        return viewConfigration
-    }
-
-    private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>) {
-        switch response {
-        case let .success(result):
-            var message = Loc.Text.paymentStatusAmount
-            message.append(" \(Utils.formatAmount(result.amount)) ")
-
-            if result.status == .cancelled {
-                message.append(Loc.Text.paymentStatusCancel)
-            } else {
-                message.append(" ")
-                message.append(Loc.Text.paymentStatusSuccess)
-                message.append("\npaymentId = \(result.paymentId)")
-            }
-
-            if AppSetting.shared.acquiring {
-                uiSDK.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
-            } else {
-                let alertView = UIAlertController(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
-                alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
-                present(alertView, animated: true, completion: nil)
-            }
-
-        case let .failure(error):
-            if AppSetting.shared.acquiring {
-                uiSDK.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
-            } else {
-                let alertView = UIAlertController(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
-                alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
-                present(alertView, animated: true, completion: nil)
-            }
-        }
-    }
-
-    private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfiguration) {
-        uiSDK.presentPaymentView(
-            on: self,
-            acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration(
-                paymentStage: .`init`(paymentData: paymentData)
-            ),
-            configuration: viewConfigration,
-            tinkoffPayDelegate: nil
-        ) { [weak self] response in
-            self?.responseReviewing(response)
-        }
-    }
-
     func pay() {
-        presentPaymentView(paymentData: createPaymentData(), viewConfigration: acquiringViewConfiguration())
-    }
-
-    func pay(_ complete: @escaping (() -> Void)) {
-        uiSDK.pay(
-            on: self,
-            initPaymentData: createPaymentData(),
-            cardRequisites: PaymentSourceData.cardNumber(number: "!!!номер карты!!!", expDate: "1120", cvv: "111"),
-            infoEmail: nil,
-            configuration: acquiringViewConfiguration()
-        ) { [weak self] response in
-            complete()
-            self?.responseReviewing(response)
-        }
+//        presentPaymentView(paymentData: createPaymentData(), viewConfigration: acquiringViewConfiguration())
     }
 
     func payAndSaveAsParent() {
@@ -684,16 +571,16 @@ extension BuyProductsViewController: UITableViewDataSource {
             return "нет доступных родительских платежей"
 
         case .paySbpUrl:
-            if uiSDK.canMakePaymentsSBP() {
-                return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
-            }
+//            if uiSDK.canMakePaymentsSBP() {
+//                return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
+//            }
 
             return "оплата недоступна"
 
         case .paySbpQrCode:
-            if uiSDK.canMakePaymentsSBP() {
-                return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
-            }
+//            if uiSDK.canMakePaymentsSBP() {
+//                return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
+//            }
 
             return "оплата недоступна"
         case .yandexPayFull:
