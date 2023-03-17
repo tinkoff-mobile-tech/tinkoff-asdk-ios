@@ -13,7 +13,6 @@ final class AcquiringAPIClientTests: XCTestCase {
     private var requestAdapter: AcquiringRequestAdapterMock!
     private var networkClient: NetworkClientMock!
     private var decoder: AcquiringDecoderMock!
-    private var deprecatedDecoder: DeprecatedDecoderMock!
     private var sut: AcquiringAPIClient!
 
     override func setUp() {
@@ -21,13 +20,11 @@ final class AcquiringAPIClientTests: XCTestCase {
         requestAdapter = AcquiringRequestAdapterMock()
         networkClient = NetworkClientMock()
         decoder = AcquiringDecoderMock()
-        deprecatedDecoder = DeprecatedDecoderMock()
 
         sut = AcquiringAPIClient(
             requestAdapter: requestAdapter,
             networkClient: networkClient,
-            decoder: decoder,
-            deprecatedDecoder: deprecatedDecoder
+            decoder: decoder
         )
     }
 
@@ -35,7 +32,6 @@ final class AcquiringAPIClientTests: XCTestCase {
         requestAdapter = nil
         networkClient = nil
         decoder = nil
-        deprecatedDecoder = nil
         sut = nil
         super.tearDown()
     }

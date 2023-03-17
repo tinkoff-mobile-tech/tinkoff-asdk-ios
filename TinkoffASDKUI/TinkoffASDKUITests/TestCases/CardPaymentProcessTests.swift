@@ -57,20 +57,15 @@ final class CardPaymentProcessTests: XCTestCase {
     }
 
     func test_start_payment_success_paymentSource_Card_finishAuthorize_success_responseStatus_done() throws {
-
-        let paymentStatusResponse = PaymentStatusResponse(
-            success: true,
-            errorCode: 0,
-            errorMessage: nil,
-            orderId: "324234",
-            paymentId: 1111,
+        let paymentStatePayload = GetPaymentStatePayload(
+            paymentId: "1111",
             amount: 234,
-            status: .authorized
-        )
+            orderId: "324234",
+            status: .authorized)
 
         // when
 
-        let dependencies = try start_payment_success_paymentSource_Card_finishAuthorize_success(finishAuthorizeResponse: .done(paymentStatusResponse))
+        let dependencies = try start_payment_success_paymentSource_Card_finishAuthorize_success(finishAuthorizeResponse: .done(paymentStatePayload))
 
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
 
