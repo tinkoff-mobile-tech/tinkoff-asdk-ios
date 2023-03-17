@@ -1,6 +1,6 @@
 //
 //
-//  PaymentInfoData.swift
+//  GetPaymentStateData.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "GetPaymentStateData")
-public typealias PaymentInfoData = GetPaymentStateData
-
 public struct GetPaymentStateData: Encodable {
     private enum CodingKeys: CodingKey {
         case paymentId
@@ -39,10 +36,5 @@ public struct GetPaymentStateData: Encodable {
 
     public init(paymentId: String) {
         self.paymentId = paymentId
-    }
-
-    @available(*, deprecated, message: "Use init(paymentId: String) instead")
-    public init(paymentId: Int64) {
-        self.paymentId = paymentId.description
     }
 }
