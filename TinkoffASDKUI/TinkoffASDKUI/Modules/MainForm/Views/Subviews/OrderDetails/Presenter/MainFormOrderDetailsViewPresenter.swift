@@ -31,7 +31,7 @@ final class MainFormOrderDetailsViewPresenter: IMainFormOrderDetailsViewOutput {
     // MARK: View Reloading
 
     private func setupView() {
-        view?.set(amountDescription: "К оплате")
+        view?.set(amountDescription: Loc.CommonSheet.PaymentForm.toPayTitle)
         view?.set(amount: moneyFormatter.formatAmount(Int(amount)))
         view?.set(orderDescription: orderDescription)
     }

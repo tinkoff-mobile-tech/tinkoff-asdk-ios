@@ -66,6 +66,7 @@
 "Acquiring.SBPBanks.ButtonClose" = "Закрыть";
 "Acquiring.SBPBanks.AnotherBank" = "Другой банк";
 "Acquiring.SBPAllBanks.SearchPlaceholder" = "Название";
+"Acquiring.PaymentCard.ChangeButton" = "Сменить карту";
 
 // CommonAlert
 "CommonAlert.SBPNoBank.Title" = "Не получилось найти приложение этого банка";
@@ -162,6 +163,7 @@
 "CommonSheet.Paid.Title" = "Оплачено";
 "CommonSheet.Paid.PrimaryButton" = "Понятно";
 "CommonSheet.PaymentWaiting.Title" = "Ждем оплату в приложении банка";
+"CommonSheet.PaymentWaiting.PrimaryButton" = "Оплатить";
 "CommonSheet.PaymentWaiting.SecondaryButton" = "Закрыть";
 "CommonSheet.TimeoutFailed.Title" = "Время оплаты истекло";
 "CommonSheet.TimeoutFailed.Description" = "Попробуйте оплатить снова";
@@ -169,6 +171,16 @@
 "CommonSheet.PaymentFailed.Title" = "Ошибка при оплате";
 "CommonSheet.PaymentFailed.Description" = "Попробуйте другой способ оплаты";
 "CommonSheet.PaymentFailed.PrimaryButton" = "Выбрать другой способ";
+"CommonSheet.PaymentForm.ToPayTitle" = "К оплате";
+"CommonSheet.PaymentForm.ByCardTitle" = "Картой";
+"CommonSheet.PaymentForm.ByCardPrimaryButton" = "Оплатить картой";
+"CommonSheet.PaymentForm.AnotherMethodTitle" = "Оплатить другим способом";
+"CommonSheet.PaymentForm.SBPTitle" = "СБП";
+"CommonSheet.PaymentForm.SBPDescription" = "В приложении любого банка";
+"CommonSheet.PaymentForm.SBPPrimaryButton" = "Оплатить";
+"CommonSheet.PaymentForm.TinkoffPayTitle" = "TinkoffPay";
+"CommonSheet.PaymentForm.TinkoffPayDescription" = "В приложении Тинькофф";
+"CommonSheet.PaymentForm.TinkoffPayPrimaryButton" = "Оплатить с Тинькофф";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Не получилось оплатить";

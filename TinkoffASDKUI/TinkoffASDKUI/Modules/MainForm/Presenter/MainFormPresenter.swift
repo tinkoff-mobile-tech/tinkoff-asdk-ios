@@ -30,7 +30,7 @@ final class MainFormPresenter {
     private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
 
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
-        title: "Получить квитанцию",
+        title: Loc.Acquiring.EmailField.switchButton,
         isOn: paymentFlow.customerOptions?.email?.isEmpty == false,
         actionBlock: { [weak self] in self?.getReceiptSwitch(didChange: $0) }
     )
@@ -40,7 +40,7 @@ final class MainFormPresenter {
         output: self
     )
     private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
-    private lazy var otherPaymentMethodsHeaderPresenter = TextHeaderViewPresenter(title: "Оплатить другим способом")
+    private lazy var otherPaymentMethodsHeaderPresenter = TextHeaderViewPresenter(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
 
     // MARK: State
 
@@ -462,14 +462,18 @@ private extension CommonSheetState {
     }
 
     static var paid: CommonSheetState {
-        CommonSheetState(status: .succeeded, title: "Оплачено", primaryButtonTitle: "Понятно")
+        CommonSheetState(
+            status: .succeeded,
+            title: Loc.CommonSheet.Paid.title,
+            primaryButtonTitle: Loc.CommonSheet.Paid.title
+        )
     }
 
     static var failed: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: "Не получилось оплатить",
-            primaryButtonTitle: "Понятно"
+            title: Loc.CommonSheet.PaymentFailed.title,
+            primaryButtonTitle: Loc.CommonSheet.PaymentFailed.primaryButton
         )
     }
 }
