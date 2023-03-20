@@ -656,52 +656,30 @@ public final class AcquiringSdk: NSObject {
 
     // MARK: Get TinkoffPay Status
 
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
+    /// Получить статус доступности `TinkoffPay`
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `GetTinkoffPayStatusPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: `Cancellable`
     @discardableResult
-    public func getTinkoffPayStatus(
-        completion: @escaping (Result<GetTinkoffPayStatusResponse, Error>) -> Void
-    ) -> Cancellable {
+    public func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusPayload, Error>) -> Void) -> Cancellable {
         let request = acquiringRequests.getTinkoffPayStatus()
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
+        return acquiringAPI.performRequest(request, completion: completion)
     }
 
     // MARK: Get TinkoffPay Link
 
-    // TODO: MIC-6303 Переписать метод под новый формат ответа
-
     /// Получить ссылку для оплаты с помощью `TinkoffPay`
     ///
     /// - Parameters:
-    ///   - paymentId: `String` - идентификтор платежа
-    ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
+    ///   - data: `GetTinkoffLinkData` - Данные для запроса на получение ссылки на оплату с помощью TinkoffPay
     ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
     /// - Returns: `Cancellable`
     @discardableResult
     public func getTinkoffPayLink(
-        paymentId: String,
-        version: GetTinkoffPayStatusResponse.Status.Version,
+        data: GetTinkoffLinkData,
         completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
     ) -> Cancellable {
-        let request = acquiringRequests.getTinkoffPayLink(paymentId: paymentId, version: version)
-        return acquiringAPI.performDeprecatedRequest(request, delegate: nil, completion: completion)
-    }
-
-    /// Получить ссылку для оплаты с помощью `TinkoffPay`
-    ///
-    /// - Parameters:
-    ///   - paymentId: `Int64` - идентификтор платежа
-    ///   - version: `GetTinkoffPayStatusPayload.Status.Version` - версия `TinkoffPay`
-    ///   - completion: Callback с результатом запроса. `GetTinkoffLinkPayload` - при успехе, `Error` - при ошибке
-    /// - Returns: `Cancellable`
-    @discardableResult
-    @available(*, deprecated, message: "Use `getTinkoffPayLink(paymentId:version:completion:)` with String `paymentId` instead")
-    public func getTinkoffPayLink(
-        paymentId: Int64,
-        version: GetTinkoffPayStatusResponse.Status.Version,
-        completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void
-    ) -> Cancellable {
-        let request = acquiringRequests.getTinkoffPayLink(paymentId: String(paymentId), version: version)
+        let request = acquiringRequests.getTinkoffPayLink(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
 

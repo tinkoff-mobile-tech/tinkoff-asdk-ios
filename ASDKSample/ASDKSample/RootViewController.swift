@@ -152,9 +152,9 @@ class RootViewController: UITableViewController {
 
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
+//            sdk.addCardNeedSetCheckTypeHandler = {
+//                AppSetting.shared.addCardChekType
+//            }
 
             sdk.presentCardList(
                 on: self,
@@ -165,9 +165,9 @@ class RootViewController: UITableViewController {
 
     @IBAction func openAddCard(_ sender: UIBarButtonItem) {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
+//            sdk.addCardNeedSetCheckTypeHandler = {
+//                AppSetting.shared.addCardChekType
+//            }
 
             let customerKey = AppSetting.shared.activeSdkCredentials.customerKey
 
@@ -178,35 +178,17 @@ class RootViewController: UITableViewController {
     }
 }
 
-extension RootViewController: AcquiringScanerProtocol {
-
-    func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController? {
-        UIAlertController.cardScannerMock(confirmationHandler: completion)
-    }
-}
-
-extension RootViewController: AcquiringAlertViewProtocol {
-
-    func presentAlertView(_ title: String?, message: String?, dismissCompletion: (() -> Void)?) -> UIViewController? {
-        let alertView = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertView.addAction(UIAlertAction(title: "ок", style: .default, handler: { _ in
-            dismissCompletion?()
-        }))
-
-        return alertView
-    }
-}
-
 // MARK: - Private methods only
 
 private extension RootViewController {
 
     private func showSpbQrCollector() {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            let viewConfigration = AcquiringViewConfiguration()
-            viewConfigration.viewTitle = Loc.Title.qrcode
+            sdk.presentStaticQr(on: self)
 
-            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
+//            let viewConfigration = AcquiringViewConfiguration()
+//            viewConfigration.viewTitle = Loc.Title.qrcode
+//            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
         }
     }
 
@@ -229,7 +211,6 @@ private extension RootViewController {
             fatalError("Could not instantiate BuyProductsViewController")
         }
 
-        viewController.scaner = self
         viewController.coreSDK = coreSDK
         viewController.uiSDK = uiSDK
         viewController.customerKey = credential.customerKey
@@ -258,5 +239,17 @@ extension RootViewController {
             )
             present(alert, animated: true)
         }
+    }
+
+    private func showAlert(with result: PaymentResult) {
+        let alert = UIAlertController(
+            title: result.alertTitle,
+            message: result.alertMessage,
+            preferredStyle: .alert
+        )
+
+        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }

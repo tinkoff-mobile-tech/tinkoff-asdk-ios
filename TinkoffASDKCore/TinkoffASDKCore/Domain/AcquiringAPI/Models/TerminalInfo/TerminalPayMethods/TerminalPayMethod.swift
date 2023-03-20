@@ -14,7 +14,7 @@ public enum TerminalPayMethod {
     /// Оплата с помощью `СБП`
     case sbp
     /// Оплата с помощью `TinkoffPay`
-    case tinkoffPay(version: String)
+    case tinkoffPay(TinkoffPayMethod)
 }
 
 // MARK: - TerminalPayMethod + Decodable
@@ -32,6 +32,10 @@ extension TerminalPayMethod: Decodable {
         case tinkoffPay = "TinkoffPay"
     }
 
+    private enum TinkoffPayParams: String, CodingKey {
+        case version = "Version"
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let methodType = try container.decode(MethodType.self, forKey: .payMethod)
@@ -42,7 +46,7 @@ extension TerminalPayMethod: Decodable {
         case .sbp:
             self = .sbp
         case .tinkoffPay:
-            self = .tinkoffPay(version: try container.decode(String.self, forKey: .version))
+            self = .tinkoffPay(try container.decode(TinkoffPayMethod.self, forKey: .params))
         }
     }
 }

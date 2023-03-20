@@ -16,6 +16,7 @@ final class MainFormRouter: IMainFormRouter {
     private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
+    private let tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
 
     // MARK: Init
 
@@ -23,12 +24,14 @@ final class MainFormRouter: IMainFormRouter {
         configuration: MainFormUIConfiguration,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
-        sbpBanksAssembly: ISBPBanksAssembly
+        sbpBanksAssembly: ISBPBanksAssembly,
+        tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
     ) {
         self.configuration = configuration
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
+        self.tinkoffPayLandingAssembly = tinkoffPayLandingAssembly
     }
 
     // MARK: IMainFormRouter
@@ -52,7 +55,7 @@ final class MainFormRouter: IMainFormRouter {
             cardPaymentOutput: cardPaymentOutput
         )
 
-        let navigationController = UINavigationController.withASDKBar(rootViewController: cardPaymentList)
+        let navigationController = UINavigationController.withElevationBar(rootViewController: cardPaymentList)
 
         transitionHandler?.present(navigationController, animated: true)
     }
@@ -71,7 +74,7 @@ final class MainFormRouter: IMainFormRouter {
             cardListOutput: cardListOutput
         )
 
-        let navVC = UINavigationController.withASDKBar(rootViewController: cardPaymentViewController)
+        let navVC = UINavigationController.withElevationBar(rootViewController: cardPaymentViewController)
         transitionHandler?.present(navVC, animated: true)
     }
 
@@ -88,7 +91,12 @@ final class MainFormRouter: IMainFormRouter {
         )
         sbpModule.input.set(banks: banks)
 
-        let navVC = UINavigationController.withASDKBar(rootViewController: sbpModule.view)
+        let navVC = UINavigationController.withElevationBar(rootViewController: sbpModule.view)
         transitionHandler?.present(navVC, animated: true)
+    }
+
+    func openTinkoffPayLanding(completion: VoidBlock?) {
+        let navigationController = tinkoffPayLandingAssembly.landingNavigationController()
+        transitionHandler?.present(navigationController, animated: true, completion: completion)
     }
 }

@@ -29,7 +29,7 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
 
     func build(paymentId: String, output: ISBPPaymentSheetPresenterOutput?) -> UIViewController {
         let paymentStatusService = PaymentStatusService(acquiringSdk: acquiringSdk)
-        let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
+        let repeatedRequestHelper = RepeatedRequestHelper()
         let presenter = SBPPaymentSheetPresenter(
             output: output,
             paymentStatusService: paymentStatusService,
@@ -43,10 +43,4 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
 
         return PullableContainerViewController(content: sheetView)
     }
-}
-
-// MARK: - Constants
-
-private extension TimeInterval {
-    static let paymentStatusRequestDelay: TimeInterval = 3
 }

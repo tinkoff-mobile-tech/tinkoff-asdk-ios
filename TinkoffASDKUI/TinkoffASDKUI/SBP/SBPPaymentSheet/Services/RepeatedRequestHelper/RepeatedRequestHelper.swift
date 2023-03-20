@@ -23,7 +23,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
 
     // MARK: Initialization
 
-    init(delay: TimeInterval) {
+    init(delay: TimeInterval = .paymentStatusRequestDelay) {
         self.delay = delay
     }
 
@@ -34,10 +34,12 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
     // MARK: IRepeatedRequestHelper
 
     /// Выполняет переданный блок кода не раньше заданного времени `var delay: TimeInterval`
+    ///
     /// Пример: delay = 10
     /// Первый вызов будет осуществлен мгновенно.
     /// А вот следующий будет исполнен только после задержки. Когда пройдет установленное время.
     /// Важно! Если накидать несколько операций подряд, то будет выполнена только последняя с соблюдением условий задержки.
+    /// Важно! Для корректной работы необходимо отправлять задачи с одного и того же потока
     /// - Parameter action: Блок который должен быть выполнен
     func executeWithWaitingIfNeeded(action: @escaping () -> Void) {
         timer?.invalidate()
@@ -57,4 +59,10 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
             RunLoop.current.add(timer, forMode: .common)
         }
     }
+}
+
+// MARK: - Constants
+
+private extension TimeInterval {
+    static let paymentStatusRequestDelay: TimeInterval = 3
 }

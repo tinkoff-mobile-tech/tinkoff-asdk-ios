@@ -23,6 +23,7 @@ final class MainFormDataStateLoader {
     private let cardsController: ICardsController?
     private let sbpBanksService: ISBPBanksService
     private let sbpBankAppChecker: ISBPBankAppChecker
+    private let tinkoffPayAppChecker: ITinkoffPayAppChecker
 
     // MARK: Init
 
@@ -30,12 +31,14 @@ final class MainFormDataStateLoader {
         terminalService: IAcquiringTerminalService,
         cardsController: ICardsController?,
         sbpBanksService: ISBPBanksService,
-        sbpBankAppChecker: ISBPBankAppChecker
+        sbpBankAppChecker: ISBPBankAppChecker,
+        tinkoffPayAppChecker: ITinkoffPayAppChecker
     ) {
         self.terminalService = terminalService
         self.cardsController = cardsController
         self.sbpBanksService = sbpBanksService
         self.sbpBankAppChecker = sbpBankAppChecker
+        self.tinkoffPayAppChecker = tinkoffPayAppChecker
     }
 }
 
@@ -73,7 +76,7 @@ extension MainFormDataStateLoader {
     ) {
         let availableMethods = (CollectionOfOne(.card) + terminalInfo.mainFormMethods)
             .filter { $0.isAvailable(for: paymentFlow) }
-            .sorted(by: <)
+            .sorted { $0.priority < $1.priority }
 
         var methodsIterator = availableMethods.makeIterator()
         var receivedCards: [PaymentCard]?
@@ -145,8 +148,10 @@ extension MainFormDataStateLoader {
     // MARK: Tinkoff Pay
 
     private func canTinkoffPayBecomePrimaryMethod(completion: @escaping CanBecomeCompletion) {
-        // TODO: MIC-7902 Добавить проверку возможности использовать `TinkoffPay` в кач-ве главного платежного метода
-        completion(false)
+        DispatchQueue.performOnMain { [weak self] in
+            guard let self = self else { return }
+            completion(self.tinkoffPayAppChecker.isTinkoffPayAppInstalled())
+        }
     }
 
     // MARK: Saved Cards
@@ -218,8 +223,8 @@ private extension TerminalInfo {
                 return nil
             case .sbp:
                 return .sbp
-            case let .tinkoffPay(version):
-                return .tinkoffPay(version: version)
+            case let .tinkoffPay(method):
+                return .tinkoffPay(method)
             }
         }
     }

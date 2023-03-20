@@ -8,6 +8,9 @@
 protocol IRecurrentPaymentViewInput: AnyObject {
     func showCommonSheet(state: CommonSheetState)
     func hideCommonSheet()
+
+    func hideKeyboard()
+
     func reloadData()
     func closeView()
 }

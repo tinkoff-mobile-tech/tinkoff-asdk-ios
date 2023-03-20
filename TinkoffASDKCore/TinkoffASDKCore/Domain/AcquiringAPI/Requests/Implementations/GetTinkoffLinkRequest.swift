@@ -17,19 +17,10 @@ struct GetTinkoffLinkRequest: AcquiringRequest {
     // MARK: - Init
 
     init(
-        paymentId: String,
-        version: GetTinkoffPayStatusResponse.Status.Version,
+        data: GetTinkoffLinkData,
         baseURL: URL
     ) {
         self.baseURL = baseURL
-        path = .path(paymentId: paymentId, version: version)
-    }
-}
-
-// MARK: - String + Helpers
-
-private extension String {
-    static func path(paymentId: String, version: GetTinkoffPayStatusResponse.Status.Version) -> String {
-        "v2/TinkoffPay/transactions/\(paymentId)/versions/\(version.rawValue)/link"
+        path = "v2/TinkoffPay/transactions/\(data.paymentId)/versions/\(data.version)/link"
     }
 }

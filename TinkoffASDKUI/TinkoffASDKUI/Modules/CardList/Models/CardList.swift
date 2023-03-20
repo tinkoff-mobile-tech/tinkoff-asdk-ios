@@ -30,10 +30,4 @@ struct CardList {
         let isInEditingMode: Bool
         let hasCheckmarkInNormalMode: Bool
     }
-
-    struct Alert {
-        let title: String
-        let message: String?
-        let icon: AcquiringAlertIconType
-    }
 }
