@@ -50,31 +50,17 @@ final class TinkoffPaySheetPresenter {
 
 extension TinkoffPaySheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
-        let handleFailure: (Swift.Error) -> Void = { [weak self] error in
-            self?.moduleResult = .failed(error)
-            self?.view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
-        }
-
-        let handleSuccess: (GetTinkoffPayStatusPayload) -> Void = { [weak self] payload in
-            guard let self = self else { return }
-
-            switch payload.status {
-            case let .allowed(method):
-                self.tinkoffPayController.performPayment(paymentFlow: self.paymentFlow, method: method)
-            case .disallowed:
-                handleFailure(Error.tinkoffPayIsNotAllowed)
-            }
-        }
-
         view?.update(state: .tinkoffPay.processing)
 
-        tinkoffPayService.getTinkoffPayStatus { result in
+        tinkoffPayService.getTinkoffPayStatus { [weak self] result in
             DispatchQueue.performOnMain {
+                guard let self = self else { return }
+
                 switch result {
                 case let .success(payload):
-                    handleSuccess(payload)
+                    self.handleReceivedStatus(payload: payload)
                 case let .failure(error):
-                    handleFailure(error)
+                    self.handleFailedStatus(error: error)
                 }
             }
         }
@@ -150,6 +136,24 @@ extension TinkoffPaySheetPresenter: TinkoffPayControllerDelegate {
         _ tinkoffPayController: ITinkoffPayController,
         completedWith error: Swift.Error
     ) {
+        moduleResult = .failed(error)
+        view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
+    }
+}
+
+// MARK: - TinkoffPaySheetPresenter + Helpers
+
+extension TinkoffPaySheetPresenter {
+    private func handleReceivedStatus(payload: GetTinkoffPayStatusPayload) {
+        switch payload.status {
+        case let .allowed(method):
+            tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: method)
+        case .disallowed:
+            handleFailedStatus(error: Error.tinkoffPayIsNotAllowed)
+        }
+    }
+
+    private func handleFailedStatus(error: Swift.Error) {
         moduleResult = .failed(error)
         view?.update(state: .tinkoffPay.failedPaymentOnIndependentFlow)
     }
