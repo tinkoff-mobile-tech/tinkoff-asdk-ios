@@ -126,7 +126,7 @@ extension MainFormPresenter: ISavedCardViewPresenterOutput {
         didRequestReplacementFor paymentCard: PaymentCard
     ) {
         router.openCardPaymentList(
-            paymentFlow: paymentFlow,
+            paymentFlow: paymentFlow.withPrimaryMethodAnalytics(dataState: dataState),
             cards: dataState.cards ?? [],
             selectedCard: paymentCard,
             cardListOutput: self,
@@ -369,10 +369,15 @@ extension MainFormPresenter {
 
         let email = getReceiptSwitchPresenter.isOn ? emailPresenter.currentEmail : nil
 
+        let paymentFlow = paymentFlow
+            .replacing(customerEmail: email)
+            .withPrimaryMethodAnalytics(dataState: dataState)
+            .withSavedCardAnalytics()
+
         payButtonPresenter.startLoading()
 
         paymentController.performPayment(
-            paymentFlow: paymentFlow.replacing(customerEmail: email),
+            paymentFlow: paymentFlow,
             paymentSource: .savedCard(cardId: cardId, cvv: cvc)
         )
     }
@@ -382,14 +387,16 @@ extension MainFormPresenter {
 
 extension MainFormPresenter {
     private func startPayment(paymentMethod: MainFormPaymentMethod) {
+        let paymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState)
+
         switch paymentMethod {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case let .tinkoffPay(version):
             view?.showCommonSheet(state: .tinkoffPay.processing)
-            tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: version)
+            tinkoffPayController.performPayment(paymentFlow: paymentFlow.withTinkoffPayAnalytics(), method: version)
         case .sbp:
-            router.openSBP(paymentFlow: paymentFlow, banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
+            router.openSBP(paymentFlow: paymentFlow.withSBPAnalytics(), banks: dataState.sbpBanks, output: self, paymentSheetOutput: self)
         }
     }
 }
