@@ -31,6 +31,10 @@ extension Bundle {
                 .flatMap { Bundle(url: $0) } ?? Bundle(for: Token.self)
         #endif
     }
+
+    static var core: Bundle {
+        Bundle(for: Token.self)
+    }
 }
 
 private extension String {
