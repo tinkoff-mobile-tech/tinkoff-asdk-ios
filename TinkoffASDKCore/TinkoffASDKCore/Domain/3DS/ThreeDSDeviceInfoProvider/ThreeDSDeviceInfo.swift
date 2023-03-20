@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "ThreeDSDeviceInfo")
-public typealias DeviceInfoParams = ThreeDSDeviceInfo
-
 public struct ThreeDSDeviceInfo {
     let threeDSCompInd: String
     let javaEnabled: String

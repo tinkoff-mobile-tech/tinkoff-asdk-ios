@@ -26,24 +26,6 @@ internal enum Loc {
     /// Ошибка сети
     internal static let transportError = Loc.tr("Localizable", "NetworkError.transportError", fallback: "Ошибка сети")
   }
-  internal enum TinkoffAcquiring {
-    internal enum Request {
-      internal enum Error {
-        /// Can't create confirmation request
-        internal static let cantCreateConfirmation = Loc.tr("Localizable", "TinkoffAcquiring.request.error.cantCreateConfirmation", fallback: "Can't create confirmation request")
-      }
-    }
-    internal enum Response {
-      internal enum Error {
-        /// Received error response
-        internal static let errorResponse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.errorResponse", fallback: "Received error response")
-        /// Received invalid response
-        internal static let invalidResponse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.invalidResponse", fallback: "Received invalid response")
-        /// Acquiring received error 'Success: false'
-        internal static let statusFalse = Loc.tr("Localizable", "TinkoffAcquiring.response.error.statusFalse", fallback: "Acquiring received error 'Success: false'")
-      }
-    }
-  }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

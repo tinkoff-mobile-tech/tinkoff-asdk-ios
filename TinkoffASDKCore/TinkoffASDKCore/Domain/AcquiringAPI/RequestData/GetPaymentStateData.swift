@@ -1,8 +1,8 @@
 //
-//  WebViewController.swift
-//  TinkoffASDKUI
 //
-//  Copyright (c) 2020 Tinkoff Bank
+//  GetPaymentStateData.swift
+//
+//  Copyright (c) 2021 Tinkoff Bank
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,18 +17,24 @@
 //  limitations under the License.
 //
 
-import UIKit
-import WebKit
+import Foundation
 
-class WebViewController: ConfirmViewController {
-    @IBOutlet var webView: WKWebView!
-    var urlRequest: URLRequest?
+public struct GetPaymentStateData: Encodable {
+    private enum CodingKeys: CodingKey {
+        case paymentId
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        if let url = urlRequest {
-            webView.load(url)
+        var stringValue: String {
+            switch self {
+            case .paymentId:
+                return Constants.Keys.paymentId
+            }
         }
+    }
+
+    /// Номер заказа в системе Продавца
+    let paymentId: String
+
+    public init(paymentId: String) {
+        self.paymentId = paymentId
     }
 }

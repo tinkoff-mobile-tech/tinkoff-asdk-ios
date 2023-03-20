@@ -1,8 +1,3 @@
-"TinkoffAcquiring.response.error.statusFalse" = "Acquiring received error 'Success: false'";
-"TinkoffAcquiring.response.error.errorResponse" = "Received error response";
-"TinkoffAcquiring.response.error.invalidResponse" = "Received invalid response";
-"TinkoffAcquiring.request.error.cantCreateConfirmation" = "Can't create confirmation request";
-
 "NetworkError.transportError" = "Transport error";
 "NetworkError.serverError" = "Server error";
 "NetworkError.emptyResponse" = "Empty body response";

@@ -7,9 +7,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "AcquiringStatus")
-public typealias PaymentStatus = AcquiringStatus
-
 /// Состояние операции API эквайринга
 public enum AcquiringStatus: String, Decodable, Equatable {
     /// Платёж создан
