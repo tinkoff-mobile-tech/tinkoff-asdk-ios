@@ -45,6 +45,7 @@ final class MainFormPresenter {
     // MARK: State
 
     private var dataState: MainFormDataState = .initial
+    private var buttonsBehavior: MainFormButtonsBehavior = .closeForm
     private var cellTypes: [MainFormCellType] = []
     private var moduleResult: PaymentResult = .cancelled()
 
@@ -86,6 +87,7 @@ extension MainFormPresenter: IMainFormPresenter {
                 self.view?.hideCommonSheet()
             case let .failure(error):
                 self.moduleResult = .failed(error)
+                self.buttonsBehavior = .closeForm
                 self.view?.showCommonSheet(state: .failed)
             }
         }
@@ -114,7 +116,21 @@ extension MainFormPresenter: IMainFormPresenter {
     }
 
     func commonSheetViewDidTapPrimaryButton() {
-        view?.closeView()
+        switch buttonsBehavior.primaryButton {
+        case .closeForm:
+            view?.closeView()
+        case .showContent:
+            view?.hideCommonSheet()
+        }
+    }
+
+    func commonSheetViewDidTapSecondaryButton() {
+        switch buttonsBehavior.secondaryButton {
+        case .closeForm:
+            view?.closeView()
+        case .showContent:
+            view?.hideCommonSheet()
+        }
     }
 }
 
@@ -204,6 +220,7 @@ extension MainFormPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         moduleResult = .succeeded(state.toPaymentInfo())
+        buttonsBehavior = .closeForm
         view?.showCommonSheet(state: .paid)
     }
 
@@ -214,6 +231,7 @@ extension MainFormPresenter: PaymentControllerDelegate {
         rebillId: String?
     ) {
         moduleResult = .failed(error)
+        buttonsBehavior = .showContent
         view?.showCommonSheet(state: .failed)
     }
 
@@ -255,6 +273,7 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         completedWithSuccessful paymentState: GetPaymentStatePayload
     ) {
         moduleResult = .succeeded(paymentState.toPaymentInfo())
+        buttonsBehavior = .closeForm
         view?.showCommonSheet(state: .tinkoffPay.paid)
     }
 
@@ -264,6 +283,7 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         error: Error
     ) {
         moduleResult = .failed(error)
+        buttonsBehavior = .showContent
         view?.showCommonSheet(state: .tinkoffPay.failedPaymentOnMainFormFlow)
     }
 
@@ -273,7 +293,8 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         error: Error
     ) {
         moduleResult = .failed(error)
-        view?.showCommonSheet(state: .tinkoffPay.timedOutOnIndependentFlow)
+        buttonsBehavior = .showContent
+        view?.showCommonSheet(state: .tinkoffPay.timedOutOnMainFormFlow)
     }
 
     func tinkoffPayController(
@@ -281,7 +302,8 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         completedWith error: Error
     ) {
         moduleResult = .failed(error)
-        view?.showCommonSheet(state: .tinkoffPay.timedOutOnIndependentFlow)
+        buttonsBehavior = .showContent
+        view?.showCommonSheet(state: .tinkoffPay.timedOutOnMainFormFlow)
     }
 }
 
@@ -304,11 +326,13 @@ extension MainFormPresenter: ICardListPresenterOutput {
 extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
     func cardPaymentWillCloseAfterFinishedPayment(with paymentData: FullPaymentData) {
         moduleResult = .succeeded(paymentData.payload.toPaymentInfo())
+        buttonsBehavior = .closeForm
         view?.showCommonSheet(state: .paid)
     }
 
     func cardPaymentWillCloseAfterFailedPayment(with error: Error, cardId: String?, rebillId: String?) {
         moduleResult = .failed(error)
+        buttonsBehavior = .showContent
         view?.showCommonSheet(state: .failed)
     }
 
@@ -393,6 +417,7 @@ extension MainFormPresenter {
         case .card:
             router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
         case let .tinkoffPay(version):
+            buttonsBehavior = .showContent
             view?.showCommonSheet(state: .tinkoffPay.processing)
             tinkoffPayController.performPayment(paymentFlow: paymentFlow.withTinkoffPayAnalytics(), method: version)
         case .sbp:
@@ -465,7 +490,7 @@ private extension CommonSheetState {
         CommonSheetState(
             status: .succeeded,
             title: Loc.CommonSheet.Paid.title,
-            primaryButtonTitle: Loc.CommonSheet.Paid.title
+            primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
         )
     }
 
