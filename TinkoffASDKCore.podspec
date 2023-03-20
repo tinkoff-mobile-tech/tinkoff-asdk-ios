@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
 	spec.source = { :git => 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS.git', :tag => spec.version }
 	spec.source_files = 'TinkoffASDKCore/TinkoffASDKCore/**/*.swift'
 	spec.resource_bundles = {
-		'TinkoffASDKCoreResources' => ['TinkoffASDKCore/TinkoffASDKCore/**/*.{lproj,strings}']
+		'TinkoffASDKCoreResources' => ['TinkoffASDKCore/TinkoffASDKCore/**/*.{lproj,strings,der}']
 	}
 	spec.pod_target_xcconfig = { 
 		'CODE_SIGN_IDENTITY' => '' 

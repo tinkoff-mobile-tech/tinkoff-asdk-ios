@@ -32,7 +32,7 @@ public final class CertificateValidator: ICertificateValidator {
 
 extension CertificateValidator {
     private func certificate(name: String) -> SecCertificate? {
-        guard let path = Bundle.core.url(forResource: name, withExtension: "der"),
+        guard let path = Bundle.coreResources.url(forResource: name, withExtension: "der"),
               let certData = try? Data(contentsOf: path) else {
             return nil
         }
