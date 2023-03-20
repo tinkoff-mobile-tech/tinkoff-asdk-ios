@@ -181,6 +181,16 @@
 "CommonSheet.PaymentForm.TinkoffPayTitle" = "TinkoffPay";
 "CommonSheet.PaymentForm.TinkoffPayDescription" = "В приложении Тинькофф";
 "CommonSheet.PaymentForm.TinkoffPayPrimaryButton" = "Оплатить с Тинькофф";
+"CommonSheet.PaymentForm.TinkoffPay.FailedPayment.PrimaryButton" = "Выбрать другой способ оплаты";
+"CommonSheet.PaymentForm.TinkoffPay.TimedOut.PrimaryButton" = "Попробовать снова";
+"CommonSheet.TinkoffPay.Waiting.Title" = "Ожидаем оплату в приложении банка";
+"CommonSheet.TinkoffPay.Waiting.SecondaryButton" = "Отмена";
+"CommonSheet.TinkoffPay.Paid.Title" = "Оплачено";
+"CommonSheet.TinkoffPay.Paid.PrimaryButton" = "Понятно";
+"CommonSheet.TinkoffPay.TimedOut.Title" = "Время оплаты истекло";
+"CommonSheet.TinkoffPay.TimedOut.PrimaryButton" = "Понятно";
+"CommonSheet.TinkoffPay.FailedPayment.Title" = "Не получилось оплатить";
+"CommonSheet.TinkoffPay.FailedPayment.PrimaryButton" = "Понятно";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Не получилось оплатить";

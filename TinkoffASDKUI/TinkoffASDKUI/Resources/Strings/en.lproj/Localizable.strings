@@ -181,6 +181,16 @@
 "CommonSheet.PaymentForm.TinkoffPayTitle" = "TinkoffPay";
 "CommonSheet.PaymentForm.TinkoffPayDescription" = "In Tinkoff app";
 "CommonSheet.PaymentForm.TinkoffPayPrimaryButton" = "Pay with Tinkoff";
+"CommonSheet.PaymentForm.TinkoffPay.FailedPayment.PrimaryButton" = "Choose another payment method";
+"CommonSheet.PaymentForm.TinkoffPay.TimedOut.PrimaryButton" = "Try again";
+"CommonSheet.TinkoffPay.Waiting.Title" = "Waiting for payment in the bank application";
+"CommonSheet.TinkoffPay.Waiting.SecondaryButton" = "Cancel";
+"CommonSheet.TinkoffPay.Paid.Title" = "Paid";
+"CommonSheet.TinkoffPay.Paid.PrimaryButton" = "Ok";
+"CommonSheet.TinkoffPay.TimedOut.Title" = "Payment time has expired";
+"CommonSheet.TinkoffPay.TimedOut.PrimaryButton" = "Ok";
+"CommonSheet.TinkoffPay.FailedPayment.Title" = "Payment error";
+"CommonSheet.TinkoffPay.FailedPayment.PrimaryButton" = "Ok";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Payment error";

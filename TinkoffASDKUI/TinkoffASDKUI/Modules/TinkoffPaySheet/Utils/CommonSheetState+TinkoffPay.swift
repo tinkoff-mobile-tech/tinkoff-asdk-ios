@@ -19,40 +19,48 @@ extension CommonSheetState.TinkoffPay {
     static var processing: CommonSheetState {
         CommonSheetState(
             status: .processing,
-            title: "Ожидаем оплату в приложении банка",
-            secondaryButtonTitle: "Отмена"
+            title: Loc.CommonSheet.TinkoffPay.Waiting.title,
+            secondaryButtonTitle: Loc.CommonSheet.TinkoffPay.Waiting.secondaryButton
         )
     }
 
     static var paid: CommonSheetState {
         CommonSheetState(
             status: .succeeded,
-            title: "Оплачено",
-            primaryButtonTitle: "Понятно"
+            title: Loc.CommonSheet.TinkoffPay.Paid.title,
+            primaryButtonTitle: Loc.CommonSheet.TinkoffPay.Paid.primaryButton
         )
     }
 
-    static var timedOut: CommonSheetState {
+    static var timedOutOnIndependentFlow: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: "Время оплаты истекло",
-            primaryButtonTitle: "Понятно"
+            title: Loc.CommonSheet.TinkoffPay.TimedOut.title,
+            primaryButtonTitle: Loc.CommonSheet.TinkoffPay.TimedOut.primaryButton
+        )
+    }
+
+    static var timedOutOnMainFormFlow: CommonSheetState {
+        CommonSheetState(
+            status: .failed,
+            title: Loc.CommonSheet.TinkoffPay.TimedOut.title,
+            primaryButtonTitle: Loc.CommonSheet.PaymentForm.TinkoffPay.TimedOut.primaryButton
         )
     }
 
     static var failedPaymentOnIndependentFlow: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: "Не получилось оплатить",
-            primaryButtonTitle: "Понятно"
+            title: Loc.CommonSheet.TinkoffPay.FailedPayment.title,
+            primaryButtonTitle: Loc.CommonSheet.TinkoffPay.FailedPayment.primaryButton
         )
     }
 
     static var failedPaymentOnMainFormFlow: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: "Не получилось оплатить",
-            primaryButtonTitle: "Выбрать другой способ оплаты"
+            title: Loc.CommonSheet.TinkoffPay.FailedPayment.title,
+            primaryButtonTitle: Loc.CommonSheet.PaymentForm.TinkoffPay.FailedPayment.primaryButton
         )
     }
 }

@@ -143,7 +143,7 @@ extension TinkoffPaySheetPresenter: TinkoffPayControllerDelegate {
         error: Swift.Error
     ) {
         moduleResult = .failed(error)
-        view?.update(state: .tinkoffPay.timedOut)
+        view?.update(state: .tinkoffPay.timedOutOnIndependentFlow)
     }
 
     func tinkoffPayController(

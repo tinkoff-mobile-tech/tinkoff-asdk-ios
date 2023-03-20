@@ -273,7 +273,7 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         error: Error
     ) {
         moduleResult = .failed(error)
-        view?.showCommonSheet(state: .tinkoffPay.timedOut)
+        view?.showCommonSheet(state: .tinkoffPay.timedOutOnIndependentFlow)
     }
 
     func tinkoffPayController(
@@ -281,7 +281,7 @@ extension MainFormPresenter: TinkoffPayControllerDelegate {
         completedWith error: Error
     ) {
         moduleResult = .failed(error)
-        view?.showCommonSheet(state: .tinkoffPay.timedOut)
+        view?.showCommonSheet(state: .tinkoffPay.timedOutOnIndependentFlow)
     }
 }
 
