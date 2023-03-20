@@ -39,6 +39,7 @@ final class MainFormPresenter {
         customerEmail: paymentFlow.customerOptions?.email ?? "",
         output: self
     )
+
     private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
     private lazy var otherPaymentMethodsHeaderPresenter = TextHeaderViewPresenter(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
 

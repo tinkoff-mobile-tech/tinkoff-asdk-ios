@@ -17,6 +17,15 @@ final class TinkoffPayController: ITinkoffPayController {
         case didReceiveFailedPaymentState(GetPaymentStatePayload)
     }
 
+    private final class Process: Cancellable {
+        var isActive: Bool { !isCancelled.wrappedValue }
+        private let isCancelled = Atomic(wrappedValue: false)
+
+        func cancel() {
+            isCancelled.store(newValue: true)
+        }
+    }
+
     // MARK: Dependencies
 
     weak var delegate: TinkoffPayControllerDelegate?
@@ -56,44 +65,52 @@ final class TinkoffPayController: ITinkoffPayController {
 
     // MARK: ITinkoffPayController
 
-    func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod) {
+    @discardableResult
+    func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod) -> Cancellable {
+        let process = Process()
+
         let paymentFlow = paymentFlow.mergePaymentDataIfNeeded(.tinkoffPayData)
 
         switch paymentFlow {
         case let .full(paymentOptions):
-            performInitPayment(paymentOptions: paymentOptions, method: method)
+            performInitPayment(paymentOptions: paymentOptions, method: method, process: process)
         case let .finish(paymentId, _):
-            getTinkoffPayLink(paymentId: paymentId, method: method)
+            getTinkoffPayLink(paymentId: paymentId, method: method, process: process)
         }
+
+        return process
     }
 
     // MARK: Business Logic
 
-    private func performInitPayment(paymentOptions: PaymentOptions, method: TinkoffPayMethod) {
+    private func performInitPayment(paymentOptions: PaymentOptions, method: TinkoffPayMethod, process: Process) {
         paymentService.initPayment(data: .data(with: paymentOptions)) { [weak self] result in
-            guard let self = self else { return }
+            guard let self = self, process.isActive else { return }
 
             switch result {
             case let .success(payload):
-                self.getTinkoffPayLink(paymentId: payload.paymentId, method: method)
+                self.getTinkoffPayLink(paymentId: payload.paymentId, method: method, process: process)
             case let .failure(error):
                 DispatchQueue.performOnMain {
+                    guard process.isActive else { return }
                     self.delegate?.tinkoffPayController(self, completedWith: error)
                 }
             }
         }
     }
 
-    private func getTinkoffPayLink(paymentId: String, method: TinkoffPayMethod) {
+    private func getTinkoffPayLink(paymentId: String, method: TinkoffPayMethod, process: Process) {
         let data = GetTinkoffLinkData(paymentId: paymentId, version: method.version)
 
         tinkoffPayService.getTinkoffPayLink(data: data) { [weak self] result in
             guard let self = self else { return }
 
             DispatchQueue.performOnMain {
+                guard process.isActive else { return }
+
                 switch result {
                 case let .success(payload):
-                    self.openApplication(with: payload.redirectUrl, paymentId: paymentId)
+                    self.openApplication(with: payload.redirectUrl, paymentId: paymentId, process: process)
                 case let .failure(error):
                     self.delegate?.tinkoffPayController(self, completedWith: error)
                 }
@@ -101,13 +118,13 @@ final class TinkoffPayController: ITinkoffPayController {
         }
     }
 
-    private func openApplication(with url: URL, paymentId: String) {
+    private func openApplication(with url: URL, paymentId: String, process: Process) {
         applicationOpener.open(url) { [weak self] isOpened in
-            guard let self = self else { return }
+            guard let self = self, process.isActive else { return }
 
             if isOpened {
                 self.delegate?.tinkoffPayController(self, didOpenTinkoffPay: url)
-                self.requestPaymentState(paymentId: paymentId)
+                self.requestPaymentState(paymentId: paymentId, process: process)
             } else {
                 self.delegate?.tinkoffPayController(
                     self,
@@ -120,6 +137,7 @@ final class TinkoffPayController: ITinkoffPayController {
 
     private func requestPaymentState(
         paymentId: String,
+        process: Process,
         requestAttempt: Int = .zero,
         lastReceivedPaymentState: GetPaymentStatePayload? = nil
     ) {
@@ -127,9 +145,11 @@ final class TinkoffPayController: ITinkoffPayController {
         let retryingAllowed = requestAttempt < paymentStatusRetriesCount
 
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
-            guard let self = self else { return }
+            guard let self = self, process.isActive else { return }
 
             self.paymentStatusService.getPaymentState(paymentId: paymentId, receiveOn: .main) { result in
+                guard process.isActive else { return }
+
                 switch result {
                 case let .success(paymentState) where self.successfulStatuses.contains(paymentState.status):
                     self.delegate?.tinkoffPayController(self, completedWithSuccessful: paymentState)
@@ -143,6 +163,7 @@ final class TinkoffPayController: ITinkoffPayController {
                     self.delegate?.tinkoffPayController(self, didReceiveIntermediate: paymentState)
                     self.requestPaymentState(
                         paymentId: paymentId,
+                        process: process,
                         requestAttempt: requestAttempt,
                         lastReceivedPaymentState: paymentState
                     )
@@ -155,6 +176,7 @@ final class TinkoffPayController: ITinkoffPayController {
                 case .failure where retryingAllowed:
                     self.requestPaymentState(
                         paymentId: paymentId,
+                        process: process,
                         requestAttempt: requestAttempt,
                         lastReceivedPaymentState: lastReceivedPaymentState
                     )
