@@ -33,6 +33,7 @@ final class TDSController: ITDSController {
     // Dependencies
 
     private let acquiringSdk: AcquiringSdk
+    private let tdsWrapper: TDSWrapper
     private let tdsTimeoutResolver: ITimeoutResolver
 
     // 3ds sdk properties
@@ -50,9 +51,11 @@ final class TDSController: ITDSController {
 
     init(
         acquiringSdk: AcquiringSdk,
+        tdsWrapper: TDSWrapper,
         tdsTimeoutResolver: ITimeoutResolver
     ) {
         self.acquiringSdk = acquiringSdk
+        self.tdsWrapper = tdsWrapper
         self.tdsTimeoutResolver = tdsTimeoutResolver
     }
 
@@ -77,6 +80,39 @@ final class TDSController: ITDSController {
 // MARK: - Private
 
 private extension TDSController {
+
+    func startAppBasedFlow(
+        directoryServerID: String,
+        messageVersion: String
+    ) throws -> AuthenticationRequestParameters {
+        let transaction = try tdsWrapper.createTransaction(
+            directoryServerID: directoryServerID,
+            messageVersion: messageVersion
+        )
+        self.transaction = transaction
+
+        DispatchQueue.main.async {
+            self.progressView = transaction.getProgressView()
+            self.progressView?.start()
+        }
+
+        let authParams = try transaction.getAuthenticationRequestParameters()
+
+        let deviceDataString = authParams.getDeviceData()
+        let deviceDataBase64 = Data(deviceDataString.utf8).base64EncodedString()
+
+        let sdkEphemPubKey = authParams.getSDKEphemeralPublicKey()
+        let sdkEphemPubKeyBase64 = Data(sdkEphemPubKey.utf8).base64EncodedString()
+
+        return AuthenticationRequestParameters(
+            deviceData: deviceDataBase64,
+            sdkTransId: authParams.getSDKTransactionID(),
+            sdkAppID: authParams.getSDKAppID(),
+            sdkReferenceNum: authParams.getSDKReferenceNumber(),
+            ephemeralPublic: sdkEphemPubKeyBase64
+        )
+    }
+
     func buildCresValue(with transStatus: String) throws -> String {
         guard let challengeParams = challengeParams else {
             return String()
