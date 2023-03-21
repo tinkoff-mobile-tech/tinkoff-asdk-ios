@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 21.03.2023.
 //
 
+import UIKit
+
 public final class TinkoffButton: UIView {
 
     // MARK: Properties
