@@ -14,4 +14,5 @@ protocol IMainFormPresenter {
     func cellType(at indexPath: IndexPath) -> MainFormCellType
     func didSelectRow(at indexPath: IndexPath)
     func commonSheetViewDidTapPrimaryButton()
+    func commonSheetViewDidTapSecondaryButton()
 }

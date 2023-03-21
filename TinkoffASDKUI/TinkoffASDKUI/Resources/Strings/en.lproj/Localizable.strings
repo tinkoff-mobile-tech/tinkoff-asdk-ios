@@ -66,6 +66,7 @@
 "Acquiring.SBPBanks.ButtonClose" = "Close";
 "Acquiring.SBPBanks.AnotherBank" = "Another bank";
 "Acquiring.SBPAllBanks.SearchPlaceholder" = "Name";
+"Acquiring.PaymentCard.ChangeButton" = "Change card";
 
 // CommonAlert
 "CommonAlert.SBPNoBank.Title" = "I couldn't find the application of this bank";
@@ -162,6 +163,7 @@
 "CommonSheet.Paid.Title" = "Paid";
 "CommonSheet.Paid.PrimaryButton" = "Ok";
 "CommonSheet.PaymentWaiting.Title" = "Waiting for payment in the bank application";
+"CommonSheet.PaymentWaiting.PrimaryButton" = "Оплатить";
 "CommonSheet.PaymentWaiting.SecondaryButton" = "Close";
 "CommonSheet.TimeoutFailed.Title" = "Payment time has expired";
 "CommonSheet.TimeoutFailed.Description" = "Try to pay again";
@@ -169,6 +171,26 @@
 "CommonSheet.PaymentFailed.Title" = "Payment error";
 "CommonSheet.PaymentFailed.Description" = "Try another payment method";
 "CommonSheet.PaymentFailed.PrimaryButton" = "Choose another method";
+"CommonSheet.PaymentForm.ToPayTitle" = "Checkout";
+"CommonSheet.PaymentForm.ByCardTitle" = "Card";
+"CommonSheet.PaymentForm.ByCardPrimaryButton" = "Pay by card";
+"CommonSheet.PaymentForm.AnotherMethodTitle" = "Another method";
+"CommonSheet.PaymentForm.SBPTitle" = "FPS";
+"CommonSheet.PaymentForm.SBPDescription" = "In any bank’s app";
+"CommonSheet.PaymentForm.SBPPrimaryButton" = "Pay";
+"CommonSheet.PaymentForm.TinkoffPayTitle" = "TinkoffPay";
+"CommonSheet.PaymentForm.TinkoffPayDescription" = "In Tinkoff app";
+"CommonSheet.PaymentForm.TinkoffPayPrimaryButton" = "Pay with Tinkoff";
+"CommonSheet.PaymentForm.TinkoffPay.FailedPayment.PrimaryButton" = "Choose another payment method";
+"CommonSheet.PaymentForm.TinkoffPay.TimedOut.PrimaryButton" = "Try again";
+"CommonSheet.TinkoffPay.Waiting.Title" = "Waiting for payment in the bank application";
+"CommonSheet.TinkoffPay.Waiting.SecondaryButton" = "Cancel";
+"CommonSheet.TinkoffPay.Paid.Title" = "Paid";
+"CommonSheet.TinkoffPay.Paid.PrimaryButton" = "Ok";
+"CommonSheet.TinkoffPay.TimedOut.Title" = "Payment time has expired";
+"CommonSheet.TinkoffPay.TimedOut.PrimaryButton" = "Ok";
+"CommonSheet.TinkoffPay.FailedPayment.Title" = "Payment error";
+"CommonSheet.TinkoffPay.FailedPayment.PrimaryButton" = "Ok";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Payment error";
