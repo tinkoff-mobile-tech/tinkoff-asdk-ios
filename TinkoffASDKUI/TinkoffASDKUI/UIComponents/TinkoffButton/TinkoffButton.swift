@@ -13,7 +13,7 @@ public final class TinkoffButton: UIView {
 
     private lazy var button: Button = {
         let config = Button.Configuration(
-            title: "Оплатить с Тинькофф",
+            title: Loc.CommonSheet.PaymentForm.tinkoffPayPrimaryButton,
             image: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image,
             style: .primaryTinkoff,
             contentSize: .basicLarge,
