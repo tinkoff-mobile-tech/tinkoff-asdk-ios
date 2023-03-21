@@ -20,12 +20,6 @@
 import UIKit
 
 extension NSLayoutConstraint {
-    @discardableResult
-    func activated() -> NSLayoutConstraint {
-        isActive = true
-        return self
-    }
-
     func with(priority: UILayoutPriority) -> NSLayoutConstraint {
         self.priority = priority
         return self

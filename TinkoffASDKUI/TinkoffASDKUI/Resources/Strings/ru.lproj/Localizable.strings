@@ -66,6 +66,7 @@
 "Acquiring.SBPBanks.ButtonClose" = "Закрыть";
 "Acquiring.SBPBanks.AnotherBank" = "Другой банк";
 "Acquiring.SBPAllBanks.SearchPlaceholder" = "Название";
+"Acquiring.PaymentCard.ChangeButton" = "Сменить карту";
 
 // CommonAlert
 "CommonAlert.SBPNoBank.Title" = "Не получилось найти приложение этого банка";
@@ -162,6 +163,7 @@
 "CommonSheet.Paid.Title" = "Оплачено";
 "CommonSheet.Paid.PrimaryButton" = "Понятно";
 "CommonSheet.PaymentWaiting.Title" = "Ждем оплату в приложении банка";
+"CommonSheet.PaymentWaiting.PrimaryButton" = "Оплатить";
 "CommonSheet.PaymentWaiting.SecondaryButton" = "Закрыть";
 "CommonSheet.TimeoutFailed.Title" = "Время оплаты истекло";
 "CommonSheet.TimeoutFailed.Description" = "Попробуйте оплатить снова";
@@ -169,6 +171,26 @@
 "CommonSheet.PaymentFailed.Title" = "Ошибка при оплате";
 "CommonSheet.PaymentFailed.Description" = "Попробуйте другой способ оплаты";
 "CommonSheet.PaymentFailed.PrimaryButton" = "Выбрать другой способ";
+"CommonSheet.PaymentForm.ToPayTitle" = "К оплате";
+"CommonSheet.PaymentForm.ByCardTitle" = "Картой";
+"CommonSheet.PaymentForm.ByCardPrimaryButton" = "Оплатить картой";
+"CommonSheet.PaymentForm.AnotherMethodTitle" = "Оплатить другим способом";
+"CommonSheet.PaymentForm.SBPTitle" = "СБП";
+"CommonSheet.PaymentForm.SBPDescription" = "В приложении любого банка";
+"CommonSheet.PaymentForm.SBPPrimaryButton" = "Оплатить";
+"CommonSheet.PaymentForm.TinkoffPayTitle" = "TinkoffPay";
+"CommonSheet.PaymentForm.TinkoffPayDescription" = "В приложении Тинькофф";
+"CommonSheet.PaymentForm.TinkoffPayPrimaryButton" = "Оплатить с Тинькофф";
+"CommonSheet.PaymentForm.TinkoffPay.FailedPayment.PrimaryButton" = "Выбрать другой способ оплаты";
+"CommonSheet.PaymentForm.TinkoffPay.TimedOut.PrimaryButton" = "Попробовать снова";
+"CommonSheet.TinkoffPay.Waiting.Title" = "Ожидаем оплату в приложении банка";
+"CommonSheet.TinkoffPay.Waiting.SecondaryButton" = "Отмена";
+"CommonSheet.TinkoffPay.Paid.Title" = "Оплачено";
+"CommonSheet.TinkoffPay.Paid.PrimaryButton" = "Понятно";
+"CommonSheet.TinkoffPay.TimedOut.Title" = "Время оплаты истекло";
+"CommonSheet.TinkoffPay.TimedOut.PrimaryButton" = "Понятно";
+"CommonSheet.TinkoffPay.FailedPayment.Title" = "Не получилось оплатить";
+"CommonSheet.TinkoffPay.FailedPayment.PrimaryButton" = "Понятно";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Не получилось оплатить";

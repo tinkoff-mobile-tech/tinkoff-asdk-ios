@@ -34,6 +34,7 @@
 * [MIC-7708] MainForm - Remove stub for primary payment method
 * [MIC-8013] MainForm - Card payment logic
 * [MIC-8037] MainForm - Add analytics data
+* [MIC-8020] MainForm - Add localization
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 * [MIC-8068] SBP - Opening from main form
 * [MIC-4650] CardsController & AddCardController for working with payment cards with own UI
