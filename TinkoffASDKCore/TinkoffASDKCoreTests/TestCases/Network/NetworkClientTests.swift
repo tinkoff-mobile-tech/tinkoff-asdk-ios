@@ -13,6 +13,7 @@ final class NetworkClientTests: XCTestCase {
     private var session: NetworkSessionMock!
     private var requestBuilder: URLRequestBuilderMock!
     private var statusCodeValidator: HTTPStatusCodeValidatorMock!
+    private var logger: LoggerMock!
     private var sut: NetworkClient!
 
     override func setUp() {
@@ -20,10 +21,12 @@ final class NetworkClientTests: XCTestCase {
         session = NetworkSessionMock()
         requestBuilder = URLRequestBuilderMock()
         statusCodeValidator = HTTPStatusCodeValidatorMock()
+        logger = LoggerMock()
         sut = NetworkClient(
             session: session,
             requestBuilder: requestBuilder,
-            statusCodeValidator: statusCodeValidator
+            statusCodeValidator: statusCodeValidator,
+            logger: logger
         )
     }
 

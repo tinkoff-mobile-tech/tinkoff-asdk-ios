@@ -46,14 +46,13 @@ struct SdkAssembly {
         )
 
         let tokenProvider = SampleTokenProvider(password: credential.terminalPassword)
-        let logger = AcquiringLoggerDefault()
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
             server: AppSetting.shared.serverType,
+            logger: nil, // для включения логирования, заменить nil на Logger()
             tokenProvider: tokenProvider
         )
-        acquiringSDKConfiguration.logger = logger
 
         return acquiringSDKConfiguration
     }
