@@ -104,8 +104,9 @@ public class AcquiringSdkConfiguration: NSObject {
     /// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
     public private(set) var language: AcquiringSdkLanguage?
 
-    /// Объект логирующий сетевые запросы. Для отключения логов, передать nil
-    /// Объект существует по дефолту`
+    /// Объект логирующий сетевые запросы. Для включения логов, передать свой объект реализовавший протокол ILogger
+    /// или уже существующий дефолтный объект типа Logger.
+    /// По дефолту nil, логи отключены
     let logger: ILogger?
 
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
@@ -129,7 +130,7 @@ public class AcquiringSdkConfiguration: NSObject {
         credential: AcquiringSdkCredential,
         server: AcquiringSdkEnvironment,
         requestsTimeoutInterval: TimeInterval = 40,
-        logger: ILogger? = Logger(),
+        logger: ILogger? = nil,
         tokenProvider: ITokenProvider? = nil,
         urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
