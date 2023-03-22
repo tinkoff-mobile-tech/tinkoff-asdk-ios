@@ -104,8 +104,8 @@ public class AcquiringSdkConfiguration: NSObject {
     /// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
     public private(set) var language: AcquiringSdkLanguage?
 
-    /// Логгер сетевых запросов. Реализация - `ASDKApiLoggerDelegate`
-    public var logger: LoggerDelegate?
+    /// Флаг указывающий, необходимо ли логировать сетевые запросы`
+    let isLoggingActive: Bool
 
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     let tokenProvider: ITokenProvider?
@@ -127,11 +127,13 @@ public class AcquiringSdkConfiguration: NSObject {
         credential: AcquiringSdkCredential,
         server: AcquiringSdkEnvironment,
         requestsTimeoutInterval: TimeInterval = 40,
+        isLoggingActive: Bool = true,
         tokenProvider: ITokenProvider? = nil,
         urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
+        self.isLoggingActive = isLoggingActive
         serverEnvironment = server
         configEnvironment = {
             switch server {
