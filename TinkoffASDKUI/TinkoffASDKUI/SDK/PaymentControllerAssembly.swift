@@ -54,13 +54,14 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             maxRequestRepeatCount: uiSDKConfiguration.paymentStatusRetriesCount
         )
 
+        lazy var defaultChallengeService = DefaultWebViewAuthChallengeService(certificateValidator: CertificateValidator.shared)
         return PaymentController(
             paymentFactory: paymentFactory(acquiringSDK: coreSDK),
             threeDSService: coreSDK,
             threeDSHandler: coreSDK.threeDSWebViewSHandler(),
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             tdsController: uiSDK.tdsController,
-            webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService(),
+            webViewAuthChallengeService: uiSDKConfiguration.webViewAuthChallengeService ?? defaultChallengeService,
             paymentStatusUpdateService: paymentStatusUpdateService,
             acquiringUISDK: uiSDK
         )
