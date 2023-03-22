@@ -34,10 +34,7 @@ public extension AcquiringSdk {
             authChallengeService: configuration.urlSessionAuthChallengeService
         )
 
-        let networkClient = NetworkClient.build(
-            session: networkSession,
-            isLoggingActive: configuration.isLoggingActive
-        )
+        let networkClient = NetworkClient.build(session: networkSession, logger: configuration.logger)
         let externalClient = ExternalAPIClient(networkClient: networkClient)
         let externalRequests = ExternalRequestBuilder(appBasedConfigURLProvider: appBasedConfigURLProvider)
         let ipAddressProvider = IPAddressProvider(factory: IPAddressFactory())
@@ -106,12 +103,12 @@ private extension AcquiringAPIClient {
 // MARK: - NetworkClient
 
 private extension NetworkClient {
-    static func build(session: INetworkSession, isLoggingActive: Bool) -> NetworkClient {
+    static func build(session: INetworkSession, logger: ILogger?) -> NetworkClient {
         NetworkClient(
             session: session,
             requestBuilder: URLRequestBuilder(),
             statusCodeValidator: HTTPStatusCodeValidator(),
-            logger: Logger(isLoggingActive: isLoggingActive)
+            logger: logger
         )
     }
 }

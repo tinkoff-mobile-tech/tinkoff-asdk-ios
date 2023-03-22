@@ -50,7 +50,7 @@ struct SdkAssembly {
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
             server: AppSetting.shared.serverType,
-            isLoggingActive: false, // флаг для включения / отключения логирования
+            logger: nil, // nil для отключения логирования
             tokenProvider: tokenProvider
         )
 

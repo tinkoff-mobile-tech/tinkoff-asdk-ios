@@ -104,8 +104,9 @@ public class AcquiringSdkConfiguration: NSObject {
     /// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
     public private(set) var language: AcquiringSdkLanguage?
 
-    /// Флаг указывающий, необходимо ли логировать сетевые запросы`
-    let isLoggingActive: Bool
+    /// Объект логирующий сетевые запросы. Для отключения логов, передать nil
+    /// Объект существует по дефолту`
+    let logger: ILogger?
 
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     let tokenProvider: ITokenProvider?
@@ -119,6 +120,7 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, значение по-умолчанию - 40 секунд
+    ///   - logger: `ILogger` Объект логирующий сетевые запросы
     ///   - tokenProvider: Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     ///   - urlSessionAuthChallengeService: Запрашивает данные и способ аутентификация для `URLSession`.
     ///   При nil используется реализация на усмотрение `AcquiringSDK`
@@ -127,13 +129,13 @@ public class AcquiringSdkConfiguration: NSObject {
         credential: AcquiringSdkCredential,
         server: AcquiringSdkEnvironment,
         requestsTimeoutInterval: TimeInterval = 40,
-        isLoggingActive: Bool = true,
+        logger: ILogger? = Logger(),
         tokenProvider: ITokenProvider? = nil,
         urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
-        self.isLoggingActive = isLoggingActive
+        self.logger = logger
         serverEnvironment = server
         configEnvironment = {
             switch server {

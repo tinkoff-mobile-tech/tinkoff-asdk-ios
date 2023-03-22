@@ -7,16 +7,13 @@
 
 import Foundation
 
-typealias ILogger = IPublicLogger & IInternalLogger
-
-// MARK: - IPublicLogger
-
-public protocol IPublicLogger {
+public protocol ILogger {
     func log(_ value: String, file: String, function: String, line: Int)
     func log(request: URLRequest, file: String, function: String, line: Int)
+    func log(request: URLRequest, result: Result<(HTTPURLResponse, Data), Error>, file: String, function: String, line: Int)
 }
 
-public extension IPublicLogger {
+public extension ILogger {
     func log(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
         log(value, file: file, function: function, line: line)
     }
@@ -24,18 +21,10 @@ public extension IPublicLogger {
     func log(request: URLRequest, file: String = #file, function: String = #function, line: Int = #line) {
         log(request: request, file: file, function: function, line: line)
     }
-}
 
-// MARK: - IInternalLogger
-
-protocol IInternalLogger {
-    func log(request: URLRequest, result: Result<NetworkResponse, NetworkError>, file: String, function: String, line: Int)
-}
-
-extension IInternalLogger {
     func log(
         request: URLRequest,
-        result: Result<NetworkResponse, NetworkError>,
+        result: Result<(HTTPURLResponse, Data), Error>,
         file: String = #file,
         function: String = #function,
         line: Int = #line

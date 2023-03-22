@@ -11,5 +11,5 @@ import Foundation
 final class LoggerMock: ILogger {
     func log(_ value: String, file: String, function: String, line: Int) {}
     func log(request: URLRequest, file: String, function: String, line: Int) {}
-    func log(request: URLRequest, result: Result<NetworkResponse, NetworkError>, file: String, function: String, line: Int) {}
+    func log(request: URLRequest, result: Result<(HTTPURLResponse, Data), Error>, file: String, function: String, line: Int) {}
 }

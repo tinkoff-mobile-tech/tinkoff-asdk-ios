@@ -28,18 +28,14 @@ public class Logger {
         return formatter
     }()
 
-    private let isLoggingActive: Bool
-
     // MARK: Initialization
 
-    public init(isLoggingActive: Bool = true) {
-        self.isLoggingActive = isLoggingActive
-    }
+    public init() {}
 }
 
-// MARK: - IPublicLogger
+// MARK: - ILogger
 
-extension Logger: IPublicLogger {
+extension Logger: ILogger {
     public func log(_ value: String, file: String = #file, function: String = #function, line: Int = #line) {
         log(with: value, type: .common, file: file, function: function, line: line)
     }
@@ -60,22 +56,16 @@ extension Logger: IPublicLogger {
 
         log(with: output, type: .request, file: file, function: function, line: line)
     }
-}
 
-// MARK: - IInternalLogger
-
-extension Logger: IInternalLogger {
-    func log(
+    public func log(
         request: URLRequest,
-        result: Result<NetworkResponse, NetworkError>,
+        result: Result<(HTTPURLResponse, Data), Error>,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) {
         switch result {
-        case let .success(networkResponse):
-            let response = networkResponse.httpResponse
-            let data = networkResponse.data
+        case let .success((response, data)):
             log(response: response, data: data, file: file, function: function, line: line)
         case let .failure(error):
             log(request: request, error: error, file: file, function: function, line: line)
@@ -87,8 +77,6 @@ extension Logger: IInternalLogger {
 
 extension Logger {
     private func log(with value: String, type: LogType, file: String, function: String, line: Int) {
-        guard isLoggingActive else { return }
-
         let time = timeFormatter.string(from: Date())
         defer { print("\n - - - - - - - - - - ASDK \(type.logFinishName) (\(time)) - - - - - - - - - - \n") }
 
