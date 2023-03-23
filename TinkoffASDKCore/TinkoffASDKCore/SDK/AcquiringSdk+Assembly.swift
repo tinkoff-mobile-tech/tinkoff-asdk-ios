@@ -134,7 +134,7 @@ private extension NetworkSession {
             delegateQueue: nil
         )
 
-        return NetworkSession(urlSession: urlSession, urlSessionDelegate: urlSessionDelegate)
+        return NetworkSession(urlSession: urlSession)
     }
 }
 

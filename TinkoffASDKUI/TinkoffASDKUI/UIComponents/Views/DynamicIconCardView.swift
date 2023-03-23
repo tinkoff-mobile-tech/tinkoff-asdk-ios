@@ -36,7 +36,7 @@ class DynamicIconCardView: UIView {
         setupViews()
         frameObserver = observe(
             \.center,
-            changeHandler: { _, _ in self.setupFrames() }
+            changeHandler: { [weak self] _, _ in self?.setupFrames() }
         )
     }
 
