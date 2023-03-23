@@ -48,20 +48,21 @@ final class NetworkSession: INetworkSession {
     // MARK: Dependencies
 
     private let urlSession: URLSession
-    /// Реализует протокол делегата `URLSession`.
-    /// Удерживается данным классом, поскольку `URLSession` хранит слабую ссылку на свой делегат
-    private let urlSessionDelegate: URLSessionDelegate
 
     // MARK: Init
 
     /// Инициализирует `NetworkSession`
     /// - Parameters:
     ///   - urlSession: `URLSession`
-    ///   - urlSessionDelegate: Делегат `URLSession`, который должен быть установлен до инициализации `NetworkSession`.
-    ///   Удерживается данным классом, поскольку `URLSession` хранит слабую ссылку на свой делегат
-    init(urlSession: URLSession, urlSessionDelegate: URLSessionDelegate) {
+    init(urlSession: URLSession) {
         self.urlSession = urlSession
-        self.urlSessionDelegate = urlSessionDelegate
+    }
+
+    deinit {
+        /// `URLSession` хранит сильную ссылку на делегат, инвалидируем сессию чтобы освободить память.
+        /// The session object keeps a strong reference to the delegate
+        /// until your app exits or explicitly invalidates the session
+        self.urlSession.invalidateAndCancel()
     }
 
     // MARK: INetworkSession
