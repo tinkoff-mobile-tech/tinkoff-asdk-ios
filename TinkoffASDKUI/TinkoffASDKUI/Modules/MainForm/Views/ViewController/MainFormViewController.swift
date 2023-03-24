@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class MainFormViewController: UIViewController, PullableContainerContent {
+final class MainFormViewController: UIViewController, PullableContainerScrollableContent {
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
@@ -82,6 +82,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
         tableView.alwaysBounceVertical = false
+        tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self
 

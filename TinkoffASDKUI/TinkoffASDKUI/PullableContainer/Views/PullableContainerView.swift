@@ -20,17 +20,23 @@
 import UIKit
 
 final class PullableContainerView: PassthroughView {
+    // MARK: Subviews
 
     let headerView = PullableContainerHeader()
     let dragView = UIView()
     let containerView = UIView()
-    var scrollView: UIScrollView!
+    let contentView: UIView
+
+    // MARK: Constraints
 
     private(set) var containerViewHeightConstraint: NSLayoutConstraint!
     private(set) var dragViewHeightConstraint: NSLayoutConstraint!
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    // MARK: Init
+
+    init(contentView: UIView) {
+        self.contentView = contentView
+        super.init(frame: .zero)
         setup()
     }
 
@@ -38,22 +44,9 @@ final class PullableContainerView: PassthroughView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    // MARK: - Content
-
-    func addContent(_ content: PullableContainerContent) {
-        if let scrollableContent = content as? PullableContainerScrollableContent {
-            scrollView = scrollableContent.scrollView
-            containerView.addSubview(content.view)
-            setupScrollableContentConstraints(content: content)
-        } else {
-            scrollView = UIScrollView()
-            containerView.addSubview(scrollView)
-            scrollView.addSubview(content.view)
-            setupNonScrollableContentConstraints(content: content)
-        }
-    }
 }
+
+// MARK: - Setting Up
 
 private extension PullableContainerView {
     func setup() {
@@ -63,6 +56,7 @@ private extension PullableContainerView {
 
         setupHeaderView()
         setupDragView()
+        setupContentView()
         setupConstraints()
     }
 
@@ -75,6 +69,10 @@ private extension PullableContainerView {
         dragView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         dragView.layer.cornerRadius = .cornerRadius
         dragView.layer.masksToBounds = true
+    }
+
+    func setupContentView() {
+        containerView.addSubview(contentView)
     }
 
     func setupConstraints() {
@@ -101,38 +99,12 @@ private extension PullableContainerView {
             containerView.rightAnchor.constraint(equalTo: dragView.rightAnchor),
             containerViewHeightConstraint,
         ])
-    }
 
-    func setupScrollableContentConstraints(content: PullableContainerContent) {
-        content.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            content.view.topAnchor.constraint(equalTo: containerView.topAnchor),
-            content.view.leftAnchor.constraint(equalTo: containerView.leftAnchor),
-            content.view.rightAnchor.constraint(equalTo: containerView.rightAnchor),
-            content.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-        ])
-    }
-
-    func setupNonScrollableContentConstraints(content: PullableContainerContent) {
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        content.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            scrollView.leftAnchor.constraint(equalTo: containerView.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: containerView.rightAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-
-            content.view.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            content.view.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
-            content.view.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
-            content.view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            content.view.widthAnchor.constraint(equalTo: containerView.widthAnchor),
-            content.view.heightAnchor.constraint(equalTo: containerView.heightAnchor),
-        ])
+        contentView.pinEdgesToSuperview()
     }
 }
+
+// MARK: - Constants
 
 private extension CGFloat {
     static let topViewHeight: CGFloat = 24

@@ -20,16 +20,10 @@
 import UIKit
 
 final class PullableContainerViewController: UIViewController {
-
-    private var customView: PullableContainerView {
-        return (view as? PullableContainerView) ?? PullableContainerView()
-    }
-
     private let content: PullableContainerContent & UIViewController
-
+    private lazy var customView = PullableContainerView(contentView: content.view)
     private var dragController: PullableContainerDragController?
     private var dragHandlers = [PullableContainerDragHandler]()
-
     private var cachedViewHeight: CGFloat = 0
 
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
@@ -58,7 +52,7 @@ final class PullableContainerViewController: UIViewController {
     // MARK: - View Life Cycle
 
     override func loadView() {
-        view = PullableContainerView()
+        view = customView
     }
 
     override func viewDidLoad() {
@@ -91,7 +85,6 @@ private extension PullableContainerViewController {
 
     func setupContent() {
         addChild(content)
-        customView.addContent(content)
         content.didMove(toParent: self)
 
         content.pullableContainerContentHeightDidChange = { [weak self] content in
@@ -111,17 +104,15 @@ private extension PullableContainerViewController {
         let panGesture = UIPanGestureRecognizer()
         customView.dragView.addGestureRecognizer(panGesture)
 
-        let panGestureHandler = PullableContainerPanGestureDragHandler(
+        let panGestureHandler: PullableContainerDragHandler = PullableContainerPanGestureDragHandler(
             dragController: dragController,
             panGestureRecognizer: panGesture
         )
 
-        let scrollHandler = PullableContainerScrollDragHandler(
-            dragController: dragController,
-            scrollView: customView.scrollView
-        )
+        let scrollHandler: PullableContainerDragHandler? = (content as? PullableContainerScrollableContent)
+            .map { PullableContainerScrollDragHandler(dragController: dragController, scrollView: $0.scrollView) }
 
-        dragHandlers = [panGestureHandler, scrollHandler]
+        dragHandlers = [panGestureHandler, scrollHandler].compactMap { $0 }
     }
 
     func updateContainerHeight(contentHeight: CGFloat) {
@@ -129,7 +120,6 @@ private extension PullableContainerViewController {
         let targetContentHeight = min(maximumContentHeight, contentHeight)
         dragController?.setDefaultPositionWithContentHeight(targetContentHeight)
         customView.containerViewHeightConstraint.constant = targetContentHeight
-        customView.scrollView.isScrollEnabled = targetContentHeight >= maximumContentHeight
 
         UIView.animate(
             withDuration: 0.5,
