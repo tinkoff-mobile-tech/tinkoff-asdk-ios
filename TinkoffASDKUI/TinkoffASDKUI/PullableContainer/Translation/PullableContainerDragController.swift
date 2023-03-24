@@ -20,10 +20,10 @@
 import UIKit
 
 protocol PullableContainerDragControllerDelegate: AnyObject {
-    func pullableContainerDragControllerDidRequestMaxContentHeight(_ controller: PullableContainerDragController) -> CGFloat
-    func pullableContainerDragControllerDidEndDragging(_ controller: PullableContainerDragController)
-    func pullableContainerDragControllerDidCloseContainer(_ controller: PullableContainerDragController)
-    func pullableContainerDragControllerShouldDismissOnDownDragging(_ controller: PullableContainerDragController) -> Bool
+    func dragControllerDidRequestMaxContentHeight(_ controller: PullableContainerDragController) -> CGFloat
+    func dragControllerDidEndDragging(_ controller: PullableContainerDragController)
+    func dragControllerDidCloseContainer(_ controller: PullableContainerDragController)
+    func dragControllerShouldDismissOnDownDragging(_ controller: PullableContainerDragController) -> Bool
 }
 
 final class PullableContainerDragController {
@@ -55,13 +55,13 @@ final class PullableContainerDragController {
     ) {
         let dragProportion = offset / dragViewHeight
         let isDismissingDrag = dragProportion >= .dismissDragProportionTreshold || velocity > .dismissVelocityTreshold
-        let isDismissionAllowed = delegate?.pullableContainerDragControllerShouldDismissOnDownDragging(self) ?? true
+        let isDismissionAllowed = delegate?.dragControllerShouldDismissOnDownDragging(self) ?? true
 
         if isDismissingDrag, isDismissionAllowed {
-            delegate?.pullableContainerDragControllerDidCloseContainer(self)
+            delegate?.dragControllerDidCloseContainer(self)
         } else {
             dragViewHeightConstraint.constant = dragViewHeight
-            delegate?.pullableContainerDragControllerDidEndDragging(self)
+            delegate?.dragControllerDidEndDragging(self)
         }
     }
 
@@ -96,7 +96,7 @@ final class PullableContainerDragController {
             return dragViewHeight
         }
 
-        let maximumHeight = delegate.pullableContainerDragControllerDidRequestMaxContentHeight(self)
+        let maximumHeight = delegate.dragControllerDidRequestMaxContentHeight(self)
             + insets.bottom
             + insets.top
 
@@ -108,7 +108,7 @@ final class PullableContainerDragController {
             return .defaultShouldDismissOnDownDragging
         }
 
-        return delegate.pullableContainerDragControllerShouldDismissOnDownDragging(self)
+        return delegate.dragControllerShouldDismissOnDownDragging(self)
     }
 }
 

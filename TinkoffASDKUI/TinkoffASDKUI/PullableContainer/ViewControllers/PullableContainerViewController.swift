@@ -140,7 +140,7 @@ private extension PullableContainerViewController {
 // MARK: - PullableContainerDragControllerDelegate
 
 extension PullableContainerViewController: PullableContainerDragControllerDelegate {
-    func pullableContainerDragControllerDidEndDragging(_ controller: PullableContainerDragController) {
+    func dragControllerDidEndDragging(_ controller: PullableContainerDragController) {
         UIView.animate(
             withDuration: 0.5,
             delay: 0,
@@ -152,7 +152,7 @@ extension PullableContainerViewController: PullableContainerDragControllerDelega
         }
     }
 
-    func pullableContainerDragControllerDidCloseContainer(_ controller: PullableContainerDragController) {
+    func dragControllerDidCloseContainer(_ controller: PullableContainerDragController) {
         dismiss(animated: true)
         content.pullableContainerWillBeClosed()
         transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
@@ -160,11 +160,11 @@ extension PullableContainerViewController: PullableContainerDragControllerDelega
         })
     }
 
-    func pullableContainerDragControllerDidRequestMaxContentHeight(_ controller: PullableContainerDragController) -> CGFloat {
+    func dragControllerDidRequestMaxContentHeight(_ controller: PullableContainerDragController) -> CGFloat {
         calculateMaximumContentHeight()
     }
 
-    func pullableContainerDragControllerShouldDismissOnDownDragging(_ controller: PullableContainerDragController) -> Bool {
+    func dragControllerShouldDismissOnDownDragging(_ controller: PullableContainerDragController) -> Bool {
         content.pullableContainerShouldDismissOnDownDragging()
     }
 }
