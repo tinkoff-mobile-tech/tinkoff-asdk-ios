@@ -69,7 +69,7 @@ public struct FinishAuthorizePayload: Decodable {
                 )
             }
         default:
-            if let finishStatus = try? PaymentStatusResponse(from: decoder) {
+            if let finishStatus = try? GetPaymentStatePayload(from: decoder) {
                 responseStatus = .done(finishStatus)
             }
         }

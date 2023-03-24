@@ -12,19 +12,19 @@ extension AvatarTableViewCellModel {
         switch paymentMethod {
         case .card:
             return AvatarTableViewCellModel(
-                title: "Картой",
+                title: Loc.CommonSheet.PaymentForm.byCardTitle,
                 avatarImage: Asset.PaymentCard.cardFrontsideAvatar.image
             )
         case .tinkoffPay:
             return AvatarTableViewCellModel(
-                title: "Tinkoff Pay",
-                description: "В приложении Тинькофф",
+                title: Loc.CommonSheet.PaymentForm.tinkoffPayTitle,
+                description: Loc.CommonSheet.PaymentForm.tinkoffPayDescription,
                 avatarImage: Asset.TinkoffPay.tinkoffPayAvatar.image
             )
         case .sbp:
             return AvatarTableViewCellModel(
-                title: "СБП",
-                description: "В приложении любого банка",
+                title: Loc.CommonSheet.PaymentForm.sbpTitle,
+                description: Loc.CommonSheet.PaymentForm.sbpDescription,
                 avatarImage: Asset.Sbp.sbpAvatar.image
             )
         }

@@ -183,19 +183,7 @@ extension PaymentController: PaymentProcessDelegate {
         confirmationCancelled: @escaping () -> Void,
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
-        tdsController.completionHandler = { response in
-            let mappedResponse = response.map { statusResponse in
-                GetPaymentStatePayload(
-                    paymentId: String(statusResponse.paymentId),
-                    amount: Int64(truncating: statusResponse.amount),
-                    orderId: statusResponse.orderId,
-                    status: statusResponse.status
-                )
-            }
-
-            completion(mappedResponse)
-        }
-
+        tdsController.completionHandler = completion
         tdsController.cancelHandler = confirmationCancelled
         tdsController.doChallenge(with: data)
     }

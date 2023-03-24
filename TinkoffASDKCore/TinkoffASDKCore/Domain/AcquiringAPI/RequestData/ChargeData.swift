@@ -42,28 +42,3 @@ public struct ChargeData: Encodable {
         self.rebillId = rebillId
     }
 }
-
-@available(*, deprecated, message: "Use `ChargeRequestData` instead")
-public struct PaymentChargeRequestData: Encodable {
-    private enum CodingKeys: CodingKey {
-        case paymentId
-        case parentPaymentId
-
-        var stringValue: String {
-            switch self {
-            case .paymentId: return Constants.Keys.paymentId
-            case .parentPaymentId: return Constants.Keys.rebillId
-            }
-        }
-    }
-
-    /// Номер заказа в системе Продавца
-    public var paymentId: Int64
-    /// Родительский платеж
-    public var parentPaymentId: Int64
-
-    public init(paymentId: Int64, parentPaymentId: Int64) {
-        self.paymentId = paymentId
-        self.parentPaymentId = parentPaymentId
-    }
-}

@@ -332,8 +332,11 @@ extension CardPaymentPresenter {
         let sourceData: PaymentSourceData = activeCards.isEmpty ? cardSourceData : savedCardSourceData
         let email = receiptSwitchViewPresenter.isOn ? emailPresenter.currentEmail : nil
 
+        let paymentFlow = (activeCards.isEmpty ? paymentFlow.withNewCardAnalytics() : paymentFlow.withSavedCardAnalytics())
+            .replacing(customerEmail: email)
+
         paymentController.performPayment(
-            paymentFlow: paymentFlow.replacing(customerEmail: email),
+            paymentFlow: paymentFlow,
             paymentSource: sourceData
         )
     }

@@ -14,33 +14,6 @@ final class MockTDSController: ITDSController {
 
     var cancelHandler: (() -> Void)?
 
-    // MARK: - enrichRequestDataWithAuthParams
-
-    struct EnrichRequestDataWithAuthParamsPassedArguments {
-        let paymentSystem: String
-        let messageVersion: String
-        let finishRequestData: TinkoffASDKCore.PaymentFinishRequestData
-        let completion: (Result<TinkoffASDKCore.PaymentFinishRequestData, Error>) -> Void
-    }
-
-    var enrichRequestDataWithAuthParamsCallCounter = 0
-    var enrichRequestDataWithAuthParamsPassedArguments: EnrichRequestDataWithAuthParamsPassedArguments?
-
-    func enrichRequestDataWithAuthParams(
-        with paymentSystem: String,
-        messageVersion: String,
-        finishRequestData: TinkoffASDKCore.PaymentFinishRequestData,
-        completion: @escaping (Result<TinkoffASDKCore.PaymentFinishRequestData, Error>) -> Void
-    ) {
-        enrichRequestDataWithAuthParamsCallCounter += 1
-        enrichRequestDataWithAuthParamsPassedArguments = EnrichRequestDataWithAuthParamsPassedArguments(
-            paymentSystem: paymentSystem,
-            messageVersion: messageVersion,
-            finishRequestData: finishRequestData,
-            completion: completion
-        )
-    }
-
     // MARK: - doChallenge
 
     struct DoChallengePassedArguments {

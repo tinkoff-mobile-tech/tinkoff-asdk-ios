@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "AttachCardData")
-public typealias FinishAddCardData = AttachCardData
-
 public struct AttachCardData {
     let cardNumber: String
     let expDate: String

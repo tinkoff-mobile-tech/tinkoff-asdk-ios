@@ -39,17 +39,20 @@ final class NetworkClient: INetworkClient {
     private let session: INetworkSession
     private let requestBuilder: IURLRequestBuilder
     private let statusCodeValidator: IHTTPStatusCodeValidator
+    private let logger: ILogger?
 
     // MARK: Init
 
     init(
         session: INetworkSession,
         requestBuilder: IURLRequestBuilder,
-        statusCodeValidator: IHTTPStatusCodeValidator
+        statusCodeValidator: IHTTPStatusCodeValidator,
+        logger: ILogger?
     ) {
         self.session = session
         self.requestBuilder = requestBuilder
         self.statusCodeValidator = statusCodeValidator
+        self.logger = logger
     }
 
     // MARK: INetworkClient
@@ -76,9 +79,16 @@ final class NetworkClient: INetworkClient {
         _ urlRequest: URLRequest,
         completion: @escaping (Result<NetworkResponse, NetworkError>) -> Void
     ) -> Cancellable {
+        logger?.log(request: urlRequest)
+
         let networkTask = session.dataTask(with: urlRequest) { [statusCodeValidator] data, response, error in
             let result: Result<NetworkResponse, NetworkError>
-            defer { completion(result) }
+
+            defer {
+                let newResult = result.map { ($0.httpResponse, $0.data) }.mapError { $0 as Error }
+                self.logger?.log(request: urlRequest, result: newResult)
+                completion(result)
+            }
 
             if let error = error {
                 result = .failure(.transportError(error))

@@ -31,10 +31,4 @@ struct ChargePaymentRequest: AcquiringRequest {
         self.baseURL = baseURL
         parameters = (try? data.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
     }
-
-    @available(*, deprecated, message: "Use `init(data:baseURL:)` instead")
-    init(paymentChargeRequestData: PaymentChargeRequestData, baseURL: URL) {
-        self.baseURL = baseURL
-        parameters = (try? paymentChargeRequestData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]
-    }
 }

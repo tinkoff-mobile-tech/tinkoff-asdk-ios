@@ -109,7 +109,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         return SavedCardViewModel(
             iconModel: iconModel,
             cardName: .formatCardName(bankName: bank?.naming, pan: card.pan),
-            actionDescription: showChangeDescription ? "Сменить карту" : nil
+            actionDescription: showChangeDescription ? Loc.Acquiring.PaymentCard.changeButton : nil
         )
     }
 

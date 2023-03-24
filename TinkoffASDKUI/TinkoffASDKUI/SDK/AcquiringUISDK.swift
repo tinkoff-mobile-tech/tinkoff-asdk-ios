@@ -23,7 +23,7 @@ import UIKit
 import WebKit
 
 public typealias PaymentResultCompletion = (PaymentResult) -> Void
-public typealias PaymentCompletionHandler = (_ result: Result<PaymentStatusResponse, Error>) -> Void
+public typealias PaymentCompletionHandler = (_ result: Result<GetPaymentStatePayload, Error>) -> Void
 
 public class AcquiringUISDK: NSObject {
 
@@ -113,13 +113,14 @@ public class AcquiringUISDK: NSObject {
 
         sbpQrAssembly = SBPQrAssembly(acquiringSdk: acquiringSdk)
 
-        let tdsWrapper = TDSWrapperBuilder(env: configuration.serverEnvironment, language: configuration.language).build()
-        let tdsCertsManager = TDSCertsManager(acquiringSdk: acquiringSdk, tdsWrapper: tdsWrapper)
+        let tdsWrapper = TDSWrapperBuilder(
+            env: configuration.serverEnvironment,
+            language: configuration.language
+        ).build()
         let tdsTimeoutResolver = TDSTimeoutResolver()
         tdsController = TDSController(
             acquiringSdk: acquiringSdk,
             tdsWrapper: tdsWrapper,
-            tdsCertsManager: tdsCertsManager,
             tdsTimeoutResolver: tdsTimeoutResolver
         )
 

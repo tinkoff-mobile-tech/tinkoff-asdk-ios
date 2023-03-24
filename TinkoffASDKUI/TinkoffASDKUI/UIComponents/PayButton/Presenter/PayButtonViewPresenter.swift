@@ -72,11 +72,11 @@ final class PayButtonViewPresenter: IPayButtonViewOutput, IPayButtonViewPresente
     private func setupView() {
         switch presentationState {
         case .pay:
-            view?.set(configuration: .pay(title: "Оплатить"))
+            view?.set(configuration: .pay(title: Loc.CommonSheet.PaymentWaiting.primaryButton))
         case .payByCard:
-            view?.set(configuration: .pay(title: "Оплатить по карте"))
+            view?.set(configuration: .pay(title: Loc.CommonSheet.PaymentForm.byCardPrimaryButton))
         case let .payWithAmount(amount):
-            view?.set(configuration: .pay(title: "Оплатить \(moneyFormatter.formatAmount(amount))"))
+            view?.set(configuration: .pay(title: "\(Loc.CommonSheet.PaymentWaiting.primaryButton) \(moneyFormatter.formatAmount(amount))"))
         case .tinkoffPay:
             view?.set(configuration: .tinkoffPay())
         case .sbp:
@@ -101,7 +101,7 @@ private extension Button.Configuration {
 
     static func tinkoffPay() -> Button.Configuration {
         Button.Configuration(
-            title: "Оплатить с Тинькофф",
+            title: Loc.CommonSheet.PaymentForm.tinkoffPayPrimaryButton,
             image: Asset.TinkoffPay.tinkoffPaySmallNoBorder.image,
             style: .primaryTinkoff,
             contentSize: .basicLarge,
@@ -113,7 +113,7 @@ private extension Button.Configuration {
     // Если появится необходимость, попросить дизайнера отрисовать это состояние, а затем положить цвет в `Button.Style`
     static func sbp() -> Button.Configuration {
         Button.Configuration(
-            title: "Оплатить",
+            title: Loc.CommonSheet.PaymentForm.sbpPrimaryButton,
             image: Asset.Sbp.sbpLogoLight.image,
             style: Button.Style(
                 foregroundColor: Button.InteractiveColor(normal: .white),

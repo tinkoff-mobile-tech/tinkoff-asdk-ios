@@ -24,14 +24,6 @@ protocol ITDSController: AnyObject {
     var completionHandler: PaymentCompletionHandler? { get set }
     var cancelHandler: (() -> Void)? { get set }
 
-    /// Получает необходимые параметры для проведения 3дс
-    func enrichRequestDataWithAuthParams(
-        with paymentSystem: String,
-        messageVersion: String,
-        finishRequestData: PaymentFinishRequestData,
-        completion: @escaping (Result<PaymentFinishRequestData, Error>) -> Void
-    )
-
     /// Начинает испытание на стороне 3дс-сдк
     func doChallenge(with appBasedData: Confirmation3DS2AppBasedData)
 }
@@ -42,7 +34,6 @@ final class TDSController: ITDSController {
 
     private let acquiringSdk: AcquiringSdk
     private let tdsWrapper: TDSWrapper
-    private let tdsCertsManager: ITDSCertsManager
     private let tdsTimeoutResolver: ITimeoutResolver
 
     // 3ds sdk properties
@@ -61,40 +52,11 @@ final class TDSController: ITDSController {
     init(
         acquiringSdk: AcquiringSdk,
         tdsWrapper: TDSWrapper,
-        tdsCertsManager: ITDSCertsManager,
         tdsTimeoutResolver: ITimeoutResolver
     ) {
         self.acquiringSdk = acquiringSdk
         self.tdsWrapper = tdsWrapper
-        self.tdsCertsManager = tdsCertsManager
         self.tdsTimeoutResolver = tdsTimeoutResolver
-    }
-
-    /// Получает необходимые параметры для проведения 3дс
-    func enrichRequestDataWithAuthParams(
-        with paymentSystem: String,
-        messageVersion: String,
-        finishRequestData: PaymentFinishRequestData,
-        completion: @escaping (Result<PaymentFinishRequestData, Error>) -> Void
-    ) {
-        tdsCertsManager.checkAndUpdateCertsIfNeeded(for: paymentSystem) { [weak self] result in
-            guard let self = self else { return }
-            do {
-                let matchingDirectoryServerID = try result.get()
-                let authParams = try self.startAppBasedFlow(
-                    directoryServerID: matchingDirectoryServerID,
-                    messageVersion: messageVersion
-                )
-
-                completion(.success(self.enrichRequestData(
-                    finishRequestData,
-                    messageVersion: messageVersion,
-                    authParams: authParams
-                )))
-            } catch {
-                completion(.failure(error))
-            }
-        }
     }
 
     /// Начинает испытание на стороне 3дс-сдк
@@ -151,35 +113,6 @@ private extension TDSController {
         )
     }
 
-    /// Добавляет необходимые параметры в `PaymentFinishRequestData`
-    func enrichRequestData(
-        _ finishRequestData: PaymentFinishRequestData,
-        messageVersion: String,
-        authParams: AuthenticationRequestParameters
-    ) -> PaymentFinishRequestData {
-        var requestData = finishRequestData
-        let screenSize = UIScreen.main.bounds.size
-
-        let deviceInfo = ThreeDSDeviceInfo(
-            cresCallbackUrl: acquiringSdk.confirmation3DSTerminationV2URL().absoluteString,
-            languageId: acquiringSdk.languageKey?.rawValue ?? "ru",
-            screenWidth: Int(screenSize.width),
-            screenHeight: Int(screenSize.height),
-            sdkAppID: authParams.getSDKAppID(),
-            sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
-            sdkReferenceNumber: authParams.getSDKReferenceNumber(),
-            sdkTransID: authParams.getSDKTransactionID(),
-            sdkMaxTimeout: tdsTimeoutResolver.mapiValue,
-            sdkEncData: authParams.getDeviceData()
-        )
-
-        requestData.setDeviceInfo(info: deviceInfo)
-        requestData.setThreeDSVersion(messageVersion)
-        requestData.setIpAddress(acquiringSdk.networkIpAddress())
-
-        return requestData
-    }
-
     func buildCresValue(with transStatus: String) throws -> String {
         guard let challengeParams = challengeParams else {
             return String()
@@ -216,8 +149,9 @@ extension TDSController: ChallengeStatusReceiver {
         finishTransaction()
         do {
             let cresValue = try buildCresValue(with: completionEvent.getTransactionStatus())
+            let cresData = CresData(cres: cresValue)
 
-            acquiringSdk.submit3DSAuthorizationV2(cres: cresValue) { [weak self] result in
+            acquiringSdk.submit3DSAuthorizationV2(data: cresData) { [weak self] result in
                 self?.completionHandler?(result)
                 self?.clear()
             }
