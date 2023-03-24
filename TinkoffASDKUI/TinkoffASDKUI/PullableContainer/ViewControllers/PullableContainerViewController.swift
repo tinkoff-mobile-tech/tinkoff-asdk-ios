@@ -104,15 +104,12 @@ private extension PullableContainerViewController {
         let panGesture = UIPanGestureRecognizer()
         customView.dragView.addGestureRecognizer(panGesture)
 
-        let panGestureHandler: PullableContainerDragHandler = PullableContainerPanGestureDragHandler(
-            dragController: dragController,
-            panGestureRecognizer: panGesture
-        )
-
-        let scrollHandler: PullableContainerDragHandler? = (content as? PullableContainerScrollableContent)
-            .map { PullableContainerScrollDragHandler(dragController: dragController, scrollView: $0.scrollView) }
-
-        dragHandlers = [panGestureHandler, scrollHandler].compactMap { $0 }
+        dragHandlers = [
+            PullableContainerPanGestureDragHandler(dragController: dragController, panGestureRecognizer: panGesture),
+            content.scrollView.map {
+                PullableContainerScrollDragHandler(dragController: dragController, scrollView: $0)
+            },
+        ].compactMap { $0 }
     }
 
     func updateContainerHeight(contentHeight: CGFloat) {

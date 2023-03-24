@@ -21,6 +21,8 @@ import UIKit
 
 protocol PullableContainerContent: AnyObject {
     var view: UIView! { get }
+    var scrollView: UIScrollView? { get }
+
     var pullableContainerContentHeight: CGFloat { get }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)? { get set }
     func pullableContainerWillBeClosed()
@@ -29,13 +31,10 @@ protocol PullableContainerContent: AnyObject {
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool
 }
 
-protocol PullableContainerScrollableContent: PullableContainerContent {
-    var scrollView: UIScrollView { get }
-}
-
 // MARK: - PullableContainerContent + Default Implementation
 
 extension PullableContainerContent {
+    var scrollView: UIScrollView? { nil }
     func pullableContainerWillBeClosed() {}
     func pullableContainerWasClosed() {}
     func pullableContainerShouldDismissOnDownDragging() -> Bool { true }

@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class MainFormViewController: UIViewController, PullableContainerScrollableContent {
+final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
