@@ -24,15 +24,17 @@ open class DefaultAuthChallengeService {
         challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        guard let serverTrust = challenge.protectionSpace.serverTrust else {
-            return completionHandler(.performDefaultHandling, nil)
-        }
+        DispatchQueue.global().async {
+            guard let serverTrust = challenge.protectionSpace.serverTrust else {
+                return completionHandler(.performDefaultHandling, nil)
+            }
 
-        if certificateValidator.isValid(serverTrust: serverTrust) {
-            let cred = URLCredential(trust: serverTrust)
-            completionHandler(.useCredential, cred)
-        } else {
-            completionHandler(.performDefaultHandling, nil)
+            if self.certificateValidator.isValid(serverTrust: serverTrust) {
+                let cred = URLCredential(trust: serverTrust)
+                completionHandler(.useCredential, cred)
+            } else {
+                completionHandler(.performDefaultHandling, nil)
+            }
         }
     }
 }
