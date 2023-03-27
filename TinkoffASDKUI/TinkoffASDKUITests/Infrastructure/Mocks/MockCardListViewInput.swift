@@ -75,11 +75,11 @@ final class MockCardListViewInput: ICardListViewInput {
         showEditButtonCallCounter += 1
     }
 
-    var showLoadingSnackbarCallCounter = 0
-    var showLoadingSnackbarStub: (String?) -> Void = { _ in }
+    var showRemovingCardSnackBarCallCounter = 0
+    var showRemovingCardSnackBarStub: (String?) -> Void = { _ in }
     func showRemovingCardSnackBar(text: String?) {
-        showLoadingSnackbarCallCounter += 1
-        showLoadingSnackbarStub(text)
+        showRemovingCardSnackBarCallCounter += 1
+        showRemovingCardSnackBarStub(text)
     }
 
     var hideLoadingSnackbarCallCounter = 0
@@ -102,7 +102,7 @@ final class MockCardListViewInput: ICardListViewInput {
 
     var hideRightBarButtonCalCounter = 0
     func hideRightBarButton() {
-        hideStubCallCounter += 1
+        hideRightBarButtonCalCounter += 1
     }
 
     var closeScreenCounter = 0

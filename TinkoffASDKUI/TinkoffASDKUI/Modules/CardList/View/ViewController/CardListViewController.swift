@@ -33,7 +33,7 @@ final class CardListViewController: UIViewController {
 
     // MARK: State
 
-    private var snackBarViewController: SnackbarViewController?
+    var snackBarViewController: ISnackbarController?
 
     private var sections: [CardListSection] = []
 

@@ -13,7 +13,7 @@ import Foundation
 import Foundation
 import XCTest
 
-final class CardListPresenterTests: XCTestCase {
+final class CardListPresenterTests: BaseTestCase {
 
     // Dependencies
     var sutAsProtocol: ICardListViewOutput! { sut }
@@ -23,7 +23,7 @@ final class CardListPresenterTests: XCTestCase {
     var mockBankResolver: MockBankResolver!
     var mockPaymentSystemResolver: MockPaymentSystemResolver!
     var mockView: MockCardListViewInput!
-    var cardsController: CardsControllerMock!
+    var cardsControllerMock: CardsControllerMock!
     var router: CardListRouterMock!
     var output: CardListPresenterOutputMock!
 
@@ -35,13 +35,13 @@ final class CardListPresenterTests: XCTestCase {
         mockBankResolver = MockBankResolver()
         mockPaymentSystemResolver = MockPaymentSystemResolver()
         mockView = MockCardListViewInput()
-        cardsController = CardsControllerMock()
+        cardsControllerMock = CardsControllerMock()
         router = CardListRouterMock()
         output = CardListPresenterOutputMock()
 
         sut = CardListPresenter(
             screenConfiguration: buildScreenConfiguration(),
-            cardsController: cardsController,
+            cardsController: cardsControllerMock,
             router: router,
             imageResolver: mockPaymentSystemImageResolver,
             bankResolver: mockBankResolver,
@@ -66,7 +66,7 @@ final class CardListPresenterTests: XCTestCase {
     func test_viewDidLoad() throws {
         // given
         let expectation = expectation(description: #function)
-        cardsController.getActiveCardsStub = { [weak self] completion in
+        cardsControllerMock.getActiveCardsStub = { [weak self] completion in
             guard let self = self else { return }
             completion(.success(self.buildActiveCardsCache()))
             expectation.fulfill()
@@ -78,7 +78,7 @@ final class CardListPresenterTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockView.showShimmerCallCounter, 1)
-        XCTAssertEqual(cardsController.getActiveCardsCallsCount, 1)
+        XCTAssertEqual(cardsControllerMock.getActiveCardsCallsCount, 1)
         XCTAssertEqual(mockView.hideShimmerCallCounter, 1)
     }
 
@@ -117,39 +117,49 @@ final class CardListPresenterTests: XCTestCase {
 
     func test_viewDidHideLoadingSnackbar_deactivateCard_success() throws {
         // given
-        sutAsProtocol.view(didTapDeleteOn: buildCardList())
+        sutAsProtocol.view(didTapDeleteOn: buildCardListCard())
 
         // when
         sutAsProtocol.viewDidHideRemovingCardSnackBar()
 
         // then
         XCTAssertEqual(mockView.enableViewUserInteractionCallCounter, 1)
-        XCTAssertEqual(cardsController.getActiveCardsCallsCount, 0)
+        XCTAssertEqual(cardsControllerMock.getActiveCardsCallsCount, 0)
     }
 
     func test_viewDidHideLoadingSnackbar_deactivateCard_failure() throws {
+        allureId(2397534, "Инициализируем событие алерта при ошибке удаление")
         // given
-        cardsController.removeCardStub = { _, completion in
+        let cards = buildActiveCardsCache()
+        var didNotChangeCards = false
+        cardsControllerMock.removeCardStub = { _, completion in
             completion(.failure(TestsError.basic))
         }
 
-        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
-        sutAsProtocol.view(didTapDeleteOn: buildCardList())
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
+        sutAsProtocol.view(didTapDeleteOn: buildCardListCard())
 
         // when
         sutAsProtocol.viewDidHideRemovingCardSnackBar()
 
         // then
+        for section in sut.sections {
+            if case let .cards(cardList) = section {
+                didNotChangeCards = cards.count == cardList.count
+            }
+        }
+
         XCTAssertEqual(mockView.enableViewUserInteractionCallCounter, 2)
         XCTAssertEqual(mockView.showNativeAlertCallCounter, 1)
+        XCTAssertTrue(didNotChangeCards)
     }
 
     func test_view_didTapDeleteOn_success() throws {
         // given
-        let cardListCard = buildCardList()
+        let cardListCard = buildCardListCard()
         let expectation = expectation(description: #function)
 
-        cardsController.removeCardStub = { _, completion in
+        cardsControllerMock.removeCardStub = { _, completion in
             completion(.success(RemoveCardPayload(cardId: "2", cardStatus: .deleted)))
             expectation.fulfill()
         }
@@ -160,17 +170,17 @@ final class CardListPresenterTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockView.disableViewUserInteractionCallCounter, 1)
-        XCTAssertEqual(mockView.showLoadingSnackbarCallCounter, 1)
-        XCTAssertEqual(cardsController.removeCardCallsCount, 1)
+        XCTAssertEqual(mockView.showRemovingCardSnackBarCallCounter, 1)
+        XCTAssertEqual(cardsControllerMock.removeCardCallsCount, 1)
         XCTAssertEqual(mockView.hideLoadingSnackbarCallCounter, 1)
     }
 
     func test_view_didTapDeleteOn_failure() throws {
         // given
-        let cardListCard = buildCardList()
+        let cardListCard = buildCardListCard()
         let expectation = expectation(description: #function)
 
-        cardsController.removeCardStub = { _, completion in
+        cardsControllerMock.removeCardStub = { _, completion in
             completion(.failure(TestsError.basic))
             expectation.fulfill()
         }
@@ -181,8 +191,8 @@ final class CardListPresenterTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockView.disableViewUserInteractionCallCounter, 1)
-        XCTAssertEqual(mockView.showLoadingSnackbarCallCounter, 1)
-        XCTAssertEqual(cardsController.removeCardCallsCount, 1)
+        XCTAssertEqual(mockView.showRemovingCardSnackBarCallCounter, 1)
+        XCTAssertEqual(cardsControllerMock.removeCardCallsCount, 1)
         XCTAssertEqual(mockView.hideLoadingSnackbarCallCounter, 1)
     }
 
@@ -202,7 +212,7 @@ final class CardListPresenterTests: XCTestCase {
 
         // then
         XCTAssertEqual(mockView.reloadCallCounter, 2)
-        XCTAssertEqual(mockView.hideStubCallCounter, 3)
+        XCTAssertEqual(mockView.hideStubCallCounter, 2)
         XCTAssertEqual(mockView.showStubCallCounter, 1)
         XCTAssertTrue(isNoCardsMode, "should show no cards stub")
     }
@@ -239,6 +249,57 @@ final class CardListPresenterTests: XCTestCase {
         // then
         XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
     }
+
+    func test_viewDidTapDelete() {
+        allureId(2397531, "Отправляем запрос удаления карты при тапе на кнопку")
+        allureId(2397536, "Уменьшение списка карт при успешном удаление карты")
+        allureId(2397533, "Инициализируем заглушку в случае удаления последней карты")
+        // given
+        let cards = buildActiveCardsCache()
+        let firstCard = cards.first
+        if firstCard == nil { XCTFail("Отсутствует карта") }
+        let card = firstCard!
+        let cardListCardToDelete = CardList.Card(from: card)
+        var passedCardId = ""
+        var didDeleteCardFromView = false
+        var didShowNoCardsStub = false
+
+        mockView.showStubStub = {
+            if case StubMode.noCardsInCardList = $0 {
+                didShowNoCardsStub = true
+            }
+        }
+
+        cardsControllerMock.removeCardStub = { cardId, completion in
+            passedCardId = cardId
+            completion(.success(RemoveCardPayload(cardId: cardId, cardStatus: .deleted)))
+        }
+
+        sut.viewDidHideShimmer(fetchCardsResult: .success(cards))
+        sut.viewDidTapEditButton()
+
+        // when
+        sut.view(didTapDeleteOn: cardListCardToDelete)
+        sut.viewDidHideRemovingCardSnackBar()
+
+        // then
+        for section in sut.sections {
+            if case let .cards(cardsList) = section {
+                didDeleteCardFromView =
+                    (cardsList.count == (cards.count - 1)) &&
+                    (!cardsList.contains { $0.id == card.cardId })
+            }
+        }
+
+        XCTAssertEqual(mockView.showRemovingCardSnackBarCallCounter, 1)
+        XCTAssertEqual(mockView.disableViewUserInteractionCallCounter, 1)
+        XCTAssertEqual(cardsControllerMock.removeCardCallsCount, 1)
+        XCTAssertEqual(passedCardId, card.cardId)
+        XCTAssertEqual(mockView.hideLoadingSnackbarCallCounter, 1)
+        XCTAssertTrue(didDeleteCardFromView)
+        XCTAssertTrue(didShowNoCardsStub)
+        XCTAssertEqual(mockView.hideRightBarButtonCalCounter, 1)
+    }
 }
 
 // MARK: - Helpers
@@ -257,7 +318,7 @@ extension CardListPresenterTests {
         ]
     }
 
-    func buildCardList() -> CardList.Card {
+    func buildCardListCard() -> CardList.Card {
         CardList.Card(
             id: "",
             pan: "",

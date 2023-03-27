@@ -45,7 +45,7 @@ final class SnackbarViewController: UIViewController {
     }
 }
 
-extension SnackbarViewController {
+extension SnackbarViewController: ISnackbarController {
 
     /// Показать снек (с анимацией)
     func showSnackView(config: SnackbarView.Configuration, animated: Bool, completion: ((Bool) -> Void)? = nil) {
