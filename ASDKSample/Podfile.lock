@@ -58,7 +58,7 @@ SPEC CHECKSUMS:
   SwiftFormat: 2402d29b26746f169cce5454d5af88314cbb2e35
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
-  TinkoffASDKCore: 233b06237a9c2f9a9ac72b44bd2c494df6967803
+  TinkoffASDKCore: a6c5290f5b70494074401f416c2ff48a28d7a2fc
   TinkoffASDKUI: 4b768a64257be3eea68fc0da855765057afee5ca
   TinkoffASDKYandexPay: 06ea08cfafb5f70805cc8f1c769dbeaf7024befc
   YandexLoginSDK: cd407482207b4b7da75c5f7d7fd2fdd6a604c325

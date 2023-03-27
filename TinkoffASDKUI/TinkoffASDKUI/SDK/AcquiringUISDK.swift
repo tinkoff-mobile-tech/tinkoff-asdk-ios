@@ -244,7 +244,9 @@ public class AcquiringUISDK: NSObject {
             ),
             methodProvider: YandexPayMethodProvider(terminalService: coreSDK)
         )
-        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? DefaultWebViewAuthChallengeService()
+
+        lazy var defaultChallengeService = DefaultWebViewAuthChallengeService(certificateValidator: CertificateValidator.shared)
+        webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? defaultChallengeService
     }
 
     /// Вызывается кода пользователь привязывает карту.
