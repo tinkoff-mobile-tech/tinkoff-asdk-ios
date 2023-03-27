@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.18.0] - 2023-03-27Z
+
 * [MIC-8065] Update for Russian Certificates
 
 ## [2.17.0] - 2023-02-13Z
