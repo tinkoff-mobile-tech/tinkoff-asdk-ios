@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
 	spec.name = "TinkoffASDKYandexPay"
-	spec.version = '2.18.1'
+	spec.version = '2.18.2'
 	spec.summary = 'Мобильный SDK'
 	spec.description = 'Позволяет настроить прием платежей в нативной форме приложений для платформы iOS с помощью YandexPaySDK'
 	spec.homepage = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS'
