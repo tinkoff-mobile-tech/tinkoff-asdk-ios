@@ -43,10 +43,15 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
     }
 
     func paymentController() -> IPaymentController {
-        let uiSDK = AcquiringUISDK(
-            coreSDK: coreSDK,
-            configuration: sdkConfiguration,
-            uiSDKConfiguration: uiSDKConfiguration
+        let tdsWrapper = TDSWrapperBuilder(
+            env: sdkConfiguration.serverEnvironment,
+            language: sdkConfiguration.language
+        ).build()
+        let tdsTimeoutResolver = TDSTimeoutResolver()
+        let tdsController = TDSController(
+            acquiringSdk: coreSDK,
+            tdsWrapper: tdsWrapper,
+            tdsTimeoutResolver: tdsTimeoutResolver
         )
 
         let paymentStatusService = PaymentStatusService(acquiringSdk: coreSDK)
@@ -62,7 +67,7 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             threeDSWebFlowController: threeDSWebFlowAssembly.threeDSWebFlowController(),
             threeDSService: coreSDK,
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
-            tdsController: uiSDK.tdsController,
+            tdsController: tdsController,
             paymentStatusUpdateService: paymentStatusUpdateService
         )
     }
