@@ -29,9 +29,7 @@ public class AcquiringUISDK: NSObject {
 
     public var acquiringSdk: AcquiringSdk
     private let style: Style
-    private weak var cardsListView: CardListDataSourceStatusListener?
 
-    private var cardListDataProvider: CardListDataProvider?
     let tdsController: TDSController
 
     private let paymentControllerAssembly: IPaymentControllerAssembly
@@ -172,64 +170,6 @@ public class AcquiringUISDK: NSObject {
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly
         )
-    }
-
-    public func setupCardListDataProvider(for customer: String, statusListener: CardListDataSourceStatusListener? = nil) {
-        resolveCardListDataProvider(customerKey: customer, statusListener: statusListener)
-    }
-
-    @discardableResult
-    private func resolveCardListDataProvider(
-        customerKey: String,
-        statusListener: CardListDataSourceStatusListener? = nil
-    ) -> CardListDataProvider {
-        let provider: CardListDataProvider
-        if let cardListDataProvider = cardListDataProvider {
-            provider = cardListDataProvider.customerKey == customerKey
-                ? cardListDataProvider
-                : CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
-        } else {
-            provider = CardListDataProvider(coreSDK: acquiringSdk, customerKey: customerKey)
-        }
-
-        cardListDataProvider = provider
-
-        if statusListener == nil {
-            cardListDataProvider?.dataSourceStatusListener = self
-        } else {
-            cardListDataProvider?.dataSourceStatusListener = statusListener
-        }
-
-        return provider
-    }
-}
-
-extension AcquiringUISDK: CardListDataSourceStatusListener {
-    // MARK: CardListDataSourceStatusListener
-
-    public func cardsListUpdated(_ status: FetchStatus<[PaymentCard]>) {
-        cardsListView?.cardsListUpdated(status)
-    }
-}
-
-public extension AcquiringUISDK {
-    enum SDKError: Error {
-        case noCustomerKey
-    }
-
-    private func getCardListDataProvider() throws -> CardListDataProvider {
-        guard let cardListDataProvider = cardListDataProvider else {
-            throw SDKError.noCustomerKey
-        }
-        return cardListDataProvider
-    }
-
-    func cardListNumberOfCards() throws -> Int {
-        return try getCardListDataProvider().count()
-    }
-
-    func cardListReloadData() throws {
-        return try getCardListDataProvider().update()
     }
 }
 

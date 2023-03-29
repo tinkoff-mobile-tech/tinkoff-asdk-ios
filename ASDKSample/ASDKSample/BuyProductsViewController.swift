@@ -55,8 +55,11 @@ class BuyProductsViewController: UIViewController {
     var customerKey: String!
     var customerEmail: String?
 
-    var paymentCardId: PaymentCard?
-    var paymentCardParentPaymentId: PaymentCard?
+    lazy var selectedRebillCard: PaymentCard? = rebillCards.last
+    private var rebillCards: [PaymentCard] { activeCards.filter { $0.parentPaymentId != nil } }
+    private var activeCards = [PaymentCard]()
+
+    private lazy var cardsController = uiSDK.cardsController(customerKey: customerKey)
 
     @IBOutlet var tableView: UITableView!
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
@@ -65,7 +68,6 @@ class BuyProductsViewController: UIViewController {
     private var finishPaymentFlowYandexPayButton: IYandexPayButtonContainer?
 
     private var paymentData: PaymentInitData?
-    private var cardRebillIds: [PaymentCard]?
     private var tableViewCells: [TableViewCellType] = [
         .products,
         .pay,
@@ -87,11 +89,7 @@ class BuyProductsViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
 
-        uiSDK.setupCardListDataProvider(for: customerKey, statusListener: self)
-        try? uiSDK.cardListReloadData()
-//        uiSDK.addCardNeedSetCheckTypeHandler = {
-//            AppSetting.shared.addCardChekType
-//        }
+        updateCards()
 
         if products.count > 1 {
             buttonAddToCart.isEnabled = false
@@ -99,6 +97,18 @@ class BuyProductsViewController: UIViewController {
         }
 
         setupYandexPayButton()
+    }
+
+    private func updateCards() {
+        cardsController.getActiveCards { [weak self] result in
+            switch result {
+            case let .success(cards):
+                self?.activeCards = cards
+                self?.tableView.reloadData()
+            case .failure:
+                break
+            }
+        }
     }
 
     private func setupYandexPayButton() {
@@ -142,14 +152,15 @@ class BuyProductsViewController: UIViewController {
     private func selectRebuildCard() {
         guard let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
             .instantiateViewController(withIdentifier: "SelectRebuildCardViewController") as? SelectRebuildCardViewController,
-            let cards: [PaymentCard] = cardRebillIds,
-            !cards.isEmpty else {
+            !rebillCards.isEmpty else {
             return
         }
 
-        viewController.cards = cards
-        viewController.onSelectCard = { card in
-            self.paymentCardParentPaymentId = card
+        viewController.cards = rebillCards
+        viewController.onSelectCard = { [weak self] card in
+            guard let self = self else { return }
+
+            self.selectedRebillCard = card
             if let index = self.tableViewCells.firstIndex(of: .payRequrent) {
                 self.tableView.beginUpdates()
                 self.tableView.reloadSections(IndexSet(integer: index), with: .fade)
@@ -202,10 +213,6 @@ class BuyProductsViewController: UIViewController {
         return paymentData
     }
 
-    func pay() {
-//        presentPaymentView(paymentData: createPaymentData(), viewConfigration: acquiringViewConfiguration())
-    }
-
     func payAndSaveAsParent() {
         var paymentData = createPaymentData()
         paymentData.savingAsParentPayment = true
@@ -220,24 +227,10 @@ class BuyProductsViewController: UIViewController {
 
         uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
         }
-
-//        presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfiguration())
     }
 
     func charge(_ complete: @escaping (() -> Void)) {
-//        if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
-//            uiSDK.presentPaymentView(
-//                on: self,
-//                paymentData: createPaymentData(),
-//                parentPatmentId: parentPaymentId,
-//                configuration: acquiringViewConfiguration()
-//            ) { [weak self] response in
-//                complete()
-//                self?.responseReviewing(response)
-//            }
-//        }
-
-        if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
+        if let parentPaymentId = selectedRebillCard?.parentPaymentId {
 
             let paymentOptions = PaymentOptions.create(from: createPaymentData())
             let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
@@ -263,14 +256,6 @@ class BuyProductsViewController: UIViewController {
         uiSDK.presentDynamicQr(on: self, paymentFlow: paymentFlow) { [weak self] result in
             self?.showAlert(with: result)
         }
-
-//        uiSDK.presentPaymentSbpQrImage(
-//            on: self,
-//            paymentData: createPaymentData(),
-//            configuration: acquiringViewConfiguration()
-//        ) { [weak self] response in
-//            self?.responseReviewing(response)
-//        }
     }
 
     func generateSbpUrl() {
@@ -317,35 +302,6 @@ class BuyProductsViewController: UIViewController {
     }
 }
 
-extension BuyProductsViewController: CardListDataSourceStatusListener {
-
-    // MARK: CardListDataSourceStatusListener
-
-    func cardsListUpdated(_ status: FetchStatus<[PaymentCard]>) {
-        switch status {
-        case let .object(cards):
-            if paymentCardId == nil {
-                paymentCardId = cards.first
-            }
-
-            cardRebillIds = cards.filter { card -> Bool in
-                card.parentPaymentId != nil
-            }
-
-            if paymentCardParentPaymentId == nil {
-                paymentCardParentPaymentId = cards.last(where: { card -> Bool in
-                    card.parentPaymentId != nil
-                })
-            }
-
-        default:
-            break
-        }
-
-        tableView.reloadData()
-    }
-}
-
 extension BuyProductsViewController: IRecurrentPaymentFailiureDelegate {
     func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void) {
         guard var initData = paymentData else { return }
@@ -374,22 +330,11 @@ extension BuyProductsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var result = 1
-
         switch tableViewCells[section] {
-        case .products:
-            result = products.count
-
-        case .payRequrent:
-            if cardRebillIds?.count ?? 0 > 0 {
-                result = 2
-            }
-
-        default:
-            result = 1
+        case .products: return products.count
+        case .payRequrent: return rebillCards.count > 0 ? 2 : 1
+        default: return 1
         }
-
-        return result
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -408,20 +353,7 @@ extension BuyProductsViewController: UITableViewDataSource {
                 cell.button.isEnabled = true
                 cell.button.backgroundColor = yellowButtonColor()
                 cell.button.setImage(nil, for: .normal)
-                // открыть экран оплаты и оплатить
-                cell.onButtonTouch = { [weak self] in
-                    self?.pay()
-                }
-                // оплатить в один клик, не показывая экран оплаты
-                // cell.onButtonTouch = { [weak self, weak cell] in
-                //	cell?.activityIndicator.startAnimating()
-                //	cell?.button.isEnabled = false
-                //	self?.pay {
-                //		cell?.activityIndicator.stopAnimating()
-                //		cell?.button.isEnabled = true
-                //	}
-                // }
-
+                cell.onButtonTouch = {}
                 return cell
             }
         case .mainFormPayment:
@@ -548,7 +480,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             return "сумма: \(Utils.formatAmount(NSDecimalNumber(value: productsAmount())))"
 
         case .pay:
-            let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
+            let cardsCount = activeCards.count
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара, доступно \(cardsCount) сохраненных карт"
             }
@@ -557,32 +489,23 @@ extension BuyProductsViewController: UITableViewDataSource {
         case .mainFormPayment:
             return "Открыть главную платежную форму и перейти к оплате товара"
         case .payAndSaveAsParent:
-            let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
+            let cardsCount = activeCards.count
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cardsCount) сохраненных карт"
             }
 
             return "оплатить и сделать этот платеж родительским"
         case .payRequrent:
-            if let card = paymentCardParentPaymentId, let parentPaymentId = card.parentPaymentId {
+            if let card = selectedRebillCard, let parentPaymentId = card.parentPaymentId {
                 return "оплатить с карты \(card.pan) \(card.expDateFormat() ?? ""), используя родительский платеж \(parentPaymentId)"
             }
 
             return "нет доступных родительских платежей"
 
         case .paySbpUrl:
-//            if uiSDK.canMakePaymentsSBP() {
-//                return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
-//            }
-
-            return "оплата недоступна"
-
+            return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
         case .paySbpQrCode:
-//            if uiSDK.canMakePaymentsSBP() {
-//                return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
-//            }
-
-            return "оплата недоступна"
+            return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
         case .yandexPayFull:
             return "Full payment flow"
         case .yandexPayFinish:
