@@ -30,8 +30,6 @@ public class AcquiringUISDK: NSObject {
     public var acquiringSdk: AcquiringSdk
     private let style: Style
 
-    let tdsController: TDSController
-
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
     private let tinkoffPayAssembly: ITinkoffPayAssembly
@@ -110,17 +108,6 @@ public class AcquiringUISDK: NSObject {
         )
 
         sbpQrAssembly = SBPQrAssembly(acquiringSdk: acquiringSdk)
-
-        let tdsWrapper = TDSWrapperBuilder(
-            env: configuration.serverEnvironment,
-            language: configuration.language
-        ).build()
-        let tdsTimeoutResolver = TDSTimeoutResolver()
-        tdsController = TDSController(
-            acquiringSdk: acquiringSdk,
-            tdsWrapper: tdsWrapper,
-            tdsTimeoutResolver: tdsTimeoutResolver
-        )
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
