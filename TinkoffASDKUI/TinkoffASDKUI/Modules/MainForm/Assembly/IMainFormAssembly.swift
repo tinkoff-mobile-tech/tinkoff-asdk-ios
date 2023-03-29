@@ -11,7 +11,6 @@ import UIKit
 protocol IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
-        configuration: MainFormUIConfiguration,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController
 }

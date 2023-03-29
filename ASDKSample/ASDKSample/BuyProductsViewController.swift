@@ -220,12 +220,7 @@ class BuyProductsViewController: UIViewController {
         let paymentOptions = PaymentOptions.create(from: paymentData)
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
-        let configuration = MainFormUIConfiguration(
-            amount: paymentOptions.orderOptions.amount,
-            orderDescription: paymentOptions.orderOptions.description
-        )
-
-        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
+        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow) { [weak self] result in self?.showAlert(with: result)
         }
     }
 
@@ -271,12 +266,7 @@ class BuyProductsViewController: UIViewController {
         let paymentOptions = PaymentOptions.create(from: createPaymentData())
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
-        let configuration = MainFormUIConfiguration(
-            amount: paymentOptions.orderOptions.amount,
-            orderDescription: paymentOptions.orderOptions.description
-        )
-
-        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
+        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow) { [weak self] result in self?.showAlert(with: result)
         }
     }
 
@@ -577,7 +567,13 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
                 }
 
                 let paymentFlow = try? result.map { payload in
-                    PaymentFlow.finish(paymentId: payload.paymentId, customerOptions: customerOptions)
+                    let paymentOptions = FinishPaymentOptions(
+                        paymentId: payload.paymentId,
+                        amount: payload.amount,
+                        orderId: payload.orderId,
+                        orderDescription: nil
+                    )
+                    return PaymentFlow.finish(paymentOptions: paymentOptions, customerOptions: customerOptions)
                 }.get()
 
                 completion(paymentFlow)

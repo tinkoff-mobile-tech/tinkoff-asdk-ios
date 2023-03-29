@@ -17,14 +17,13 @@ final class MainFormPresenter {
     private let paymentController: IPaymentController
     private let tinkoffPayController: ITinkoffPayController
     private let paymentFlow: PaymentFlow
-    private let configuration: MainFormUIConfiguration
     private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
 
     private lazy var orderDetailsPresenter = MainFormOrderDetailsViewPresenter(
-        amount: configuration.amount,
-        orderDescription: configuration.orderDescription
+        amount: paymentFlow.amount,
+        orderDescription: paymentFlow.orderDescription
     )
 
     private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
@@ -58,7 +57,6 @@ final class MainFormPresenter {
         paymentController: IPaymentController,
         tinkoffPayController: ITinkoffPayController,
         paymentFlow: PaymentFlow,
-        configuration: MainFormUIConfiguration,
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
@@ -66,7 +64,6 @@ final class MainFormPresenter {
         self.paymentController = paymentController
         self.tinkoffPayController = tinkoffPayController
         self.paymentFlow = paymentFlow
-        self.configuration = configuration
         self.moduleCompletion = moduleCompletion
     }
 }
