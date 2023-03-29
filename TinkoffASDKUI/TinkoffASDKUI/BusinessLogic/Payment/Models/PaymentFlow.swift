@@ -12,7 +12,7 @@ public enum PaymentFlow: Equatable {
     /// Оплата совершится с помощью вызова `v2/Init` в API эквайринга, на основе которого будет сформирован `paymentId`
     case full(paymentOptions: PaymentOptions)
     /// Используется в ситуациях, когда вызов `v2/Init` и формирование `paymentId` происходит на бекенде продавца
-    case finish(paymentId: String, customerOptions: CustomerOptions?)
+    case finish(paymentOptions: FinishPaymentOptions, customerOptions: CustomerOptions?)
 }
 
 // MARK: - PaymentFlow + Utils
@@ -31,6 +31,15 @@ extension PaymentFlow {
         customerOptions?.customerKey
     }
 
+    var amount: Int64 {
+        switch self {
+        case let .full(paymentOptions):
+            return paymentOptions.orderOptions.amount
+        case let .finish(paymentOptions, _):
+            return paymentOptions.amount
+        }
+    }
+
     func replacing(customerEmail: String?) -> PaymentFlow {
         let newCustomerOptions = customerOptions.map {
             CustomerOptions(customerKey: $0.customerKey, email: customerEmail)
@@ -44,8 +53,8 @@ extension PaymentFlow {
                 paymentData: paymentOptions.paymentData
             )
             return .full(paymentOptions: newPaymentOptions)
-        case let .finish(paymentId, _):
-            return .finish(paymentId: paymentId, customerOptions: newCustomerOptions)
+        case let .finish(paymentOptions, _):
+            return .finish(paymentOptions: paymentOptions, customerOptions: newCustomerOptions)
         }
     }
 

@@ -221,7 +221,6 @@ class BuyProductsViewController: UIViewController {
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
         let configuration = MainFormUIConfiguration(
-            amount: paymentOptions.orderOptions.amount,
             orderDescription: paymentOptions.orderOptions.description
         )
 
@@ -272,7 +271,6 @@ class BuyProductsViewController: UIViewController {
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
         let configuration = MainFormUIConfiguration(
-            amount: paymentOptions.orderOptions.amount,
             orderDescription: paymentOptions.orderOptions.description
         )
 
@@ -577,7 +575,12 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
                 }
 
                 let paymentFlow = try? result.map { payload in
-                    PaymentFlow.finish(paymentId: payload.paymentId, customerOptions: customerOptions)
+                    let paymentOptions = FinishPaymentOptions(
+                        paymentId: payload.paymentId,
+                        amount: payload.amount,
+                        orderId: payload.orderId
+                    )
+                    return PaymentFlow.finish(paymentOptions: paymentOptions, customerOptions: customerOptions)
                 }.get()
 
                 completion(paymentFlow)

@@ -65,7 +65,6 @@ final class MainFormAssembly: IMainFormAssembly {
         let tinkoffPayController = tinkoffPayAssembly.tinkoffPayController()
 
         let router = MainFormRouter(
-            configuration: configuration,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly,
