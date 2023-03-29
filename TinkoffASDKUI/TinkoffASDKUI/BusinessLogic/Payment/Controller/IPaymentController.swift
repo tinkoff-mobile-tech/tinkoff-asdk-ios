@@ -41,16 +41,16 @@ public extension IPaymentController {
     ///
     /// По завершении платежа ответ вернется с помощью `PaymentControllerDelegate`
     /// - Parameters:
-    ///   - paymentOptions: Данные проводимой оплаты
+    ///   - paymentId: Идентификатор инициированного платежа
     ///   - paymentSource: Источник оплаты
     ///   - customerOptions: Параметры покупателя
     func performFinishPayment(
-        paymentOptions: FinishPaymentOptions,
+        paymentId: String,
         paymentSource: PaymentSourceData,
         customerOptions: CustomerOptions?
     ) {
         performPayment(
-            paymentFlow: .finish(paymentOptions: paymentOptions, customerOptions: customerOptions),
+            paymentFlow: .finish(paymentId: paymentId, customerOptions: customerOptions),
             paymentSource: paymentSource
         )
     }

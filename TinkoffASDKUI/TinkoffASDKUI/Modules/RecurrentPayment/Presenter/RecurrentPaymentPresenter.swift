@@ -201,7 +201,7 @@ extension RecurrentPaymentPresenter {
                 paymentOptions: paymentOptions,
                 paymentSource: .savedCard(cardId: cardId, cvv: cvc)
             )
-        case let .finish(paymentOptions, customerOptions):
+        case let .finish(_, customerOptions):
             failureDelegate?.recurrentPaymentNeedRepeatInit(additionalData: additionalData) { [weak self] result in
                 guard let self = self else { return }
 
@@ -209,7 +209,7 @@ extension RecurrentPaymentPresenter {
                     switch result {
                     case let .success(paymentId):
                         self.paymentController.performFinishPayment(
-                            paymentOptions: paymentOptions.updated(with: paymentId),
+                            paymentId: paymentId,
                             paymentSource: .savedCard(cardId: cardId, cvv: cvc),
                             customerOptions: customerOptions
                         )

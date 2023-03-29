@@ -211,10 +211,12 @@ public extension AcquiringUISDK {
     func presentMainForm(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
+        configuration: MainFormUIConfiguration,
         completion: PaymentResultCompletion? = nil
     ) {
         let viewController = mainFormAssembly.build(
             paymentFlow: paymentFlow,
+            configuration: configuration,
             moduleCompletion: completion
         )
 

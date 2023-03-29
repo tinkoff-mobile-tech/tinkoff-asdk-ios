@@ -12,6 +12,7 @@ final class MainFormRouter: IMainFormRouter {
     // MARK: Dependencies
 
     weak var transitionHandler: UIViewController?
+    private let configuration: MainFormUIConfiguration
     private let cardListAssembly: ICardListAssembly
     private let cardPaymentAssembly: ICardPaymentAssembly
     private let sbpBanksAssembly: ISBPBanksAssembly
@@ -20,11 +21,13 @@ final class MainFormRouter: IMainFormRouter {
     // MARK: Init
 
     init(
+        configuration: MainFormUIConfiguration,
         cardListAssembly: ICardListAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
         sbpBanksAssembly: ISBPBanksAssembly,
         tinkoffPayLandingAssembly: ITinkoffPayLandingAssembly
     ) {
+        self.configuration = configuration
         self.cardListAssembly = cardListAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.sbpBanksAssembly = sbpBanksAssembly
@@ -47,7 +50,7 @@ final class MainFormRouter: IMainFormRouter {
             cards: cards,
             selectedCard: selectedCard,
             paymentFlow: paymentFlow,
-            amount: paymentFlow.amount,
+            amount: configuration.amount,
             output: cardListOutput,
             cardPaymentOutput: cardPaymentOutput
         )
@@ -66,7 +69,7 @@ final class MainFormRouter: IMainFormRouter {
         let cardPaymentViewController = cardPaymentAssembly.anyCardPayment(
             activeCards: cards,
             paymentFlow: paymentFlow,
-            amount: paymentFlow.amount,
+            amount: configuration.amount,
             output: output,
             cardListOutput: cardListOutput
         )

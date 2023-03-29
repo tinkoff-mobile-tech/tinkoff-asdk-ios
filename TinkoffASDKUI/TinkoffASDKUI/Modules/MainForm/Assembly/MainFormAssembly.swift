@@ -46,6 +46,7 @@ final class MainFormAssembly: IMainFormAssembly {
 
     func build(
         paymentFlow: PaymentFlow,
+        configuration: MainFormUIConfiguration,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
@@ -64,6 +65,7 @@ final class MainFormAssembly: IMainFormAssembly {
         let tinkoffPayController = tinkoffPayAssembly.tinkoffPayController()
 
         let router = MainFormRouter(
+            configuration: configuration,
             cardListAssembly: cardListAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
             sbpBanksAssembly: sbpBanksAssembly,
@@ -76,6 +78,7 @@ final class MainFormAssembly: IMainFormAssembly {
             paymentController: paymentController,
             tinkoffPayController: tinkoffPayController,
             paymentFlow: paymentFlow,
+            configuration: configuration,
             moduleCompletion: moduleCompletion
         )
 

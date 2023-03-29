@@ -113,9 +113,9 @@ extension SBPQrPresenter {
                     self?.handleFailureGetQrData(error: error)
                 }
             })
-        case let .finish(paymentOptions, _):
-            paymentId = paymentOptions.paymentId
-            loadDynamicQr(paymentId: paymentOptions.paymentId)
+        case let .finish(paymentId, _):
+            self.paymentId = paymentId
+            loadDynamicQr(paymentId: paymentId)
         }
     }
 
