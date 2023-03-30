@@ -57,9 +57,9 @@ final class CardPaymentProcess: PaymentProcess {
         switch paymentFlow {
         case let .full(paymentOptions):
             initPayment(data: .data(with: paymentOptions))
-        case let .finish(paymentId, _):
-            self.paymentId = paymentId
-            check3DSVersion(data: Check3DSVersionData(paymentId: paymentId, paymentSource: paymentSource))
+        case let .finish(paymentOptions):
+            paymentId = paymentOptions.paymentId
+            check3DSVersion(data: Check3DSVersionData(paymentId: paymentOptions.paymentId, paymentSource: paymentSource))
         }
     }
 

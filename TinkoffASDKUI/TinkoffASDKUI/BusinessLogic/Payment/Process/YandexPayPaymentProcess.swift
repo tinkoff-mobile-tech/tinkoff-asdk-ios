@@ -18,8 +18,8 @@ final class YandexPayPaymentProcess: PaymentProcess {
         switch paymentFlow {
         case .full:
             return _paymentId.wrappedValue
-        case let .finish(paymentId, _):
-            return paymentId
+        case let .finish(paymentOptions):
+            return paymentOptions.paymentId
         }
     }
 
@@ -60,8 +60,8 @@ final class YandexPayPaymentProcess: PaymentProcess {
         switch paymentFlow {
         case let .full(paymentOptions):
             initPayment(data: .data(with: paymentOptions))
-        case let .finish(paymentId, _):
-            finishAuthorize(data: createFinishAuthorizeData(paymentId: paymentId))
+        case let .finish(paymentOptions):
+            finishAuthorize(data: createFinishAuthorizeData(paymentId: paymentOptions.paymentId))
         }
     }
 

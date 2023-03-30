@@ -23,7 +23,7 @@ final class MainFormPresenter {
     // MARK: Child Presenters
 
     private lazy var orderDetailsPresenter = MainFormOrderDetailsViewPresenter(
-        amount: configuration.amount,
+        amount: paymentFlow.amount,
         orderDescription: configuration.orderDescription
     )
 

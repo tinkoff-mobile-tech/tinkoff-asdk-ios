@@ -46,9 +46,9 @@ final class ChargePaymentProcess: PaymentProcess {
         switch paymentFlow {
         case let .full(paymentOptions):
             initPayment(data: PaymentInitData.data(with: paymentOptions, isCharge: true))
-        case let .finish(paymentId, _):
-            self.paymentId = paymentId
-            finishPayment(paymentId: paymentId)
+        case let .finish(paymentOptions):
+            paymentId = paymentOptions.paymentId
+            finishPayment(paymentId: paymentOptions.paymentId)
         }
     }
 
