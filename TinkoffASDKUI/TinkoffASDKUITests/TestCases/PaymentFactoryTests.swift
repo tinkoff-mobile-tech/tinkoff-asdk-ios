@@ -75,10 +75,13 @@ final class PaymentFactoryTests: XCTestCase {
     }
 
     func testCreatePayment_withYandexPayFinishFlow_shouldReturnYandexPayPaymentProcess() throws {
+        // given
+        let options = FinishPaymentOptions(paymentId: "fdfd", amount: 100, orderId: "id", customerOptions: nil)
+
         // when
         let proccess = sut.createPayment(
             paymentSource: .yandexPay(base64Token: "some token"),
-            paymentFlow: .finish(paymentId: "fdfd", customerOptions: nil),
+            paymentFlow: .finish(paymentOptions: options),
             paymentDelegate: paymentDelegateMock
         )
 

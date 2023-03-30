@@ -309,10 +309,9 @@ extension CardPaymentProcessTests {
         check3DSVersionResult: Result<Check3DSVersionPayload, Error>
     ) throws -> Dependencies {
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
-        let paymentFlow = PaymentFlow.finish(
-            paymentId: "32423",
-            customerOptions: CustomerOptions(customerKey: "somekey", email: "someemail")
-        )
+        let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
+        let options = FinishPaymentOptions(paymentId: "32423", amount: 100, orderId: "id", customerOptions: customerOptions)
+        let paymentFlow = PaymentFlow.finish(paymentOptions: options)
 
         let dependencies = Self.makeDependecies(
             paymentSource: paymentSource,
