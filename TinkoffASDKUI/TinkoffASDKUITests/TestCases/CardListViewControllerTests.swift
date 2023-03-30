@@ -50,4 +50,12 @@ final class CardListViewControllerTests: BaseTestCase {
         XCTAssertEqual(snackbarControllerMock.hideSnackViewCallArguments?.animated, true)
         XCTAssertEqual(presenterMock.viewDidHideRemovingCardSnackBarCallsCount, 1)
     }
+
+    func test_showAddedCardSnackbar() {
+        allureId(2397518, "Отображение нового списка карт в случае успешного добавления без прохождения 3ds")
+        // when
+        sut.showAddedCardSnackbar(cardMaskedPan: "")
+        // then
+        XCTAssertEqual(presenterMock.viewDidShowAddedCardSnackbarCallsCount, 1)
+    }
 }

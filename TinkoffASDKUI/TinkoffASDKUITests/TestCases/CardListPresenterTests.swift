@@ -289,6 +289,34 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertTrue(didShowNoCardsStub)
         XCTAssertEqual(mockView.hideRightBarButtonCalCounter, 1)
     }
+
+    func test_addNewCardDidReceive() {
+        allureId(2397518, "Отображение нового списка карт в случае успешного добавления без прохождения 3ds")
+        allureId(2397502)
+        // given
+        let cards = buildActiveCardsCache()
+        let paymentCard = PaymentCard.fake()
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
+
+        // when
+        sut.addNewCardDidReceive(result: .succeded(paymentCard))
+
+        // then
+        XCTAssertEqual(mockView.showAddedCardSnackbarCallCounter, 1)
+    }
+
+    func test_viewDidShowAddedCardSnackbar() {
+        allureId(2397518, "Отображение нового списка карт в случае успешного добавления без прохождения 3ds")
+        allureId(2397502)
+        // when
+        sut.viewDidShowAddedCardSnackbar()
+
+        // then
+        let counter = mockView.showDoneEditingButtonCallCounter + mockView.showEditButtonCallCounter
+        XCTAssertTrue(counter > 0)
+        XCTAssertEqual(mockView.hideStubCallCounter, 1)
+        XCTAssertEqual(mockView.reloadCallCounter, 1)
+    }
 }
 
 // MARK: - Helpers

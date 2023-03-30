@@ -18,16 +18,16 @@ final class CardsController {
 
     // MARK: Dependencies
 
-    private let coreSDK: AcquiringSdk
+    private let cardService: ICardService
     private let addCardController: IAddCardController
 
     // MARK: Init
 
     init(
-        coreSDK: AcquiringSdk,
+        cardService: ICardService,
         addCardController: IAddCardController
     ) {
-        self.coreSDK = coreSDK
+        self.cardService = cardService
         self.addCardController = addCardController
     }
 }
@@ -64,7 +64,7 @@ extension CardsController: ICardsController {
     func removeCard(cardId: String, completion: @escaping (Result<RemoveCardPayload, Swift.Error>) -> Void) {
         let data = RemoveCardData(cardId: cardId, customerKey: customerKey)
 
-        coreSDK.removeCard(data: data) { result in
+        cardService.removeCard(data: data) { result in
             DispatchQueue.performOnMain { completion(result) }
         }
     }
@@ -72,7 +72,7 @@ extension CardsController: ICardsController {
     func getActiveCards(completion: @escaping (Result<[PaymentCard], Swift.Error>) -> Void) {
         let getCardListData = GetCardListData(customerKey: customerKey)
 
-        coreSDK.getCardList(data: getCardListData) { result in
+        cardService.getCardList(data: getCardListData) { result in
             let filteredCardsResult = result.map { cards in
                 cards.filter { $0.status == .active }
             }

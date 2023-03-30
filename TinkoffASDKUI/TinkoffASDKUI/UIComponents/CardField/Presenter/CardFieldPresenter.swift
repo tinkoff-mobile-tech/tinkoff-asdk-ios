@@ -43,7 +43,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     // MARK: Initialization
 
     init(
-        output: ICardFieldOutput,
+        output: ICardFieldOutput?,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver(),
@@ -54,6 +54,10 @@ final class CardFieldPresenter: ICardFieldViewOutput {
         self.paymentSystemResolver = paymentSystemResolver
         self.bankResolver = bankResolver
         self.inputMaskResolver = inputMaskResolver
+    }
+
+    func injectOutput(_ output: ICardFieldOutput) {
+        self.output = output
     }
 }
 

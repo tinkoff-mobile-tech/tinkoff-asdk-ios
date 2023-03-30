@@ -189,7 +189,7 @@ extension SnackbarViewController {
             x: Constants.sideInset,
             y: view.frame.maxY
                 - SnackbarView.defaultSize.height
-                - (Constants.bottomInset + UIApplication.shared.keyWindow!.safeAreaInsets.bottom),
+                - (Constants.bottomInset + (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? .zero)),
             width: SnackbarView.defaultSize.width,
             height: SnackbarView.defaultSize.height
         )
