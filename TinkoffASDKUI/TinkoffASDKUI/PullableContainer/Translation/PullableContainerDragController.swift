@@ -24,13 +24,42 @@ protocol PullableContainerDragControllerDelegate: AnyObject {
     func dragControllerDidEndDragging(_ controller: PullableContainerDragController)
     func dragControllerDidCloseContainer(_ controller: PullableContainerDragController)
     func dragControllerShouldDismissOnDownDragging(_ controller: PullableContainerDragController) -> Bool
+
+    func dragControllerDidRequestNumberOfAnchors(_ dragController: PullableContainerDragController) -> Int
+    func dragController(
+        _ dragController: PullableContainerDragController,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat
+
+    func dragControllerDidRequestNextAnchorHeightForExpanding(_ dragController: PullableContainerDragController) -> CGFloat?
+}
+
+extension PullableContainerDragControllerDelegate {
+    func dragControllerDidRequestNumberOfAnchors(_ dragController: PullableContainerDragController) -> Int {
+        .zero
+    }
+
+    func dragController(
+        _ dragController: PullableContainerDragController,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        .zero
+    }
+
+    func dragControllerDidRequestNextAnchorHeightForExpanding(_ dragController: PullableContainerDragController) -> CGFloat? {
+        UIScreen.main.bounds.height - 60
+    }
 }
 
 final class PullableContainerDragController {
     weak var delegate: PullableContainerDragControllerDelegate?
     var insets: UIEdgeInsets = .zero
     private let dragViewHeightConstraint: NSLayoutConstraint
+
     private var dragViewHeight: CGFloat = 0
+    private var nextDragViewHeight: CGFloat?
 
     // MARK: Init
 
@@ -46,18 +75,32 @@ final class PullableContainerDragController {
     }
 
     func didDragWith(offset: CGFloat) {
-        dragViewHeightConstraint.constant = calculateDragViewHeight(offset: offset)
+        let nextDragViewHeight = nextDragViewHeight ?? delegate?.dragControllerDidRequestNextAnchorHeightForExpanding(self)
+        self.nextDragViewHeight = nextDragViewHeight
+
+        dragViewHeightConstraint.constant = offset < 0
+            ? calculateDragViewHeightForTopDirectionDragging(offset: offset, nextHeight: nextDragViewHeight)
+            : calculateDragViewHeightForBottomDirectionDragging(offset: offset)
     }
 
     func didEndDragging(
         offset: CGFloat,
         velocity: CGFloat
     ) {
-        let dragProportion = offset / dragViewHeight
-        let isDismissingDrag = dragProportion >= .dismissDragProportionTreshold || velocity > .dismissVelocityTreshold
+        let dragProportion = abs(offset / dragViewHeight)
+        let isMovingChange = dragProportion >= .dismissDragProportionTreshold || velocity > .dismissVelocityTreshold
+
+        if isMovingChange, offset < 0 {
+            dragViewHeight = nextDragViewHeight ?? dragViewHeight
+            nextDragViewHeight = nil
+            dragViewHeightConstraint.constant = dragViewHeight
+            delegate?.dragControllerDidEndDragging(self)
+            return
+        }
+
         let isDismissionAllowed = delegate?.dragControllerShouldDismissOnDownDragging(self) ?? true
 
-        if isDismissingDrag, isDismissionAllowed {
+        if isMovingChange, isDismissionAllowed {
             delegate?.dragControllerDidCloseContainer(self)
         } else {
             dragViewHeightConstraint.constant = dragViewHeight
@@ -67,17 +110,26 @@ final class PullableContainerDragController {
 
     // MARK: Helpers
 
-    private func calculateDragViewHeight(offset: CGFloat) -> CGFloat {
-        offset < 0
-            ? calculateDragViewHeightForTopDirectionDragging(offset: offset)
-            : calculateDragViewHeightForBottomDirectionDragging(offset: offset)
-    }
-
-    private func calculateDragViewHeightForTopDirectionDragging(offset: CGFloat) -> CGFloat {
+    private func calculateDragViewHeightForTopDirectionDragging(offset: CGFloat, nextHeight: CGFloat?) -> CGFloat {
         assert(offset <= 0)
-        let resultOffset = max(-.maximumDragOffset, offset / 2)
-        let resultHeight = min(maximumDragViewHeight(), dragViewHeight - resultOffset)
-        return resultHeight
+
+        let availableHeight = maximumDragViewHeight()
+
+        if let nextHeight = nextHeight, nextHeight < availableHeight {
+            let diff = dragViewHeight - nextHeight
+            let normalizedOffset = diff + (offset - diff) / 2
+            let limitedOffset = diff - .maximumDragOffset
+
+            let resultOffset = (dragViewHeight - offset) > nextHeight
+                ? max(normalizedOffset, limitedOffset)
+                : offset
+
+            return dragViewHeight - resultOffset
+        } else {
+            let resultOffset = max(-.maximumDragOffset, offset / 2)
+            let resultHeight = min(availableHeight, dragViewHeight - resultOffset)
+            return resultHeight
+        }
     }
 
     private func calculateDragViewHeightForBottomDirectionDragging(offset: CGFloat) -> CGFloat {
