@@ -131,27 +131,20 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2397534, "Инициализируем событие алерта при ошибке удаление")
         // given
         let cards = buildActiveCardsCache()
-        var didNotChangeCards = false
         cardsControllerMock.removeCardStub = { _, completion in
             completion(.failure(TestsError.basic))
         }
-
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
         sutAsProtocol.view(didTapDeleteOn: buildCardListCard())
+        mockView.reloadCallCounter = .zero
 
         // when
         sutAsProtocol.viewDidHideRemovingCardSnackBar()
 
         // then
-        for section in sut.sections {
-            if case let .cards(cardList) = section {
-                didNotChangeCards = cards.count == cardList.count
-            }
-        }
-
         XCTAssertEqual(mockView.enableViewUserInteractionCallCounter, 2)
         XCTAssertEqual(mockView.showNativeAlertCallCounter, 1)
-        XCTAssertTrue(didNotChangeCards)
+        XCTAssertEqual(mockView.reloadCallCounter, .zero)
     }
 
     func test_view_didTapDeleteOn_success() throws {
@@ -250,19 +243,23 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
     }
 
-    func test_viewDidTapDelete() {
+    func test_viewDidTapDelete() throws {
         allureId(2397531, "Отправляем запрос удаления карты при тапе на кнопку")
         allureId(2397536, "Уменьшение списка карт при успешном удаление карты")
         allureId(2397533, "Инициализируем заглушку в случае удаления последней карты")
         // given
         let cards = buildActiveCardsCache()
-        let firstCard = cards.first
-        if firstCard == nil { XCTFail("Отсутствует карта") }
-        let card = firstCard!
+        let card = try XCTUnwrap(cards.first)
         let cardListCardToDelete = CardList.Card(from: card)
         var passedCardId = ""
         var didDeleteCardFromView = false
         var didShowNoCardsStub = false
+
+        mockView.reloadStub = { sections in
+            let cardList = sections.getCardListFromCardsSection()
+            didDeleteCardFromView = cardList.count == (cards.count - 1) &&
+                !cardList.contains { $0.id == card.cardId }
+        }
 
         mockView.showStubStub = {
             if case StubMode.noCardsInCardList = $0 {
@@ -283,14 +280,6 @@ final class CardListPresenterTests: BaseTestCase {
         sut.viewDidHideRemovingCardSnackBar()
 
         // then
-        for section in sut.sections {
-            if case let .cards(cardsList) = section {
-                didDeleteCardFromView =
-                    (cardsList.count == (cards.count - 1)) &&
-                    (!cardsList.contains { $0.id == card.cardId })
-            }
-        }
-
         XCTAssertEqual(mockView.showRemovingCardSnackBarCallCounter, 1)
         XCTAssertEqual(mockView.disableViewUserInteractionCallCounter, 1)
         XCTAssertEqual(cardsControllerMock.removeCardCallsCount, 1)
@@ -335,5 +324,18 @@ extension CardListPresenterTests {
             useCase: useCase,
             selectedCardId: nil
         )
+    }
+}
+
+extension Array where Element == CardListSection {
+
+    func getCardListFromCardsSection() -> [CardList.Card] {
+        for section in self {
+            if case let .cards(cardList) = section {
+                return cardList
+            }
+        }
+
+        return []
     }
 }

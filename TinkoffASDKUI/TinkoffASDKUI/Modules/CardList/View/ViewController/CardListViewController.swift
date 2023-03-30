@@ -33,7 +33,7 @@ final class CardListViewController: UIViewController {
 
     // MARK: State
 
-    var snackBarViewController: ISnackbarController?
+    private var snackBarViewController: ISnackbarController?
 
     private var sections: [CardListSection] = []
 
@@ -41,10 +41,12 @@ final class CardListViewController: UIViewController {
 
     init(
         configuration: CardListScreenConfiguration,
-        presenter: ICardListViewOutput
+        presenter: ICardListViewOutput,
+        snackBarViewController: ISnackbarController? = nil
     ) {
         self.presenter = presenter
         self.configuration = configuration
+        self.snackBarViewController = snackBarViewController
         super.init(nibName: nil, bundle: nil)
     }
 

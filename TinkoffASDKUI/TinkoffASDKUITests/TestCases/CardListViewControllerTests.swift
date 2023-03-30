@@ -15,6 +15,7 @@ final class CardListViewControllerTests: BaseTestCase {
 
     // Mocks
     var presenterMock: CardListPresenterMock!
+    var snackbarControllerMock: SnackbarControllerMock!
 
     // MARK: - Setup
 
@@ -22,14 +23,17 @@ final class CardListViewControllerTests: BaseTestCase {
         super.setUp()
 
         presenterMock = CardListPresenterMock()
+        snackbarControllerMock = SnackbarControllerMock()
         sut = CardListViewController(
             configuration: CardListScreenConfiguration(useCase: .cardList),
-            presenter: presenterMock
+            presenter: presenterMock,
+            snackBarViewController: snackbarControllerMock
         )
     }
 
     override func tearDown() {
         presenterMock = nil
+        snackbarControllerMock = nil
         sut = nil
 
         super.tearDown()
@@ -39,15 +43,11 @@ final class CardListViewControllerTests: BaseTestCase {
 
     func test_hideLoadingSnackbar() {
         allureId(2397536, "Уменьшение списка карт при успешном удаление карты")
-        // given
-        let snackbarMock = SnackbarControllerMock()
-        sut.snackBarViewController = snackbarMock
         // when
         sut.hideLoadingSnackbar()
         // then
-        XCTAssertEqual(snackbarMock.hideSnackViewCallsCount, 1)
-        XCTAssertEqual(snackbarMock.hideSnackViewCallArguments?.animated, true)
+        XCTAssertEqual(snackbarControllerMock.hideSnackViewCallsCount, 1)
+        XCTAssertEqual(snackbarControllerMock.hideSnackViewCallArguments?.animated, true)
         XCTAssertEqual(presenterMock.viewDidHideRemovingCardSnackBarCallsCount, 1)
-        XCTAssertTrue(sut.snackBarViewController == nil)
     }
 }
