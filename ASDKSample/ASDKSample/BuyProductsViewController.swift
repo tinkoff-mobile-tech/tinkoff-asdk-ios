@@ -574,7 +574,7 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
                     CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
                 }
 
-                let paymentFlow = try? result.map { payload in
+                let paymentFlow: PaymentFlow? = try? result.map { payload in
                     let paymentOptions = FinishPaymentOptions(
                         paymentId: payload.paymentId,
                         amount: payload.amount,
