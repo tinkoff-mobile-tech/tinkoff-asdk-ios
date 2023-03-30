@@ -12,20 +12,25 @@ public struct FinishPaymentOptions: Equatable {
     public let amount: Int64
     /// Идентификатор заказа в системе продавца
     public let orderId: String
+    /// Параметры покупателя
+    public let customerOptions: CustomerOptions?
 
     /// Создание конфигурации главной платежной формы
     /// - Parameters:
     ///   - paymentId: Номер платежа, полученного после инициализации платежа
     ///   - amount: Сумма заказа в копейках, отображаемая пользователю
     ///   - orderId: Идентификатор заказа в системе продавца
+    ///   - customerOptions: Параметры покупателя
     public init(
         paymentId: String,
         amount: Int64,
-        orderId: String
+        orderId: String,
+        customerOptions: CustomerOptions? = nil
     ) {
         self.paymentId = paymentId
         self.amount = amount
         self.orderId = orderId
+        self.customerOptions = customerOptions
     }
 
     func updated(with newPaymentId: String) -> FinishPaymentOptions {

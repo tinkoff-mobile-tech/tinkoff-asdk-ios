@@ -43,14 +43,9 @@ public extension IPaymentController {
     /// - Parameters:
     ///   - paymentOptions: Данные проводимой оплаты
     ///   - paymentSource: Источник оплаты
-    ///   - customerOptions: Параметры покупателя
-    func performFinishPayment(
-        paymentOptions: FinishPaymentOptions,
-        paymentSource: PaymentSourceData,
-        customerOptions: CustomerOptions?
-    ) {
+    func performFinishPayment(paymentOptions: FinishPaymentOptions, paymentSource: PaymentSourceData) {
         performPayment(
-            paymentFlow: .finish(paymentOptions: paymentOptions, customerOptions: customerOptions),
+            paymentFlow: .finish(paymentOptions: paymentOptions),
             paymentSource: paymentSource
         )
     }

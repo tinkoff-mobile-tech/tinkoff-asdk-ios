@@ -578,9 +578,10 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
                     let paymentOptions = FinishPaymentOptions(
                         paymentId: payload.paymentId,
                         amount: payload.amount,
-                        orderId: payload.orderId
+                        orderId: payload.orderId,
+                        customerOptions: customerOptions
                     )
-                    return PaymentFlow.finish(paymentOptions: paymentOptions, customerOptions: customerOptions)
+                    return PaymentFlow.finish(paymentOptions: paymentOptions)
                 }.get()
 
                 completion(paymentFlow)

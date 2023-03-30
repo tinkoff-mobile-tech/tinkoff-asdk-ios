@@ -39,7 +39,7 @@ extension SBPPaymentService {
                     completion(.failure(error))
                 }
             })
-        case let .finish(paymentOptions, _):
+        case let .finish(paymentOptions):
             getPaymentQrData(paymentId: String(paymentOptions.paymentId), completion: completion)
         }
     }

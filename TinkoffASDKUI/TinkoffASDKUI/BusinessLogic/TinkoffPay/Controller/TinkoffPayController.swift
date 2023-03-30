@@ -74,7 +74,7 @@ final class TinkoffPayController: ITinkoffPayController {
         switch paymentFlow {
         case let .full(paymentOptions):
             performInitPayment(paymentOptions: paymentOptions, method: method, process: process)
-        case let .finish(paymentOptions, _):
+        case let .finish(paymentOptions):
             getTinkoffPayLink(paymentId: paymentOptions.paymentId, method: method, process: process)
         }
 
