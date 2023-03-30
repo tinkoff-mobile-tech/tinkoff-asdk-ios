@@ -83,6 +83,44 @@ File -> Add packages -> `https://github.com/Tinkoff/AcquiringSdk_IOS.git`
 </dict>
 ```
 
+Если в вашем приложении используется "Allow Arbitrary Loads" для конкретных доменов,
+то следует добавить несколько наших доменов (rest-api-test.tinkoff.ru - тестовый домен, опционально) 
+и указать свойство "Allow Arbitrary Loads in Web Content" = true:
+
+```xml
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>qr.nspk.ru</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+            <key>rest-api-test.tinkoff.ru</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+            <key>securepay.tinkoff.ru</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+        </dict>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+    </dict>
+```
+
 ## Начало работы
 
 В начале нужно создать конфигурацию, используем объект AcquiringSdkConfiguration, обязательные параметры:
