@@ -245,6 +245,8 @@ extension CardListPresenter {
             switch (error as NSError).code {
             case NSURLErrorNotConnectedToInternet, NSURLErrorDataNotAllowed:
                 showNoNetworkStub()
+            case ASDKError.Code.unknownCustomer.rawValue:
+                showNoCardsStub()
             default:
                 showServerErrorStub()
             }

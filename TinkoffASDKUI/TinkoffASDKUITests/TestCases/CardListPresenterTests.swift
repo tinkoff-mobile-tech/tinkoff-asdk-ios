@@ -239,6 +239,25 @@ final class CardListPresenterTests: XCTestCase {
         // then
         XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
     }
+
+    func test_getCardList_unknownCustomer_error() {
+        // given
+        var didShowNoCardsStub = false
+        mockView.showStubStub = { stubMode in
+            if case StubMode.noCardsInCardList = stubMode {
+                didShowNoCardsStub = true
+            }
+        }
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(
+            fetchCardsResult: .failure(APIFailureError(errorCode: ASDKError.Code.unknownCustomer.rawValue))
+        )
+
+        // then
+        XCTAssertEqual(mockView.showStubCallCounter, 1)
+        XCTAssertTrue(didShowNoCardsStub)
+    }
 }
 
 // MARK: - Helpers
