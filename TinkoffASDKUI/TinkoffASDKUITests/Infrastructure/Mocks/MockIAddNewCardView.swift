@@ -71,7 +71,7 @@ final class MockIAddNewCardView: IAddNewCardView {
         showOkNativeAlertCallCounter += 1
         showOkNativeAlertStub(data)
     }
-    
+
     var showCardScannerCounter = 0
     var showCardScannerCompletionStub: (cardNumber: String?, expiration: String?, cvc: String?)?
     func showCardScanner(completion: @escaping CardScannerCompletion) {
