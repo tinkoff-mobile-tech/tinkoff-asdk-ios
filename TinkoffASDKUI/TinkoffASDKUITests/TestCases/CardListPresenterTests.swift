@@ -242,6 +242,7 @@ final class CardListPresenterTests: XCTestCase {
 
     func test_getCardList_unknownCustomer_error() {
         // given
+        let noSuchCustomerErrorCode = 7
         var didShowNoCardsStub = false
         mockView.showStubStub = { stubMode in
             if case StubMode.noCardsInCardList = stubMode {
@@ -251,7 +252,7 @@ final class CardListPresenterTests: XCTestCase {
 
         // when
         sutAsProtocol.viewDidHideShimmer(
-            fetchCardsResult: .failure(APIFailureError(errorCode: ASDKError.Code.unknownCustomer.rawValue))
+            fetchCardsResult: .failure(APIFailureError(errorCode: noSuchCustomerErrorCode))
         )
 
         // then
