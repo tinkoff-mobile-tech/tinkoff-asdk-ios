@@ -212,11 +212,13 @@ public extension AcquiringUISDK {
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
+        cardScannerDelegate: ICardScannerDelegate? = nil,
         completion: PaymentResultCompletion? = nil
     ) {
         let viewController = mainFormAssembly.build(
             paymentFlow: paymentFlow,
             configuration: configuration,
+            cardScannerDelegate: cardScannerDelegate,
             moduleCompletion: completion
         )
 
@@ -227,14 +229,17 @@ public extension AcquiringUISDK {
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
     ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
+    ///   - cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
     ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
+        cardScannerDelegate: ICardScannerDelegate? = nil,
         onViewWasClosed: ((AddCardResult) -> Void)? = nil
     ) {
         let navigationController = addNewCardAssembly.addNewCardNavigationController(
             customerKey: customerKey,
+            cardScannerDelegate: cardScannerDelegate,
             onViewWasClosed: onViewWasClosed
         )
 
@@ -247,12 +252,17 @@ public extension AcquiringUISDK {
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
     ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
+    ///   - cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
     ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     func presentCardList(
         on presentingViewController: UIViewController,
-        customerKey: String
+        customerKey: String,
+        cardScannerDelegate: ICardScannerDelegate? = nil
     ) {
-        let navigationController = cardListAssembly.cardsPresentingNavigationController(customerKey: customerKey)
+        let navigationController = cardListAssembly.cardsPresentingNavigationController(
+            customerKey: customerKey,
+            cardScannerDelegate: cardScannerDelegate
+        )
         presentingViewController.present(navigationController, animated: true)
     }
 

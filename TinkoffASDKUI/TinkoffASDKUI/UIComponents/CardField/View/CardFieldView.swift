@@ -20,7 +20,7 @@ final class CardFieldView: UIView, ICardFieldViewInput {
         }
     }
 
-    private let maskingFactory = CardFieldMaskingFactory()
+    private lazy var maskingFactory = CardFieldMaskingFactory()
 
     private lazy var cardNumberDelegate = maskingFactory.buildMaskingDelegate(for: .cardNumber, listener: self)
     private lazy var expirationDelegate = maskingFactory.buildMaskingDelegate(for: .expiration, listener: self)
@@ -28,13 +28,20 @@ final class CardFieldView: UIView, ICardFieldViewInput {
 
     // MARK: Properties
 
-    private let contentView = UIView()
+    private lazy var contentView = UIView()
 
-    private let dynamicCardView = DynamicIconCardView()
+    private lazy var dynamicCardView = DynamicIconCardView()
 
-    private let cardNumberTextField = FloatingTextField(insetsType: .commonAndHugeLeftInset)
-    private let expireTextField = FloatingTextField()
-    private let cvcTextField = FloatingTextField()
+    private lazy var cardNumberTextField = FloatingTextField(insetsType: .commonAndHugeLeftInset)
+    private lazy var expireTextField = FloatingTextField()
+    private lazy var cvcTextField = FloatingTextField()
+
+    private lazy var scanButton: UIButton = {
+        let button = UIButton()
+        button.setImage(Asset.scanCard.image, for: .normal)
+        button.addTarget(self, action: #selector(scanButtonAction(_:)), for: .touchUpInside)
+        return button
+    }()
 
     // MARK: Initialization
 
@@ -59,6 +66,20 @@ extension CardFieldView {
 
     func updateCardNumberField(with maskFormat: String) -> Bool {
         cardNumberDelegate.update(maskFormat: maskFormat, using: cardNumberTextField.textField)
+    }
+
+    func activateScanButton() {
+        cardNumberTextField.set(rightView: scanButton)
+    }
+
+    func setCardNumberTextField(rightViewMode: UITextField.ViewMode) {
+        cardNumberTextField.set(rightViewMode: rightViewMode)
+    }
+
+    func set(textFieldType: CardFieldType, text: String?) {
+        let floatingTextField = getTextField(for: textFieldType)
+        floatingTextField.set(text: text)
+        getTextFieldDelegate(for: textFieldType).put(text: text ?? "", into: floatingTextField.textField)
     }
 
     func setHeaderErrorFor(textFieldType: CardFieldType) {
@@ -99,6 +120,14 @@ extension CardFieldView: MaskedTextFieldDelegateListener {
     }
 }
 
+// MARK: - Actions
+
+extension CardFieldView {
+    @objc private func scanButtonAction(_ sender: UIButton) {
+        presenter?.scanButtonPressed()
+    }
+}
+
 // MARK: - Private
 
 extension CardFieldView {
@@ -134,6 +163,7 @@ extension CardFieldView {
         dynamicCardView.translatesAutoresizingMaskIntoConstraints = false
         expireTextField.translatesAutoresizingMaskIntoConstraints = false
         cvcTextField.translatesAutoresizingMaskIntoConstraints = false
+        scanButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             cardNumberTextField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
@@ -156,6 +186,9 @@ extension CardFieldView {
             cvcTextField.topAnchor.constraint(equalTo: cardNumberTextField.bottomAnchor, constant: .bottomFieldsTopInset),
             cvcTextField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             cvcTextField.heightAnchor.constraint(equalTo: expireTextField.heightAnchor),
+
+            scanButton.heightAnchor.constraint(equalToConstant: .textFieldHeight),
+            scanButton.widthAnchor.constraint(equalToConstant: .scanButtonWidth),
         ])
     }
 
@@ -164,6 +197,14 @@ extension CardFieldView {
         case .cardNumber: return cardNumberTextField
         case .expiration: return expireTextField
         case .cvc: return cvcTextField
+        }
+    }
+
+    private func getTextFieldDelegate(for type: CardFieldType) -> MaskedTextFieldDelegate {
+        switch type {
+        case .cardNumber: return cardNumberDelegate
+        case .expiration: return expirationDelegate
+        case .cvc: return cvcDelegate
         }
     }
 
@@ -189,4 +230,6 @@ private extension CGFloat {
     static let bottomFieldsTopInset: CGFloat = 12
 
     static let cvcFieldLeftInset: CGFloat = 11
+
+    static let scanButtonWidth: CGFloat = 40
 }

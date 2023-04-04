@@ -43,6 +43,8 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     private let amount: Int64
     private let customerEmail: String
 
+    private let isCardFieldScanButtonNeeded: Bool
+
     // MARK: Initialization
 
     init(
@@ -53,7 +55,8 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         paymentController: IPaymentController,
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
-        amount: Int64
+        amount: Int64,
+        isCardFieldScanButtonNeeded: Bool
     ) {
         self.router = router
         self.output = output
@@ -64,6 +67,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         self.paymentFlow = paymentFlow
         self.amount = amount
         customerEmail = paymentFlow.customerOptions?.email ?? ""
+        self.isCardFieldScanButtonNeeded = isCardFieldScanButtonNeeded
     }
 }
 
@@ -95,6 +99,14 @@ extension CardPaymentPresenter {
 // MARK: - ICardFieldOutput
 
 extension CardPaymentPresenter: ICardFieldOutput {
+    func scanButtonPressed() {
+        router.showCardScanner { [weak self] cardNumber, expiration, cvc in
+            self?.cardFieldPresenter.set(textFieldType: .cardNumber, text: cardNumber)
+            self?.cardFieldPresenter.set(textFieldType: .expiration, text: expiration)
+            self?.cardFieldPresenter.set(textFieldType: .cvc, text: cvc)
+        }
+    }
+
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         isCardFieldValid = result.isValid
         activatePayButtonIfNeeded()
@@ -258,7 +270,7 @@ extension CardPaymentPresenter {
     }
 
     private func createCardFieldViewPresenter() -> CardFieldPresenter {
-        CardFieldPresenter(output: self)
+        CardFieldPresenter(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
     }
 
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {

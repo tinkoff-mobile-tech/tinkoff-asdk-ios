@@ -21,21 +21,24 @@ final class AddNewCardPresenter {
 
     // MARK: Child presenters
 
-    private lazy var cardFieldPresenter = CardFieldPresenter(output: self)
+    private lazy var cardFieldPresenter = CardFieldPresenter(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
 
     // MARK: State
 
     private var moduleResult: AddCardResult = .cancelled
+    private let isCardFieldScanButtonNeeded: Bool
 
     // MARK: Init
 
     init(
         cardsController: ICardsController,
         output: IAddNewCardPresenterOutput?,
+        isCardFieldScanButtonNeeded: Bool,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) {
         self.cardsController = cardsController
         self.output = output
+        self.isCardFieldScanButtonNeeded = isCardFieldScanButtonNeeded
         self.onViewWasClosed = onViewWasClosed
     }
 }
@@ -78,6 +81,14 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 // MARK: - ICardFieldOutput
 
 extension AddNewCardPresenter: ICardFieldOutput {
+    func scanButtonPressed() {
+        view?.showCardScanner { [weak self] cardNumber, expiration, cvc in
+            self?.cardFieldPresenter.set(textFieldType: .cardNumber, text: cardNumber)
+            self?.cardFieldPresenter.set(textFieldType: .expiration, text: expiration)
+            self?.cardFieldPresenter.set(textFieldType: .cvc, text: cvc)
+        }
+    }
+
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         result.isValid ? view?.enableAddButton() : view?.disableAddButton()
     }

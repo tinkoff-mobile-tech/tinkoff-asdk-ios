@@ -35,12 +35,16 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         paymentFlow: PaymentFlow,
         amount: Int64,
         output: ICardPaymentPresenterModuleOutput?,
-        cardListOutput: ICardListPresenterOutput?
+        cardListOutput: ICardListPresenterOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
-        let router = CardPaymentRouter(cardListAssembly: cardListAssembly)
+        let router = CardPaymentRouter(
+            cardListAssembly: cardListAssembly,
+            cardScannerDelegate: cardScannerDelegate
+        )
 
         let presenter = CardPaymentPresenter(
             router: router,
@@ -50,7 +54,8 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
             paymentController: paymentController,
             activeCards: activeCards,
             paymentFlow: paymentFlow,
-            amount: amount
+            amount: amount,
+            isCardFieldScanButtonNeeded: cardScannerDelegate != nil
         )
 
         let view = CardPaymentViewController(presenter: presenter)

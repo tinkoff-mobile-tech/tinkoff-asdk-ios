@@ -18,7 +18,8 @@ protocol ICardPaymentAssembly {
         paymentFlow: PaymentFlow,
         amount: Int64,
         output: ICardPaymentPresenterModuleOutput?,
-        cardListOutput: ICardListPresenterOutput?
+        cardListOutput: ICardListPresenterOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) -> UIViewController
 }
 
@@ -28,14 +29,16 @@ extension ICardPaymentAssembly {
     func newCardPayment(
         paymentFlow: PaymentFlow,
         amount: Int64,
-        output: ICardPaymentPresenterModuleOutput?
+        output: ICardPaymentPresenterModuleOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) -> UIViewController {
         anyCardPayment(
             activeCards: [],
             paymentFlow: paymentFlow,
             amount: amount,
             output: output,
-            cardListOutput: nil
+            cardListOutput: nil,
+            cardScannerDelegate: cardScannerDelegate
         )
     }
 }

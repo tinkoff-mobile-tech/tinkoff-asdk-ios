@@ -16,4 +16,5 @@ protocol IAddNewCardView: AnyObject {
     func enableAddButton()
     func activateCardField()
     func showOkNativeAlert(data: OkAlertData)
+    func showCardScanner(completion: @escaping CardScannerCompletion)
 }

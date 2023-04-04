@@ -224,7 +224,13 @@ class BuyProductsViewController: UIViewController {
             orderDescription: paymentOptions.orderOptions.description
         )
 
-        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
+        uiSDK.presentMainForm(
+            on: self,
+            paymentFlow: paymentFlow,
+            configuration: configuration,
+            cardScannerDelegate: nil
+        ) { [weak self] result in
+            self?.showAlert(with: result)
         }
     }
 
@@ -274,7 +280,13 @@ class BuyProductsViewController: UIViewController {
             orderDescription: paymentOptions.orderOptions.description
         )
 
-        uiSDK.presentMainForm(on: self, paymentFlow: paymentFlow, configuration: configuration) { [weak self] result in self?.showAlert(with: result)
+        uiSDK.presentMainForm(
+            on: self,
+            paymentFlow: paymentFlow,
+            configuration: configuration,
+            cardScannerDelegate: self
+        ) { [weak self] result in
+            self?.showAlert(with: result)
         }
     }
 
@@ -297,6 +309,13 @@ class BuyProductsViewController: UIViewController {
         let action = UIAlertAction(title: Loc.Button.ok, style: .default)
         alert.addAction(action)
         present(alert, animated: true)
+    }
+}
+
+extension BuyProductsViewController: ICardScannerDelegate {
+    func cardScanButtonDidPressed(on viewController: UIViewController, completion: @escaping CardScannerCompletion) {
+        let alert = UIAlertController.cardScannerMock(confirmationHandler: completion)
+        viewController.present(alert, animated: true)
     }
 }
 

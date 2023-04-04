@@ -26,6 +26,7 @@ final class AddNewCardViewController: UIViewController {
     // MARK: Dependencies
 
     private let presenter: IAddNewCardPresenter
+    private weak var cardScannerDelegate: ICardScannerDelegate?
 
     // MARK: Properties
 
@@ -34,8 +35,12 @@ final class AddNewCardViewController: UIViewController {
 
     // MARK: Init
 
-    init(presenter: IAddNewCardPresenter) {
+    init(
+        presenter: IAddNewCardPresenter,
+        cardScannerDelegate: ICardScannerDelegate?
+    ) {
         self.presenter = presenter
+        self.cardScannerDelegate = cardScannerDelegate
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -99,6 +104,10 @@ extension AddNewCardViewController: IAddNewCardView {
     func showOkNativeAlert(data: OkAlertData) {
         let alert = UIAlertController.okAlert(data: data)
         present(alert, animated: true)
+    }
+
+    func showCardScanner(completion: @escaping CardScannerCompletion) {
+        cardScannerDelegate?.cardScanButtonDidPressed(on: self, completion: completion)
     }
 
     func disableAddButton() {

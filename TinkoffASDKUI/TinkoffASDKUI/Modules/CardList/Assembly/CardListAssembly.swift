@@ -41,8 +41,15 @@ final class CardListAssembly: ICardListAssembly {
 
     // MARK: ICardListAssembly
 
-    func cardsPresentingNavigationController(customerKey: String) -> UINavigationController {
-        let view = createModule(customerKey: customerKey, configuration: .cardList())
+    func cardsPresentingNavigationController(
+        customerKey: String,
+        cardScannerDelegate: ICardScannerDelegate?
+    ) -> UINavigationController {
+        let view = createModule(
+            customerKey: customerKey,
+            configuration: .cardList(),
+            cardScannerDelegate: cardScannerDelegate
+        )
         return UINavigationController.withElevationBar(rootViewController: view)
     }
 
@@ -53,7 +60,8 @@ final class CardListAssembly: ICardListAssembly {
         paymentFlow: PaymentFlow,
         amount: Int64,
         output: ICardListPresenterOutput?,
-        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) -> UIViewController {
         createModule(
             customerKey: customerKey,
@@ -62,7 +70,8 @@ final class CardListAssembly: ICardListAssembly {
             paymentFlow: paymentFlow,
             amount: amount,
             output: output,
-            cardPaymentOutput: cardPaymentOutput
+            cardPaymentOutput: cardPaymentOutput,
+            cardScannerDelegate: cardScannerDelegate
         )
     }
 
@@ -75,7 +84,8 @@ final class CardListAssembly: ICardListAssembly {
         paymentFlow: PaymentFlow? = nil,
         amount: Int64? = nil,
         output: ICardListPresenterOutput? = nil,
-        cardPaymentOutput: ICardPaymentPresenterModuleOutput? = nil
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput? = nil,
+        cardScannerDelegate: ICardScannerDelegate?
     ) -> UIViewController {
         // `CardPaymentAssembly` создается здесь, а не передается в кач-ве зависимости в `init`
         // из-за циклической связи зависимостей `CardPaymentAssembly` и `CardListAssembly`
@@ -92,7 +102,8 @@ final class CardListAssembly: ICardListAssembly {
             cardPaymentAssembly: cardPaymentAssembly,
             paymentFlow: paymentFlow,
             amount: amount,
-            cardPaymentOutput: cardPaymentOutput
+            cardPaymentOutput: cardPaymentOutput,
+            cardScannerDelegate: cardScannerDelegate
         )
 
         let presenter = CardListPresenter(

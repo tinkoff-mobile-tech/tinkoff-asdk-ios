@@ -14,10 +14,12 @@ protocol IAddNewCardAssembly {
     /// - Parameters:
     ///   - customerKey: Идентификатор покупателя в системе Продавца
     ///   - output: Объект, который будет получать события из экрана добавления карты
+    ///   - cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
     /// - Returns: `UIViewController`
     func addNewCardView(
         customerKey: String,
-        output: IAddNewCardPresenterOutput?
+        output: IAddNewCardPresenterOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) -> AddNewCardViewController
 
     /// Создает экран добавления карты, обернутый в `UINavigationController`
@@ -25,10 +27,12 @@ protocol IAddNewCardAssembly {
     /// Используется в кач-ве самостоятельного экрана, открываемого из родительского приложения
     /// - Parameters:
     ///   - customerKey: Идентификатор покупателя в системе Продавца
+    ///   - cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
     ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     /// - Returns: `UINavigationController`
     func addNewCardNavigationController(
         customerKey: String,
+        cardScannerDelegate: ICardScannerDelegate?,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> UINavigationController
 }

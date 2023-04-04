@@ -12,6 +12,8 @@ protocol ICardFieldInput: AnyObject {
     var expiration: String { get }
     var cvc: String { get }
 
+    func set(textFieldType: CardFieldType, text: String?)
+
     var validationResult: CardFieldValidationResult { get }
 
     @discardableResult
