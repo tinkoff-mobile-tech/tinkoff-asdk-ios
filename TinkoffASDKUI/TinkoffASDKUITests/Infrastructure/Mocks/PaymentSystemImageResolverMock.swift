@@ -1,5 +1,5 @@
 //
-//  MockPaymentSystemImageResolver.swift
+//  PaymentSystemImageResolverMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
 //  Created by Ivan Glushko on 19.12.2022.
@@ -10,7 +10,7 @@
 
 import UIKit
 
-final class MockPaymentSystemImageResolver: IPaymentSystemImageResolver {
+final class PaymentSystemImageResolverMock: IPaymentSystemImageResolver {
 
     var resolveCallCounter = 0
     var resolveStub: (String?) -> UIImage? = { _ in nil }
