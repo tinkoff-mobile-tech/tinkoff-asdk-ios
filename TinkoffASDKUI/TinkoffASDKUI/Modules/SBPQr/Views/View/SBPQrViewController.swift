@@ -90,7 +90,7 @@ extension SBPQrViewController: UITableViewDataSource {
 
         switch cellType {
         case let .textHeader(presenter):
-            let cell = tableView.dequeue(cellType: TextHeaderTableCell.self, indexPath: indexPath)
+            let cell = tableView.dequeue(cellType: TextAndImageHeaderTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
             cell.insets = .textHeaderInsets
             return cell
@@ -141,7 +141,7 @@ extension SBPQrViewController {
         tableView.alwaysBounceVertical = false
         tableView.dataSource = self
 
-        tableView.register(TextHeaderTableCell.self, QrImageTableCell.self)
+        tableView.register(TextAndImageHeaderTableCell.self, QrImageTableCell.self)
     }
 
     private func setupTableContentSizeObservation() {
@@ -155,6 +155,6 @@ extension SBPQrViewController {
 // MARK: - Constants
 
 private extension UIEdgeInsets {
-    static let textHeaderInsets = UIEdgeInsets(vertical: 12, horizontal: 16)
-    static let qrImageInsets = UIEdgeInsets(horizontal: 32)
+    static let textHeaderInsets = UIEdgeInsets(vertical: 10, horizontal: 16)
+    static let qrImageInsets = UIEdgeInsets(vertical: 10, horizontal: 16)
 }

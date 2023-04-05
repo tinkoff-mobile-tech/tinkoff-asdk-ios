@@ -41,7 +41,7 @@ final class MainFormPresenter {
     )
 
     private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
-    private lazy var otherPaymentMethodsHeaderPresenter = TextHeaderViewPresenter(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
+    private lazy var otherPaymentMethodsHeaderPresenter = TextAndImageHeaderViewPresenter(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
 
     // MARK: State
 
