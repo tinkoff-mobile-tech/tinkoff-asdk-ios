@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol ITextAndImageHeaderViewInput: AnyObject {
     func set(title: String?)
