@@ -1,5 +1,5 @@
 //
-//  MockPaymentSystemResolver.swift
+//  PaymentSystemResolverMock.swift
 //  TinkoffASDKUI
 //
 //  Created by Ivan Glushko on 30.11.2022.
@@ -10,7 +10,7 @@
 
 import Foundation
 
-final class MockPaymentSystemResolver: IPaymentSystemResolver {
+final class PaymentSystemResolverMock: IPaymentSystemResolver {
 
     var resolveCallCounter = 0
     var resolveStub: (_ inputPan: String?) -> PaymentSystemDecision = { _ in

@@ -19,9 +19,9 @@ final class CardListPresenterTests: BaseTestCase {
     var sutAsProtocol: ICardListViewOutput! { sut }
 
     var sut: CardListPresenter!
-    var mockPaymentSystemImageResolver: MockPaymentSystemImageResolver!
-    var mockBankResolver: MockBankResolver!
-    var mockPaymentSystemResolver: MockPaymentSystemResolver!
+    var mockPaymentSystemImageResolver: PaymentSystemImageResolverMock!
+    var bankResolverMock: BankResolverMock!
+    var paymentSystemResolverMock: PaymentSystemResolverMock!
     var mockView: MockCardListViewInput!
     var cardsControllerMock: CardsControllerMock!
     var router: CardListRouterMock!
@@ -31,9 +31,9 @@ final class CardListPresenterTests: BaseTestCase {
 
     override func setUp() {
         super.setUp()
-        mockPaymentSystemImageResolver = MockPaymentSystemImageResolver()
-        mockBankResolver = MockBankResolver()
-        mockPaymentSystemResolver = MockPaymentSystemResolver()
+        mockPaymentSystemImageResolver = PaymentSystemImageResolverMock()
+        bankResolverMock = BankResolverMock()
+        paymentSystemResolverMock = PaymentSystemResolverMock()
         mockView = MockCardListViewInput()
         cardsControllerMock = CardsControllerMock()
         router = CardListRouterMock()
@@ -44,8 +44,8 @@ final class CardListPresenterTests: BaseTestCase {
             cardsController: cardsControllerMock,
             router: router,
             imageResolver: mockPaymentSystemImageResolver,
-            bankResolver: mockBankResolver,
-            paymentSystemResolver: mockPaymentSystemResolver,
+            bankResolver: bankResolverMock,
+            paymentSystemResolver: paymentSystemResolverMock,
             output: output
         )
 
@@ -55,8 +55,8 @@ final class CardListPresenterTests: BaseTestCase {
     override func tearDown() {
         sut = nil
         mockPaymentSystemImageResolver = nil
-        mockBankResolver = nil
-        mockPaymentSystemResolver = nil
+        bankResolverMock = nil
+        paymentSystemResolverMock = nil
         mockView = nil
         super.tearDown()
     }
@@ -64,22 +64,24 @@ final class CardListPresenterTests: BaseTestCase {
     // MARK: - Tests
 
     func test_viewDidLoad() throws {
-        // given
-        let expectation = expectation(description: #function)
-        cardsControllerMock.getActiveCardsStub = { [weak self] completion in
-            guard let self = self else { return }
-            completion(.success(self.buildActiveCardsCache()))
-            expectation.fulfill()
-        }
+        allureId(2401647, "Инициализируем шиммер при инициализации экрана Списка Карт")
+        allureId(2397526, "Меняем состояние экрана карт на отображение полученного списка карт")
+        allureId(2397528, "Определение ПС и банка-эмитента перед отображением карт")
+        allureId(2397505, "Отправляем запрос получения списка при инициализации SDK")
 
         // when
         sutAsProtocol.viewDidLoad()
-        wait(for: [expectation], timeout: 1)
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
 
         // then
         XCTAssertEqual(mockView.showShimmerCallCounter, 1)
         XCTAssertEqual(cardsControllerMock.getActiveCardsCallsCount, 1)
         XCTAssertEqual(mockView.hideShimmerCallCounter, 1)
+        XCTAssertEqual(mockView.showEditButtonCallCounter, 1)
+        XCTAssertEqual(mockView.reloadCallCounter, 1)
+        XCTAssertEqual(mockView.reloadCallArguments?.isEmpty, false)
+        XCTAssertEqual(bankResolverMock.resolveCallCounter, 1)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallCounter, 1)
     }
 
     func test_viewDidTapEditButton_when_showingCards() throws {
@@ -189,9 +191,55 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(mockView.hideLoadingSnackbarCallCounter, 1)
     }
 
-    func test_viewDidHideShimmer_success_emptyCards_shouldShowNoCardsStub() throws {
+    func test_viewDidHideShimmer_failure_shouldShow_serverErrorStub() throws {
+        allureId(2397506, "Инициализируем заглушку в случае ошибки получения списка карт")
+
         // given
-        let fetchCardsResult: Result<[PaymentCard], Error> = .success([])
+        var serverErrorModeStubShown = false
+
+        mockView.showStubStub = { mode in
+            if case StubMode.serverError = mode {
+                serverErrorModeStubShown = true
+            }
+        }
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .failure(TestsError.basic))
+
+        // then
+        XCTAssertEqual(mockView.showStubCallCounter, 1)
+        XCTAssertEqual(mockView.hideRightBarButtonCalCounter, 1)
+        XCTAssertTrue(serverErrorModeStubShown, "should show no cards stub")
+    }
+
+    func test_viewDidHideShimmer_network_failure_shouldShow_noNetworkStub() throws {
+        allureId(2397506, "Инициализируем заглушку в случае ошибки получения списка карт")
+
+        // given
+        var noNetworkStubShown = false
+
+        mockView.showStubStub = { mode in
+            if case StubMode.noNetwork = mode {
+                noNetworkStubShown = true
+            }
+        }
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(
+            fetchCardsResult: .failure(NSError(domain: "", code: NSURLErrorNotConnectedToInternet))
+        )
+
+        // then
+        XCTAssertEqual(mockView.showStubCallCounter, 1)
+        XCTAssertEqual(mockView.hideRightBarButtonCalCounter, 1)
+        XCTAssertTrue(noNetworkStubShown, "should show no cards stub")
+    }
+
+    func test_viewDidHideShimmer_success_emptyCards_shouldShowNoCardsStub() throws {
+        allureId(2397506, "Инициализируем заглушку в случае ошибки получения списка карт")
+        allureId(2397501, "Инициализируем заглушку в случае получения пустого списка карт")
+
+        // given
         var isNoCardsMode = false
 
         mockView.showStubStub = { mode in
@@ -201,12 +249,13 @@ final class CardListPresenterTests: BaseTestCase {
         }
 
         // when
-        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: fetchCardsResult)
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success([]))
 
         // then
         XCTAssertEqual(mockView.reloadCallCounter, 2)
         XCTAssertEqual(mockView.hideStubCallCounter, 2)
         XCTAssertEqual(mockView.showStubCallCounter, 1)
+        XCTAssertEqual(mockView.hideRightBarButtonCalCounter, 1)
         XCTAssertTrue(isNoCardsMode, "should show no cards stub")
     }
 
