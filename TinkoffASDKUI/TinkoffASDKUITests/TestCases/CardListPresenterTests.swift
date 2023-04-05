@@ -317,6 +317,36 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(mockView.hideStubCallCounter, 1)
         XCTAssertEqual(mockView.reloadCallCounter, 1)
     }
+
+    func test_viewDidShowAddedCardSnackbar_shows_doneEditingButton() {
+        // given
+        sut.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
+        // setting screenState to .editingCards
+        sut.viewDidTapEditButton()
+
+        // resetting calls state
+        mockView.showDoneEditingButtonCallCounter = .zero
+        mockView.hideStubCallCounter = .zero
+        mockView.reloadCallCounter = .zero
+
+        // when
+        sut.viewDidShowAddedCardSnackbar()
+
+        // then
+        XCTAssertEqual(mockView.showDoneEditingButtonCallCounter, 1)
+        XCTAssertEqual(mockView.hideStubCallCounter, 1)
+        XCTAssertEqual(mockView.reloadCallCounter, 1)
+    }
+
+    func test_viewDidShowAddedCardSnackbar_shows_editButton() {
+        // when
+        sut.viewDidShowAddedCardSnackbar()
+
+        // then
+        XCTAssertEqual(mockView.showEditButtonCallCounter, 1)
+        XCTAssertEqual(mockView.hideStubCallCounter, 1)
+        XCTAssertEqual(mockView.reloadCallCounter, 1)
+    }
 }
 
 // MARK: - Helpers

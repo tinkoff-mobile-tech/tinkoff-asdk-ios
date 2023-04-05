@@ -43,7 +43,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     // MARK: Initialization
 
     init(
-        output: ICardFieldOutput?,
+        output: ICardFieldOutput? = nil,
         validator: ICardRequisitesValidator = CardRequisitesValidator(),
         paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
         bankResolver: IBankResolver = BankResolver(),

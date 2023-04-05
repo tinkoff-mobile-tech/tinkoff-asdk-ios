@@ -84,6 +84,8 @@ final class AddNewCardPresenterTests: BaseTestCase {
             XCTFail()
             return
         }
+
+        XCTAssertEqual(viewMock.closeScreenCallsCount, 1)
     }
 
     func test_addCard_cancelled() {
@@ -101,9 +103,13 @@ final class AddNewCardPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(viewMock.showLoadingStateCallsCount, 1)
+        XCTAssertEqual(cardsControllerMock.addCardCallsCount, 1)
+        XCTAssertEqual(viewMock.hideLoadingStateCallsCount, 1)
+        XCTAssertEqual(outputMock.addNewCardDidReceiveCallsCount, 1)
     }
 
-    func test_addCard_error() {
+    func test_addCard_generic_error() {
         allureId(2397498, "Успешно обрабатываем ошибку в случае ошибки web-view")
         allureId(2397519)
         allureId(2397520)
@@ -127,20 +133,46 @@ final class AddNewCardPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showOkNativeAlertCallsCount, 1)
+        XCTAssertEqual(viewMock.showLoadingStateCallsCount, 1)
+        XCTAssertEqual(cardsControllerMock.addCardCallsCount, 1)
+        XCTAssertEqual(viewMock.hideLoadingStateCallsCount, 1)
+        XCTAssertEqual(outputMock.addNewCardDidReceiveCallsCount, 1)
+        XCTAssertEqual(viewMock.showOkNativeAlertReceivedArguments?.title, Loc.CommonAlert.SomeProblem.title)
+        XCTAssertEqual(viewMock.showOkNativeAlertReceivedArguments?.message, Loc.CommonAlert.SomeProblem.description)
+        XCTAssertEqual(viewMock.showOkNativeAlertReceivedArguments?.buttonTitle, Loc.CommonAlert.button)
     }
-}
 
-extension AddNewCardPresenterTests {
+    func test_addCard_510_error() {
+        // given
+        cardFieldPresenterMock.bootstrap()
+        cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-    func addCardDataToCardField() {
-        cardFieldPresenterMock.underlyingCardNumber = "2201382000000104"
-        cardFieldPresenterMock.underlyingCvc = "111"
-        cardFieldPresenterMock.underlyingExpiration = "0928"
-        cardFieldPresenterMock.underlyingCardData = CardData(
-            cardNumber: cardFieldPresenterMock.underlyingCardNumber,
-            expiration: cardFieldPresenterMock.underlyingExpiration,
-            cvc: cardFieldPresenterMock.underlyingCvc
-        )
+        cardsControllerMock.addCardStub = { options, completion in
+            completion(.failed(NSError(domain: "", code: 510)))
+        }
+
+        // when
+        sut.cardFieldViewAddCardTapped()
+
+        // then
+        XCTAssertEqual(viewMock.showOkNativeAlertCallsCount, 1)
+        XCTAssertEqual(viewMock.showOkNativeAlertReceivedArguments?.title, Loc.CommonAlert.AddCard.title)
+        XCTAssertEqual(viewMock.showOkNativeAlertReceivedArguments?.buttonTitle, Loc.CommonAlert.button)
+    }
+
+    func test_cardFieldViewAddCardTapped_notValid() {
+        // given
+        cardFieldPresenterMock.bootstrap()
+        cardFieldPresenterMock.validateWholeFormReturnValue = .notValid()
+
+        // when
+        sut.cardFieldViewAddCardTapped()
+
+        // then
+        XCTAssertEqual(viewMock.showLoadingStateCallsCount, 0)
+        XCTAssertEqual(cardsControllerMock.addCardCallsCount, 0)
+        XCTAssertEqual(viewMock.hideLoadingStateCallsCount, 0)
+        XCTAssertEqual(outputMock.addNewCardDidReceiveCallsCount, 0)
     }
 }
 
@@ -152,5 +184,9 @@ extension CardFieldValidationResult {
             expirationIsValid: true,
             cvcIsValid: true
         )
+    }
+
+    static func notValid() -> Self {
+        CardFieldValidationResult(cardNumberIsValid: false)
     }
 }

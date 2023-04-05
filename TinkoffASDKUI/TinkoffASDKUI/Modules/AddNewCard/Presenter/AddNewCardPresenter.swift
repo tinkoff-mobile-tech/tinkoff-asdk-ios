@@ -21,7 +21,7 @@ final class AddNewCardPresenter {
 
     // MARK: Child presenters
 
-    private var cardFieldPresenter: ICardFieldViewOutput
+    private let cardFieldPresenter: ICardFieldViewOutput
 
     // MARK: State
 

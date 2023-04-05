@@ -12,6 +12,8 @@ import XCTest
 
 final class ThreeDSWebFlowControllerTests: BaseTestCase {
 
+    private typealias ThreeDSWebViewResult = ThreeDSWebViewHandlingResult<GetPaymentStatePayload>
+
     var sut: ThreeDSWebFlowController!
 
     // Mocks
@@ -55,7 +57,6 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         let data = Confirmation3DSData.fake()
         let navController = UINavigationController()
         let viewControllerMock = UIViewControllerMock()
-        var shouldTapBackButtonInNavigationBar = true
         threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerReturnValue = navController
         threeDSWebFlowDelegateMock.sourceViewControllerToPresentReturnValue = viewControllerMock
         threeDSServiceMock.createConfirmation3DSRequestReturnStub = { args in
@@ -73,12 +74,15 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
             completion: completion
         )
 
-        if shouldTapBackButtonInNavigationBar {
-            completion(.failed(TestsError.basic))
-        }
+        completion(.failed(TestsError.basic))
 
         // then
         let result = try XCTUnwrap(completionResult)
+        guard case let ThreeDSWebViewResult.failed(error) = result, error is TestsError else {
+            XCTFail()
+            return
+        }
+
         let requestUrlInWebView = threeDSWebViewAssemblyMock
             .threeDSWebViewNavigationControllerReceivedArguments?
             .urlRequest.url
@@ -98,15 +102,14 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         let data = Confirmation3DSDataACS.fake()
         let navController = UINavigationController()
         let viewControllerMock = UIViewControllerMock()
-        var shouldTapBackButtonInNavigationBar = true
         threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerReturnValue = navController
         threeDSWebFlowDelegateMock.sourceViewControllerToPresentReturnValue = viewControllerMock
         threeDSServiceMock.createConfirmation3DSRequestACSReturnStub = { args in
             URLRequest(url: URL(string: data.acsUrl) ?? .empty)
         }
 
-        var completionResult: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
-        let completion: (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void = {
+        var completionResult: ThreeDSWebViewResult?
+        let completion: (ThreeDSWebViewResult) -> Void = {
             completionResult = $0
         }
 
@@ -117,12 +120,16 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
             completion: completion
         )
 
-        if shouldTapBackButtonInNavigationBar {
-            completion(.failed(TestsError.basic))
-        }
+        // tap back button in nav bar
+        completion(.failed(TestsError.basic))
 
         // then
         let result = try XCTUnwrap(completionResult)
+        guard case let ThreeDSWebViewResult.failed(error) = result, error is TestsError else {
+            XCTFail()
+            return
+        }
+
         let requestUrlInWebView = threeDSWebViewAssemblyMock
             .threeDSWebViewNavigationControllerReceivedArguments?
             .urlRequest.url
