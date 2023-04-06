@@ -1,5 +1,5 @@
 //
-//  MockAcquiringThreeDsService.swift
+//  AcquiringThreeDsServiceMock.swift
 //  Pods
 //
 //  Created by Ivan Glushko on 19.10.2022.
@@ -17,7 +17,7 @@ extension URLRequest {
     static let empty = URLRequest(url: .empty)
 }
 
-final class MockAcquiringThreeDsService: IAcquiringThreeDSService {
+final class AcquiringThreeDsServiceMock: IAcquiringThreeDSService {
 
     // MARK: - check3DSVersion
 

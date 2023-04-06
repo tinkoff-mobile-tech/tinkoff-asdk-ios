@@ -21,7 +21,7 @@ final class AddNewCardPresenter {
 
     // MARK: Child presenters
 
-    private lazy var cardFieldPresenter = CardFieldPresenter(output: self)
+    private let cardFieldPresenter: ICardFieldViewOutput
 
     // MARK: State
 
@@ -32,11 +32,13 @@ final class AddNewCardPresenter {
     init(
         cardsController: ICardsController,
         output: IAddNewCardPresenterOutput?,
-        onViewWasClosed: ((AddCardResult) -> Void)?
+        onViewWasClosed: ((AddCardResult) -> Void)?,
+        cardFieldPresenter: ICardFieldViewOutput
     ) {
         self.cardsController = cardsController
         self.output = output
         self.onViewWasClosed = onViewWasClosed
+        self.cardFieldPresenter = cardFieldPresenter
     }
 }
 

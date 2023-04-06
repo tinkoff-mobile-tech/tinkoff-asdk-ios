@@ -17,7 +17,7 @@ final class PaymentFactoryTests: XCTestCase {
     var paymentDelegateMock: MockPaymentProcessDelegate!
     var ipProviderMock: MockIPAddressProvider!
     var paymentsServiceMock: MockAcquiringPaymentsService!
-    var threeDsServiceMock: MockAcquiringThreeDsService!
+    var threeDsServiceMock: AcquiringThreeDsServiceMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var sut: PaymentFactory!
 
@@ -29,7 +29,7 @@ final class PaymentFactoryTests: XCTestCase {
         let ipProviderMock = MockIPAddressProvider()
         let paymentDelegateMock = MockPaymentProcessDelegate()
         let paymentsServiceMock = MockAcquiringPaymentsService()
-        let threeDsServiceMock = MockAcquiringThreeDsService()
+        let threeDsServiceMock = AcquiringThreeDsServiceMock()
         let threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
 
         let sut = PaymentFactory(

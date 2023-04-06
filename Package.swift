@@ -55,7 +55,8 @@ let package = Package(
             name: "TinkoffASDKUITests",
             dependencies: ["TinkoffASDKUI"],
             path: "TinkoffASDKUI/TinkoffASDKUITests",
-            exclude: ["Info.plist"]
+            exclude: ["Info.plist"],
+            sources: ["TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*"]
         ),
     ]
 )
