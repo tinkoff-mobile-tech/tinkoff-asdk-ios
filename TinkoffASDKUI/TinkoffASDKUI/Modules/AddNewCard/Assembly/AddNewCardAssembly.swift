@@ -41,7 +41,7 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> AddNewCardViewController {
         let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
-        let cardFieldPresenter = CardFieldPresenter(output: nil)
+        let cardFieldPresenter = CardFieldPresenter()
 
         let presenter = AddNewCardPresenter(
             cardsController: cardsController,
