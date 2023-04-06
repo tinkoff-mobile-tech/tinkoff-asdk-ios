@@ -16,14 +16,14 @@ final class CardRequisitesValidatorTests: XCTestCase {
     // Dependencies
     var sutAsProtocol: ICardRequisitesValidator { sut }
     var sut: CardRequisitesValidator!
-    var paymentSystemResolverMock: MockPaymentSystemResolver!
+    var paymentSystemResolverMock: PaymentSystemResolverMock!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
 
-        let paymentSystemResolverMock = MockPaymentSystemResolver()
+        let paymentSystemResolverMock = PaymentSystemResolverMock()
         let validator = CardRequisitesValidator(
             paymentSystemResolver: paymentSystemResolverMock,
             options: .disableExpiryDateValidation
