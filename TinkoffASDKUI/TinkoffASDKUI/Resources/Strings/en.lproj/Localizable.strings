@@ -16,7 +16,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 "TinkoffAcquiring.unknown.response.status" = "Unknown Status";
 "TinkoffAcquiring.unknown.error.status" = "Unknown Error.\nPlease try again later.";
 //
@@ -62,16 +61,16 @@
 "TinkoffAcquiring.view.title.confimration" = "Confirmation";
 
 // Acquiring
-"Acquiring.SBP.ScreenTitle" = "Bank selection";
+"Acquiring.SBP.ScreenTitle" = "Choose bank";
 "Acquiring.SBPBanks.ButtonClose" = "Close";
 "Acquiring.SBPBanks.AnotherBank" = "Another bank";
 "Acquiring.SBPAllBanks.SearchPlaceholder" = "Name";
 "Acquiring.PaymentCard.ChangeButton" = "Change card";
 
 // CommonAlert
-"CommonAlert.SBPNoBank.Title" = "I couldn't find the application of this bank";
-"CommonAlert.SBPNoBank.Description" = "Install it or choose another bank";
-"CommonAlert.Button" = "Ok";
+"CommonAlert.SBPNoBank.Title" = "Unable to\U00A0find this bank’s app";
+"CommonAlert.SBPNoBank.Description" = "Install it or\U00A0choose another bank";
+"CommonAlert.Button" = "OK";
 
 // Tinkoff Pay
 "TP.LoadingStatus.Title" = "Payment confirmation awaiting";
@@ -85,7 +84,7 @@
 "TinkoffAcquiring.threeds.error.timeout" = "3DS operation timed out";
 
 // CardList
-"Acquiring.CardList.ScreenTitle" = "Your cards";
+"Acquiring.CardList.ScreenTitle" = "Your Cards";
 "Acquiring.CardList.ButtonChange" = "Edit";
 "Acquiring.CardList.ButtonDone" = "Done";
 "CardList.alert.title.deleteCard" = "Delete this card";
@@ -104,32 +103,32 @@
 
 // CardField
 
+
 "Acquiring.CardField.PanTitle" = "Number";
-"Acquiring.CardField.TermTitle" = "Expiration";
+"Acquiring.CardField.TermTitle" = "Valid through";
 "Acquiring.CardField.TermPlaceholder" = "07/30";
-"Acquiring.CardField.CVVTitle" = "CVV";
-"Acquiring.CardField.CVVPlaceholder" = "123";
+"Acquiring.CardField.CVVTitle" = "CVC";
+"Acquiring.CardField.CVVPlaceholder" = "CVC";
 
 
 // Common
 "Acquiring.Common.SberCardTitle" = "SberBank";
 "Acquiring.Common.TcsCardTitle" = "Tinkoff Bank";
-"Acquiring.Common.VtbCardTitle" = "VTB Bank";
+"Acquiring.Common.VtbCardTitle" = "Bank VTB";
 "Acquiring.Common.AlfaCardTitle" = "Alfa Bank";
 "Acquiring.Common.GazpromCardTitle" = "Gazprom Bank";
 "Acquiring.Common.RaiffeisenCardTitle" = "Raiffeisen Bank";
 
 // Alerts
-"CommonAlert.DeleteCard.Title" = "Couldn't delete the card";
-"CommonAlert.Button" = "OK";
-"CommonAlert.AddCard.Title" = "The card has already been added";
-"CommonAlert.SomeProblem.Title" = "We have a problem, we are already solving it";
-"CommonAlert.SomeProblem.Description" = "Try again in a couple of minutes";
+"CommonAlert.DeleteCard.Title" = "Unable to\U00A0remove the\U00A0card";
+"CommonAlert.AddCard.Title" = "Card is\U00A0already added";
+"CommonAlert.SomeProblem.Title" = "We have a\U00A0problem, working on\U00A0it\U00A0already";
+"CommonAlert.SomeProblem.Description" = "Try again in\U00A0a\U00A0couple of\U00A0minutes";
 
 // CardList
-"Acquiring.CardList.AddCard" = "Add new card";
-"Acquiring.CardList.DeleteSnackBar" = "Deleting the card";
-"Acquiring.CardList.AddSnackBar" = "The card %@ was added";
+"Acquiring.CardList.AddCard" = "Add new";
+"Acquiring.CardList.DeleteSnackBar" = "Deleting card";
+"Acquiring.CardList.AddSnackBar" = "Card %@ added";
 
 // Add New Card
 "Acquiring.AddNewCard.ScreenTitle" = "New Card";
@@ -146,34 +145,34 @@
 "Acquiring.EmailField.SwitchButton" = "Get receipt";
 
 // Заглушки
-"CommonStub.SomeProblem.Title" = "We have a problem, we are already solving it";
-"CommonStub.NoNetwork.Title" = "It didn't load";
-"CommonStub.SomeProblem.Description" = "Try again in a couple of minutes";
-"CommonStub.NoNetwork.Description" = "Check your internet access and try again";
-"CommonStub.NoCards.Description" = "There will be your cards";
+"CommonStub.SomeProblem.Title" = "We\U00A0have a\U00A0problem, working on\U00A0it\U00A0already";
+"CommonStub.NoNetwork.Title" = "Loading failed";
+"CommonStub.SomeProblem.Description" = "Try again in\U00A0a\U00A0couple of\U00A0minutes";
+"CommonStub.NoNetwork.Description" = "Check internet connection and\U00A0try\U00A0again";
+"CommonStub.NoCards.Description" = "Your cards will\U00A0be\U00A0shown here";
 "CommonStub.NoCardsToPay.Description" = "No cards to pay";
-"CommonStub.SomeProblem.Button" = "Ok";
-"CommonStub.NoNetwork.Button" = "Refresh";
+"CommonStub.SomeProblem.Button" = "Got it";
+"CommonStub.NoNetwork.Button" = "Reload";
 "CommonStub.NoCards.Button" = "Add";
 "CommonStub.NoCardsToPay.Button" = "Pay with a new";
 
 // CommonSheet
-"CommonSheet.Processing.Title" = "Processing the payment";
-"CommonSheet.Processing.Description" = "It will take some time";
-"CommonSheet.Paid.Title" = "Paid";
-"CommonSheet.Paid.PrimaryButton" = "Ok";
-"CommonSheet.PaymentWaiting.Title" = "Waiting for payment in the bank application";
-"CommonSheet.PaymentWaiting.PrimaryButton" = "Оплатить";
+"CommonSheet.Processing.Title" = "Processing payment";
+"CommonSheet.Processing.Description" = "This will take some time";
+"CommonSheet.Paid.Title" = "Payment complete";
+"CommonSheet.Paid.PrimaryButton" = "Got it";
+"CommonSheet.PaymentWaiting.Title" = "Waiting for\U00A0payment in\U00A0the bank’s app";
+"CommonSheet.PaymentWaiting.PrimaryButton" = "Pay";
 "CommonSheet.PaymentWaiting.SecondaryButton" = "Close";
-"CommonSheet.TimeoutFailed.Title" = "Payment time has expired";
-"CommonSheet.TimeoutFailed.Description" = "Try to pay again";
+"CommonSheet.TimeoutFailed.Title" = "Payment time ran\U00A0out";
+"CommonSheet.TimeoutFailed.Description" = "Try paying again";
 "CommonSheet.TimeoutFailed.SecondaryButton" = "Close";
-"CommonSheet.PaymentFailed.Title" = "Payment error";
-"CommonSheet.PaymentFailed.Description" = "Try another payment method";
+"CommonSheet.PaymentFailed.Title" = "Payment failed";
+"CommonSheet.PaymentFailed.Description" = "Try another method";
 "CommonSheet.PaymentFailed.PrimaryButton" = "Choose another method";
 "CommonSheet.PaymentForm.ToPayTitle" = "Checkout";
 "CommonSheet.PaymentForm.ByCardTitle" = "Card";
-"CommonSheet.PaymentForm.ByCardPrimaryButton" = "Pay by card";
+"CommonSheet.PaymentForm.ByCardPrimaryButton" = "Pay by\U00A0card";
 "CommonSheet.PaymentForm.AnotherMethodTitle" = "Another method";
 "CommonSheet.PaymentForm.SBPTitle" = "FPS";
 "CommonSheet.PaymentForm.SBPDescription" = "In any bank’s app";
