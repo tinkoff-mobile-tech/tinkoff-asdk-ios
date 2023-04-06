@@ -10,6 +10,14 @@
 final class CardFieldViewOutputMock: CardFieldInputMock, ICardFieldViewOutput {
 
     var view: ICardFieldViewInput?
+    
+    // MARK: - scanButton
+    
+    var scanButtonPressedCallsCount = 0
+    
+    func scanButtonPressed() {
+        scanButtonPressedCallsCount += 1
+    }
 
     // MARK: - didFillField
 

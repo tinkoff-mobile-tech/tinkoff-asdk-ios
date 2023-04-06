@@ -36,6 +36,16 @@ class CardFieldInputMock: ICardFieldInput {
     }
 
     var underlyingCvc: String!
+    
+    var setTextFieldTypeCallsCount = 0
+    var setTextFieldTypeReceivedArguments: (CardFieldType, String?)?
+    var setTextFieldTypeReceivedInvocations: [(CardFieldType, String?)] = []
+    func set(textFieldType: CardFieldType, text: String?) {
+        setTextFieldTypeCallsCount += 1
+        let arguments = (textFieldType, text)
+        setTextFieldTypeReceivedArguments = arguments
+        setTextFieldTypeReceivedInvocations.append(arguments)
+    }
 
     var validationResult: CardFieldValidationResult {
         get { return underlyingValidationResult }
