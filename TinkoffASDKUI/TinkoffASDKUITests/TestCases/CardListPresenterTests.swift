@@ -243,6 +243,26 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
     }
 
+    func test_getCardList_unknownCustomer_error() {
+        // given
+        let noSuchCustomerErrorCode = 7
+        var didShowNoCardsStub = false
+        mockView.showStubStub = { stubMode in
+            if case StubMode.noCardsInCardList = stubMode {
+                didShowNoCardsStub = true
+            }
+        }
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(
+            fetchCardsResult: .failure(APIFailureError(errorCode: noSuchCustomerErrorCode))
+        )
+
+        // then
+        XCTAssertEqual(mockView.showStubCallCounter, 1)
+        XCTAssertTrue(didShowNoCardsStub)
+    }
+
     func test_viewDidTapDelete() throws {
         allureId(2397531, "Отправляем запрос удаления карты при тапе на кнопку")
         allureId(2397536, "Уменьшение списка карт при успешном удаление карты")

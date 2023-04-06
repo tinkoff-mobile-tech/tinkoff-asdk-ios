@@ -20,6 +20,10 @@
 import TinkoffASDKCore
 import UIKit
 
+private extension Int {
+    static let noSuchCustomerErrorCode = 7
+}
+
 final class CardListPresenter {
     // MARK: Internal Types
 
@@ -245,6 +249,8 @@ extension CardListPresenter {
             switch (error as NSError).code {
             case NSURLErrorNotConnectedToInternet, NSURLErrorDataNotAllowed:
                 showNoNetworkStub()
+            case .noSuchCustomerErrorCode:
+                showNoCardsStub()
             default:
                 showServerErrorStub()
             }
