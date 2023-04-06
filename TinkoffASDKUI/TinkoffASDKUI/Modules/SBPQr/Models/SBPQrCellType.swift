@@ -6,6 +6,6 @@
 //
 
 enum SBPQrCellType {
-    case textHeader(ITextHeaderViewOutput)
+    case textHeader(ITextAndImageHeaderViewOutput)
     case qrImage(IQrImageViewOutput)
 }

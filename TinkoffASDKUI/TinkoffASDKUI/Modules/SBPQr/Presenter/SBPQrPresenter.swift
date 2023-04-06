@@ -22,7 +22,7 @@ final class SBPQrPresenter: ISBPQrViewOutput {
 
     // MARK: Child Presenters
 
-    private lazy var textHeaderPresenter = TextHeaderViewPresenter(title: Loc.TinkoffAcquiring.View.Title.payQRCode)
+    private lazy var textHeaderPresenter: ITextAndImageHeaderViewOutput = createTextHeaderPresener()
     private lazy var qrImagePresenter = QrImageViewPresenter(output: self)
 
     // MARK: State
@@ -142,6 +142,8 @@ extension SBPQrPresenter {
     }
 
     private func handleSuccessGet(qrType: QrImageType) {
+        textHeaderPresenter = createTextHeaderPresener(for: qrType)
+
         // Отображение Qr происходит после того как Qr будет загружен в WebView или ImageView. (зависит от типа)
         // Так как у web view есть задержка отображения.
         // Уведомление о загрузке приходит в методе qrDidLoad()
@@ -193,6 +195,16 @@ extension SBPQrPresenter {
 
     private func handleFailureGetPaymentStatus(_ error: Error) {
         getPaymentStatus()
+    }
+
+    private func createTextHeaderPresener(for qrType: QrImageType? = nil) -> ITextAndImageHeaderViewOutput {
+        let title = Loc.TinkoffAcquiring.View.Title.payQRCode
+
+        if let qrType = qrType, case QrImageType.dynamicQr = qrType {
+            return TextAndImageHeaderViewPresenter(title: title, imageAsset: Asset.Sbp.sbpNoLogo)
+        } else {
+            return TextAndImageHeaderViewPresenter(title: title)
+        }
     }
 
     private func viewUpdateStateIfNeeded(newState: CommonSheetState) {
