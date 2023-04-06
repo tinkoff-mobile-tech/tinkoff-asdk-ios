@@ -10,4 +10,6 @@ import TinkoffASDKCore
 extension AcquiringSdk: IAcquiringThreeDSService,
     IAcquiringPaymentsService,
     IAcquiringTinkoffPayService,
-    IAcquiringTerminalService {}
+    IAcquiringTerminalService,
+    IAddCardService,
+    ICardService {}

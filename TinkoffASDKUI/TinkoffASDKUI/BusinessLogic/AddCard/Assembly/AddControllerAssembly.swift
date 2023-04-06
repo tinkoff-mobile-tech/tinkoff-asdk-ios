@@ -31,7 +31,7 @@ final class AddCardControllerAssembly: IAddCardControllerAssembly {
 
     func addCardController(customerKey: String) -> IAddCardController {
         AddCardController(
-            coreSDK: coreSDK,
+            addCardService: coreSDK,
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             webFlowController: webFlowControllerAssembly.threeDSWebFlowController(),
             threeDSService: coreSDK,

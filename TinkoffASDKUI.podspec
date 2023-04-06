@@ -27,6 +27,6 @@ Pod::Spec.new do |spec|
 	spec.dependency 'TinkoffASDKCore'
 
 	spec.test_spec 'Tests' do |test_spec|
-	test_spec.source_files = 'TinkoffASDKUI/TinkoffASDKUITests/**/*'
+	test_spec.source_files = 'TinkoffASDKUI/TinkoffASDKUITests/**/*', 'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*'
 	end
 end

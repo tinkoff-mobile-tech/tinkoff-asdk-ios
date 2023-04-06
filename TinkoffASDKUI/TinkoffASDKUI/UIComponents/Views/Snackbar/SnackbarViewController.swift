@@ -45,7 +45,7 @@ final class SnackbarViewController: UIViewController {
     }
 }
 
-extension SnackbarViewController {
+extension SnackbarViewController: ISnackbarController {
 
     /// Показать снек (с анимацией)
     func showSnackView(config: SnackbarView.Configuration, animated: Bool, completion: ((Bool) -> Void)? = nil) {
@@ -189,7 +189,7 @@ extension SnackbarViewController {
             x: Constants.sideInset,
             y: view.frame.maxY
                 - SnackbarView.defaultSize.height
-                - (Constants.bottomInset + UIApplication.shared.keyWindow!.safeAreaInsets.bottom),
+                - (Constants.bottomInset + (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? .zero)),
             width: SnackbarView.defaultSize.width,
             height: SnackbarView.defaultSize.height
         )

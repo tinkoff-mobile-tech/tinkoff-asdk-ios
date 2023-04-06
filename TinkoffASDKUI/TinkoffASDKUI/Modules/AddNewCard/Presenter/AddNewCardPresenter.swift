@@ -21,25 +21,24 @@ final class AddNewCardPresenter {
 
     // MARK: Child presenters
 
-    private lazy var cardFieldPresenter = CardFieldPresenter(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
+    private let cardFieldPresenter: ICardFieldViewOutput
 
     // MARK: State
 
     private var moduleResult: AddCardResult = .cancelled
-    private let isCardFieldScanButtonNeeded: Bool
 
     // MARK: Init
 
     init(
         cardsController: ICardsController,
         output: IAddNewCardPresenterOutput?,
-        isCardFieldScanButtonNeeded: Bool,
-        onViewWasClosed: ((AddCardResult) -> Void)?
+        onViewWasClosed: ((AddCardResult) -> Void)?,
+        cardFieldPresenter: ICardFieldViewOutput
     ) {
         self.cardsController = cardsController
         self.output = output
-        self.isCardFieldScanButtonNeeded = isCardFieldScanButtonNeeded
         self.onViewWasClosed = onViewWasClosed
+        self.cardFieldPresenter = cardFieldPresenter
     }
 }
 

@@ -13,23 +13,29 @@ import Foundation
 final class MockCardListViewInput: ICardListViewInput {
 
     var reloadCallCounter = 0
+    var reloadCallArguments: [CardListSection]?
     var reloadStub: ([CardListSection]) -> Void = { _ in }
     func reload(sections: [CardListSection]) {
         reloadCallCounter += 1
+        reloadCallArguments = sections
         reloadStub(sections)
     }
 
     var deleteItemsCallCounter = 0
+    var deleteItemsCallArguments: [IndexPath]?
     var deleteItemsStub: ([IndexPath]) -> Void = { _ in }
     func deleteItems(at: [IndexPath]) {
         deleteItemsCallCounter += 1
+        deleteItemsCallArguments = at
         deleteItemsStub(at)
     }
 
     var removeCallCounter = 0
+    var removeCallArguments: (CardList.Card)?
     var removeStub: (CardList.Card) -> Void = { _ in }
     func remove(card: CardList.Card) {
         removeCallCounter += 1
+        removeCallArguments = card
         removeStub(card)
     }
 
@@ -49,9 +55,11 @@ final class MockCardListViewInput: ICardListViewInput {
     }
 
     var showStubCallCounter = 0
+    var showStubCallArguments: StubMode?
     var showStubStub: (StubMode) -> Void = { _ in }
     func showStub(mode: StubMode) {
         showStubCallCounter += 1
+        showStubCallArguments = mode
         showStubStub(mode)
     }
 
@@ -75,11 +83,13 @@ final class MockCardListViewInput: ICardListViewInput {
         showEditButtonCallCounter += 1
     }
 
-    var showLoadingSnackbarCallCounter = 0
-    var showLoadingSnackbarStub: (String?) -> Void = { _ in }
+    var showRemovingCardSnackBarCallCounter = 0
+    var showRemovingCardSnackBarArguments: String??
+    var showRemovingCardSnackBarStub: (String?) -> Void = { _ in }
     func showRemovingCardSnackBar(text: String?) {
-        showLoadingSnackbarCallCounter += 1
-        showLoadingSnackbarStub(text)
+        showRemovingCardSnackBarCallCounter += 1
+        showRemovingCardSnackBarArguments = text
+        showRemovingCardSnackBarStub(text)
     }
 
     var hideLoadingSnackbarCallCounter = 0
@@ -88,21 +98,25 @@ final class MockCardListViewInput: ICardListViewInput {
     }
 
     var hideShimmerCallCounter = 0
+    var hideShimmerArguments: Result<[PaymentCard], Error>?
     var hideShimmerStub: (Result<[PaymentCard], Error>) -> Void = { _ in }
     func hideShimmer(fetchCardsResult: Result<[TinkoffASDKCore.PaymentCard], Error>) {
         hideShimmerCallCounter += 1
+        hideShimmerArguments = fetchCardsResult
         hideShimmerStub(fetchCardsResult)
     }
 
     var showAddedCardSnackbarCallCounter = 0
+    var showAddedCardSnackbarArguments: String?
     var showAddedCardSnackbarStub: (String) -> Void = { _ in }
     func showAddedCardSnackbar(cardMaskedPan: String) {
         showAddedCardSnackbarCallCounter += 1
+        showAddedCardSnackbarArguments = cardMaskedPan
     }
 
     var hideRightBarButtonCalCounter = 0
     func hideRightBarButton() {
-        hideStubCallCounter += 1
+        hideRightBarButtonCalCounter += 1
     }
 
     var closeScreenCounter = 0
@@ -111,9 +125,11 @@ final class MockCardListViewInput: ICardListViewInput {
     }
 
     var showNativeAlertCallCounter = 0
+    var showNativeAlertArguments: OkAlertData?
     var showNativeAlertStub: (OkAlertData) -> Void = { _ in }
     func showNativeAlert(data: OkAlertData) {
         showNativeAlertCallCounter += 1
+        showNativeAlertArguments = data
         showNativeAlertStub(data)
     }
 }

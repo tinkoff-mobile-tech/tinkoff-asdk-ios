@@ -28,7 +28,7 @@ final class AddCardController {
 
     // MARK: Dependencies
 
-    private let coreSDK: AcquiringSdk
+    private let addCardService: IAddCardService
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     private let webFlowController: IThreeDSWebFlowController
     private let threeDSService: IAcquiringThreeDSService
@@ -39,7 +39,7 @@ final class AddCardController {
     // MARK: Init
 
     init(
-        coreSDK: AcquiringSdk,
+        addCardService: IAddCardService,
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         webFlowController: IThreeDSWebFlowController,
         threeDSService: IAcquiringThreeDSService,
@@ -48,7 +48,7 @@ final class AddCardController {
         successfulStatuses: Set<AcquiringStatus> = [.completed],
         paymentStateSuccessfulStatuses: Set<AcquiringStatus> = [.authorized, .confirmed]
     ) {
-        self.coreSDK = coreSDK
+        self.addCardService = addCardService
         self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.webFlowController = webFlowController
         self.threeDSService = threeDSService
@@ -72,7 +72,7 @@ extension AddCardController: IAddCardController {
             DispatchQueue.performOnMain { completion(result) }
         }
 
-        coreSDK.addCard(data: AddCardData(with: checkType, customerKey: customerKey)) { [weak self] result in
+        addCardService.addCard(data: AddCardData(with: checkType, customerKey: customerKey)) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
@@ -126,7 +126,7 @@ extension AddCardController {
         requestKey: String,
         completion: @escaping Completion
     ) {
-        coreSDK.check3DSVersion(data: .data(with: paymentId, options: options)) { [weak self] result in
+        addCardService.check3DSVersion(data: .data(with: paymentId, options: options)) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
@@ -216,7 +216,7 @@ extension AddCardController {
             deviceData: deviceData
         )
 
-        coreSDK.attachCard(data: attachData) { [weak self] result in
+        addCardService.attachCard(data: attachData) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
@@ -323,7 +323,7 @@ extension AddCardController {
     private func getState(attachPayload: AttachCardPayload, completion: @escaping Completion) {
         let getStateData = GetAddCardStateData(requestKey: attachPayload.requestKey)
 
-        coreSDK.getAddCardState(data: getStateData) { [weak self] result in
+        addCardService.getAddCardState(data: getStateData) { [weak self] result in
             guard let self = self else { return }
 
             switch result {

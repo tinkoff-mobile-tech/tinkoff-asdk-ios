@@ -132,7 +132,7 @@
 # 🔗 https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#numberFormatting
 --enable numberFormatting
 # [decimalgrouping] - Decimal grouping,threshold (default: 3,6) or "none", "ignore"
---decimalgrouping 3,6
+--decimalgrouping ignore
 # [binarygrouping] - Binary grouping,threshold (default: 4,8) or "none", "ignore"
 --binarygrouping 4,8
 # [octalgrouping] - Octal grouping,threshold (default: 4,8) or "none", "ignore"
