@@ -18,6 +18,7 @@ final class MainFormPresenter {
     private let tinkoffPayController: ITinkoffPayController
     private let paymentFlow: PaymentFlow
     private let configuration: MainFormUIConfiguration
+    private weak var cardScannerDelegate: ICardScannerDelegate?
     private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
@@ -59,6 +60,7 @@ final class MainFormPresenter {
         tinkoffPayController: ITinkoffPayController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
+        cardScannerDelegate: ICardScannerDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
@@ -67,6 +69,7 @@ final class MainFormPresenter {
         self.tinkoffPayController = tinkoffPayController
         self.paymentFlow = paymentFlow
         self.configuration = configuration
+        self.cardScannerDelegate = cardScannerDelegate
         self.moduleCompletion = moduleCompletion
     }
 }
@@ -153,7 +156,8 @@ extension MainFormPresenter: ISavedCardViewPresenterOutput {
             cards: dataState.cards ?? [],
             selectedCard: paymentCard,
             cardListOutput: self,
-            cardPaymentOutput: self
+            cardPaymentOutput: self,
+            cardScannerDelegate: cardScannerDelegate
         )
     }
 
@@ -423,7 +427,13 @@ extension MainFormPresenter {
 
         switch paymentMethod {
         case .card:
-            router.openCardPayment(paymentFlow: paymentFlow, cards: dataState.cards, output: self, cardListOutput: self)
+            router.openCardPayment(
+                paymentFlow: paymentFlow,
+                cards: dataState.cards,
+                output: self,
+                cardListOutput: self,
+                cardScannerDelegate: cardScannerDelegate
+            )
         case let .tinkoffPay(version):
             let cancellable = tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: version)
             presentationState = .tinkoffPayProcessing(cancellable)

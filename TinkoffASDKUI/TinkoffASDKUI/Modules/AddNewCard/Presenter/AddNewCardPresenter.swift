@@ -80,6 +80,14 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 // MARK: - ICardFieldOutput
 
 extension AddNewCardPresenter: ICardFieldOutput {
+    func scanButtonPressed() {
+        view?.showCardScanner { [weak self] cardNumber, expiration, cvc in
+            self?.cardFieldPresenter.set(textFieldType: .cardNumber, text: cardNumber)
+            self?.cardFieldPresenter.set(textFieldType: .expiration, text: expiration)
+            self?.cardFieldPresenter.set(textFieldType: .cvc, text: cvc)
+        }
+    }
+
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         result.isValid ? view?.enableAddButton() : view?.disableAddButton()
     }

@@ -15,11 +15,16 @@ final class CardPaymentRouter: ICardPaymentRouter {
     weak var transitionHandler: UIViewController?
 
     private let cardListAssembly: ICardListAssembly
+    private weak var cardScannerDelegate: ICardScannerDelegate?
 
     // MARK: Initialization
 
-    init(cardListAssembly: ICardListAssembly) {
+    init(
+        cardListAssembly: ICardListAssembly,
+        cardScannerDelegate: ICardScannerDelegate?
+    ) {
         self.cardListAssembly = cardListAssembly
+        self.cardScannerDelegate = cardScannerDelegate
     }
 }
 
@@ -28,6 +33,11 @@ final class CardPaymentRouter: ICardPaymentRouter {
 extension CardPaymentRouter {
     func closeScreen(completion: VoidBlock?) {
         transitionHandler?.dismiss(animated: true, completion: completion)
+    }
+
+    func showCardScanner(completion: @escaping CardScannerCompletion) {
+        guard let transitionHandler = transitionHandler else { return }
+        cardScannerDelegate?.cardScanButtonDidPressed(on: transitionHandler, completion: completion)
     }
 
     func openCardPaymentList(
@@ -47,7 +57,8 @@ extension CardPaymentRouter {
             paymentFlow: paymentFlow,
             amount: amount,
             output: cardListOutput,
-            cardPaymentOutput: cardPaymentOutput
+            cardPaymentOutput: cardPaymentOutput,
+            cardScannerDelegate: cardScannerDelegate
         )
 
         transitionHandler?.navigationController?.pushViewController(cardPaymentList, animated: true)

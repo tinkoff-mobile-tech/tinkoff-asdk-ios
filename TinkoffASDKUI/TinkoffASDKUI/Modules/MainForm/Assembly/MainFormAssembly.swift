@@ -47,6 +47,7 @@ final class MainFormAssembly: IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
+        cardScannerDelegate: ICardScannerDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
@@ -78,6 +79,7 @@ final class MainFormAssembly: IMainFormAssembly {
             tinkoffPayController: tinkoffPayController,
             paymentFlow: paymentFlow,
             configuration: configuration,
+            cardScannerDelegate: cardScannerDelegate,
             moduleCompletion: moduleCompletion
         )
 

@@ -90,7 +90,7 @@ final class FloatingTextField: UIView {
 // MARK: - Public
 
 extension FloatingTextField {
-    func set(text: String) {
+    func set(text: String?) {
         textField.text = text
         liftHeaderLabelIfNeeded()
     }
@@ -104,6 +104,14 @@ extension FloatingTextField {
 
     func set(clearButtonMode: UITextField.ViewMode) {
         textField.clearButtonMode = clearButtonMode
+    }
+
+    func set(rightView: UIView) {
+        textField.rightView = rightView
+    }
+
+    func set(rightViewMode: UITextField.ViewMode) {
+        textField.rightViewMode = rightViewMode
     }
 
     func set(keyboardType: UIKeyboardType) {

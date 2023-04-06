@@ -82,4 +82,17 @@ final class AddNewCardViewMock: IAddNewCardView {
         showOkNativeAlertReceivedArguments = arguments
         showOkNativeAlertReceivedInvocations.append(arguments)
     }
+
+    var showCardScannerCallsCount = 0
+    var showCardScannerCompletionStub: (cardNumber: String?, expiration: String?, cvc: String?)?
+    var showCardScannerReceivedArguments: CardScannerCompletion?
+    var showCardScannerReceivedInvocations: [CardScannerCompletion] = []
+    func showCardScanner(completion: @escaping CardScannerCompletion) {
+        showCardScannerCallsCount += 1
+        showCardScannerReceivedArguments = completion
+        showCardScannerReceivedInvocations.append(completion)
+        if let stub = showCardScannerCompletionStub {
+            completion(stub.cardNumber, stub.expiration, stub.cvc)
+        }
+    }
 }

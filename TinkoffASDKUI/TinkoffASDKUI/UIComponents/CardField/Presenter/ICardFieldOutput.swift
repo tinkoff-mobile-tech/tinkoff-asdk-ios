@@ -6,5 +6,6 @@
 //
 
 protocol ICardFieldOutput: AnyObject {
+    func scanButtonPressed()
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult)
 }

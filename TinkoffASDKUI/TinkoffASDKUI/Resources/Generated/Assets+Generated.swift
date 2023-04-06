@@ -87,6 +87,7 @@ internal enum Asset {
     }
   }
   internal static let scan = ImageAsset(name: "scan")
+  internal static let scanCard = ImageAsset(name: "scan_card")
   internal static let share = ImageAsset(name: "share")
   internal static let tuiIcServiceCross24 = ImageAsset(name: "tui_ic_service_cross_24")
 }

@@ -10,6 +10,8 @@ import TinkoffASDKCore
 protocol ICardPaymentRouter {
     func closeScreen(completion: VoidBlock?)
 
+    func showCardScanner(completion: @escaping CardScannerCompletion)
+
     func openCardPaymentList(
         paymentFlow: PaymentFlow,
         amount: Int64,

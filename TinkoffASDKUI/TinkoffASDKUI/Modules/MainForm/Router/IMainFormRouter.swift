@@ -14,14 +14,16 @@ protocol IMainFormRouter {
         cards: [PaymentCard],
         selectedCard: PaymentCard,
         cardListOutput: ICardListPresenterOutput?,
-        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     )
 
     func openCardPayment(
         paymentFlow: PaymentFlow,
         cards: [PaymentCard]?,
         output: ICardPaymentPresenterModuleOutput?,
-        cardListOutput: ICardListPresenterOutput?
+        cardListOutput: ICardListPresenterOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     )
 
     func openSBP(

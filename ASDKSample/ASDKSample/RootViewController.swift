@@ -158,7 +158,8 @@ class RootViewController: UITableViewController {
 
             sdk.presentCardList(
                 on: self,
-                customerKey: AppSetting.shared.activeSdkCredentials.customerKey
+                customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
+                cardScannerDelegate: self
             )
         }
     }
@@ -171,10 +172,17 @@ class RootViewController: UITableViewController {
 
             let customerKey = AppSetting.shared.activeSdkCredentials.customerKey
 
-            sdk.presentAddCard(on: self, customerKey: customerKey) { [weak self] result in
+            sdk.presentAddCard(on: self, customerKey: customerKey, cardScannerDelegate: nil) { [weak self] result in
                 self?.addingNewCardCompleted(result: result)
             }
         }
+    }
+}
+
+extension RootViewController: ICardScannerDelegate {
+    func cardScanButtonDidPressed(on viewController: UIViewController, completion: @escaping CardScannerCompletion) {
+        let alert = UIAlertController.cardScannerMock(confirmationHandler: completion)
+        viewController.present(alert, animated: true)
     }
 }
 

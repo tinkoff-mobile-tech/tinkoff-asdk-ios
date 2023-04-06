@@ -19,6 +19,7 @@ final class CardListRouter: ICardListRouter {
     private let paymentFlow: PaymentFlow?
     private let amount: Int64?
     private weak var cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+    private weak var cardScannerDelegate: ICardScannerDelegate?
 
     // MARK: Init
 
@@ -27,19 +28,25 @@ final class CardListRouter: ICardListRouter {
         cardPaymentAssembly: ICardPaymentAssembly,
         paymentFlow: PaymentFlow?,
         amount: Int64?,
-        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) {
         self.addNewCardAssembly = addNewCardAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
         self.paymentFlow = paymentFlow
         self.amount = amount
         self.cardPaymentOutput = cardPaymentOutput
+        self.cardScannerDelegate = cardScannerDelegate
     }
 
     // MARK: ICardListRouter
 
     func openAddNewCard(customerKey: String, output: IAddNewCardPresenterOutput?) {
-        let viewController = addNewCardAssembly.addNewCardView(customerKey: customerKey, output: output)
+        let viewController = addNewCardAssembly.addNewCardView(
+            customerKey: customerKey,
+            output: output,
+            cardScannerDelegate: cardScannerDelegate
+        )
         transitionHandler?.navigationController?.pushViewController(viewController, animated: true)
     }
 
@@ -49,7 +56,8 @@ final class CardListRouter: ICardListRouter {
         let viewController = cardPaymentAssembly.newCardPayment(
             paymentFlow: paymentFlow,
             amount: amount,
-            output: cardPaymentOutput
+            output: cardPaymentOutput,
+            cardScannerDelegate: cardScannerDelegate
         )
 
         transitionHandler?.navigationController?.pushViewController(viewController, animated: true)

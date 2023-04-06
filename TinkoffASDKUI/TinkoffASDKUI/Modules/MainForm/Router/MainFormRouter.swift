@@ -38,7 +38,8 @@ final class MainFormRouter: IMainFormRouter {
         cards: [PaymentCard],
         selectedCard: PaymentCard,
         cardListOutput: ICardListPresenterOutput?,
-        cardPaymentOutput: ICardPaymentPresenterModuleOutput?
+        cardPaymentOutput: ICardPaymentPresenterModuleOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) {
         guard let customerKey = paymentFlow.customerOptions?.customerKey else { return }
 
@@ -49,7 +50,8 @@ final class MainFormRouter: IMainFormRouter {
             paymentFlow: paymentFlow,
             amount: paymentFlow.amount,
             output: cardListOutput,
-            cardPaymentOutput: cardPaymentOutput
+            cardPaymentOutput: cardPaymentOutput,
+            cardScannerDelegate: cardScannerDelegate
         )
 
         let navigationController = UINavigationController.withElevationBar(rootViewController: cardPaymentList)
@@ -61,14 +63,16 @@ final class MainFormRouter: IMainFormRouter {
         paymentFlow: PaymentFlow,
         cards: [PaymentCard]?,
         output: ICardPaymentPresenterModuleOutput?,
-        cardListOutput: ICardListPresenterOutput?
+        cardListOutput: ICardListPresenterOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
     ) {
         let cardPaymentViewController = cardPaymentAssembly.anyCardPayment(
             activeCards: cards,
             paymentFlow: paymentFlow,
             amount: paymentFlow.amount,
             output: output,
-            cardListOutput: cardListOutput
+            cardListOutput: cardListOutput,
+            cardScannerDelegate: cardScannerDelegate
         )
 
         let navVC = UINavigationController.withElevationBar(rootViewController: cardPaymentViewController)

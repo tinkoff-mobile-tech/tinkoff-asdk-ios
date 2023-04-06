@@ -12,6 +12,7 @@ protocol IMainFormAssembly {
     func build(
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
+        cardScannerDelegate: ICardScannerDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController
 }
