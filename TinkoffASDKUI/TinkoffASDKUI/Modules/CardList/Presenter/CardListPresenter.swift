@@ -47,11 +47,11 @@ final class CardListPresenter {
 
     // MARK: State
 
+    private var sections: [CardListSection] { getSections() }
     private var isLoading = false
     private var hasVisualContent: Bool { !cards.isEmpty }
     private var screenState = ScreenState.initial
     private var deactivateCardResult: Result<RemoveCardPayload, Error>?
-    private var sections: [CardListSection] { getSections() }
     private var cards: [PaymentCard] {
         didSet {
             guard cards != oldValue else { return }
