@@ -36,7 +36,7 @@ class CardFieldInputMock: ICardFieldInput {
     }
 
     var underlyingCvc: String!
-    
+
     var setTextFieldTypeCallsCount = 0
     var setTextFieldTypeReceivedArguments: (CardFieldType, String?)?
     var setTextFieldTypeReceivedInvocations: [(CardFieldType, String?)] = []

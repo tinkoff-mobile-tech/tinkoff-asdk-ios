@@ -7,7 +7,7 @@
 
 @testable import TinkoffASDKUI
 
-final class AddNewCardViewMock: IAddNewCardView {    
+final class AddNewCardViewMock: IAddNewCardView {
 
     // MARK: - reloadCollection
 
@@ -82,7 +82,7 @@ final class AddNewCardViewMock: IAddNewCardView {
         showOkNativeAlertReceivedArguments = arguments
         showOkNativeAlertReceivedInvocations.append(arguments)
     }
-    
+
     var showCardScannerCallsCount = 0
     var showCardScannerCompletionStub: (cardNumber: String?, expiration: String?, cvc: String?)?
     var showCardScannerReceivedArguments: CardScannerCompletion?
