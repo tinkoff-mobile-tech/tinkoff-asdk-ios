@@ -170,6 +170,8 @@
 "CommonSheet.PaymentFailed.Title" = "Payment failed";
 "CommonSheet.PaymentFailed.Description" = "Try another method";
 "CommonSheet.PaymentFailed.PrimaryButton" = "Choose another method";
+"CommonSheet.FailedPayment.Title" = "Payment error";
+"CommonSheet.FailedPayment.PrimaryButton" = "Ok";
 "CommonSheet.PaymentForm.ToPayTitle" = "Checkout";
 "CommonSheet.PaymentForm.ByCardTitle" = "Card";
 "CommonSheet.PaymentForm.ByCardPrimaryButton" = "Pay by\U00A0card";
@@ -188,8 +190,6 @@
 "CommonSheet.TinkoffPay.Paid.PrimaryButton" = "Ok";
 "CommonSheet.TinkoffPay.TimedOut.Title" = "Payment time has expired";
 "CommonSheet.TinkoffPay.TimedOut.PrimaryButton" = "Ok";
-"CommonSheet.TinkoffPay.FailedPayment.Title" = "Payment error";
-"CommonSheet.TinkoffPay.FailedPayment.PrimaryButton" = "Ok";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Payment error";

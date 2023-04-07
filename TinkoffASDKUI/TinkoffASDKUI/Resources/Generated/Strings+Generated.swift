@@ -161,6 +161,12 @@ internal enum Loc {
     }
   }
   internal enum CommonSheet {
+    internal enum FailedPayment {
+      /// Понятно
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.FailedPayment.PrimaryButton", fallback: "Понятно")
+      /// Не получилось оплатить
+      internal static let title = Loc.tr("Localizable", "CommonSheet.FailedPayment.Title", fallback: "Не получилось оплатить")
+    }
     internal enum Paid {
       /// Понятно
       internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.Paid.PrimaryButton", fallback: "Понятно")
@@ -230,12 +236,6 @@ internal enum Loc {
       internal static let title = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.Title", fallback: "Время оплаты истекло")
     }
     internal enum TinkoffPay {
-      internal enum FailedPayment {
-        /// Понятно
-        internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.TinkoffPay.FailedPayment.PrimaryButton", fallback: "Понятно")
-        /// Не получилось оплатить
-        internal static let title = Loc.tr("Localizable", "CommonSheet.TinkoffPay.FailedPayment.Title", fallback: "Не получилось оплатить")
-      }
       internal enum Paid {
         /// Понятно
         internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.TinkoffPay.Paid.PrimaryButton", fallback: "Понятно")
