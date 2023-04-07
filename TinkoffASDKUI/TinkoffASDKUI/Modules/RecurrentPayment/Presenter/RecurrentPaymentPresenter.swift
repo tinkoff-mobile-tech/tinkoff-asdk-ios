@@ -232,14 +232,18 @@ private extension CommonSheetState {
     }
 
     static var paid: CommonSheetState {
-        CommonSheetState(status: .succeeded, title: "Оплачено", primaryButtonTitle: "Понятно")
+        CommonSheetState(
+            status: .succeeded,
+            title: Loc.CommonSheet.Paid.title,
+            primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
+        )
     }
 
     static var failed: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: "Не получилось оплатить",
-            primaryButtonTitle: "Понятно"
+            title: Loc.CommonSheet.FailedPayment.title,
+            primaryButtonTitle: Loc.CommonSheet.FailedPayment.primaryButton
         )
     }
 }
