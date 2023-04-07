@@ -28,6 +28,10 @@ final class YandexPayButtonContainer: UIView {
 
     private lazy var yandexPayPaymentFlow = yandexPayPaymentFlowAssembly.yandexPayPaymentFlow(delegate: self)
 
+    // MARK: State
+
+    private var requestedPaymentFlow: PaymentFlow?
+
     // MARK: Init
 
     init(
@@ -105,24 +109,22 @@ extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
     }
 
     func yandexPayButtonDidRequestPaymentSheet(_ button: YandexPayButton, completion: @escaping (YPPaymentSheet?) -> Void) {
-        let completion = { [paymentSheetFactory] (paymentSheet: YandexPayPaymentSheet?) in
-            let yandexPayPaymentSheet = paymentSheet.map(paymentSheetFactory.create(with:))
+        let completion = { [weak self, paymentSheetFactory] (paymentFlow: PaymentFlow?) in
+            self?.requestedPaymentFlow = paymentFlow
+            let yandexPayPaymentSheet = paymentFlow.map(paymentSheetFactory.create(with:))
             completion(yandexPayPaymentSheet)
         }
 
-        delegate?.yandexPayButtonContainer(self, didRequestPaymentSheet: completion)
+        delegate?.yandexPayButtonContainer(self, didRequestPaymentFlow: completion)
     }
 
     func yandexPayButton(_ button: YandexPayButton, didCompletePaymentWithResult result: YPPaymentResult) {
         switch result {
         case let .succeeded(paymentInfo):
-            let completion = { [weak self] (flow: PaymentFlow?) in
-                guard let self = self, let flow = flow else { return }
-                DispatchQueue.performOnMain {
-                    self.yandexPayPaymentFlow.start(with: flow, base64Token: paymentInfo.paymentToken)
-                }
+            guard let flow = requestedPaymentFlow else { break }
+            DispatchQueue.performOnMain {
+                self.yandexPayPaymentFlow.start(with: flow, base64Token: paymentInfo.paymentToken)
             }
-            delegate?.yandexPayButtonContainer(self, didRequestPaymentFlow: completion)
         case .cancelled:
             delegate?.yandexPayButtonContainer(self, didCompletePaymentWithResult: .cancelled(nil))
         case let .failed(error):

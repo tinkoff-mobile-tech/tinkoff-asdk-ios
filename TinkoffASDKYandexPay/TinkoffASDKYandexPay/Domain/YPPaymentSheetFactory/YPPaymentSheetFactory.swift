@@ -11,7 +11,7 @@ import TinkoffASDKUI
 import YandexPaySDK
 
 protocol IYPPaymentSheetFactory {
-    func create(with paymentSheet: YandexPayPaymentSheet) -> YPPaymentSheet
+    func create(with paymentFlow: PaymentFlow) -> YPPaymentSheet
 }
 
 final class YPPaymentSheetFactory: IYPPaymentSheetFactory {
@@ -21,7 +21,19 @@ final class YPPaymentSheetFactory: IYPPaymentSheetFactory {
         self.method = method
     }
 
-    func create(with paymentSheet: YandexPayPaymentSheet) -> YPPaymentSheet {
+    func create(with paymentFlow: PaymentFlow) -> YPPaymentSheet {
+        let orderId: String
+        let amount: Int64
+
+        switch paymentFlow {
+        case let .full(paymentOptions):
+            orderId = paymentOptions.orderOptions.orderId
+            amount = paymentOptions.orderOptions.amount
+        case let .finish(paymentOptions):
+            orderId = paymentOptions.orderId
+            amount = paymentOptions.amount
+        }
+
         let cardMethod = YPCardPaymentMethod(
             gateway: .gateway,
             gatewayMerchantId: method.merchantId,
@@ -30,8 +42,8 @@ final class YPPaymentSheetFactory: IYPPaymentSheetFactory {
         )
 
         let order = YPOrder(
-            id: method.merchantId + paymentSheet.order.orderId,
-            amount: .rublesString(fromPennies: paymentSheet.order.amount)
+            id: method.merchantId + orderId,
+            amount: .rublesString(fromPennies: amount)
         )
 
         let yandexPaySDKPaymentSheet = YPPaymentSheet(
