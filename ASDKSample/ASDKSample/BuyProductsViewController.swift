@@ -22,7 +22,6 @@ import TinkoffASDKUI
 import TinkoffASDKYandexPay
 import UIKit
 
-// swiftlint:disable file_length
 class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
