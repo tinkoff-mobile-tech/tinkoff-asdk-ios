@@ -9,18 +9,18 @@ import UIKit
 import WebKit
 
 final class MainFormViewController: UIViewController, PullableContainerContent {
+    // MARK: Internal Types
+
+    enum Anchor: CaseIterable {
+        case contentBased
+        case medium
+        case maximum
+    }
+
     // MARK: PullableContainer Properties
 
     var scrollView: UIScrollView { tableView }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
-
-    var pullableContainerContentHeight: CGFloat {
-        if commonSheetView.isHidden {
-            return keyboardVisible ? UIScreen.main.bounds.height : tableView.contentSize.height
-        } else {
-            return commonSheetView.estimatedHeight
-        }
-    }
 
     // MARK: Dependencies
 
@@ -136,6 +136,8 @@ extension MainFormViewController: IMainFormViewController {
         tableView.beginUpdates()
         tableView.insertRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
+
+        navigationItem.largeTitleDisplayMode = .always
     }
 
     func deleteRows(at indexPaths: [IndexPath]) {
@@ -152,6 +154,10 @@ extension MainFormViewController: IMainFormViewController {
 // MARK: - CommonSheetViewDelegate
 
 extension MainFormViewController: CommonSheetViewDelegate {
+    var pullableContainerContentHeight: CGFloat {
+        commonSheetView.estimatedHeight
+    }
+
     func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
 
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
@@ -166,8 +172,35 @@ extension MainFormViewController: CommonSheetViewDelegate {
 // MARK: - PullableContainerContent Methods
 
 extension MainFormViewController {
+    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerViewController) -> Int {
+        Anchor.allCases.count
+    }
+
+    func pullabeContainer(_ container: PullableContainerViewController, canReachAnchorAt index: Int) -> Bool {
+        true
+    }
+
+    func pullableContainer(
+        _ container: PullableContainerViewController,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        switch Anchor.allCases[index] {
+        case .contentBased:
+            return commonSheetView.estimatedHeight
+        case .medium:
+            return availableSpace * 3 / 5
+        case .maximum:
+            return availableSpace
+        }
+    }
+
     func pullableContainerWasClosed() {
         presenter.viewWasClosed()
+    }
+
+    func pullableContainerShouldDismissOnDownDragging() -> Bool {
+        false
     }
 }
 

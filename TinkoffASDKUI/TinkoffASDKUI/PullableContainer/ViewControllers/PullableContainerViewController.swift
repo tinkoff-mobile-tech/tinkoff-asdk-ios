@@ -95,9 +95,9 @@ private extension PullableContainerViewController {
 
     func setupDragController() {
         dragController = PullableContainerDragController(
-            dragViewHeightConstraint: customView.dragViewHeightConstraint
+            dragViewHeightConstraint: customView.dragViewHeightConstraint,
+            delegate: self
         )
-        dragController?.delegate = self
     }
 
     func setupDragHandlers() {
@@ -140,6 +140,22 @@ private extension PullableContainerViewController {
 // MARK: - PullableContainerDragControllerDelegate
 
 extension PullableContainerViewController: PullableContainerDragControllerDelegate {
+    func dragControllerDidRequestNumberOfAnchors(_ dragController: PullableContainerDragController) -> Int {
+        content.pullableContainerDidRequestNumberOfAnchors(self)
+    }
+
+    func dragController(
+        _ dragController: PullableContainerDragController,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        content.pullableContainer(self, didRequestHeightForAnchorAt: index, availableSpace: availableSpace)
+    }
+
+    func dragController(_ dragController: PullableContainerDragController, shouldUseAnchorAt index: Int) -> Bool {
+        content.pullabeContainer(self, canReachAnchorAt: index)
+    }
+
     func dragControllerDidEndDragging(_ controller: PullableContainerDragController) {
         UIView.animate(
             withDuration: 0.5,

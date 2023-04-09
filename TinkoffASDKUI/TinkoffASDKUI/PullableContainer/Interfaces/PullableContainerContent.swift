@@ -23,6 +23,19 @@ protocol PullableContainerContent: AnyObject {
     var view: UIView! { get }
     var scrollView: UIScrollView? { get }
 
+    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerViewController) -> Int
+
+    func pullableContainer(
+        _ container: PullableContainerViewController,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat
+
+    func pullabeContainer(
+        _ container: PullableContainerViewController,
+        canReachAnchorAt index: Int
+    ) -> Bool
+
     var pullableContainerContentHeight: CGFloat { get }
     var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)? { get set }
     func pullableContainerWillBeClosed()
@@ -39,4 +52,23 @@ extension PullableContainerContent {
     func pullableContainerWasClosed() {}
     func pullableContainerShouldDismissOnDownDragging() -> Bool { true }
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool { true }
+
+    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerViewController) -> Int {
+        1
+    }
+
+    func pullableContainer(
+        _ container: PullableContainerViewController,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        pullableContainerContentHeight
+    }
+
+    func pullabeContainer(
+        _ container: PullableContainerViewController,
+        canReachAnchorAt index: Int
+    ) -> Bool {
+        true
+    }
 }
