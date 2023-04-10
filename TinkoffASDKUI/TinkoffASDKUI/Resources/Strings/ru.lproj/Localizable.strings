@@ -106,7 +106,7 @@
 "Acquiring.CardField.PanTitle" = "Номер";
 "Acquiring.CardField.TermTitle" = "Срок";
 "Acquiring.CardField.TermPlaceholder" = "07/30";
-"Acquiring.CardField.CVVTitle" = "Код";
+"Acquiring.CardField.CVVTitle" = "CVC";
 "Acquiring.CardField.CVVPlaceholder" = "123";
 
 // Common

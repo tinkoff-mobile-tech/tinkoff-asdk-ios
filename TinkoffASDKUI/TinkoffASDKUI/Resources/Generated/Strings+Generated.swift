@@ -22,8 +22,8 @@ internal enum Loc {
     internal enum CardField {
       /// 123
       internal static let cvvPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.CVVPlaceholder", fallback: "123")
-      /// Код
-      internal static let cvvTitle = Loc.tr("Localizable", "Acquiring.CardField.CVVTitle", fallback: "Код")
+      /// CVC
+      internal static let cvvTitle = Loc.tr("Localizable", "Acquiring.CardField.CVVTitle", fallback: "CVC")
       /// Номер
       internal static let panTitle = Loc.tr("Localizable", "Acquiring.CardField.PanTitle", fallback: "Номер")
       /// 07/30
