@@ -6,6 +6,6 @@ framework module ThreeDSWrapper {
 }
 
 module ThreeDSWrapper.Swift {
-    header "ThreeDSWrapper-Swift.h"
-    requires objc
+  header "ThreeDSWrapper-Swift.h"
+  requires objc
 }

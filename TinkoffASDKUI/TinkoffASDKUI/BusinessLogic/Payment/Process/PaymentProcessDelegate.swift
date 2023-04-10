@@ -47,4 +47,9 @@ protocol PaymentProcessDelegate: AnyObject {
         confirmationCancelled: @escaping () -> Void,
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     )
+
+    func startAppBasedFlow(
+        check3dsPayload: Check3DSVersionPayload,
+        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+    )
 }

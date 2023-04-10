@@ -131,8 +131,19 @@ private extension CardPaymentProcess {
     }
 
     func handleCheck3DSResult(payload: Check3DSVersionPayload, paymentId: String) {
-        if let tdsServerTransID = payload.tdsServerTransID,
-           let threeDSMethodURL = payload.threeDSMethodURL {
+        switch payload.receiveVersion() {
+        case .v1:
+            let data = FinishAuthorizeData(
+                paymentId: paymentId,
+                paymentSource: paymentSource,
+                infoEmail: paymentFlow.customerOptions?.email
+            )
+            finishAuthorize(data: data, threeDSVersion: payload.version)
+
+        case .v2:
+            guard let tdsServerTransID = payload.tdsServerTransID,
+                  let threeDSMethodURL = payload.threeDSMethodURL
+            else { return }
             let check3DSData = Checking3DSURLData(
                 tdsServerTransID: tdsServerTransID,
                 threeDSMethodURL: threeDSMethodURL,
@@ -153,13 +164,30 @@ private extension CardPaymentProcess {
                 )
                 self.finishAuthorize(data: data, threeDSVersion: payload.version)
             }
-        } else {
-            let data = FinishAuthorizeData(
+
+        case .appBased:
+            let finishAuthorizeData = FinishAuthorizeData(
                 paymentId: paymentId,
                 paymentSource: paymentSource,
-                infoEmail: paymentFlow.customerOptions?.email
+                infoEmail: paymentFlow.customerOptions?.email,
+                threeDSVersion: payload.version
             )
-            finishAuthorize(data: data, threeDSVersion: payload.version)
+
+            delegate?.startAppBasedFlow(
+                check3dsPayload: payload,
+                completion: { [weak self] result in
+                    guard let self = self else { return }
+                    switch result {
+                    case let .success(threeDsDeviceInfo):
+                        var enrichedFinishAuthorizeData = finishAuthorizeData
+                        enrichedFinishAuthorizeData.deviceInfo = threeDsDeviceInfo
+                        self.finishAuthorize(data: enrichedFinishAuthorizeData)
+                    case let .failure(error):
+                        let (cardId, rebillId) = self.paymentSource.getCardAndRebillId()
+                        self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
+                    }
+                }
+            )
         }
     }
 

@@ -6,6 +6,6 @@ framework module TdsSdkIos {
 }
 
 module TdsSdkIos.Swift {
-    header "TdsSdkIos-Swift.h"
-    requires objc
+  header "TdsSdkIos-Swift.h"
+  requires objc
 }

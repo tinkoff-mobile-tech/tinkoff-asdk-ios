@@ -86,6 +86,8 @@ extension AttachCardPayload: Decodable {
                 attachCardStatus = .needConfirmation3DS(confirmation3DS)
             } else if let confirmation3DSACS = try? Confirmation3DSDataACS(from: decoder) {
                 attachCardStatus = .needConfirmation3DSACS(confirmation3DSACS)
+            } else if let confirmation3DSAppBasedData = try? Confirmation3DS2AppBasedData(from: decoder) {
+                attachCardStatus = .needConfirmation3DS2AppBased(confirmation3DSAppBasedData)
             } else {
                 throw DecodingError.typeMismatch(
                     FinishAuthorizePayload.self,

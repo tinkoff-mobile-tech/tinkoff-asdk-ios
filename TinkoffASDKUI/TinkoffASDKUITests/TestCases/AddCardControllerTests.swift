@@ -20,6 +20,7 @@ final class AddCardControllerTests: BaseTestCase {
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var threeDSWebFlowControllerMock: ThreeDSWebFlowControllerMock!
     var acquiringThreeDsServiceMock: AcquiringThreeDsServiceMock!
+    var tdsControllerMock: TDSControllerMock!
 
     // MARK: - Setup
 
@@ -29,6 +30,7 @@ final class AddCardControllerTests: BaseTestCase {
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         threeDSWebFlowControllerMock = ThreeDSWebFlowControllerMock()
         acquiringThreeDsServiceMock = AcquiringThreeDsServiceMock()
+        tdsControllerMock = TDSControllerMock()
         sut = createAddCardController(checkType: .no)
     }
 
@@ -37,6 +39,7 @@ final class AddCardControllerTests: BaseTestCase {
         threeDSDeviceInfoProviderMock = nil
         threeDSWebFlowControllerMock = nil
         acquiringThreeDsServiceMock = nil
+        tdsControllerMock = nil
         sut = nil
 
         super.tearDown()
@@ -624,7 +627,8 @@ extension AddCardControllerTests {
             webFlowController: threeDSWebFlowControllerMock,
             threeDSService: acquiringThreeDsServiceMock,
             customerKey: "key",
-            checkType: checkType
+            checkType: checkType,
+            tdsController: tdsControllerMock
         )
     }
 

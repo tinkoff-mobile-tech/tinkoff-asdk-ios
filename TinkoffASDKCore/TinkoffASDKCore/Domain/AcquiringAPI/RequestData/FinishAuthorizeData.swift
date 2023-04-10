@@ -25,10 +25,10 @@ public struct FinishAuthorizeData {
     let paymentSource: PaymentSourceData
     let infoEmail: String?
     let sendEmail: Bool?
-    let deviceInfo: ThreeDSDeviceInfo?
     let threeDSVersion: String?
     let source: String?
     let route: String?
+    public var deviceInfo: ThreeDSDeviceInfo?
 
     public init(
         paymentId: String,

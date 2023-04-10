@@ -25,6 +25,8 @@ public enum AttachCardStatus {
     case needConfirmation3DS(Confirmation3DSData)
     /// Требуется подтверждение 3DS v2.0
     case needConfirmation3DSACS(Confirmation3DSDataACS)
+    /// Требуется подтверждение 3DS v2.1.0 app-based
+    case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
     /// Карта успешно привязана
     case done
 }

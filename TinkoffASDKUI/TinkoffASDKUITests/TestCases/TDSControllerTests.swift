@@ -20,6 +20,10 @@ final class TDSControllerTests: BaseTestCase {
     var tDSWrapperMock: TDSWrapperMock!
     var timeoutResolverMock: TimeoutResolverMock!
     var transactionMock: TransactionMock!
+    var tdsCertsManagerMock: TDSCertsManagerMock!
+    var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
+    var delayExecutorMock: DelayedExecutorMock!
+    var mainQueueMock: DispatchQueueMock!
 
     // MARK: - Setup
 
@@ -30,53 +34,73 @@ final class TDSControllerTests: BaseTestCase {
         tDSWrapperMock = TDSWrapperMock()
         timeoutResolverMock = TimeoutResolverMock()
         transactionMock = TransactionMock()
+        tdsCertsManagerMock = TDSCertsManagerMock()
+        threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
+        delayExecutorMock = DelayedExecutorMock()
+        mainQueueMock = DispatchQueueMock()
+        delayExecutorMock.executeWorkClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
 
         tDSWrapperMock.createTransactionReturnValue = transactionMock
 
         sut = TDSController(
             threeDsService: acquiringThreeDSServiceMock,
             tdsWrapper: tDSWrapperMock,
-            tdsTimeoutResolver: timeoutResolverMock
+            tdsTimeoutResolver: timeoutResolverMock,
+            tdsCertsManager: tdsCertsManagerMock,
+            threeDSDeviceInfoProvider: threeDSDeviceInfoProviderMock,
+            delayExecutor: delayExecutorMock,
+            mainQueue: mainQueueMock
         )
     }
 
     override func tearDown() {
+        delayExecutorMock.executeWorkClosureShouldExecute = false
+        DispatchQueueMock.performOnMainBlockClosureShouldExecute = false
+
         acquiringThreeDSServiceMock = nil
         tDSWrapperMock = nil
         timeoutResolverMock = nil
         transactionMock = nil
-        sut = nil
+        tdsCertsManagerMock = nil
+        threeDSDeviceInfoProviderMock = nil
+        delayExecutorMock = nil
+        mainQueueMock = nil
 
+        sut = nil
         super.tearDown()
     }
 
     // MARK: - Tests
 
-    func test_startAppBasedFlow() throws {
+    func test_startAppBasedFlow_happy_path() throws {
         // given
         let expectation = XCTestExpectation(description: #function)
         transactionMock.getAuthenticationRequestParametersReturnValue = .fake()
-        transactionMock.getProgressViewReturnValue = .fake()
+        transactionMock.getProgressViewReturnValue = ProgressDialogMock()
         transactionMock.getProgressViewClosure = { expectation.fulfill() }
+        var didReceiveThreeDSInfo = false
 
         // when
-
-        let _ = try sut.startAppBasedFlow(
-            directoryServerID: .doesntMatter,
-            messageVersion: .doesntMatter
-        )
+        setupAndStartAppBasedFlow { result in
+            switch result {
+            case .success: didReceiveThreeDSInfo = true
+            case .failure: break
+            }
+        }
 
         wait(for: [expectation], timeout: .defaultAnimationDuration)
 
         // then
         XCTAssertEqual(transactionMock.getAuthenticationRequestParametersCallsCount, 1)
         XCTAssertEqual(transactionMock.getProgressViewCallsCount, 1)
+        XCTAssertTrue(didReceiveThreeDSInfo)
     }
 
     func test_doChallenge() throws {
         allureId(2358075)
         // given
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
         timeoutResolverMock.underlyingChallengeValue = 1
 
         // when
@@ -95,7 +119,7 @@ final class TDSControllerTests: BaseTestCase {
         var completionResult: GetPaymentStatePayload?
         let fakedResult = GetPaymentStatePayload.fake()
 
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
         sut.completionHandler = { result in
             completionResult = try? result.get()
         }
@@ -118,7 +142,7 @@ final class TDSControllerTests: BaseTestCase {
         // given
         let fakedResult = GetPaymentStatePayload.fake()
 
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
         timeoutResolverMock.underlyingChallengeValue = 1
         sut.doChallenge(with: .fake())
 
@@ -139,7 +163,7 @@ final class TDSControllerTests: BaseTestCase {
         // given
         var didCallCancellation = false
         sut.cancelHandler = { didCallCancellation = true }
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
 
         // when
         sut.cancelled()
@@ -151,7 +175,7 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_timedout() throws {
         // given
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
         var receivedTimeoutError = false
 
         sut.completionHandler = { result in
@@ -172,7 +196,7 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_protocolError() throws {
         // given
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
         let protocolError = ProtocolErrorEvent.fake()
         var receivedError: Error?
         sut.completionHandler = { result in
@@ -196,7 +220,7 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_runtimeError() throws {
         // given
-        try setupStartAppBasedFlow()
+        setupAndStartAppBasedFlow()
         var receivedError: Error?
         sut.completionHandler = { result in
             switch result {
@@ -222,19 +246,16 @@ final class TDSControllerTests: BaseTestCase {
 
 extension TDSControllerTests {
 
-    @discardableResult
-    func setupStartAppBasedFlow() throws -> AuthenticationRequestParameters {
+    func setupAndStartAppBasedFlow(completion: ((Result<ThreeDSDeviceInfo, Error>) -> Void)? = nil) {
         // given
         transactionMock.getAuthenticationRequestParametersReturnValue = .fake()
-        transactionMock.getProgressViewReturnValue = .fake()
-
+        transactionMock.getProgressViewReturnValue = ProgressDialogMock()
+        tdsCertsManagerMock.checkAndUpdateCertsIfNeededCompletionClosureInput = .success("matchingDirectoryServerID")
         // when
-        let authParams = try sut.startAppBasedFlow(
-            directoryServerID: .doesntMatter,
-            messageVersion: .doesntMatter
+        sut.startAppBasedFlow(
+            check3dsPayload: .fake(version: .appBased),
+            completion: completion ?? { _ in }
         )
-
-        return authParams
     }
 }
 

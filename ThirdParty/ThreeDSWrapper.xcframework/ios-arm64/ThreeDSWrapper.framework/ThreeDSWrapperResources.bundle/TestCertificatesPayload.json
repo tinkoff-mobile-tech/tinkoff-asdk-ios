@@ -16,6 +16,23 @@
             "algorithm": "rsa",
             "sha256Fingerprint": "F3:74:47:BA:46:08:EC:CC:4C:23:2D:7D:29:52:9A:25:C2:3E:A4:40:53:1C:8D:91:C9:9F:3E:3F:11:4E:DD:33",
             "notAfterDate": "2031-11-23 07:45:42Z"
+        },
+        {
+            "directoryServerID": "A000000333",
+            "type": "dsPublicKey",
+            "filename": "TestUPPublicKey",
+            "fileExtension": "cer",
+            "algorithm": "rsa",
+            "sha256Fingerprint": "34:5E:8B:3E:9E:DC:71:2E:1D:7E:2D:E4:40:69:DB:38:B4:37:CA:CE:B7:F8:C0:F0:E8:1F:49:65:A2:E2:EC:62",
+            "notAfterDate": "2023-11-10 7:43:30Z"
+        },
+        {   "directoryServerID": "A000000333",
+            "type": "dsRootCA",
+            "filename": "TestUPRootCA",
+            "fileExtension": "cer",
+            "algorithm": "rsa",
+            "sha256Fingerprint": "6A:51:FE:FC:85:47:0C:07:C1:EE:A3:C8:5D:2C:6A:EA:E4:65:CE:F7:F5:33:39:2F:B0:F1:5B:B7:E5:DC:1A:01",
+            "notAfterDate": "2043-03-08 03:38:32Z"
         }
     ]
 }

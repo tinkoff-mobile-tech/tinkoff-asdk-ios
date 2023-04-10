@@ -81,16 +81,37 @@ public final class AcquiringUISDK {
             threeDSWebViewAssembly: threeDSWebViewAssembly
         )
 
+        let tdsWrapperBuilder = TDSWrapperBuilder(
+            env: configuration.serverEnvironment,
+            language: configuration.language
+        )
+
+        let tdsCertsManager = TDSCertsManager(
+            acquiringSdk: coreSDK,
+            tdsWrapper: tdsWrapperBuilder.build()
+        )
+
+        let appBasedFlowAssembly = TDSControllerAssembly(
+            sdkConfiguration: configuration,
+            coreSDK: coreSDK,
+            tdsWrapperBuilder: tdsWrapperBuilder,
+            tdsCertsManager: tdsCertsManager,
+            threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider()
+        )
+
         paymentControllerAssembly = PaymentControllerAssembly(
             coreSDK: coreSDK,
             threeDSWebFlowAssembly: threeDSWebFlowAssembly,
+            appBasedFlowControllerAssembly: appBasedFlowAssembly,
             sdkConfiguration: configuration,
-            uiSDKConfiguration: uiSDKConfiguration
+            uiSDKConfiguration: uiSDKConfiguration,
+            tdsCertsManager: tdsCertsManager
         )
 
         addCardControllerAssembly = AddCardControllerAssembly(
             coreSDK: coreSDK,
             webFlowControllerAssembly: threeDSWebFlowAssembly,
+            appBasedFlowControllerAssembly: appBasedFlowAssembly,
             configuration: uiSDKConfiguration
         )
 
