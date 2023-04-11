@@ -3,6 +3,16 @@
     {
       "filename" : "payment-system-mir-visa.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "payment-system-visa.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
