@@ -93,6 +93,7 @@ extension EmailView {
         textField.delegate = self
 
         textField.setHeader(text: Loc.Acquiring.EmailField.title)
+        textField.set(contentType: .emailAddress)
         textField.set(keyboardType: .emailAddress)
     }
 

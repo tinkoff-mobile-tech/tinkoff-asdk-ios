@@ -172,21 +172,6 @@ func setupView(with factory: IYandexPayButtonContainerFactory) {
 
 ```swift
 extension MyViewController: YandexPayButtonContainerDelegate {
-    func yandexPayButtonContainer(
-         _ container: IYandexPayButtonContainer,
-         didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
-    ) {
-        // значения этих параметров должны совпадать с данными в `OrderOptions`
-        let order = YandexPayPaymentSheet.Order(
-            orderId: orderId,
-            amount: amount
-        )
-
-        let paymentSheet = YandexPayPaymentSheet(order: order)
-        
-        // Может быть вызван синхронно или асинхронно из любого потока
-         completion(paymentSheet)
-    }
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,

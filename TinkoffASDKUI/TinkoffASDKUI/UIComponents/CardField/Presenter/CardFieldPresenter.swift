@@ -161,8 +161,6 @@ extension CardFieldPresenter {
     private func didFillCvc(text: String, filled: Bool) {
         cvc = text
         validate()
-
-        if filled { view?.deactivate() }
     }
 
     @discardableResult

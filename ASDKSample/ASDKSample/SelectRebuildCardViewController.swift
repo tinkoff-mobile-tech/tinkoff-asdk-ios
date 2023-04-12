@@ -26,7 +26,6 @@ class SelectRebuildCardViewController: UITableViewController {
     var onSelectCard: ((PaymentCard) -> Void)?
     var cards: [PaymentCard] = []
 
-    private lazy var cardRequisitesBrandInfo: CardRequisitesBrandInfoProtocol = CardRequisitesBrandInfo()
     private lazy var buttonClose = UIBarButtonItem(
         barButtonSystemItem: .cancel,
         target: self,
@@ -63,31 +62,17 @@ class SelectRebuildCardViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if
-            let cell = tableView.dequeueReusableCell(withIdentifier: "RebuildCardTableViewCell")
-            as? RebuildCardTableViewCell {
-            let card = cards[indexPath.row]
+        let cell = tableView.dequeue(RebuildCardTableViewCell.self)
+        let card = cards[indexPath.row]
 
-            cell.labelCardName.text = card.pan
-            cell.labelCardExpData.text = card.expDateFormat()
-            if let rebuildId = card.parentPaymentId {
-                cell.labelRebuid.text = "(\(Loc.Text.parentPayment) \(rebuildId))"
-            }
-
-            cardRequisitesBrandInfo.cardBrandInfo(numbers: card.pan, completion: { [weak cell] requisites, icon, _ in
-                if let numbers = requisites, card.pan.hasPrefix(numbers) {
-                    cell?.imageViewLogo.image = icon
-                    cell?.imageViewLogo.isHidden = false
-                } else {
-                    cell?.imageViewLogo.image = nil
-                    cell?.imageViewLogo.isHidden = true
-                }
-            })
-
-            return cell
+        cell.labelCardName.text = card.pan
+        cell.labelCardExpData.text = card.expDateFormat()
+        if let rebuildId = card.parentPaymentId {
+            cell.labelRebuid.text = "(\(Loc.Text.parentPayment) \(rebuildId))"
         }
 
-        return tableView.defaultCell()
+        cell.imageViewLogo.image = cardBrandImage(for: card.pan)
+        return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -97,5 +82,50 @@ class SelectRebuildCardViewController: UITableViewController {
         dismiss(animated: true) {
             //
         }
+    }
+}
+
+// MARK: Card recognizer
+
+private extension SelectRebuildCardViewController {
+    private enum CardType {
+        case mastercard
+        case visa
+        case mir
+        case maestro
+        case unrecognized
+    }
+
+    private func cardBrandImage(for cardNumber: String) -> UIImage? {
+        let paymentSystem = paymentSystemType(for: cardNumber)
+
+        switch paymentSystem {
+        case .mastercard: return Asset.CardRequisites.mcLogo.image
+        case .visa: return Asset.CardRequisites.visaLogo.image
+        case .mir: return Asset.CardRequisites.mirLogo.image
+        case .maestro: return Asset.CardRequisites.maestroLogo.image
+        case .unrecognized: return nil
+        }
+    }
+
+    private func paymentSystemType(for cardNumber: String) -> CardType {
+        let prefix = String(cardNumber.prefix(1))
+
+        switch prefix {
+        case "6": return .maestro
+        case "5": return .mastercard
+        case "4": return .visa
+        case "2": return isMir(cardNumber) ? .mir : .mastercard
+        default: return .unrecognized
+        }
+    }
+
+    private func isMir(_ cardNumber: String) -> Bool {
+        guard let regЕxp = try? NSRegularExpression(pattern: "220[0-4]", options: .caseInsensitive) else { return false }
+
+        let prefix = String(cardNumber.prefix(4))
+        let range = NSRange(location: 0, length: prefix.count)
+        let matches = regЕxp.matches(in: prefix, options: [], range: range)
+        return matches.count == 1
     }
 }

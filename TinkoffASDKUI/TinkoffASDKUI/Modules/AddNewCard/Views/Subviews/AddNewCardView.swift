@@ -233,7 +233,7 @@ extension AddNewCardView {
     struct Constants {
         struct CollectionView {
             static var horizontalInsets: UIEdgeInsets { UIEdgeInsets(horizontal: 16) }
-            static var topInset: CGFloat { 20 }
+            static var topInset: CGFloat { 16 }
         }
 
         struct AddButton {}

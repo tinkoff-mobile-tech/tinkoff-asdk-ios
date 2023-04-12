@@ -22,7 +22,6 @@ import TinkoffASDKUI
 import TinkoffASDKYandexPay
 import UIKit
 
-// swiftlint:disable file_length
 class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
@@ -554,22 +553,6 @@ extension BuyProductsViewController: UITableViewDelegate {
 // MARK: - IYandexPayButtonContainerDelegate
 
 extension BuyProductsViewController: YandexPayButtonContainerDelegate {
-    func yandexPayButtonContainer(
-        _ container: IYandexPayButtonContainer,
-        didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
-    ) {
-        let paymentData = createPaymentData()
-        self.paymentData = paymentData
-
-        let order = YandexPayPaymentSheet.Order(
-            orderId: paymentData.orderId,
-            amount: paymentData.amount
-        )
-
-        let paymentSheet = YandexPayPaymentSheet(order: order)
-
-        completion(paymentSheet)
-    }
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,

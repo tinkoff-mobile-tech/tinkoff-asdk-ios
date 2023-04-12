@@ -128,10 +128,6 @@ extension SavedCardViewPresenter {
         self.cvcInputText = cvcInputText
         updateCVCFieldValidationState()
 
-        if isValid {
-            view?.deactivateCVCField()
-        }
-
         output?.savedCardPresenter(self, didUpdateCVC: cvcInputText, isValid: isValid)
     }
 

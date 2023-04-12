@@ -106,7 +106,7 @@
 "Acquiring.CardField.PanTitle" = "Номер";
 "Acquiring.CardField.TermTitle" = "Срок";
 "Acquiring.CardField.TermPlaceholder" = "07/30";
-"Acquiring.CardField.CVVTitle" = "Код";
+"Acquiring.CardField.CVVTitle" = "CVC";
 "Acquiring.CardField.CVVPlaceholder" = "123";
 
 // Common
@@ -171,6 +171,8 @@
 "CommonSheet.PaymentFailed.Title" = "Ошибка при оплате";
 "CommonSheet.PaymentFailed.Description" = "Попробуйте другой способ оплаты";
 "CommonSheet.PaymentFailed.PrimaryButton" = "Выбрать другой способ";
+"CommonSheet.FailedPayment.Title" = "Не получилось оплатить";
+"CommonSheet.FailedPayment.PrimaryButton" = "Понятно";
 "CommonSheet.PaymentForm.ToPayTitle" = "К оплате";
 "CommonSheet.PaymentForm.ByCardTitle" = "Картой";
 "CommonSheet.PaymentForm.ByCardPrimaryButton" = "Оплатить картой";
@@ -189,8 +191,6 @@
 "CommonSheet.TinkoffPay.Paid.PrimaryButton" = "Понятно";
 "CommonSheet.TinkoffPay.TimedOut.Title" = "Время оплаты истекло";
 "CommonSheet.TinkoffPay.TimedOut.PrimaryButton" = "Понятно";
-"CommonSheet.TinkoffPay.FailedPayment.Title" = "Не получилось оплатить";
-"CommonSheet.TinkoffPay.FailedPayment.PrimaryButton" = "Понятно";
 
 // YandexSheet
 "YandexSheet.Failed.Title" = "Не получилось оплатить";

@@ -3,6 +3,16 @@
     {
       "filename" : "payment-system-mir-plain.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "payment-system-mir-monochrome.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

@@ -114,6 +114,10 @@ extension FloatingTextField {
         textField.rightViewMode = rightViewMode
     }
 
+    func set(contentType: UITextContentType) {
+        textField.textContentType = contentType
+    }
+
     func set(keyboardType: UIKeyboardType) {
         textField.keyboardType = keyboardType
     }

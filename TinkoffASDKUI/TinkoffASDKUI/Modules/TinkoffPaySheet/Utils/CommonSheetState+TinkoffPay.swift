@@ -51,15 +51,15 @@ extension CommonSheetState.TinkoffPay {
     static var failedPaymentOnIndependentFlow: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: Loc.CommonSheet.TinkoffPay.FailedPayment.title,
-            primaryButtonTitle: Loc.CommonSheet.TinkoffPay.FailedPayment.primaryButton
+            title: Loc.CommonSheet.FailedPayment.title,
+            primaryButtonTitle: Loc.CommonSheet.FailedPayment.primaryButton
         )
     }
 
     static var failedPaymentOnMainFormFlow: CommonSheetState {
         CommonSheetState(
             status: .failed,
-            title: Loc.CommonSheet.TinkoffPay.FailedPayment.title,
+            title: Loc.CommonSheet.FailedPayment.title,
             primaryButtonTitle: Loc.CommonSheet.PaymentForm.TinkoffPay.FailedPayment.primaryButton
         )
     }
