@@ -53,6 +53,30 @@ public struct AgentData: Codable, Equatable {
     /// - обязателен если `AgentSign` = `bankPayingSubagent`
     var operatorInn: String?
 
+    // MARK: Init
+
+    public init(
+        agentSign: AgentSign,
+        operationName: String? = nil,
+        phones: [String]? = nil,
+        receiverPhones: [String]? = nil,
+        transferPhones: [String]? = nil,
+        operatorName: String? = nil,
+        operatorAddress: String? = nil,
+        operatorInn: String? = nil
+    ) {
+        self.agentSign = agentSign
+        self.operationName = operationName
+        self.phones = phones
+        self.receiverPhones = receiverPhones
+        self.transferPhones = transferPhones
+        self.operatorName = operatorName
+        self.operatorAddress = operatorAddress
+        self.operatorInn = operatorInn
+    }
+
+    // MARK: Init from decoder
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let agent = try? container.decode(String.self, forKey: .agentSign) {
