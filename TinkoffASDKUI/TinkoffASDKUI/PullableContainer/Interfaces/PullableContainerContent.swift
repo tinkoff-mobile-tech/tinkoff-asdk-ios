@@ -20,24 +20,13 @@
 import UIKit
 
 protocol PullableContainerContent: AnyObject {
-    var view: UIView! { get }
-    var scrollView: UIScrollView? { get }
-
-    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerViewController) -> Int
-
-    func pullableContainer(
-        _ container: PullableContainerViewController,
-        didRequestHeightForAnchorAt index: Int,
-        availableSpace: CGFloat
-    ) -> CGFloat
-
-    func pullabeContainer(
-        _ container: PullableContainerViewController,
-        canReachAnchorAt index: Int
-    ) -> Bool
-
-    var pullableContainerContentHeight: CGFloat { get }
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)? { get set }
+    func pullableContainerDidRequestContentView(_ contentDelegate: PullableContainerСontentDelegate) -> UIView
+    func pullableContainerDidRequestScrollView(_ contentDelegate: PullableContainerСontentDelegate) -> UIScrollView?
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int)
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didRequestHeightForAnchorAt index: Int, availableSpace: CGFloat) -> CGFloat
+    func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool
     func pullableContainerWillBeClosed()
     func pullableContainerWasClosed()
     func pullableContainerShouldDismissOnDownDragging() -> Bool
@@ -47,28 +36,15 @@ protocol PullableContainerContent: AnyObject {
 // MARK: - PullableContainerContent + Default Implementation
 
 extension PullableContainerContent {
-    var scrollView: UIScrollView? { nil }
+    func pullableContainerDidRequestScrollView(_ contentDelegate: PullableContainerСontentDelegate) -> UIScrollView? { nil }
     func pullableContainerWillBeClosed() {}
     func pullableContainerWasClosed() {}
     func pullableContainerShouldDismissOnDownDragging() -> Bool { true }
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool { true }
+    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerСontentDelegate) -> Int { 1 }
+    func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool { true }
+}
 
-    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerViewController) -> Int {
-        1
-    }
-
-    func pullableContainer(
-        _ container: PullableContainerViewController,
-        didRequestHeightForAnchorAt index: Int,
-        availableSpace: CGFloat
-    ) -> CGFloat {
-        pullableContainerContentHeight
-    }
-
-    func pullabeContainer(
-        _ container: PullableContainerViewController,
-        canReachAnchorAt index: Int
-    ) -> Bool {
-        true
-    }
+extension PullableContainerContent where Self: UIViewController {
+    func pullableContainerDidRequestContentView(_ contentDelegate: PullableContainerСontentDelegate) -> UIView { view }
 }

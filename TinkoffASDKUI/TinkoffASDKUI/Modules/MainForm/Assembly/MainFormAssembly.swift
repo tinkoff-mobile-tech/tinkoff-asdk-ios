@@ -93,6 +93,8 @@ final class MainFormAssembly: IMainFormAssembly {
         tinkoffPayController.delegate = presenter
 
         let pullableContainerViewController = PullableContainerViewController(content: view)
+        view.pullableContentDelegate = pullableContainerViewController
+
         return pullableContainerViewController
     }
 }

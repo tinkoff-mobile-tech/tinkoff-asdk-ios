@@ -9,22 +9,9 @@ import UIKit
 import WebKit
 
 final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentViewInput, PullableContainerContent {
-
     // MARK: PullableContainer Properties
 
-    var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
-
-    var pullableContainerContentHeight: CGFloat {
-        if commonSheetView.isHidden {
-            let tableViewHeight = tableView.contentSize.height
-            let bottomSafeArea = UIWindow.globalSafeAreaInsets.bottom
-            let heightWithKeyboard = tableViewHeight + keyboardHeight - bottomSafeArea
-            return keyboardVisible ? heightWithKeyboard : tableViewHeight
-        } else {
-            return commonSheetView.estimatedHeight
-        }
-    }
+    weak var pullableContainer: PullableContainerСontentDelegate?
 
     // MARK: Dependencies
 
@@ -82,12 +69,12 @@ extension RecurrentPaymentViewController {
     func showCommonSheet(state: CommonSheetState) {
         commonSheetView.update(state: state, animated: false)
         commonSheetView.isHidden = false
-        pullableContainerContentHeightDidChange?(self)
+//        pullableContainerContentHeightDidChange?(self)
     }
 
     func hideCommonSheet() {
         commonSheetView.isHidden = true
-        pullableContainerContentHeightDidChange?(self)
+//        pullableContainerContentHeightDidChange?(self)
     }
 
     func hideKeyboard() {
@@ -131,6 +118,16 @@ extension RecurrentPaymentViewController: UITableViewDataSource {
 // MARK: - PullableContainerContent Methods
 
 extension RecurrentPaymentViewController {
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+        .zero
+    }
+
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
+
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didRequestHeightForAnchorAt index: Int, availableSpace: CGFloat) -> CGFloat {
+        .zero
+    }
+
     func pullableContainerWasClosed() {
         presenter.viewWasClosed()
     }
@@ -186,7 +183,7 @@ extension RecurrentPaymentViewController {
     private func setupTableContentSizeObservation() {
         tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
             guard let self = self, change.oldValue != change.newValue else { return }
-            self.pullableContainerContentHeightDidChange?(self)
+//            self.pullableContainerContentHeightDidChange?(self)
         }
     }
 
@@ -195,7 +192,7 @@ extension RecurrentPaymentViewController {
             guard let self = self else { return }
             self.keyboardHeight = keyboardHeight
             self.tableView.contentInset.bottom = keyboardHeight
-            self.pullableContainerContentHeightDidChange?(self)
+//            self.pullableContainerContentHeightDidChange?(self)
         }
     }
 }

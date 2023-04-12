@@ -8,16 +8,9 @@
 import UIKit
 
 final class CommonSheetViewController: UIViewController, PullableContainerContent {
-    // MARK: PullableContainerContent Properties
-
-    var pullableContainerContentHeight: CGFloat {
-        commonSheetView.estimatedHeight
-    }
-
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
-
     // MARK: Dependencies
 
+    weak var pullableContainer: PullableContainerСontentDelegate?
     private let presenter: ICommonSheetPresenter
 
     // MARK: UI
@@ -64,7 +57,7 @@ extension CommonSheetViewController: ICommonSheetView {
 
 extension CommonSheetViewController: CommonSheetViewDelegate {
     func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
-        pullableContainerContentHeightDidChange?(self)
+        pullableContainer?.updateHeight(animated: true)
     }
 
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
@@ -79,6 +72,12 @@ extension CommonSheetViewController: CommonSheetViewDelegate {
 // MARK: - PullableContainerContent
 
 extension CommonSheetViewController {
+    func pullableContainerDidRequestCurrentAnchorIndex(_ pullableContainer: PullableContainerСontentDelegate) -> Int {
+        .zero
+    }
+
+    func pullableContainer(_ pullableContainer: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
+
     func pullableContainerWasClosed() {
         presenter.viewWasClosed()
     }
@@ -89,5 +88,13 @@ extension CommonSheetViewController {
 
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool {
         presenter.canDismissViewByUserInteraction()
+    }
+
+    func pullableContainer(
+        _ container: PullableContainerСontentDelegate,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        commonSheetView.estimatedHeight
     }
 }

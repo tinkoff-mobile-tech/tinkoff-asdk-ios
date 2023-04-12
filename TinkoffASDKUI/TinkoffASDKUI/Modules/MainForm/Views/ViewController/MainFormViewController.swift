@@ -11,19 +11,15 @@ import WebKit
 final class MainFormViewController: UIViewController, PullableContainerContent {
     // MARK: Internal Types
 
-    enum Anchor: CaseIterable {
+    enum Anchor: Int, CaseIterable {
         case contentBased
         case medium
         case maximum
     }
 
-    // MARK: PullableContainer Properties
-
-    var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
-
     // MARK: Dependencies
 
+    weak var pullableContentDelegate: PullableContainerСontentDelegate?
     private let presenter: IMainFormPresenter
     private let keyboardService = KeyboardService()
 
@@ -32,12 +28,12 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
     private lazy var commonSheetView = CommonSheetView(delegate: self)
-    private lazy var hiddenWebView = WKWebView()
+    private lazy var hiddenWebView = WKWebView(frame: view.bounds)
 
-    // MARK: State
+    // MARK: Anchors
 
-    private var tableViewContentSizeObservation: NSKeyValueObservation?
-    private var keyboardVisible = false
+    private let anchors = Anchor.allCases
+    private var currentAnchor: Anchor = .contentBased
 
     // MARK: Init
 
@@ -57,8 +53,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         super.viewDidLoad()
         setupViewsHierarchy()
         setupTableView()
-        setupTableContentSizeObservation()
-        setupKeyboardObserving()
         presenter.viewDidLoad()
     }
 
@@ -96,22 +90,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             AvatarTableViewCell.self
         )
     }
-
-    private func setupTableContentSizeObservation() {
-        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
-            guard let self = self, change.oldValue != change.newValue else { return }
-            self.pullableContainerContentHeightDidChange?(self)
-        }
-    }
-
-    private func setupKeyboardObserving() {
-        keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
-            guard let self = self else { return }
-            self.keyboardVisible = keyboardHeight > 0
-            self.tableView.contentInset.bottom = keyboardHeight
-            self.pullableContainerContentHeightDidChange?(self)
-        }
-    }
 }
 
 // MARK: - IMainFormViewController
@@ -120,12 +98,14 @@ extension MainFormViewController: IMainFormViewController {
     func showCommonSheet(state: CommonSheetState) {
         commonSheetView.update(state: state, animated: false)
         commonSheetView.isHidden = false
-        pullableContainerContentHeightDidChange?(self)
+        currentAnchor = .contentBased
+        pullableContentDelegate?.updateHeight(animated: true)
     }
 
     func hideCommonSheet() {
         commonSheetView.isHidden = true
-        pullableContainerContentHeightDidChange?(self)
+        currentAnchor = .medium
+        pullableContentDelegate?.updateHeight(animated: true)
     }
 
     func reloadData() {
@@ -154,10 +134,6 @@ extension MainFormViewController: IMainFormViewController {
 // MARK: - CommonSheetViewDelegate
 
 extension MainFormViewController: CommonSheetViewDelegate {
-    var pullableContainerContentHeight: CGFloat {
-        commonSheetView.estimatedHeight
-    }
-
     func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
 
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
@@ -172,20 +148,28 @@ extension MainFormViewController: CommonSheetViewDelegate {
 // MARK: - PullableContainerContent Methods
 
 extension MainFormViewController {
-    func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerViewController) -> Int {
-        Anchor.allCases.count
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+        currentAnchor.rawValue
     }
 
-    func pullabeContainer(_ container: PullableContainerViewController, canReachAnchorAt index: Int) -> Bool {
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
+        currentAnchor = anchors[currentAnchorIndex]
+    }
+
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+        anchors.count
+    }
+
+    func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool {
         true
     }
 
     func pullableContainer(
-        _ container: PullableContainerViewController,
+        _ contentDelegate: PullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {
-        switch Anchor.allCases[index] {
+        switch anchors[index] {
         case .contentBased:
             return commonSheetView.estimatedHeight
         case .medium:
@@ -197,10 +181,6 @@ extension MainFormViewController {
 
     func pullableContainerWasClosed() {
         presenter.viewWasClosed()
-    }
-
-    func pullableContainerShouldDismissOnDownDragging() -> Bool {
-        false
     }
 }
 

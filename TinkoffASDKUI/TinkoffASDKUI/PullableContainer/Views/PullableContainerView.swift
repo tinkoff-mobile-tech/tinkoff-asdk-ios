@@ -22,21 +22,29 @@ import UIKit
 final class PullableContainerView: PassthroughView {
     // MARK: Subviews
 
-    let headerView = PullableContainerHeader()
-    let dragView = UIView()
-    let containerView = UIView()
-    let contentView: UIView
+    private(set) lazy var dragView: UIView = {
+        let dragView = UIView()
+        dragView.backgroundColor = ASDKColors.Background.elevation1.color
+        dragView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        dragView.layer.cornerRadius = .cornerRadius
+        dragView.layer.masksToBounds = true
+        return dragView
+    }()
+
+    private(set) lazy var headerView: UIView = {
+        let headerView = PullableContainerHeader()
+        headerView.isUserInteractionEnabled = false
+        return headerView
+    }()
 
     // MARK: Constraints
 
-    private(set) var containerViewHeightConstraint: NSLayoutConstraint!
-    private(set) var dragViewHeightConstraint: NSLayoutConstraint!
+    private(set) lazy var dragViewHeightConstraint = dragView.heightAnchor.constraint(equalToConstant: .zero)
 
     // MARK: Init
 
-    init(contentView: UIView) {
-        self.contentView = contentView
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
     }
 
@@ -44,63 +52,41 @@ final class PullableContainerView: PassthroughView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
 
-// MARK: - Setting Up
+    // MARK: PullableContainerView
 
-private extension PullableContainerView {
-    func setup() {
+    func add(contentView: UIView) {
+        dragView.addSubview(contentView)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: dragView.bottomAnchor),
+        ])
+    }
+
+    // MARK: Setting Up
+
+    private func setup() {
         addSubview(dragView)
         dragView.addSubview(headerView)
-        dragView.addSubview(containerView)
 
-        setupHeaderView()
-        setupDragView()
-        setupContentView()
-        setupConstraints()
-    }
-
-    func setupHeaderView() {
-        headerView.isUserInteractionEnabled = false
-    }
-
-    func setupDragView() {
-        dragView.backgroundColor = ASDKColors.Background.elevation1.color
-        dragView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        dragView.layer.cornerRadius = .cornerRadius
-        dragView.layer.masksToBounds = true
-    }
-
-    func setupContentView() {
-        containerView.addSubview(contentView)
-    }
-
-    func setupConstraints() {
         dragView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.translatesAutoresizingMaskIntoConstraints = false
         headerView.translatesAutoresizingMaskIntoConstraints = false
-
-        dragViewHeightConstraint = dragView.heightAnchor.constraint(equalToConstant: 0)
-        containerViewHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
 
         NSLayoutConstraint.activate([
             dragView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dragView.leftAnchor.constraint(equalTo: leftAnchor),
-            dragView.rightAnchor.constraint(equalTo: rightAnchor),
+            dragView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            dragView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dragViewHeightConstraint,
 
             headerView.topAnchor.constraint(equalTo: dragView.topAnchor),
-            headerView.leftAnchor.constraint(equalTo: dragView.leftAnchor),
-            headerView.rightAnchor.constraint(equalTo: dragView.rightAnchor),
+            headerView.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
             headerView.heightAnchor.constraint(equalToConstant: .topViewHeight),
-
-            containerView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-            containerView.leftAnchor.constraint(equalTo: dragView.leftAnchor),
-            containerView.rightAnchor.constraint(equalTo: dragView.rightAnchor),
-            containerViewHeightConstraint,
         ])
-
-        contentView.pinEdgesToSuperview()
     }
 }
 

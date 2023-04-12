@@ -8,6 +8,17 @@
 import UIKit
 
 final class SBPQrViewController: UIViewController, ISBPQrViewInput, PullableContainerContent {
+    func pullableContainerDidRequestCurrentAnchorIndex(_ pullableContainer: PullableContainerСontentDelegate) -> Int {
+        .zero
+    }
+
+    func pullableContainer(_ pullableContainer: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
+
+    weak var pullableContainer: PullableContainerСontentDelegate?
+
+    func pullableContainer(_ container: PullableContainerСontentDelegate, didRequestHeightForAnchorAt index: Int, availableSpace: CGFloat) -> CGFloat {
+        .zero
+    }
 
     // MARK: PullableContainer Properties
 

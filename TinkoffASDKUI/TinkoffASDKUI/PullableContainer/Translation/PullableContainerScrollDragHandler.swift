@@ -20,17 +20,17 @@
 import UIKit
 
 final class PullableContainerScrollDragHandler: NSObject, PullableContainerDragHandler {
-    private weak var dragController: PullableContainerDragController?
+    private weak var heightConstraintController: PullableContainerHeightConstraintController?
     private let scrollView: UIScrollView
 
     private var isMoving = false
     private var translatingBeginOffset: CGFloat = 0
 
     init(
-        dragController: PullableContainerDragController?,
+        heightConstraintController: PullableContainerHeightConstraintController?,
         scrollView: UIScrollView
     ) {
-        self.dragController = dragController
+        self.heightConstraintController = heightConstraintController
         self.scrollView = scrollView
         super.init()
         setup()
@@ -70,19 +70,19 @@ private extension PullableContainerScrollDragHandler {
                     translatingBeginOffset = yTranslation
                 }
                 let movingOffset = yTranslation - translatingBeginOffset
-                dragController?.didDragWith(offset: movingOffset)
+                heightConstraintController?.didDragWith(offset: movingOffset)
                 scrollView.contentOffset = .zero
             } else {
                 if isMoving {
                     scrollView.setContentOffset(.zero, animated: false)
                     let movingOffset = yTranslation - translatingBeginOffset
-                    dragController?.didDragWith(offset: movingOffset)
+                    heightConstraintController?.didDragWith(offset: movingOffset)
                     isMoving = !(movingOffset < 0)
                 }
             }
         case .cancelled, .ended:
             if isMoving {
-                dragController?.didEndDragging(offset: yTranslation, velocity: yVelocity)
+                heightConstraintController?.didEndDragging(offset: yTranslation, velocity: yVelocity)
             }
         default:
             break
