@@ -53,7 +53,7 @@ public struct AgentData: Codable, Equatable {
     /// - обязателен если `AgentSign` = `bankPayingSubagent`
     var operatorInn: String?
 
-    // MARK: - Init
+    // MARK: Init
 
     public init(
         agentSign: AgentSign,
@@ -75,7 +75,7 @@ public struct AgentData: Codable, Equatable {
         self.operatorInn = operatorInn
     }
 
-    // MARK: - Init from decoder
+    // MARK: Init from decoder
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

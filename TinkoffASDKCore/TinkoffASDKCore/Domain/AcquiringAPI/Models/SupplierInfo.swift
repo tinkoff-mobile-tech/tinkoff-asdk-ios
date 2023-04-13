@@ -24,7 +24,7 @@ public struct SupplierInfo: Codable, Equatable {
     /// ИНН поставщика. Строка длиной от 10 до 12 символов.
     var inn: String?
 
-    // MARK: - Init
+    // MARK: Init
 
     public init(
         phones: [String]? = nil,
@@ -36,7 +36,7 @@ public struct SupplierInfo: Codable, Equatable {
         self.inn = inn
     }
 
-    // MARK: - Init from decoder
+    // MARK: Init from decoder
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
