@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [EACQAPW-4510] Added public inits for `AgentData` и `SupplierInfo`
+
 ## [2.18.2] - 2023-03-28Z
 
 * [MIC-8065] Update for Russian Certificates
