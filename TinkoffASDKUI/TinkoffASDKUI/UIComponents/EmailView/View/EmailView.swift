@@ -94,7 +94,7 @@ extension EmailView {
 
         textField.setHeader(text: Loc.Acquiring.EmailField.title)
         textField.set(contentType: .emailAddress)
-        textField.set(keyboardType: .emailAddress)
+//        textField.set(keyboardType: .emailAddress)
     }
 
     private func setupViewsConstraints() {

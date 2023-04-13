@@ -142,20 +142,20 @@ extension CardFieldView {
 
         cardNumberTextField.delegate = cardNumberDelegate
         cardNumberTextField.setHeader(text: Loc.Acquiring.CardField.panTitle)
-        cardNumberTextField.set(contentType: .creditCardNumber)
+        cardNumberTextField.set(contentType: .username)
         cardNumberTextField.set(keyboardType: .numberPad)
 
         expireTextField.delegate = expirationDelegate
         expireTextField.setHeader(text: Loc.Acquiring.CardField.termTitle)
         expireTextField.set(placeholder: Loc.Acquiring.CardField.termPlaceholder)
-        expireTextField.set(contentType: .creditCardNumber)
-        expireTextField.set(keyboardType: .numberPad)
+        expireTextField.set(contentType: .username)
+        expireTextField.set(keyboardType: .asciiCapableNumberPad)
 
         cvcTextField.delegate = cvcDelegate
         cvcTextField.setHeader(text: Loc.Acquiring.CardField.cvvTitle)
         cvcTextField.set(placeholder: Loc.Acquiring.CardField.cvvPlaceholder)
         cvcTextField.set(contentType: .creditCardNumber)
-        cvcTextField.set(keyboardType: .numberPad)
+        cvcTextField.set(keyboardType: .asciiCapableNumberPad)
         cvcTextField.set(isSecureTextEntry: true)
     }
 

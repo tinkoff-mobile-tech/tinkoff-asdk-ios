@@ -135,7 +135,7 @@ final class SavedCardView: UIView {
         cvcField.delegate = maskingDelegate
         cvcField.set(placeholder: .cvcFieldPlaceholder)
         cvcField.set(clearButtonMode: .never)
-        cvcField.set(contentType: .creditCardNumber)
+        cvcField.set(contentType: .familyName)
         cvcField.set(keyboardType: .numberPad)
         cvcField.set(isSecureTextEntry: true)
         cvcField.setHeader(text: .cvcFieldHeader)
