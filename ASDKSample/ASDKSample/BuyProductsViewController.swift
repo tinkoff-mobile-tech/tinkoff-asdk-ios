@@ -66,7 +66,6 @@ class BuyProductsViewController: UIViewController {
     private var fullPaymentFlowYandexPayButton: IYandexPayButtonContainer?
     private var finishPaymentFlowYandexPayButton: IYandexPayButtonContainer?
 
-    private var paymentData: PaymentInitData?
     private var tableViewCells: [TableViewCellType] = [
         .products,
         .pay,
@@ -320,7 +319,7 @@ extension BuyProductsViewController: ICardScannerDelegate {
 
 extension BuyProductsViewController: IRecurrentPaymentFailiureDelegate {
     func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void) {
-        guard var initData = paymentData else { return }
+        var initData = createPaymentData()
 
         let newPaymentData = initData.paymentFormData?.merging(additionalData) { $1 }
         initData.paymentFormData = newPaymentData
@@ -558,7 +557,7 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
         _ container: IYandexPayButtonContainer,
         didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
     ) {
-        guard let initData = paymentData else { return }
+        let initData = createPaymentData()
 
         switch container {
         case fullPaymentFlowYandexPayButton as UIView?:
