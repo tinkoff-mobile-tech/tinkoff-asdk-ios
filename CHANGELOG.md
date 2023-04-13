@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [2.19.0] - 2023-04-13Z
+
 ### Added
 
 * [EACQAPW-4510] Added public inits for `AgentData` и `SupplierInfo`
