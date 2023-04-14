@@ -130,8 +130,8 @@ final class PullableContainerViewController: UIViewController {
 
     private func calculateMaximumContentHeight() -> CGFloat {
         view.bounds.height
-            - view.safeAreaInsets.top
-            - view.safeAreaInsets.bottom
+            - view.safeAreaInsets.vertical
+            - .additionalInset(for: view.safeAreaInsets)
             - containerView.headerView.bounds.height
     }
 }
@@ -225,5 +225,16 @@ extension PullableContainerViewController: DimmingPresentationControllerDelegate
 
     func dimmingPresentationControllerShouldDismissOnDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController) -> Bool {
         content.pullableContainerShouldDismissOnDimmingViewTap()
+    }
+}
+
+// MARK: - Helpers
+
+private extension CGFloat {
+    /// Определяет дополнительный отступ для шторки на основе нижнего safe area
+    ///
+    /// По значению `safeAreaInsets.bottom > 0` определяем, что у данного устройства есть челка. В такой ситуации отступ должен быть меньше
+    static func additionalInset(for safeAreaInsets: UIEdgeInsets) -> CGFloat {
+        safeAreaInsets.bottom > 0 ? 10 : 20
     }
 }

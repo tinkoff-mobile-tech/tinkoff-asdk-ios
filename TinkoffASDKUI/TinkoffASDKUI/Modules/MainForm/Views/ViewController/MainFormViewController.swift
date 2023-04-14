@@ -8,13 +8,17 @@
 import UIKit
 import WebKit
 
-final class MainFormViewController: UIViewController, PullableContainerContent {
+final class MainFormViewController: UIViewController {
     // MARK: Internal Types
 
-    enum Anchor: Int, CaseIterable {
+    private enum Anchor: CaseIterable {
         case contentBased
-        case medium
         case maximum
+    }
+
+    private enum PresentationState {
+        case commonSheet
+        case tableView
     }
 
     // MARK: Dependencies
@@ -30,10 +34,15 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     private lazy var commonSheetView = CommonSheetView(delegate: self)
     private lazy var hiddenWebView = WKWebView(frame: view.bounds)
 
-    // MARK: Anchors
+    // MARK: State
 
     private let anchors = Anchor.allCases
     private var currentAnchor: Anchor = .contentBased
+    private var presentationState: PresentationState = .commonSheet
+
+    // MARK: Observations
+
+    private var tableViewContentSizeObservation: NSKeyValueObservation?
 
     // MARK: Init
 
@@ -53,15 +62,17 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         super.viewDidLoad()
         setupViewsHierarchy()
         setupTableView()
+        setupTableContentSizeObservation()
+        setupKeyboardObserving()
         presenter.viewDidLoad()
     }
 
     // MARK: Initial Configuration
 
     private func setupViewsHierarchy() {
-        view.addSubview(hiddenWebView)
-        hiddenWebView.pinEdgesToSuperview()
-        hiddenWebView.isHidden = true
+//        view.addSubview(hiddenWebView)
+//        hiddenWebView.pinEdgesToSuperview()
+//        hiddenWebView.isHidden = true
 
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
@@ -79,6 +90,7 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: view.safeAreaInsets.bottom, right: .zero)
 
         tableView.register(
             MainFormOrderDetailsTableCell.self,
@@ -90,6 +102,30 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
             AvatarTableViewCell.self
         )
     }
+
+    private func setupTableContentSizeObservation() {
+        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
+            guard let self = self,
+                  change.oldValue != change.newValue,
+                  self.presentationState == .tableView else { return }
+
+            self.pullableContentDelegate?.updateHeight(animated: true)
+        }
+    }
+
+    private func setupKeyboardObserving() {
+        keyboardService.onHeightDidChangeBlock = { [weak self] _, _ in
+            guard let self = self, self.currentAnchor != .maximum else { return }
+            self.currentAnchor = .maximum
+            self.pullableContentDelegate?.updateHeight(animated: true)
+        }
+    }
+
+    private func updateCurrentAnchorIfNeeded(_ currentAnchor: Anchor) {
+        guard self.currentAnchor != currentAnchor else { return }
+        self.currentAnchor = currentAnchor
+        pullableContentDelegate?.updateHeight(animated: true)
+    }
 }
 
 // MARK: - IMainFormViewController
@@ -98,13 +134,15 @@ extension MainFormViewController: IMainFormViewController {
     func showCommonSheet(state: CommonSheetState) {
         commonSheetView.update(state: state, animated: false)
         commonSheetView.isHidden = false
+        presentationState = .commonSheet
         currentAnchor = .contentBased
         pullableContentDelegate?.updateHeight(animated: true)
     }
 
     func hideCommonSheet() {
         commonSheetView.isHidden = true
-        currentAnchor = .medium
+        currentAnchor = .contentBased
+        presentationState = .tableView
         pullableContentDelegate?.updateHeight(animated: true)
     }
 
@@ -116,14 +154,16 @@ extension MainFormViewController: IMainFormViewController {
         tableView.beginUpdates()
         tableView.insertRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
-
-        navigationItem.largeTitleDisplayMode = .always
     }
 
     func deleteRows(at indexPaths: [IndexPath]) {
         tableView.beginUpdates()
         tableView.deleteRows(at: indexPaths, with: .fade)
         tableView.endUpdates()
+    }
+
+    func hideKeyboard() {
+        view.endEditing(true)
     }
 
     func closeView() {
@@ -145,11 +185,11 @@ extension MainFormViewController: CommonSheetViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent Methods
+// MARK: - PullableContainerContent
 
-extension MainFormViewController {
+extension MainFormViewController: PullableContainerContent {
     func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
-        currentAnchor.rawValue
+        anchors.firstIndex(of: currentAnchor) ?? .zero
     }
 
     func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
@@ -161,7 +201,12 @@ extension MainFormViewController {
     }
 
     func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool {
-        true
+        switch presentationState {
+        case .commonSheet:
+            return false
+        case .tableView:
+            return true
+        }
     }
 
     func pullableContainer(
@@ -169,12 +214,13 @@ extension MainFormViewController {
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {
-        switch anchors[index] {
-        case .contentBased:
+        switch (anchors[index], presentationState) {
+        case (.contentBased, .tableView):
+            let mediumHeight = availableSpace * .mediumHeightCoefficient
+            return presenter.containsDynamicElements() ? mediumHeight : min(tableView.contentSize.height, mediumHeight)
+        case (.contentBased, .commonSheet):
             return commonSheetView.estimatedHeight
-        case .medium:
-            return availableSpace * 3 / 5
-        case .maximum:
+        case (.maximum, _):
             return availableSpace
         }
     }
@@ -267,4 +313,18 @@ private extension UIEdgeInsets {
 
 private extension CGRect {
     static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
+}
+
+private extension CGFloat {
+    static let mediumHeightCoefficient: CGFloat = 4 / 6
+}
+
+// MARK: IMainFormPresenter + Helpers
+
+private extension IMainFormPresenter {
+    func containsDynamicElements() -> Bool {
+        (0 ..< numberOfRows())
+            .map { cellType(at: IndexPath(row: $0, section: .zero)) }
+            .contains { $0.isGetReceiptSwitch }
+    }
 }
