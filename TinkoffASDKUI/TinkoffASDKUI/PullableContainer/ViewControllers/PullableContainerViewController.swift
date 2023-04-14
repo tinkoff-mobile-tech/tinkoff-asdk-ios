@@ -134,6 +134,18 @@ final class PullableContainerViewController: UIViewController {
             - .additionalInset(for: view.safeAreaInsets)
             - containerView.headerView.bounds.height
     }
+
+    private func animate(changes: @escaping VoidBlock, completion: VoidBlock? = nil) {
+        UIView.animate(
+            withDuration: 0.4,
+            delay: 0,
+            usingSpringWithDamping: 2,
+            initialSpringVelocity: 0,
+            options: .curveEaseInOut,
+            animations: changes,
+            completion: { _ in completion?() }
+        )
+    }
 }
 
 // MARK: - PullableContainerСontentDelegate
@@ -143,16 +155,7 @@ extension PullableContainerViewController: PullableContainerСontentDelegate {
         printFunction()
         dragHandlers.forEach { $0.cancel() }
         heightConstraintController.updateHeight()
-
-        UIView.animate(
-            withDuration: 0.5,
-            delay: 0,
-            usingSpringWithDamping: 0.8,
-            initialSpringVelocity: 2,
-            options: .curveEaseInOut
-        ) {
-            self.containerView.layoutIfNeeded()
-        }
+        animate(changes: containerView.layoutIfNeeded, completion: completion)
     }
 }
 
@@ -184,15 +187,7 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
     }
 
     func heightConstraintControllerDidEndDragging(_ controller: PullableContainerHeightConstraintController) {
-        UIView.animate(
-            withDuration: 0.5,
-            delay: 0,
-            usingSpringWithDamping: 0.8,
-            initialSpringVelocity: 2,
-            options: .curveEaseInOut
-        ) {
-            self.containerView.layoutIfNeeded()
-        }
+        animate(changes: containerView.layoutIfNeeded)
     }
 
     func heightConstraintControllerDidCloseContainer(_ controller: PullableContainerHeightConstraintController) {
