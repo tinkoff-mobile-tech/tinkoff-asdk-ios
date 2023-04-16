@@ -88,7 +88,7 @@ final class PullableContainerViewController: UIViewController {
             cachedViewHeight = view.bounds.height
             containerView.layoutIfNeeded()
             heightConstraintController.insets.top = containerView.headerView.bounds.height
-            updateHeight(animated: false)
+            updateHeight()
         }
     }
 
@@ -151,11 +151,18 @@ final class PullableContainerViewController: UIViewController {
 // MARK: - PullableContainerСontentDelegate
 
 extension PullableContainerViewController: PullableContainerСontentDelegate {
-    func updateHeight(animated: Bool, completion: VoidBlock?) {
+    func updateHeight(alongsideAnimation: VoidBlock?, completion: VoidBlock?) {
         printFunction()
         dragHandlers.forEach { $0.cancel() }
-        heightConstraintController.updateHeight()
-        animate(changes: containerView.layoutIfNeeded, completion: completion)
+
+        animate(
+            changes: {
+                alongsideAnimation?()
+                self.heightConstraintController.updateHeight()
+                self.containerView.layoutIfNeeded()
+            },
+            completion: completion
+        )
     }
 }
 

@@ -13,7 +13,7 @@ final class MainFormViewController: UIViewController {
 
     private enum Anchor: CaseIterable {
         case contentBased
-        case maximum
+        case expanded
     }
 
     private enum PresentationState {
@@ -70,9 +70,9 @@ final class MainFormViewController: UIViewController {
     // MARK: Initial Configuration
 
     private func setupViewsHierarchy() {
-//        view.addSubview(hiddenWebView)
-//        hiddenWebView.pinEdgesToSuperview()
-//        hiddenWebView.isHidden = true
+        view.addSubview(hiddenWebView)
+        hiddenWebView.pinEdgesToSuperview()
+        hiddenWebView.isHidden = true
 
         view.addSubview(tableView)
         tableView.pinEdgesToSuperview()
@@ -109,22 +109,16 @@ final class MainFormViewController: UIViewController {
                   change.oldValue != change.newValue,
                   self.presentationState == .tableView else { return }
 
-            self.pullableContentDelegate?.updateHeight(animated: true)
+            self.pullableContentDelegate?.updateHeight()
         }
     }
 
     private func setupKeyboardObserving() {
         keyboardService.onHeightDidChangeBlock = { [weak self] _, _ in
-            guard let self = self, self.currentAnchor != .maximum else { return }
-            self.currentAnchor = .maximum
-            self.pullableContentDelegate?.updateHeight(animated: true)
+            guard let self = self, self.currentAnchor != .expanded else { return }
+            self.currentAnchor = .expanded
+            self.pullableContentDelegate?.updateHeight()
         }
-    }
-
-    private func updateCurrentAnchorIfNeeded(_ currentAnchor: Anchor) {
-        guard self.currentAnchor != currentAnchor else { return }
-        self.currentAnchor = currentAnchor
-        pullableContentDelegate?.updateHeight(animated: true)
     }
 }
 
@@ -132,18 +126,30 @@ final class MainFormViewController: UIViewController {
 
 extension MainFormViewController: IMainFormViewController {
     func showCommonSheet(state: CommonSheetState) {
-        commonSheetView.update(state: state, animated: false)
-        commonSheetView.isHidden = false
         presentationState = .commonSheet
         currentAnchor = .contentBased
-        pullableContentDelegate?.updateHeight(animated: true)
+
+        commonSheetView.showOverlay(animated: true) {
+            self.commonSheetView.set(state: state)
+
+            self.pullableContentDelegate?.updateHeight(
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
+            )
+        }
     }
 
     func hideCommonSheet() {
-        commonSheetView.isHidden = true
         currentAnchor = .contentBased
         presentationState = .tableView
-        pullableContentDelegate?.updateHeight(animated: true)
+        tableView.setContentOffset(.zero, animated: false)
+
+        commonSheetView.showOverlay(animated: true) {
+            self.commonSheetView.set(state: .clear)
+
+            self.pullableContentDelegate?.updateHeight(
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
+            )
+        }
     }
 
     func reloadData() {
@@ -174,8 +180,6 @@ extension MainFormViewController: IMainFormViewController {
 // MARK: - CommonSheetViewDelegate
 
 extension MainFormViewController: CommonSheetViewDelegate {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
-
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }
@@ -220,7 +224,7 @@ extension MainFormViewController: PullableContainerContent {
             return presenter.containsDynamicElements() ? mediumHeight : min(tableView.contentSize.height, mediumHeight)
         case (.contentBased, .commonSheet):
             return commonSheetView.estimatedHeight
-        case (.maximum, _):
+        case (.expanded, _):
             return availableSpace
         }
     }
@@ -316,7 +320,7 @@ private extension CGRect {
 }
 
 private extension CGFloat {
-    static let mediumHeightCoefficient: CGFloat = 4 / 6
+    static let mediumHeightCoefficient: CGFloat = 7 / 10
 }
 
 // MARK: IMainFormPresenter + Helpers

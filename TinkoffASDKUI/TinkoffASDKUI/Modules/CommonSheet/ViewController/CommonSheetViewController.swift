@@ -57,7 +57,7 @@ extension CommonSheetViewController: ICommonSheetView {
 
 extension CommonSheetViewController: CommonSheetViewDelegate {
     func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
-        pullableContainer?.updateHeight(animated: true)
+        pullableContainer?.updateHeight()
     }
 
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {

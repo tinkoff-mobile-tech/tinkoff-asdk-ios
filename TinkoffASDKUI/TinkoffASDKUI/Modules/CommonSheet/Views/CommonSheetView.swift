@@ -8,12 +8,11 @@
 import UIKit
 
 protocol CommonSheetViewDelegate: AnyObject {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState)
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView)
     func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView)
 }
 
-final class CommonSheetView: UIView {
+final class CommonSheetView: PassthroughView {
     weak var delegate: CommonSheetViewDelegate?
 
     // MARK: Subviews
@@ -67,6 +66,12 @@ final class CommonSheetView: UIView {
         }
     )
 
+    private lazy var backgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = ASDKColors.Background.elevation1.color
+        return view
+    }()
+
     private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -118,35 +123,77 @@ final class CommonSheetView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         overlayView.frame = bounds
+        backgroundView.frame = bounds
     }
 
-    // MARK: CommonSheetView Updating
+    // MARK: CommonSheetView
 
-    func update(state: CommonSheetState, animated: Bool = true) {
+    func set(state: CommonSheetState) {
+        updateViews(with: state)
+        layoutIfNeeded()
+    }
+
+    func update(state: CommonSheetState, animated: Bool = true, completion: VoidBlock? = nil) {
         let stateUpdates = { [self] in
             updateViews(with: state)
             layoutIfNeeded()
-            delegate?.commonSheetView(self, didUpdateWithState: state)
+            completion?()
         }
 
         guard animated else { return stateUpdates() }
 
-        showOverlay { [self] _ in
+        showOverlay { [self] in
             stateUpdates()
             hideOverlay()
         }
     }
 
+    func showOverlay(animated: Bool = true, completion: VoidBlock? = nil) {
+        let animations = { self.overlayView.alpha = 1 }
+
+        guard animated else {
+            animations()
+            completion?()
+            return
+        }
+
+        UIView.animate(
+            withDuration: .animationDuration,
+            delay: .zero,
+            options: [.curveEaseIn],
+            animations: animations,
+            completion: { _ in completion?() }
+        )
+    }
+
+    func hideOverlay(animated: Bool = true, completion: VoidBlock? = nil) {
+        let animations = { self.overlayView.alpha = .zero }
+
+        guard animated else {
+            animations()
+            completion?()
+            return
+        }
+
+        UIView.animate(
+            withDuration: .animationDuration,
+            delay: .zero,
+            options: [.curveEaseOut],
+            animations: animations,
+            completion: { _ in completion?() }
+        )
+    }
+
     // MARK: Initial Configuration
 
     private func setupView() {
-        backgroundColor = ASDKColors.Background.elevation1.color
-
         setupLayout()
         updateViews(with: CommonSheetState(status: .processing))
     }
 
     private func setupLayout() {
+        addSubview(backgroundView)
+
         contentStack.addArrangedSubviews([iconView, activityIndicator, labelsStack, buttonsStack])
         labelsStack.addArrangedSubviews([titleLabel, descriptionLabel])
         buttonsStack.addArrangedSubviews([primaryButton, secondaryButton])
@@ -171,6 +218,8 @@ final class CommonSheetView: UIView {
         updateLabels(with: state)
         updateButtons(with: state)
         updateContentLayout(with: state)
+        updateContentStack(with: state)
+        updateBackground(with: state)
     }
 
     private func updateStatusViews(with state: CommonSheetState) {
@@ -185,6 +234,9 @@ final class CommonSheetView: UIView {
         case .failed:
             iconView.image = Asset.Illustrations.crossCircle.image
             iconView.isHidden = false
+            activityIndicator.isHidden = true
+        case .none:
+            iconView.isHidden = true
             activityIndicator.isHidden = true
         }
     }
@@ -205,6 +257,14 @@ final class CommonSheetView: UIView {
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
     }
 
+    private func updateBackground(with state: CommonSheetState) {
+        backgroundView.isHidden = state == .clear
+    }
+
+    private func updateContentStack(with state: CommonSheetState) {
+        contentStack.isHidden = state == .clear
+    }
+
     private func updateContentLayout(with state: CommonSheetState) {
         let hasContentAfterStatusViews = [
             state.title,
@@ -220,28 +280,6 @@ final class CommonSheetView: UIView {
 
         contentTopConstraint.constant = hasContentAfterStatusViews ? .defaultContentVerticalInset : .emptyContentTopInset
         contentBottomConstraint.constant = hasContentAfterStatusViews ? -.defaultContentVerticalInset : -.emptyContentBottomInset
-    }
-
-    // MARK: Overlay Animation
-
-    private func showOverlay(completion: ((Bool) -> Void)? = nil) {
-        UIView.animate(
-            withDuration: .animationDuration,
-            delay: .zero,
-            options: [.curveEaseIn],
-            animations: { self.overlayView.alpha = 1 },
-            completion: completion
-        )
-    }
-
-    private func hideOverlay(completion: ((Bool) -> Void)? = nil) {
-        UIView.animate(
-            withDuration: .animationDuration,
-            delay: .zero,
-            options: [.curveEaseOut],
-            animations: { self.overlayView.alpha = .zero },
-            completion: completion
-        )
     }
 }
 
