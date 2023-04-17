@@ -197,6 +197,10 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
     func heightConstraintControllerShouldDismissOnDownDragging(_ controller: PullableContainerHeightConstraintController) -> Bool {
         content.pullableContainerShouldDismissOnDownDragging()
     }
+
+    func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didDragWithOffset offset: CGFloat) {
+        content.pullableContainer(self, didDragWithOffset: offset)
+    }
 }
 
 // MARK: - DimmingPresentationControllerDelegate

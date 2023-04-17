@@ -31,6 +31,7 @@ protocol PullableContainerContent: AnyObject {
     func pullableContainerWasClosed()
     func pullableContainerShouldDismissOnDownDragging() -> Bool
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat)
 }
 
 // MARK: - PullableContainerContent + Default Implementation
@@ -43,6 +44,7 @@ extension PullableContainerContent {
     func pullableContainerShouldDismissOnDimmingViewTap() -> Bool { true }
     func pullableContainerDidRequestNumberOfAnchors(_ container: PullableContainerСontentDelegate) -> Int { 1 }
     func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool { true }
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {}
 }
 
 extension PullableContainerContent where Self: UIViewController {

@@ -233,6 +233,10 @@ extension MainFormViewController: PullableContainerContent {
         }
     }
 
+    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
+        hideKeyboard()
+    }
+
     func pullableContainerWasClosed() {
         presenter.viewWasClosed()
     }
