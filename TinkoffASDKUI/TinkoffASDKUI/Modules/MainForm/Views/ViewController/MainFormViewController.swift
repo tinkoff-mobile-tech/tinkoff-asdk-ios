@@ -125,32 +125,30 @@ final class MainFormViewController: UIViewController {
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func showCommonSheet(state: CommonSheetState, updatingContainerHeight: Bool) {
+    func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         presentationState = .commonSheet
         currentAnchor = .contentBased
 
         commonSheetView.showOverlay(animated: true) {
             self.commonSheetView.set(state: state)
 
-            if updatingContainerHeight {
-                self.pullableContentDelegate?.updateHeight(
-                    alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
-                )
-            } else {
-                self.commonSheetView.hideOverlay(animated: true)
-            }
+            self.pullableContentDelegate?.updateHeight(
+                animated: animatePullableContainerUpdates,
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: !animatePullableContainerUpdates) }
+            )
         }
     }
 
     func hideCommonSheet() {
-        currentAnchor = .contentBased
         presentationState = .tableView
+        currentAnchor = .contentBased
         tableView.setContentOffset(.zero, animated: false)
 
         commonSheetView.showOverlay(animated: true) {
             self.commonSheetView.set(state: .clear)
 
             self.pullableContentDelegate?.updateHeight(
+                animated: true,
                 alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
             )
         }
@@ -201,6 +199,7 @@ extension MainFormViewController: PullableContainerContent {
     }
 
     func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
+        print("DEBUG: \(#function)")
         currentAnchor = anchors[currentAnchorIndex]
     }
 

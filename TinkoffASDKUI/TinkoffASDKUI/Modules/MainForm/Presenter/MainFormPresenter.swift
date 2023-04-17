@@ -78,7 +78,7 @@ final class MainFormPresenter {
 
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
-        view?.showCommonSheet(state: .processing, updatingContainerHeight: false)
+        view?.showCommonSheet(state: .processing, animatePullableContainerUpdates: false)
 
         dataStateLoader.loadState(for: paymentFlow) { [weak self] result in
             guard let self = self else { return }

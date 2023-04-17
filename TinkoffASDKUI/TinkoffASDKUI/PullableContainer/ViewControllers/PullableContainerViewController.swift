@@ -121,8 +121,20 @@ final class PullableContainerViewController: UIViewController {
 // MARK: - PullableContainerСontentDelegate
 
 extension PullableContainerViewController: PullableContainerСontentDelegate {
-    func updateHeight(alongsideAnimation: VoidBlock?, completion: VoidBlock?) {
+    func updateHeight(animated: Bool, alongsideAnimation: VoidBlock?, completion: VoidBlock?) {
         dragHandlers.forEach { $0.cancel() }
+
+        let updates = { [self] in
+            alongsideAnimation?()
+            self.heightConstraintController.updateHeight()
+            self.containerView.layoutIfNeeded()
+        }
+
+        guard animated else {
+            updates()
+            completion?()
+            return
+        }
 
         UIView.animate(
             withDuration: 0.4,
@@ -130,11 +142,7 @@ extension PullableContainerViewController: PullableContainerСontentDelegate {
             usingSpringWithDamping: 1,
             initialSpringVelocity: .zero,
             options: .curveEaseInOut,
-            animations: {
-                alongsideAnimation?()
-                self.heightConstraintController.updateHeight()
-                self.containerView.layoutIfNeeded()
-            },
+            animations: updates,
             completion: { _ in completion?() }
         )
     }
