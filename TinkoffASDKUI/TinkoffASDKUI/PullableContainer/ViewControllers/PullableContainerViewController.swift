@@ -235,7 +235,8 @@ extension PullableContainerViewController: DimmingPresentationControllerDelegate
 private extension CGFloat {
     /// Определяет дополнительный отступ для шторки на основе нижнего safe area
     ///
-    /// По значению `safeAreaInsets.bottom > 0` определяем, что у данного устройства есть челка. В такой ситуации отступ должен быть меньше
+    /// По значению `safeAreaInsets.bottom > 0` определяем, что у данного устройства есть челка. В такой ситуации отступ должен быть меньше.
+    /// Значения отступов подобраны для соответствия максимальной высоты шторки и высоты нативного модального экрана
     static func additionalInset(for safeAreaInsets: UIEdgeInsets) -> CGFloat {
         safeAreaInsets.bottom > 0 ? 10 : 20
     }

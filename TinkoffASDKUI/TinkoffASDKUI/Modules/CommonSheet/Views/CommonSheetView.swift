@@ -24,13 +24,7 @@ final class CommonSheetView: PassthroughView {
         return view
     }()
 
-    private lazy var activityIndicator = ActivityIndicatorView(style: .xlYellow)
-
-    private lazy var iconView: UIImageView = {
-        let iconView = UIImageView()
-        iconView.contentMode = .scaleAspectFit
-        return iconView
-    }()
+    private lazy var statusView = CommonSheetStatusView()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -194,7 +188,7 @@ final class CommonSheetView: PassthroughView {
     private func setupLayout() {
         addSubview(backgroundView)
 
-        contentStack.addArrangedSubviews([iconView, activityIndicator, labelsStack, buttonsStack])
+        contentStack.addArrangedSubviews([statusView, labelsStack, buttonsStack])
         labelsStack.addArrangedSubviews([titleLabel, descriptionLabel])
         buttonsStack.addArrangedSubviews([primaryButton, secondaryButton])
 
@@ -224,20 +218,11 @@ final class CommonSheetView: PassthroughView {
 
     private func updateStatusViews(with state: CommonSheetState) {
         switch state.status {
-        case .processing:
-            activityIndicator.isHidden = false
-            iconView.isHidden = true
-        case .succeeded:
-            iconView.image = Asset.Illustrations.checkCirclePositive.image
-            iconView.isHidden = false
-            activityIndicator.isHidden = true
-        case .failed:
-            iconView.image = Asset.Illustrations.crossCircle.image
-            iconView.isHidden = false
-            activityIndicator.isHidden = true
+        case let .some(status):
+            statusView.set(status: status)
+            statusView.isHidden = false
         case .none:
-            iconView.isHidden = true
-            activityIndicator.isHidden = true
+            statusView.isHidden = true
         }
     }
 
@@ -275,8 +260,7 @@ final class CommonSheetView: PassthroughView {
 
         let statusBottomSpacing: CGFloat = hasContentAfterStatusViews ? .statusBottomSpacing : .zero
 
-        contentStack.setCustomSpacing(statusBottomSpacing, after: iconView)
-        contentStack.setCustomSpacing(statusBottomSpacing, after: activityIndicator)
+        contentStack.setCustomSpacing(statusBottomSpacing, after: statusView)
 
         contentTopConstraint.constant = hasContentAfterStatusViews ? .defaultContentVerticalInset : .emptyContentTopInset
         contentBottomConstraint.constant = hasContentAfterStatusViews ? -.defaultContentVerticalInset : -.emptyContentBottomInset
