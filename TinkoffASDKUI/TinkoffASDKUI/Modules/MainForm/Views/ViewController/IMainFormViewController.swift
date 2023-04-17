@@ -8,7 +8,7 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
-    func showCommonSheet(state: CommonSheetState)
+    func showCommonSheet(state: CommonSheetState, updatingContainerHeight: Bool)
     func hideCommonSheet()
     func reloadData()
     func insertRows(at indexPaths: [IndexPath])
@@ -19,6 +19,10 @@ protocol IMainFormViewController: AnyObject {
 // MARK: - IMainFormViewController + Helpers
 
 extension IMainFormViewController {
+    func showCommonSheet(state: CommonSheetState) {
+        showCommonSheet(state: state, updatingContainerHeight: true)
+    }
+
     func insertRow(at indexPath: IndexPath) {
         insertRows(at: [indexPath])
     }

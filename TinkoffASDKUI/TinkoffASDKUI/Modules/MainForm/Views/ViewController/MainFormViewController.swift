@@ -125,16 +125,20 @@ final class MainFormViewController: UIViewController {
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func showCommonSheet(state: CommonSheetState) {
+    func showCommonSheet(state: CommonSheetState, updatingContainerHeight: Bool) {
         presentationState = .commonSheet
         currentAnchor = .contentBased
 
         commonSheetView.showOverlay(animated: true) {
             self.commonSheetView.set(state: state)
 
-            self.pullableContentDelegate?.updateHeight(
-                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
-            )
+            if updatingContainerHeight {
+                self.pullableContentDelegate?.updateHeight(
+                    alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
+                )
+            } else {
+                self.commonSheetView.hideOverlay(animated: true)
+            }
         }
     }
 
@@ -329,6 +333,6 @@ private extension IMainFormPresenter {
     func containsDynamicElements() -> Bool {
         (0 ..< numberOfRows())
             .map { cellType(at: IndexPath(row: $0, section: .zero)) }
-            .contains { $0.isGetReceiptSwitch }
+            .contains { $0.isGetReceiptSwitch || $0.isEmail }
     }
 }
