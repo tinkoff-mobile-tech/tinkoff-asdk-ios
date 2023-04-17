@@ -190,6 +190,7 @@ extension CardPaymentViewController {
         )
 
         tableView.dataSource = self
+        tableView.delaysContentTouches = false
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = .commonCellHeight
