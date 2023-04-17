@@ -83,6 +83,10 @@ extension CardPaymentPresenter {
         }
     }
 
+    func viewDidAppear() {
+        cardFieldPresenter.activate(textFieldType: .cardNumber)
+    }
+
     func closeButtonPressed() {
         router.closeScreen()
     }
