@@ -143,6 +143,8 @@ extension SavedCardViewPresenter {
     }
 
     func savedCardViewIsSelected() {
+        view?.deactivateCVCField()
+
         switch presentationState {
         case let .selected(card, showChangeDescription) where showChangeDescription:
             output?.savedCardPresenter(self, didRequestReplacementFor: card)

@@ -13,6 +13,7 @@ protocol IMainFormViewController: AnyObject {
     func reloadData()
     func insertRows(at indexPaths: [IndexPath])
     func deleteRows(at indexPaths: [IndexPath])
+    func hideKeyboard()
     func closeView()
 }
 

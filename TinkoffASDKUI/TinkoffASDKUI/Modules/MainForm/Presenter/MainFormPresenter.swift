@@ -114,6 +114,7 @@ extension MainFormPresenter: IMainFormPresenter {
     func didSelectRow(at indexPath: IndexPath) {
         switch cellType(at: indexPath) {
         case let .otherPaymentMethod(paymentMethod):
+            view?.hideKeyboard()
             startPayment(paymentMethod: paymentMethod)
         default:
             break
@@ -199,6 +200,8 @@ extension MainFormPresenter {
 
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
+        view?.hideKeyboard()
+
         switch dataState.primaryPaymentMethod {
         case .card where savedCardPresenter.presentationState.isSelected:
             startPaymentWithSavedCard()
