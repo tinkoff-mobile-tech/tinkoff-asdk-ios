@@ -90,7 +90,6 @@ final class MainFormViewController: UIViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: view.safeAreaInsets.bottom, right: .zero)
 
         tableView.register(
             MainFormOrderDetailsTableCell.self,

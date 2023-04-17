@@ -10,7 +10,7 @@ import UIKit
 final class CommonSheetViewController: UIViewController, PullableContainerContent {
     // MARK: Dependencies
 
-    weak var pullableContainer: PullableContainerСontentDelegate?
+    weak var pullableContentDelegate: PullableContainerСontentDelegate?
     private let presenter: ICommonSheetPresenter
 
     // MARK: UI
@@ -44,8 +44,15 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 // MARK: - ICommonSheetView
 
 extension CommonSheetViewController: ICommonSheetView {
-    func update(state: CommonSheetState) {
-        commonSheetView.update(state: state)
+    func update(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
+        commonSheetView.showOverlay(animated: true) {
+            self.pullableContentDelegate?.updateHeight(
+                animated: animatePullableContainerUpdates,
+                alongsideAnimation: {
+                    self.commonSheetView.hideOverlay(animated: !animatePullableContainerUpdates)
+                }
+            )
+        }
     }
 
     func close() {
@@ -57,7 +64,7 @@ extension CommonSheetViewController: ICommonSheetView {
 
 extension CommonSheetViewController: CommonSheetViewDelegate {
     func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
-        pullableContainer?.updateHeight()
+        pullableContentDelegate?.updateHeight()
     }
 
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
@@ -72,21 +79,15 @@ extension CommonSheetViewController: CommonSheetViewDelegate {
 // MARK: - PullableContainerContent
 
 extension CommonSheetViewController {
-    func pullableContainerDidRequestCurrentAnchorIndex(_ pullableContainer: PullableContainerСontentDelegate) -> Int {
-        .zero
-    }
-
-    func pullableContainer(_ pullableContainer: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
-
-    func pullableContainerWasClosed() {
+    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 
-    func pullableContainerShouldDismissOnDownDragging() -> Bool {
+    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: PullableContainerСontentDelegate) -> Bool {
         presenter.canDismissViewByUserInteraction()
     }
 
-    func pullableContainerShouldDismissOnDimmingViewTap() -> Bool {
+    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: PullableContainerСontentDelegate) -> Bool {
         presenter.canDismissViewByUserInteraction()
     }
 

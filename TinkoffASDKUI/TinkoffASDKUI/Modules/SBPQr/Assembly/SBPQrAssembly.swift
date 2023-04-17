@@ -52,7 +52,9 @@ extension SBPQrAssembly {
         let view = SBPQrViewController(presenter: presenter)
         presenter.view = view
 
-        let pullableContainerViewController = PullableContainerViewController(content: view)
-        return pullableContainerViewController
+        let container = PullableContainerViewController(content: view)
+        view.pullableContentDelegate = container
+
+        return container
     }
 }

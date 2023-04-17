@@ -7,30 +7,17 @@
 
 import UIKit
 
-final class SBPQrViewController: UIViewController, ISBPQrViewInput, PullableContainerContent {
-    func pullableContainerDidRequestCurrentAnchorIndex(_ pullableContainer: PullableContainerСontentDelegate) -> Int {
-        .zero
-    }
+final class SBPQrViewController: UIViewController, ISBPQrViewInput {
+    // MARK: Internal Types
 
-    func pullableContainer(_ pullableContainer: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
-
-    weak var pullableContainer: PullableContainerСontentDelegate?
-
-    func pullableContainer(_ container: PullableContainerСontentDelegate, didRequestHeightForAnchorAt index: Int, availableSpace: CGFloat) -> CGFloat {
-        .zero
-    }
-
-    // MARK: PullableContainer Properties
-
-    var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
-
-    var pullableContainerContentHeight: CGFloat {
-        commonSheetView.isHidden ? tableView.contentSize.height : commonSheetView.estimatedHeight
+    private enum PresentationState {
+        case commonSheet
+        case tableView
     }
 
     // MARK: Dependencies
 
+    weak var pullableContentDelegate: PullableContainerСontentDelegate?
     private let presenter: ISBPQrViewOutput
 
     // MARK: Properties
@@ -41,6 +28,7 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput, PullableCont
     // MARK: State
 
     private var tableViewContentSizeObservation: NSKeyValueObservation?
+    private var presentationState: PresentationState = .commonSheet
 
     // MARK: Initialization
 
@@ -61,7 +49,6 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput, PullableCont
         setupViewsHierarchy()
         setupTableView()
         setupTableContentSizeObservation()
-
         presenter.viewDidLoad()
     }
 }
@@ -69,15 +56,30 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput, PullableCont
 // MARK: - ISBPQrViewInput
 
 extension SBPQrViewController {
-    func showCommonSheet(state: CommonSheetState) {
-        commonSheetView.update(state: state, animated: false)
-        commonSheetView.isHidden = false
-        pullableContainerContentHeightDidChange?(self)
+    func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
+        presentationState = .commonSheet
+
+        commonSheetView.showOverlay {
+            self.commonSheetView.set(state: state)
+
+            self.pullableContentDelegate?.updateHeight(
+                animated: animatePullableContainerUpdates,
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: !animatePullableContainerUpdates) }
+            )
+        }
     }
 
     func hideCommonSheet() {
-        commonSheetView.isHidden = true
-        pullableContainerContentHeightDidChange?(self)
+        presentationState = .tableView
+
+        commonSheetView.showOverlay {
+            self.commonSheetView.set(state: .clear)
+
+            self.pullableContentDelegate?.updateHeight(
+                animated: true,
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
+            )
+        }
     }
 
     func reloadData() {
@@ -116,8 +118,21 @@ extension SBPQrViewController: UITableViewDataSource {
 
 // MARK: - PullableContainerContent Methods
 
-extension SBPQrViewController {
-    func pullableContainerWasClosed() {
+extension SBPQrViewController: PullableContainerContent {
+    func pullableContainer(
+        _ contentDelegate: PullableContainerСontentDelegate,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        switch presentationState {
+        case .commonSheet:
+            return commonSheetView.estimatedHeight
+        case .tableView:
+            return tableView.contentSize.height
+        }
+    }
+
+    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 }
@@ -150,6 +165,8 @@ extension SBPQrViewController {
     private func setupTableView() {
         tableView.separatorStyle = .none
         tableView.alwaysBounceVertical = false
+        tableView.showsVerticalScrollIndicator = false
+        tableView.delaysContentTouches = false
         tableView.dataSource = self
 
         tableView.register(TextAndImageHeaderTableCell.self, QrImageTableCell.self)
@@ -157,8 +174,11 @@ extension SBPQrViewController {
 
     private func setupTableContentSizeObservation() {
         tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
-            guard let self = self, change.oldValue != change.newValue else { return }
-            self.pullableContainerContentHeightDidChange?(self)
+            guard let self = self,
+                  change.oldValue != change.newValue,
+                  self.presentationState == .tableView else { return }
+
+            self.pullableContentDelegate?.updateHeight()
         }
     }
 }

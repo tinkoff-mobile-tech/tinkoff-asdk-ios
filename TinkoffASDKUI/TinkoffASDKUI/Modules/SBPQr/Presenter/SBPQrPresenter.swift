@@ -53,7 +53,7 @@ final class SBPQrPresenter: ISBPQrViewOutput {
 
 extension SBPQrPresenter {
     func viewDidLoad() {
-        view?.showCommonSheet(state: .processing)
+        view?.showCommonSheet(state: .processing, animatePullableContainerUpdates: false)
         loadQrData()
     }
 

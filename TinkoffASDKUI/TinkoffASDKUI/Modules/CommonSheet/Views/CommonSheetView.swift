@@ -127,21 +127,6 @@ final class CommonSheetView: PassthroughView {
         layoutIfNeeded()
     }
 
-    func update(state: CommonSheetState, animated: Bool = true, completion: VoidBlock? = nil) {
-        let stateUpdates = { [self] in
-            updateViews(with: state)
-            layoutIfNeeded()
-            completion?()
-        }
-
-        guard animated else { return stateUpdates() }
-
-        showOverlay { [self] in
-            stateUpdates()
-            hideOverlay()
-        }
-    }
-
     func showOverlay(animated: Bool = true, completion: VoidBlock? = nil) {
         let animations = { self.overlayView.alpha = 1 }
 
