@@ -140,6 +140,7 @@ final class SavedCardView: UIView {
         cvcField.set(isSecureTextEntry: true)
         cvcField.setHeader(text: .cvcFieldHeader)
         cvcField.setHeader(color: ASDKColors.Text.secondary.color)
+        cvcField.setContainerView(radius: .cvcFieldCornerRadius)
     }
 
     // MARK: Events
@@ -210,6 +211,7 @@ private extension CGFloat {
     static let labelsStackHorizontalInset: CGFloat = 16
     static let cvcFieldTrailingInset: CGFloat = 8
     static let accessoryViewWidth: CGFloat = 83
+    static let cvcFieldCornerRadius: CGFloat = 12
 }
 
 private extension CGSize {
