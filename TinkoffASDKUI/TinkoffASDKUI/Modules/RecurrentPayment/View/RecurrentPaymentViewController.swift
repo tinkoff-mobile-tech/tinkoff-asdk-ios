@@ -68,6 +68,12 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
         presenter.viewDidLoad()
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        presenter.viewDidAppear()
+    }
 }
 
 // MARK: - IRecurrentPaymentViewInput

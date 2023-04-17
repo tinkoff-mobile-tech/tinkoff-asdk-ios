@@ -85,6 +85,7 @@ extension CardPaymentPresenter {
 
     func viewDidAppear() {
         cardFieldPresenter.activate(textFieldType: .cardNumber)
+        savedCardPresenter?.activateCVCField()
     }
 
     func closeButtonPressed() {

@@ -180,6 +180,10 @@ extension SavedCardView: ISavedCardViewInput {
         cvcField.setHeader(color: ASDKColors.Foreground.negativeAccent)
     }
 
+    func activateCVCField() {
+        cvcField.becomeFirstResponder()
+    }
+
     func deactivateCVCField() {
         cvcField.resignFirstResponder()
     }

@@ -9,6 +9,8 @@ import Foundation
 
 protocol IRecurrentPaymentViewOutput {
     func viewDidLoad()
+    func viewDidAppear()
+
     func viewWasClosed()
     func numberOfRows() -> Int
     func cellType(at indexPath: IndexPath) -> RecurrentPaymentCellType
