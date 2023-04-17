@@ -19,10 +19,6 @@
 
 import UIKit
 
-func printFunction(function: String = #function) {
-    print("DEBUG: \(function)")
-}
-
 final class PullableContainerViewController: UIViewController {
     // MARK: UIViewController's Properties
 
@@ -70,19 +66,16 @@ final class PullableContainerViewController: UIViewController {
     // MARK: View Life Cycle
 
     override func loadView() {
-        printFunction()
         view = containerView
     }
 
     override func viewDidLoad() {
-        printFunction()
         super.viewDidLoad()
         setupContent()
         setupDragHandlers()
     }
 
     override func viewDidLayoutSubviews() {
-        printFunction()
         super.viewDidLayoutSubviews()
         if cachedViewHeight != view.bounds.height {
             cachedViewHeight = view.bounds.height
@@ -93,7 +86,6 @@ final class PullableContainerViewController: UIViewController {
     }
 
     override func viewSafeAreaInsetsDidChange() {
-        printFunction()
         super.viewSafeAreaInsetsDidChange()
         heightConstraintController.insets.bottom = view.safeAreaInsets.bottom
     }
@@ -107,7 +99,6 @@ final class PullableContainerViewController: UIViewController {
     }
 
     private func setupDragHandlers() {
-        printFunction()
         let panGesture = UIPanGestureRecognizer()
         containerView.dragView.addGestureRecognizer(panGesture)
 
@@ -125,43 +116,26 @@ final class PullableContainerViewController: UIViewController {
 
         dragHandlers = [panGestureHandler, scrollHandler].compactMap { $0 }
     }
-
-    // MARK: Helpers
-
-    private func calculateMaximumContentHeight() -> CGFloat {
-        view.bounds.height
-            - view.safeAreaInsets.vertical
-            - .additionalInset(for: view.safeAreaInsets)
-            - containerView.headerView.bounds.height
-    }
-
-    private func animate(changes: @escaping VoidBlock, completion: VoidBlock? = nil) {
-        UIView.animate(
-            withDuration: 0.4,
-            delay: 0,
-            usingSpringWithDamping: 2,
-            initialSpringVelocity: 0,
-            options: .curveEaseInOut,
-            animations: changes,
-            completion: { _ in completion?() }
-        )
-    }
 }
 
 // MARK: - PullableContainerСontentDelegate
 
 extension PullableContainerViewController: PullableContainerСontentDelegate {
     func updateHeight(alongsideAnimation: VoidBlock?, completion: VoidBlock?) {
-        printFunction()
         dragHandlers.forEach { $0.cancel() }
 
-        animate(
-            changes: {
+        UIView.animate(
+            withDuration: 0.4,
+            delay: .zero,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: .zero,
+            options: .curveEaseInOut,
+            animations: {
                 alongsideAnimation?()
                 self.heightConstraintController.updateHeight()
                 self.containerView.layoutIfNeeded()
             },
-            completion: completion
+            completion: { _ in completion?() }
         )
     }
 }
@@ -194,7 +168,14 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
     }
 
     func heightConstraintControllerDidEndDragging(_ controller: PullableContainerHeightConstraintController) {
-        animate(changes: containerView.layoutIfNeeded)
+        UIView.animate(
+            withDuration: 0.4,
+            delay: .zero,
+            usingSpringWithDamping: 2,
+            initialSpringVelocity: 0,
+            options: .curveEaseInOut,
+            animations: containerView.layoutIfNeeded
+        )
     }
 
     func heightConstraintControllerDidCloseContainer(_ controller: PullableContainerHeightConstraintController) {
@@ -207,7 +188,10 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
     }
 
     func heightConstraintControllerDidRequestAvailableSpace(_ controller: PullableContainerHeightConstraintController) -> CGFloat {
-        calculateMaximumContentHeight()
+        view.bounds.height
+            - view.safeAreaInsets.vertical
+            - .additionalInset(for: view.safeAreaInsets)
+            - containerView.headerView.bounds.height
     }
 
     func heightConstraintControllerShouldDismissOnDownDragging(_ controller: PullableContainerHeightConstraintController) -> Bool {
@@ -230,7 +214,7 @@ extension PullableContainerViewController: DimmingPresentationControllerDelegate
     }
 }
 
-// MARK: - Helpers
+// MARK: - Constants
 
 private extension CGFloat {
     /// Определяет дополнительный отступ для шторки на основе нижнего safe area
