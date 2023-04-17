@@ -189,9 +189,10 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
     func heightConstraintControllerDidCloseContainer(_ controller: PullableContainerHeightConstraintController) {
         dismiss(animated: true)
 
-        content.pullableContainerWillBeClosed()
+        content.pullableContainerWillBeClosed(self)
         transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
-            self?.content.pullableContainerWasClosed()
+            guard let self = self else { return }
+            self.content.pullableContainerWasClosed(self)
         })
     }
 
@@ -203,7 +204,7 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
     }
 
     func heightConstraintControllerShouldDismissOnDownDragging(_ controller: PullableContainerHeightConstraintController) -> Bool {
-        content.pullableContainerShouldDismissOnDownDragging()
+        content.pullableContainerShouldDismissOnDownDragging(self)
     }
 
     func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didDragWithOffset offset: CGFloat) {
@@ -215,14 +216,15 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
 
 extension PullableContainerViewController: DimmingPresentationControllerDelegate {
     func dimmingPresentationControllerDidDismissByDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController) {
-        content.pullableContainerWillBeClosed()
+        content.pullableContainerWillBeClosed(self)
         transitionCoordinator?.animate(alongsideTransition: nil, completion: { [weak self] _ in
-            self?.content.pullableContainerWasClosed()
+            guard let self = self else { return }
+            self.content.pullableContainerWasClosed(self)
         })
     }
 
     func dimmingPresentationControllerShouldDismissOnDimmingViewTap(_ dimmingPresentationController: DimmingPresentationController) -> Bool {
-        content.pullableContainerShouldDismissOnDimmingViewTap()
+        content.pullableContainerShouldDismissOnDimmingViewTap(self)
     }
 }
 

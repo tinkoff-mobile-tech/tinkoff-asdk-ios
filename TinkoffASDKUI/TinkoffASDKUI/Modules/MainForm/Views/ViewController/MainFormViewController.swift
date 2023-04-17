@@ -194,17 +194,16 @@ extension MainFormViewController: CommonSheetViewDelegate {
 // MARK: - PullableContainerContent
 
 extension MainFormViewController: PullableContainerContent {
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+        anchors.count
+    }
+
     func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
         anchors.firstIndex(of: currentAnchor) ?? .zero
     }
 
     func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
-        print("DEBUG: \(#function)")
         currentAnchor = anchors[currentAnchorIndex]
-    }
-
-    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
-        anchors.count
     }
 
     func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool {
@@ -236,7 +235,7 @@ extension MainFormViewController: PullableContainerContent {
         hideKeyboard()
     }
 
-    func pullableContainerWasClosed() {
+    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 }
