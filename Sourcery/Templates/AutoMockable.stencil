@@ -34,9 +34,16 @@ import {{ import }}
 
 {% macro methodReceivedParameters method %}
         {% if method.parameters.count > 0 %}
+        {% set shortNameOfTheMethod %}{% call swiftifyMethodName method.shortName %}{% endset %}
         let arguments = ({% call methodClosureCallParameters method %})
-        {% call swiftifyMethodName method.shortName %}ReceivedArguments = arguments
-        {% call swiftifyMethodName method.shortName %}ReceivedInvocations.append(arguments)
+        {{ shortNameOfTheMethod }}ReceivedArguments = arguments
+        {{ shortNameOfTheMethod }}ReceivedInvocations.append(arguments)
+        {% for param in method.parameters where param.isClosure %}
+        {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
+        if let {{ closureInput }} = {{ closureInput }} {
+            {{ param.name}}({{ closureInput }})
+        }
+        {% endfor -%}
         {% endif %}
 {% endmacro %}
 {% macro methodClosureName method %}{% call swiftifyMethodName method.shortName %}Clos2213ure{% endmacro %}
@@ -76,6 +83,11 @@ import {{ import }}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedArguments: {{ prefferedArgumentsType }}?
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
     {% endif %}
+    {% for param in method.parameters where param.isClosure %}
+    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})?
+    {% endset %}
+    var {% call swiftifyMethodName method.shortName %}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}
+    {% endfor %}
     {% if not method.returnTypeName.isVoid and not method.isInitializer %}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ '!' if not method.isOptionalReturnType }}
     {% endif %}
@@ -188,13 +200,10 @@ import {{ import }}
 
 {% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}{% if type.name != "AutoMockable" %}
 {% call accessLevel type.accessLevel %}final class {{ type.name }}Mock: {{ type.name }} {
-
     {% if type.accessLevel == "public" %}public init() {}{% endif %}
-
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}
-
 {% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
     static func reset()
     {
