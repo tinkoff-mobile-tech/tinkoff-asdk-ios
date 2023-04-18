@@ -11,6 +11,15 @@ import WebKit
 typealias QrImageTableCell = TableCell<QrImageView>
 
 final class QrImageView: UIView, IQrImageViewInput {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let minimalHeight: CGFloat = 248
+        static let backgroundRadius: CGFloat = 16
+        static let imageBackgroundSide: CGFloat = 200
+        static let imageOffset: CGFloat = 16
+    }
+
     // MARK: Dependencies
 
     var presenter: IQrImageViewOutput? {
@@ -22,6 +31,7 @@ final class QrImageView: UIView, IQrImageViewInput {
 
     // MARK: Subviews
 
+    private lazy var backgroundView = UIView()
     private lazy var imageBackgroundView = UIView()
     private lazy var imageView = UIImageView()
     private lazy var webView = WKWebView()
@@ -42,14 +52,15 @@ final class QrImageView: UIView, IQrImageViewInput {
     // MARK: Initial Configuration
 
     private func setupViews() {
-        addSubview(imageBackgroundView)
+        addSubview(backgroundView)
+        backgroundView.addSubview(imageBackgroundView)
         imageBackgroundView.addSubview(imageView)
         imageBackgroundView.addSubview(webView)
 
-        backgroundColor = ASDKColors.Background.neutral2.color
-        layer.cornerRadius = .backgroundRadius
+        backgroundView.backgroundColor = ASDKColors.Background.neutral2.color
+        backgroundView.layer.cornerRadius = Constants.backgroundRadius
         imageBackgroundView.backgroundColor = .white
-        imageBackgroundView.layer.cornerRadius = .backgroundRadius
+        imageBackgroundView.layer.cornerRadius = Constants.backgroundRadius
         imageView.contentMode = .scaleAspectFit
 
         webView.scrollView.isScrollEnabled = false
@@ -57,26 +68,32 @@ final class QrImageView: UIView, IQrImageViewInput {
     }
 
     private func setupConstraints() {
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
         imageBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            imageBackgroundView.widthAnchor.constraint(equalToConstant: .imageBackgroundSide),
-            imageBackgroundView.heightAnchor.constraint(equalToConstant: .imageBackgroundSide),
-            imageBackgroundView.topAnchor.constraint(equalTo: topAnchor, constant: .backgroundOffset),
-            imageBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -.backgroundOffset),
-            imageBackgroundView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            backgroundView.topAnchor.constraint(equalTo: topAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            backgroundView.heightAnchor.constraint(equalToConstant: Constants.minimalHeight),
 
-            imageView.leftAnchor.constraint(equalTo: imageBackgroundView.leftAnchor, constant: .imageOffset),
-            imageView.topAnchor.constraint(equalTo: imageBackgroundView.topAnchor, constant: .imageOffset),
-            imageView.rightAnchor.constraint(equalTo: imageBackgroundView.rightAnchor, constant: -.imageOffset),
-            imageView.bottomAnchor.constraint(equalTo: imageBackgroundView.bottomAnchor, constant: -.imageOffset),
+            imageBackgroundView.widthAnchor.constraint(equalToConstant: Constants.imageBackgroundSide),
+            imageBackgroundView.heightAnchor.constraint(equalToConstant: Constants.imageBackgroundSide),
+            imageBackgroundView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
+            imageBackgroundView.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
 
-            webView.leftAnchor.constraint(equalTo: imageBackgroundView.leftAnchor, constant: .imageOffset),
-            webView.topAnchor.constraint(equalTo: imageBackgroundView.topAnchor, constant: .imageOffset),
-            webView.rightAnchor.constraint(equalTo: imageBackgroundView.rightAnchor, constant: -.imageOffset),
-            webView.bottomAnchor.constraint(equalTo: imageBackgroundView.bottomAnchor, constant: -.imageOffset),
+            imageView.leftAnchor.constraint(equalTo: imageBackgroundView.leftAnchor, constant: Constants.imageOffset),
+            imageView.topAnchor.constraint(equalTo: imageBackgroundView.topAnchor, constant: Constants.imageOffset),
+            imageView.rightAnchor.constraint(equalTo: imageBackgroundView.rightAnchor, constant: -Constants.imageOffset),
+            imageView.bottomAnchor.constraint(equalTo: imageBackgroundView.bottomAnchor, constant: -Constants.imageOffset),
+
+            webView.leftAnchor.constraint(equalTo: imageBackgroundView.leftAnchor, constant: Constants.imageOffset),
+            webView.topAnchor.constraint(equalTo: imageBackgroundView.topAnchor, constant: Constants.imageOffset),
+            webView.rightAnchor.constraint(equalTo: imageBackgroundView.rightAnchor, constant: -Constants.imageOffset),
+            webView.bottomAnchor.constraint(equalTo: imageBackgroundView.bottomAnchor, constant: -Constants.imageOffset),
         ])
     }
 }
@@ -104,13 +121,4 @@ extension QrImageView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         presenter?.qrDidLoad()
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let backgroundRadius: CGFloat = 16
-    static let imageBackgroundSide: CGFloat = 200
-    static let backgroundOffset: CGFloat = 24
-    static let imageOffset: CGFloat = 16
 }
