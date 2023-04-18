@@ -62,7 +62,6 @@ final class MainFormViewController: UIViewController {
         super.viewDidLoad()
         setupViewsHierarchy()
         setupTableView()
-        setupTableContentSizeObservation()
         setupKeyboardObserving()
         presenter.viewDidLoad()
     }
@@ -102,22 +101,69 @@ final class MainFormViewController: UIViewController {
         )
     }
 
-    private func setupTableContentSizeObservation() {
-        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
-            guard let self = self,
-                  change.oldValue != change.newValue,
-                  self.presentationState == .tableView else { return }
-
-            self.pullableContentDelegate?.updateHeight()
-        }
-    }
-
     private func setupKeyboardObserving() {
         keyboardService.onHeightDidChangeBlock = { [weak self] _, _ in
             guard let self = self, self.currentAnchor != .expanded else { return }
             self.currentAnchor = .expanded
             self.pullableContentDelegate?.updateHeight()
         }
+    }
+
+    // MARK: Table Layout Helpers
+
+    private func height(for cellType: MainFormCellType) -> CGFloat {
+        let contentHeight: CGFloat = {
+            switch cellType {
+            case .orderDetails:
+                return .zero
+            case .savedCard:
+                return SavedCardView.Constants.minimalHeight
+            case .getReceiptSwitch:
+                return SwitchView.Constants.minimalHeight
+            case .email:
+                return EmailView.Constants.minimalHeight
+            case .payButton:
+                return PayButtonView.Constants.minimalHeight
+            case .otherPaymentMethodsHeader:
+                return TextHeaderView.Constants.minimalHeight
+            case .otherPaymentMethod:
+                return AvatarTableViewCell.Constants.minimalHeight
+            }
+        }()
+
+        return contentHeight + insets(for: cellType).vertical
+    }
+
+    private func insets(for cellType: MainFormCellType) -> UIEdgeInsets {
+        switch cellType {
+        case .orderDetails:
+            return .orderDetailsInsets
+        case .savedCard:
+            return .savedCardInsets
+        case .getReceiptSwitch:
+            return .getReceiptSwitchInsets
+        case .email:
+            return .emailInsets
+        case .payButton:
+            return .payButtonInsets
+        case .otherPaymentMethodsHeader:
+            return .otherPaymentMethodsHeaderInsets
+        case .otherPaymentMethod:
+            return .zero
+        }
+    }
+
+    private func containerHeight(for cellTypes: [MainFormCellType], availableSpace: CGFloat) -> CGFloat {
+        let containsDynamicElements = cellTypes.contains { $0.isEmail || $0.isGetReceiptSwitch }
+        let mediumHeight = availableSpace * .mediumHeightCoefficient
+
+        guard !containsDynamicElements else { return mediumHeight }
+
+        let contentHeight = cellTypes.reduce(CGRect.tableHeaderInitialFrame.height) { partialResult, cellType in
+            partialResult + height(for: cellType)
+        }
+
+        return min(mediumHeight, contentHeight)
     }
 }
 
@@ -221,8 +267,7 @@ extension MainFormViewController: PullableContainerContent {
     ) -> CGFloat {
         switch (anchors[index], presentationState) {
         case (.contentBased, .tableView):
-            let mediumHeight = availableSpace * .mediumHeightCoefficient
-            return presenter.containsDynamicElements() ? mediumHeight : min(tableView.contentSize.height, mediumHeight)
+            return containerHeight(for: presenter.allCells(), availableSpace: availableSpace)
         case (.contentBased, .commonSheet):
             return commonSheetView.estimatedHeight
         case (.expanded, _):
@@ -253,32 +298,32 @@ extension MainFormViewController: UITableViewDataSource {
         case let .orderDetails(presenter):
             let cell = tableView.dequeue(cellType: MainFormOrderDetailsTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
-            cell.insets = .orderDetailsInsets
+            cell.insets = insets(for: cellType)
             return cell
         case let .savedCard(presenter):
             let cell = tableView.dequeue(cellType: SavedCardTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
-            cell.insets = .savedCardInsets
+            cell.insets = insets(for: cellType)
             return cell
         case let .getReceiptSwitch(presenter):
             let cell = tableView.dequeue(cellType: SwitchTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
-            cell.insets = .getReceiptSwitchInsets
+            cell.insets = insets(for: cellType)
             return cell
         case let .email(presenter):
             let cell = tableView.dequeue(cellType: EmailTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
-            cell.insets = .emailInsets
+            cell.insets = insets(for: cellType)
             return cell
         case let .payButton(presenter):
             let cell = tableView.dequeue(cellType: PayButtonTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
-            cell.insets = .payButtonInsets
+            cell.insets = insets(for: cellType)
             return cell
         case let .otherPaymentMethodsHeader(presenter):
             let cell = tableView.dequeue(cellType: TextAndImageHeaderTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
-            cell.insets = .otherPaymentMethodsHeaderInsets
+            cell.insets = insets(for: cellType)
             return cell
         case let .otherPaymentMethod(paymentMethod):
             let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
@@ -294,6 +339,10 @@ extension MainFormViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        height(for: presenter.cellType(at: indexPath))
     }
 }
 
@@ -331,6 +380,10 @@ private extension CGFloat {
 // MARK: IMainFormPresenter + Helpers
 
 private extension IMainFormPresenter {
+    func allCells() -> [MainFormCellType] {
+        (0 ..< numberOfRows()).map { cellType(at: IndexPath(row: $0, section: .zero)) }
+    }
+
     func containsDynamicElements() -> Bool {
         (0 ..< numberOfRows())
             .map { cellType(at: IndexPath(row: $0, section: .zero)) }
