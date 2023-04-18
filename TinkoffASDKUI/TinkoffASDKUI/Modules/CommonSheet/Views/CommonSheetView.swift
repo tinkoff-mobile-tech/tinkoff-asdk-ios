@@ -92,7 +92,7 @@ final class CommonSheetView: PassthroughView {
     // MARK: Constraints
 
     private lazy var contentTopConstraint = contentStack.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var contentBottomConstraint = contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+    private lazy var contentBottomConstraint = contentStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
         .with(priority: .fittingSizeLevel)
 
     // MARK: Init
@@ -185,6 +185,7 @@ final class CommonSheetView: PassthroughView {
             contentBottomConstraint,
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .contentHorizontalInset),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentHorizontalInset),
+            statusView.heightAnchor.constraint(equalToConstant: .statusViewHeight),
         ])
 
         addSubview(overlayView)
@@ -276,6 +277,7 @@ private extension CGFloat {
     static let labelsStackInterItemSpacing: CGFloat = 8
     static let labelsStackBottomSpacing: CGFloat = 24
     static let buttonsStackInterItemSpacing: CGFloat = 12
+    static let statusViewHeight: CGFloat = 72
 }
 
 private extension TimeInterval {

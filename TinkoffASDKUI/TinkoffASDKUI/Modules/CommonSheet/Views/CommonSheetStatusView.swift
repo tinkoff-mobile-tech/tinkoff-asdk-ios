@@ -62,17 +62,8 @@ final class CommonSheetStatusView: UIView {
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
             iconView.centerXAnchor.constraint(equalTo: centerXAnchor),
             iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-            widthAnchor.constraint(equalToConstant: .statusViewSize),
-            heightAnchor.constraint(equalToConstant: .statusViewSize),
         ])
 
         set(status: .processing)
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let statusViewSize: CGFloat = 72
 }
