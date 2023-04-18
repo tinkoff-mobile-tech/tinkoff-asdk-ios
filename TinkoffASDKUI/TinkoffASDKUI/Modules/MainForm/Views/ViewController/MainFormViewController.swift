@@ -40,10 +40,6 @@ final class MainFormViewController: UIViewController {
     private var currentAnchor: Anchor = .contentBased
     private var presentationState: PresentationState = .commonSheet
 
-    // MARK: Observations
-
-    private var tableViewContentSizeObservation: NSKeyValueObservation?
-
     // MARK: Init
 
     init(presenter: IMainFormPresenter, tableContentProvider: IMainFormTableContentProvider) {
