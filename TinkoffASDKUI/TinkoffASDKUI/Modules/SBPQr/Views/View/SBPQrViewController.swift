@@ -19,6 +19,7 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
 
     weak var pullableContentDelegate: PullableContainerСontentDelegate?
     private let presenter: ISBPQrViewOutput
+    private let tableContentProvider: ISBPQrTableContentProvider
 
     // MARK: Properties
 
@@ -31,8 +32,9 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
 
     // MARK: Initialization
 
-    init(presenter: ISBPQrViewOutput) {
+    init(presenter: ISBPQrViewOutput, tableContentProvider: ISBPQrTableContentProvider) {
         self.presenter = presenter
+        self.tableContentProvider = tableContentProvider
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -97,20 +99,19 @@ extension SBPQrViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellType = presenter.cellType(at: indexPath)
+        tableContentProvider.dequeueCell(
+            from: tableView,
+            at: indexPath,
+            withType: presenter.cellType(at: indexPath)
+        )
+    }
+}
 
-        switch cellType {
-        case let .textHeader(presenter):
-            let cell = tableView.dequeue(cellType: TextAndImageHeaderTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .textHeaderInsets
-            return cell
-        case let .qrImage(presenter):
-            let cell = tableView.dequeue(cellType: QrImageTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .qrImageInsets
-            return cell
-        }
+// MARK: - UITableViewDelegate
+
+extension SBPQrViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        tableContentProvider.height(for: presenter.cellType(at: indexPath), in: tableView)
     }
 }
 
@@ -126,7 +127,11 @@ extension SBPQrViewController: PullableContainerContent {
         case .commonSheet:
             return commonSheetView.estimatedHeight
         case .tableView:
-            return tableView.contentSize.height
+            return tableContentProvider.pullableContainerHeight(
+                for: presenter.allCells(),
+                in: tableView,
+                availableSpace: availableSpace
+            )
         }
     }
 
@@ -138,8 +143,6 @@ extension SBPQrViewController: PullableContainerContent {
 // MARK: - CommonSheetViewDelegate
 
 extension SBPQrViewController: CommonSheetViewDelegate {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
-
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }
@@ -166,14 +169,16 @@ extension SBPQrViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.delaysContentTouches = false
         tableView.dataSource = self
+        tableView.delegate = self
 
-        tableView.register(TextAndImageHeaderTableCell.self, QrImageTableCell.self)
+        tableContentProvider.registerCells(in: tableView)
     }
 }
 
-// MARK: - Constants
+// MARK: - ISBPQrViewOutput + Helpers
 
-private extension UIEdgeInsets {
-    static let textHeaderInsets = UIEdgeInsets(vertical: 10, horizontal: 16)
-    static let qrImageInsets = UIEdgeInsets(vertical: 10, horizontal: 16)
+private extension ISBPQrViewOutput {
+    func allCells() -> [SBPQrCellType] {
+        (0 ..< numberOfRows()).map { cellType(at: IndexPath(row: $0, section: .zero)) }
+    }
 }

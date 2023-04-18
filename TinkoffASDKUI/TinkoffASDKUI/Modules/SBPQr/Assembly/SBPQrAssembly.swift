@@ -49,7 +49,10 @@ extension SBPQrAssembly {
             paymentStatusService: paymentStatusService,
             moduleCompletion: moduleCompletion
         )
-        let view = SBPQrViewController(presenter: presenter)
+
+        let tableContentProvider = SBPQrTableContentProvider()
+
+        let view = SBPQrViewController(presenter: presenter, tableContentProvider: tableContentProvider)
         presenter.view = view
 
         let container = PullableContainerViewController(content: view)
