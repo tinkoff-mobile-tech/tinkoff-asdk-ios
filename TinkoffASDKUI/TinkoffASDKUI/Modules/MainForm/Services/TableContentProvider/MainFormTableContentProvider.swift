@@ -11,6 +11,7 @@ final class MainFormTableContentProvider: IMainFormTableContentProvider {
     // MARK: Mirror Views
 
     private lazy var orderDetailsMirror = MainFormOrderDetailsView()
+    private lazy var textHeaderMirror = TextAndImageHeaderView()
 
     // MARK: MainFormTableContentProvider
 
@@ -25,7 +26,7 @@ final class MainFormTableContentProvider: IMainFormTableContentProvider {
             SwitchTableCell.self,
             EmailTableCell.self,
             PayButtonTableCell.self,
-            TextHeaderTableCell.self,
+            TextAndImageHeaderTableCell.self,
             AvatarTableViewCell.self
         )
     }
@@ -62,7 +63,7 @@ final class MainFormTableContentProvider: IMainFormTableContentProvider {
             cell.insets = insets(for: cellType)
             return cell
         case let .otherPaymentMethodsHeader(presenter):
-            let cell = tableView.dequeue(cellType: TextHeaderTableCell.self, indexPath: indexPath)
+            let cell = tableView.dequeue(cellType: TextAndImageHeaderTableCell.self, indexPath: indexPath)
             cell.containedView.presenter = presenter
             cell.insets = insets(for: cellType)
             return cell
@@ -105,8 +106,10 @@ final class MainFormTableContentProvider: IMainFormTableContentProvider {
                 return EmailView.Constants.minimalHeight
             case .payButton:
                 return PayButtonView.Constants.minimalHeight
-            case .otherPaymentMethodsHeader:
-                return TextHeaderView.Constants.minimalHeight
+            case let .otherPaymentMethodsHeader(presenter):
+                let presenterCopy = presenter.copy()
+                textHeaderMirror.presenter = presenterCopy
+                return calculateHeight(for: textHeaderMirror, in: tableView, using: .otherPaymentMethodsHeaderInsets)
             case .otherPaymentMethod:
                 return AvatarTableViewCell.Constants.minimalHeight
             }

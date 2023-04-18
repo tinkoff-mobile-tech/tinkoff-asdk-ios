@@ -9,4 +9,6 @@ import Foundation
 
 protocol ITextAndImageHeaderViewOutput: AnyObject {
     var view: ITextAndImageHeaderViewInput? { get set }
+
+    func copy() -> ITextAndImageHeaderViewOutput
 }
