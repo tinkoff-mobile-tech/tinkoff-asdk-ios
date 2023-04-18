@@ -27,7 +27,6 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
 
     // MARK: State
 
-    private var tableViewContentSizeObservation: NSKeyValueObservation?
     private var presentationState: PresentationState = .commonSheet
 
     // MARK: Initialization
@@ -48,7 +47,6 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
         super.viewDidLoad()
         setupViewsHierarchy()
         setupTableView()
-        setupTableContentSizeObservation()
         presenter.viewDidLoad()
     }
 }
@@ -170,16 +168,6 @@ extension SBPQrViewController {
         tableView.dataSource = self
 
         tableView.register(TextAndImageHeaderTableCell.self, QrImageTableCell.self)
-    }
-
-    private func setupTableContentSizeObservation() {
-        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
-            guard let self = self,
-                  change.oldValue != change.newValue,
-                  self.presentationState == .tableView else { return }
-
-            self.pullableContentDelegate?.updateHeight()
-        }
     }
 }
 
