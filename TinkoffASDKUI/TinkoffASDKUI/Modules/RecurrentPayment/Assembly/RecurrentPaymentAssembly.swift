@@ -50,7 +50,9 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
             moduleCompletion: moduleCompletion
         )
 
-        let view = RecurrentPaymentViewController(presenter: presenter)
+        let tableContentProvider = RecurrentPaymentTableContentProvider()
+
+        let view = RecurrentPaymentViewController(presenter: presenter, tableContentProvider: tableContentProvider)
         presenter.view = view
 
         paymentController.delegate = presenter

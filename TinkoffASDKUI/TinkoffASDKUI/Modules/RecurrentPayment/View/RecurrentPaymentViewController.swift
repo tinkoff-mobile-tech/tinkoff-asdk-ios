@@ -25,6 +25,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
     weak var pullableContentDelegate: PullableContainerСontentDelegate?
     private let presenter: IRecurrentPaymentViewOutput
+    private let tableContentProvider: IRecurrentPaymentTableContentProvider
     private let keyboardService = KeyboardService()
 
     // MARK: Properties
@@ -38,12 +39,12 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
     private let anchors = Anchor.allCases
     private var currentAnchor: Anchor = .contentBased
     private var presentationState: PresentationState = .commonSheet
-    private var tableViewContentSizeObservation: NSKeyValueObservation?
 
     // MARK: Initialization
 
-    init(presenter: IRecurrentPaymentViewOutput) {
+    init(presenter: IRecurrentPaymentViewOutput, tableContentProvider: IRecurrentPaymentTableContentProvider) {
         self.presenter = presenter
+        self.tableContentProvider = tableContentProvider
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -59,7 +60,6 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
         setupViewsHierarchy()
         setupWebView()
         setupTableView()
-        setupTableContentSizeObservation()
         setupKeyboardObserving()
         presenter.viewDidLoad()
     }
@@ -124,20 +124,15 @@ extension RecurrentPaymentViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellType = presenter.cellType(at: indexPath)
+        tableContentProvider.dequeueCell(from: tableView, at: indexPath, withType: presenter.cellType(at: indexPath))
+    }
+}
 
-        switch cellType {
-        case let .savedCard(presenter):
-            let cell = tableView.dequeue(cellType: SavedCardTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .savedCardInsets
-            return cell
-        case let .payButton(presenter):
-            let cell = tableView.dequeue(cellType: PayButtonTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .payButtonInsets
-            return cell
-        }
+// MARK: - UITableViewDelegate
+
+extension RecurrentPaymentViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        tableContentProvider.height(for: presenter.cellType(at: indexPath), in: tableView)
     }
 }
 
@@ -159,8 +154,11 @@ extension RecurrentPaymentViewController: PullableContainerContent {
     ) -> CGFloat {
         switch (anchors[index], presentationState) {
         case (.contentBased, .tableView):
-            let mediumHeight = availableSpace * .mediumHeightCoefficient
-            return min(tableView.contentSize.height, mediumHeight)
+            return tableContentProvider.pullableContainerHeight(
+                for: presenter.allCells(),
+                in: tableView,
+                availableSpace: availableSpace
+            )
         case (.contentBased, .commonSheet):
             return commonSheetView.estimatedHeight
         case (.expanded, _):
@@ -219,19 +217,9 @@ extension RecurrentPaymentViewController {
         tableView.alwaysBounceVertical = false
         tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
-        tableView.contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: view.safeAreaInsets.bottom, right: .zero)
+        tableView.delegate = self
 
-        tableView.register(SavedCardTableCell.self, PayButtonTableCell.self)
-    }
-
-    private func setupTableContentSizeObservation() {
-        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
-            guard let self = self,
-                  change.oldValue != change.newValue,
-                  self.presentationState == .tableView else { return }
-
-            self.pullableContentDelegate?.updateHeight()
-        }
+        tableContentProvider.registerCells(in: tableView)
     }
 
     private func setupKeyboardObserving() {
@@ -243,13 +231,10 @@ extension RecurrentPaymentViewController {
     }
 }
 
-// MARK: - Constants
+// MARK: - IRecurrentPaymentViewOutput + Helpers
 
-private extension UIEdgeInsets {
-    static let savedCardInsets = UIEdgeInsets(top: 8, left: 16, bottom: 20, right: 16)
-    static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
-}
-
-private extension CGFloat {
-    static let mediumHeightCoefficient: CGFloat = 7 / 10
+private extension IRecurrentPaymentViewOutput {
+    func allCells() -> [RecurrentPaymentCellType] {
+        (0 ..< numberOfRows()).map { cellType(at: IndexPath(row: $0, section: .zero)) }
+    }
 }
