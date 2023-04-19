@@ -14,5 +14,6 @@ protocol ISavedCardViewInput: AnyObject {
     func setCVCText(_ text: String)
     func setCVCFieldValid()
     func setCVCFieldInvalid()
+    func activateCVCField()
     func deactivateCVCField()
 }

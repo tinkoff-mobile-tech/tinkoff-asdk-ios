@@ -47,6 +47,16 @@ class CardFieldInputMock: ICardFieldInput {
         setTextFieldTypeReceivedInvocations.append(arguments)
     }
 
+    var activateTextFieldTypeCallsCount = 0
+    var activateTextFieldTypeReceivedArguments: CardFieldType?
+    var activateTextFieldTypeReceivedInvocations: [CardFieldType] = []
+    func activate(textFieldType: CardFieldType) {
+        activateTextFieldTypeCallsCount += 1
+        let arguments = textFieldType
+        activateTextFieldTypeReceivedArguments = arguments
+        activateTextFieldTypeReceivedInvocations.append(arguments)
+    }
+
     var validationResult: CardFieldValidationResult {
         get { return underlyingValidationResult }
         set(value) { underlyingValidationResult = value }

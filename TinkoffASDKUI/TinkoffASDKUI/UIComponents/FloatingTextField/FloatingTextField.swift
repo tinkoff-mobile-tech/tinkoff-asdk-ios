@@ -90,6 +90,10 @@ final class FloatingTextField: UIView {
 // MARK: - Public
 
 extension FloatingTextField {
+    func setContainerView(radius: CGFloat) {
+        containerView.layer.cornerRadius = radius
+    }
+
     func set(text: String?) {
         textField.text = text
         liftHeaderLabelIfNeeded()

@@ -91,7 +91,7 @@ final class CardListPresenter {
                     bank: bank?.icon,
                     paymentSystem: paymentSystemResolver
                         .resolve(by: card.pan).getPaymentSystem()?.icon
-                )
+                ), style: DynamicIconCardView.Style(enableAnimations: false)
             )
 
             let bankText = bank?.naming ?? ""

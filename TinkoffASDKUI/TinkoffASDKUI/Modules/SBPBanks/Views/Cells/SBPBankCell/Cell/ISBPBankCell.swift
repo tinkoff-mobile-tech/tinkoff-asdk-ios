@@ -11,6 +11,7 @@ protocol ISBPBankCell: NSObject {
     var presenter: ISBPBankCellPresenter? { get set }
 
     func showSkeletonViews()
-    func setNameLabel(text: String)
-    func setLogo(image: UIImage, animated: Bool)
+    func set(selectionStyle: UITableViewCell.SelectionStyle)
+    func setNameLabel(text: String?)
+    func setLogo(image: UIImage?, animated: Bool)
 }

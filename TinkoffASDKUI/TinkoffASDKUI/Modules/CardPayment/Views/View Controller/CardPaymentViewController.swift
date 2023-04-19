@@ -43,6 +43,12 @@ final class CardPaymentViewController: UIViewController, ICardPaymentViewControl
 
         presenter.viewDidLoad()
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        presenter.viewDidAppear()
+    }
 }
 
 // MARK: - ICardPaymentViewControllerInput
@@ -184,6 +190,7 @@ extension CardPaymentViewController {
         )
 
         tableView.dataSource = self
+        tableView.delaysContentTouches = false
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = .commonCellHeight

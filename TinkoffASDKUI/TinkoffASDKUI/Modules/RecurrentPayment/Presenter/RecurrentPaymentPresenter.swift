@@ -62,6 +62,10 @@ extension RecurrentPaymentPresenter {
         paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .parentPayment(rebuidId: rebillId))
     }
 
+    func viewDidAppear() {
+        savedCardPresenter.activateCVCField()
+    }
+
     func viewWasClosed() {
         moduleCompletion?(moduleResult)
         moduleCompletion = nil

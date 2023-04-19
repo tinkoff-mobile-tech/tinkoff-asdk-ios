@@ -13,6 +13,7 @@ protocol ICardFieldInput: AnyObject {
     var cvc: String { get }
 
     func set(textFieldType: CardFieldType, text: String?)
+    func activate(textFieldType: CardFieldType)
 
     var validationResult: CardFieldValidationResult { get }
 

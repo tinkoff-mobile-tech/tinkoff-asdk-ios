@@ -78,6 +78,10 @@ extension CardFieldPresenter {
     func set(textFieldType: CardFieldType, text: String?) {
         view?.set(textFieldType: textFieldType, text: text)
     }
+
+    func activate(textFieldType: CardFieldType) {
+        view?.activate(textFieldType: textFieldType)
+    }
 }
 
 // MARK: - ICardFieldViewOutput
