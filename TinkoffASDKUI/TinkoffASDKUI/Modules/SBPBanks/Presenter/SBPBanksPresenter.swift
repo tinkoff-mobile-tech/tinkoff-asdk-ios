@@ -253,6 +253,21 @@ extension SBPBanksPresenter {
             allBanksCellPresenters.append(otherBankCellPresenter)
         }
 
+        // Существует проблема анимации.
+        // Скелетоны на этом экране это не отдельная вьюха или вьюхи.
+        // Это те же самые ячейки что и банки, которые умеет быть скелетоном.
+        // И если количество банков после загрузки оказывается меньше чем скелетонов,
+        // то происходит уменьшение contentSize у tableView во вью контроллере.
+        // Всвязи с чем все ячейки в момент анимации как бы едут снизу наверх (а должна быть анимация fade).
+        // Поэтому приходится добавлять пустые ячейки, что бы сравнять общее количество ячеек с количеством скелетонов.
+        if allBanksCellPresenters.count < .skeletonsCount {
+            let blankCellsCount = Int.skeletonsCount - allBanksCellPresenters.count
+            for _ in 0 ..< blankCellsCount {
+                let blankPresenter = cellPresentersAssembly.build(cellType: .blank)
+                allBanksCellPresenters.append(blankPresenter)
+            }
+        }
+
         filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
