@@ -46,7 +46,7 @@ class CardFieldInputMock: ICardFieldInput {
         setTextFieldTypeReceivedArguments = arguments
         setTextFieldTypeReceivedInvocations.append(arguments)
     }
-    
+
     var activateTextFieldTypeCallsCount = 0
     var activateTextFieldTypeReceivedArguments: CardFieldType?
     var activateTextFieldTypeReceivedInvocations: [CardFieldType] = []
