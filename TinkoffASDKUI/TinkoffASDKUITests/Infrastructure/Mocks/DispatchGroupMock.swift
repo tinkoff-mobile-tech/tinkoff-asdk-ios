@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import XCTest
+
 @testable import TinkoffASDKUI
 
 final class DispatchGroupMock: IDispatchGroup {
@@ -25,6 +27,7 @@ final class DispatchGroupMock: IDispatchGroup {
         notifyReceivedArguments = arguments
         notifyReceivedInvocations.append(arguments)
         if notifyWorkShouldCalls {
+            wait(for: 0.1)
             work()
         }
     }
@@ -43,5 +46,24 @@ final class DispatchGroupMock: IDispatchGroup {
 
     func leave() {
         leaveCallsCount += 1
+    }
+}
+
+private extension DispatchGroupMock {
+    func wait(for duration: TimeInterval) {
+        let expectation = XCTestExpectation(description: #function)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            expectation.fulfill()
+        }
+
+        XCTWaiter.wait([expectation], timeout: duration + 1)
+    }
+}
+
+private extension XCTWaiter {
+    @discardableResult
+    class func wait(_ expectations: [XCTestExpectation], timeout: TimeInterval) -> XCTWaiter.Result {
+        wait(for: expectations, timeout: timeout)
     }
 }

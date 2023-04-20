@@ -163,7 +163,7 @@ extension SBPBanksPresenter: ISBPPaymentSheetPresenterOutput {
 
 extension SBPBanksPresenter {
     private func prepareAndShowSkeletonModels() {
-        allBanksCellPresenters = [SBPBankCellPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: .skeletonsCount))
+        allBanksCellPresenters = (0 ..< Int.skeletonsCount).map { _ in cellPresentersAssembly.build(cellType: .skeleton) }
         filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }

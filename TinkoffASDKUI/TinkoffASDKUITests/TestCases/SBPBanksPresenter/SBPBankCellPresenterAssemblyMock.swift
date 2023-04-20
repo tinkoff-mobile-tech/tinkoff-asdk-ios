@@ -9,6 +9,9 @@
 
 final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
 
+    var buildCommonCallsCount = 0
+    var buildCommonInvocations: [SBPBankCellType] = []
+
     // MARK: - build
 
     var buildCallsCount = 0
@@ -17,10 +20,12 @@ final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
     var buildReturnValue: SBPBankCellPresenter!
 
     func build(cellType: SBPBankCellType) -> SBPBankCellPresenter {
+        buildCommonCallsCount += 1
         buildCallsCount += 1
         let arguments = cellType
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
+        buildCommonInvocations.append(arguments)
         return buildReturnValue
     }
 
@@ -29,17 +34,15 @@ final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
     var buildWithActionCallsCount = 0
     var buildWithActionReceivedArguments: SBPBankCellType?
     var buildWithActionReceivedInvocations: [SBPBankCellType] = []
-    var buildWithActionActionShouldCalls = false
     var buildWithActionReturnValue: SBPBankCellPresenter!
 
     func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> SBPBankCellPresenter {
+        buildCommonCallsCount += 1
         buildWithActionCallsCount += 1
         let arguments = cellType
         buildWithActionReceivedArguments = arguments
         buildWithActionReceivedInvocations.append(arguments)
-        if buildWithActionActionShouldCalls {
-            action()
-        }
+        buildCommonInvocations.append(arguments)
         return buildWithActionReturnValue
     }
 }
