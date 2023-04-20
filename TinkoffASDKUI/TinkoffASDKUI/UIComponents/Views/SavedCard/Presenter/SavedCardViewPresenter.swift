@@ -73,6 +73,12 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         self.output = output
     }
 
+    // MARK: ISavedCardViewPresenterInput
+
+    func activateCVCField() {
+        view?.activateCVCField()
+    }
+
     // MARK: View Reloading
 
     private func setupView() {

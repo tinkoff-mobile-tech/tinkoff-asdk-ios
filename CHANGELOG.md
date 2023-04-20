@@ -44,6 +44,18 @@
 * [MIC-8095] TinkoffPay - integrate to MainForm
 * [MIC-8096] TinkoffPay - integrate with independent button
 
+## [2.19.0] - 2023-04-13Z
+
+### Added
+
+* [EACQAPW-4510] Added public inits for `AgentData` и `SupplierInfo`
+
+## [2.18.2] - 2023-03-28Z
+
+### Added
+
+* [MIC-8065] Update for Russian Certificates
+
 ## [2.17.0] - 2023-02-13Z
 
 ### Changed

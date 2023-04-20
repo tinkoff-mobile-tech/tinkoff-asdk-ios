@@ -80,11 +80,11 @@ extension SBPBanksViewController {
     }
 
     func showSearchBar() {
-        tableView.tableHeaderView = searchController.searchBar
+        navigationItem.searchController = searchController
     }
 
     func hideSearchBar() {
-        tableView.tableHeaderView = nil
+        navigationItem.searchController = nil
     }
 
     func reloadTableView() {
@@ -205,7 +205,8 @@ extension SBPBanksViewController {
         searchController.searchResultsUpdater = self
 
         searchController.searchBar.sizeToFit()
-        tableView.tableHeaderView = searchController.searchBar
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
 
         definesPresentationContext = true
 

@@ -12,6 +12,7 @@ enum SBPBankCellType {
     case bank(SBPBank)
     case bankButton(imageAsset: ImageAsset, name: String)
     case skeleton
+    case blank
 }
 
 private enum SBPCellImageLoadingStatus {
@@ -90,6 +91,10 @@ extension SBPBankCellPresenter {
             cell?.setNameLabel(text: name)
         case .skeleton:
             cell?.showSkeletonViews()
+        case .blank:
+            cell?.setLogo(image: nil, animated: false)
+            cell?.setNameLabel(text: nil)
+            cell?.set(selectionStyle: .none)
         }
     }
 

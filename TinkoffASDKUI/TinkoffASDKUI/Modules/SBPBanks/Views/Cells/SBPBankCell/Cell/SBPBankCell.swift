@@ -70,11 +70,15 @@ extension SBPBankCell {
         logoImageSkeletonView.startAnimating(animationType: .waterfall(index: 1, delay: .waterfallDelay))
     }
 
-    func setNameLabel(text: String) {
+    func set(selectionStyle: UITableViewCell.SelectionStyle) {
+        self.selectionStyle = selectionStyle
+    }
+
+    func setNameLabel(text: String?) {
         nameLabel.text = text
     }
 
-    func setLogo(image: UIImage, animated: Bool) {
+    func setLogo(image: UIImage?, animated: Bool) {
         let duration: TimeInterval = animated ? .defaultAnimationDuration : 0
 
         UIView.transition(

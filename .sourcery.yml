@@ -1,0 +1,10 @@
+# Здесь указываем пути по которым sourcery будет парсить код
+sources:
+    - .
+
+# Шаблоны для кодогенерации
+templates:
+    - Sourcery/Templates
+
+# Куда сохранить сгенеренный кодфайл
+output: Sourcery/Generated
