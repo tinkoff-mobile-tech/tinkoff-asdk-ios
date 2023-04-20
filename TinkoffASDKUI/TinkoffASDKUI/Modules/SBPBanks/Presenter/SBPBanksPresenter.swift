@@ -29,7 +29,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private let bankAppChecker: ISBPBankAppChecker
     private let bankAppOpener: ISBPBankAppOpener
     private let cellPresentersAssembly: ISBPBankCellPresenterAssembly
-    private let dispatchGroup: DispatchGroup
+    private let dispatchGroup: IDispatchGroup
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
@@ -55,7 +55,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         bankAppChecker: ISBPBankAppChecker,
         bankAppOpener: ISBPBankAppOpener,
         cellPresentersAssembly: ISBPBankCellPresenterAssembly,
-        dispatchGroup: DispatchGroup
+        dispatchGroup: IDispatchGroup
     ) {
         self.router = router
         self.output = output
