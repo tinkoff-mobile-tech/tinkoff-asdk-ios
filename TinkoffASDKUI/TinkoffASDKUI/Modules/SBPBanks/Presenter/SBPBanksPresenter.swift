@@ -30,6 +30,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private let bankAppOpener: ISBPBankAppOpener
     private let cellPresentersAssembly: ISBPBankCellPresenterAssembly
     private let dispatchGroup: IDispatchGroup
+    private let mainDispatchQueue: IDispatchQueue
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
@@ -55,7 +56,8 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         bankAppChecker: ISBPBankAppChecker,
         bankAppOpener: ISBPBankAppOpener,
         cellPresentersAssembly: ISBPBankCellPresenterAssembly,
-        dispatchGroup: IDispatchGroup
+        dispatchGroup: IDispatchGroup,
+        mainDispatchQueue: IDispatchQueue
     ) {
         self.router = router
         self.output = output
@@ -67,6 +69,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         self.bankAppOpener = bankAppOpener
         self.cellPresentersAssembly = cellPresentersAssembly
         self.dispatchGroup = dispatchGroup
+        self.mainDispatchQueue = mainDispatchQueue
     }
 }
 
@@ -210,7 +213,7 @@ extension SBPBanksPresenter {
         paymentService?.loadPaymentQr(completion: { [weak self] result in
             guard let self = self else { return }
 
-            DispatchQueue.main.async {
+            self.mainDispatchQueue.async {
                 switch result {
                 case let .success(qrPayload):
                     self.qrPayload = qrPayload

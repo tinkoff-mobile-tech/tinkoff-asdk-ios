@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetQRPayload: Decodable {
+public struct GetQRPayload: Decodable, Equatable {
     private enum CodingKeys: CodingKey {
         case qrCodeData
         case orderId

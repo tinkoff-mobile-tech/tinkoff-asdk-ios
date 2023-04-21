@@ -90,7 +90,8 @@ extension SBPBanksAssembly {
             bankAppChecker: bankAppChecker,
             bankAppOpener: bankAppOpener,
             cellPresentersAssembly: cellPresentersAssembly,
-            dispatchGroup: DispatchGroup()
+            dispatchGroup: DispatchGroup(),
+            mainDispatchQueue: DispatchQueue.main
         )
 
         let view = SBPBanksViewController(presenter: presenter)

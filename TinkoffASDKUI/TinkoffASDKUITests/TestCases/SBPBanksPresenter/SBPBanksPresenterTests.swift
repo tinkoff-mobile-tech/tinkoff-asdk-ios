@@ -28,7 +28,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
     var bankAppOpenerMock: SBPBankAppOpenerMock!
     var cellPresentersAssemblyMock: ISBPBankCellPresenterAssemblyMock!
     var dispatchGroupMock: DispatchGroupMock!
-
+    var mainDispatchQueueMock: DispatchQueueMock!
+    
     // MARK: Setup
 
     override func setUp() {
@@ -44,6 +45,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         bankAppOpenerMock = SBPBankAppOpenerMock()
         cellPresentersAssemblyMock = ISBPBankCellPresenterAssemblyMock()
         dispatchGroupMock = DispatchGroupMock()
+        mainDispatchQueueMock = DispatchQueueMock()
 
         sut = SBPBanksPresenter(
             router: routerMock,
@@ -55,7 +57,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
             bankAppChecker: bankAppCheckerMock,
             bankAppOpener: bankAppOpenerMock,
             cellPresentersAssembly: cellPresentersAssemblyMock,
-            dispatchGroup: dispatchGroupMock
+            dispatchGroup: dispatchGroupMock,
+            mainDispatchQueue: mainDispatchQueueMock
         )
 
         sut.view = viewMock
@@ -121,9 +124,170 @@ final class SBPBanksPresenterTests: BaseTestCase {
             case 0 ..< skeletonsCount: XCTAssertEqual(cellType, .skeleton)
             case skeletonsCount ..< skeletonsAndBanksCount: XCTAssertEqual(cellType, .bank(.any))
             case skeletonsAndBanksCount ..< cellPresentersAssemblyCallsCount: XCTAssertEqual(cellType, .blank)
+                fallthrough
             default: break
             }
         }
+    }
+    
+    func test_viewDidLoad_when_startEmpty_and_successLoadedBanksAndQR_with_prefferedBanks() {
+        // given
+        let otherImage = Asset.Sbp.sbpLogo
+        let otherName = Loc.Acquiring.SBPBanks.anotherBank
+        let otherButtonType: SBPBankCellType = .bankButton(imageAsset: otherImage, name: otherName)
+        let skeletonsCount = 7
+        let otherBankCount = 1
+        let skeletonsWithOtherBankCount = skeletonsCount + otherBankCount
+        let loadedBanks = [SBPBank](repeating: .any, count: 6)
+        let preferredBanks = [SBPBank](repeating: .any, count: 4)
+        let emptyCellsCount = max(skeletonsCount - preferredBanks.count - otherBankCount, 0)
+        let skeletonsAndBanksCount = skeletonsCount + preferredBanks.count
+        let skeletonsAndBanksWithOtherCount = skeletonsWithOtherBankCount + preferredBanks.count
+        let cellPresentersAssemblyCallsCount = skeletonsAndBanksWithOtherCount + emptyCellsCount
+
+        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
+        dispatchGroupMock.notifyWorkShouldCalls = true
+        bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
+
+        // when
+        sut.viewDidLoad()
+
+        // then
+        XCTAssertEqual(viewMock.hideSearchBarCallsCount, 1)
+        XCTAssertEqual(viewMock.reloadTableViewCallsCount, 2)
+        XCTAssertEqual(dispatchGroupMock.enterCallsCount, 2)
+        XCTAssertEqual(dispatchGroupMock.leaveCallsCount, 2)
+        XCTAssertEqual(dispatchGroupMock.notifyCallsCount, 1)
+        XCTAssertEqual(dispatchGroupMock.notifyReceivedArguments?.queue, .main)
+        XCTAssertEqual(paymentServiceMock.loadPaymentQrCallsCount, 1)
+        XCTAssertEqual(banksServiceMock.loadBanksCallsCount, 1)
+        XCTAssertEqual(bankAppCheckerMock.bankAppsPreferredByMerchantCallsCount, 1)
+        XCTAssertEqual(bankAppCheckerMock.bankAppsPreferredByMerchantReceivedArguments, loadedBanks)
+        XCTAssertEqual(viewMock.showSearchBarCallsCount, 0)
+        XCTAssertEqual(outputMock.didLoadedCallsCount, 1)
+        XCTAssertEqual(outputMock.didLoadedReceivedArguments, loadedBanks)
+        XCTAssertEqual(viewMock.setupNavigationWithCloseButtonCallsCount, 1)
+        XCTAssertEqual(cellPresentersAssemblyMock.buildCommonCallsCount, cellPresentersAssemblyCallsCount)
+
+        cellPresentersAssemblyMock.buildCommonInvocations.enumerated().forEach { index, cellType in
+            switch index {
+            case 0 ..< skeletonsCount:
+                XCTAssertEqual(cellType, .skeleton)
+            case skeletonsCount ..< skeletonsWithOtherBankCount:
+                XCTAssertEqual(cellType, otherButtonType)
+            case skeletonsWithOtherBankCount ..< skeletonsAndBanksWithOtherCount:
+                XCTAssertEqual(cellType, .bank(.any))
+            case skeletonsAndBanksWithOtherCount ..< cellPresentersAssemblyCallsCount: XCTAssertEqual(cellType, .blank)
+                fallthrough
+            default: break
+            }
+        }
+    }
+    
+    func test_viewDidLoad_when_startWithBanks_and_successLoadedQR_with_no_prefferedBanks() {
+        // given
+        let skeletonsCount = 7
+        let loadedBanks = [SBPBank](repeating: .any, count: 3)
+        let emptyCellsCount = max(skeletonsCount - loadedBanks.count, 0)
+        let skeletonsAndBanksCount = skeletonsCount + loadedBanks.count
+        let cellPresentersAssemblyCallsCount = skeletonsAndBanksCount + emptyCellsCount
+
+        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = []
+        
+        sut.set(banks: loadedBanks)
+
+        // when
+        sut.viewDidLoad()
+
+        // then
+        XCTAssertEqual(viewMock.hideSearchBarCallsCount, 1)
+        XCTAssertEqual(viewMock.reloadTableViewCallsCount, 2)
+        XCTAssertEqual(paymentServiceMock.loadPaymentQrCallsCount, 1)
+        XCTAssertEqual(banksServiceMock.loadBanksCallsCount, 0)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
+        XCTAssertEqual(bankAppCheckerMock.bankAppsPreferredByMerchantCallsCount, 1)
+        XCTAssertEqual(bankAppCheckerMock.bankAppsPreferredByMerchantReceivedArguments, loadedBanks)
+        XCTAssertEqual(viewMock.showSearchBarCallsCount, 1)
+        XCTAssertEqual(outputMock.didLoadedCallsCount, 0)
+        XCTAssertEqual(viewMock.setupNavigationWithCloseButtonCallsCount, 1)
+        XCTAssertEqual(cellPresentersAssemblyMock.buildCommonCallsCount, cellPresentersAssemblyCallsCount)
+
+        cellPresentersAssemblyMock.buildCommonInvocations.enumerated().forEach { index, cellType in
+            switch index {
+            case 0 ..< skeletonsCount: XCTAssertEqual(cellType, .skeleton)
+            case skeletonsCount ..< skeletonsAndBanksCount: XCTAssertEqual(cellType, .bank(.any))
+            case skeletonsAndBanksCount ..< cellPresentersAssemblyCallsCount: XCTAssertEqual(cellType, .blank)
+                fallthrough
+            default: break
+            }
+        }
+    }
+    
+    func test_otherBankCellPresenter_action() throws {
+        // given
+        let otherImage = Asset.Sbp.sbpLogo
+        let otherName = Loc.Acquiring.SBPBanks.anotherBank
+        let otherButtonType: SBPBankCellType = .bankButton(imageAsset: otherImage, name: otherName)
+        let loadedBanks = Array(1...10).map { SBPBank.some($0) }
+        let preferredBanks = Array(1...4).map { SBPBank.some($0) }
+        let notPreferredBanks = Array(5...10).map { SBPBank.some($0) }
+
+        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
+        dispatchGroupMock.notifyWorkShouldCalls = true
+        bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
+        
+        sut.viewDidLoad()
+        let otherBankInvocationOptional = cellPresentersAssemblyMock.buildWithActionReceivedInvocations
+            .filter { $0.cellType == otherButtonType }.first
+        let otherBankInvocation = try XCTUnwrap(otherBankInvocationOptional)
+        
+        // when
+        otherBankInvocation.action()
+        
+        // then
+        XCTAssertEqual(routerMock.showCallsCount, 1)
+        XCTAssertEqual(routerMock.showReceivedArguments?.banks, notPreferredBanks)
+        XCTAssertEqual(routerMock.showReceivedArguments?.qrPayload, .any)
+    }
+    
+    func test_otherBankCellPresenter_action_when_presenterNil() throws {
+        // given
+        let otherImage = Asset.Sbp.sbpLogo
+        let otherName = Loc.Acquiring.SBPBanks.anotherBank
+        let otherButtonType: SBPBankCellType = .bankButton(imageAsset: otherImage, name: otherName)
+        let loadedBanks = Array(1...10).map { SBPBank.some($0) }
+        let preferredBanks = Array(1...4).map { SBPBank.some($0) }
+        let notPreferredBanks = Array(5...10).map { SBPBank.some($0) }
+
+        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
+        dispatchGroupMock.notifyWorkShouldCalls = true
+        bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
+        
+        sut.viewDidLoad()
+        let otherBankInvocationOptional = cellPresentersAssemblyMock.buildWithActionReceivedInvocations
+            .filter { $0.cellType == otherButtonType }.first
+        let otherBankInvocation = try XCTUnwrap(otherBankInvocationOptional)
+        sut = nil
+        
+        // when
+        otherBankInvocation.action()
+        
+        // then
+        XCTAssertEqual(routerMock.showCallsCount, 0)
     }
 }
 
@@ -505,7 +669,11 @@ extension GetQRPayload {
 
 extension SBPBank {
     static var any: SBPBank {
-        return SBPBank(name: "name", logoURL: nil, schema: "scheme")
+        SBPBank(name: "name", logoURL: nil, schema: "scheme")
+    }
+    
+    static func some(_ uniqValue: Int) -> SBPBank {
+        SBPBank(name: "name \(uniqValue)", logoURL: nil, schema: "scheme \(uniqValue)")
     }
 }
 

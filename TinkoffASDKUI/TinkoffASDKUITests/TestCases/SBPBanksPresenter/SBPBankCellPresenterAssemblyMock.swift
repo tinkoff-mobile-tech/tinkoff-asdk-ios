@@ -30,19 +30,21 @@ final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
     }
 
     // MARK: - build
+    
+    typealias BuildWithActionArguments = (cellType: SBPBankCellType, action: VoidBlock)
 
     var buildWithActionCallsCount = 0
-    var buildWithActionReceivedArguments: SBPBankCellType?
-    var buildWithActionReceivedInvocations: [SBPBankCellType] = []
+    var buildWithActionReceivedArguments: BuildWithActionArguments?
+    var buildWithActionReceivedInvocations: [BuildWithActionArguments] = []
     var buildWithActionReturnValue: SBPBankCellPresenter!
 
     func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> SBPBankCellPresenter {
         buildCommonCallsCount += 1
         buildWithActionCallsCount += 1
-        let arguments = cellType
+        let arguments = (cellType, action)
         buildWithActionReceivedArguments = arguments
         buildWithActionReceivedInvocations.append(arguments)
-        buildCommonInvocations.append(arguments)
+        buildCommonInvocations.append(cellType)
         return buildWithActionReturnValue
     }
 }
