@@ -137,7 +137,7 @@ extension SBPBanksPresenter {
         guard lastSearchedText != lowercasedText else { return }
         lastSearchedText = lowercasedText
 
-        DispatchQueue.main.asyncDeduped(target: self, after: .searchDelay) { [weak self] in
+        mainDispatchQueue.asyncDeduped(target: self, after: .searchDelay) { [weak self] in
             guard let self = self else { return }
 
             if lowercasedText.isEmpty {
@@ -280,7 +280,7 @@ extension SBPBanksPresenter {
         case NSURLErrorNotConnectedToInternet:
             viewShowNoNetworkStub()
         default:
-            viewShowServerErrorStub()
+            viewShowServerErrorStub(error)
         }
     }
 
@@ -290,7 +290,7 @@ extension SBPBanksPresenter {
         view?.reloadTableView()
     }
 
-    private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellPresenter] {
+    private func createCellPresenters(from banks: [SBPBank]) -> [ISBPBankCellPresenter] {
         guard let paymentUrl = URL(string: qrPayload?.qrCodeData ?? ""),
               let paymentId = qrPayload?.paymentId else { return [] }
 
@@ -330,10 +330,10 @@ extension SBPBanksPresenter {
         })
     }
 
-    private func viewShowServerErrorStub() {
+    private func viewShowServerErrorStub(_ error: Error) {
         clearCellModels()
         view?.showStubView(mode: .serverError { [weak self] in
-            self?.router.closeScreen()
+            self?.routerClose(with: .failed(error))
         })
     }
 

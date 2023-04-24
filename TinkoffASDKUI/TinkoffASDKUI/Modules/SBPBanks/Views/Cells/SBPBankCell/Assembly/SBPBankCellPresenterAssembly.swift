@@ -18,11 +18,11 @@ final class SBPBankCellPresenterAssembly: ISBPBankCellPresenterAssembly {
 
     // MARK: - ISBPBankCellAssembly
 
-    func build(cellType: SBPBankCellType) -> SBPBankCellPresenter {
+    func build(cellType: SBPBankCellType) -> ISBPBankCellPresenter {
         build(cellType: cellType, action: {})
     }
 
-    func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> SBPBankCellPresenter {
+    func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> ISBPBankCellPresenter {
         return SBPBankCellPresenter(cellType: cellType, action: action, cellImageLoader: cellImageLoader)
     }
 }

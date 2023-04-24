@@ -17,9 +17,9 @@ final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
     var buildCallsCount = 0
     var buildReceivedArguments: SBPBankCellType?
     var buildReceivedInvocations: [SBPBankCellType] = []
-    var buildReturnValue: SBPBankCellPresenter!
+    var buildReturnValue: ISBPBankCellPresenter!
 
-    func build(cellType: SBPBankCellType) -> SBPBankCellPresenter {
+    func build(cellType: SBPBankCellType) -> ISBPBankCellPresenter {
         buildCommonCallsCount += 1
         buildCallsCount += 1
         let arguments = cellType
@@ -36,9 +36,9 @@ final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
     var buildWithActionCallsCount = 0
     var buildWithActionReceivedArguments: BuildWithActionArguments?
     var buildWithActionReceivedInvocations: [BuildWithActionArguments] = []
-    var buildWithActionReturnValue: SBPBankCellPresenter!
+    var buildWithActionReturnValue: ISBPBankCellPresenter!
 
-    func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> SBPBankCellPresenter {
+    func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> ISBPBankCellPresenter {
         buildCommonCallsCount += 1
         buildWithActionCallsCount += 1
         let arguments = (cellType, action)
