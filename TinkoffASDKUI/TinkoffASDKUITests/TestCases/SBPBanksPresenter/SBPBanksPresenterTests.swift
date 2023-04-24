@@ -35,33 +35,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
     override func setUp() {
         super.setUp()
         
-        viewMock = SBPBanksViewControllerMock()
-        routerMock = SBPBanksRouterMock()
-        outputMock = SBPBanksModuleOutputMock()
-        paymentSheetOutputMock = SBPPaymentSheetPresenterOutputMock()
-        paymentServiceMock = SBPPaymentServiceMock()
-        banksServiceMock = SBPBanksServiceMock()
-        bankAppCheckerMock = SBPBankAppCheckerMock()
-        bankAppOpenerMock = SBPBankAppOpenerMock()
-        cellPresentersAssemblyMock = ISBPBankCellPresenterAssemblyMock()
-        dispatchGroupMock = DispatchGroupMock()
-        mainDispatchQueueMock = DispatchQueueMock()
-        
-        sut = SBPBanksPresenter(
-            router: routerMock,
-            output: outputMock,
-            paymentSheetOutput: paymentSheetOutputMock,
-            moduleCompletion: nil,
-            paymentService: paymentServiceMock,
-            banksService: banksServiceMock,
-            bankAppChecker: bankAppCheckerMock,
-            bankAppOpener: bankAppOpenerMock,
-            cellPresentersAssembly: cellPresentersAssemblyMock,
-            dispatchGroup: dispatchGroupMock,
-            mainDispatchQueue: mainDispatchQueueMock
-        )
-        
-        sut.view = viewMock
+        configureSut()
     }
     
     override func tearDown() {
@@ -92,8 +66,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsAndBanksCount = skeletonsCount + loadedBanks.count
         let cellPresentersAssemblyCallsCount = skeletonsAndBanksCount + emptyCellsCount
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -144,8 +118,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsAndBanksWithOtherCount = skeletonsWithOtherBankCount + preferredBanks.count
         let cellPresentersAssemblyCallsCount = skeletonsAndBanksWithOtherCount + emptyCellsCount
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -191,7 +165,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsCount = 7
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -220,7 +194,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         // given
         let skeletonsCount = 7
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         dispatchGroupMock.notifyWorkShouldCalls = true
         
         // when
@@ -250,7 +224,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         
         let error = NSError(domain: "error", code: 1234)
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldCalls = true
         
@@ -280,7 +254,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldCalls = true
         
@@ -311,8 +285,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsAndBanksCount = skeletonsCount + loadedBanks.count
         let cellPresentersAssemblyCallsCount = skeletonsAndBanksCount + emptyCellsCount
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         mainDispatchQueueMock.asyncWorkShouldCalls = true
@@ -350,7 +324,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_startWithFullData_with_notNilQrPayload() {
         // given
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         
         sut.set(qrPayload: .any, banks: loadedBanks)
         
@@ -370,7 +344,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_startWithFullData_with_nilQrPayload() {
         // given
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         
         sut.set(qrPayload: nil, banks: loadedBanks)
         
@@ -392,8 +366,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let preferredBanks = Array(1...4).map { SBPBank.some($0) }
         let notPreferredBanks = Array(5...10).map { SBPBank.some($0) }
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -421,8 +395,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let loadedBanks = Array(1...10).map { SBPBank.some($0) }
         let preferredBanks = Array(1...4).map { SBPBank.some($0) }
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -446,7 +420,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let qrPayload = GetQRPayload.any
         let neededURL = URL(string: qrPayload.qrCodeData)
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         bankAppOpenerMock.openBankAppCompletionClosureInput = true
         
         sut.set(qrPayload: .any, banks: loadedBanks)
@@ -471,7 +445,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let qrPayload = GetQRPayload.any
         let neededURL = URL(string: qrPayload.qrCodeData)
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildWithActionReturnValue = .any
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         bankAppOpenerMock.openBankAppCompletionClosureInput = false
         
         sut.set(qrPayload: .any, banks: loadedBanks)
@@ -496,7 +470,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsCount = 7
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -543,7 +517,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
         let loadedBanks = [SBPBank](repeating: .any, count: 3)
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldCalls = true
@@ -580,7 +554,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         // given
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
         
-        cellPresentersAssemblyMock.buildReturnValue = .any
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldCalls = true
@@ -610,6 +584,273 @@ final class SBPBanksPresenterTests: BaseTestCase {
         XCTAssertEqual(banksServiceMock.loadBanksCallsCount, 0)
         XCTAssertEqual(cellPresentersAssemblyMock.buildCommonCallsCount, 0)
     }
+    
+    func test_serverErrorStub_action() throws {
+        // given
+        var isModuleCompletionCalled = false
+        var moduleCompletionResult: PaymentResult? = nil
+        moduleCompletionMock = { result in
+            isModuleCompletionCalled = true
+            moduleCompletionResult = result
+        }
+        
+        configureSut()
+
+        let error = NSError(domain: "error", code: 123456)
+        
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
+        banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
+        dispatchGroupMock.notifyWorkShouldCalls = true
+        routerMock.closeScreenCompletionShouldCalls = true
+        
+        sut.viewDidLoad()
+        let stub = try XCTUnwrap(viewMock.showStubViewReceivedArguments)
+        
+        // when
+        switch stub {
+        case let .serverError(action):
+            action()
+            fallthrough
+        default: break
+        }
+        
+        // then
+        XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .failed(error))
+        XCTAssertEqual(moduleCompletionResult, .failed(error))
+        XCTAssertTrue(isModuleCompletionCalled)
+    }
+    
+    func test_closeButtonPressed() {
+        // given
+        var isModuleCompletionCalled = false
+        var moduleCompletionResult: PaymentResult? = nil
+        moduleCompletionMock = { result in
+            isModuleCompletionCalled = true
+            moduleCompletionResult = result
+        }
+        
+        configureSut()
+        routerMock.closeScreenCompletionShouldCalls = true
+        
+        // when
+        sut.closeButtonPressed()
+        
+        // then
+        XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .cancelled())
+        XCTAssertEqual(moduleCompletionResult, .cancelled())
+        XCTAssertTrue(isModuleCompletionCalled)
+    }
+    
+    func test_controllerDidDismissManually() {
+        // given
+        var isModuleCompletionCalled = false
+        var moduleCompletionResult: PaymentResult? = nil
+        moduleCompletionMock = { result in
+            isModuleCompletionCalled = true
+            moduleCompletionResult = result
+        }
+        
+        configureSut()
+        
+        // when
+        sut.controllerDidDismissManually()
+        
+        // then
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .cancelled())
+        XCTAssertEqual(moduleCompletionResult, .cancelled())
+        XCTAssertTrue(isModuleCompletionCalled)
+    }
+    
+    func test_prefetchForRows() {
+        // given
+        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        let cellPresenterMock = SBPBankCellPresenterMock()
+        cellPresentersAssemblyMock.buildReturnValue = cellPresenterMock
+        cellPresentersAssemblyMock.buildWithActionReturnValue = cellPresenterMock
+        
+        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.viewDidLoad()
+
+        // when
+        sut.prefetch(for: [1])
+        
+        // then
+        XCTAssertEqual(cellPresenterMock.startLoadingCellImageIfNeededCallsCount, 1)
+    }
+    
+    func test_numberOfRows() {
+        // given
+        let loadedBanks = [SBPBank](repeating: .any, count: 7)
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
+        
+        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.viewDidLoad()
+        
+        // when
+        let numberOfRows = sut.numberOfRows()
+        
+        // then
+        XCTAssertEqual(numberOfRows, loadedBanks.count)
+    }
+    
+    func test_searchTextDidChange_with_notEmptyText() {
+        // given
+        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
+        mainDispatchQueueMock.asyncDedupedWorkShouldCalls = true
+        
+        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.viewDidLoad()
+        
+        viewMock.reloadTableViewCallsCount = 0
+        
+        // when
+        sut.searchTextDidChange(to: "1")
+        
+        // then
+        XCTAssertEqual(mainDispatchQueueMock.asyncDedupedCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncDedupedReceivedArguments?.delay, 0.3)
+        XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
+    }
+    
+    func test_searchTextDidChange_when_textEmpty() {
+        // given
+        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
+        mainDispatchQueueMock.asyncDedupedWorkShouldCalls = true
+        
+        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.viewDidLoad()
+        
+        sut.searchTextDidChange(to: "1")
+        mainDispatchQueueMock.asyncDedupedCallsCount = 0
+        viewMock.reloadTableViewCallsCount = 0
+
+        // when
+        sut.searchTextDidChange(to: "")
+        
+        // then
+        XCTAssertEqual(mainDispatchQueueMock.asyncDedupedCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncDedupedReceivedArguments?.delay, 0.3)
+        XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
+    }
+    
+    func test_searchTextDidChange_when_textEqualLastText() {
+        // given
+        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
+        mainDispatchQueueMock.asyncDedupedWorkShouldCalls = true
+        
+        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.viewDidLoad()
+        
+        viewMock.reloadTableViewCallsCount = 0
+
+        // when
+        sut.searchTextDidChange(to: "")
+        
+        // then
+        XCTAssertEqual(mainDispatchQueueMock.asyncDedupedCallsCount, 0)
+        XCTAssertEqual(viewMock.reloadTableViewCallsCount, 0)
+    }
+    
+    func test_didSelectRowAtIndex() {
+        // given
+        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        let cellPresenterMock = SBPBankCellPresenterMock()
+        
+        var isCellPresenterActionCalled = false
+        cellPresenterMock.action = {
+            isCellPresenterActionCalled = true
+        }
+
+        cellPresentersAssemblyMock.buildReturnValue = cellPresenterMock
+        cellPresentersAssemblyMock.buildWithActionReturnValue = cellPresenterMock
+        
+        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.viewDidLoad()
+
+        // when
+        sut.didSelectRow(at: 0)
+        
+        // then
+        XCTAssertTrue(isCellPresenterActionCalled)
+    }
+    
+    func test_sbpPaymentSheetCompletedWithResult() {
+        // given
+        var isModuleCompletionCalled = false
+        var moduleCompletionResult: PaymentResult? = nil
+        moduleCompletionMock = { result in
+            isModuleCompletionCalled = true
+            moduleCompletionResult = result
+        }
+        
+        configureSut()
+        routerMock.closeScreenCompletionShouldCalls = true
+        
+        // when
+        sut.sbpPaymentSheet(completedWith: .cancelled())
+        
+        // then
+        XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .cancelled())
+        XCTAssertEqual(moduleCompletionResult, .cancelled())
+        XCTAssertTrue(isModuleCompletionCalled)
+    }
+}
+
+// MARK: - Private methods
+
+extension SBPBanksPresenterTests {
+    private func configureSut() {
+        viewMock = SBPBanksViewControllerMock()
+        routerMock = SBPBanksRouterMock()
+        outputMock = SBPBanksModuleOutputMock()
+        paymentSheetOutputMock = SBPPaymentSheetPresenterOutputMock()
+        paymentServiceMock = SBPPaymentServiceMock()
+        banksServiceMock = SBPBanksServiceMock()
+        bankAppCheckerMock = SBPBankAppCheckerMock()
+        bankAppOpenerMock = SBPBankAppOpenerMock()
+        cellPresentersAssemblyMock = ISBPBankCellPresenterAssemblyMock()
+        dispatchGroupMock = DispatchGroupMock()
+        mainDispatchQueueMock = DispatchQueueMock()
+        
+        sut = SBPBanksPresenter(
+            router: routerMock,
+            output: outputMock,
+            paymentSheetOutput: paymentSheetOutputMock,
+            moduleCompletion: moduleCompletionMock,
+            paymentService: paymentServiceMock,
+            banksService: banksServiceMock,
+            bankAppChecker: bankAppCheckerMock,
+            bankAppOpener: bankAppOpenerMock,
+            cellPresentersAssembly: cellPresentersAssemblyMock,
+            dispatchGroup: dispatchGroupMock,
+            mainDispatchQueue: mainDispatchQueueMock
+        )
+        
+        sut.view = viewMock
+    }
+    
+    var cellImageLoaderMock: CellImageLoaderMock {
+        CellImageLoaderMock()
+    }
+    
+    var anyCellPresenter: ISBPBankCellPresenter {
+        SBPBankCellPresenter(cellType: .blank, action: {}, cellImageLoader: cellImageLoaderMock)
+    }
 }
 
 // MARK: - Helpers
@@ -626,9 +867,4 @@ extension SBPBank {
     static func some(_ uniqValue: Int) -> SBPBank {
         SBPBank(name: "name \(uniqValue)", logoURL: nil, schema: "scheme \(uniqValue)")
     }
-}
-
-extension SBPBankCellPresenter {
-    static let cellImageLoaderMock = CellImageLoaderMock()
-    static let any = SBPBankCellPresenter(cellType: .blank, action: {}, cellImageLoader: cellImageLoaderMock)
 }
