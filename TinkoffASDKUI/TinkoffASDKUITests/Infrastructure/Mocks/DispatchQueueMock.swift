@@ -20,7 +20,6 @@ final class DispatchQueueMock: IDispatchQueue {
     var asyncReceivedInvocations: [AsyncArguments] = []
     var asyncWorkShouldCalls = false
 
-
     func async(group: DispatchGroup?, qos: DispatchQoS, flags: DispatchWorkItemFlags, execute work: @convention(block) @escaping () -> Void) {
         asyncCallsCount += 1
         let arguments = (group, qos, flags, work)
@@ -30,7 +29,7 @@ final class DispatchQueueMock: IDispatchQueue {
             work()
         }
     }
-    
+
     // MARK: - asyncDeduped
 
     typealias AsyncDedupedArguments = (target: AnyObject, delay: TimeInterval, work: () -> Void)

@@ -50,11 +50,11 @@ public enum PaymentResult {
 extension PaymentResult: Equatable {
     public static func == (lhs: PaymentResult, rhs: PaymentResult) -> Bool {
         switch (lhs, rhs) {
-        case (.succeeded(let lhsPaymentInfo), .succeeded(let rhsPaymentInfo)):
+        case let (.succeeded(lhsPaymentInfo), .succeeded(rhsPaymentInfo)):
             return lhsPaymentInfo == rhsPaymentInfo
-        case (.failed(let lhsError as NSError), .failed(let rhsError as NSError)):
+        case let (.failed(lhsError as NSError), .failed(rhsError as NSError)):
             return lhsError == rhsError
-        case (.cancelled(let lhsPaymentInfo), .cancelled(let rhsPaymentInfo)):
+        case let (.cancelled(lhsPaymentInfo), .cancelled(rhsPaymentInfo)):
             return lhsPaymentInfo == rhsPaymentInfo
         default: return false
         }

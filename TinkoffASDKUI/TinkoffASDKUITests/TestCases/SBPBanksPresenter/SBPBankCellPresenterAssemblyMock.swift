@@ -30,7 +30,7 @@ final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
     }
 
     // MARK: - build
-    
+
     typealias BuildWithActionArguments = (cellType: SBPBankCellType, action: VoidBlock)
 
     var buildWithActionCallsCount = 0

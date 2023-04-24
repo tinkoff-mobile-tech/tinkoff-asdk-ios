@@ -316,13 +316,13 @@ extension SBPBanksPresenter {
 
     private func viewShowNoNetworkStub() {
         clearCellModels()
-        
+
         view?.showStubView(mode: .noNetwork { [weak self] in
             guard let self = self else { return }
-            
+
             self.view?.hideStubView()
             self.prepareAndShowSkeletonModels()
-            
+
             switch self.screenType {
             case .startEmpty, .startWithFullData: self.loadQrPayloadAndBanks()
             case .startWithBanks: self.loadQrPayloadWhenBanksPreloaded()
