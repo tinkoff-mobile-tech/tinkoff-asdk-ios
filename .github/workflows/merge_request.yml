@@ -11,6 +11,11 @@ on:
         type: string
 
 jobs:
+  changelog_check:
+    secrets:
+      comment_token: ${{ secrets.COMMENT_TOKEN }}
+    uses: ./.github/workflows/check-changelog.yml
+    
   swiftformat:
     runs-on: ubuntu-latest
     container: ghcr.io/nicklockwood/swiftformat:0.49.18
