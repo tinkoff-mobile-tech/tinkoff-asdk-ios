@@ -13,7 +13,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
 
     struct DidFinishPaymentPassedArguments {
         let controller: IPaymentController
-        let didFinishPayment: PaymentProcess
+        let didFinishPayment: IPaymentProcess
         let state: GetPaymentStatePayload
         let cardId: String?
         let rebillId: String?
@@ -24,7 +24,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
 
     func paymentController(
         _ controller: IPaymentController,
-        didFinishPayment: PaymentProcess,
+        didFinishPayment: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -44,7 +44,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
 
     struct WasCancelledPassedArguments {
         let controller: IPaymentController
-        let paymentWasCancelled: PaymentProcess
+        let paymentWasCancelled: IPaymentProcess
         let cardId: String?
         let rebillId: String?
     }
@@ -54,7 +54,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
 
     func paymentController(
         _ controller: IPaymentController,
-        paymentWasCancelled: PaymentProcess,
+        paymentWasCancelled: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {

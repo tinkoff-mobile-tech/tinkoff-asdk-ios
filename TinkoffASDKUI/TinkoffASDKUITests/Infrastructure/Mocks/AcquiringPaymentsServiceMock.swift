@@ -1,5 +1,5 @@
 //
-//  MockAcquiringPayments.swift
+//  AcquiringPaymentsServiceMock.swift
 //  Pods
 //
 //  Created by Ivan Glushko on 19.10.2022.
@@ -9,7 +9,7 @@ import Foundation
 @testable import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-final class MockAcquiringPaymentsService: IAcquiringPaymentsService {
+final class AcquiringPaymentsServiceMock: IAcquiringPaymentsService {
 
     // MARK: - initPayment
 
@@ -20,12 +20,16 @@ final class MockAcquiringPaymentsService: IAcquiringPaymentsService {
 
     var initPaymentCallCounter = 0
     var initPaymentPassedArguments: InitPaymentPassedArguments?
+    var initPaymentCompletionInput: Result<InitPayload, Error>?
     var initPaymentStubReturn: ((InitPaymentPassedArguments) -> Cancellable) = { _ in EmptyCancellable() }
 
     func initPayment(data: PaymentInitData, completion: @escaping (Result<InitPayload, Error>) -> Void) -> Cancellable {
         initPaymentCallCounter += 1
         let args = InitPaymentPassedArguments(data: data, completion: completion)
         initPaymentPassedArguments = args
+        if let initPaymentCompletionInput = initPaymentCompletionInput {
+            completion(initPaymentCompletionInput)
+        }
         return initPaymentStubReturn(args)
     }
 
@@ -38,12 +42,16 @@ final class MockAcquiringPaymentsService: IAcquiringPaymentsService {
 
     var finishAuthorizeCallCounter = 0
     var finishAuthorizePassedArguments: FinishAuthorizePassedArguments?
+    var finishAuthorizeCompletionInput: Result<FinishAuthorizePayload, Error>?
     var finishAuthorizeStubReturn: ((FinishAuthorizePassedArguments) -> Cancellable) = { _ in EmptyCancellable() }
 
     func finishAuthorize(data: FinishAuthorizeData, completion: @escaping (Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
         finishAuthorizeCallCounter += 1
         let args = FinishAuthorizePassedArguments(data: data, completion: completion)
         finishAuthorizePassedArguments = args
+        if let finishAuthorizeCompletionInput = finishAuthorizeCompletionInput {
+            completion(finishAuthorizeCompletionInput)
+        }
         return finishAuthorizeStubReturn(args)
     }
 

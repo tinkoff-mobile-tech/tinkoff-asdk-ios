@@ -19,7 +19,7 @@
 
 import TinkoffASDKCore
 
-final class CardPaymentProcess: PaymentProcess {
+final class CardPaymentProcess: IPaymentProcess {
 
     private let paymentsService: IAcquiringPaymentsService
     private let threeDsService: IAcquiringThreeDSService
@@ -139,6 +139,8 @@ private extension CardPaymentProcess {
                 notificationURL: threeDsService.confirmation3DSCompleteV2URL().absoluteString
             )
 
+            // Может тут должен быть метод ?
+            // need3DSConfirmationACS
             delegate?.payment(self, needToCollect3DSData: check3DSData) { [weak self] deviceInfo in
                 guard let self = self else { return }
 

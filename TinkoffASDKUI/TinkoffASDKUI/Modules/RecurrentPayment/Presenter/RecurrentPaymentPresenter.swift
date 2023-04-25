@@ -106,7 +106,7 @@ extension RecurrentPaymentPresenter: IPayButtonViewPresenterOutput {
 extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
-        didFinishPayment paymentProcess: PaymentProcess,
+        didFinishPayment paymentProcess: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -127,7 +127,7 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
 
     func paymentController(
         _ controller: IPaymentController,
-        paymentWasCancelled paymentProcess: PaymentProcess,
+        paymentWasCancelled paymentProcess: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {
@@ -138,7 +138,7 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
-        failedPaymentProcess: PaymentProcess,
+        failedPaymentProcess: IPaymentProcess,
         additionalData: [String: String],
         error: Error
     ) {

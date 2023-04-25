@@ -8,7 +8,7 @@
 import Foundation
 import TinkoffASDKCore
 
-final class YandexPayPaymentProcess: PaymentProcess {
+final class YandexPayPaymentProcess: IPaymentProcess {
     // MARK: PaymentProcess properties
 
     let paymentFlow: PaymentFlow
@@ -26,7 +26,6 @@ final class YandexPayPaymentProcess: PaymentProcess {
     // MARK: Dependencies
 
     private let paymentService: IAcquiringPaymentsService
-    private let threeDSService: IAcquiringThreeDSService
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     private weak var delegate: PaymentProcessDelegate?
 
@@ -42,14 +41,12 @@ final class YandexPayPaymentProcess: PaymentProcess {
         paymentFlow: PaymentFlow,
         paymentSource: PaymentSourceData,
         paymentService: IAcquiringPaymentsService,
-        threeDSService: IAcquiringThreeDSService,
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
         delegate: PaymentProcessDelegate
     ) {
         self.paymentFlow = paymentFlow
         self.paymentSource = paymentSource
         self.paymentService = paymentService
-        self.threeDSService = threeDSService
         self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
         self.delegate = delegate
     }

@@ -13,7 +13,7 @@ public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата прошла успешно
     func paymentController(
         _ controller: IPaymentController,
-        didFinishPayment paymentProcess: PaymentProcess,
+        didFinishPayment paymentProcess: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -22,7 +22,7 @@ public protocol PaymentControllerDelegate: AnyObject {
     /// Оплата была отменена
     func paymentController(
         _ controller: IPaymentController,
-        paymentWasCancelled paymentProcess: PaymentProcess,
+        paymentWasCancelled paymentProcess: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     )

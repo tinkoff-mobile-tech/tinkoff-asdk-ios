@@ -58,4 +58,14 @@ protocol IAcquiringThreeDSService {
     /// - Returns:
     ///   - URLRequest
     func createConfirmation3DSRequestACS(data: Confirmation3DSDataACS, messageVersion: String) throws -> URLRequest
+
+    /// Осуществляет проверку результатов прохождения 3-D Secure v2
+    /// и при успешном результате прохождения 3-D Secure v2
+    /// подтверждает инициированный платеж.
+    ///
+    @discardableResult
+    func submit3DSAuthorizationV2(
+        data: CresData,
+        completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
+    ) -> Cancellable
 }

@@ -19,7 +19,7 @@
 
 import TinkoffASDKCore
 
-final class ChargePaymentProcess: PaymentProcess {
+final class ChargePaymentProcess: IPaymentProcess {
     private let paymentsService: IAcquiringPaymentsService
     private var isCancelled = Atomic(wrappedValue: false)
     private var currentRequest: Atomic<Cancellable>?

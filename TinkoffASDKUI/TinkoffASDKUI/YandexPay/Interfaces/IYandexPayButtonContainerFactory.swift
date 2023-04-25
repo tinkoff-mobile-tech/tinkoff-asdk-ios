@@ -19,6 +19,6 @@ public protocol IYandexPayButtonContainerFactory: AnyObject {
     /// - Returns: UI-контейнер с кнопкой `YandexPay`
     func createButtonContainer(
         with configuration: YandexPayButtonContainerConfiguration,
-        delegate: YandexPayButtonContainerDelegate
+        delegate: IYandexPayButtonContainerDelegate
     ) -> IYandexPayButtonContainer
 }

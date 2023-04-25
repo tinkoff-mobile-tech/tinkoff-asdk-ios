@@ -49,7 +49,7 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
         ).build()
         let tdsTimeoutResolver = TDSTimeoutResolver()
         let tdsController = TDSController(
-            acquiringSdk: coreSDK,
+            threeDsService: coreSDK,
             tdsWrapper: tdsWrapper,
             tdsTimeoutResolver: tdsTimeoutResolver
         )

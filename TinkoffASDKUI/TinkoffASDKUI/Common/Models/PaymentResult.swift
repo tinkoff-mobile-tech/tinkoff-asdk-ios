@@ -11,7 +11,7 @@ import TinkoffASDKCore
 /// Результат платежа
 public enum PaymentResult {
     /// Информация о проведенном платеже
-    public struct PaymentInfo {
+    public struct PaymentInfo: Equatable {
         /// Идентификатор платежа
         public let paymentId: String
         /// Идентификатор заказа в системе продавца
@@ -50,5 +50,24 @@ public enum PaymentResult {
 extension GetPaymentStatePayload {
     func toPaymentInfo() -> PaymentResult.PaymentInfo {
         PaymentResult.PaymentInfo(paymentId: paymentId, orderId: orderId, amount: amount, paymentStatus: status)
+    }
+}
+
+extension PaymentResult: Equatable {
+
+    public static func == (lhs: PaymentResult, rhs: PaymentResult) -> Bool {
+        switch lhs {
+        case let .cancelled(info):
+            guard case let .cancelled(rhsInfo) = rhs else { return false }
+            return info == rhsInfo
+
+        case let .failed(error):
+            guard case let .failed(rhsError) = rhs else { return false }
+            return (type(of: error) == type(of: rhsError))
+
+        case let .succeeded(info):
+            guard case let .succeeded(rhsInfo) = rhs else { return false }
+            return info == rhsInfo
+        }
     }
 }

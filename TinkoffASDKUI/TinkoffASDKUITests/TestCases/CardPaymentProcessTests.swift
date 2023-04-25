@@ -341,10 +341,10 @@ extension CardPaymentProcessTests {
 
     struct Dependencies {
         let sut: CardPaymentProcess
-        let sutAsPaymentProcess: PaymentProcess
-        let paymentDelegateMock: MockPaymentProcessDelegate
+        let sutAsPaymentProcess: IPaymentProcess
+        let paymentDelegateMock: PaymentProcessDelegateMock
         let ipProviderMock: MockIPAddressProvider
-        let paymentsServiceMock: MockAcquiringPaymentsService
+        let paymentsServiceMock: AcquiringPaymentsServiceMock
         let threeDsServiceMock: AcquiringThreeDsServiceMock
         let paymentFlow: PaymentFlow
         let paymentSource: PaymentSourceData
@@ -354,10 +354,10 @@ extension CardPaymentProcessTests {
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow
     ) -> Dependencies {
-        let paymentDelegateMock = MockPaymentProcessDelegate()
+        let paymentDelegateMock = PaymentProcessDelegateMock()
         let ipProviderMock = MockIPAddressProvider()
 
-        let paymentsServiceMock = MockAcquiringPaymentsService()
+        let paymentsServiceMock = AcquiringPaymentsServiceMock()
         let threeDsServiceMock = AcquiringThreeDsServiceMock()
 
         let sut = CardPaymentProcess(

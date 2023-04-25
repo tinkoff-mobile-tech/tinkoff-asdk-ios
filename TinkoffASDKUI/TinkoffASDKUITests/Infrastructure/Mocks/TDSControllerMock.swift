@@ -1,5 +1,5 @@
 //
-//  MockTDSController.swift
+//  TDSControllerMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
 //  Created by Ivan Glushko on 17.10.2022.
@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-final class MockTDSController: ITDSController {
+final class TDSControllerMock: ITDSController {
 
     var completionHandler: TinkoffASDKUI.PaymentCompletionHandler?
 

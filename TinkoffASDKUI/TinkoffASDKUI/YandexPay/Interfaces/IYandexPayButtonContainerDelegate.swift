@@ -1,5 +1,5 @@
 //
-//  YandexPayButtonContainerDelegate.swift
+//  IYandexPayButtonContainerDelegate.swift
 //  TinkoffASDKYandexPay
 //
 //  Created by r.akhmadeev on 04.12.2022.
@@ -8,7 +8,7 @@
 import UIKit
 
 /// Делегат  UI-контейнера для кнопки `YandexPay`
-public protocol YandexPayButtonContainerDelegate: AnyObject {
+public protocol IYandexPayButtonContainerDelegate: AnyObject {
     /// Уведомляет о завершении оплаты с помощью `YandexPay`
     /// - Parameters:
     ///   - container: UI-контейнер для кнопки `YandexPay`

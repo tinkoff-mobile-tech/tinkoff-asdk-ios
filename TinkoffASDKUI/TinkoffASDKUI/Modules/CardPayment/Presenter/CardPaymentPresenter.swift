@@ -181,7 +181,7 @@ extension CardPaymentPresenter: ICardListPresenterOutput {
 extension CardPaymentPresenter: PaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
-        didFinishPayment: PaymentProcess,
+        didFinishPayment: IPaymentProcess,
         with state: TinkoffASDKCore.GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -196,7 +196,7 @@ extension CardPaymentPresenter: PaymentControllerDelegate {
 
     func paymentController(
         _ controller: IPaymentController,
-        paymentWasCancelled: PaymentProcess,
+        paymentWasCancelled: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {
