@@ -863,6 +863,10 @@ extension SBPBank {
     static var any: SBPBank {
         SBPBank(name: "name", logoURL: nil, schema: "scheme")
     }
+    
+    static var anyWithUrl: SBPBank {
+        SBPBank(name: "name", logoURL: URL(string: "https://www.google.com"), schema: "scheme")
+    }
 
     static func some(_ uniqValue: Int) -> SBPBank {
         SBPBank(name: "name \(uniqValue)", logoURL: nil, schema: "scheme \(uniqValue)")
