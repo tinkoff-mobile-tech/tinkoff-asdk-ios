@@ -129,6 +129,7 @@ extension MainFormPresenter: IMainFormPresenter {
             view?.closeView()
         case .recoverableFailure:
             presentationState = .payMethodsPresenting
+            payButtonPresenter.stopLoading()
             view?.hideCommonSheet()
         }
     }
