@@ -126,9 +126,9 @@ final class PullableContainerViewController: UIViewController {
     }
 }
 
-// MARK: - PullableContainerСontentDelegate
+// MARK: - IPullableContainerСontentDelegate
 
-extension PullableContainerViewController: PullableContainerСontentDelegate {
+extension PullableContainerViewController: IPullableContainerСontentDelegate {
     func updateHeight(animated: Bool, alongsideAnimation: VoidBlock?, completion: VoidBlock?) {
         dragHandlers.forEach { $0.cancel() }
 

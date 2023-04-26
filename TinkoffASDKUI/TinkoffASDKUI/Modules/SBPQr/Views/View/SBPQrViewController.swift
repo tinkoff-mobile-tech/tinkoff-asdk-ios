@@ -17,7 +17,7 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
 
     // MARK: Dependencies
 
-    weak var pullableContentDelegate: PullableContainerСontentDelegate?
+    weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: ISBPQrViewOutput
     private let tableContentProvider: ISBPQrTableContentProvider
 
@@ -119,7 +119,7 @@ extension SBPQrViewController: UITableViewDelegate {
 
 extension SBPQrViewController: IPullableContainerContent {
     func pullableContainer(
-        _ contentDelegate: PullableContainerСontentDelegate,
+        _ contentDelegate: IPullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {
@@ -135,7 +135,7 @@ extension SBPQrViewController: IPullableContainerContent {
         }
     }
 
-    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 }

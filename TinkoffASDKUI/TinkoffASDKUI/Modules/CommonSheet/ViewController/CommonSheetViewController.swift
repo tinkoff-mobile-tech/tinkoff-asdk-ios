@@ -10,7 +10,7 @@ import UIKit
 final class CommonSheetViewController: UIViewController, IPullableContainerContent {
     // MARK: Dependencies
 
-    weak var pullableContentDelegate: PullableContainerСontentDelegate?
+    weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: ICommonSheetPresenter
 
     // MARK: UI
@@ -79,20 +79,20 @@ extension CommonSheetViewController: CommonSheetViewDelegate {
 // MARK: - IPullableContainerContent
 
 extension CommonSheetViewController {
-    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 
-    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: PullableContainerСontentDelegate) -> Bool {
+    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool {
         presenter.canDismissViewByUserInteraction()
     }
 
-    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: PullableContainerСontentDelegate) -> Bool {
+    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool {
         presenter.canDismissViewByUserInteraction()
     }
 
     func pullableContainer(
-        _ container: PullableContainerСontentDelegate,
+        _ container: IPullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {

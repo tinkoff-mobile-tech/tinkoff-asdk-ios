@@ -23,7 +23,7 @@ final class MainFormViewController: UIViewController {
 
     // MARK: Dependencies
 
-    weak var pullableContentDelegate: PullableContainerСontentDelegate?
+    weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: IMainFormPresenter
     private let tableContentProvider: IMainFormTableContentProvider
     private let keyboardService = KeyboardService()
@@ -171,19 +171,19 @@ extension MainFormViewController: CommonSheetViewDelegate {
 // MARK: - IPullableContainerContent
 
 extension MainFormViewController: IPullableContainerContent {
-    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
         anchors.count
     }
 
-    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
         anchors.firstIndex(of: currentAnchor) ?? .zero
     }
 
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
         currentAnchor = anchors[currentAnchorIndex]
     }
 
-    func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool {
+    func pullabeContainer(_ contentDelegate: IPullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool {
         switch presentationState {
         case .commonSheet:
             return false
@@ -193,7 +193,7 @@ extension MainFormViewController: IPullableContainerContent {
     }
 
     func pullableContainer(
-        _ contentDelegate: PullableContainerСontentDelegate,
+        _ contentDelegate: IPullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {
@@ -211,11 +211,11 @@ extension MainFormViewController: IPullableContainerContent {
         }
     }
 
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
         hideKeyboard()
     }
 
-    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 }

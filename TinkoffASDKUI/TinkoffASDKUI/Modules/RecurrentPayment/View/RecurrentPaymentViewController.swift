@@ -23,7 +23,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
     // MARK: Dependencies
 
-    weak var pullableContentDelegate: PullableContainerСontentDelegate?
+    weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: IRecurrentPaymentViewOutput
     private let tableContentProvider: IRecurrentPaymentTableContentProvider
     private let keyboardService = KeyboardService()
@@ -139,16 +139,16 @@ extension RecurrentPaymentViewController: UITableViewDelegate {
 // MARK: - IPullableContainerContent Methods
 
 extension RecurrentPaymentViewController: IPullableContainerContent {
-    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
         anchors.firstIndex(of: currentAnchor) ?? .zero
     }
 
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
         currentAnchor = anchors[currentAnchorIndex]
     }
 
     func pullableContainer(
-        _ contentDelegate: PullableContainerСontentDelegate,
+        _ contentDelegate: IPullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {
@@ -166,11 +166,11 @@ extension RecurrentPaymentViewController: IPullableContainerContent {
         }
     }
 
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
         hideKeyboard()
     }
 
-    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 }

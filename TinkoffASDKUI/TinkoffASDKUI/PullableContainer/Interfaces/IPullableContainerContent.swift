@@ -20,41 +20,41 @@
 import UIKit
 
 protocol IPullableContainerContent: AnyObject {
-    func pullableContainerDidRequestContentView(_ contentDelegate: PullableContainerСontentDelegate) -> UIView
-    func pullableContainerDidRequestScrollView(_ contentDelegate: PullableContainerСontentDelegate) -> UIScrollView?
-    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int
-    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int
+    func pullableContainerDidRequestContentView(_ contentDelegate: IPullableContainerСontentDelegate) -> UIView
+    func pullableContainerDidRequestScrollView(_ contentDelegate: IPullableContainerСontentDelegate) -> UIScrollView?
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: IPullableContainerСontentDelegate) -> Int
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: IPullableContainerСontentDelegate) -> Int
 
     func pullableContainer(
-        _ contentDelegate: PullableContainerСontentDelegate,
+        _ contentDelegate: IPullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat
 
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat)
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int)
-    func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool
-    func pullableContainerWillBeClosed(_ contentDelegate: PullableContainerСontentDelegate)
-    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate)
-    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: PullableContainerСontentDelegate) -> Bool
-    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: PullableContainerСontentDelegate) -> Bool
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didDragWithOffset offset: CGFloat)
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didChange currentAnchorIndex: Int)
+    func pullabeContainer(_ contentDelegate: IPullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool
+    func pullableContainerWillBeClosed(_ contentDelegate: IPullableContainerСontentDelegate)
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate)
+    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool
+    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool
 }
 
 // MARK: - IPullableContainerContent + Default Implementation
 
 extension IPullableContainerContent {
-    func pullableContainerDidRequestScrollView(_ contentDelegate: PullableContainerСontentDelegate) -> UIScrollView? { nil }
-    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int { 1 }
-    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int { .zero }
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {}
-    func pullableContainer(_ contentDelegate: PullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
-    func pullabeContainer(_ contentDelegate: PullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool { true }
-    func pullableContainerWillBeClosed(_ contentDelegate: PullableContainerСontentDelegate) {}
-    func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {}
-    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: PullableContainerСontentDelegate) -> Bool { true }
-    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: PullableContainerСontentDelegate) -> Bool { true }
+    func pullableContainerDidRequestScrollView(_ contentDelegate: IPullableContainerСontentDelegate) -> UIScrollView? { nil }
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: IPullableContainerСontentDelegate) -> Int { 1 }
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: IPullableContainerСontentDelegate) -> Int { .zero }
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {}
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {}
+    func pullabeContainer(_ contentDelegate: IPullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool { true }
+    func pullableContainerWillBeClosed(_ contentDelegate: IPullableContainerСontentDelegate) {}
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {}
+    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool { true }
+    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool { true }
 }
 
 extension IPullableContainerContent where Self: UIViewController {
-    func pullableContainerDidRequestContentView(_ contentDelegate: PullableContainerСontentDelegate) -> UIView { view }
+    func pullableContainerDidRequestContentView(_ contentDelegate: IPullableContainerСontentDelegate) -> UIView { view }
 }
