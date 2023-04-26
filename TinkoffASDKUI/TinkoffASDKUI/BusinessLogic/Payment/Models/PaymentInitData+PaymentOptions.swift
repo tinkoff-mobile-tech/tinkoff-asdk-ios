@@ -38,6 +38,8 @@ extension PaymentInitData {
         initData.receipt = orderOptions.receipt
         initData.shops = orderOptions.shops
         initData.receipts = orderOptions.receipts
+        initData.successURL = paymentOptions.paymentCallbackURL?.successURL
+        initData.failURL = paymentOptions.paymentCallbackURL?.failureURL
 
         if isCharge {
             initData.addPaymentData(["chargeFlag": "true"])
