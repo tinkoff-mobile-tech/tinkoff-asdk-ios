@@ -46,6 +46,8 @@ final class CommonSheetViewController: UIViewController, IPullableContainerConte
 extension CommonSheetViewController: ICommonSheetView {
     func update(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         commonSheetView.showOverlay(animated: true) {
+            self.commonSheetView.set(state: state)
+
             self.pullableContentDelegate?.updateHeight(
                 animated: animatePullableContainerUpdates,
                 alongsideAnimation: {
@@ -63,10 +65,6 @@ extension CommonSheetViewController: ICommonSheetView {
 // MARK: - CommonSheetViewDelegate
 
 extension CommonSheetViewController: CommonSheetViewDelegate {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
-        pullableContentDelegate?.updateHeight()
-    }
-
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.primaryButtonTapped()
     }
