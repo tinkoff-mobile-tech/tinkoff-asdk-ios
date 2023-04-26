@@ -43,6 +43,7 @@ final class PullableContainerViewController: UIViewController {
 
     private lazy var heightConstraintController = PullableContainerHeightConstraintController(
         dragViewHeightConstraint: containerView.dragViewHeightConstraint,
+        contentContainerHeightConstraint: containerView.contentContainerHeightConstraint,
         delegate: self
     )
 
@@ -80,14 +81,12 @@ final class PullableContainerViewController: UIViewController {
         if cachedViewHeight != view.bounds.height {
             cachedViewHeight = view.bounds.height
             containerView.layoutIfNeeded()
-            heightConstraintController.insets.top = containerView.headerView.bounds.height
             updateHeight()
         }
     }
 
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
-        heightConstraintController.insets.bottom = view.safeAreaInsets.bottom
     }
 
     // MARK: Initial Configuration
@@ -115,6 +114,15 @@ final class PullableContainerViewController: UIViewController {
         }
 
         dragHandlers = [panGestureHandler, scrollHandler].compactMap { $0 }
+    }
+
+    // MARK: Helpers
+
+    private func calculateMaxContentHeight() -> CGFloat {
+        view.bounds.height
+            - containerView.safeAreaInsets.vertical
+            - .additionalInset(for: view.safeAreaInsets)
+            - containerView.headerView.bounds.height
     }
 }
 
@@ -163,12 +171,8 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
         content.pullableContainerDidRequestCurrentAnchorIndex(self)
     }
 
-    func heightConstraintController(
-        _ controller: PullableContainerHeightConstraintController,
-        didRequestHeightForAnchorAt index: Int,
-        availableSpace: CGFloat
-    ) -> CGFloat {
-        content.pullableContainer(self, didRequestHeightForAnchorAt: index, availableSpace: availableSpace)
+    func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didRequestHeightForAnchorAt index: Int) -> CGFloat {
+        content.pullableContainer(self, didRequestHeightForAnchorAt: index, availableSpace: calculateMaxContentHeight())
     }
 
     func heightConstraintController(_ controller: PullableContainerHeightConstraintController, shouldUseAnchorAt index: Int) -> Bool {
@@ -196,11 +200,12 @@ extension PullableContainerViewController: PullableContainerHeightConstraintCont
         })
     }
 
-    func heightConstraintControllerDidRequestAvailableSpace(_ controller: PullableContainerHeightConstraintController) -> CGFloat {
-        view.bounds.height
-            - view.safeAreaInsets.vertical
-            - .additionalInset(for: view.safeAreaInsets)
-            - containerView.headerView.bounds.height
+    func heightConstraintControllerDidRequestMaxContentHeight(_ controller: PullableContainerHeightConstraintController) -> CGFloat {
+        calculateMaxContentHeight()
+    }
+
+    func heightConstraintControllerDidRequestDragViewInset(_ controller: PullableContainerHeightConstraintController) -> UIEdgeInsets {
+        UIEdgeInsets(top: containerView.headerView.bounds.height, left: .zero, bottom: containerView.safeAreaInsets.bottom, right: .zero)
     }
 
     func heightConstraintControllerShouldDismissOnDownDragging(_ controller: PullableContainerHeightConstraintController) -> Bool {

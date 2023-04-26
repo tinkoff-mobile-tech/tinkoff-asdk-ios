@@ -115,7 +115,7 @@ extension SBPQrViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent Methods
+// MARK: - PullableContainerContent
 
 extension SBPQrViewController: PullableContainerContent {
     func pullableContainer(

@@ -37,9 +37,12 @@ final class PullableContainerView: PassthroughView {
         return headerView
     }()
 
+    private lazy var contentContainer = UIView()
+
     // MARK: Constraints
 
     private(set) lazy var dragViewHeightConstraint = dragView.heightAnchor.constraint(equalToConstant: .zero)
+    private(set) lazy var contentContainerHeightConstraint = contentContainer.heightAnchor.constraint(equalToConstant: .zero)
 
     // MARK: Init
 
@@ -56,15 +59,8 @@ final class PullableContainerView: PassthroughView {
     // MARK: PullableContainerView
 
     func add(contentView: UIView) {
-        dragView.addSubview(contentView)
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-            contentView.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: dragView.bottomAnchor),
-        ])
+        contentContainer.addSubview(contentView)
+        contentView.pinEdgesToSuperview()
     }
 
     // MARK: Setting Up
@@ -72,20 +68,27 @@ final class PullableContainerView: PassthroughView {
     private func setup() {
         addSubview(dragView)
         dragView.addSubview(headerView)
+        dragView.addSubview(contentContainer)
 
         dragView.translatesAutoresizingMaskIntoConstraints = false
         headerView.translatesAutoresizingMaskIntoConstraints = false
+        contentContainer.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            dragView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dragView.leadingAnchor.constraint(equalTo: leadingAnchor),
             dragView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            dragView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dragViewHeightConstraint,
 
             headerView.topAnchor.constraint(equalTo: dragView.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
             headerView.heightAnchor.constraint(equalToConstant: .topViewHeight),
+
+            contentContainer.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
+            contentContainerHeightConstraint,
         ])
     }
 }

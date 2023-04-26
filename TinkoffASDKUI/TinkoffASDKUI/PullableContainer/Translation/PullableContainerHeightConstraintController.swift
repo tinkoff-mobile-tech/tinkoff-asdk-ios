@@ -20,21 +20,17 @@
 import UIKit
 
 protocol PullableContainerHeightConstraintControllerDelegate: AnyObject {
-    func heightConstraintControllerDidRequestAvailableSpace(_ controller: PullableContainerHeightConstraintController) -> CGFloat
-    func heightConstraintControllerDidEndDragging(_ controller: PullableContainerHeightConstraintController)
-    func heightConstraintControllerDidCloseContainer(_ controller: PullableContainerHeightConstraintController)
-    func heightConstraintControllerShouldDismissOnDownDragging(_ controller: PullableContainerHeightConstraintController) -> Bool
+    func heightConstraintControllerDidRequestMaxContentHeight(_ controller: PullableContainerHeightConstraintController) -> CGFloat
+    func heightConstraintControllerDidRequestDragViewInset(_ controller: PullableContainerHeightConstraintController) -> UIEdgeInsets
     func heightConstraintControllerDidRequestCurrentAnchorIndex(_ controller: PullableContainerHeightConstraintController) -> Int
     func heightConstraintControllerDidRequestNumberOfAnchors(_ controller: PullableContainerHeightConstraintController) -> Int
-    func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didChange currentAnchorIndex: Int)
+    func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didRequestHeightForAnchorAt index: Int) -> CGFloat
     func heightConstraintController(_ controller: PullableContainerHeightConstraintController, shouldUseAnchorAt index: Int) -> Bool
+    func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didChange currentAnchorIndex: Int)
+    func heightConstraintControllerShouldDismissOnDownDragging(_ controller: PullableContainerHeightConstraintController) -> Bool
     func heightConstraintController(_ controller: PullableContainerHeightConstraintController, didDragWithOffset offset: CGFloat)
-
-    func heightConstraintController(
-        _ controller: PullableContainerHeightConstraintController,
-        didRequestHeightForAnchorAt index: Int,
-        availableSpace: CGFloat
-    ) -> CGFloat
+    func heightConstraintControllerDidEndDragging(_ controller: PullableContainerHeightConstraintController)
+    func heightConstraintControllerDidCloseContainer(_ controller: PullableContainerHeightConstraintController)
 }
 
 final class PullableContainerHeightConstraintController {
@@ -49,15 +45,17 @@ final class PullableContainerHeightConstraintController {
 
     private weak var delegate: PullableContainerHeightConstraintControllerDelegate?
     private let dragViewHeightConstraint: NSLayoutConstraint
-
-    // MARK: State
-
-    var insets: UIEdgeInsets = .zero
+    private let contentContainerHeightConstraint: NSLayoutConstraint
 
     // MARK: Init
 
-    init(dragViewHeightConstraint: NSLayoutConstraint, delegate: PullableContainerHeightConstraintControllerDelegate?) {
+    init(
+        dragViewHeightConstraint: NSLayoutConstraint,
+        contentContainerHeightConstraint: NSLayoutConstraint,
+        delegate: PullableContainerHeightConstraintControllerDelegate?
+    ) {
         self.dragViewHeightConstraint = dragViewHeightConstraint
+        self.contentContainerHeightConstraint = contentContainerHeightConstraint
         self.delegate = delegate
     }
 
@@ -65,7 +63,7 @@ final class PullableContainerHeightConstraintController {
 
     func updateHeight() {
         guard let currentAnchor = currentAnchor() else { return }
-        updateConstraintIfNeeded(dragViewHeight: currentAnchor.height)
+        updateConstraints(contentHeight: currentAnchor.height)
     }
 
     func didDragWith(offset: CGFloat) {
@@ -84,17 +82,17 @@ final class PullableContainerHeightConstraintController {
 
         if isMovingChange, offset < 0 {
             let newAnchor = nearestUpperAnchor(for: currentAnchor, consideringOffset: offset) ?? currentAnchor
-            updateConstraintIfNeeded(dragViewHeight: newAnchor.height)
+            updateConstraints(contentHeight: newAnchor.height)
             delegate.heightConstraintControllerDidEndDragging(self)
             delegate.heightConstraintController(self, didChange: newAnchor.index)
         } else if isMovingChange, let nearestLowerAnchor = nearestLowerAnchor(for: currentAnchor, consideringOffset: offset) {
-            updateConstraintIfNeeded(dragViewHeight: nearestLowerAnchor.height)
+            updateConstraints(contentHeight: nearestLowerAnchor.height)
             delegate.heightConstraintControllerDidEndDragging(self)
             delegate.heightConstraintController(self, didChange: nearestLowerAnchor.index)
         } else if isMovingChange, shouldDismissOnDownDragging() {
             delegate.heightConstraintControllerDidCloseContainer(self)
         } else {
-            updateConstraintIfNeeded(dragViewHeight: currentAnchor.height)
+            updateConstraints(contentHeight: currentAnchor.height)
             delegate.heightConstraintControllerDidEndDragging(self)
         }
     }
@@ -120,7 +118,7 @@ final class PullableContainerHeightConstraintController {
             resultOffset = max(-.maximumDragOffset, dragOffset * .dragOffsetCoefficient)
         }
 
-        updateConstraintIfNeeded(dragViewHeight: currentAnchor.height - resultOffset)
+        updateConstraints(contentHeight: currentAnchor.height - resultOffset)
 
         delegate?.heightConstraintController(self, didDragWithOffset: resultOffset)
     }
@@ -148,17 +146,9 @@ final class PullableContainerHeightConstraintController {
             dragViewHeight = max(currentAnchor.height - resultOffset, currentAnchor.height - .maximumDragOffset)
         }
 
-        updateConstraintIfNeeded(dragViewHeight: dragViewHeight)
+        updateConstraints(contentHeight: dragViewHeight)
 
         delegate?.heightConstraintController(self, didDragWithOffset: currentAnchor.height - dragViewHeight)
-    }
-
-    private func availableSpace() -> CGFloat {
-        guard let delegate = delegate else {
-            return .zero
-        }
-
-        return delegate.heightConstraintControllerDidRequestAvailableSpace(self)
     }
 
     private func shouldDismissOnDownDragging() -> Bool {
@@ -210,14 +200,14 @@ final class PullableContainerHeightConstraintController {
 
         return Anchor(
             index: index,
-            height: delegate.heightConstraintController(self, didRequestHeightForAnchorAt: index, availableSpace: availableSpace())
+            height: delegate.heightConstraintController(self, didRequestHeightForAnchorAt: index)
         )
     }
 
-    private func updateConstraintIfNeeded(dragViewHeight: CGFloat) {
-        let constant = dragViewHeight + insets.vertical
-        guard dragViewHeightConstraint.constant != constant else { return }
-        dragViewHeightConstraint.constant = constant
+    private func updateConstraints(contentHeight: CGFloat) {
+        let dragViewInsets = delegate?.heightConstraintControllerDidRequestDragViewInset(self) ?? .zero
+        contentContainerHeightConstraint.constant = contentHeight + dragViewInsets.bottom
+        dragViewHeightConstraint.constant = contentHeight + dragViewInsets.vertical
     }
 }
 
