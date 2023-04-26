@@ -55,10 +55,10 @@ jobs:
       - name: build Package.swift
         run: bundle exec fastlane build_spm
 
-      - name: Testing Target [Unit Tests]
+      - name: Testing [Unit Tests]
         run: bundle exec fastlane tests
 
-      - name: tests lint
+      - name: Podspecs lint
         env:
           XCODEPROJ_PATH: ${{ inputs.xcodeproj_path }}
           SCHEME_NAME: ${{ inputs.scheme_name }}
