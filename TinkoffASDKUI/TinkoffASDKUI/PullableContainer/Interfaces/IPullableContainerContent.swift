@@ -1,6 +1,6 @@
 //
 //
-//  PullableContainerContent.swift
+//  IPullableContainerContent.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import UIKit
 
-protocol PullableContainerContent: AnyObject {
+protocol IPullableContainerContent: AnyObject {
     func pullableContainerDidRequestContentView(_ contentDelegate: PullableContainerСontentDelegate) -> UIView
     func pullableContainerDidRequestScrollView(_ contentDelegate: PullableContainerСontentDelegate) -> UIScrollView?
     func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int
@@ -40,9 +40,9 @@ protocol PullableContainerContent: AnyObject {
     func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: PullableContainerСontentDelegate) -> Bool
 }
 
-// MARK: - PullableContainerContent + Default Implementation
+// MARK: - IPullableContainerContent + Default Implementation
 
-extension PullableContainerContent {
+extension IPullableContainerContent {
     func pullableContainerDidRequestScrollView(_ contentDelegate: PullableContainerСontentDelegate) -> UIScrollView? { nil }
     func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int { 1 }
     func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int { .zero }
@@ -55,6 +55,6 @@ extension PullableContainerContent {
     func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: PullableContainerСontentDelegate) -> Bool { true }
 }
 
-extension PullableContainerContent where Self: UIViewController {
+extension IPullableContainerContent where Self: UIViewController {
     func pullableContainerDidRequestContentView(_ contentDelegate: PullableContainerСontentDelegate) -> UIView { view }
 }

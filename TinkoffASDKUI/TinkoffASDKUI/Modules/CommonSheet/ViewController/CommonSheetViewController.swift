@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CommonSheetViewController: UIViewController, PullableContainerContent {
+final class CommonSheetViewController: UIViewController, IPullableContainerContent {
     // MARK: Dependencies
 
     weak var pullableContentDelegate: PullableContainerСontentDelegate?
@@ -76,7 +76,7 @@ extension CommonSheetViewController: CommonSheetViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent
+// MARK: - IPullableContainerContent
 
 extension CommonSheetViewController {
     func pullableContainerWasClosed(_ contentDelegate: PullableContainerСontentDelegate) {

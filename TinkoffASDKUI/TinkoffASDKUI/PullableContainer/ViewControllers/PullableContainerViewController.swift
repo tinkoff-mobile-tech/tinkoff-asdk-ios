@@ -38,7 +38,7 @@ final class PullableContainerViewController: UIViewController {
 
     // MARK: Dependencies
 
-    private let content: PullableContainerContent & UIViewController
+    private let content: IPullableContainerContent & UIViewController
     private lazy var dimmingTransitioningDelegate = DimmingTransitioningDelegate(dimmingPresentationControllerDelegate: self)
 
     private lazy var heightConstraintController = PullableContainerHeightConstraintController(
@@ -54,7 +54,7 @@ final class PullableContainerViewController: UIViewController {
 
     // MARK: Init
 
-    init(content: PullableContainerContent & UIViewController) {
+    init(content: IPullableContainerContent & UIViewController) {
         self.content = content
         super.init(nibName: nil, bundle: nil)
     }

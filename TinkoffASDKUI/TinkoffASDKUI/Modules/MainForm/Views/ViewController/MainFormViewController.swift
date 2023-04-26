@@ -168,9 +168,9 @@ extension MainFormViewController: CommonSheetViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent
+// MARK: - IPullableContainerContent
 
-extension MainFormViewController: PullableContainerContent {
+extension MainFormViewController: IPullableContainerContent {
     func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
         anchors.count
     }

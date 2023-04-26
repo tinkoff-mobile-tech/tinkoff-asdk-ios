@@ -115,9 +115,9 @@ extension SBPQrViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent
+// MARK: - IPullableContainerContent
 
-extension SBPQrViewController: PullableContainerContent {
+extension SBPQrViewController: IPullableContainerContent {
     func pullableContainer(
         _ contentDelegate: PullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,

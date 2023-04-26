@@ -136,9 +136,9 @@ extension RecurrentPaymentViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent Methods
+// MARK: - IPullableContainerContent Methods
 
-extension RecurrentPaymentViewController: PullableContainerContent {
+extension RecurrentPaymentViewController: IPullableContainerContent {
     func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: PullableContainerСontentDelegate) -> Int {
         anchors.firstIndex(of: currentAnchor) ?? .zero
     }
