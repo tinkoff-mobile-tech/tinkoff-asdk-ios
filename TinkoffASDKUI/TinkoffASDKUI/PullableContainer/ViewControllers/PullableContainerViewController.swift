@@ -156,9 +156,9 @@ extension PullableContainerViewController: IPullableContainerСontentDelegate {
     }
 }
 
-// MARK: - PullableContainerDragControllerDelegate
+// MARK: - IPullableContainerHeightConstraintControllerDelegate
 
-extension PullableContainerViewController: PullableContainerHeightConstraintControllerDelegate {
+extension PullableContainerViewController: IPullableContainerHeightConstraintControllerDelegate {
     func heightConstraintControllerDidRequestNumberOfAnchors(_ controller: PullableContainerHeightConstraintController) -> Int {
         content.pullableContainerDidRequestNumberOfAnchors(self)
     }

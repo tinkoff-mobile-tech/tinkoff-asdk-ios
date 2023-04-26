@@ -19,7 +19,7 @@
 
 import UIKit
 
-protocol PullableContainerHeightConstraintControllerDelegate: AnyObject {
+protocol IPullableContainerHeightConstraintControllerDelegate: AnyObject {
     func heightConstraintControllerDidRequestMaxContentHeight(_ controller: PullableContainerHeightConstraintController) -> CGFloat
     func heightConstraintControllerDidRequestDragViewInset(_ controller: PullableContainerHeightConstraintController) -> UIEdgeInsets
     func heightConstraintControllerDidRequestCurrentAnchorIndex(_ controller: PullableContainerHeightConstraintController) -> Int
@@ -43,7 +43,7 @@ final class PullableContainerHeightConstraintController {
 
     // MARK: Dependencies
 
-    private weak var delegate: PullableContainerHeightConstraintControllerDelegate?
+    private weak var delegate: IPullableContainerHeightConstraintControllerDelegate?
     private let dragViewHeightConstraint: NSLayoutConstraint
     private let contentContainerHeightConstraint: NSLayoutConstraint
 
@@ -52,7 +52,7 @@ final class PullableContainerHeightConstraintController {
     init(
         dragViewHeightConstraint: NSLayoutConstraint,
         contentContainerHeightConstraint: NSLayoutConstraint,
-        delegate: PullableContainerHeightConstraintControllerDelegate?
+        delegate: IPullableContainerHeightConstraintControllerDelegate?
     ) {
         self.dragViewHeightConstraint = dragViewHeightConstraint
         self.contentContainerHeightConstraint = contentContainerHeightConstraint
