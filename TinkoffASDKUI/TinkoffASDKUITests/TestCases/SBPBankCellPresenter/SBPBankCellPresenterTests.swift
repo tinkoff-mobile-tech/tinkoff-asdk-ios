@@ -13,44 +13,44 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class SBPBankCellPresenterTests: BaseTestCase {
-    
+
     var sut: SBPBankCellPresenter!
-    
+
     // MARK: Mocks
-    
+
     var cellMock: SBPBankCellMock!
     var cellImageLoaderMock: CellImageLoaderMock!
-    
+
     // MARK: Setup
-    
+
     override func setUp() {
         super.setUp()
-            
+
         cellMock = SBPBankCellMock()
         setupSut(with: .blank)
     }
-    
+
     override func tearDown() {
         cellMock = nil
         cellImageLoaderMock = nil
-        
+
         sut = nil
-        
+
         super.tearDown()
     }
-    
+
     // MARK: - Tests
-    
+
     func test_setupCell_when_bankType_and_notLoadedImageStatus_successLoaded() {
         // given
         let image = UIImage()
         let bank = SBPBank.anyWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .success(image)
-        
+
         // when
         sut.cell = cellMock
-        
+
         // then
         XCTAssertEqual(cellMock.setNameLabelCallsCount, 1)
         XCTAssertEqual(cellMock.setNameLabelReceivedArguments, bank.name)
@@ -60,34 +60,34 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.image, image)
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.animated, true)
     }
-    
+
     func test_setupCell_when_bankType_with_logoUrlNil_and_notLoadedImageStatus() {
         // given
         let image = UIImage()
         let bank = SBPBank.any
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .success(image)
-        
+
         // when
         sut.cell = cellMock
-        
+
         // then
         XCTAssertEqual(cellMock.setNameLabelCallsCount, 1)
         XCTAssertEqual(cellMock.setNameLabelReceivedArguments, bank.name)
         XCTAssertEqual(cellImageLoaderMock.loadImageCallsCount, 0)
         XCTAssertEqual(cellMock.setLogoCallsCount, 0)
     }
-    
+
     func test_setupCell_when_bankType_and_notLoadedImageStatus_failureLoaded() {
         // given
         let error = NSError(domain: "error", code: 123456)
         let bank = SBPBank.anyWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .failure(error)
-        
+
         // when
         sut.cell = cellMock
-        
+
         // then
         XCTAssertEqual(cellMock.setNameLabelCallsCount, 1)
         XCTAssertEqual(cellMock.setNameLabelReceivedArguments, bank.name)
@@ -97,7 +97,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.image, Asset.Sbp.sbpNoImage.image)
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.animated, true)
     }
-    
+
     func test_setupCell_when_bankType_and_failedPreviousTimeImageStatus_successLoaded() {
         // given
         let error = NSError(domain: "error", code: 123456)
@@ -105,9 +105,9 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         let bank = SBPBank.anyWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .failure(error)
-                
+
         sut.cell = cellMock
-        
+
         cellMock.setNameLabelCallsCount = 0
         cellMock.setLogoCallsCount = 0
         cellMock.setLogoReceivedArguments = nil
@@ -129,7 +129,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellMock.setLogoReceivedInvocations[0].animated, false)
         XCTAssertEqual(cellMock.setLogoReceivedInvocations[1].animated, true)
     }
-    
+
     func test_setupCell_when_bankType_and_loadedImageStatus() {
         // given
         let image = UIImage()
@@ -138,7 +138,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         cellImageLoaderMock.loadImageCompletionClosureInput = .success(image)
 
         sut.cell = cellMock
-        
+
         cellMock.setNameLabelCallsCount = 0
         cellMock.setLogoCallsCount = 0
         cellMock.setLogoReceivedArguments = nil
@@ -156,19 +156,19 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.image, image)
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.animated, false)
     }
-    
+
     func test_setupCell_when_bankType_and_repeatLoadingInProcess() {
         // given
         let error = NSError(domain: "error", code: 123456)
         let bank = SBPBank.anyWithUrl
         setupSut(with: .bank(bank))
-        
+
         cellImageLoaderMock.loadImageCompletionClosureInput = .failure(error)
         sut.cell = cellMock
-        
+
         cellImageLoaderMock.loadImageCompletionClosureInput = nil
         sut.cell = cellMock
-        
+
         cellMock.setNameLabelCallsCount = 0
         cellMock.setLogoCallsCount = 0
         cellMock.setLogoReceivedArguments = nil
@@ -186,14 +186,14 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.image, Asset.Sbp.sbpNoImage.image)
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.animated, false)
     }
-    
+
     func test_setupCell_when_bankType_and_loadingInProcess() {
         // given
         let bank = SBPBank.anyWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = nil
         sut.cell = cellMock
-        
+
         cellMock.setNameLabelCallsCount = 0
         cellMock.setLogoCallsCount = 0
         cellImageLoaderMock.loadImageCallsCount = 0
@@ -207,7 +207,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellImageLoaderMock.loadImageCallsCount, 0)
         XCTAssertEqual(cellMock.setLogoCallsCount, 0)
     }
-    
+
     func test_setupCell_when_bankButtonType() {
         // given
         let someName = "some name"
@@ -215,7 +215,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
 
         // when
         sut.cell = cellMock
-        
+
         // then
         XCTAssertEqual(cellMock.setNameLabelCallsCount, 1)
         XCTAssertEqual(cellMock.setNameLabelReceivedArguments, someName)
@@ -224,27 +224,27 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.image, Asset.Sbp.sbpNoImage.image)
         XCTAssertEqual(cellMock.setLogoReceivedArguments?.animated, false)
     }
-    
+
     func test_setupCell_when_skeletonType() {
         // given
         setupSut(with: .skeleton)
 
         // when
         sut.cell = cellMock
-        
+
         // then
         XCTAssertEqual(cellMock.showSkeletonViewsCallsCount, 1)
         XCTAssertEqual(cellMock.setNameLabelCallsCount, 0)
         XCTAssertEqual(cellMock.setLogoCallsCount, 0)
     }
-    
+
     func test_setupCell_when_blankType() {
         // given
         setupSut(with: .blank)
 
         // when
         sut.cell = cellMock
-        
+
         // then
         XCTAssertEqual(cellMock.setNameLabelCallsCount, 1)
         XCTAssertEqual(cellMock.setNameLabelReceivedArguments, nil)

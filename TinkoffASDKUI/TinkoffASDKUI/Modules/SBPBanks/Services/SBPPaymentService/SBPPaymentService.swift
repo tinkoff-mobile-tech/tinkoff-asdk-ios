@@ -11,16 +11,16 @@ final class SBPPaymentService: ISBPPaymentService {
 
     // MARK: Dependencies
 
-    private let acquiringSdk: AcquiringSdk
+    private let acquiringService: IAcquiringPaymentsService & IAcquiringSBPService
     private let paymentFlow: PaymentFlow
 
     // MARK: Initialization
 
     init(
-        acquiringSdk: AcquiringSdk,
+        acquiringService: IAcquiringPaymentsService & IAcquiringSBPService,
         paymentFlow: PaymentFlow
     ) {
-        self.acquiringSdk = acquiringSdk
+        self.acquiringService = acquiringService
         self.paymentFlow = paymentFlow
     }
 }
@@ -31,7 +31,7 @@ extension SBPPaymentService {
     func loadPaymentQr(completion: @escaping SBPPaymentServiceCompletion) {
         switch paymentFlow {
         case let .full(paymentOptions):
-            acquiringSdk.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
+            acquiringService.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
                 switch result {
                 case let .success(initPayload):
                     self?.getPaymentQrData(paymentId: initPayload.paymentId, completion: completion)
@@ -50,6 +50,6 @@ extension SBPPaymentService {
 extension SBPPaymentService {
     private func getPaymentQrData(paymentId: String, completion: @escaping SBPPaymentServiceCompletion) {
         let qrData = GetQRData(paymentId: paymentId, paymentInvoiceType: .url)
-        acquiringSdk.getQR(data: qrData, completion: completion)
+        acquiringService.getQR(data: qrData, completion: completion)
     }
 }

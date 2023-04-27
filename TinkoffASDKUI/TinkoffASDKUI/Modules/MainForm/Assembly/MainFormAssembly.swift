@@ -58,7 +58,7 @@ final class MainFormAssembly: IMainFormAssembly {
         let dataStateLoader = MainFormDataStateLoader(
             terminalService: coreSDK,
             cardsController: cardsController,
-            sbpBanksService: SBPBanksService(acquiringSdk: coreSDK),
+            sbpBanksService: SBPBanksService(acquiringSBPService: coreSDK),
             sbpBankAppChecker: SBPBankAppChecker(appChecker: appChecker),
             tinkoffPayAppChecker: tinkoffPayAssembly.tinkoffPayAppChecker()
         )

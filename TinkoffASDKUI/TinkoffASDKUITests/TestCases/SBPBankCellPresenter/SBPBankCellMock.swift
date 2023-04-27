@@ -28,7 +28,7 @@ final class SBPBankCellMock: NSObject, ISBPBankCell {
 
     func set(selectionStyle: UITableViewCell.SelectionStyle) {
         setCallsCount += 1
-        let arguments = (selectionStyle)
+        let arguments = selectionStyle
         setReceivedArguments = arguments
         setReceivedInvocations.append(arguments)
     }
@@ -41,7 +41,7 @@ final class SBPBankCellMock: NSObject, ISBPBankCell {
 
     func setNameLabel(text: String?) {
         setNameLabelCallsCount += 1
-        let arguments = (text)
+        let arguments = text
         setNameLabelReceivedArguments = arguments
         setNameLabelReceivedInvocations.append(arguments)
     }

@@ -863,7 +863,7 @@ extension SBPBank {
     static var any: SBPBank {
         SBPBank(name: "name", logoURL: nil, schema: "scheme")
     }
-    
+
     static var anyWithUrl: SBPBank {
         SBPBank(name: "name", logoURL: URL(string: "https://www.google.com"), schema: "scheme")
     }
