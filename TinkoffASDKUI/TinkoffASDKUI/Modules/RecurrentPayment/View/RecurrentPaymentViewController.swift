@@ -25,7 +25,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
     weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: IRecurrentPaymentViewOutput
-    private let tableContentProvider: IRecurrentPaymentTableContentProvider
+    private let tableContentProvider: any IRecurrentPaymentTableContentProvider
     private let keyboardService = KeyboardService()
 
     // MARK: Properties
@@ -42,7 +42,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
     // MARK: Initialization
 
-    init(presenter: IRecurrentPaymentViewOutput, tableContentProvider: IRecurrentPaymentTableContentProvider) {
+    init(presenter: IRecurrentPaymentViewOutput, tableContentProvider: any IRecurrentPaymentTableContentProvider) {
         self.presenter = presenter
         self.tableContentProvider = tableContentProvider
         super.init(nibName: nil, bundle: nil)

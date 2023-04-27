@@ -19,7 +19,7 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
 
     weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: ISBPQrViewOutput
-    private let tableContentProvider: ISBPQrTableContentProvider
+    private let tableContentProvider: any ISBPQrTableContentProvider
 
     // MARK: Properties
 
@@ -32,7 +32,7 @@ final class SBPQrViewController: UIViewController, ISBPQrViewInput {
 
     // MARK: Initialization
 
-    init(presenter: ISBPQrViewOutput, tableContentProvider: ISBPQrTableContentProvider) {
+    init(presenter: ISBPQrViewOutput, tableContentProvider: any ISBPQrTableContentProvider) {
         self.presenter = presenter
         self.tableContentProvider = tableContentProvider
         super.init(nibName: nil, bundle: nil)

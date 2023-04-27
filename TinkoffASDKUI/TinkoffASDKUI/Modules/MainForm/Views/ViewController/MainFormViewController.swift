@@ -25,7 +25,7 @@ final class MainFormViewController: UIViewController {
 
     weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: IMainFormPresenter
-    private let tableContentProvider: IMainFormTableContentProvider
+    private let tableContentProvider: any IMainFormTableContentProvider
     private let keyboardService = KeyboardService()
 
     // MARK: Subviews
@@ -42,7 +42,7 @@ final class MainFormViewController: UIViewController {
 
     // MARK: Init
 
-    init(presenter: IMainFormPresenter, tableContentProvider: IMainFormTableContentProvider) {
+    init(presenter: IMainFormPresenter, tableContentProvider: any IMainFormTableContentProvider) {
         self.presenter = presenter
         self.tableContentProvider = tableContentProvider
         super.init(nibName: nil, bundle: nil)
