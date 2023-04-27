@@ -50,7 +50,7 @@ final class TinkoffPaySheetPresenter {
 
 extension TinkoffPaySheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
-        view?.update(state: .tinkoffPay.processing)
+        view?.update(state: .tinkoffPay.processing, animatePullableContainerUpdates: false)
 
         tinkoffPayService.getTinkoffPayStatus { [weak self] result in
             DispatchQueue.performOnMain {

@@ -58,7 +58,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
 extension RecurrentPaymentPresenter {
     func viewDidLoad() {
-        view?.showCommonSheet(state: .processing)
+        view?.showCommonSheet(state: .processing, animatePullableContainerUpdates: false)
         paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .parentPayment(rebuidId: rebillId))
     }
 

@@ -8,8 +8,14 @@
 import Foundation
 
 protocol ICommonSheetView: AnyObject {
-    func update(state: CommonSheetState)
+    func update(state: CommonSheetState, animatePullableContainerUpdates: Bool)
     func close()
+}
+
+extension ICommonSheetView {
+    func update(state: CommonSheetState) {
+        update(state: state, animatePullableContainerUpdates: true)
+    }
 }
 
 protocol ICommonSheetPresenter {

@@ -10,6 +10,12 @@ import UIKit
 typealias PayButtonTableCell = TableCell<PayButtonView>
 
 final class PayButtonView: UIView {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let minimalHeight = Button.ContentSize.basicLarge.preferredHeight
+    }
+
     // MARK: Dependencies
 
     var presenter: IPayButtonViewOutput? {

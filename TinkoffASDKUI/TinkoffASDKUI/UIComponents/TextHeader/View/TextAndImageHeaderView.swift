@@ -4,7 +4,6 @@
 //
 //  Created by r.akhmadeev on 08.02.2023.
 //
-
 import UIKit
 
 typealias TextAndImageHeaderTableCell = TableCell<TextAndImageHeaderView>

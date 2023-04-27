@@ -10,6 +10,12 @@ import UIKit
 typealias SwitchTableCell = TableCell<SwitchView>
 
 final class SwitchView: UIView, ISwitchViewInput {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let minimalHeight: CGFloat = 40
+        static let nameLabelRightInset: CGFloat = 8
+    }
 
     // MARK: Dependencies
 
@@ -90,21 +96,14 @@ extension SwitchView {
         switchButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(greaterThanOrEqualToConstant: .minimalHeight),
+            heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.minimalHeight),
 
             nameLabel.leftAnchor.constraint(equalTo: leftAnchor),
-            nameLabel.rightAnchor.constraint(equalTo: switchButton.leftAnchor, constant: .nameLabelRightInset),
+            nameLabel.rightAnchor.constraint(equalTo: switchButton.leftAnchor, constant: Constants.nameLabelRightInset),
             nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             switchButton.rightAnchor.constraint(equalTo: rightAnchor),
             switchButton.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let minimalHeight: CGFloat = 40
-    static let nameLabelRightInset: CGFloat = 8
 }

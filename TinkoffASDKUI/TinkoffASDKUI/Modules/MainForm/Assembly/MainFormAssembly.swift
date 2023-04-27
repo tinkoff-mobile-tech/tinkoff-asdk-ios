@@ -83,7 +83,9 @@ final class MainFormAssembly: IMainFormAssembly {
             moduleCompletion: moduleCompletion
         )
 
-        let view = MainFormViewController(presenter: presenter)
+        let tableContentProvider = MainFormTableContentProvider()
+
+        let view = MainFormViewController(presenter: presenter, tableContentProvider: tableContentProvider)
 
         router.transitionHandler = view
         presenter.view = view
@@ -93,6 +95,8 @@ final class MainFormAssembly: IMainFormAssembly {
         tinkoffPayController.delegate = presenter
 
         let pullableContainerViewController = PullableContainerViewController(content: view)
+        view.pullableContentDelegate = pullableContainerViewController
+
         return pullableContainerViewController
     }
 }

@@ -24,6 +24,12 @@ final class TextAndImageHeaderViewPresenter: ITextAndImageHeaderViewOutput {
         self.imageAsset = imageAsset
     }
 
+    // MARK: ITextHeaderViewOutput
+
+    func copy() -> ITextAndImageHeaderViewOutput {
+        TextAndImageHeaderViewPresenter(title: title, imageAsset: imageAsset)
+    }
+
     // MARK: View Reloading
 
     private func setupView() {

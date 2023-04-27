@@ -50,13 +50,17 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
             moduleCompletion: moduleCompletion
         )
 
-        let view = RecurrentPaymentViewController(presenter: presenter)
+        let tableContentProvider = RecurrentPaymentTableContentProvider()
+
+        let view = RecurrentPaymentViewController(presenter: presenter, tableContentProvider: tableContentProvider)
         presenter.view = view
 
         paymentController.delegate = presenter
         paymentController.webFlowDelegate = view
 
-        let pullableContainerViewController = PullableContainerViewController(content: view)
-        return pullableContainerViewController
+        let container = PullableContainerViewController(content: view)
+        view.pullableContentDelegate = container
+
+        return container
     }
 }

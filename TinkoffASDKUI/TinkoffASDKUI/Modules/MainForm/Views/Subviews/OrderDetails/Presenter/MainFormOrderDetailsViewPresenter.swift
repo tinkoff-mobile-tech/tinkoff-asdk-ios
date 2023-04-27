@@ -28,6 +28,12 @@ final class MainFormOrderDetailsViewPresenter: IMainFormOrderDetailsViewOutput {
         self.orderDescription = orderDescription
     }
 
+    // MARK: IMainFormOrderDetailsViewOutput
+
+    func copy() -> IMainFormOrderDetailsViewOutput {
+        MainFormOrderDetailsViewPresenter(moneyFormatter: moneyFormatter, amount: amount, orderDescription: orderDescription)
+    }
+
     // MARK: View Reloading
 
     private func setupView() {
