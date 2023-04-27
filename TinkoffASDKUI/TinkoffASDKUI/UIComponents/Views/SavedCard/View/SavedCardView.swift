@@ -22,7 +22,7 @@ final class SavedCardView: UIView {
 
         static let iconSize = CGSize(width: 40, height: 26)
         static let cvcFieldContainerSize = CGSize(width: 59, height: 48)
-
+        static let cvcFieldCornerRadius: CGFloat = 12
         static let cvcFieldHeader = "CVC"
         static let cvcFieldPlaceholder = "123"
     }
@@ -157,7 +157,7 @@ final class SavedCardView: UIView {
         cvcField.set(isSecureTextEntry: true)
         cvcField.setHeader(text: Constants.cvcFieldHeader)
         cvcField.setHeader(color: ASDKColors.Text.secondary.color)
-        cvcField.setContainerView(radius: .cvcFieldCornerRadius)
+        cvcField.setContainerView(radius: Constants.cvcFieldCornerRadius)
     }
 
     // MARK: Events
@@ -217,26 +217,4 @@ extension SavedCardView: MaskedTextFieldDelegateListener {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         presenter?.savedCardViewDidBeginCVCFieldEditing()
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let containerMinimalHeight: CGFloat = 64
-    static let iconLeadingInset: CGFloat = 16
-    static let labelsStackSpacing: CGFloat = 4
-    static let labelsStackHorizontalInset: CGFloat = 16
-    static let cvcFieldTrailingInset: CGFloat = 8
-    static let accessoryViewWidth: CGFloat = 83
-    static let cvcFieldCornerRadius: CGFloat = 12
-}
-
-private extension CGSize {
-    static let iconSize = CGSize(width: 40, height: 26)
-    static let cvcFieldContainerSize = CGSize(width: 59, height: 48)
-}
-
-private extension String {
-    static let cvcFieldHeader = "CVC"
-    static let cvcFieldPlaceholder = "123"
 }
