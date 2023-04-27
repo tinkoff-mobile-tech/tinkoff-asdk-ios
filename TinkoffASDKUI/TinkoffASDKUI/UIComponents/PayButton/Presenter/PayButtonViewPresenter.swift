@@ -117,10 +117,21 @@ private extension Button.Configuration {
             image: Asset.Sbp.sbpLogoLight.image,
             style: Button.Style(
                 foregroundColor: Button.InteractiveColor(normal: .white),
-                backgroundColor: Button.InteractiveColor(normal: UIColor(hex: "#1D1346") ?? .clear)
+                backgroundColor: Button.InteractiveColor(normal: .sbpButtonBackground)
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
             imagePlacement: .trailing
         )
+    }
+}
+
+// MARK: - UIColor + Helpers
+
+private extension UIColor {
+    static var sbpButtonBackground: UIColor {
+        UIColor.Dynamic(
+            light: UIColor(hex: "#1D1346") ?? .clear,
+            dark: UIColor(hex: "#F5F1E8") ?? .clear
+        ).color
     }
 }
