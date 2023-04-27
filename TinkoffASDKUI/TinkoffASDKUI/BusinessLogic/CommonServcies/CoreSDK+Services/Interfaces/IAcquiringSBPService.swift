@@ -16,7 +16,7 @@ protocol IAcquiringSBPService {
     ///   - completion: результат запроса. `GetSBPBanksPayload` в случае успешного запроса и  `Error` - ошибка.
     @discardableResult
     func loadSBPBanks(completion: @escaping (Result<GetSBPBanksPayload, Error>) -> Void) -> Cancellable
-    
+
     // MARK: Get QR
 
     /// Сгенерировать QR для оплаты

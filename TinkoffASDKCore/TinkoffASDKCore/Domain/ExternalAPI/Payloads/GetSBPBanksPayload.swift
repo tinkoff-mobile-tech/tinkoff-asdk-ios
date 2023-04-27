@@ -38,7 +38,7 @@ public struct GetSBPBanksPayload: Decodable {
         }
         banks = resultBanks
     }
-    
+
     public init(banks: [SBPBank]) {
         self.banks = banks
     }

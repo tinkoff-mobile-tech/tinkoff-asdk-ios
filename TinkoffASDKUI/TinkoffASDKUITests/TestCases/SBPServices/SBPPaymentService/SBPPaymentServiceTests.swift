@@ -12,31 +12,31 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class SBPPaymentServiceTests: BaseTestCase {
-    
+
     var sut: SBPPaymentService!
-    
+
     // MARK: Mocks
-    
+
     var acquiringSBPServiceMock: AcquiringSBPAndPaymentServiceMock!
-    
+
     // MARK: Setup
-    
+
     override func setUp() {
         super.setUp()
-        
+
         setupSut(with: .fullRandom)
     }
-    
+
     override func tearDown() {
         acquiringSBPServiceMock = nil
-        
+
         sut = nil
-        
+
         super.tearDown()
     }
-    
+
     // MARK: - Tests
-    
+
     func test_loadPaymentQr_with_fullPaymentFlow_successBoth() throws {
         // given
         let paymentFlow = PaymentFlow.fullRandom
@@ -45,7 +45,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
         let anyPayload = GetQRPayload.any
         acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.any)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
-        
+
         var isSuccessLoaded = false
         var qrPayload: GetQRPayload?
         let completion: SBPPaymentServiceCompletion = { result in
@@ -57,17 +57,17 @@ final class SBPPaymentServiceTests: BaseTestCase {
                 isSuccessLoaded = false
             }
         }
-        
+
         // when
         sut.loadPaymentQr(completion: completion)
-        
+
         // then
         XCTAssertEqual(acquiringSBPServiceMock.initPaymentCallsCount, 1)
         XCTAssertEqual(acquiringSBPServiceMock.getQRCallsCount, 1)
         XCTAssertTrue(isSuccessLoaded)
         XCTAssertEqual(qrPayload, anyPayload)
     }
-    
+
     func test_loadPaymentQr_with_fullPaymentFlow_failureInit() throws {
         // given
         let paymentFlow = PaymentFlow.fullRandom
@@ -77,7 +77,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
         let error = NSError(domain: "error", code: 123456)
         acquiringSBPServiceMock.initPaymentCompletionClosureInput = .failure(error)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
-        
+
         var isSuccessLoaded = false
         let completion: SBPPaymentServiceCompletion = { result in
             switch result {
@@ -85,16 +85,16 @@ final class SBPPaymentServiceTests: BaseTestCase {
             case .failure: isSuccessLoaded = false
             }
         }
-        
+
         // when
         sut.loadPaymentQr(completion: completion)
-        
+
         // then
         XCTAssertEqual(acquiringSBPServiceMock.initPaymentCallsCount, 1)
         XCTAssertEqual(acquiringSBPServiceMock.getQRCallsCount, 0)
         XCTAssertFalse(isSuccessLoaded)
     }
-    
+
     func test_loadPaymentQr_with_fullPaymentFlow_failureGetQr() throws {
         // given
         let paymentFlow = PaymentFlow.fullRandom
@@ -103,7 +103,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
         let error = NSError(domain: "error", code: 123456)
         acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.any)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .failure(error)
-        
+
         var isSuccessLoaded = false
         let completion: SBPPaymentServiceCompletion = { result in
             switch result {
@@ -111,16 +111,16 @@ final class SBPPaymentServiceTests: BaseTestCase {
             case .failure: isSuccessLoaded = false
             }
         }
-        
+
         // when
         sut.loadPaymentQr(completion: completion)
-        
+
         // then
         XCTAssertEqual(acquiringSBPServiceMock.initPaymentCallsCount, 1)
         XCTAssertEqual(acquiringSBPServiceMock.getQRCallsCount, 1)
         XCTAssertFalse(isSuccessLoaded)
     }
-    
+
     func test_loadPaymentQr_with_finishPaymentFlow_success() throws {
         // given
         let paymentFlow = PaymentFlow.finishAny
@@ -128,7 +128,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
         let anyPayload = GetQRPayload.any
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
-        
+
         var isSuccessLoaded = false
         var qrPayload: GetQRPayload?
         let completion: SBPPaymentServiceCompletion = { result in
@@ -143,14 +143,14 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
         // when
         sut.loadPaymentQr(completion: completion)
-        
+
         // then
         XCTAssertEqual(acquiringSBPServiceMock.initPaymentCallsCount, 0)
         XCTAssertEqual(acquiringSBPServiceMock.getQRCallsCount, 1)
         XCTAssertTrue(isSuccessLoaded)
         XCTAssertEqual(qrPayload, anyPayload)
     }
-    
+
     func test_loadPaymentQr_with_finishPaymentFlow_failure() throws {
         // given
         let paymentFlow = PaymentFlow.finishAny
@@ -158,7 +158,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
         let error = NSError(domain: "error", code: 123456)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .failure(error)
-        
+
         var isSuccessLoaded = false
         let completion: SBPPaymentServiceCompletion = { result in
             switch result {
@@ -169,7 +169,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
         // when
         sut.loadPaymentQr(completion: completion)
-        
+
         // then
         XCTAssertEqual(acquiringSBPServiceMock.initPaymentCallsCount, 0)
         XCTAssertEqual(acquiringSBPServiceMock.getQRCallsCount, 1)
@@ -215,11 +215,11 @@ private extension PaymentFlow {
             customer: nil,
             customerInn: nil
         )
-        
+
         let paymentOptions = PaymentOptions.create(from: paymentData)
         return PaymentFlow.full(paymentOptions: paymentOptions)
     }
-    
+
     static var finishAny: PaymentFlow {
         let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
         let options = FinishPaymentOptions(paymentId: "32423", amount: 100, orderId: "id", customerOptions: customerOptions)

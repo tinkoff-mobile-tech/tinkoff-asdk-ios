@@ -22,7 +22,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
         }
         return CancellableMock()
     }
-    
+
     // MARK: - getQR
 
     typealias GetQRArguments = (data: GetQRData, completion: (_ result: Result<GetQRPayload, Error>) -> Void)
@@ -30,7 +30,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
     var getQRCallsCount = 0
     var getQRReceivedArguments: GetQRArguments?
     var getQRReceivedInvocations: [GetQRArguments] = []
-    var getQRCompletionClosureInput: (Result<GetQRPayload, Error>)?
+    var getQRCompletionClosureInput: Result<GetQRPayload, Error>?
 
     @discardableResult
     func getQR(data: GetQRData, completion: @escaping (_ result: Result<GetQRPayload, Error>) -> Void) -> Cancellable {
@@ -43,7 +43,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
         }
         return CancellableMock()
     }
-    
+
     // MARK: - initPayment
 
     typealias InitPaymentArguments = (data: PaymentInitData, completion: (_ result: Result<InitPayload, Error>) -> Void)
@@ -51,7 +51,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
     var initPaymentCallsCount = 0
     var initPaymentReceivedArguments: InitPaymentArguments?
     var initPaymentReceivedInvocations: [InitPaymentArguments] = []
-    var initPaymentCompletionClosureInput: (Result<InitPayload, Error>)?
+    var initPaymentCompletionClosureInput: Result<InitPayload, Error>?
 
     @discardableResult
     func initPayment(data: PaymentInitData, completion: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
@@ -72,7 +72,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
     var finishAuthorizeCallsCount = 0
     var finishAuthorizeReceivedArguments: FinishAuthorizeArguments?
     var finishAuthorizeReceivedInvocations: [FinishAuthorizeArguments] = []
-    var finishAuthorizeCompletionClosureInput: (Result<FinishAuthorizePayload, Error>)?
+    var finishAuthorizeCompletionClosureInput: Result<FinishAuthorizePayload, Error>?
 
     @discardableResult
     func finishAuthorize(data: FinishAuthorizeData, completion: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
@@ -93,7 +93,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
     var chargeCallsCount = 0
     var chargeReceivedArguments: ChargeArguments?
     var chargeReceivedInvocations: [ChargeArguments] = []
-    var chargeCompletionClosureInput: (Result<ChargePayload, Error>)?
+    var chargeCompletionClosureInput: Result<ChargePayload, Error>?
 
     @discardableResult
     func charge(data: ChargeData, completion: @escaping (_ result: Result<ChargePayload, Error>) -> Void) -> Cancellable {
