@@ -41,6 +41,10 @@ final class PullableContainerHeightConstraintController {
         let height: CGFloat
     }
 
+    var maxHeightIsReached: Bool {
+        contentContainerHeightConstraint.constant >= (maximumReachableAnchorHeight() ?? .zero)
+    }
+
     // MARK: Dependencies
 
     private weak var delegate: IPullableContainerHeightConstraintControllerDelegate?
@@ -179,12 +183,21 @@ final class PullableContainerHeightConstraintController {
             .max { $0.height < $1.height }
     }
 
+    private func maximumReachableAnchorHeight() -> CGFloat? {
+        allReachableAnchors().map(\.height).max(by: <)
+    }
+
     private func allReachableAnchors(without currentAnchor: Anchor) -> [Anchor] {
+        allReachableAnchors()
+            .filter { $0.index != currentAnchor.index }
+    }
+
+    private func allReachableAnchors() -> [Anchor] {
         guard let delegate = delegate else { return [] }
 
         return (0 ..< delegate.heightConstraintControllerDidRequestNumberOfAnchors(self))
             .enumerated()
-            .filter { $0.offset != currentAnchor.index && delegate.heightConstraintController(self, shouldUseAnchorAt: $0.offset) }
+            .filter { delegate.heightConstraintController(self, shouldUseAnchorAt: $0.offset) }
             .compactMap { anchor(withIndex: $0.offset) }
     }
 

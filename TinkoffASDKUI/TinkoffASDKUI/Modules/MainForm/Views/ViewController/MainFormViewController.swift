@@ -171,6 +171,10 @@ extension MainFormViewController: CommonSheetViewDelegate {
 // MARK: - IPullableContainerContent
 
 extension MainFormViewController: IPullableContainerContent {
+    func pullableContainerDidRequestScrollView(_ contentDelegate: IPullableContainerСontentDelegate) -> UIScrollView? {
+        tableView
+    }
+
     func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
         anchors.count
     }
