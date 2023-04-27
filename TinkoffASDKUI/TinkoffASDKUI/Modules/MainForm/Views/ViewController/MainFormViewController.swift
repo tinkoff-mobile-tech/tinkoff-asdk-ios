@@ -8,41 +8,43 @@
 import UIKit
 import WebKit
 
-final class MainFormViewController: UIViewController, PullableContainerContent {
-    // MARK: PullableContainer Properties
+final class MainFormViewController: UIViewController {
+    // MARK: Internal Types
 
-    var scrollView: UIScrollView { tableView }
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
+    private enum Anchor: CaseIterable {
+        case contentBased
+        case expanded
+    }
 
-    var pullableContainerContentHeight: CGFloat {
-        if commonSheetView.isHidden {
-            return keyboardVisible ? UIScreen.main.bounds.height : tableView.contentSize.height
-        } else {
-            return commonSheetView.estimatedHeight
-        }
+    private enum PresentationState {
+        case commonSheet
+        case tableView
     }
 
     // MARK: Dependencies
 
+    weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: IMainFormPresenter
+    private let tableContentProvider: any IMainFormTableContentProvider
     private let keyboardService = KeyboardService()
 
     // MARK: Subviews
 
     private lazy var tableView = UITableView(frame: view.bounds)
-    private lazy var tableHeaderView = MainFormTableHeaderView(frame: .tableHeaderInitialFrame)
     private lazy var commonSheetView = CommonSheetView(delegate: self)
-    private lazy var hiddenWebView = WKWebView()
+    private lazy var hiddenWebView = WKWebView(frame: view.bounds)
 
     // MARK: State
 
-    private var tableViewContentSizeObservation: NSKeyValueObservation?
-    private var keyboardVisible = false
+    private let anchors = Anchor.allCases
+    private var currentAnchor: Anchor = .contentBased
+    private var presentationState: PresentationState = .commonSheet
 
     // MARK: Init
 
-    init(presenter: IMainFormPresenter) {
+    init(presenter: IMainFormPresenter, tableContentProvider: any IMainFormTableContentProvider) {
         self.presenter = presenter
+        self.tableContentProvider = tableContentProvider
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -57,7 +59,6 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
         super.viewDidLoad()
         setupViewsHierarchy()
         setupTableView()
-        setupTableContentSizeObservation()
         setupKeyboardObserving()
         presenter.viewDidLoad()
     }
@@ -77,38 +78,23 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
     }
 
     private func setupTableView() {
-        tableView.tableHeaderView = tableHeaderView
+        tableView.tableHeaderView = tableContentProvider.tableHeaderView()
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.delaysContentTouches = false
         tableView.alwaysBounceVertical = false
+        tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self
 
-        tableView.register(
-            MainFormOrderDetailsTableCell.self,
-            SavedCardTableCell.self,
-            SwitchTableCell.self,
-            EmailTableCell.self,
-            PayButtonTableCell.self,
-            TextAndImageHeaderTableCell.self,
-            AvatarTableViewCell.self
-        )
-    }
-
-    private func setupTableContentSizeObservation() {
-        tableViewContentSizeObservation = tableView.observe(\.contentSize, options: [.new, .old]) { [weak self] _, change in
-            guard let self = self, change.oldValue != change.newValue else { return }
-            self.pullableContainerContentHeightDidChange?(self)
-        }
+        tableContentProvider.registerCells(in: tableView)
     }
 
     private func setupKeyboardObserving() {
-        keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
-            guard let self = self else { return }
-            self.keyboardVisible = keyboardHeight > 0
-            self.tableView.contentInset.bottom = keyboardHeight
-            self.pullableContainerContentHeightDidChange?(self)
+        keyboardService.onHeightDidChangeBlock = { [weak self] _, _ in
+            guard let self = self, self.currentAnchor != .expanded else { return }
+            self.currentAnchor = .expanded
+            self.pullableContentDelegate?.updateHeight()
         }
     }
 }
@@ -116,15 +102,33 @@ final class MainFormViewController: UIViewController, PullableContainerContent {
 // MARK: - IMainFormViewController
 
 extension MainFormViewController: IMainFormViewController {
-    func showCommonSheet(state: CommonSheetState) {
-        commonSheetView.update(state: state, animated: false)
-        commonSheetView.isHidden = false
-        pullableContainerContentHeightDidChange?(self)
+    func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
+        presentationState = .commonSheet
+        currentAnchor = .contentBased
+
+        commonSheetView.showOverlay(animated: true) {
+            self.commonSheetView.set(state: state)
+
+            self.pullableContentDelegate?.updateHeight(
+                animated: animatePullableContainerUpdates,
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: !animatePullableContainerUpdates) }
+            )
+        }
     }
 
     func hideCommonSheet() {
-        commonSheetView.isHidden = true
-        pullableContainerContentHeightDidChange?(self)
+        presentationState = .tableView
+        currentAnchor = .contentBased
+        tableView.setContentOffset(.zero, animated: false)
+
+        commonSheetView.showOverlay(animated: true) {
+            self.commonSheetView.set(state: .clear)
+
+            self.pullableContentDelegate?.updateHeight(
+                animated: true,
+                alongsideAnimation: { self.commonSheetView.hideOverlay(animated: false) }
+            )
+        }
     }
 
     func reloadData() {
@@ -143,6 +147,10 @@ extension MainFormViewController: IMainFormViewController {
         tableView.endUpdates()
     }
 
+    func hideKeyboard() {
+        view.endEditing(true)
+    }
+
     func closeView() {
         dismiss(animated: true, completion: presenter.viewWasClosed)
     }
@@ -151,8 +159,6 @@ extension MainFormViewController: IMainFormViewController {
 // MARK: - CommonSheetViewDelegate
 
 extension MainFormViewController: CommonSheetViewDelegate {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {}
-
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }
@@ -162,10 +168,58 @@ extension MainFormViewController: CommonSheetViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent Methods
+// MARK: - IPullableContainerContent
 
-extension MainFormViewController {
-    func pullableContainerWasClosed() {
+extension MainFormViewController: IPullableContainerContent {
+    func pullableContainerDidRequestScrollView(_ contentDelegate: IPullableContainerСontentDelegate) -> UIScrollView? {
+        tableView
+    }
+
+    func pullableContainerDidRequestNumberOfAnchors(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
+        anchors.count
+    }
+
+    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
+        anchors.firstIndex(of: currentAnchor) ?? .zero
+    }
+
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
+        currentAnchor = anchors[currentAnchorIndex]
+    }
+
+    func pullabeContainer(_ contentDelegate: IPullableContainerСontentDelegate, canReachAnchorAt index: Int) -> Bool {
+        switch presentationState {
+        case .commonSheet:
+            return false
+        case .tableView:
+            return true
+        }
+    }
+
+    func pullableContainer(
+        _ contentDelegate: IPullableContainerСontentDelegate,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        switch (anchors[index], presentationState) {
+        case (.contentBased, .tableView):
+            return tableContentProvider.pullableContainerHeight(
+                for: presenter.allCells(),
+                in: tableView,
+                availableSpace: availableSpace
+            )
+        case (.contentBased, .commonSheet):
+            return commonSheetView.estimatedHeight
+        case (.expanded, _):
+            return availableSpace
+        }
+    }
+
+    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
+        hideKeyboard()
+    }
+
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 }
@@ -178,44 +232,11 @@ extension MainFormViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellType = presenter.cellType(at: indexPath)
-
-        switch cellType {
-        case let .orderDetails(presenter):
-            let cell = tableView.dequeue(cellType: MainFormOrderDetailsTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .orderDetailsInsets
-            return cell
-        case let .savedCard(presenter):
-            let cell = tableView.dequeue(cellType: SavedCardTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .savedCardInsets
-            return cell
-        case let .getReceiptSwitch(presenter):
-            let cell = tableView.dequeue(cellType: SwitchTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .getReceiptSwitchInsets
-            return cell
-        case let .email(presenter):
-            let cell = tableView.dequeue(cellType: EmailTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .emailInsets
-            return cell
-        case let .payButton(presenter):
-            let cell = tableView.dequeue(cellType: PayButtonTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .payButtonInsets
-            return cell
-        case let .otherPaymentMethodsHeader(presenter):
-            let cell = tableView.dequeue(cellType: TextAndImageHeaderTableCell.self, indexPath: indexPath)
-            cell.containedView.presenter = presenter
-            cell.insets = .otherPaymentMethodsHeaderInsets
-            return cell
-        case let .otherPaymentMethod(paymentMethod):
-            let cell = tableView.dequeue(cellType: AvatarTableViewCell.self, indexPath: indexPath)
-            cell.update(with: .viewModel(from: paymentMethod))
-            return cell
-        }
+        tableContentProvider.dequeueCell(
+            from: tableView,
+            at: indexPath,
+            withType: presenter.cellType(at: indexPath)
+        )
     }
 }
 
@@ -225,6 +246,10 @@ extension MainFormViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        tableContentProvider.height(for: presenter.cellType(at: indexPath), in: tableView)
     }
 }
 
@@ -240,17 +265,10 @@ extension MainFormViewController: ThreeDSWebFlowDelegate {
     }
 }
 
-// MARK: - Constants
+// MARK: IMainFormPresenter + Helpers
 
-private extension UIEdgeInsets {
-    static let orderDetailsInsets = UIEdgeInsets(top: 32, left: 16, bottom: 28, right: 16)
-    static let savedCardInsets = UIEdgeInsets(top: 8, left: 16, bottom: 20, right: 16)
-    static let getReceiptSwitchInsets = UIEdgeInsets(top: .zero, left: 20, bottom: 12, right: 20)
-    static let emailInsets = UIEdgeInsets(top: .zero, left: 16, bottom: 8, right: 16)
-    static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
-    static let otherPaymentMethodsHeaderInsets = UIEdgeInsets(vertical: 12, horizontal: 16)
-}
-
-private extension CGRect {
-    static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
+private extension IMainFormPresenter {
+    func allCells() -> [MainFormCellType] {
+        (0 ..< numberOfRows()).map { cellType(at: IndexPath(row: $0, section: .zero)) }
+    }
 }

@@ -39,6 +39,8 @@ final class YandexPayPaymentSheetAssembly: IYandexPayPaymentSheetAssembly {
         paymentController.delegate = presenter
         paymentController.webFlowDelegate = paymentControllerUIProvider
 
-        return PullableContainerViewController(content: view)
+        let container = PullableContainerViewController(content: view)
+        view.pullableContentDelegate = container
+        return container
     }
 }

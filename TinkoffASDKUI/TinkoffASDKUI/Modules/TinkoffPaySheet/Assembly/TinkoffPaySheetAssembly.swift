@@ -48,6 +48,9 @@ final class TinkoffPaySheetAssembly: ITinkoffPaySheetAssembly {
         presenter.view = view
         tinkoffPayController.delegate = presenter
 
-        return PullableContainerViewController(content: view)
+        let container = PullableContainerViewController(content: view)
+        view.pullableContentDelegate = container
+
+        return container
     }
 }

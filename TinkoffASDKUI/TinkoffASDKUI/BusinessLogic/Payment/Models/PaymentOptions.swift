@@ -25,6 +25,10 @@ public struct PaymentOptions: Equatable {
     public let orderOptions: OrderOptions
     /// Параметры покупателя
     public let customerOptions: CustomerOptions?
+    /// Ссылки для возврата на страницы успешной или неуспешной оплаты, используемые по завершении процесса оплаты во внешнем приложении
+    ///
+    /// Используется только для оплаты через `Tinkoff Pay`
+    public let paymentCallbackURL: PaymentCallbackURL?
     /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
     ///
     /// `Key: String` – 20 знаков,
@@ -36,10 +40,12 @@ public struct PaymentOptions: Equatable {
     public init(
         orderOptions: OrderOptions,
         customerOptions: CustomerOptions? = nil,
+        paymentCallbackURL: PaymentCallbackURL? = nil,
         paymentData: [String: String]? = nil
     ) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
+        self.paymentCallbackURL = paymentCallbackURL
         self.paymentData = paymentData
     }
 }

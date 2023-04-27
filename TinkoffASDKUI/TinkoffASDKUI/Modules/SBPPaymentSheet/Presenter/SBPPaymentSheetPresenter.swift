@@ -56,7 +56,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 extension SBPPaymentSheetPresenter {
     func viewDidLoad() {
         getPaymentStatus()
-        view?.update(state: currentViewState)
+        view?.update(state: currentViewState, animatePullableContainerUpdates: false)
     }
 
     func primaryButtonTapped() {

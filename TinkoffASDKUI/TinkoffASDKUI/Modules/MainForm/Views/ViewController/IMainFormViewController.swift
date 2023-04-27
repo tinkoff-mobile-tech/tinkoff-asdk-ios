@@ -8,17 +8,22 @@
 import Foundation
 
 protocol IMainFormViewController: AnyObject {
-    func showCommonSheet(state: CommonSheetState)
+    func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool)
     func hideCommonSheet()
     func reloadData()
     func insertRows(at indexPaths: [IndexPath])
     func deleteRows(at indexPaths: [IndexPath])
+    func hideKeyboard()
     func closeView()
 }
 
 // MARK: - IMainFormViewController + Helpers
 
 extension IMainFormViewController {
+    func showCommonSheet(state: CommonSheetState) {
+        showCommonSheet(state: state, animatePullableContainerUpdates: true)
+    }
+
     func insertRow(at indexPath: IndexPath) {
         insertRows(at: [indexPath])
     }

@@ -20,14 +20,31 @@
 import UIKit
 
 final class PullableContainerView: PassthroughView {
+    // MARK: Subviews
 
-    let headerView = PullableContainerHeader()
-    let dragView = UIView()
-    let containerView = UIView()
-    var scrollView: UIScrollView!
+    private(set) lazy var dragView: UIView = {
+        let dragView = UIView()
+        dragView.backgroundColor = ASDKColors.Background.elevation1.color
+        dragView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        dragView.layer.cornerRadius = .cornerRadius
+        dragView.layer.masksToBounds = true
+        return dragView
+    }()
 
-    private(set) var containerViewHeightConstraint: NSLayoutConstraint!
-    private(set) var dragViewHeightConstraint: NSLayoutConstraint!
+    private(set) lazy var headerView: UIView = {
+        let headerView = PullableContainerHeader()
+        headerView.isUserInteractionEnabled = false
+        return headerView
+    }()
+
+    private lazy var contentContainer = UIView()
+
+    // MARK: Constraints
+
+    private(set) lazy var dragViewHeightConstraint = dragView.heightAnchor.constraint(equalToConstant: .zero)
+    private(set) lazy var contentContainerHeightConstraint = contentContainer.heightAnchor.constraint(equalToConstant: .zero)
+
+    // MARK: Init
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,100 +56,44 @@ final class PullableContainerView: PassthroughView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Content
+    // MARK: PullableContainerView
 
-    func addContent(_ content: PullableContainerContent) {
-        if let scrollableContent = content as? PullableContainerScrollableContent {
-            scrollView = scrollableContent.scrollView
-            containerView.addSubview(content.view)
-            setupScrollableContentConstraints(content: content)
-        } else {
-            scrollView = UIScrollView()
-            containerView.addSubview(scrollView)
-            scrollView.addSubview(content.view)
-            setupNonScrollableContentConstraints(content: content)
-        }
+    func add(contentView: UIView) {
+        contentContainer.addSubview(contentView)
+        contentView.pinEdgesToSuperview()
     }
-}
 
-private extension PullableContainerView {
-    func setup() {
+    // MARK: Setting Up
+
+    private func setup() {
         addSubview(dragView)
         dragView.addSubview(headerView)
-        dragView.addSubview(containerView)
+        dragView.addSubview(contentContainer)
 
-        setupHeaderView()
-        setupDragView()
-        setupConstraints()
-    }
-
-    func setupHeaderView() {
-        headerView.isUserInteractionEnabled = false
-    }
-
-    func setupDragView() {
-        dragView.backgroundColor = ASDKColors.Background.elevation1.color
-        dragView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        dragView.layer.cornerRadius = .cornerRadius
-        dragView.layer.masksToBounds = true
-    }
-
-    func setupConstraints() {
         dragView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.translatesAutoresizingMaskIntoConstraints = false
         headerView.translatesAutoresizingMaskIntoConstraints = false
-
-        dragViewHeightConstraint = dragView.heightAnchor.constraint(equalToConstant: 0)
-        containerViewHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
+        contentContainer.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
+            dragView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            dragView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dragView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dragView.leftAnchor.constraint(equalTo: leftAnchor),
-            dragView.rightAnchor.constraint(equalTo: rightAnchor),
             dragViewHeightConstraint,
 
             headerView.topAnchor.constraint(equalTo: dragView.topAnchor),
-            headerView.leftAnchor.constraint(equalTo: dragView.leftAnchor),
-            headerView.rightAnchor.constraint(equalTo: dragView.rightAnchor),
+            headerView.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
             headerView.heightAnchor.constraint(equalToConstant: .topViewHeight),
 
-            containerView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-            containerView.leftAnchor.constraint(equalTo: dragView.leftAnchor),
-            containerView.rightAnchor.constraint(equalTo: dragView.rightAnchor),
-            containerViewHeightConstraint,
-        ])
-    }
-
-    func setupScrollableContentConstraints(content: PullableContainerContent) {
-        content.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            content.view.topAnchor.constraint(equalTo: containerView.topAnchor),
-            content.view.leftAnchor.constraint(equalTo: containerView.leftAnchor),
-            content.view.rightAnchor.constraint(equalTo: containerView.rightAnchor),
-            content.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-        ])
-    }
-
-    func setupNonScrollableContentConstraints(content: PullableContainerContent) {
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        content.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            scrollView.leftAnchor.constraint(equalTo: containerView.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: containerView.rightAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-
-            content.view.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            content.view.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
-            content.view.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
-            content.view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            content.view.widthAnchor.constraint(equalTo: containerView.widthAnchor),
-            content.view.heightAnchor.constraint(equalTo: containerView.heightAnchor),
+            contentContainer.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: dragView.leadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: dragView.trailingAnchor),
+            contentContainerHeightConstraint,
         ])
     }
 }
+
+// MARK: - Constants
 
 private extension CGFloat {
     static let topViewHeight: CGFloat = 24

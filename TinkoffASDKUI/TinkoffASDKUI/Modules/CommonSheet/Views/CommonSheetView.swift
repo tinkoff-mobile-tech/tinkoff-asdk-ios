@@ -8,12 +8,11 @@
 import UIKit
 
 protocol CommonSheetViewDelegate: AnyObject {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState)
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView)
     func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView)
 }
 
-final class CommonSheetView: UIView {
+final class CommonSheetView: PassthroughView {
     weak var delegate: CommonSheetViewDelegate?
 
     // MARK: Subviews
@@ -25,13 +24,7 @@ final class CommonSheetView: UIView {
         return view
     }()
 
-    private lazy var activityIndicator = ActivityIndicatorView(style: .xlYellow)
-
-    private lazy var iconView: UIImageView = {
-        let iconView = UIImageView()
-        iconView.contentMode = .scaleAspectFit
-        return iconView
-    }()
+    private lazy var statusView = CommonSheetStatusView()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -67,6 +60,12 @@ final class CommonSheetView: UIView {
         }
     )
 
+    private lazy var backgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = ASDKColors.Background.elevation1.color
+        return view
+    }()
+
     private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -93,7 +92,7 @@ final class CommonSheetView: UIView {
     // MARK: Constraints
 
     private lazy var contentTopConstraint = contentStack.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var contentBottomConstraint = contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+    private lazy var contentBottomConstraint = contentStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
         .with(priority: .fittingSizeLevel)
 
     // MARK: Init
@@ -118,36 +117,63 @@ final class CommonSheetView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         overlayView.frame = bounds
+        backgroundView.frame = bounds
     }
 
-    // MARK: CommonSheetView Updating
+    // MARK: CommonSheetView
 
-    func update(state: CommonSheetState, animated: Bool = true) {
-        let stateUpdates = { [self] in
-            updateViews(with: state)
-            layoutIfNeeded()
-            delegate?.commonSheetView(self, didUpdateWithState: state)
+    func set(state: CommonSheetState) {
+        updateViews(with: state)
+        layoutIfNeeded()
+    }
+
+    func showOverlay(animated: Bool = true, completion: VoidBlock? = nil) {
+        let animations = { self.overlayView.alpha = 1 }
+
+        guard animated else {
+            animations()
+            completion?()
+            return
         }
 
-        guard animated else { return stateUpdates() }
+        UIView.animate(
+            withDuration: .animationDuration,
+            delay: .zero,
+            options: [.curveEaseIn],
+            animations: animations,
+            completion: { _ in completion?() }
+        )
+    }
 
-        showOverlay { [self] _ in
-            stateUpdates()
-            hideOverlay()
+    func hideOverlay(animated: Bool = true, completion: VoidBlock? = nil) {
+        let animations = { self.overlayView.alpha = .zero }
+
+        guard animated else {
+            animations()
+            completion?()
+            return
         }
+
+        UIView.animate(
+            withDuration: .animationDuration,
+            delay: .zero,
+            options: [.curveEaseOut],
+            animations: animations,
+            completion: { _ in completion?() }
+        )
     }
 
     // MARK: Initial Configuration
 
     private func setupView() {
-        backgroundColor = ASDKColors.Background.elevation1.color
-
         setupLayout()
         updateViews(with: CommonSheetState(status: .processing))
     }
 
     private func setupLayout() {
-        contentStack.addArrangedSubviews([iconView, activityIndicator, labelsStack, buttonsStack])
+        addSubview(backgroundView)
+
+        contentStack.addArrangedSubviews([statusView, labelsStack, buttonsStack])
         labelsStack.addArrangedSubviews([titleLabel, descriptionLabel])
         buttonsStack.addArrangedSubviews([primaryButton, secondaryButton])
 
@@ -159,6 +185,7 @@ final class CommonSheetView: UIView {
             contentBottomConstraint,
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .contentHorizontalInset),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -.contentHorizontalInset),
+            statusView.heightAnchor.constraint(equalToConstant: .statusViewHeight),
         ])
 
         addSubview(overlayView)
@@ -171,21 +198,17 @@ final class CommonSheetView: UIView {
         updateLabels(with: state)
         updateButtons(with: state)
         updateContentLayout(with: state)
+        updateContentStack(with: state)
+        updateBackground(with: state)
     }
 
     private func updateStatusViews(with state: CommonSheetState) {
         switch state.status {
-        case .processing:
-            activityIndicator.isHidden = false
-            iconView.isHidden = true
-        case .succeeded:
-            iconView.image = Asset.Illustrations.checkCirclePositive.image
-            iconView.isHidden = false
-            activityIndicator.isHidden = true
-        case .failed:
-            iconView.image = Asset.Illustrations.crossCircle.image
-            iconView.isHidden = false
-            activityIndicator.isHidden = true
+        case let .some(status):
+            statusView.set(status: status)
+            statusView.isHidden = false
+        case .none:
+            statusView.isHidden = true
         }
     }
 
@@ -205,6 +228,14 @@ final class CommonSheetView: UIView {
         buttonsStack.isHidden = buttonsStack.arrangedSubviews.allSatisfy(\.isHidden)
     }
 
+    private func updateBackground(with state: CommonSheetState) {
+        backgroundView.isHidden = state == .clear
+    }
+
+    private func updateContentStack(with state: CommonSheetState) {
+        contentStack.isHidden = state == .clear
+    }
+
     private func updateContentLayout(with state: CommonSheetState) {
         let hasContentAfterStatusViews = [
             state.title,
@@ -215,33 +246,10 @@ final class CommonSheetView: UIView {
 
         let statusBottomSpacing: CGFloat = hasContentAfterStatusViews ? .statusBottomSpacing : .zero
 
-        contentStack.setCustomSpacing(statusBottomSpacing, after: iconView)
-        contentStack.setCustomSpacing(statusBottomSpacing, after: activityIndicator)
+        contentStack.setCustomSpacing(statusBottomSpacing, after: statusView)
 
         contentTopConstraint.constant = hasContentAfterStatusViews ? .defaultContentVerticalInset : .emptyContentTopInset
         contentBottomConstraint.constant = hasContentAfterStatusViews ? -.defaultContentVerticalInset : -.emptyContentBottomInset
-    }
-
-    // MARK: Overlay Animation
-
-    private func showOverlay(completion: ((Bool) -> Void)? = nil) {
-        UIView.animate(
-            withDuration: .animationDuration,
-            delay: .zero,
-            options: [.curveEaseIn],
-            animations: { self.overlayView.alpha = 1 },
-            completion: completion
-        )
-    }
-
-    private func hideOverlay(completion: ((Bool) -> Void)? = nil) {
-        UIView.animate(
-            withDuration: .animationDuration,
-            delay: .zero,
-            options: [.curveEaseOut],
-            animations: { self.overlayView.alpha = .zero },
-            completion: completion
-        )
     }
 }
 
@@ -269,6 +277,7 @@ private extension CGFloat {
     static let labelsStackInterItemSpacing: CGFloat = 8
     static let labelsStackBottomSpacing: CGFloat = 24
     static let buttonsStackInterItemSpacing: CGFloat = 12
+    static let statusViewHeight: CGFloat = 72
 }
 
 private extension TimeInterval {

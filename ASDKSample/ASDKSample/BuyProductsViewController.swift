@@ -183,7 +183,7 @@ class BuyProductsViewController: UIViewController {
         let amount = productsAmount()
         let randomOrderId = String(Int64.random(in: 1000 ... 10000))
         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: customerKey)
-        paymentData.description = "Краткое описние товара"
+        paymentData.description = "Краткое описание товара"
 
         var receiptItems: [Item] = []
         products.forEach { product in

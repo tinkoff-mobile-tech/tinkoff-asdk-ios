@@ -41,6 +41,8 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
         let sheetView = CommonSheetViewController(presenter: presenter)
         presenter.view = sheetView
 
-        return PullableContainerViewController(content: sheetView)
+        let container = PullableContainerViewController(content: sheetView)
+        sheetView.pullableContentDelegate = container
+        return container
     }
 }

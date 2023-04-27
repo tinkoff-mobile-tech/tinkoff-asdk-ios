@@ -10,6 +10,12 @@ import UIKit
 typealias MainFormOrderDetailsTableCell = TableCell<MainFormOrderDetailsView>
 
 final class MainFormOrderDetailsView: UIView {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let contentStackSpacing: CGFloat = 8
+    }
+
     // MARK: Dependencies
 
     var presenter: IMainFormOrderDetailsViewOutput? {
@@ -48,7 +54,7 @@ final class MainFormOrderDetailsView: UIView {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = .contentStackSpacing
+        stack.spacing = Constants.contentStackSpacing
         return stack
     }()
 
@@ -87,10 +93,4 @@ extension MainFormOrderDetailsView: IMainFormOrderDetailsViewInput {
     func set(orderDescription: String?) {
         orderDescriptionLabel.text = orderDescription
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let contentStackSpacing: CGFloat = 8
 }

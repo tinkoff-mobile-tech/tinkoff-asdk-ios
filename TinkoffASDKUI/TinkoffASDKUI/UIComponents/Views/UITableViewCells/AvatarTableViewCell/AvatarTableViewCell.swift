@@ -8,6 +8,16 @@
 import UIKit
 
 final class AvatarTableViewCell: UITableViewCell {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let labelsSpacing: CGFloat = 4
+        static let contentStackSpacing: CGFloat = 16
+        static let avatarSize: CGFloat = 40
+        static let minimalHeight: CGFloat = 56
+        static let contentStackInsets = UIEdgeInsets(horizontal: 16)
+    }
+
     // MARK: Subviews
 
     private lazy var avatarImageView: UIImageView = {
@@ -34,14 +44,15 @@ final class AvatarTableViewCell: UITableViewCell {
     private lazy var labelsStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = .labelsSpacing
+        stack.spacing = Constants.labelsSpacing
         return stack
     }()
 
     private lazy var contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = .contentStackSpacing
+        stack.spacing = Constants.contentStackSpacing
+        stack.alignment = .center
         return stack
     }()
 
@@ -78,26 +89,17 @@ final class AvatarTableViewCell: UITableViewCell {
 
     private func setupView() {
         contentView.addSubview(contentStack)
-        contentStack.pinEdgesToSuperview(insets: .contentStackInsets)
+        contentStack.pinEdgesToSuperview(insets: Constants.contentStackInsets)
+
         contentStack.addArrangedSubviews(avatarImageView, labelsStack)
         labelsStack.addArrangedSubviews(titleLabel, descriptionLabel)
 
         NSLayoutConstraint.activate([
-            avatarImageView.heightAnchor.constraint(equalToConstant: .avatarSize),
-            avatarImageView.widthAnchor.constraint(equalToConstant: .avatarSize),
+            contentStack.heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.minimalHeight),
+            avatarImageView.heightAnchor.constraint(equalToConstant: Constants.avatarSize),
+            avatarImageView.widthAnchor.constraint(equalToConstant: Constants.avatarSize),
         ])
+
         accessoryType = .disclosureIndicator
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let labelsSpacing: CGFloat = 4
-    static let contentStackSpacing: CGFloat = 16
-    static let avatarSize: CGFloat = 40
-}
-
-private extension UIEdgeInsets {
-    static let contentStackInsets = UIEdgeInsets(vertical: 8, horizontal: 16)
 }
