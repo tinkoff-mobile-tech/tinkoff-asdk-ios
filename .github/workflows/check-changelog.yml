@@ -3,7 +3,7 @@ name: Check CHANGELOG.md has been written.
 on:
   workflow_call:
     secrets:
-      comment_token:
+      tinkoff_bot_pat:
         required: true
 
 jobs:
@@ -12,10 +12,9 @@ jobs:
     steps:
       - name: Check if github-token is set
         run: |
-          if [ -z "${{ secrets.comment_token }}" ]
+          if [ -z "${{ secrets.tinkoff_bot_pat }}" ]
           then
-            echo "${{ secrets.comment_token }}"
-            echo "Error: COMMENT_TOKEN is not set." >&2
+            echo "Error: TINKOFF_BOT_PAT is not set." >&2
             exit 1
           fi
 
@@ -25,7 +24,7 @@ jobs:
         uses: actions/github-script@v4
         id: files
         with:
-          github-token: ${{ secrets.comment_token }}
+          github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
             const { data: pullRequest } = await github.pulls.get({
               owner: context.repo.owner,
@@ -52,7 +51,7 @@ jobs:
         uses: actions/github-script@v4
         if: ${{ steps.files.outputs.comment }}
         with:
-          github-token: ${{ secrets.comment_token }}
+          github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
             const { data: comments } = await github.issues.listComments({
               owner: context.repo.owner,
