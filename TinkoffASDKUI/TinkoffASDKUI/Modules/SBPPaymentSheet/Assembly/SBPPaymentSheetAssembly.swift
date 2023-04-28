@@ -34,6 +34,7 @@ final class SBPPaymentSheetAssembly: ISBPPaymentSheetAssembly {
             output: output,
             paymentStatusService: paymentStatusService,
             repeatedRequestHelper: repeatedRequestHelper,
+            mainDispatchQueue: DispatchQueue.main,
             sbpConfiguration: sbpConfiguration,
             paymentId: paymentId
         )
