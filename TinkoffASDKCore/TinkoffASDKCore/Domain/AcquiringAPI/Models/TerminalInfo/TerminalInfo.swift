@@ -13,6 +13,15 @@ public struct TerminalInfo {
     public let payMethods: [TerminalPayMethod]
     /// Возможность сохранения карт
     public let addCardScheme: Bool
+
+    /// Информация о доступных методах оплаты и настройках терминала
+    /// - Parameters:
+    ///   - payMethods: Методы оплаты, доступные для данного терминала
+    ///   - addCardScheme: Возможность сохранения карт
+    public init(payMethods: [TerminalPayMethod], addCardScheme: Bool) {
+        self.payMethods = payMethods
+        self.addCardScheme = addCardScheme
+    }
 }
 
 // MARK: - TerminalInfo + Decodable
