@@ -70,7 +70,7 @@ extension EmailViewPresenter {
 extension EmailViewPresenter {
     private func setupView() {
         viewSetTextFieldHeaderState()
-        view?.setTextField(text: currentEmail)
+        view?.setTextField(text: currentEmail, animated: false)
     }
 
     private func isValidEmail(_ email: String) -> Bool {
