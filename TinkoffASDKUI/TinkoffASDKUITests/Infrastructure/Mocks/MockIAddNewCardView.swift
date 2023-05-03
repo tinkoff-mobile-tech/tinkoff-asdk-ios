@@ -48,14 +48,14 @@ final class MockIAddNewCardView: IAddNewCardView {
         showGenericErrorNativeAlertCallCounter += 1
     }
 
-    var disableAddButtonCallCounter = 0
-    func disableAddButton() {
-        disableAddButtonCallCounter += 1
-    }
+    typealias SetAddButtonArguments = (enabled: Bool, animated: Bool)
 
-    var enableAddButtonCallCounter = 0
-    func enableAddButton() {
-        enableAddButtonCallCounter += 1
+    var setAddButtonCallCounter = 0
+    var setAddButtonArguments: SetAddButtonArguments?
+
+    func setAddButton(enabled: Bool, animated: Bool) {
+        setAddButtonCallCounter += 1
+        setAddButtonArguments = (enabled, animated)
     }
 
     var activateCardFieldCallCounter = 0
