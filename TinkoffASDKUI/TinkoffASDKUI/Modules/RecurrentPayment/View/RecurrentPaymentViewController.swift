@@ -175,14 +175,12 @@ extension RecurrentPaymentViewController: IPullableContainerContent {
     }
 }
 
-// MARK: - CommonSheetViewDelegate
+// MARK: - ICommonSheetViewDelegate
 
-extension RecurrentPaymentViewController: CommonSheetViewDelegate {
+extension RecurrentPaymentViewController: ICommonSheetViewDelegate {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }
-
-    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
 }
 
 // MARK: - ThreeDSWebFlowDelegate
