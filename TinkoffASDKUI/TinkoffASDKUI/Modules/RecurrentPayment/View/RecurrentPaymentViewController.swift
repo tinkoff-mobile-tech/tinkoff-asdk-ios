@@ -11,11 +11,6 @@ import WebKit
 final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentViewInput {
     // MARK: Internal Types
 
-    private enum Anchor: CaseIterable {
-        case contentBased
-        case expanded
-    }
-
     private enum PresentationState {
         case commonSheet
         case tableView
@@ -28,7 +23,7 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
     private let tableContentProvider: any IRecurrentPaymentTableContentProvider
     private let keyboardService = KeyboardService()
 
-    // MARK: Properties
+    // MARK: Subviews
 
     private lazy var tableView = UITableView(frame: view.bounds)
     private lazy var commonSheetView = CommonSheetView(delegate: self)
@@ -36,9 +31,8 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 
     // MARK: State
 
-    private let anchors = Anchor.allCases
-    private var currentAnchor: Anchor = .contentBased
     private var presentationState: PresentationState = .commonSheet
+    private var keyboardHeight: CGFloat = .zero
 
     // MARK: Initialization
 
@@ -63,12 +57,6 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
         setupKeyboardObserving()
         presenter.viewDidLoad()
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        presenter.viewDidAppear()
-    }
 }
 
 // MARK: - IRecurrentPaymentViewInput
@@ -76,7 +64,6 @@ final class RecurrentPaymentViewController: UIViewController, IRecurrentPaymentV
 extension RecurrentPaymentViewController {
     func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         presentationState = .commonSheet
-        currentAnchor = .contentBased
 
         commonSheetView.showOverlay(animated: true) {
             self.commonSheetView.set(state: state)
@@ -90,8 +77,6 @@ extension RecurrentPaymentViewController {
 
     func hideCommonSheet() {
         presentationState = .tableView
-        currentAnchor = .contentBased
-        tableView.setContentOffset(.zero, animated: false)
 
         commonSheetView.showOverlay(animated: true) {
             self.commonSheetView.set(state: .clear)
@@ -136,38 +121,24 @@ extension RecurrentPaymentViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - IPullableContainerContent Methods
+// MARK: - IPullableContainerContent
 
 extension RecurrentPaymentViewController: IPullableContainerContent {
-    func pullableContainerDidRequestCurrentAnchorIndex(_ contentDelegate: IPullableContainerСontentDelegate) -> Int {
-        anchors.firstIndex(of: currentAnchor) ?? .zero
-    }
-
-    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didChange currentAnchorIndex: Int) {
-        currentAnchor = anchors[currentAnchorIndex]
-    }
-
     func pullableContainer(
         _ contentDelegate: IPullableContainerСontentDelegate,
         didRequestHeightForAnchorAt index: Int,
         availableSpace: CGFloat
     ) -> CGFloat {
-        switch (anchors[index], presentationState) {
-        case (.contentBased, .tableView):
-            return tableContentProvider.pullableContainerHeight(
+        switch presentationState {
+        case .tableView:
+            return keyboardHeight + tableContentProvider.pullableContainerHeight(
                 for: presenter.allCells(),
                 in: tableView,
-                availableSpace: availableSpace
+                availableSpace: availableSpace - keyboardHeight
             )
-        case (.contentBased, .commonSheet):
+        case .commonSheet:
             return commonSheetView.estimatedHeight
-        case (.expanded, _):
-            return availableSpace
         }
-    }
-
-    func pullableContainer(_ contentDelegate: IPullableContainerСontentDelegate, didDragWithOffset offset: CGFloat) {
-        hideKeyboard()
     }
 
     func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
@@ -210,7 +181,7 @@ extension RecurrentPaymentViewController {
 
     private func setupTableView() {
         tableView.separatorStyle = .none
-        tableView.keyboardDismissMode = .onDrag
+        tableView.keyboardDismissMode = .none
         tableView.delaysContentTouches = false
         tableView.alwaysBounceVertical = false
         tableView.showsVerticalScrollIndicator = false
@@ -221,9 +192,9 @@ extension RecurrentPaymentViewController {
     }
 
     private func setupKeyboardObserving() {
-        keyboardService.onHeightDidChangeBlock = { [weak self] _, _ in
-            guard let self = self, self.currentAnchor != .expanded else { return }
-            self.currentAnchor = .expanded
+        keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
+            guard let self = self else { return }
+            self.keyboardHeight = keyboardHeight
             self.pullableContentDelegate?.updateHeight()
         }
     }
