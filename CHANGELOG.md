@@ -50,6 +50,7 @@
 * [EACQAPW-4707] Add correct sbp failures handling on MainForm
 * [MIC-8723] - Design review ui fixes - Pay by new card
 * [MIC-8719] - Design review ui fixes - Cards flow
+* [MIC-8786] Fix keyboard handling in recurrent payment module
 
 ## [2.19.0] - 2023-04-13Z
 
