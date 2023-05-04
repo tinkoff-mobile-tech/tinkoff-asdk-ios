@@ -179,9 +179,9 @@ extension MainFormViewController: IMainFormViewController {
     }
 }
 
-// MARK: - CommonSheetViewDelegate
+// MARK: - ICommonSheetViewDelegate
 
-extension MainFormViewController: CommonSheetViewDelegate {
+extension MainFormViewController: ICommonSheetViewDelegate {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }

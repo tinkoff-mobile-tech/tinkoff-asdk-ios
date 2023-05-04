@@ -62,9 +62,9 @@ extension CommonSheetViewController: ICommonSheetView {
     }
 }
 
-// MARK: - CommonSheetViewDelegate
+// MARK: - ICommonSheetViewDelegate
 
-extension CommonSheetViewController: CommonSheetViewDelegate {
+extension CommonSheetViewController: ICommonSheetViewDelegate {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.primaryButtonTapped()
     }
