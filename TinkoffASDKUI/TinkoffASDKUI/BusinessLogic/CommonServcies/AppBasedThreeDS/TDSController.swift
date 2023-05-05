@@ -131,7 +131,7 @@ private extension TDSController {
     func finishTransaction() {
         transaction?.close()
         DispatchQueue.main.async {
-//            self.progressView?.close()
+            self.progressView?.close()
         }
     }
 
