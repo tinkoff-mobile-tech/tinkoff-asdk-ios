@@ -169,7 +169,7 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        XCTAssertEqualTypes(tdsControllerMock.doChallengeCallCounter, 1)
+        XCTAssertEqual(tdsControllerMock.doChallengeCallCounter, 1)
         XCTAssertEqual(cancelBlockTriggerCount, .zero)
         XCTAssertEqual(completionBlockTriggerCount, .zero)
 
