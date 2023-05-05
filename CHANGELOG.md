@@ -51,6 +51,8 @@
 * [MIC-8723] - Design review ui fixes - Pay by new card
 * [MIC-8719] - Design review ui fixes - Cards flow
 * [MIC-8786] Fix keyboard handling in recurrent payment module
+* [EACQAPW-4190] - YandexPay Flow Unit Tests
+* [EACQAPW-4189] - YandexPay Flow Error Handling Unit Tests
 
 ## [2.19.0] - 2023-04-13Z
 
