@@ -6,8 +6,14 @@
 //
 
 protocol ISBPQrViewInput: AnyObject {
-    func showCommonSheet(state: CommonSheetState)
+    func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool)
     func hideCommonSheet()
     func reloadData()
     func closeView()
+}
+
+extension ISBPQrViewInput {
+    func showCommonSheet(state: CommonSheetState) {
+        showCommonSheet(state: state, animatePullableContainerUpdates: true)
+    }
 }

@@ -13,6 +13,8 @@ protocol ISavedCardViewPresenterInput: AnyObject {
     var isValid: Bool { get }
     var cardId: String? { get }
     var cvc: String? { get }
+
+    func activateCVCField()
 }
 
 extension ISavedCardViewPresenterInput {

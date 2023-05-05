@@ -114,13 +114,24 @@ private extension Button.Configuration {
     static func sbp() -> Button.Configuration {
         Button.Configuration(
             title: Loc.CommonSheet.PaymentForm.sbpPrimaryButton,
-            image: Asset.Sbp.sbpLogoLight.image,
+            image: Asset.Sbp.sbpLogoUniversal.image,
             style: Button.Style(
-                foregroundColor: Button.InteractiveColor(normal: .white),
-                backgroundColor: Button.InteractiveColor(normal: UIColor(hex: "#1D1346") ?? .clear)
+                foregroundColor: Button.InteractiveColor(normal: UIColor.Dynamic(light: .white, dark: .black).color),
+                backgroundColor: Button.InteractiveColor(normal: .sbpButtonBackground)
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },
             imagePlacement: .trailing
         )
+    }
+}
+
+// MARK: - UIColor + Helpers
+
+private extension UIColor {
+    static var sbpButtonBackground: UIColor {
+        UIColor.Dynamic(
+            light: UIColor(hex: "#1D1346") ?? .clear,
+            dark: UIColor(hex: "#F5F1E8") ?? .clear
+        ).color
     }
 }

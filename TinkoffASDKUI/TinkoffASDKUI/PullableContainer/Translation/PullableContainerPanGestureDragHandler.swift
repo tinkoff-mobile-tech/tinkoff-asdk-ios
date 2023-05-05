@@ -20,14 +20,14 @@
 import UIKit
 
 final class PullableContainerPanGestureDragHandler: PullableContainerDragHandler {
-    private weak var dragController: PullableContainerDragController?
+    private weak var heightConstraintController: PullableContainerHeightConstraintController?
     private let panGestureRecognizer: UIPanGestureRecognizer
 
     init(
-        dragController: PullableContainerDragController?,
+        heightConstraintController: PullableContainerHeightConstraintController?,
         panGestureRecognizer: UIPanGestureRecognizer
     ) {
-        self.dragController = dragController
+        self.heightConstraintController = heightConstraintController
         self.panGestureRecognizer = panGestureRecognizer
         setup()
     }
@@ -47,12 +47,12 @@ private extension PullableContainerPanGestureDragHandler {
         let yTranslation = panGestureRecognizer.translation(in: panGestureRecognizer.view).y
         switch recognizer.state {
         case .changed:
-            dragController?.didDragWith(offset: yTranslation)
+            heightConstraintController?.didDragWith(offset: yTranslation)
         case .ended:
             let yVelocity = panGestureRecognizer.velocity(in: panGestureRecognizer.view).y
-            dragController?.didEndDragging(offset: yTranslation, velocity: yVelocity)
+            heightConstraintController?.didEndDragging(offset: yTranslation, velocity: yVelocity)
         case .cancelled, .failed:
-            dragController?.didEndDragging(offset: 0, velocity: 0)
+            heightConstraintController?.didEndDragging(offset: 0, velocity: 0)
         default:
             break
         }

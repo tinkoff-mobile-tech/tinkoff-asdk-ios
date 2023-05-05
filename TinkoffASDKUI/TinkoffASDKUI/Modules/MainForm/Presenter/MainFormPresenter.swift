@@ -78,7 +78,7 @@ final class MainFormPresenter {
 
 extension MainFormPresenter: IMainFormPresenter {
     func viewDidLoad() {
-        view?.showCommonSheet(state: .processing)
+        view?.showCommonSheet(state: .processing, animatePullableContainerUpdates: false)
 
         dataStateLoader.loadState(for: paymentFlow) { [weak self] result in
             guard let self = self else { return }
@@ -114,6 +114,7 @@ extension MainFormPresenter: IMainFormPresenter {
     func didSelectRow(at indexPath: IndexPath) {
         switch cellType(at: indexPath) {
         case let .otherPaymentMethod(paymentMethod):
+            view?.hideKeyboard()
             startPayment(paymentMethod: paymentMethod)
         default:
             break
@@ -128,6 +129,7 @@ extension MainFormPresenter: IMainFormPresenter {
             view?.closeView()
         case .recoverableFailure:
             presentationState = .payMethodsPresenting
+            payButtonPresenter.stopLoading()
             view?.hideCommonSheet()
         }
     }
@@ -199,6 +201,8 @@ extension MainFormPresenter {
 
 extension MainFormPresenter: IPayButtonViewPresenterOutput {
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
+        view?.hideKeyboard()
+
         switch dataState.primaryPaymentMethod {
         case .card where savedCardPresenter.presentationState.isSelected:
             startPaymentWithSavedCard()
@@ -367,9 +371,11 @@ extension MainFormPresenter: ISBPBanksModuleOutput {
 extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
     func sbpPaymentSheet(completedWith result: PaymentResult) {
         switch result {
-        case .succeeded, .failed:
+        case .succeeded:
             moduleResult = result
             view?.closeView()
+        case .failed:
+            moduleResult = result
         case let .cancelled(paymentInfo) where paymentInfo != nil:
             moduleResult = result
             view?.closeView()

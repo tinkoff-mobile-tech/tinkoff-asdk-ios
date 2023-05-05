@@ -19,20 +19,20 @@
 
 import UIKit
 
-final class PullableContainerScrollDragHandler: NSObject, PullableContainerDragHandler {
-    private weak var dragController: PullableContainerDragController?
+final class PullableContainerScrollDragHandler: PullableContainerDragHandler {
+    private weak var heightConstraintController: PullableContainerHeightConstraintController?
     private let scrollView: UIScrollView
 
     private var isMoving = false
-    private var translatingBeginOffset: CGFloat = 0
+    private var lastScrollTranslation: CGFloat = .zero
+    private var translatingBeginOffset: CGFloat = .zero
 
     init(
-        dragController: PullableContainerDragController?,
+        heightConstraintController: PullableContainerHeightConstraintController?,
         scrollView: UIScrollView
     ) {
-        self.dragController = dragController
+        self.heightConstraintController = heightConstraintController
         self.scrollView = scrollView
-        super.init()
         setup()
     }
 
@@ -48,42 +48,49 @@ private extension PullableContainerScrollDragHandler {
     }
 
     @objc func scrollPanGestureAction(_ recognizer: UIPanGestureRecognizer) {
+        guard let controller = heightConstraintController else { return }
+
         let yTranslation = recognizer.translation(in: scrollView).y
         let yVelocity = recognizer.velocity(in: scrollView).y
 
-        let isScrollDown = yVelocity > 0
-        let isOnTop = scrollView.contentOffset.y <= 0
-        let isMovingDownAction = (isScrollDown && isOnTop)
+        let lastScrollTranslation = self.lastScrollTranslation
+        self.lastScrollTranslation = yTranslation
+
+        let isScrollsDown = (lastScrollTranslation - yTranslation) < 0
+        let isScrollsUp = !isScrollsDown
+
+        let isOnTopPosition = scrollView.contentOffset.y - abs(yTranslation) <= 0
+        let isMovingDownAction = isScrollsDown && isOnTopPosition
+        let isMovingUpAction = isScrollsUp && isOnTopPosition && !controller.maxHeightIsReached
 
         switch recognizer.state {
-        case .possible:
-            scrollView.contentOffset = .zero
-        case .began:
-            if isMovingDownAction {
-                isMoving = true
-                scrollView.setContentOffset(.zero, animated: false)
-            }
         case .changed:
-            if isMovingDownAction {
+            if isMovingDownAction || isMovingUpAction {
                 if !isMoving {
                     isMoving = true
                     translatingBeginOffset = yTranslation
                 }
                 let movingOffset = yTranslation - translatingBeginOffset
-                dragController?.didDragWith(offset: movingOffset)
-                scrollView.contentOffset = .zero
+                controller.didDragWith(offset: movingOffset)
+
+                scrollView.setContentOffset(.zero, animated: false)
             } else {
                 if isMoving {
                     scrollView.setContentOffset(.zero, animated: false)
                     let movingOffset = yTranslation - translatingBeginOffset
-                    dragController?.didDragWith(offset: movingOffset)
-                    isMoving = !(movingOffset < 0)
+                    controller.didDragWith(offset: movingOffset)
+                    isMoving = movingOffset >= 0
                 }
             }
         case .cancelled, .ended:
             if isMoving {
-                dragController?.didEndDragging(offset: yTranslation, velocity: yVelocity)
+                controller.didEndDragging(offset: yTranslation, velocity: yVelocity)
+                scrollView.setContentOffset(.zero, animated: false)
             }
+
+            self.lastScrollTranslation = .zero
+            translatingBeginOffset = .zero
+            isMoving = false
         default:
             break
         }

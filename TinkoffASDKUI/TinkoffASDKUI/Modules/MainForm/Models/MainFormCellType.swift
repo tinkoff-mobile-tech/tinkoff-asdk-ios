@@ -35,4 +35,13 @@ extension MainFormCellType {
             return false
         }
     }
+
+    var isPayButton: Bool {
+        switch self {
+        case .payButton:
+            return true
+        default:
+            return false
+        }
+    }
 }

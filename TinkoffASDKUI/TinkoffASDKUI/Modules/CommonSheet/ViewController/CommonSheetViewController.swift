@@ -7,17 +7,10 @@
 
 import UIKit
 
-final class CommonSheetViewController: UIViewController, PullableContainerContent {
-    // MARK: PullableContainerContent Properties
-
-    var pullableContainerContentHeight: CGFloat {
-        commonSheetView.estimatedHeight
-    }
-
-    var pullableContainerContentHeightDidChange: ((PullableContainerContent) -> Void)?
-
+final class CommonSheetViewController: UIViewController, IPullableContainerContent {
     // MARK: Dependencies
 
+    weak var pullableContentDelegate: IPullableContainerСontentDelegate?
     private let presenter: ICommonSheetPresenter
 
     // MARK: UI
@@ -51,8 +44,17 @@ final class CommonSheetViewController: UIViewController, PullableContainerConten
 // MARK: - ICommonSheetView
 
 extension CommonSheetViewController: ICommonSheetView {
-    func update(state: CommonSheetState) {
-        commonSheetView.update(state: state)
+    func update(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
+        commonSheetView.showOverlay(animated: true) {
+            self.commonSheetView.set(state: state)
+
+            self.pullableContentDelegate?.updateHeight(
+                animated: animatePullableContainerUpdates,
+                alongsideAnimation: {
+                    self.commonSheetView.hideOverlay(animated: !animatePullableContainerUpdates)
+                }
+            )
+        }
     }
 
     func close() {
@@ -60,13 +62,9 @@ extension CommonSheetViewController: ICommonSheetView {
     }
 }
 
-// MARK: - CommonSheetViewDelegate
+// MARK: - ICommonSheetViewDelegate
 
-extension CommonSheetViewController: CommonSheetViewDelegate {
-    func commonSheetView(_ commonSheetView: CommonSheetView, didUpdateWithState state: CommonSheetState) {
-        pullableContainerContentHeightDidChange?(self)
-    }
-
+extension CommonSheetViewController: ICommonSheetViewDelegate {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.primaryButtonTapped()
     }
@@ -76,18 +74,26 @@ extension CommonSheetViewController: CommonSheetViewDelegate {
     }
 }
 
-// MARK: - PullableContainerContent
+// MARK: - IPullableContainerContent
 
 extension CommonSheetViewController {
-    func pullableContainerWasClosed() {
+    func pullableContainerWasClosed(_ contentDelegate: IPullableContainerСontentDelegate) {
         presenter.viewWasClosed()
     }
 
-    func pullableContainerShouldDismissOnDownDragging() -> Bool {
+    func pullableContainerShouldDismissOnDownDragging(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool {
         presenter.canDismissViewByUserInteraction()
     }
 
-    func pullableContainerShouldDismissOnDimmingViewTap() -> Bool {
+    func pullableContainerShouldDismissOnDimmingViewTap(_ contentDelegate: IPullableContainerСontentDelegate) -> Bool {
         presenter.canDismissViewByUserInteraction()
+    }
+
+    func pullableContainer(
+        _ container: IPullableContainerСontentDelegate,
+        didRequestHeightForAnchorAt index: Int,
+        availableSpace: CGFloat
+    ) -> CGFloat {
+        commonSheetView.estimatedHeight
     }
 }

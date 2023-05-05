@@ -6,7 +6,8 @@ on:
       bump_type:
         required: true
         type: string
-        description: "bump type for version"
+        # Expected value is one of major/minor/patch
+        description: "bump type for version" 
 
 jobs:
   publish:

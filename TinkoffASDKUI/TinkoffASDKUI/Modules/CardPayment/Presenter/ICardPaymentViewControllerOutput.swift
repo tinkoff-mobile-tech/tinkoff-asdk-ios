@@ -7,6 +7,7 @@
 
 protocol ICardPaymentViewControllerOutput {
     func viewDidLoad()
+    func viewDidAppear()
 
     func closeButtonPressed()
 

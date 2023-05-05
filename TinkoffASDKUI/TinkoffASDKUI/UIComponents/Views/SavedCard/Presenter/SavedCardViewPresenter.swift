@@ -52,6 +52,7 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
     // MARK: State
 
     private var hasUserInteractedWithCVC = false
+    private var shouldActivateOnSetup = false
     private var cvcInputText = "" {
         didSet {
             guard cvcInputText != oldValue else { return }
@@ -73,10 +74,18 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
         self.output = output
     }
 
+    // MARK: ISavedCardViewPresenterInput
+
+    func activateCVCField() {
+        view?.activateCVCField()
+        shouldActivateOnSetup = view == nil
+    }
+
     // MARK: View Reloading
 
     private func setupView() {
-        view?.deactivateCVCField()
+        shouldActivateOnSetup ? view?.activateCVCField() : view?.deactivateCVCField()
+        shouldActivateOnSetup = false
 
         switch presentationState {
         case let .selected(card, showChangeDescription):
@@ -137,6 +146,8 @@ extension SavedCardViewPresenter {
     }
 
     func savedCardViewIsSelected() {
+        view?.deactivateCVCField()
+
         switch presentationState {
         case let .selected(card, showChangeDescription) where showChangeDescription:
             output?.savedCardPresenter(self, didRequestReplacementFor: card)

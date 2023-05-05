@@ -35,6 +35,9 @@
 * [MIC-8013] MainForm - Card payment logic
 * [MIC-8037] MainForm - Add analytics data
 * [MIC-8020] MainForm - Add localization
+* [MIC-8596] MainForm - Change SBP Button's background color
+* [MIC-8760] MainForm - PullableContainer's height adapts to content height
+* [MIC-8761] MainForm - Keyboard handling logic takes into account the position of the button
 * [MIC-7699] CardPayment - Add common functionality of payment by card
 * [MIC-8068] SBP - Opening from main form
 * [MIC-4650] CardsController & AddCardController for working with payment cards with own UI
@@ -43,6 +46,11 @@
 * [MIC-8050] Change add card icon
 * [MIC-8095] TinkoffPay - integrate to MainForm
 * [MIC-8096] TinkoffPay - integrate with independent button
+* [MIC-7776] PullableContainer refactoring
+* [EACQAPW-4707] Add correct sbp failures handling on MainForm
+* [MIC-8723] - Design review ui fixes - Pay by new card
+* [MIC-8719] - Design review ui fixes - Cards flow
+* [MIC-8786] Fix keyboard handling in recurrent payment module
 
 ## [2.19.0] - 2023-04-13Z
 

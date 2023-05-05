@@ -44,7 +44,7 @@ final class YandexPayPaymentSheetPresenter {
 
 extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
-        view?.update(state: SheetState.processing.toCommonSheetState())
+        view?.update(state: SheetState.processing.toCommonSheetState(), animatePullableContainerUpdates: false)
 
         paymentController.performPayment(
             paymentFlow: paymentFlow,

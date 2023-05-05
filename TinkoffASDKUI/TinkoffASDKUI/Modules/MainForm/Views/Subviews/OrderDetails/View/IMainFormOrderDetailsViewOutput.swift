@@ -9,4 +9,6 @@ import Foundation
 
 protocol IMainFormOrderDetailsViewOutput: AnyObject {
     var view: IMainFormOrderDetailsViewInput? { get set }
+
+    func copy() -> IMainFormOrderDetailsViewOutput
 }

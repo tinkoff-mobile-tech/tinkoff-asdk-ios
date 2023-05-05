@@ -10,6 +10,11 @@ import UIKit
 typealias EmailTableCell = TableCell<EmailView>
 
 final class EmailView: UIView, IEmailViewInput {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let minimalHeight: CGFloat = 56
+    }
 
     // MARK: Dependencies
 
@@ -53,8 +58,8 @@ extension EmailView {
         textField.setHeader(color: ASDKColors.Text.secondary.color)
     }
 
-    func setTextField(text: String) {
-        textField.set(text: text)
+    func setTextField(text: String, animated: Bool) {
+        textField.set(text: text, animated: animated)
     }
 
     func hideKeyboard() {
@@ -99,12 +104,6 @@ extension EmailView {
 
     private func setupViewsConstraints() {
         textField.pinEdgesToSuperview()
-        heightAnchor.constraint(greaterThanOrEqualToConstant: .minimalHeight).isActive = true
+        heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.minimalHeight).isActive = true
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let minimalHeight: CGFloat = 56
 }

@@ -90,9 +90,17 @@ final class FloatingTextField: UIView {
 // MARK: - Public
 
 extension FloatingTextField {
-    func set(text: String?) {
+    func setContainerView(radius: CGFloat) {
+        containerView.layer.cornerRadius = radius
+    }
+
+    func set(text: String?, animated: Bool) {
         textField.text = text
-        liftHeaderLabelIfNeeded()
+        liftHeaderLabelIfNeeded(animated: animated)
+    }
+
+    func set(text: String?) {
+        set(text: text, animated: true)
     }
 
     func set(placeholder: String) {
@@ -126,9 +134,13 @@ extension FloatingTextField {
         textField.isSecureTextEntry = isSecureTextEntry
     }
 
-    func setHeader(text: String) {
+    func setHeader(text: String, animated: Bool) {
         headerLabel.text = text
-        liftHeaderLabelIfNeeded()
+        liftHeaderLabelIfNeeded(animated: animated)
+    }
+
+    func setHeader(text: String) {
+        setHeader(text: text, animated: true)
     }
 
     func setHeader(color: UIColor) {
@@ -144,7 +156,7 @@ extension FloatingTextField: UITextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        liftHeaderLabel()
+        liftHeaderLabel(animated: true)
         delegate?.textFieldDidBeginEditing(textField)
     }
 
@@ -214,8 +226,14 @@ extension FloatingTextField {
         ])
     }
 
-    private func liftHeaderLabel() {
-        animateHeaderLabel(isLifting: true)
+    private func liftHeaderLabel(animated: Bool) {
+        if animated {
+            animateHeaderLabel(isLifting: true)
+        } else {
+            UIView.performWithoutAnimation {
+                animateHeaderLabel(isLifting: true)
+            }
+        }
     }
 
     private func downHeaderLabel() {
@@ -243,8 +261,8 @@ extension FloatingTextField {
         animateChanges(in: textField, animations: { self.textField.setPlaceholder(color: placeholderColor) })
     }
 
-    private func liftHeaderLabelIfNeeded() {
-        if textField.text?.isEmpty == false { liftHeaderLabel() }
+    private func liftHeaderLabelIfNeeded(animated: Bool) {
+        if textField.text?.isEmpty == false { liftHeaderLabel(animated: animated) }
     }
 
     private func animateChanges(in view: UIView, animations: @escaping VoidBlock) {

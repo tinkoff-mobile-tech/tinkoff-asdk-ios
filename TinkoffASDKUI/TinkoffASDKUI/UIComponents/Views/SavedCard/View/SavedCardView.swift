@@ -10,6 +10,23 @@ import UIKit
 typealias SavedCardTableCell = TableCell<SavedCardView>
 
 final class SavedCardView: UIView {
+    // MARK: Internal Types
+
+    enum Constants {
+        static let minimalHeight: CGFloat = 64
+        static let iconLeadingInset: CGFloat = 16
+        static let labelsStackSpacing: CGFloat = 4
+        static let labelsStackHorizontalInset: CGFloat = 16
+        static let cvcFieldTrailingInset: CGFloat = 8
+        static let accessoryViewWidth: CGFloat = 83
+
+        static let iconSize = CGSize(width: 40, height: 26)
+        static let cvcFieldContainerSize = CGSize(width: 59, height: 48)
+        static let cvcFieldCornerRadius: CGFloat = 12
+        static let cvcFieldHeader = "CVC"
+        static let cvcFieldPlaceholder = "123"
+    }
+
     // MARK: Dependencies
 
     var presenter: ISavedCardViewOutput? {
@@ -52,7 +69,7 @@ final class SavedCardView: UIView {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .leading
-        stack.spacing = .labelsStackSpacing
+        stack.spacing = Constants.labelsStackSpacing
         return stack
     }()
 
@@ -68,7 +85,7 @@ final class SavedCardView: UIView {
         return view
     }()
 
-    private lazy var accessoryViewWidthConstraint = accessoryView.widthAnchor.constraint(equalToConstant: .accessoryViewWidth)
+    private lazy var accessoryViewWidthConstraint = accessoryView.widthAnchor.constraint(equalToConstant: Constants.accessoryViewWidth)
 
     // MARK: Init
 
@@ -108,38 +125,39 @@ final class SavedCardView: UIView {
         containerView.pinEdgesToSuperview()
 
         NSLayoutConstraint.activate([
-            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: .containerMinimalHeight),
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.minimalHeight),
 
-            iconView.widthAnchor.constraint(equalToConstant: CGSize.iconSize.width),
+            iconView.widthAnchor.constraint(equalToConstant: Constants.iconSize.width),
             iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            iconView.heightAnchor.constraint(equalToConstant: CGSize.iconSize.height),
-            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: .iconLeadingInset),
+            iconView.heightAnchor.constraint(equalToConstant: Constants.iconSize.height),
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.iconLeadingInset),
 
             labelsStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: .labelsStackHorizontalInset),
-            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -.labelsStackHorizontalInset),
+            labelsStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: Constants.labelsStackHorizontalInset),
+            labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -Constants.labelsStackHorizontalInset),
             labelsStack.trailingAnchor.constraint(equalTo: accessoryView.leadingAnchor).with(priority: .defaultLow),
 
             accessoryView.topAnchor.constraint(equalTo: contentView.topAnchor),
             accessoryView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             accessoryView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
-            cvcField.widthAnchor.constraint(equalToConstant: CGSize.cvcFieldContainerSize.width),
-            cvcField.heightAnchor.constraint(equalToConstant: CGSize.cvcFieldContainerSize.height),
+            cvcField.widthAnchor.constraint(equalToConstant: Constants.cvcFieldContainerSize.width),
+            cvcField.heightAnchor.constraint(equalToConstant: Constants.cvcFieldContainerSize.height),
             cvcField.centerYAnchor.constraint(equalTo: accessoryView.centerYAnchor),
-            cvcField.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -.cvcFieldTrailingInset),
+            cvcField.trailingAnchor.constraint(equalTo: accessoryView.trailingAnchor, constant: -Constants.cvcFieldTrailingInset),
         ])
     }
 
     private func configureCVCField() {
         cvcField.delegate = maskingDelegate
-        cvcField.set(placeholder: .cvcFieldPlaceholder)
+        cvcField.set(placeholder: Constants.cvcFieldPlaceholder)
         cvcField.set(clearButtonMode: .never)
         cvcField.set(contentType: .creditCardNumber)
         cvcField.set(keyboardType: .numberPad)
         cvcField.set(isSecureTextEntry: true)
-        cvcField.setHeader(text: .cvcFieldHeader)
+        cvcField.setHeader(text: Constants.cvcFieldHeader)
         cvcField.setHeader(color: ASDKColors.Text.secondary.color)
+        cvcField.setContainerView(radius: Constants.cvcFieldCornerRadius)
     }
 
     // MARK: Events
@@ -180,6 +198,10 @@ extension SavedCardView: ISavedCardViewInput {
         cvcField.setHeader(color: ASDKColors.Foreground.negativeAccent)
     }
 
+    func activateCVCField() {
+        cvcField.becomeFirstResponder()
+    }
+
     func deactivateCVCField() {
         cvcField.resignFirstResponder()
     }
@@ -195,25 +217,4 @@ extension SavedCardView: MaskedTextFieldDelegateListener {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         presenter?.savedCardViewDidBeginCVCFieldEditing()
     }
-}
-
-// MARK: - Constants
-
-private extension CGFloat {
-    static let containerMinimalHeight: CGFloat = 64
-    static let iconLeadingInset: CGFloat = 16
-    static let labelsStackSpacing: CGFloat = 4
-    static let labelsStackHorizontalInset: CGFloat = 16
-    static let cvcFieldTrailingInset: CGFloat = 8
-    static let accessoryViewWidth: CGFloat = 83
-}
-
-private extension CGSize {
-    static let iconSize = CGSize(width: 40, height: 26)
-    static let cvcFieldContainerSize = CGSize(width: 59, height: 48)
-}
-
-private extension String {
-    static let cvcFieldHeader = "CVC"
-    static let cvcFieldPlaceholder = "123"
 }
