@@ -11,13 +11,15 @@ final class CommonSheetViewMock: ICommonSheetView {
 
     // MARK: - update
 
-    var updateCallsCount = 0
-    var updateReceivedArguments: CommonSheetState?
-    var updateReceivedInvocations: [CommonSheetState] = []
+    typealias UpdateArguments = (state: CommonSheetState, animateContainerUpdates: Bool)
 
-    func update(state: CommonSheetState) {
+    var updateCallsCount = 0
+    var updateReceivedArguments: UpdateArguments?
+    var updateReceivedInvocations: [UpdateArguments] = []
+
+    func update(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         updateCallsCount += 1
-        let arguments = state
+        let arguments = (state, animatePullableContainerUpdates)
         updateReceivedArguments = arguments
         updateReceivedInvocations.append(arguments)
     }

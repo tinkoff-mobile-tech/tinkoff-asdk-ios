@@ -13,7 +13,8 @@ extension YPPaymentInfo {
         YPPaymentInfo(
             paymentToken: "YPPaymentToken",
             paymentMethodInfo: .card(.init(cardLast4: "2344", cardNetwork: .mir)),
-            paymentAmount: "200"
+            paymentAmount: "200",
+            billingContact: nil
         )
     }
 }
