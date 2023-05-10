@@ -140,9 +140,9 @@ extension SBPQrViewController: IPullableContainerContent {
     }
 }
 
-// MARK: - CommonSheetViewDelegate
+// MARK: - ICommonSheetViewDelegate
 
-extension SBPQrViewController: CommonSheetViewDelegate {
+extension SBPQrViewController: ICommonSheetViewDelegate {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }

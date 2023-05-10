@@ -371,9 +371,11 @@ extension MainFormPresenter: ISBPBanksModuleOutput {
 extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
     func sbpPaymentSheet(completedWith result: PaymentResult) {
         switch result {
-        case .succeeded, .failed:
+        case .succeeded:
             moduleResult = result
             view?.closeView()
+        case .failed:
+            moduleResult = result
         case let .cancelled(paymentInfo) where paymentInfo != nil:
             moduleResult = result
             view?.closeView()

@@ -38,13 +38,8 @@ final class RecurrentPaymentTableContentProvider: IRecurrentPaymentTableContentP
         in tableView: UITableView,
         availableSpace: CGFloat
     ) -> CGFloat {
-        let mediumHeight = availableSpace * .mediumHeightCoefficient
-
-        let contentHeight: CGFloat = cellTypes.reduce(.zero) { partialResult, cellType in
-            partialResult + height(for: cellType, in: tableView)
-        }
-
-        return min(mediumHeight, contentHeight)
+        let contentHeight: CGFloat = cellTypes.reduce(.zero) { $0 + height(for: $1, in: tableView) }
+        return min(contentHeight, availableSpace)
     }
 
     func height(for cellType: RecurrentPaymentCellType, in tableView: UITableView) -> CGFloat {
@@ -77,8 +72,4 @@ final class RecurrentPaymentTableContentProvider: IRecurrentPaymentTableContentP
 private extension UIEdgeInsets {
     static let savedCardInsets = UIEdgeInsets(top: 8, left: 16, bottom: 20, right: 16)
     static let payButtonInsets = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16)
-}
-
-private extension CGFloat {
-    static let mediumHeightCoefficient: CGFloat = 7 / 10
 }

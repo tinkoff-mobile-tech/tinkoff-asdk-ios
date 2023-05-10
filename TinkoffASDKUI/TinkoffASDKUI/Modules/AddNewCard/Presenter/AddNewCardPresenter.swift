@@ -11,7 +11,10 @@ import enum TinkoffASDKCore.APIError
 final class AddNewCardPresenter {
     // MARK: Dependencies
 
-    weak var view: IAddNewCardView?
+    weak var view: IAddNewCardView? {
+        didSet { setupView() }
+    }
+
     private let cardsController: ICardsController
 
     // MARK: Output Events Handlers
@@ -59,7 +62,6 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
 
     func viewDidLoad() {
         view?.reloadCollection(sections: [.cardField])
-        view?.disableAddButton()
     }
 
     func viewDidAppear() {
@@ -89,7 +91,7 @@ extension AddNewCardPresenter: ICardFieldOutput {
     }
 
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
-        result.isValid ? view?.enableAddButton() : view?.disableAddButton()
+        view?.setAddButton(enabled: result.isValid)
     }
 }
 
@@ -116,6 +118,10 @@ extension AddNewCardPresenter {
                 self.view?.closeScreen()
             }
         }
+    }
+
+    private func setupView() {
+        view?.setAddButton(enabled: false, animated: false)
     }
 }
 

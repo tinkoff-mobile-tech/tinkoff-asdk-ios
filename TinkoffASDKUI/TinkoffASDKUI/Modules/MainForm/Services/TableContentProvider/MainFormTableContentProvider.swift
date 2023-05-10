@@ -79,16 +79,15 @@ final class MainFormTableContentProvider: IMainFormTableContentProvider {
         in tableView: UITableView,
         availableSpace: CGFloat
     ) -> CGFloat {
-        let containsDynamicElements = cellTypes.contains { $0.isEmail || $0.isGetReceiptSwitch }
-        let mediumHeight = availableSpace * .mediumHeightCoefficient
+        let emailViewHeight = cellTypes.contains(where: \.isGetReceiptSwitch)
+            ? EmailView.Constants.minimalHeight + UIEdgeInsets.emailInsets.vertical
+            : .zero
 
-        guard !containsDynamicElements else { return mediumHeight }
+        let contentHeight = cellTypes
+            .filter { !$0.isEmail }
+            .reduce(CGRect.tableHeaderInitialFrame.height + emailViewHeight) { $0 + height(for: $1, in: tableView) }
 
-        let contentHeight = cellTypes.reduce(CGRect.tableHeaderInitialFrame.height) { partialResult, cellType in
-            partialResult + height(for: cellType, in: tableView)
-        }
-
-        return min(mediumHeight, contentHeight)
+        return min(contentHeight, availableSpace)
     }
 
     func height(for cellType: MainFormCellType, in tableView: UITableView) -> CGFloat {
@@ -168,8 +167,4 @@ private extension UIEdgeInsets {
 
 private extension CGRect {
     static let tableHeaderInitialFrame = CGRect(origin: .zero, size: CGSize(width: .zero, height: 40))
-}
-
-private extension CGFloat {
-    static let mediumHeightCoefficient: CGFloat = 7 / 10
 }

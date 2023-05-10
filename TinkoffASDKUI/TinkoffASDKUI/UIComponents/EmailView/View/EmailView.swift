@@ -58,8 +58,8 @@ extension EmailView {
         textField.setHeader(color: ASDKColors.Text.secondary.color)
     }
 
-    func setTextField(text: String) {
-        textField.set(text: text)
+    func setTextField(text: String, animated: Bool) {
+        textField.set(text: text, animated: animated)
     }
 
     func hideKeyboard() {

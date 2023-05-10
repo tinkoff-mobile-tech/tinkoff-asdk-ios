@@ -114,9 +114,9 @@ private extension Button.Configuration {
     static func sbp() -> Button.Configuration {
         Button.Configuration(
             title: Loc.CommonSheet.PaymentForm.sbpPrimaryButton,
-            image: Asset.Sbp.sbpLogoLight.image,
+            image: Asset.Sbp.sbpLogoUniversal.image,
             style: Button.Style(
-                foregroundColor: Button.InteractiveColor(normal: .white),
+                foregroundColor: Button.InteractiveColor(normal: UIColor.Dynamic(light: .white, dark: .black).color),
                 backgroundColor: Button.InteractiveColor(normal: .sbpButtonBackground)
             ),
             contentSize: modify(.basicLarge) { $0.imagePadding = 12 },

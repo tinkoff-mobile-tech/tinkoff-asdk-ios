@@ -49,22 +49,50 @@ jobs:
 
       - name: Add comment
         uses: actions/github-script@v4
-        if: ${{ steps.files.outputs.comment }}
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
-            const { data: comments } = await github.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-            const commentBody = `${{ steps.files.outputs.comment }}`;
-            const existingComment = comments.find((comment) => comment.body.includes(commentBody));
-            if (!existingComment) {
-              await github.issues.createComment({
+            function needsToLeftAChangelogComment() {
+              const commentBody = `${{ steps.files.outputs.comment }}`;
+              return commentBody !== undefined && commentBody.length > 0;
+            }
+
+            async function leftChangelogComment(comments, commentBody) {
+              const existingComment = comments.find((comment) => comment.body.includes(commentBody));
+              if (!existingComment) {
+                await github.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody,
+                });
+              }
+            }
+
+            async function removeChangelogCommentIfExists(comments) {
+              const existingComment = comments.find((comment) => comment.body.includes('CHANGELOG.md'));
+              if (existingComment) {
+                await github.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                });
+              }
+            }
+
+            async function runJob() {
+              const { data: comments } = await github.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: commentBody,
               });
+
+              if (needsToLeftAChangelogComment()) {
+                const commentBody = `${{ steps.files.outputs.comment }}`;
+                leftChangelogComment(comments, commentBody);
+              } else {
+                removeChangelogCommentIfExists(comments);
+              }
             }
+
+            runJob();
