@@ -29,7 +29,8 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
     private let bankAppChecker: ISBPBankAppChecker
     private let bankAppOpener: ISBPBankAppOpener
     private let cellPresentersAssembly: ISBPBankCellPresenterAssembly
-    private let dispatchGroup: DispatchGroup
+    private let dispatchGroup: IDispatchGroup
+    private let mainDispatchQueue: IDispatchQueue
 
     // Properties
     private var screenType: SBPBanksScreenType = .startEmpty
@@ -55,7 +56,8 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         bankAppChecker: ISBPBankAppChecker,
         bankAppOpener: ISBPBankAppOpener,
         cellPresentersAssembly: ISBPBankCellPresenterAssembly,
-        dispatchGroup: DispatchGroup
+        dispatchGroup: IDispatchGroup,
+        mainDispatchQueue: IDispatchQueue
     ) {
         self.router = router
         self.output = output
@@ -67,6 +69,7 @@ final class SBPBanksPresenter: ISBPBanksPresenter, ISBPBanksModuleInput {
         self.bankAppOpener = bankAppOpener
         self.cellPresentersAssembly = cellPresentersAssembly
         self.dispatchGroup = dispatchGroup
+        self.mainDispatchQueue = mainDispatchQueue
     }
 }
 
@@ -134,7 +137,7 @@ extension SBPBanksPresenter {
         guard lastSearchedText != lowercasedText else { return }
         lastSearchedText = lowercasedText
 
-        DispatchQueue.main.asyncDeduped(target: self, after: .searchDelay) { [weak self] in
+        mainDispatchQueue.asyncDeduped(target: self, after: .searchDelay) { [weak self] in
             guard let self = self else { return }
 
             if lowercasedText.isEmpty {
@@ -163,7 +166,7 @@ extension SBPBanksPresenter: ISBPPaymentSheetPresenterOutput {
 
 extension SBPBanksPresenter {
     private func prepareAndShowSkeletonModels() {
-        allBanksCellPresenters = [SBPBankCellPresenter](repeatElement(cellPresentersAssembly.build(cellType: .skeleton), count: .skeletonsCount))
+        allBanksCellPresenters = (0 ..< Int.skeletonsCount).map { _ in cellPresentersAssembly.build(cellType: .skeleton) }
         filteredBanksCellPresenters = allBanksCellPresenters
         view?.reloadTableView()
     }
@@ -210,7 +213,7 @@ extension SBPBanksPresenter {
         paymentService?.loadPaymentQr(completion: { [weak self] result in
             guard let self = self else { return }
 
-            DispatchQueue.main.async {
+            self.mainDispatchQueue.async {
                 switch result {
                 case let .success(qrPayload):
                     self.qrPayload = qrPayload
@@ -277,7 +280,7 @@ extension SBPBanksPresenter {
         case NSURLErrorNotConnectedToInternet:
             viewShowNoNetworkStub()
         default:
-            viewShowServerErrorStub()
+            viewShowServerErrorStub(error)
         }
     }
 
@@ -287,7 +290,7 @@ extension SBPBanksPresenter {
         view?.reloadTableView()
     }
 
-    private func createCellPresenters(from banks: [SBPBank]) -> [SBPBankCellPresenter] {
+    private func createCellPresenters(from banks: [SBPBank]) -> [ISBPBankCellPresenter] {
         guard let paymentUrl = URL(string: qrPayload?.qrCodeData ?? ""),
               let paymentId = qrPayload?.paymentId else { return [] }
 
@@ -313,17 +316,24 @@ extension SBPBanksPresenter {
 
     private func viewShowNoNetworkStub() {
         clearCellModels()
+
         view?.showStubView(mode: .noNetwork { [weak self] in
-            self?.view?.hideStubView()
-            self?.prepareAndShowSkeletonModels()
-            self?.loadQrPayloadAndBanks()
+            guard let self = self else { return }
+
+            self.view?.hideStubView()
+            self.prepareAndShowSkeletonModels()
+
+            switch self.screenType {
+            case .startEmpty, .startWithFullData: self.loadQrPayloadAndBanks()
+            case .startWithBanks: self.loadQrPayloadWhenBanksPreloaded()
+            }
         })
     }
 
-    private func viewShowServerErrorStub() {
+    private func viewShowServerErrorStub(_ error: Error) {
         clearCellModels()
         view?.showStubView(mode: .serverError { [weak self] in
-            self?.router.closeScreen()
+            self?.routerClose(with: .failed(error))
         })
     }
 

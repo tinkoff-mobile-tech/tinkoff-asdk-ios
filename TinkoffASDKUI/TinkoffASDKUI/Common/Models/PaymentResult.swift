@@ -47,6 +47,20 @@ public enum PaymentResult {
     case cancelled(PaymentInfo? = nil)
 }
 
+extension PaymentResult: Equatable {
+    public static func == (lhs: PaymentResult, rhs: PaymentResult) -> Bool {
+        switch (lhs, rhs) {
+        case let (.succeeded(lhsPaymentInfo), .succeeded(rhsPaymentInfo)):
+            return lhsPaymentInfo == rhsPaymentInfo
+        case let (.failed(lhsError as NSError), .failed(rhsError as NSError)):
+            return lhsError == rhsError
+        case let (.cancelled(lhsPaymentInfo), .cancelled(rhsPaymentInfo)):
+            return lhsPaymentInfo == rhsPaymentInfo
+        default: return false
+        }
+    }
+}
+
 extension GetPaymentStatePayload {
     func toPaymentInfo() -> PaymentResult.PaymentInfo {
         PaymentResult.PaymentInfo(paymentId: paymentId, orderId: orderId, amount: amount, paymentStatus: status)

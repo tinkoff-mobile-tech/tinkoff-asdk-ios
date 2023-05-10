@@ -11,5 +11,6 @@ extension AcquiringSdk: IAcquiringThreeDSService,
     IAcquiringPaymentsService,
     IAcquiringTinkoffPayService,
     IAcquiringTerminalService,
+    IAcquiringSBPService,
     IAddCardService,
     ICardService {}
