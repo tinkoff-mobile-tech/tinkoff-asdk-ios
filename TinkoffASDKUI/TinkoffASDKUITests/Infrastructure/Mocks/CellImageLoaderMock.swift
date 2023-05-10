@@ -35,18 +35,18 @@ final class CellImageLoaderMock: ICellImageLoader {
 
     typealias LoadRemoteImageArguments = (url: URL, imageView: UIImageView, onFailureImage: UIImage?)
 
-    var loadRemoteImageCallsCount = 0
-    var loadRemoteImageReceivedArguments: LoadRemoteImageArguments?
-    var loadRemoteImageReceivedInvocations: [LoadRemoteImageArguments] = []
-    var loadRemoteImageReturnValue: UUID?
+    var loadAndSetRemoteImageCallsCount = 0
+    var loadAndSetRemoteImageReceivedArguments: LoadRemoteImageArguments?
+    var loadAndSetRemoteImageReceivedInvocations: [LoadRemoteImageArguments] = []
+    var loadAndSetRemoteImageReturnValue: UUID?
 
     @discardableResult
-    func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID? {
-        loadRemoteImageCallsCount += 1
+    func loadAndSetRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID? {
+        loadAndSetRemoteImageCallsCount += 1
         let arguments = (url, imageView, onFailureImage)
-        loadRemoteImageReceivedArguments = arguments
-        loadRemoteImageReceivedInvocations.append(arguments)
-        return loadRemoteImageReturnValue
+        loadAndSetRemoteImageReceivedArguments = arguments
+        loadAndSetRemoteImageReceivedInvocations.append(arguments)
+        return loadAndSetRemoteImageReturnValue
     }
 
     // MARK: - cancelLoadIfNeeded

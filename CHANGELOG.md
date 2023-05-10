@@ -45,6 +45,7 @@
 * [MIC-8095] TinkoffPay - integrate to MainForm
 * [MIC-8096] TinkoffPay - integrate with independent button
 * [MIC-7776] PullableContainer refactoring
+* [EACQAPW-4284] Testing SBPBanks module and services
 
 ## [2.19.0] - 2023-04-13Z
 
