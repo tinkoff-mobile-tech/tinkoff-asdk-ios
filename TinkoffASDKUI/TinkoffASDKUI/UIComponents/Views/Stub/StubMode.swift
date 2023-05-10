@@ -10,10 +10,10 @@ import Foundation
 enum StubMode {
     private typealias Data = BaseStubViewBuilder.InputData
 
-    case noNetwork(buttonAction: VoidBlock)
-    case noCardsInCardList(buttonAction: VoidBlock)
-    case noCardsInCardPaymentList(buttonAction: VoidBlock)
-    case serverError(buttonAction: VoidBlock)
+    case noNetwork(buttonAction: VoidBlock = {})
+    case noCardsInCardList(buttonAction: VoidBlock = {})
+    case noCardsInCardPaymentList(buttonAction: VoidBlock = {})
+    case serverError(buttonAction: VoidBlock = {})
 
     func convertToInfoInputData() -> BaseStubViewBuilder.InputData {
         typealias Texts = Loc.CommonStub
@@ -51,6 +51,18 @@ enum StubMode {
                 buttonTitle: Texts.SomeProblem.button,
                 buttonAction: action
             )
+        }
+    }
+}
+
+extension StubMode: Equatable {
+    static func == (lhs: StubMode, rhs: StubMode) -> Bool {
+        switch (lhs, rhs) {
+        case (.noNetwork, .noNetwork): return true
+        case (.noCardsInCardList, .noCardsInCardList): return true
+        case (.noCardsInCardPaymentList, .noCardsInCardPaymentList): return true
+        case (.serverError, .serverError): return true
+        default: return false
         }
     }
 }

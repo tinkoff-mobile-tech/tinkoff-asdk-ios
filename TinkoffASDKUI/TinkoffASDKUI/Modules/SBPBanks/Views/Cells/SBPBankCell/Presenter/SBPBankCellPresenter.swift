@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 import UIKit
 
-enum SBPBankCellType {
+enum SBPBankCellType: Equatable {
     case bank(SBPBank)
     case bankButton(imageAsset: ImageAsset, name: String)
     case skeleton

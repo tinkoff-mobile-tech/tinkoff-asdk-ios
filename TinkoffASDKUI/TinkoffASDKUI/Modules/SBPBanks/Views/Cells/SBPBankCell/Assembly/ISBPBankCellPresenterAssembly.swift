@@ -6,6 +6,6 @@
 //
 
 protocol ISBPBankCellPresenterAssembly {
-    func build(cellType: SBPBankCellType) -> SBPBankCellPresenter
-    func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> SBPBankCellPresenter
+    func build(cellType: SBPBankCellType) -> ISBPBankCellPresenter
+    func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> ISBPBankCellPresenter
 }

@@ -37,7 +37,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
         completion: PaymentResultCompletion?
     ) -> SBPBanksModule {
         let paymentService = SBPPaymentService(
-            acquiringSdk: acquiringSdk,
+            acquiringService: acquiringSdk,
             paymentFlow: paymentFlow
         )
 
@@ -50,7 +50,7 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
         paymentSheetOutput: ISBPPaymentSheetPresenterOutput?
     ) -> SBPBanksModule {
         let paymentService = SBPPaymentService(
-            acquiringSdk: acquiringSdk,
+            acquiringService: acquiringSdk,
             paymentFlow: paymentFlow
         )
         return build(paymentService: paymentService, output: output, paymentSheetOutput: paymentSheetOutput, completion: nil)
@@ -72,7 +72,7 @@ extension SBPBanksAssembly {
         )
         let router = SBPBanksRouter(sbpBanksAssembly: self, sbpPaymentSheetAssembly: sbpPaymentSheetAssembly)
 
-        let banksService = SBPBanksService(acquiringSdk: acquiringSdk)
+        let banksService = SBPBanksService(acquiringSBPService: acquiringSdk)
         let bankAppChecker = SBPBankAppChecker(appChecker: AppChecker())
         let bankAppOpener = SBPBankAppOpener(application: UIApplication.shared)
 
@@ -90,7 +90,8 @@ extension SBPBanksAssembly {
             bankAppChecker: bankAppChecker,
             bankAppOpener: bankAppOpener,
             cellPresentersAssembly: cellPresentersAssembly,
-            dispatchGroup: DispatchGroup()
+            dispatchGroup: DispatchGroup(),
+            mainDispatchQueue: DispatchQueue.main
         )
 
         let view = SBPBanksViewController(presenter: presenter)

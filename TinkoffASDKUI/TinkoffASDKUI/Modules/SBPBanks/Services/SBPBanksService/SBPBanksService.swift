@@ -10,12 +10,12 @@ import TinkoffASDKCore
 final class SBPBanksService: ISBPBanksService {
 
     // Dependencies
-    private let acquiringSdk: AcquiringSdk
+    private let acquiringSBPService: IAcquiringSBPService
 
     // MARK: - Initialization
 
-    init(acquiringSdk: AcquiringSdk) {
-        self.acquiringSdk = acquiringSdk
+    init(acquiringSBPService: IAcquiringSBPService) {
+        self.acquiringSBPService = acquiringSBPService
     }
 
     // MARK: - ISBPBanksService
@@ -23,6 +23,6 @@ final class SBPBanksService: ISBPBanksService {
     /// Загружает список банков с NSPK (Национальная система платёжных карт)
     /// - Parameter completion: В случае success выдает массив банков
     func loadBanks(completion: @escaping SBPBanksServiceLoadBanksCompletion) {
-        acquiringSdk.loadSBPBanks { completion($0.map(\.banks)) }
+        acquiringSBPService.loadSBPBanks { completion($0.map(\.banks)) }
     }
 }
