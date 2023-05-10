@@ -67,11 +67,15 @@ final class ThreeDSWebFlowControllerMock: IThreeDSWebFlowController {
     var confirm3DSACSCallsCount = 0
     var confirm3DSACSReceivedArguments: Confirm3DSACSArguments?
     var confirm3DSACSReceivedInvocations: [Confirm3DSACSArguments] = []
+    var confirm3DSACSCompletionInput: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
 
     func confirm3DSACS(data: Confirmation3DSDataACS, messageVersion: String, completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void) {
         confirm3DSACSCallsCount += 1
         let arguments = (data, messageVersion, completion)
         confirm3DSACSReceivedArguments = arguments
         confirm3DSACSReceivedInvocations.append(arguments)
+        if let confirm3DSACSCompletionInput = confirm3DSACSCompletionInput {
+            completion(confirm3DSACSCompletionInput)
+        }
     }
 }

@@ -375,8 +375,6 @@
 			dependencies = (
 			);
 			name = ASDKSample;
-			packageProductDependencies = (
-			);
 			productName = ASDKSample;
 			productReference = 2C9C7EBB239FBCB200DE4071 /* ASDKSample.app */;
 			productType = "com.apple.product-type.application";
@@ -406,8 +404,6 @@
 				ru,
 			);
 			mainGroup = 2C9C7EB2239FBCB200DE4071;
-			packageReferences = (
-			);
 			productRefGroup = 2C9C7EBC239FBCB200DE4071 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

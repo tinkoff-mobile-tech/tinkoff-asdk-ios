@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 
 struct FullPaymentData {
-    let paymentProcess: PaymentProcess
+    let paymentProcess: IPaymentProcess
     var payload: GetPaymentStatePayload
     let cardId: String?
     let rebillId: String?

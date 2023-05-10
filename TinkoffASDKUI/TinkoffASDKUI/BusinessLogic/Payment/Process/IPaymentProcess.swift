@@ -1,6 +1,6 @@
 //
 //
-//  PaymentProcess.swift
+//  IPaymentProcess.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //
@@ -19,7 +19,7 @@
 
 import TinkoffASDKCore
 
-public protocol PaymentProcess: Cancellable {
+public protocol IPaymentProcess: Cancellable {
     var paymentId: String? { get }
     var paymentFlow: PaymentFlow { get }
     var paymentSource: PaymentSourceData { get }

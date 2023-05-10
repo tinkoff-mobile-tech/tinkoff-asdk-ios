@@ -551,7 +551,7 @@ extension BuyProductsViewController: UITableViewDelegate {
 
 // MARK: - IYandexPayButtonContainerDelegate
 
-extension BuyProductsViewController: YandexPayButtonContainerDelegate {
+extension BuyProductsViewController: IYandexPayButtonContainerDelegate {
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,

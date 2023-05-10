@@ -48,6 +48,7 @@ final class ThreeDSURLRequestBuilderTests: BaseTestCase {
 
     func test_buildConfirmation3DSRequest() throws {
         allureId(2397514, "Инициалилизируем 3DS web-view v1 по ответу v2/AttachCard")
+        allureId(2358058) // Редиректим на ACSUrl
 
         // given
         let data = Confirmation3DSData.fake()

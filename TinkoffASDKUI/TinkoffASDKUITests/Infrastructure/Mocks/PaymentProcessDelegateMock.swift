@@ -1,5 +1,5 @@
 //
-//  MockPaymentProcessDelegate.swift
+//  PaymentProcessDelegateMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
 //  Created by Ivan Glushko on 17.10.2022.
@@ -8,12 +8,12 @@
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-final class MockPaymentProcessDelegate: PaymentProcessDelegate {
+final class PaymentProcessDelegateMock: PaymentProcessDelegate {
 
     // MARK: - paymentDidFinish
 
     struct PaymentDidFinishPassedArguments {
-        let paymentProcess: PaymentProcess
+        let paymentProcess: IPaymentProcess
         let state: TinkoffASDKCore.GetPaymentStatePayload
         let cardId: String?
         let rebillId: String?
@@ -23,7 +23,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     var paymentDidFinishPassedArguments: PaymentDidFinishPassedArguments?
 
     func paymentDidFinish(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         with state: TinkoffASDKCore.GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -40,7 +40,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     // MARK: - paymentDidFailed
 
     struct PaymentDidFailedPassedArguments {
-        let paymentProcess: PaymentProcess
+        let paymentProcess: IPaymentProcess
         let error: Error
         let cardId: String?
         let rebillId: String?
@@ -50,7 +50,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     var paymentDidFailedPassedArguments: PaymentDidFailedPassedArguments?
 
     func paymentDidFailed(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         with error: Error,
         cardId: String?,
         rebillId: String?
@@ -67,7 +67,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     // MARK: - payment need to collect 3ds data
 
     struct PaymentNeedCollect3DsPassedArguments {
-        let paymentProcess: PaymentProcess
+        let paymentProcess: IPaymentProcess
         let needToCollect3DSData: TinkoffASDKCore.Checking3DSURLData
         let completion: (TinkoffASDKCore.ThreeDSDeviceInfo) -> Void
     }
@@ -76,7 +76,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     var paymentNeedCollect3DsPassedArguments: PaymentNeedCollect3DsPassedArguments?
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         needToCollect3DSData checking3DSURLData: TinkoffASDKCore.Checking3DSURLData,
         completion: @escaping (TinkoffASDKCore.ThreeDSDeviceInfo) -> Void
     ) {
@@ -91,7 +91,7 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
     // MARK: - payment need 3ds confirmation
 
     struct PaymentNeed3DsConfirmationPassedArguments {
-        let paymentProcess: PaymentProcess
+        let paymentProcess: IPaymentProcess
         let need3DSConfirmation: TinkoffASDKCore.Confirmation3DSData
         let confirmationCancelled: () -> Void
         let completion: (Result<TinkoffASDKCore.GetPaymentStatePayload, Error>) -> Void
@@ -99,12 +99,14 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
 
     var paymentNeed3DsConfirmationCallCounter = 0
     var paymentNeed3DsConfirmationPassedArguments: PaymentNeed3DsConfirmationPassedArguments?
+    var paymentNeed3DsConfirmationCompletionInput: Result<GetPaymentStatePayload, Error>?
+    var paymentNeed3DsConfirmationCancelledInput: Void?
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         need3DSConfirmation data: TinkoffASDKCore.Confirmation3DSData,
         confirmationCancelled: @escaping () -> Void,
-        completion: @escaping (Result<TinkoffASDKCore.GetPaymentStatePayload, Error>) -> Void
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
         paymentNeed3DsConfirmationCallCounter += 1
         paymentNeed3DsConfirmationPassedArguments = PaymentNeed3DsConfirmationPassedArguments(
@@ -113,12 +115,20 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
             confirmationCancelled: confirmationCancelled,
             completion: completion
         )
+
+        if let _ = paymentNeed3DsConfirmationCancelledInput {
+            confirmationCancelled()
+        }
+
+        if let paymentNeed3DsConfirmationCompletionInput = paymentNeed3DsConfirmationCompletionInput {
+            completion(paymentNeed3DsConfirmationCompletionInput)
+        }
     }
 
     // MARK: - payment need3DSConfirmationACS
 
     struct PaymentNeed3DSConfirmationACSPassedArguments {
-        let paymentProcess: PaymentProcess
+        let paymentProcess: IPaymentProcess
         let need3DSConfirmationACS: TinkoffASDKCore.Confirmation3DSDataACS
         let version: String
         let confirmationCancelled: () -> Void
@@ -127,13 +137,15 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
 
     var paymentNeed3DSConfirmationACSCallCounter = 0
     var paymentNeed3DSConfirmationACSPassedArguments: PaymentNeed3DSConfirmationACSPassedArguments?
+    var paymentNeed3DSConfirmationACSConfirmationCancelledInput: Void?
+    var paymentNeed3DSConfirmationACSCompletionInput: Result<GetPaymentStatePayload, Error>?
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         need3DSConfirmationACS data: TinkoffASDKCore.Confirmation3DSDataACS,
         version: String,
         confirmationCancelled: @escaping () -> Void,
-        completion: @escaping (Result<TinkoffASDKCore.GetPaymentStatePayload, Error>) -> Void
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
         paymentNeed3DSConfirmationACSCallCounter += 1
         paymentNeed3DSConfirmationACSPassedArguments = PaymentNeed3DSConfirmationACSPassedArguments(
@@ -143,12 +155,20 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
             confirmationCancelled: confirmationCancelled,
             completion: completion
         )
+
+        if let _ = paymentNeed3DSConfirmationACSConfirmationCancelledInput {
+            confirmationCancelled()
+        }
+
+        if let input = paymentNeed3DSConfirmationACSCompletionInput {
+            completion(input)
+        }
     }
 
     // MARK: - payment need3DSConfirmationAppBased
 
     struct PaymentNeed3DSConfirmationAppBasedPassedArguments {
-        let paymentProcess: PaymentProcess
+        let paymentProcess: IPaymentProcess
         let need3DSConfirmationAppBased: TinkoffASDKCore.Confirmation3DS2AppBasedData
         let version: String
         let confirmationCancelled: () -> Void
@@ -157,13 +177,15 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
 
     var paymentNeed3DSConfirmationAppBasedCallCounter = 0
     var paymentNeed3DSConfirmationAppBasedPassedArguments: PaymentNeed3DSConfirmationAppBasedPassedArguments?
+    var paymentNeed3DSConfirmationAppBasedConfirmationCancelledInput: Void?
+    var paymentNeed3DSConfirmationAppBasedCompletionInput: Result<GetPaymentStatePayload, Error>?
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         need3DSConfirmationAppBased data: TinkoffASDKCore.Confirmation3DS2AppBasedData,
         version: String,
         confirmationCancelled: @escaping () -> Void,
-        completion: @escaping (Result<TinkoffASDKCore.GetPaymentStatePayload, Error>) -> Void
+        completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
         paymentNeed3DSConfirmationAppBasedCallCounter += 1
         paymentNeed3DSConfirmationAppBasedPassedArguments = PaymentNeed3DSConfirmationAppBasedPassedArguments(
@@ -173,5 +195,13 @@ final class MockPaymentProcessDelegate: PaymentProcessDelegate {
             confirmationCancelled: confirmationCancelled,
             completion: completion
         )
+
+        if let _ = paymentNeed3DSConfirmationAppBasedConfirmationCancelledInput {
+            confirmationCancelled()
+        }
+
+        if let input = paymentNeed3DSConfirmationAppBasedCompletionInput {
+            completion(input)
+        }
     }
 }

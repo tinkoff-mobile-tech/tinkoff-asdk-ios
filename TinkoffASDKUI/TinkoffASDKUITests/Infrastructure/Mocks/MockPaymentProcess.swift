@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-final class MockPaymentProcess: PaymentProcess {
+final class MockPaymentProcess: IPaymentProcess {
 
     var paymentId: String?
 

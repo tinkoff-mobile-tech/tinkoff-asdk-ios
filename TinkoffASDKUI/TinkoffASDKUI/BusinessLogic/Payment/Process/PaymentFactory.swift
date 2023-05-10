@@ -24,7 +24,7 @@ protocol IPaymentFactory {
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
         paymentDelegate: PaymentProcessDelegate
-    ) -> PaymentProcess?
+    ) -> IPaymentProcess?
 }
 
 struct PaymentFactory: IPaymentFactory {
@@ -49,7 +49,7 @@ struct PaymentFactory: IPaymentFactory {
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow,
         paymentDelegate: PaymentProcessDelegate
-    ) -> PaymentProcess? {
+    ) -> IPaymentProcess? {
         switch paymentSource {
         case .cardNumber, .savedCard:
             return CardPaymentProcess(
@@ -66,7 +66,6 @@ struct PaymentFactory: IPaymentFactory {
                 paymentFlow: paymentFlow,
                 paymentSource: paymentSource,
                 paymentService: paymentsService,
-                threeDSService: threeDsService,
                 threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
                 delegate: paymentDelegate
             )

@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetPaymentStatePayload: Decodable {
+public struct GetPaymentStatePayload: Decodable, Equatable {
     private enum CodingKeys: CodingKey {
         case amount
         case orderId
