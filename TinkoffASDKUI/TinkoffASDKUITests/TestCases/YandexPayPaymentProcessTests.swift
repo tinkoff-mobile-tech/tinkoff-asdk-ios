@@ -30,6 +30,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
     override func tearDown() {
         paymentServiceMock = nil
         threeDSDeviceInfoProviderMock = nil
+        paymentProcessDelegateMock = nil
 
         super.tearDown()
     }

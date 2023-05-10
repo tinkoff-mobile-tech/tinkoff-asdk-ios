@@ -29,9 +29,7 @@ final class TDSControllerTests: BaseTestCase {
         acquiringThreeDSServiceMock = AcquiringThreeDsServiceMock()
         tDSWrapperMock = TDSWrapperMock()
         timeoutResolverMock = TimeoutResolverMock()
-
-        let transactionMocked = TransactionMock()
-        transactionMock = transactionMocked
+        transactionMock = TransactionMock()
 
         tDSWrapperMock.createTransactionReturnValue = transactionMock
 
@@ -132,11 +130,23 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_timedout() throws {
         // given
+        try setupStartAppBasedFlow()
+        var receivedTimeoutError = false
+
+        sut.completionHandler = { result in
+            switch result {
+            case let .failure(error as TDSFlowError):
+                receivedTimeoutError = error == .timeout
+            default: break
+            }
+        }
 
         // when
         sut.timedout()
 
         // then
+        XCTAssertEqual(transactionMock.closeCallsCount, 1)
+        XCTAssertTrue(receivedTimeoutError)
     }
 
     func test_protocolError() throws {

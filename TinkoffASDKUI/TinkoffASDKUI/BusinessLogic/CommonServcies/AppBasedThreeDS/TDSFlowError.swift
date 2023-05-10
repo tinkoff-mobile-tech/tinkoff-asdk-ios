@@ -25,6 +25,27 @@ enum TDSFlowError: Swift.Error {
     case timeout
 }
 
+extension TDSWrapperError: Equatable {
+    public static func == (lhs: TDSWrapperError, rhs: TDSWrapperError) -> Bool {
+        lhs.code == rhs.code
+    }
+}
+
+extension TDSFlowError: Equatable {
+    static func == (lhs: TDSFlowError, rhs: TDSFlowError) -> Bool {
+        switch (lhs, rhs) {
+        case (.invalidPaymentSystem, .invalidPaymentSystem):
+            return true
+        case let (.updatingCertsError(lhsArray), .updatingCertsError(rhsArray)):
+            return lhsArray == rhsArray
+        case (.timeout, .timeout):
+            return true
+        default:
+            return false
+        }
+    }
+}
+
 extension TDSFlowError: LocalizedError {
     public var errorDescription: String? {
         switch self {
