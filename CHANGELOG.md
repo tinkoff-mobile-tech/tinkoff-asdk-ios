@@ -55,6 +55,10 @@
 * [EACQAPW-4190] - YandexPay Flow Unit Tests
 * [EACQAPW-4189] - YandexPay Flow Error Handling Unit Tests
 
+### Fixed
+
+* [EACQAPW-4762] - Add PayType to PaymentOptions
+
 ## [2.19.0] - 2023-04-13Z
 
 ### Added

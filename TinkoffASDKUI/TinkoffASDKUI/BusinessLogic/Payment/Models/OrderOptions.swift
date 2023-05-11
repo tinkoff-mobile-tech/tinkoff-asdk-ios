@@ -27,6 +27,8 @@ public struct OrderOptions: Equatable {
     public let amount: Int64
     /// Краткое описание
     public let description: String?
+    /// Тип проведения платежа
+    public let payType: PayType?
     /// Данные чека
     public let receipt: Receipt?
     /// Данные маркетплейса. Используется для разбивки платежа по партнерам
@@ -36,10 +38,21 @@ public struct OrderOptions: Equatable {
     /// Сохранить платеж в качестве родительского
     public let savingAsParentPayment: Bool
 
+    /// Параметры заказа
+    /// - Parameters:
+    ///   - orderId: Идентификатор заказа в системе продавца
+    ///   - amount: Полная сумма заказа в копейках
+    ///   - description: Краткое описание
+    ///   - payType: Тип проведения платежа
+    ///   - receipt: Данные чека
+    ///   - shops: Данные маркетплейса. Используется для разбивки платежа по партнерам
+    ///   - receipts: Чеки для каждого объекта `Shop`. В каждом чеке необходимо указывать `Receipt.shopCode` == `Shop.shopCode`
+    ///   - savingAsParentPayment: Сохранить платеж в качестве родительского
     public init(
         orderId: String,
         amount: Int64,
         description: String? = nil,
+        payType: PayType? = nil,
         receipt: Receipt? = nil,
         shops: [Shop]? = nil,
         receipts: [Receipt]? = nil,
@@ -48,6 +61,7 @@ public struct OrderOptions: Equatable {
         self.orderId = orderId
         self.amount = amount
         self.description = description
+        self.payType = payType
         self.receipt = receipt
         self.shops = shops
         self.receipts = receipts

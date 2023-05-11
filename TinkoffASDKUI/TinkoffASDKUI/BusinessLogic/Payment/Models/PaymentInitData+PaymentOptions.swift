@@ -34,6 +34,7 @@ extension PaymentInitData {
         )
 
         initData.description = orderOptions.description
+        initData.payType = orderOptions.payType
         initData.savingAsParentPayment = orderOptions.savingAsParentPayment
         initData.receipt = orderOptions.receipt
         initData.shops = orderOptions.shops
