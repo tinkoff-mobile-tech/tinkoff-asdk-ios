@@ -52,6 +52,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
 
     func test_confirm3DS() throws {
         allureId(2397514, "Инициалилизируем 3DS web-view v1 по ответу v2/AttachCard")
+        allureId(2358072) // ASDK совершил редирект на ACSurl для прохождения 3DS v1
 
         // given
         let data = Confirmation3DSData.fake()
@@ -90,8 +91,8 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         XCTAssertEqual(threeDSWebFlowDelegateMock.sourceViewControllerToPresentCallsCount, 1)
         XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestCallCounter, 1)
         XCTAssertEqual(threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerCallsCount, 1)
-        XCTAssertEqual(viewControllerMock.presentCallCount, 1)
-        XCTAssertTrue(viewControllerMock.presentArguments?.viewControllerToPresent === navController)
+        XCTAssertEqual(viewControllerMock.invokedPresentAnimatedCount, 1)
+        XCTAssertTrue(viewControllerMock.invokedPresentAnimatedParameters?.viewControllerToPresent === navController)
         XCTAssertEqual(requestUrlInWebView?.absoluteString, data.acsUrl)
     }
 
@@ -137,8 +138,8 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         XCTAssertEqual(threeDSWebFlowDelegateMock.sourceViewControllerToPresentCallsCount, 1)
         XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestACSCallCounter, 1)
         XCTAssertEqual(threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerCallsCount, 1)
-        XCTAssertEqual(viewControllerMock.presentCallCount, 1)
-        XCTAssertTrue(viewControllerMock.presentArguments?.viewControllerToPresent === navController)
+        XCTAssertEqual(viewControllerMock.invokedPresentAnimatedCount, 1)
+        XCTAssertTrue(viewControllerMock.invokedPresentAnimatedParameters?.viewControllerToPresent === navController)
         XCTAssertEqual(requestUrlInWebView?.absoluteString, data.acsUrl)
     }
 }

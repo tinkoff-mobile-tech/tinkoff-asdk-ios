@@ -7,13 +7,18 @@
 
 import UIKit
 
-protocol CommonSheetViewDelegate: AnyObject {
+protocol ICommonSheetViewDelegate: AnyObject {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView)
     func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView)
 }
 
+extension ICommonSheetViewDelegate {
+    func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {}
+    func commonSheetViewDidTapSecondaryButton(_ commonSheetView: CommonSheetView) {}
+}
+
 final class CommonSheetView: PassthroughView {
-    weak var delegate: CommonSheetViewDelegate?
+    weak var delegate: ICommonSheetViewDelegate?
 
     // MARK: Subviews
 
@@ -102,7 +107,7 @@ final class CommonSheetView: PassthroughView {
         setupView()
     }
 
-    convenience init(delegate: CommonSheetViewDelegate) {
+    convenience init(delegate: ICommonSheetViewDelegate) {
         self.init(frame: .zero)
         self.delegate = delegate
     }

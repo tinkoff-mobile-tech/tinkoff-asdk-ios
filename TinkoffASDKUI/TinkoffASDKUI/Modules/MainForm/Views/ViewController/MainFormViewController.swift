@@ -91,11 +91,34 @@ final class MainFormViewController: UIViewController {
     }
 
     private func setupKeyboardObserving() {
-        keyboardService.onHeightDidChangeBlock = { [weak self] _, _ in
-            guard let self = self, self.currentAnchor != .expanded else { return }
+        keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
+            guard let self = self else { return }
             self.currentAnchor = .expanded
-            self.pullableContentDelegate?.updateHeight()
+
+            self.pullableContentDelegate?.updateHeight(
+                animated: true,
+                alongsideAnimation: nil,
+                completion: { self.scrollTableFor(keyboardHeight: keyboardHeight) }
+            )
         }
+    }
+
+    private func scrollTableFor(keyboardHeight: CGFloat) {
+        guard keyboardHeight > .zero else {
+            tableView.setContentOffset(.zero, animated: true)
+            return
+        }
+
+        guard let payButtonIndex = presenter.allCells().firstIndex(where: \.isPayButton) else { return }
+
+        let payButtonRect = tableView.rectForRow(at: IndexPath(row: payButtonIndex, section: .zero))
+        let buttonsDistanceToBottom = tableView.bounds.height - payButtonRect.maxY
+
+        let targetYOffset = buttonsDistanceToBottom > keyboardHeight
+            ? .zero
+            : keyboardHeight - buttonsDistanceToBottom
+
+        tableView.setContentOffset(CGPoint(x: .zero, y: targetYOffset), animated: true)
     }
 }
 
@@ -156,9 +179,9 @@ extension MainFormViewController: IMainFormViewController {
     }
 }
 
-// MARK: - CommonSheetViewDelegate
+// MARK: - ICommonSheetViewDelegate
 
-extension MainFormViewController: CommonSheetViewDelegate {
+extension MainFormViewController: ICommonSheetViewDelegate {
     func commonSheetViewDidTapPrimaryButton(_ commonSheetView: CommonSheetView) {
         presenter.commonSheetViewDidTapPrimaryButton()
     }

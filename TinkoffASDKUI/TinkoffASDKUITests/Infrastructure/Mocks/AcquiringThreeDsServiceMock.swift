@@ -123,4 +123,26 @@ final class AcquiringThreeDsServiceMock: IAcquiringThreeDSService {
         )
         return try createConfirmation3DSRequestACSReturnStub(args)
     }
+
+    // MARK: - submit3DSAuthorizationV2
+
+    typealias Submit3DSAuthorizationV2Arguments = (data: CresData, completion: (_ result: Result<GetPaymentStatePayload, Error>) -> Void)
+
+    var submit3DSAuthorizationV2CallsCount = 0
+    var submit3DSAuthorizationV2ReceivedArguments: Submit3DSAuthorizationV2Arguments?
+    var submit3DSAuthorizationV2ReceivedInvocations: [Submit3DSAuthorizationV2Arguments] = []
+    var submit3DSAuthorizationV2CompletionClosureInput: Result<GetPaymentStatePayload, Error>?
+    var submit3DSAuthorizationV2ReturnValue: Cancellable!
+
+    @discardableResult
+    func submit3DSAuthorizationV2(data: CresData, completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void) -> Cancellable {
+        submit3DSAuthorizationV2CallsCount += 1
+        let arguments = (data, completion)
+        submit3DSAuthorizationV2ReceivedArguments = arguments
+        submit3DSAuthorizationV2ReceivedInvocations.append(arguments)
+        if let submit3DSAuthorizationV2CompletionClosureInput = submit3DSAuthorizationV2CompletionClosureInput {
+            completion(submit3DSAuthorizationV2CompletionClosureInput)
+        }
+        return submit3DSAuthorizationV2ReturnValue
+    }
 }

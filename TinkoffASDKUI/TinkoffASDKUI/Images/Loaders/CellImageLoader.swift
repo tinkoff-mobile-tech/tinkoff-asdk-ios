@@ -30,7 +30,7 @@ protocol ICellImageLoader {
     func loadImage(url: URL, completion: @escaping (Result<UIImage, Swift.Error>) -> Void)
 
     @discardableResult
-    func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID?
+    func loadAndSetRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID?
     func cancelLoadIfNeeded(imageView: UIImageView)
 
     @discardableResult
@@ -93,7 +93,7 @@ extension CellImageLoader {
     }
 
     @discardableResult
-    func loadRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage? = nil) -> UUID? {
+    func loadAndSetRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage? = nil) -> UUID? {
         cancelLoadIfNeeded(imageView: imageView)
 
         let uuid = imageLoader.loadImage(url: url) { [weak self] image in

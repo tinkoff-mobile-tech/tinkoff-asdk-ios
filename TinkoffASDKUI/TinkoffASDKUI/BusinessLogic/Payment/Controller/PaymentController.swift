@@ -37,21 +37,21 @@ final class PaymentController: IPaymentController {
     private let paymentFactory: IPaymentFactory
     private let threeDSWebFlowController: IThreeDSWebFlowController
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
-    private let tdsController: TDSController
+    private let tdsController: ITDSController
     private let paymentStatusUpdateService: IPaymentStatusUpdateService
 
     // MARK: State
 
-    private var paymentProcess: PaymentProcess?
+    private var paymentProcess: IPaymentProcess?
 
     // MARK: Init
 
     init(
-        paymentFactory: PaymentFactory,
+        paymentFactory: IPaymentFactory,
         threeDSWebFlowController: IThreeDSWebFlowController,
         threeDSService: IAcquiringThreeDSService,
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
-        tdsController: TDSController,
+        tdsController: ITDSController,
         paymentStatusUpdateService: IPaymentStatusUpdateService
     ) {
         self.threeDSService = threeDSService
@@ -88,7 +88,7 @@ final class PaymentController: IPaymentController {
 
 extension PaymentController: PaymentProcessDelegate {
     func paymentDidFinish(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -103,7 +103,7 @@ extension PaymentController: PaymentProcessDelegate {
     }
 
     func paymentDidFailed(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         with error: Error,
         cardId: String?,
         rebillId: String?
@@ -124,7 +124,7 @@ extension PaymentController: PaymentProcessDelegate {
     }
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         needToCollect3DSData checking3DSURLData: Checking3DSURLData,
         completion: @escaping (ThreeDSDeviceInfo) -> Void
     ) {
@@ -138,7 +138,7 @@ extension PaymentController: PaymentProcessDelegate {
     }
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         need3DSConfirmation data: Confirmation3DSData,
         confirmationCancelled: @escaping () -> Void,
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
@@ -157,7 +157,7 @@ extension PaymentController: PaymentProcessDelegate {
     }
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         need3DSConfirmationACS data: Confirmation3DSDataACS,
         version: String,
         confirmationCancelled: @escaping () -> Void,
@@ -177,7 +177,7 @@ extension PaymentController: PaymentProcessDelegate {
     }
 
     func payment(
-        _ paymentProcess: PaymentProcess,
+        _ paymentProcess: IPaymentProcess,
         need3DSConfirmationAppBased data: Confirmation3DS2AppBasedData,
         version: String,
         confirmationCancelled: @escaping () -> Void,
@@ -245,7 +245,7 @@ extension PaymentController {
 
     private func intercept(
         error: Error,
-        paymentProcess: PaymentProcess,
+        paymentProcess: IPaymentProcess,
         rebillId: String?
     ) -> Bool {
         guard let rebillId = rebillId,

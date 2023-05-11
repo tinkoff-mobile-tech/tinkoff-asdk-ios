@@ -24,7 +24,7 @@ public enum PaymentFinishResponseStatus {
     case needConfirmation3DS(Confirmation3DSData)
     /// Требуется подтверждение 3DS v2.0 browser-based
     case needConfirmation3DSACS(Confirmation3DSDataACS)
-    /// Требуется подтверждение 3DS v2.0 app-based
+    /// Требуется подтверждение 3DS v2.1 app-based
     case needConfirmation3DS2AppBased(Confirmation3DS2AppBasedData)
     /// Успешная оплата
     case done(GetPaymentStatePayload)

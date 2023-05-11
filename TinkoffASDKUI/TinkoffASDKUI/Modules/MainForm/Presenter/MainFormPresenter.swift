@@ -229,7 +229,7 @@ extension MainFormPresenter: IEmailViewPresenterOutput {
 extension MainFormPresenter: PaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
-        didFinishPayment paymentProcess: PaymentProcess,
+        didFinishPayment paymentProcess: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -252,7 +252,7 @@ extension MainFormPresenter: PaymentControllerDelegate {
 
     func paymentController(
         _ controller: IPaymentController,
-        paymentWasCancelled paymentProcess: PaymentProcess,
+        paymentWasCancelled paymentProcess: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {
@@ -352,7 +352,7 @@ extension MainFormPresenter: ICardPaymentPresenterModuleOutput {
         view?.showCommonSheet(state: .paymentFailed)
     }
 
-    func cardPaymentDidCloseAfterCancelledPayment(with paymentProcess: PaymentProcess, cardId: String?, rebillId: String?) {
+    func cardPaymentDidCloseAfterCancelledPayment(with paymentProcess: IPaymentProcess, cardId: String?, rebillId: String?) {
         moduleResult = .cancelled()
         view?.closeView()
     }
@@ -371,9 +371,11 @@ extension MainFormPresenter: ISBPBanksModuleOutput {
 extension MainFormPresenter: ISBPPaymentSheetPresenterOutput {
     func sbpPaymentSheet(completedWith result: PaymentResult) {
         switch result {
-        case .succeeded, .failed:
+        case .succeeded:
             moduleResult = result
             view?.closeView()
+        case .failed:
+            moduleResult = result
         case let .cancelled(paymentInfo) where paymentInfo != nil:
             moduleResult = result
             view?.closeView()

@@ -230,15 +230,15 @@ extension ChargePaymentProcessTests {
 
     struct Dependencies {
         let sut: ChargePaymentProcess
-        let sutAsProtocol: PaymentProcess
-        let paymentDelegateMock: MockPaymentProcessDelegate
-        let paymentsServiceMock: MockAcquiringPaymentsService
+        let sutAsProtocol: IPaymentProcess
+        let paymentDelegateMock: PaymentProcessDelegateMock
+        let paymentsServiceMock: AcquiringPaymentsServiceMock
         let paymentSource: PaymentSourceData
     }
 
     static func makeDependencies(paymentFlow: PaymentFlow) -> Dependencies {
-        let paymentDelegateMock = MockPaymentProcessDelegate()
-        let paymentsServiceMock = MockAcquiringPaymentsService()
+        let paymentDelegateMock = PaymentProcessDelegateMock()
+        let paymentsServiceMock = AcquiringPaymentsServiceMock()
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_parentPayment()
 
         let sut = ChargePaymentProcess(

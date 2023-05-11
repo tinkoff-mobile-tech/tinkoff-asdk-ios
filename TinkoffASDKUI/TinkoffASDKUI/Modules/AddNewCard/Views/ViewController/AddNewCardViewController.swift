@@ -110,12 +110,19 @@ extension AddNewCardViewController: IAddNewCardView {
         cardScannerDelegate?.cardScanButtonDidPressed(on: self, completion: completion)
     }
 
-    func disableAddButton() {
-        addCardView.disableAddButton()
-    }
+    func setAddButton(enabled: Bool, animated: Bool) {
+        let updates = { [weak self] in
+            guard let self = self else { return }
+            enabled ? self.addCardView.enableAddButton() : self.addCardView.disableAddButton()
+        }
 
-    func enableAddButton() {
-        addCardView.enableAddButton()
+        if animated {
+            updates()
+        } else {
+            UIView.performWithoutAnimation {
+                updates()
+            }
+        }
     }
 }
 

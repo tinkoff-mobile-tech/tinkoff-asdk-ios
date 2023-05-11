@@ -62,10 +62,6 @@ extension RecurrentPaymentPresenter {
         paymentController.performPayment(paymentFlow: paymentFlow, paymentSource: .parentPayment(rebuidId: rebillId))
     }
 
-    func viewDidAppear() {
-        savedCardPresenter.activateCVCField()
-    }
-
     func viewWasClosed() {
         moduleCompletion?(moduleResult)
         moduleCompletion = nil
@@ -110,7 +106,7 @@ extension RecurrentPaymentPresenter: IPayButtonViewPresenterOutput {
 extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
-        didFinishPayment paymentProcess: PaymentProcess,
+        didFinishPayment paymentProcess: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -131,7 +127,7 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
 
     func paymentController(
         _ controller: IPaymentController,
-        paymentWasCancelled paymentProcess: PaymentProcess,
+        paymentWasCancelled paymentProcess: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {
@@ -142,7 +138,7 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
-        failedPaymentProcess: PaymentProcess,
+        failedPaymentProcess: IPaymentProcess,
         additionalData: [String: String],
         error: Error
     ) {
@@ -180,6 +176,7 @@ extension RecurrentPaymentPresenter {
                     self.cellTypes = [.savedCard(self.savedCardPresenter), .payButton(self.payButtonPresenter)]
                     self.view?.reloadData()
                     self.view?.hideCommonSheet()
+                    self.savedCardPresenter.activateCVCField()
                 } else {
                     self.view?.showCommonSheet(state: .failed)
                 }

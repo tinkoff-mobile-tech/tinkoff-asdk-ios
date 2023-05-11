@@ -22,5 +22,15 @@ Pod::Spec.new do |spec|
 
 	spec.dependency 'TinkoffASDKCore'
     spec.dependency 'TinkoffASDKUI'
-    spec.dependency 'YandexPaySDK/Dynamic', '~> 1.2'
+    spec.dependency 'YandexPaySDK/Dynamic', '1.3.6'
+
+	spec.test_spec 'Tests' do |test_spec|
+	test_spec.source_files = 
+	'TinkoffASDKYandexPay/TinkoffASDKYandexPayTests/**/*', 
+	'TinkoffASDKCore/TinkoffASDKCoreTests/TestCases/3DS/BaseTestCase.swift',
+	'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*',
+	'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Mocks/YandexPay/**/*',
+	'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Extensions/**/*',
+	'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/TestsError.swift'
+	end
 end

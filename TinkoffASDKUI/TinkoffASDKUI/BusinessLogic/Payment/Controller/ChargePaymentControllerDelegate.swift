@@ -20,7 +20,7 @@ public protocol ChargePaymentControllerDelegate: PaymentControllerDelegate {
     func paymentController(
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
-        failedPaymentProcess: PaymentProcess,
+        failedPaymentProcess: IPaymentProcess,
         additionalData: [String: String],
         error: Error
     )

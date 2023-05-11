@@ -184,7 +184,7 @@ class BuyProductsViewController: UIViewController {
         let randomOrderId = String(Int64.random(in: 1000 ... 10000))
         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: customerKey)
         paymentData.description = "Краткое описание товара"
-
+        paymentData.payType = .oneStage
         var receiptItems: [Item] = []
         products.forEach { product in
             let item = Item(
@@ -551,7 +551,7 @@ extension BuyProductsViewController: UITableViewDelegate {
 
 // MARK: - IYandexPayButtonContainerDelegate
 
-extension BuyProductsViewController: YandexPayButtonContainerDelegate {
+extension BuyProductsViewController: IYandexPayButtonContainerDelegate {
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
@@ -614,6 +614,7 @@ private extension PaymentOptions {
             orderId: initData.orderId,
             amount: initData.amount,
             description: initData.description,
+            payType: initData.payType,
             receipt: initData.receipt,
             shops: initData.shops,
             receipts: initData.receipts,

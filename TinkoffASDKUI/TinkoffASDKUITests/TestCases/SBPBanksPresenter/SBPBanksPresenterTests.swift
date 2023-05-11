@@ -50,6 +50,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         bankAppOpenerMock = nil
         cellPresentersAssemblyMock = nil
         dispatchGroupMock = nil
+        mainDispatchQueueMock = nil
 
         sut = nil
 

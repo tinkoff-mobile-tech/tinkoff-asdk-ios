@@ -9,7 +9,7 @@ protocol IEmailViewInput: AnyObject {
     func setTextFieldHeaderError()
     func setTextFieldHeaderNormal()
 
-    func setTextField(text: String)
+    func setTextField(text: String, animated: Bool)
 
     func hideKeyboard()
 }

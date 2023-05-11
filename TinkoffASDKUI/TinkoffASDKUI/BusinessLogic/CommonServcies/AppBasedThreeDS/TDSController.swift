@@ -32,13 +32,13 @@ final class TDSController: ITDSController {
 
     // Dependencies
 
-    private let acquiringSdk: AcquiringSdk
-    private let tdsWrapper: TDSWrapper
+    private let threeDsService: IAcquiringThreeDSService
+    private let tdsWrapper: ITDSWrapper
     private let tdsTimeoutResolver: ITimeoutResolver
 
     // 3ds sdk properties
 
-    private var transaction: Transaction?
+    private var transaction: ITransaction?
     private var progressView: ProgressDialog?
     private var challengeParams: ChallengeParameters?
 
@@ -50,11 +50,11 @@ final class TDSController: ITDSController {
     // Init
 
     init(
-        acquiringSdk: AcquiringSdk,
-        tdsWrapper: TDSWrapper,
+        threeDsService: IAcquiringThreeDSService,
+        tdsWrapper: ITDSWrapper,
         tdsTimeoutResolver: ITimeoutResolver
     ) {
-        self.acquiringSdk = acquiringSdk
+        self.threeDsService = threeDsService
         self.tdsWrapper = tdsWrapper
         self.tdsTimeoutResolver = tdsTimeoutResolver
     }
@@ -75,11 +75,6 @@ final class TDSController: ITDSController {
             timeout: tdsTimeoutResolver.challengeValue
         )
     }
-}
-
-// MARK: - Private
-
-private extension TDSController {
 
     func startAppBasedFlow(
         directoryServerID: String,
@@ -112,6 +107,11 @@ private extension TDSController {
             ephemeralPublic: sdkEphemPubKeyBase64
         )
     }
+}
+
+// MARK: - Private
+
+private extension TDSController {
 
     func buildCresValue(with transStatus: String) throws -> String {
         guard let challengeParams = challengeParams else {
@@ -151,7 +151,7 @@ extension TDSController: ChallengeStatusReceiver {
             let cresValue = try buildCresValue(with: completionEvent.getTransactionStatus())
             let cresData = CresData(cres: cresValue)
 
-            acquiringSdk.submit3DSAuthorizationV2(data: cresData) { [weak self] result in
+            threeDsService.submit3DSAuthorizationV2(data: cresData) { [weak self] result in
                 self?.completionHandler?(result)
                 self?.clear()
             }

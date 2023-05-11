@@ -17,7 +17,7 @@ final class YandexPayButtonContainer: UIView {
     private let sdkButtonFactory: IYandexPaySDKButtonFactory
     private let paymentSheetFactory: IYPPaymentSheetFactory
     private let yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly
-    private weak var delegate: YandexPayButtonContainerDelegate?
+    private weak var delegate: IYandexPayButtonContainerDelegate?
 
     // MARK: Lazy Dependencies
 
@@ -39,7 +39,7 @@ final class YandexPayButtonContainer: UIView {
         sdkButtonFactory: IYandexPaySDKButtonFactory,
         paymentSheetFactory: IYPPaymentSheetFactory,
         yandexPayPaymentFlowAssembly: IYandexPayPaymentFlowAssembly,
-        delegate: YandexPayButtonContainerDelegate
+        delegate: IYandexPayButtonContainerDelegate
     ) {
         self.configuration = configuration
         self.sdkButtonFactory = sdkButtonFactory
@@ -104,10 +104,12 @@ extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
         case unknown
     }
 
+    /// Запросили вью контроллер для презентации
     func yandexPayButtonDidRequestViewControllerForPresentation(_ button: YandexPayButton) -> UIViewController? {
         delegate?.yandexPayButtonContainerDidRequestViewControllerForPresentation(self)
     }
 
+    /// Запросили платежную шторку Яндекса (не наш платеж)
     func yandexPayButtonDidRequestPaymentSheet(_ button: YandexPayButton, completion: @escaping (YPPaymentSheet?) -> Void) {
         let completion = { [weak self, paymentSheetFactory] (paymentFlow: PaymentFlow?) in
             self?.requestedPaymentFlow = paymentFlow
@@ -118,6 +120,10 @@ extension YandexPayButtonContainer: YandexPayButtonAsyncDelegate {
         delegate?.yandexPayButtonContainer(self, didRequestPaymentFlow: completion)
     }
 
+    /// Настоящий платеж мы проводим на своей стороне от Яндекса получаем токен тут paymentInfo.paymentToken
+    ///
+    /// - Parameters:
+    ///   - didCompletePaymentWithResult: Получили результат от Яндекса
     func yandexPayButton(_ button: YandexPayButton, didCompletePaymentWithResult result: YPPaymentResult) {
         switch result {
         case let .succeeded(paymentInfo):

@@ -8,5 +8,6 @@
 import Foundation
 
 protocol IYandexPayPaymentSheetOutput: AnyObject {
+    /// Результат проведенного платежа на стороне Тинькофф
     func yandexPayPaymentSheet(completedWith result: PaymentResult)
 }

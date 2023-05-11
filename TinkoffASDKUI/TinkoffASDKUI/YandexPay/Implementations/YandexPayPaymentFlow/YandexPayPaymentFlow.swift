@@ -16,6 +16,8 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
         self.delegate = delegate
     }
 
+    /// Начинаем флоу оплаты на стороне Тинькофф, после получения токена от Яндекса
+    /// Показываем шторку с платежом
     func start(with paymentFlow: PaymentFlow, base64Token: String) {
         guard let presentingViewController = delegate?.yandexPayPaymentFlowDidRequestViewControllerForPresentation(self) else {
             return
@@ -34,6 +36,8 @@ final class YandexPayPaymentFlow: IYandexPayPaymentFlow {
 // MARK: - IYandexPayPaymentSheetOutput
 
 extension YandexPayPaymentFlow: IYandexPayPaymentSheetOutput {
+
+    /// Результат проведенного платежа на стороне Тинькофф
     func yandexPayPaymentSheet(completedWith result: PaymentResult) {
         delegate?.yandexPayPaymentFlow(self, didCompleteWith: result)
     }

@@ -46,20 +46,16 @@ final class AddNewCardViewMock: IAddNewCardView {
         closeScreenCallsCount += 1
     }
 
-    // MARK: - disableAddButton
+    // MARK: - setAddButton
 
-    var disableAddButtonCallsCount = 0
+    typealias SetAddButtonArguments = (enabled: Bool, animated: Bool)
 
-    func disableAddButton() {
-        disableAddButtonCallsCount += 1
-    }
+    var setAddButtonCallCounter = 0
+    var setAddButtonArguments: SetAddButtonArguments?
 
-    // MARK: - enableAddButton
-
-    var enableAddButtonCallsCount = 0
-
-    func enableAddButton() {
-        enableAddButtonCallsCount += 1
+    func setAddButton(enabled: Bool, animated: Bool) {
+        setAddButtonCallCounter += 1
+        setAddButtonArguments = (enabled, animated)
     }
 
     // MARK: - activateCardField

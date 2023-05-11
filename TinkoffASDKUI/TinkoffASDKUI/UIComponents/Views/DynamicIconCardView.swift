@@ -247,10 +247,16 @@ extension DynamicIconCardView.Icon {
 
         func getImage(bank: Bank?) -> UIImage {
             let style = (bank == .raiffaisen || bank == nil) ? Style.plain : Style.white
-            return getImage(style: style)
+            return getImage(style: style, bank: bank)
         }
 
-        func getImage(style: Style) -> UIImage {
+        func getImage(style: Style, bank: Bank?) -> UIImage {
+            if #available(iOS 13.0, *), bank == .raiffaisen {
+                if let image = handleRaiffassenCase() {
+                    return image
+                }
+            }
+
             switch self {
             case .mir:
                 switch style {
@@ -274,6 +280,33 @@ extension DynamicIconCardView.Icon {
             case .masterCard:
                 return Asset.PaymentCard.PaymentSystem.mastercard.image
             }
+        }
+
+        /// Всегда отдаем светлую иконку ПС для райф банка
+        private func handleRaiffassenCase() -> UIImage? {
+            let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+            switch self {
+            case .mir:
+                let image = Asset.PaymentCard.PaymentSystem.mir.image
+                guard let lightImage = image.imageAsset?.image(with: lightTrait),
+                      let cgImage = lightImage.cgImage
+                else {
+                    return image
+                }
+                return UIImage(cgImage: cgImage)
+            case .visa:
+                let image = Asset.PaymentCard.PaymentSystem.visa.image
+                guard let lightImage = image.imageAsset?.image(with: lightTrait),
+                      let cgImage = lightImage.cgImage
+                else {
+                    return image
+                }
+                return UIImage(cgImage: cgImage)
+            default:
+                break
+            }
+
+            return nil
         }
     }
 }
