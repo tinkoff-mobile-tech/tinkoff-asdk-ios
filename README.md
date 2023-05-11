@@ -673,7 +673,7 @@ public func presentAddCard(
 
 ```swift
 /// Результат привязки карты
-public enum AddCardResult {s
+public enum AddCardResult {
     /// Привязка карты произошла успешно.
     /// В этом случае возвращается модель с подробной информацией о карте
     case succeded(PaymentCard)
