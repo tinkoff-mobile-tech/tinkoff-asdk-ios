@@ -727,6 +727,9 @@ public enum AddCardResult {
 
 ### Сканирование карт
 
+<div>
+  <img src="./Docs/images/flows/card_scanner_button.png" width="30%" height="30%">
+<div/>
 При запуске всех пользовательских сценариев, где может присутствовать поле ввода карточных данных, у вас есть возможность передать ссылку на реализацию протокола `ICardScannerDelegate`:
 
 ```swift
