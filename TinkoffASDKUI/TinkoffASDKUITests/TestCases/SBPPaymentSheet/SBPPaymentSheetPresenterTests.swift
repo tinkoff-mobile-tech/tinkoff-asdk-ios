@@ -12,52 +12,52 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class SBPPaymentSheetPresenterTests: BaseTestCase {
-    
+
     var sut: SBPPaymentSheetPresenter!
-    
+
     // MARK: Mocks
-    
+
     var viewMock: CommonSheetViewMock!
     var paymentSheetOutputMock: SBPPaymentSheetPresenterOutputMock!
     var paymentStatusServiceMock: PaymentStatusServiceMock!
     var repeatedRequestHelperMock: RepeatedRequestHelperMock!
     var mainDispatchQueueMock: DispatchQueueMock!
-    
+
     // MARK: Setup
-    
+
     override func setUp() {
         super.setUp()
-        
+
         setupSut(configuration: SBPConfiguration(), paymentId: "1234")
     }
-    
+
     override func tearDown() {
         viewMock = nil
         paymentSheetOutputMock = nil
         paymentStatusServiceMock = nil
         repeatedRequestHelperMock = nil
-        
+
         sut = nil
-        
+
         super.tearDown()
     }
-    
+
     // MARK: - Tests
-    
+
     func test_viewDidLoad_when_status_authorized() {
         // given
         let paymentId = "11111"
         let configuration = SBPConfiguration(paymentStatusRetriesCount: 5)
         setupSut(configuration: configuration, paymentId: paymentId)
-        
+
         let payload = GetPaymentStatePayload.some(status: .authorized)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInput = .success(payload)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
         XCTAssertEqual(viewMock.updateReceivedInvocations[1].state.status, .succeeded)
@@ -80,7 +80,7 @@ extension SBPPaymentSheetPresenterTests {
         paymentStatusServiceMock = PaymentStatusServiceMock()
         repeatedRequestHelperMock = RepeatedRequestHelperMock()
         mainDispatchQueueMock = DispatchQueueMock()
-        
+
         sut = SBPPaymentSheetPresenter(
             output: paymentSheetOutputMock,
             paymentStatusService: paymentStatusServiceMock,
@@ -89,7 +89,7 @@ extension SBPPaymentSheetPresenterTests {
             sbpConfiguration: configuration,
             paymentId: paymentId
         )
-        
+
         sut.view = viewMock
     }
 }
@@ -102,9 +102,7 @@ private extension GetPaymentStatePayload {
     }
 }
 
-
-
-//final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
+// final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 //
 //    // MARK: Dependencies
 //
@@ -142,11 +140,11 @@ private extension GetPaymentStatePayload {
 //        self.sbpConfiguration = sbpConfiguration
 //        self.paymentId = paymentId
 //    }
-//}
+// }
 //
 //// MARK: - ICommonSheetPresenter
 //
-//extension SBPPaymentSheetPresenter {
+// extension SBPPaymentSheetPresenter {
 //    func viewDidLoad() {
 //        getPaymentStatus()
 //        view?.update(state: currentViewState, animatePullableContainerUpdates: false)
@@ -184,11 +182,11 @@ private extension GetPaymentStatePayload {
 //            break
 //        }
 //    }
-//}
+// }
 //
 //// MARK: - Private
 //
-//extension SBPPaymentSheetPresenter {
+// extension SBPPaymentSheetPresenter {
 //    private func getPaymentStatus() {
 //        repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
 //            guard let self = self else { return }
@@ -257,11 +255,11 @@ private extension GetPaymentStatePayload {
 //            view?.update(state: currentViewState)
 //        }
 //    }
-//}
+// }
 //
 //// MARK: - CommonSheetState + SBP States
 //
-//private extension CommonSheetState {
+// private extension CommonSheetState {
 //    static var waiting: CommonSheetState {
 //        CommonSheetState(
 //            status: .processing,
@@ -303,5 +301,5 @@ private extension GetPaymentStatePayload {
 //            primaryButtonTitle: Loc.CommonSheet.PaymentFailed.primaryButton
 //        )
 //    }
-//}
+// }
 //
