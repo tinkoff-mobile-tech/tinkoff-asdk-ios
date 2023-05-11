@@ -17,15 +17,18 @@ final class PaymentStatusServiceMock: IPaymentStatusService {
     var getPaymentStateCallsCount = 0
     var getPaymentStateReceivedArguments: GetPaymentStateArguments?
     var getPaymentStateReceivedInvocations: [GetPaymentStateArguments] = []
-    var getPaymentStateCompletionClosureInput: Result<GetPaymentStatePayload, Error>?
-
+    var getPaymentStateCompletionClosureInputs: [Result<GetPaymentStatePayload, Error>]?
+    var lastPaymentStateCompletionClosureInputIndex = 0
+    
     func getPaymentState(paymentId: String, completion: @escaping PaymentStatusServiceCompletion) {
         getPaymentStateCallsCount += 1
         let arguments = (paymentId, completion)
         getPaymentStateReceivedArguments = arguments
         getPaymentStateReceivedInvocations.append(arguments)
-        if let getPaymentStateCompletionClosureInput = getPaymentStateCompletionClosureInput {
-            completion(getPaymentStateCompletionClosureInput)
+        if let inputs = getPaymentStateCompletionClosureInputs,
+           let result = inputs[safe: lastPaymentStateCompletionClosureInputIndex] {
+            lastPaymentStateCompletionClosureInputIndex += 1
+            completion(result)
         }
     }
 }
