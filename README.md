@@ -377,6 +377,10 @@ public struct PaymentInfo {
 `PaymentInfo` так же может располагаться и в `cancelled` в тех ситуациях, когда SDK начал процесс оплаты, но пользователь закрыл экран, не дождавшись завершения работы.
 
 ### Оплата с помощью платежной формы
+<div>
+  <img src="./Docs/images/flows/main_form.png" width="30%" height="30%">
+  <img src="./Docs/images/flows/main_form_saved.png" width="30%" height="30%">
+<div/>
 
 В SDK реализована общая платежная форма. В ней отображаются несколько способов оплаты, доступных для данного терминала, и пользователь может выбрать любой из них:
 
@@ -423,6 +427,9 @@ public struct MainFormUIConfiguration {
 Платежная форма закроется по завершении оплаты и вернет в `completion` объект `PaymentResult`
 
 ### Оплата с помощью TinkoffPay
+<div>
+  <img src="./Docs/images/flows/tinkoff_pay_start.png" width="30%" height="30%">
+<div/>
 
 Прежде всего для корректной работы `TinkoffPay` в вашем приложении необходимо добавить в `Info.plist` в массив по ключу `LSApplicationQueriesSchemes` значение `tinkoffbank`:
 
@@ -457,6 +464,11 @@ public func presentTinkoffPay(
 Оплата с помощью `TinkoffPay` также доступа с [платежной формы](#оплата-с-помощью-платежной-формы)
 
 ### Оплата с помощью Системы быстрых платежей
+
+<div>
+  <img src="./Docs/images/flows/sbp.png" width="30%" height="30%">
+  <img src="./Docs/images/flows/sbp_banks.png" width="30%" height="30%">
+<div/>
 
 В SDK доступны несколько видов оплаты с помощью `СБП`. В данном разделе описан сценарий, при котором пользователю отображается список банков, поддерживающих оплату `СБП`. При выборе конкретного банка из списка произойдет переход в соответствующее банковское приложение.
 
@@ -626,6 +638,11 @@ public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
 
 ### Оплата с помощью YandexPay
 
+<div>
+  <img src="./Docs/images/flows/yandex_pay_start.png" width="30%" height="30%">
+  <img src="./Docs/images/flows/yandex_pay.png" width="30%" height="30%">
+<div/>
+
 Подробную инструкцию по интеграции кнопки YandexPay, настроенную на прием платежей с помощью `интернет-эквайринга Тинькофф Касса`, вы можете прочитать на [отдельной странице](./Docs/YandexPayIntergration.md)
 
 ## Управление банковскими картами
@@ -633,6 +650,10 @@ public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
 Помимо платежей в SDK предусмотрены точки входа для экранов управление картами
 
 ### Список сохраненных карт
+
+<div>
+  <img src="./Docs/images/flows/cards_list.png" width="30%" height="30%">
+<div/>
 
 Для открытия экрана со списком сохраненных карт достаточно вызвать в `AcquiringUISDK` функцию:
 
@@ -654,6 +675,10 @@ public func presentCardList(
 Также вы можете передать, ссылку на реализацию [ICardScannerDelegate](#сканирование-карт), с помощью которой пользователь сможет отсканировать свою банковскую карту.
 
 ### Привязка новой карты
+
+<div>
+  <img src="./Docs/images/flows/add_card.png" width="30%" height="30%">
+<div/>
 
 Возможность привязать новую карту доступна пользователю с экрана со списком карт, но при необходимости вы можете самостоятельно встроить ее в свое приложение.
 Для этого необходимо вызвать следующую функцию в `AcquringUISDK`:
