@@ -237,12 +237,10 @@ class BuyProductsViewController: UIViewController {
 
             let paymentOptions = PaymentOptions.create(from: createPaymentData())
             let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
-            let amount = paymentOptions.orderOptions.amount
 
             uiSDK.presentRecurrentPayment(
                 on: self,
                 paymentFlow: paymentFlow,
-                amount: amount,
                 rebillId: String(parentPaymentId),
                 failureDelegate: self
             ) { [weak self] result in
@@ -256,7 +254,7 @@ class BuyProductsViewController: UIViewController {
         let paymentOptions = PaymentOptions.create(from: createPaymentData())
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
-        uiSDK.presentDynamicQr(on: self, paymentFlow: paymentFlow) { [weak self] result in
+        uiSDK.presentDynamicSBPQR(on: self, paymentFlow: paymentFlow) { [weak self] result in
             self?.showAlert(with: result)
         }
     }

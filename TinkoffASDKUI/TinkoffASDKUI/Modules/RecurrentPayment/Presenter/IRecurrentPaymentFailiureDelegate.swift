@@ -7,7 +7,9 @@
 
 public typealias PaymentId = String
 
-/// Используется только при PaymentFlow.finish
+/// Делегат, обрабатывающий ошибку списания средств при вызове `v2/Charge`
+///
+/// Используется только при оплате на основе уже существующего `paymentId (PaymentFlow.finish)`
 public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
     /// В случае вызова этого метода делегата, необходимо совершить повторный запрос v2/Init, для получения обновленного paymentId
     /// для этого необходимо в запросе к полю DATA добавить additionalData (в PaymentOptions поле называется paymentFormData)

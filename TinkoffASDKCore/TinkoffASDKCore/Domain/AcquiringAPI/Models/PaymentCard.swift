@@ -26,7 +26,7 @@ public struct PaymentCard: Codable, Equatable {
         }
     }
 
-    /// Название карты, по умолчанию выставяется замаскированный номер, например `430000******0777`
+    /// Название карты, по умолчанию выставляется замаскированный номер, например `430000******0777`
     public var pan: String
     public var cardId: String
     public var status: PaymentCardStatus

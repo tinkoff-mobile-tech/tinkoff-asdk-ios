@@ -32,7 +32,6 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
 
     func build(
         paymentFlow: PaymentFlow,
-        amount: Int64,
         rebillId: String,
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
@@ -45,7 +44,7 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
             cardsController: cardsController,
             paymentFlow: paymentFlow,
             rebillId: rebillId,
-            amount: amount,
+            amount: paymentFlow.amount,
             failureDelegate: failureDelegate,
             moduleCompletion: moduleCompletion
         )

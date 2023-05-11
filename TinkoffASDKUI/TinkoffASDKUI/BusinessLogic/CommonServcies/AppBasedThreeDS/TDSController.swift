@@ -20,6 +20,8 @@
 import ThreeDSWrapper
 import TinkoffASDKCore
 
+typealias PaymentCompletionHandler = (_ result: Result<GetPaymentStatePayload, Error>) -> Void
+
 protocol ITDSController: AnyObject {
     var completionHandler: PaymentCompletionHandler? { get set }
     var cancelHandler: (() -> Void)? { get set }
