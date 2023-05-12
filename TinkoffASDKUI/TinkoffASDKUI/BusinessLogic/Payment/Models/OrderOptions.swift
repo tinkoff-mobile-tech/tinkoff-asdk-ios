@@ -25,7 +25,7 @@ public struct OrderOptions: Equatable {
     public let orderId: String
     /// Полная сумма заказа в копейках
     public let amount: Int64
-    /// Краткое описание
+    /// Краткое описание заказа
     public let description: String?
     /// Тип проведения платежа
     public let payType: PayType?

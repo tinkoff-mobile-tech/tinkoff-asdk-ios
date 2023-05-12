@@ -8,7 +8,7 @@
 import Foundation
 
 /// Информация о чеке
-public class Receipt: Codable {
+public struct Receipt: Codable {
     private enum CodingKeys: String, CodingKey {
         case shopCode = "ShopCode"
         case email = "Email"
@@ -42,7 +42,7 @@ public class Receipt: Codable {
     /// Инн покупателя. Если ИНН иностранного гражданина, необходимо указать 00000000000
     public var customerInn: String?
 
-    public required init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         shopCode = try? container.decode(String.self, forKey: .shopCode)
         email = try? container.decode(String.self, forKey: .email)

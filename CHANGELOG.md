@@ -54,6 +54,7 @@
 * [EACQAPW-4284] Testing SBPBanks module and services
 * [EACQAPW-4190] - YandexPay Flow Unit Tests
 * [EACQAPW-4189] - YandexPay Flow Error Handling Unit Tests
+* [EACQAPW-4188] - Add documentation for Acquiring v3
 
 ### Fixed
 
