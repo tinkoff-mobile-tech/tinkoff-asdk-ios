@@ -58,7 +58,8 @@
 
 ### Fixed
 
-* [EACQAPW-4762] - Add PayType to PaymentOptions
+* [EACQAPW-4762] Add PayType to PaymentOptions
+* [EACQAPW-4772] Fix TinkoffPay Analytics
 
 ## [2.19.0] - 2023-04-13Z
 
