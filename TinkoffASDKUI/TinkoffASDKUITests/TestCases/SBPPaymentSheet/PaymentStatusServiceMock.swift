@@ -19,7 +19,7 @@ final class PaymentStatusServiceMock: IPaymentStatusService {
     var getPaymentStateReceivedInvocations: [GetPaymentStateArguments] = []
     var getPaymentStateCompletionClosureInputs: [Result<GetPaymentStatePayload, Error>]?
     var lastPaymentStateCompletionClosureInputIndex = 0
-    
+
     func getPaymentState(paymentId: String, completion: @escaping PaymentStatusServiceCompletion) {
         getPaymentStateCallsCount += 1
         let arguments = (paymentId, completion)

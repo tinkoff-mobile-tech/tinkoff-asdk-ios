@@ -48,74 +48,74 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         // given
         let paymentId = "11111"
         commonSetupsForGivenViewDidLoadTests(status: .authorized, paymentId: paymentId)
-        
+
         // when
         sut.viewDidLoad()
 
         // then
         commonTestsForThenViewDidLoadTests(status: .succeeded, paymentId: paymentId)
     }
-    
+
     func test_viewDidLoad_when_status_confirmed() {
         // given
         let paymentId = "11111"
         commonSetupsForGivenViewDidLoadTests(status: .confirmed, paymentId: paymentId)
-        
+
         // when
         sut.viewDidLoad()
 
         // then
         commonTestsForThenViewDidLoadTests(status: .succeeded, paymentId: paymentId)
     }
-    
+
     func test_viewDidLoad_when_status_rejected() {
         // given
         let paymentId = "11111"
         commonSetupsForGivenViewDidLoadTests(status: .rejected, paymentId: paymentId)
-        
+
         // when
         sut.viewDidLoad()
 
         // then
         commonTestsForThenViewDidLoadTests(status: .failed, paymentId: paymentId)
     }
-    
+
     func test_viewDidLoad_when_status_deadlineExpired() {
         // given
         let paymentId = "11111"
         commonSetupsForGivenViewDidLoadTests(status: .deadlineExpired, paymentId: paymentId)
-        
+
         // when
         sut.viewDidLoad()
 
         // then
         commonTestsForThenViewDidLoadTests(status: .failed, paymentId: paymentId)
     }
-    
+
     func test_viewDidLoad_when_any_unexpected_status() {
         // given
         let paymentId = "11111"
         commonSetupsForGivenViewDidLoadTests(status: .unknown, paymentId: paymentId)
-        
+
         // when
         sut.viewDidLoad()
 
         // then
         commonTestsForThenViewDidLoadTests(status: .failed, paymentId: paymentId)
     }
-    
+
     func test_viewDidLoad_when_status_formShowed_and_requests_not_allowed() {
         // given
         let paymentId = "11111"
         commonSetupsForGivenViewDidLoadTests(status: .formShowed, paymentId: paymentId, retriesCount: 1)
-        
+
         // when
         sut.viewDidLoad()
 
         // then
         commonTestsForThenViewDidLoadTests(status: .failed, paymentId: paymentId)
     }
-    
+
     func test_viewDidLoad_when_status_formShowed_and_requests_allowed() {
         // given
         let paymentId = "11111"
@@ -127,7 +127,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload1), .success(payload2)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         // when
         sut.viewDidLoad()
 
@@ -144,13 +144,13 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 2)
     }
-    
+
     func test_viewDidLoad_when_status_confirming() {
         // given
         let paymentId = "11111"
         let configuration = SBPConfiguration(paymentStatusRetriesCount: 5)
         setupSut(configuration: configuration, paymentId: paymentId)
-        
+
         let payload1 = GetPaymentStatePayload.some(status: .confirming)
         let payload2 = GetPaymentStatePayload.some(status: .confirming)
         let payload3 = GetPaymentStatePayload.some(status: .confirming)
@@ -158,14 +158,14 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let payload5 = GetPaymentStatePayload.some(status: .authorized)
         let payloads = [payload1, payload2, payload3, payload4, payload5]
         let results: [Result<GetPaymentStatePayload, Error>] = payloads.map { .success($0) }
-        
+
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = results
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 3)
         XCTAssertEqual(viewMock.updateReceivedInvocations[2].state.status, .processing)
@@ -179,21 +179,21 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 5)
     }
-    
+
     func test_viewDidLoad_when_getPaymentStatusFailed_and_requestsAllowed() {
         // given
         let paymentId = "11111"
         let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
         setupSut(configuration: configuration, paymentId: paymentId)
-        
+
         let error = NSError(domain: "error", code: 1234)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.failure(error), .failure(error)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
         XCTAssertEqual(viewMock.updateReceivedInvocations[0].state.status, .failed)
@@ -203,73 +203,131 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 2)
     }
-    
+
     func test_primaryButtonTapped() {
         // when
         sut.primaryButtonTapped()
-        
+
         // then
         XCTAssertEqual(viewMock.closeCallsCount, 1)
     }
-    
+
     func test_secondaryButtonTapped() {
         // when
         sut.secondaryButtonTapped()
-        
+
         // then
         XCTAssertEqual(viewMock.closeCallsCount, 1)
     }
-    
+
     func test_canDismissViewByUserInteraction_true() {
         // when
         let isCanDissmiss = sut.canDismissViewByUserInteraction()
-        
+
         // then
         XCTAssertTrue(isCanDissmiss)
     }
-    
+
     func test_canDismissViewByUserInteraction_false() {
         // given
         let paymentId = "11111"
         let configuration = SBPConfiguration(paymentStatusRetriesCount: 1)
         setupSut(configuration: configuration, paymentId: paymentId)
-        
+
         let payload = GetPaymentStatePayload.some(status: .confirming)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         sut.viewDidLoad()
-        
+
         // when
         let isCanDissmiss = sut.canDismissViewByUserInteraction()
-        
+
         // then
         XCTAssertFalse(isCanDissmiss)
     }
-    
 
-//    func viewWasClosed() {
-//        switch currentViewState {
-//        case .paid:
-//            guard let lastPaymentInfo = lastPaymentInfo else {
-//                output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .unknown)))
-//                return
-//            }
-//
-//            output?.sbpPaymentSheet(completedWith: .succeeded(lastPaymentInfo))
-//        case .waiting:
-//            output?.sbpPaymentSheet(completedWith: .cancelled(lastPaymentInfo))
-//        case .paymentFailed:
-//            output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .rejected)))
-//        case .timeout:
-//            output?.sbpPaymentSheet(completedWith: .failed(ASDKError(code: .timeout, underlyingError: lastGetPaymentStatusError)))
-//        default:
-//            // во всех остальных кейсах, закрытие шторки должно быть невозможно
-//            break
-//        }
-//    }
+    func test_viewWasClosed_when_paymentFailed() {
+        // given
+        let paymentId = "11111"
+        commonSetupsForGivenViewDidLoadTests(status: .rejected, paymentId: paymentId)
+        sut.viewDidLoad()
 
+        // when
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .failed(ASDKError(code: .rejected)))
+    }
+
+    func test_viewWasClosed_when_timeout() {
+        // given
+        let paymentId = "11111"
+        commonSetupsForGivenViewDidLoadTests(status: .deadlineExpired, paymentId: paymentId)
+        sut.viewDidLoad()
+
+        // when
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .failed(ASDKError(code: .timeout, underlyingError: nil)))
+    }
+
+    func test_viewWasClosed_when_processing() {
+        // given
+        let paymentId = "11111"
+        commonSetupsForGivenViewDidLoadTests(status: .authorizing, paymentId: paymentId)
+        sut.viewDidLoad()
+
+        // when
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 0)
+    }
+
+    func test_viewWasClosed_when_waiting() {
+        // given
+        let paymentId = "11111"
+        let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
+        setupSut(configuration: configuration, paymentId: paymentId)
+
+        let payload = GetPaymentStatePayload.some(status: .formShowed)
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        sut.viewDidLoad()
+
+        // when
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .cancelled(payload.toPaymentInfo()))
+    }
+
+    func test_viewWasClosed_when_paid_with_info() {
+        // given
+        let paymentId = "11111"
+        let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
+        setupSut(configuration: configuration, paymentId: paymentId)
+
+        let payload = GetPaymentStatePayload.some(status: .authorized)
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        sut.viewDidLoad()
+
+        // when
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetCallsCount, 1)
+        XCTAssertEqual(paymentSheetOutputMock.sbpPaymentSheetReceivedArguments, .succeeded(payload.toPaymentInfo()))
+    }
 }
 
 // MARK: - Private methods
@@ -293,7 +351,7 @@ extension SBPPaymentSheetPresenterTests {
 
         sut.view = viewMock
     }
-    
+
     private func commonSetupsForGivenViewDidLoadTests(
         status: AcquiringStatus,
         paymentId: String,
@@ -307,7 +365,7 @@ extension SBPPaymentSheetPresenterTests {
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
         mainDispatchQueueMock.asyncWorkShouldCalls = true
     }
-    
+
     private func commonTestsForThenViewDidLoadTests(status: CommonSheetState.Status, paymentId: String) {
         XCTAssertEqual(viewMock.updateCallsCount, 2)
         XCTAssertEqual(viewMock.updateReceivedInvocations[1].state.status, status)

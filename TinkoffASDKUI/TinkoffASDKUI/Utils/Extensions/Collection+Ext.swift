@@ -7,7 +7,7 @@
 
 extension Collection {
     /// Безопасно достает элемент из массива по сабскрипту
-    subscript (safe index: Index) -> Element? {
+    subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
 }
