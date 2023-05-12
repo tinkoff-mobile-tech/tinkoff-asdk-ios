@@ -106,4 +106,25 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
         }
         return CancellableMock()
     }
+
+    // MARK: - getPaymentState
+
+    typealias GetPaymentStateArguments = (data: GetPaymentStateData, completion: (_ result: Result<GetPaymentStatePayload, Error>) -> Void)
+
+    var getPaymentStateCallsCount = 0
+    var getPaymentStateReceivedArguments: GetPaymentStateArguments?
+    var getPaymentStateReceivedInvocations: [GetPaymentStateArguments] = []
+    var getPaymentStateCompletionClosureInput: Result<GetPaymentStatePayload, Error>?
+
+    @discardableResult
+    func getPaymentState(data: GetPaymentStateData, completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void) -> Cancellable {
+        getPaymentStateCallsCount += 1
+        let arguments = (data, completion)
+        getPaymentStateReceivedArguments = arguments
+        getPaymentStateReceivedInvocations.append(arguments)
+        if let getPaymentStateCompletionClosureInput = getPaymentStateCompletionClosureInput {
+            completion(getPaymentStateCompletionClosureInput)
+        }
+        return CancellableMock()
+    }
 }

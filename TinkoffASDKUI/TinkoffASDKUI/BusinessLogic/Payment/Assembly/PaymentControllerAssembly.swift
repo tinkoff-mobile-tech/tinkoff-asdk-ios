@@ -54,7 +54,7 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             tdsTimeoutResolver: tdsTimeoutResolver
         )
 
-        let paymentStatusService = PaymentStatusService(acquiringSdk: coreSDK)
+        let paymentStatusService = PaymentStatusService(paymentService: coreSDK)
         let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
         let paymentStatusUpdateService = PaymentStatusUpdateService(
             paymentStatusService: paymentStatusService,
