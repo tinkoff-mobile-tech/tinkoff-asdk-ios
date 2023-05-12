@@ -25,14 +25,19 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
 
     override var isHighlighted: Bool {
         didSet {
+            guard shouldHighlight else { return }
             apply(highlighted: isHighlighted)
         }
     }
 
     // MARK: Subviews
 
-    private lazy var content = Content()
+    lazy var content = Content()
     private lazy var background = UIView()
+
+    // MARK: Settable
+
+    private var shouldHighlight = true
 
     // MARK: Init
 
@@ -57,9 +62,9 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
 
     private func setupView() {
         contentView.addSubview(background)
-        background.pinEdgesToSuperview()
         contentView.addSubview(content)
-        content.pinEdgesToSuperview()
+        background.pinEdgesToSuperview()
+        content.makeEqualToSuperview()
     }
 
     // MARK: State Updating
@@ -80,15 +85,21 @@ final class CollectionCell<Content: UIView & Reusable & Configurable>: UICollect
 // MARK: - Configurable
 
 extension CollectionCell: Configurable {
-    typealias Configuration = Content.Configuration
+    typealias ContentConfiguration = Content.Configuration
+
+    struct Configuration {
+        let contentConfiguration: Content.Configuration
+        var shouldHighlight = true
+    }
 
     func update(with configuration: Configuration) {
-        content.update(with: configuration)
+        shouldHighlight = configuration.shouldHighlight
+        content.update(with: configuration.contentConfiguration)
     }
 }
 
 // MARK: - Constants
 
-private extension TimeInterval {
+extension TimeInterval {
     static let highlightAnimationDuration: TimeInterval = 0.15
 }

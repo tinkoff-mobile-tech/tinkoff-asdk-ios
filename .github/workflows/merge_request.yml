@@ -11,6 +11,11 @@ on:
         type: string
 
 jobs:
+  changelog_check:
+    secrets:
+      tinkoff_bot_pat: ${{ secrets.TINKOFF_BOT_PAT }}
+    uses: ./.github/workflows/check-changelog.yml
+    
   swiftformat:
     runs-on: ubuntu-latest
     container: ghcr.io/nicklockwood/swiftformat:0.49.18
@@ -29,6 +34,7 @@ jobs:
         run: swiftlint --quiet
 
   check:
+    needs: [swiftformat, swiftlint]
     runs-on: macos-12
 
     steps:
@@ -49,10 +55,10 @@ jobs:
       - name: build Package.swift
         run: bundle exec fastlane build_spm
 
-      - name: Testing Target [Unit Tests]
+      - name: Testing [Unit Tests]
         run: bundle exec fastlane tests
 
-      - name: tests lint
+      - name: Podspecs lint
         env:
           XCODEPROJ_PATH: ${{ inputs.xcodeproj_path }}
           SCHEME_NAME: ${{ inputs.scheme_name }}

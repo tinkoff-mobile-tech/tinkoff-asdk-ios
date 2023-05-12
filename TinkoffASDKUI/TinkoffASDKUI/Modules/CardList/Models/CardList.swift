@@ -24,33 +24,10 @@ struct CardList {
     struct Card {
         let id: String
         let pan: String
-        let validThru: String
-        let icon: UIImage?
-    }
-
-    struct Alert {
-        let title: String
-        let message: String?
-        let icon: AcquiringAlertIconType
-    }
-}
-
-// MARK: - Alerts Factory Methods
-
-extension CardList.Alert {
-    static func cardAdded(card: PaymentCard) -> CardList.Alert {
-        CardList.Alert(
-            title: Loc.TinkoffAcquiring.Alert.Title.cardSuccessAdded,
-            message: "card id = \(card.cardId),\n\(card.pan) \(card.expDateFormat() ?? "")",
-            icon: .success
-        )
-    }
-
-    static func cardAddingFailed(with error: Error) -> CardList.Alert {
-        CardList.Alert(
-            title: Loc.TinkoffAcquiring.Alert.Title.error,
-            message: error.localizedDescription,
-            icon: .error
-        )
+        let cardModel: DynamicIconCardView.Model
+        let bankNameText: String
+        let cardNumberText: String
+        let isInEditingMode: Bool
+        let hasCheckmarkInNormalMode: Bool
     }
 }

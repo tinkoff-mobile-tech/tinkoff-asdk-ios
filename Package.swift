@@ -32,7 +32,10 @@ let package = Package(
             name: "TinkoffASDKCoreTests",
             dependencies: ["TinkoffASDKCore"],
             path: "TinkoffASDKCore/TinkoffASDKCoreTests",
-            exclude: ["Info.plist"]
+            exclude: ["Info.plist"],
+            resources: [
+                .process("Infrastructure/JSONStubs/Resources/GetTerminalPayMethods"),
+            ]
         ),
 
         // TinkoffASDKUI
@@ -55,7 +58,8 @@ let package = Package(
             name: "TinkoffASDKUITests",
             dependencies: ["TinkoffASDKUI"],
             path: "TinkoffASDKUI/TinkoffASDKUITests",
-            exclude: ["Info.plist"]
+            exclude: ["Info.plist"],
+            sources: ["TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*"]
         ),
     ]
 )

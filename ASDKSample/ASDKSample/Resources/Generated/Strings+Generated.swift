@@ -10,6 +10,14 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
+  internal enum AddCard {
+    internal enum Alert {
+      /// Карта %@ была добавлена
+      internal static func message(_ p1: Any) -> String {
+        return Loc.tr("Localizable", "addCard.alert.message", String(describing: p1), fallback: "Карта %@ была добавлена")
+      }
+    }
+  }
   internal enum Alert {
     internal enum Message {
       /// Операция отменена
@@ -133,6 +141,10 @@ internal enum Loc {
     }
   }
   internal enum Text {
+    /// Изменение сервера к которому будут обращаться все запросы СДК
+    internal static let chooseServerDescription = Loc.tr("Localizable", "text.chooseServerDescription", fallback: "Изменение сервера к которому будут обращаться все запросы СДК")
+    /// Кастомный адрес будет использован когда выбран тип сервака custom
+    internal static let customServerDescription = Loc.tr("Localizable", "text.customServerDescription", fallback: "Кастомный адрес будет использован когда выбран тип сервака custom")
     /// Родительский платеж
     internal static let parentPayment = Loc.tr("Localizable", "text.parentPayment", fallback: "Родительский платеж")
     /// Покупка
@@ -176,6 +188,10 @@ internal enum Loc {
     internal static let aquaringAlertView = Loc.tr("Localizable", "title.aquaringAlertView", fallback: "AlertView")
     /// Корзина
     internal static let cart = Loc.tr("Localizable", "title.cart", fallback: "Корзина")
+    /// Выбор сервера
+    internal static let chooseServer = Loc.tr("Localizable", "title.chooseServer", fallback: "Выбор сервера")
+    /// Кастомный сервер
+    internal static let customServer = Loc.tr("Localizable", "title.customServer", fallback: "Кастомный сервер")
     /// Система Быстрых Платежей
     internal static let fasterPayments = Loc.tr("Localizable", "title.fasterPayments", fallback: "Система Быстрых Платежей")
     /// Товары
@@ -186,8 +202,6 @@ internal enum Loc {
     internal static let pay = Loc.tr("Localizable", "title.pay", fallback: "Оплата")
     /// Оплатить, начать регулярный платеж
     internal static let payAndSaveAsParent = Loc.tr("Localizable", "title.payAndSaveAsParent", fallback: "Оплатить, начать регулярный платеж")
-    /// Оплатить с помощью ApplePay
-    internal static let payByApplePay = Loc.tr("Localizable", "title.payByApplePay", fallback: "Оплатить с помощью ApplePay")
     /// Оплатить с помощью Системы Быстрых Платежей
     internal static let payBySBP = Loc.tr("Localizable", "title.payBySBP", fallback: "Оплатить с помощью Системы Быстрых Платежей")
     /// Список карт

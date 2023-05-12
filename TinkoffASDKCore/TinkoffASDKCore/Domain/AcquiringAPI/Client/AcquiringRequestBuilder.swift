@@ -17,15 +17,13 @@ protocol IAcquiringRequestBuilder {
     func getCardList(data: GetCardListData) -> AcquiringRequest
     func addCard(data: AddCardData) -> AcquiringRequest
     func attachCard(data: AttachCardData) -> AcquiringRequest
+    func getAddCardState(data: GetAddCardStateData) -> AcquiringRequest
     func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest
     func removeCard(data: RemoveCardData) -> AcquiringRequest
     func getQR(data: GetQRData) -> AcquiringRequest
     func getStaticQR(data: GetQRDataType) -> AcquiringRequest
     func getTinkoffPayStatus() -> AcquiringRequest
-    func getTinkoffPayLink(
-        paymentId: String,
-        version: GetTinkoffPayStatusResponse.Status.Version
-    ) -> AcquiringRequest
+    func getTinkoffPayLink(data: GetTinkoffLinkData) -> AcquiringRequest
     func getTerminalPayMethods() -> AcquiringRequest
 }
 
@@ -116,6 +114,10 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
         )
     }
 
+    func getAddCardState(data: GetAddCardStateData) -> AcquiringRequest {
+        GetAddCardStateRequest(data: data, baseURL: baseURLProvider.url)
+    }
+
     func submitRandomAmount(data: SubmitRandomAmountData) -> AcquiringRequest {
         SubmitRandomAmountRequest(submitRandomAmountData: data, baseURL: baseURLProvider.url)
     }
@@ -139,11 +141,8 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
         )
     }
 
-    func getTinkoffPayLink(
-        paymentId: String,
-        version: GetTinkoffPayStatusResponse.Status.Version
-    ) -> AcquiringRequest {
-        GetTinkoffLinkRequest(paymentId: paymentId, version: version, baseURL: baseURLProvider.url)
+    func getTinkoffPayLink(data: GetTinkoffLinkData) -> AcquiringRequest {
+        GetTinkoffLinkRequest(data: data, baseURL: baseURLProvider.url)
     }
 
     func getTerminalPayMethods() -> AcquiringRequest {

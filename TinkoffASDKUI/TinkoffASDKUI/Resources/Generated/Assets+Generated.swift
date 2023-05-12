@@ -23,14 +23,19 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
   internal enum Sbp {
-    internal static let emptyBanks = ImageAsset(name: "empty_banks")
+    internal static let sbpAvatar = ImageAsset(name: "sbp-avatar")
+    internal static let sbpLogoLight = ImageAsset(name: "sbp-logo-light")
+    internal static let sbpLogoUniversal = ImageAsset(name: "sbp-logo-universal")
+    internal static let sbpLogo = ImageAsset(name: "sbp_logo")
+    internal static let sbpNoImage = ImageAsset(name: "sbp_no_image")
+    internal static let sbpNoLogo = ImageAsset(name: "sbp_no_logo")
   }
   internal enum TinkoffPay {
+    internal static let tinkoffPayAvatar = ImageAsset(name: "tinkoffPay-avatar")
+    internal static let tinkoffPaySmallNoBorder = ImageAsset(name: "tinkoffPay-small-no-border")
     internal static let tinkoffPayLogoBlack = ImageAsset(name: "tinkoff_pay_logo_black")
     internal static let tinkoffPayLogoWhite = ImageAsset(name: "tinkoff_pay_logo_white")
   }
-  internal static let add = ImageAsset(name: "add")
-  internal static let buttonIconSBP = ImageAsset(name: "buttonIconSBP")
   internal static let cancel = ImageAsset(name: "cancel")
   internal enum CardRequisites {
     internal static let maestroLogo = ImageAsset(name: "maestro_logo")
@@ -38,42 +43,53 @@ internal enum Asset {
     internal static let mirLogo = ImageAsset(name: "mir_logo")
     internal static let visaLogo = ImageAsset(name: "visa_logo")
   }
-  internal enum Cards {
-    internal static let cardAlpha = ImageAsset(name: "card-alpha")
-    internal static let cardGazprom = ImageAsset(name: "card-gazprom")
-    internal static let cardOther = ImageAsset(name: "card-other")
-    internal static let cardOzon = ImageAsset(name: "card-ozon")
-    internal static let cardRaiffaisen = ImageAsset(name: "card-raiffaisen")
-    internal static let cardSber = ImageAsset(name: "card-sber")
-    internal static let cardTinkoff = ImageAsset(name: "card-tinkoff")
-    internal static let cardVtb = ImageAsset(name: "card-vtb")
-  }
   internal static let done = ImageAsset(name: "done")
   internal enum Icons {
+    internal static let addedCard = ImageAsset(name: "added-card")
+    internal static let cardPlus = ImageAsset(name: "cardPlus")
+    internal static let check = ImageAsset(name: "check")
+    internal static let clear = ImageAsset(name: "clear")
     internal static let popupBar = ImageAsset(name: "popup-bar")
   }
   internal enum Illustrations {
+    internal static let alarm = ImageAsset(name: "alarm")
+    internal static let cardCross = ImageAsset(name: "card-cross")
+    internal static let checkCirclePositive = ImageAsset(name: "check-circle-positive")
+    internal static let crossCircle = ImageAsset(name: "cross-circle")
     internal static let illustrationsCommonLightCard = ImageAsset(name: "illustrations-common-light-card")
+    internal static let wiFiOff = ImageAsset(name: "wi-fi-off")
+  }
+  internal enum Logo {
+    internal static let smallGerb = ImageAsset(name: "small-gerb")
   }
   internal static let logoPs = ImageAsset(name: "logo_ps")
   internal static let next = ImageAsset(name: "next")
   internal static let nexta = ImageAsset(name: "nexta")
-  internal enum PaymentSystem {
-    internal static let paymentSystemMaestro = ImageAsset(name: "payment-system-maestro")
-    internal static let paymentSystemMastercard = ImageAsset(name: "payment-system-mastercard")
-    internal static let paymentSystemMirWhite = ImageAsset(name: "payment-system-mir-white")
-    internal static let paymentSystemMir = ImageAsset(name: "payment-system-mir")
-    internal static let paymentSystemUnionpay = ImageAsset(name: "payment-system-unionpay")
-    internal static let paymentSystemVisaWhite = ImageAsset(name: "payment-system-visa-white")
-    internal static let paymentSystemVisa = ImageAsset(name: "payment-system-visa")
+  internal enum PaymentCard {
+    internal enum Bank {
+      internal static let alpha = ImageAsset(name: "alpha")
+      internal static let gazprom = ImageAsset(name: "gazprom")
+      internal static let other = ImageAsset(name: "other")
+      internal static let ozon = ImageAsset(name: "ozon")
+      internal static let raiffaisen = ImageAsset(name: "raiffaisen")
+      internal static let sber = ImageAsset(name: "sber")
+      internal static let tinkoff = ImageAsset(name: "tinkoff")
+      internal static let vtb = ImageAsset(name: "vtb")
+    }
+    internal static let cardFrontsideAvatar = ImageAsset(name: "card-frontside-avatar")
+    internal enum PaymentSystem {
+      internal static let maestro = ImageAsset(name: "maestro")
+      internal static let mastercard = ImageAsset(name: "mastercard")
+      internal static let mirWhite = ImageAsset(name: "mir-white")
+      internal static let mir = ImageAsset(name: "mir")
+      internal static let unionpay = ImageAsset(name: "unionpay")
+      internal static let visaWhite = ImageAsset(name: "visa-white")
+      internal static let visa = ImageAsset(name: "visa")
+    }
   }
   internal static let scan = ImageAsset(name: "scan")
+  internal static let scanCard = ImageAsset(name: "scan_card")
   internal static let share = ImageAsset(name: "share")
-  internal static let tick24 = ImageAsset(name: "tick_24")
-  internal enum TuiIcMedium {
-    internal static let checkCirclePositive = ImageAsset(name: "check-circle-positive")
-    internal static let crossCircle = ImageAsset(name: "cross-circle")
-  }
   internal static let tuiIcServiceCross24 = ImageAsset(name: "tui_ic_service_cross_24")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

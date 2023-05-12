@@ -7,6 +7,8 @@
 "title.paymentCardList" = "Список карт";
 "title.qrcode" = "QR-код";
 "title.savingCard" = "Сохранение карты";
+"title.chooseServer" = "Выбор сервера";
+"title.customServer" = "Кастомный сервер";
 "title.paymentFormLanguage" = "Локализация платежной формы";
 "title.fasterPayments" = "Система Быстрых Платежей";
 "title.showEmailField" = "Поле ввода email";
@@ -14,7 +16,6 @@
 "title.aquaringAlertView" = "AlertView";
 "title.goods" = "Товары";
 "title.paymentTryAgain" = "Повторить платеж";
-"title.payByApplePay" = "Оплатить с помощью ApplePay";
 "title.payBySBP" = "Оплатить с помощью Системы Быстрых Платежей";
 "title.payAndSaveAsParent" = "Оплатить, начать регулярный платеж";
 "title.Acquiring" = "Уведомления, алерты";
@@ -31,6 +32,8 @@
 "text.totalAmount" = "на сумму";
 "text.payBySBP.description" = "на главном экране кнопка сгенерировать QR-код для приема платежей, на форме платежей добавляеся кнопка оплатить с помощью СБП";
 "text.addCardCheckType.description" = "NO – сохранить карту без проверок. Родительский платеж в случае успеха не создастся.\n3DS – при сохранении карты выполнить проверку 3DS и выполнить списание, а затем отмену на 1 р. Карты, не поддерживающие 3DS, привязаны не будут. В случае успеха сгенерируется родительский платеж, для рекуррентных платежей.\nHOLD – при сохранении сделать списание и затем отмену на 1 руб. В случае успеха сгенерируется родительский платеж для рекуррентных платежей.\n3DSHOLD – при привязке карты выполняем проверку, поддерживает карта 3DS или нет. Если карта поддерживает 3DS выполняем списание и затем отмену на 1 руб.";
+"text.chooseServerDescription" = "Изменение сервера к которому будут обращаться все запросы СДК";
+"text.customServerDescription" = "Кастомный адрес будет использован когда выбран тип сервака custom";
 "text.language.description" = "auto - Устанавливается язык который выбран на устройстве.\nru - Платежная форма на Русском языке.\nen - Платежная форма на Англисйком языке.";
 "text.paymentStatusAmount" = "Покупка на сумму";
 "text.paymentStatusCancel" = "отменена";
@@ -88,3 +91,6 @@
 "credentialsView.title.terminalPassword" = "Terminal Password";
 "credentialsView.title.publicKey" = "Public Key";
 "credentialsView.title.customerKey" = "Customer Key";
+
+// Add Card
+"addCard.alert.message" = "Карта %@ была добавлена";

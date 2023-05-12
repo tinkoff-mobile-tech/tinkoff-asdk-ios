@@ -19,56 +19,124 @@
 
 import UIKit
 
-final class CellImageLoader {
+enum CellImageLoaderType: Equatable {
+    case round
+    case size(CGSize)
+    case roundAndSize(CGSize)
+    case `default`
+}
+
+protocol ICellImageLoader {
+    func loadImage(url: URL, completion: @escaping (Result<UIImage, Swift.Error>) -> Void)
+
+    @discardableResult
+    func loadAndSetRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage?) -> UUID?
+    func cancelLoadIfNeeded(imageView: UIImageView)
+
+    @discardableResult
+    func loadRemoteImageJustForCache(url: URL) -> UUID?
+    func cancelLoad(uuid: UUID)
+
+    func set(type: CellImageLoaderType)
+}
+
+final class CellImageLoader: ICellImageLoader {
+
     private let imageLoader: ImageLoader
     private var imageProcessors = [ImageProcessor]()
 
-    init(imageLoader: ImageLoader) {
-        self.imageLoader = imageLoader
-    }
+    private var requests = [UIImageView: UUID]()
 
-    func setImageProcessors(_ imageProcessors: [ImageProcessor]) {
-        self.imageProcessors = imageProcessors
-    }
+    private var type: CellImageLoaderType = .default {
+        didSet {
+            let scale = UIScreen.main.scale
 
-    func loadImage(url: URL, cell: ReusableCell) {
-        if url.isFileURL {
-            loadLocalImage(url: url, cell: cell)
-        } else {
-            loadRemoteImage(url: url, cell: cell)
+            switch type {
+            case .round:
+                imageProcessors = [RoundImageProcessor()]
+            case let .size(size):
+                imageProcessors = [SizeImageProcessor(size: size, scale: scale)]
+            case let .roundAndSize(size):
+                imageProcessors = [RoundImageProcessor(), SizeImageProcessor(size: size, scale: scale)]
+            case .default:
+                imageProcessors = []
+            }
         }
+    }
+
+    init(imageLoader: ImageLoader, type: CellImageLoaderType = .default) {
+        self.imageLoader = imageLoader
+        self.type = type
+    }
+
+    func set(type: CellImageLoaderType) {
+        guard self.type != type else { return }
+
+        self.type = type
     }
 }
 
-private extension CellImageLoader {
-    func loadLocalImage(url: URL, cell: ReusableCell) {
-        guard let imageData = try? Data(contentsOf: url),
-              let image = UIImage(data: imageData) else {
-            return
-        }
-        cell.imageView?.image = image
-    }
+// MARK: - ICellImageLoader
 
-    func loadRemoteImage(url: URL, cell: ReusableCell) {
-        let uuid = imageLoader.loadImage(url: url) { [weak self] image in
+extension CellImageLoader {
+    func loadImage(url: URL, completion: @escaping (Result<UIImage, Swift.Error>) -> Void) {
+        imageLoader.loadImage(url: url) { [weak self] image in
             guard let self = self else { return image }
             return self.imageProcessors.reduce(image) { image, processor -> UIImage in
                 processor.processImage(image)
             }
         } completion: { result in
             DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+
+    @discardableResult
+    func loadAndSetRemoteImage(url: URL, imageView: UIImageView, onFailureImage: UIImage? = nil) -> UUID? {
+        cancelLoadIfNeeded(imageView: imageView)
+
+        let uuid = imageLoader.loadImage(url: url) { [weak self] image in
+            guard let self = self else { return image }
+            return self.imageProcessors.reduce(image) { image, processor -> UIImage in
+                processor.processImage(image)
+            }
+        } completion: { [weak self] result in
+            DispatchQueue.main.async {
                 switch result {
                 case let .success(image):
-                    cell.imageView?.image = image
+                    imageView.image = image
                 case .failure:
-                    break
+                    imageView.image = onFailureImage
                 }
+
+                self?.requests.removeValue(forKey: imageView)
             }
         }
 
-        guard let cellUuid = uuid else { return }
-        cell.onReuse = { [weak self] in
-            self?.imageLoader.cancelImageLoad(uuid: cellUuid)
+        requests[imageView] = uuid
+
+        return uuid
+    }
+
+    func cancelLoadIfNeeded(imageView: UIImageView) {
+        if let uuid = requests[imageView] {
+            imageLoader.cancelImageLoad(uuid: uuid)
+            requests.removeValue(forKey: imageView)
         }
+    }
+
+    @discardableResult
+    func loadRemoteImageJustForCache(url: URL) -> UUID? {
+        return imageLoader.loadImage(url: url) { [weak self] image in
+            guard let self = self else { return image }
+            return self.imageProcessors.reduce(image) { image, processor -> UIImage in
+                processor.processImage(image)
+            }
+        } completion: { _ in }
+    }
+
+    func cancelLoad(uuid: UUID) {
+        imageLoader.cancelImageLoad(uuid: uuid)
     }
 }

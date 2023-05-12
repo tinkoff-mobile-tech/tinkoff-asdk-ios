@@ -23,6 +23,14 @@ enum PaymentSystemDecision {
     case resolved(PaymentSystem)
     case ambiguous
     case unrecognized
+
+    func getPaymentSystem() -> PaymentSystem? {
+        if case let .resolved(paymentSystem) = self {
+            return paymentSystem
+        } else {
+            return nil
+        }
+    }
 }
 
 protocol IPaymentSystemResolver {
@@ -48,6 +56,12 @@ final class PaymentSystemResolver: IPaymentSystemResolver {
         // Для проверки на соответствие регулярному выражению достаточно
         // использовать только BIN (первые 6 цифр номера карты)
         let inputBIN = String(inputPAN.prefix(Constants.binLength))
+
+        // Для всех карт, начинающихся с цифры 6
+        // Валидируем платежную систему со второго символа
+        if inputPAN.starts(with: "6"), inputPAN.count < 2 {
+            return .ambiguous
+        }
 
         let matchedPaymentSystems = paymentSystemsRegexes
             .filter { _, regex in inputBIN.matches(with: regex) }

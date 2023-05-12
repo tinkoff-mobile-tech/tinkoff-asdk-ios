@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "GetSBPBanksPayload")
-public typealias SBPBankResponse = GetSBPBanksPayload
-
 public struct GetSBPBanksPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case banks = "dictionary"
@@ -40,5 +37,9 @@ public struct GetSBPBanksPayload: Decodable {
             resultBanks.append(bank)
         }
         banks = resultBanks
+    }
+
+    public init(banks: [SBPBank]) {
+        self.banks = banks
     }
 }

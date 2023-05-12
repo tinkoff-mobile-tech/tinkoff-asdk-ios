@@ -11,6 +11,17 @@ import Foundation
 public struct TerminalInfo {
     /// Методы оплаты, доступные для данного терминала
     public let payMethods: [TerminalPayMethod]
+    /// Возможность сохранения карт
+    public let addCardScheme: Bool
+
+    /// Информация о доступных методах оплаты и настройках терминала
+    /// - Parameters:
+    ///   - payMethods: Методы оплаты, доступные для данного терминала
+    ///   - addCardScheme: Возможность сохранения карт
+    public init(payMethods: [TerminalPayMethod], addCardScheme: Bool) {
+        self.payMethods = payMethods
+        self.addCardScheme = addCardScheme
+    }
 }
 
 // MARK: - TerminalInfo + Decodable
@@ -18,6 +29,7 @@ public struct TerminalInfo {
 extension TerminalInfo: Decodable {
     private enum CodingKeys: String, CodingKey {
         case payMethods = "Paymethods"
+        case addCardScheme = "AddCardScheme"
     }
 
     public init(from decoder: Decoder) throws {
@@ -28,5 +40,7 @@ extension TerminalInfo: Decodable {
             .decodeIfPresent([SafeDecodable<TerminalPayMethod>].self, forKey: .payMethods)
             .or([])
             .compactMap(\.decodedValue)
+
+        addCardScheme = try container.decodeIfPresent(Bool.self, forKey: .addCardScheme) ?? false
     }
 }

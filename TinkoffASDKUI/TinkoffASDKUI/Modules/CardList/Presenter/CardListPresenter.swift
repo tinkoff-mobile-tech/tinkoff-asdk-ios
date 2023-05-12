@@ -20,71 +20,92 @@
 import TinkoffASDKCore
 import UIKit
 
-protocol ICardListViewOutput: AnyObject {
-    func viewDidLoad()
-    func view(didSelect card: CardList.Card)
-    func view(didTapDeleteOn card: CardList.Card)
-    func viewDidTapPrimaryButton()
+private extension Int {
+    static let noSuchCustomerErrorCode = 7
 }
 
-protocol ICardListModule: AnyObject {
-    var onSelectCard: ((PaymentCard) -> Void)? { get set }
-    var onAddNewCardTap: (() -> Void)? { get set }
+final class CardListPresenter {
+    // MARK: Internal Types
 
-    func addingNewCard(completedWith result: Result<PaymentCard?, Error>)
-}
-
-final class CardListPresenter: ICardListModule {
-    // MARK: ICardListModule Event Handlers
-
-    var onSelectCard: ((PaymentCard) -> Void)?
-    var onAddNewCardTap: (() -> Void)?
+    private enum ScreenState {
+        case initial
+        case showingCards
+        case editingCards
+        case showingStub
+    }
 
     // MARK: Dependencies
 
     weak var view: ICardListViewInput?
+    private weak var output: ICardListPresenterOutput?
     private let imageResolver: IPaymentSystemImageResolver
-    private let provider: IPaymentCardsProvider
+    private let bankResolver: IBankResolver
+    private let paymentSystemResolver: IPaymentSystemResolver
+    private var screenConfiguration: CardListScreenConfiguration
+    private let cardsController: ICardsController
+    private let router: ICardListRouter
 
     // MARK: State
 
-    private var activeCardsCache: [PaymentCard] = []
+    private var sections: [CardListSection] { getSections() }
+    private var isLoading = false
+    private var hasVisualContent: Bool { !cards.isEmpty }
+    private var screenState = ScreenState.initial
+    private var deactivateCardResult: Result<RemoveCardPayload, Error>?
+    private var cards: [PaymentCard] {
+        didSet {
+            guard cards != oldValue else { return }
+            output?.cardList(didUpdate: cards)
+        }
+    }
 
     // MARK: Init
 
     init(
+        screenConfiguration: CardListScreenConfiguration,
+        cardsController: ICardsController,
+        router: ICardListRouter,
         imageResolver: IPaymentSystemImageResolver,
-        provider: IPaymentCardsProvider
+        bankResolver: IBankResolver,
+        paymentSystemResolver: IPaymentSystemResolver,
+        cards: [PaymentCard] = [],
+        output: ICardListPresenterOutput? = nil
     ) {
+        self.screenConfiguration = screenConfiguration
         self.imageResolver = imageResolver
-        self.provider = provider
-    }
-
-    // MARK: ICardListModule Methods
-
-    func addingNewCard(completedWith result: Result<PaymentCard?, Error>) {
-        switch result {
-        case let .success(card):
-            // card == nil - добавление карты отменено пользователем
-            if let card = card {
-                activeCardsCache.append(card)
-                view?.reload(cards: transform(activeCardsCache))
-                view?.show(alert: .cardAdded(card: card))
-            }
-        case let .failure(error):
-            view?.show(alert: .cardAddingFailed(with: error))
-        }
+        self.bankResolver = bankResolver
+        self.paymentSystemResolver = paymentSystemResolver
+        self.cardsController = cardsController
+        self.router = router
+        self.cards = cards
+        self.output = output
     }
 
     // MARK: Helpers
 
     private func transform(_ paymentCards: [PaymentCard]) -> [CardList.Card] {
         paymentCards.map { card in
-            CardList.Card(
+            let bank = bankResolver.resolve(cardNumber: card.pan).getBank()
+            let cardModel = DynamicIconCardView.Model(
+                data: DynamicIconCardView.Data(
+                    bank: bank?.icon,
+                    paymentSystem: paymentSystemResolver
+                        .resolve(by: card.pan).getPaymentSystem()?.icon
+                ), style: DynamicIconCardView.Style(enableAnimations: false)
+            )
+
+            let bankText = bank?.naming ?? ""
+            var cardNumberText = String.format(pan: card.pan)
+            cardNumberText = bankText.isEmpty ? cardNumberText : (" " + cardNumberText)
+
+            return CardList.Card(
                 id: card.cardId,
                 pan: .format(pan: card.pan),
-                validThru: .format(validThru: card.expDate),
-                icon: imageResolver.resolve(by: card.pan)
+                cardModel: cardModel,
+                bankNameText: bankText,
+                cardNumberText: cardNumberText,
+                isInEditingMode: screenState == .editingCards,
+                hasCheckmarkInNormalMode: screenConfiguration.selectedCardId == card.cardId
             )
         }
     }
@@ -94,50 +115,216 @@ final class CardListPresenter: ICardListModule {
 
 extension CardListPresenter: ICardListViewOutput {
     func viewDidLoad() {
-        view?.showLoader()
-        provider.fetchActiveCards { [self] result in
-            switch result {
-            case let .success(paymentCards):
-                activeCardsCache = paymentCards
-                view?.reload(cards: transform(paymentCards))
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
-            }
+        view?.showShimmer()
+        fetchCardsIfNeeded()
+    }
 
-            view?.hideLoader()
+    func viewDidTapCard(cardIndex: Int) {
+        guard screenConfiguration.useCase == .cardPaymentList else { return }
+
+        let selectedCard = cards[cardIndex]
+        output?.cardList(willCloseAfterSelecting: selectedCard)
+        view?.closeScreen()
+    }
+
+    func viewDidTapAddCardCell() {
+        switch screenConfiguration.useCase {
+        case .cardList:
+            router.openAddNewCard(customerKey: cardsController.customerKey, output: self)
+        case .cardPaymentList:
+            router.openCardPayment()
         }
     }
 
-    func view(didSelect card: CardList.Card) {
-        guard let paymentCard = activeCardsCache.first(where: { $0.cardId == card.id }) else {
-            return
-        }
-        onSelectCard?(paymentCard)
+    func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
+        handleFetchedActiveCard(result: fetchCardsResult)
+    }
+
+    func viewDidShowAddedCardSnackbar() {
+        reloadCollection()
     }
 
     func view(didTapDeleteOn card: CardList.Card) {
-        view?.showLoader()
+        isLoading = true
+        view?.disableViewUserInteraction()
+        view?.showRemovingCardSnackBar(
+            text: Loc.Acquiring.CardList.deleteSnackBar + " " + card.pan
+        )
 
-        provider.deactivateCard(cardId: card.id) { [self] result in
-            switch result {
-            case .success:
-                activeCardsCache.removeAll { $0.cardId == card.id }
-                view?.remove(card: card)
-            case .failure:
-                // swiftlint:disable wrong_todo_syntax
-                // TODO: Add failure handling
-                // swiftlint:enable wrong_todo_syntax
-                break
-            }
-            view?.hideLoader()
+        cardsController.removeCard(cardId: card.id) { [weak self] result in
+            guard let self = self else { return }
+            self.isLoading = false
+            self.deactivateCardResult = result
+            self.view?.hideLoadingSnackbar()
         }
     }
 
-    func viewDidTapPrimaryButton() {
-        onAddNewCardTap?()
+    func viewDidTapEditButton() {
+        guard screenState == .showingCards, !isLoading else { return }
+        screenState = .editingCards
+        view?.showDoneEditingButton()
+        reloadCollection()
+    }
+
+    func viewDidTapDoneEditingButton() {
+        guard !isLoading else { return }
+        screenState = .showingCards
+        view?.showEditButton()
+        reloadCollection()
+    }
+
+    func viewDidHideRemovingCardSnackBar() {
+        if let result = deactivateCardResult {
+            deactivateCardResult = nil
+
+            switch result {
+            case let .success(payload):
+                cards.removeAll { $0.cardId == payload.cardId }
+                if let newSelectedCardId = cards.first?.cardId {
+                    screenConfiguration.selectedCardId = newSelectedCardId
+                }
+                handleFetchedActiveCard(result: .success(cards))
+            case .failure:
+                if hasVisualContent {
+                    showRemoveCardErrorAlert()
+                }
+                view?.enableViewUserInteraction()
+            }
+        }
+    }
+}
+
+// MARK: - IAddNewCardPresenterOutput
+
+extension CardListPresenter: IAddNewCardPresenterOutput {
+    func addNewCardDidReceive(result: AddCardResult) {
+        switch result {
+        case .cancelled, .failed:
+            break
+        case let .succeded(card):
+            screenState = .showingCards
+            cards.append(card)
+            view?.showAddedCardSnackbar(cardMaskedPan: String.format(pan: card.pan))
+        }
+    }
+}
+
+extension CardListPresenter {
+
+    // MARK: - Private
+
+    private func fetchCardsIfNeeded() {
+        guard cards.isEmpty else {
+            view?.hideShimmer(fetchCardsResult: .success(cards))
+            return
+        }
+
+        isLoading = true
+
+        cardsController.getActiveCards { [weak self] result in
+            self?.isLoading = false
+
+            self?.view?.hideShimmer(fetchCardsResult: result)
+        }
+    }
+
+    private func handleFetchedActiveCard(result: Result<[PaymentCard], Error>) {
+        isLoading = false
+
+        switch result {
+        case let .success(paymentCards):
+            cards = paymentCards
+            if paymentCards.isEmpty {
+                viewDidTapDoneEditingButton()
+                reloadCollection()
+                showNoCardsStub()
+            } else {
+                if screenState != .editingCards {
+                    screenState = .showingCards
+                }
+                reloadCollection()
+            }
+
+        case let .failure(error):
+            switch (error as NSError).code {
+            case NSURLErrorNotConnectedToInternet, NSURLErrorDataNotAllowed:
+                showNoNetworkStub()
+            case .noSuchCustomerErrorCode:
+                showNoCardsStub()
+            default:
+                showServerErrorStub()
+            }
+        }
+
+        view?.enableViewUserInteraction()
+    }
+
+    private func showServerErrorStub() {
+        screenState = .showingStub
+        view?.hideRightBarButton()
+        view?.showStub(mode: .serverError { [weak self] in
+            self?.view?.closeScreen()
+        })
+    }
+
+    private func showNoNetworkStub() {
+        screenState = .showingStub
+        view?.hideRightBarButton()
+        view?.showStub(mode: .noNetwork { [weak self] in
+            self?.view?.hideStub()
+            self?.viewDidLoad()
+        })
+    }
+
+    private func showNoCardsStub() {
+        screenState = .showingStub
+        view?.hideRightBarButton()
+
+        let buttonAction: VoidBlock = { [weak self] in self?.viewDidTapAddCardCell() }
+
+        let stubMode: StubMode = screenConfiguration.useCase == .cardList
+            ? .noCardsInCardList(buttonAction: buttonAction)
+            : .noCardsInCardPaymentList(buttonAction: buttonAction)
+
+        view?.showStub(mode: stubMode)
+    }
+
+    private func reloadCollection() {
+        showBarButton()
+        view?.hideStub()
+        view?.reload(sections: sections)
+    }
+
+    private func showBarButton() {
+        screenState == .editingCards
+            ? view?.showDoneEditingButton()
+            : view?.showEditButton()
+    }
+
+    private func showRemoveCardErrorAlert() {
+        view?.showNativeAlert(
+            data: OkAlertData(
+                title: Loc.CommonAlert.DeleteCard.title,
+                buttonTitle: Loc.CommonAlert.button
+            )
+        )
+    }
+
+    private func getSections() -> [CardListSection] {
+        var result: [CardListSection] = [
+            .cards(data: transform(cards)),
+        ]
+
+        if screenState != .editingCards {
+            result.append(.addCard(data: prepareAddCardConfigs()))
+        }
+        return result
+    }
+
+    private func prepareAddCardConfigs() -> [(ImageAsset, String)] {
+        return [
+            (icon: Asset.Icons.cardPlus, title: screenConfiguration.newCardTitle),
+        ]
     }
 }
 
@@ -145,7 +332,7 @@ extension CardListPresenter: ICardListViewOutput {
 
 private extension String {
     static func format(pan: String) -> String {
-        "*" + pan.suffix(4)
+        "• " + pan.suffix(4)
     }
 
     static func format(validThru: String?) -> String {

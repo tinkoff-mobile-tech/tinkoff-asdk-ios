@@ -57,20 +57,16 @@ final class CardPaymentProcessTests: XCTestCase {
     }
 
     func test_start_payment_success_paymentSource_Card_finishAuthorize_success_responseStatus_done() throws {
-
-        let paymentStatusResponse = PaymentStatusResponse(
-            success: true,
-            errorCode: 0,
-            errorMessage: nil,
-            orderId: "324234",
-            paymentId: 1111,
+        let paymentStatePayload = GetPaymentStatePayload(
+            paymentId: "1111",
             amount: 234,
+            orderId: "324234",
             status: .authorized
         )
 
         // when
 
-        let dependencies = try start_payment_success_paymentSource_Card_finishAuthorize_success(finishAuthorizeResponse: .done(paymentStatusResponse))
+        let dependencies = try start_payment_success_paymentSource_Card_finishAuthorize_success(finishAuthorizeResponse: .done(paymentStatePayload))
 
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
 
@@ -313,10 +309,9 @@ extension CardPaymentProcessTests {
         check3DSVersionResult: Result<Check3DSVersionPayload, Error>
     ) throws -> Dependencies {
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
-        let paymentFlow = PaymentFlow.finish(
-            paymentId: "32423",
-            customerOptions: CustomerOptions(customerKey: "somekey", email: "someemail")
-        )
+        let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
+        let options = FinishPaymentOptions(paymentId: "32423", amount: 100, orderId: "id", customerOptions: customerOptions)
+        let paymentFlow = PaymentFlow.finish(paymentOptions: options)
 
         let dependencies = Self.makeDependecies(
             paymentSource: paymentSource,
@@ -346,11 +341,11 @@ extension CardPaymentProcessTests {
 
     struct Dependencies {
         let sut: CardPaymentProcess
-        let sutAsPaymentProcess: PaymentProcess
-        let paymentDelegateMock: MockPaymentProcessDelegate
+        let sutAsPaymentProcess: IPaymentProcess
+        let paymentDelegateMock: PaymentProcessDelegateMock
         let ipProviderMock: MockIPAddressProvider
-        let paymentsServiceMock: MockAcquiringPaymentsService
-        let threeDsServiceMock: MockAcquiringThreeDsService
+        let paymentsServiceMock: AcquiringPaymentsServiceMock
+        let threeDsServiceMock: AcquiringThreeDsServiceMock
         let paymentFlow: PaymentFlow
         let paymentSource: PaymentSourceData
     }
@@ -359,11 +354,11 @@ extension CardPaymentProcessTests {
         paymentSource: PaymentSourceData,
         paymentFlow: PaymentFlow
     ) -> Dependencies {
-        let paymentDelegateMock = MockPaymentProcessDelegate()
+        let paymentDelegateMock = PaymentProcessDelegateMock()
         let ipProviderMock = MockIPAddressProvider()
 
-        let paymentsServiceMock = MockAcquiringPaymentsService()
-        let threeDsServiceMock = MockAcquiringThreeDsService()
+        let paymentsServiceMock = AcquiringPaymentsServiceMock()
+        let threeDsServiceMock = AcquiringThreeDsServiceMock()
 
         let sut = CardPaymentProcess(
             paymentsService: paymentsServiceMock,
@@ -391,7 +386,7 @@ extension CardPaymentProcessTests {
         let orderAmount: Int64 = 324
         let paymentId: Int64 = 111
         let orderId = "234244"
-        let paymentStatus = PaymentStatus.authorized
+        let paymentStatus = AcquiringStatus.authorized
 
         let finishAuthorizePayload = FinishAuthorizePayload(
             status: .authorized,

@@ -8,7 +8,7 @@
 import UIKit
 
 /// Индикатор активности
-final class ActivityIndicatorView: UIView, Stylable, ShadowAvailable {
+final class ActivityIndicatorView: UIView, Stylable {
 
     /// Флаг активности анимации
     private(set) var isAnimating = false
@@ -186,6 +186,18 @@ final class ActivityIndicatorView: UIView, Stylable, ShadowAvailable {
     // MARK: - Style
 
     struct Style {
+        static var standart: ActivityIndicatorView.Style {
+            ActivityIndicatorView.Style()
+        }
+
+        static var xlYellow: ActivityIndicatorView.Style {
+            ActivityIndicatorView.Style(
+                lineColor: ASDKColors.Foreground.brandTinkoffAccent,
+                diameter: 72,
+                width: 4
+            )
+        }
+
         var backgroundColor: UIColor
         var lineColor: UIColor
         var cornerRadius: CGFloat?
@@ -216,24 +228,6 @@ final class ActivityIndicatorView: UIView, Stylable, ShadowAvailable {
         }
     }
 }
-
-// MARK: - Default Styles
-
-extension ActivityIndicatorView.Style {
-    static var standart: ActivityIndicatorView.Style {
-        ActivityIndicatorView.Style()
-    }
-
-    static var xlYellow: ActivityIndicatorView.Style {
-        ActivityIndicatorView.Style(
-            lineColor: ASDKColors.tinkoffYellow,
-            diameter: 72,
-            width: 4
-        )
-    }
-}
-
-// MARK: - Constants
 
 private enum Constants {
     /// Константы для анимации

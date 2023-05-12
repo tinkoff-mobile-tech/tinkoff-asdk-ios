@@ -44,6 +44,7 @@ private extension IYandexPaySDKInitializable {
         let merchant = YandexPaySDKMerchant(
             id: method.showcaseId,
             name: method.merchantName,
+            origin: method.merchantOrigin,
             url: method.merchantOrigin
         )
 

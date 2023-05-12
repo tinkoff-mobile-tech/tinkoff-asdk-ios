@@ -3,26 +3,30 @@ PODS:
   - SwiftFormat/CLI (0.49.18)
   - SwiftGen (6.6.2)
   - SwiftLint (0.47.0)
-  - TinkoffASDKCore (2.17.0)
-  - TinkoffASDKCore/Tests (2.17.0)
-  - TinkoffASDKUI (2.17.0):
+  - TinkoffASDKCore (2.19.0)
+  - TinkoffASDKCore/Tests (2.19.0)
+  - TinkoffASDKUI (2.19.0):
     - TinkoffASDKCore
-  - TinkoffASDKUI/Tests (2.17.0):
+  - TinkoffASDKUI/Tests (2.19.0):
     - TinkoffASDKCore
-  - TinkoffASDKYandexPay (2.17.0):
+  - TinkoffASDKYandexPay (2.19.0):
     - TinkoffASDKCore
     - TinkoffASDKUI
-    - YandexPaySDK/Dynamic (~> 1.2)
-  - YandexLoginSDK (2.0.2)
-  - YandexMobileMetrica/Dynamic (4.4.0):
-    - YandexMobileMetrica/Dynamic/Core (= 4.4.0)
-    - YandexMobileMetrica/Dynamic/Crashes (= 4.4.0)
-  - YandexMobileMetrica/Dynamic/Core (4.4.0)
-  - YandexMobileMetrica/Dynamic/Crashes (4.4.0):
+    - YandexPaySDK/Dynamic (= 1.3.6)
+  - TinkoffASDKYandexPay/Tests (2.19.0):
+    - TinkoffASDKCore
+    - TinkoffASDKUI
+    - YandexPaySDK/Dynamic (= 1.3.6)
+  - YandexLoginSDK (2.1.1)
+  - YandexMobileMetrica/Dynamic (4.5.0):
+    - YandexMobileMetrica/Dynamic/Core (= 4.5.0)
+    - YandexMobileMetrica/Dynamic/Crashes (= 4.5.0)
+  - YandexMobileMetrica/Dynamic/Core (4.5.0)
+  - YandexMobileMetrica/Dynamic/Crashes (4.5.0):
     - YandexMobileMetrica/Dynamic/Core
-  - YandexPaySDK/Dynamic (1.2.0):
+  - YandexPaySDK/Dynamic (1.3.6):
     - PromiseKit/CorePromise (~> 6.0)
-    - YandexLoginSDK (~> 2.0.2)
+    - YandexLoginSDK (~> 2.1.1)
     - YandexMobileMetrica/Dynamic
 
 DEPENDENCIES:
@@ -34,6 +38,7 @@ DEPENDENCIES:
   - TinkoffASDKUI (from `../`)
   - TinkoffASDKUI/Tests (from `../`)
   - TinkoffASDKYandexPay (from `../`)
+  - TinkoffASDKYandexPay/Tests (from `../`)
 
 SPEC REPOS:
   trunk:
@@ -58,13 +63,13 @@ SPEC CHECKSUMS:
   SwiftFormat: 2402d29b26746f169cce5454d5af88314cbb2e35
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
-  TinkoffASDKCore: a6c5290f5b70494074401f416c2ff48a28d7a2fc
-  TinkoffASDKUI: 4b768a64257be3eea68fc0da855765057afee5ca
-  TinkoffASDKYandexPay: 06ea08cfafb5f70805cc8f1c769dbeaf7024befc
-  YandexLoginSDK: cd407482207b4b7da75c5f7d7fd2fdd6a604c325
-  YandexMobileMetrica: baf7cea47cb87fc9af963c4f747ce8dd7df3d7c0
-  YandexPaySDK: 77bfc6e67d889e26f1f3926c2a6cdfd5ccbb6a52
+  TinkoffASDKCore: 6ff82882c54572439a583b602d94f36ebf249aa9
+  TinkoffASDKUI: 915f58e0ba8de66410b6889494fe92a957517607
+  TinkoffASDKYandexPay: 7e127398f084c94bf3e3b8751b948e4316f460ab
+  YandexLoginSDK: ad9a07aca36a7748353af17c9cbbf2b83be9ba26
+  YandexMobileMetrica: 7dafc7d224077d4443ab3a587b82b24e9b6cc9c7
+  YandexPaySDK: 94cfd7f426b8fcdee6eda91e53d281da17489e28
 
-PODFILE CHECKSUM: 217bce3f9ba90d1b9b1fb5edcc9d48457072e21e
+PODFILE CHECKSUM: c0a55b57309ba8717ff000c4a23db4f511d8804a
 
 COCOAPODS: 1.11.3

@@ -27,7 +27,7 @@ final class YandexPayButtonContainerFactory: IYandexPayButtonContainerFactory {
 
     func createButtonContainer(
         with configuration: YandexPayButtonContainerConfiguration,
-        delegate: YandexPayButtonContainerDelegate
+        delegate: IYandexPayButtonContainerDelegate
     ) -> IYandexPayButtonContainer {
         YandexPayButtonContainer(
             configuration: configuration,

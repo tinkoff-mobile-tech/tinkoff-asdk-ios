@@ -8,22 +8,22 @@
 import Foundation
 import UIKit
 
-struct CommonSheetState {
+struct CommonSheetState: Equatable {
     enum Status {
         case processing
         case succeeded
         case failed
     }
 
-    let status: Status
-    let title: String
+    let status: Status?
+    let title: String?
     let description: String?
     let primaryButtonTitle: String?
     let secondaryButtonTitle: String?
 
     init(
-        status: Status,
-        title: String,
+        status: Status? = nil,
+        title: String? = nil,
         description: String? = nil,
         primaryButtonTitle: String? = nil,
         secondaryButtonTitle: String? = nil
@@ -33,5 +33,11 @@ struct CommonSheetState {
         self.description = description
         self.primaryButtonTitle = primaryButtonTitle
         self.secondaryButtonTitle = secondaryButtonTitle
+    }
+}
+
+extension CommonSheetState {
+    static var clear: CommonSheetState {
+        CommonSheetState()
     }
 }

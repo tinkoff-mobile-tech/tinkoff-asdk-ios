@@ -19,7 +19,6 @@
 
 import UIKit
 
-import PassKit
 import TinkoffASDKCore
 import TinkoffASDKUI
 
@@ -151,80 +150,39 @@ class RootViewController: UITableViewController {
 
     // MARK: - Navigation
 
-    private func addCardView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
-        sdk.presentAddCardView(on: self, customerKey: customerKey, configuration: cardListViewConfigration) { result in
-            var alertMessage: String
-            var alertIcon: AcquiringAlertIconType
-            switch result {
-            case let .success(card):
-                if card != nil {
-                    alertMessage = Loc.Alert.Title.cardSuccessAdded
-                    alertIcon = .success
-                } else {
-                    alertMessage = Loc.Alert.Message.addingCardCancel
-                    alertIcon = .error
-                }
-
-            case let .failure(error):
-                alertMessage = error.localizedDescription
-                alertIcon = .error
-            }
-
-            sdk.presentAlertView(on: self, title: alertMessage, icon: alertIcon)
-        }
-    }
-
-    private func addCardListView(_ sdk: AcquiringUISDK, _ customerKey: String, _ cardListViewConfigration: AcquiringViewConfiguration) {
-        sdk.presentCardList(on: self, customerKey: customerKey, configuration: cardListViewConfigration)
-    }
-
     @IBAction func openCardList(_ sender: UIBarButtonItem) {
-        let cardListViewConfigration = AcquiringViewConfiguration()
-        cardListViewConfigration.viewTitle = Loc.Title.paymentCardList
-        cardListViewConfigration.scaner = self
-
-        if AppSetting.shared.acquiring {
-            cardListViewConfigration.alertViewHelper = self
-        }
-
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
-            }
+//            sdk.addCardNeedSetCheckTypeHandler = {
+//                AppSetting.shared.addCardChekType
+//            }
 
             sdk.presentCardList(
                 on: self,
                 customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
-                configuration: cardListViewConfigration
+                cardScannerDelegate: self
             )
         }
     }
 
     @IBAction func openAddCard(_ sender: UIBarButtonItem) {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            sdk.addCardNeedSetCheckTypeHandler = {
-                AppSetting.shared.addCardChekType
+//            sdk.addCardNeedSetCheckTypeHandler = {
+//                AppSetting.shared.addCardChekType
+//            }
+
+            let customerKey = AppSetting.shared.activeSdkCredentials.customerKey
+
+            sdk.presentAddCard(on: self, customerKey: customerKey, cardScannerDelegate: nil) { [weak self] result in
+                self?.addingNewCardCompleted(result: result)
             }
         }
     }
 }
 
-extension RootViewController: AcquiringScanerProtocol {
-
-    func presentScanner(completion: @escaping (_ number: String?, _ yy: Int?, _ mm: Int?) -> Void) -> UIViewController? {
-        UIAlertController.cardScannerMock(confirmationHandler: completion)
-    }
-}
-
-extension RootViewController: AcquiringAlertViewProtocol {
-
-    func presentAlertView(_ title: String?, message: String?, dismissCompletion: (() -> Void)?) -> UIViewController? {
-        let alertView = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertView.addAction(UIAlertAction(title: "ок", style: .default, handler: { _ in
-            dismissCompletion?()
-        }))
-
-        return alertView
+extension RootViewController: ICardScannerDelegate {
+    func cardScanButtonDidPressed(on viewController: UIViewController, completion: @escaping CardScannerCompletion) {
+        let alert = UIAlertController.cardScannerMock(confirmationHandler: completion)
+        viewController.present(alert, animated: true)
     }
 }
 
@@ -234,10 +192,11 @@ private extension RootViewController {
 
     private func showSpbQrCollector() {
         if let sdk = try? SdkAssembly.assembleUISDK(credential: AppSetting.shared.activeSdkCredentials) {
-            let viewConfigration = AcquiringViewConfiguration()
-            viewConfigration.viewTitle = Loc.Title.qrcode
+            sdk.presentStaticSBPQR(on: self)
 
-            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
+//            let viewConfigration = AcquiringViewConfiguration()
+//            viewConfigration.viewTitle = Loc.Title.qrcode
+//            sdk.presentPaymentQRCollector(on: self, configuration: viewConfigration)
         }
     }
 
@@ -260,11 +219,45 @@ private extension RootViewController {
             fatalError("Could not instantiate BuyProductsViewController")
         }
 
-        viewController.scaner = self
         viewController.coreSDK = coreSDK
         viewController.uiSDK = uiSDK
         viewController.customerKey = credential.customerKey
         viewController.products = [product]
         navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+extension RootViewController {
+    private func addingNewCardCompleted(result: AddCardResult) {
+        switch result {
+        case .cancelled, .failed:
+            let alert = UIAlertController.okAlert(
+                title: nil,
+                message: String(describing: result),
+                buttonTitle: Loc.Button.ok
+            )
+
+            present(alert, animated: true)
+
+        case let .succeded(card):
+            let alert = UIAlertController.okAlert(
+                title: nil,
+                message: "\(card)",
+                buttonTitle: Loc.Button.ok
+            )
+            present(alert, animated: true)
+        }
+    }
+
+    private func showAlert(with result: PaymentResult) {
+        let alert = UIAlertController(
+            title: result.alertTitle,
+            message: result.alertMessage,
+            preferredStyle: .alert
+        )
+
+        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }

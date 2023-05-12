@@ -21,31 +21,34 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 struct SdkAssembly {
-    static func assembleUISDK(
-        credential: SdkCredentials,
-        style: Style = DefaultStyle()
-    ) throws -> AcquiringUISDK {
-        try AcquiringUISDK(configuration: createConfiguration(credential: credential), style: style)
+    static func assembleUISDK(credential: SdkCredentials) throws -> AcquiringUISDK {
+        let coreConfiguration = createCoreConfiguration(credential: credential)
+        let uiConfiguration = UISDKConfiguration(addCardCheckType: AppSetting.shared.addCardChekType)
+
+        return try AcquiringUISDK(
+            coreSDKConfiguration: coreConfiguration,
+            uiSDKConfiguration: uiConfiguration
+        )
     }
 
     static func assembleCoreSDK(credential: SdkCredentials) throws -> AcquiringSdk {
-        try AcquiringSdk(configuration: createConfiguration(credential: credential))
+        try AcquiringSdk(configuration: createCoreConfiguration(credential: credential))
     }
 
-    private static func createConfiguration(credential: SdkCredentials) -> AcquiringSdkConfiguration {
+    private static func createCoreConfiguration(credential: SdkCredentials) -> AcquiringSdkConfiguration {
         let sdkCredential = AcquiringSdkCredential(
             terminalKey: credential.terminalKey,
             publicKey: credential.publicKey
         )
 
         let tokenProvider = SampleTokenProvider(password: credential.terminalPassword)
-        let logger = AcquiringLoggerDefault()
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
+            server: AppSetting.shared.serverType,
+            logger: nil, // для включения логирования, заменить nil на Logger()
             tokenProvider: tokenProvider
         )
-        acquiringSDKConfiguration.logger = logger
 
         return acquiringSDKConfiguration
     }

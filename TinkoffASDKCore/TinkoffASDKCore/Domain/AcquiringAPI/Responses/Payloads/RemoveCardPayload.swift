@@ -34,4 +34,9 @@ public struct RemoveCardPayload: Decodable {
 
     public let cardId: String
     public let cardStatus: PaymentCardStatus
+
+    public init(cardId: String, cardStatus: PaymentCardStatus) {
+        self.cardId = cardId
+        self.cardStatus = cardStatus
+    }
 }

@@ -1,0 +1,98 @@
+name: Check CHANGELOG.md has been written.
+
+on:
+  workflow_call:
+    secrets:
+      tinkoff_bot_pat:
+        required: true
+
+jobs:
+  check-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if github-token is set
+        run: |
+          if [ -z "${{ secrets.tinkoff_bot_pat }}" ]
+          then
+            echo "Error: TINKOFF_BOT_PAT is not set." >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v3
+
+      - name: Get changed files
+        uses: actions/github-script@v4
+        id: files
+        with:
+          github-token: ${{ secrets.tinkoff_bot_pat }}
+          script: |
+            const { data: pullRequest } = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            const { data: files } = await github.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            const hasChangelog = files.some(file => file.filename === 'CHANGELOG.md');
+            if (!hasChangelog) {
+              console.log('CHANGELOG.md not found in pull request files');
+              console.log('Please update the CHANGELOG.md file.');
+              const comment = `
+              🤠 Please update the **CHANGELOG.md** file.
+              > Keep on going sir, next time do not break the rules 🫡
+              `;
+              core.setOutput('comment', comment);
+            }
+
+      - name: Add comment
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.tinkoff_bot_pat }}
+          script: |
+            function needsToLeftAChangelogComment() {
+              const commentBody = `${{ steps.files.outputs.comment }}`;
+              return commentBody !== undefined && commentBody.length > 0;
+            }
+
+            async function leftChangelogComment(comments, commentBody) {
+              const existingComment = comments.find((comment) => comment.body.includes(commentBody));
+              if (!existingComment) {
+                await github.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody,
+                });
+              }
+            }
+
+            async function removeChangelogCommentIfExists(comments) {
+              const existingComment = comments.find((comment) => comment.body.includes('CHANGELOG.md'));
+              if (existingComment) {
+                await github.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                });
+              }
+            }
+
+            async function runJob() {
+              const { data: comments } = await github.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+
+              if (needsToLeftAChangelogComment()) {
+                const commentBody = `${{ steps.files.outputs.comment }}`;
+                leftChangelogComment(comments, commentBody);
+              } else {
+                removeChangelogCommentIfExists(comments);
+              }
+            }
+
+            runJob();

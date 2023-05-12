@@ -158,3 +158,6 @@ ASDKSample/ASDKSample.xcworkspace/**
 
 # Debug helper files for local development
 TinkoffASDKUI/TinkoffASDKUI/Debug/**
+
+# Sourcery generated files
+Sourcery/Generated

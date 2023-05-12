@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "RemoveCardData")
-public typealias InitDeactivateCardData = RemoveCardData
-
 public struct RemoveCardData: Encodable {
     private enum CodingKeys: CodingKey {
         case cardId

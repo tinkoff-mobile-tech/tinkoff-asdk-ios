@@ -44,7 +44,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_when_paymentFlow_full_InitPayment_success_Charge_success() {
 
-        let paymentStatus = PaymentStatus.authorized
+        let paymentStatus = AcquiringStatus.authorized
 
         let getPaymentStatePayload = GetPaymentStatePayload(
             paymentId: "2222",
@@ -98,7 +98,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
     func test_Start_when_paymentFlow_full_InitPayment_success_Charge_failure() {
 
-        let paymentStatus = PaymentStatus.authorized
+        let paymentStatus = AcquiringStatus.authorized
 
         let initPayload = InitPayload(
             amount: 324,
@@ -139,9 +139,9 @@ final class ChargePaymentProcessTests: XCTestCase {
     // MARK: - func start() when paymentFlow == .finish
 
     func test_Start_paymentFlow_finish_Charge_success() {
-        let dependencies = Self.makeDependencies(
-            paymentFlow: .finish(paymentId: "23423", customerOptions: CustomerOptions(customerKey: "someKey", email: "some"))
-        )
+        let customerOptions = CustomerOptions(customerKey: "somekey", email: "some")
+        let options = FinishPaymentOptions(paymentId: "23423", amount: 100, orderId: "id", customerOptions: customerOptions)
+        let dependencies = Self.makeDependencies(paymentFlow: .finish(paymentOptions: options))
 
         let paymentState = GetPaymentStatePayload(
             paymentId: "324234",
@@ -172,9 +172,9 @@ final class ChargePaymentProcessTests: XCTestCase {
     }
 
     func test_Start_paymentFlow_finish_Charge_failure() {
-        let dependencies = Self.makeDependencies(
-            paymentFlow: .finish(paymentId: "23423", customerOptions: CustomerOptions(customerKey: "someKey", email: "some"))
-        )
+        let customerOptions = CustomerOptions(customerKey: "somekey", email: "some")
+        let options = FinishPaymentOptions(paymentId: "23423", amount: 100, orderId: "id", customerOptions: customerOptions)
+        let dependencies = Self.makeDependencies(paymentFlow: .finish(paymentOptions: options))
 
         dependencies.paymentsServiceMock.chargeStubReturn = { passedArgs in
             passedArgs.completion(.failure(TestsError.basic))
@@ -230,15 +230,15 @@ extension ChargePaymentProcessTests {
 
     struct Dependencies {
         let sut: ChargePaymentProcess
-        let sutAsProtocol: PaymentProcess
-        let paymentDelegateMock: MockPaymentProcessDelegate
-        let paymentsServiceMock: MockAcquiringPaymentsService
+        let sutAsProtocol: IPaymentProcess
+        let paymentDelegateMock: PaymentProcessDelegateMock
+        let paymentsServiceMock: AcquiringPaymentsServiceMock
         let paymentSource: PaymentSourceData
     }
 
     static func makeDependencies(paymentFlow: PaymentFlow) -> Dependencies {
-        let paymentDelegateMock = MockPaymentProcessDelegate()
-        let paymentsServiceMock = MockAcquiringPaymentsService()
+        let paymentDelegateMock = PaymentProcessDelegateMock()
+        let paymentsServiceMock = AcquiringPaymentsServiceMock()
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_parentPayment()
 
         let sut = ChargePaymentProcess(

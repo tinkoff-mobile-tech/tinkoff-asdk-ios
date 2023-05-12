@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "GetQRDataType")
-public typealias PaymentInvoiceSBPSourceType = GetQRDataType
-
 /// Тип возвращаемых данных для генерации QR-кода
 public enum GetQRDataType: String, Encodable {
     /// `IMAGE` – В ответе возвращается SVG изображение QR-кода
@@ -37,9 +34,6 @@ public enum GetQRDataType: String, Encodable {
         }
     }
 }
-
-@available(*, deprecated, renamed: "GetQRData")
-public typealias PaymentInvoiceQRCodeData = GetQRData
 
 public struct GetQRData: Encodable {
     private enum CodingKeys: CodingKey {
@@ -61,12 +55,6 @@ public struct GetQRData: Encodable {
 
     public init(paymentId: String, paymentInvoiceType: GetQRDataType = .url) {
         self.paymentId = paymentId
-        dataType = paymentInvoiceType
-    }
-
-    @available(*, deprecated, message: "Use `init(paymentId, paymentInvoiceType)` with string `paymentId` instead")
-    public init(paymentId: Int64, paymentInvoiceType: PaymentInvoiceSBPSourceType = .url) {
-        self.paymentId = String(paymentId)
         dataType = paymentInvoiceType
     }
 

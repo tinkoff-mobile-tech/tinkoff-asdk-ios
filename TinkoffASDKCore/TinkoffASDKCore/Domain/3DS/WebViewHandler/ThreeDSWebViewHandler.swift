@@ -20,7 +20,8 @@
 import Foundation
 
 public enum ThreeDSWebViewHandlingResult<Payload: Decodable> {
-    case finished(payload: Result<Payload, Error>)
+    case succeded(Payload)
+    case failed(Error)
     case cancelled
 }
 
@@ -70,10 +71,11 @@ public final class ThreeDSWebViewHandler: IThreeDSWebViewHandler {
             return nil
         }
 
-        let payloadResult = Result {
-            try decoder.decode(Payload.self, from: data, with: .standard)
+        do {
+            let payload = try decoder.decode(Payload.self, from: data, with: .standard)
+            return .succeded(payload)
+        } catch {
+            return .failed(error)
         }
-
-        return ThreeDSWebViewHandlingResult.finished(payload: payloadResult)
     }
 }

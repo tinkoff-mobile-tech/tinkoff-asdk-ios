@@ -25,9 +25,38 @@ public enum AcquiringSdkLanguage: String {
     case en
 }
 
-public enum AcquiringSdkEnvironment: String {
-    case test = "rest-api-test.tinkoff.ru"
-    case prod = "securepay.tinkoff.ru"
+public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible, RawRepresentable {
+    case test
+    case preProd
+    case prod
+    case custom(String)
+
+    public var rawValue: String {
+        switch self {
+        case .test: return "rest-api-test.tinkoff.ru"
+        case .preProd: return "qa-mapi.tcsbank.ru"
+        case .prod: return "securepay.tinkoff.ru"
+        case let .custom(address): return address
+        }
+    }
+
+    public init(rawValue: String) {
+        switch rawValue {
+        case "rest-api-test.tinkoff.ru": self = .test
+        case "qa-mapi.tcsbank.ru": self = .preProd
+        case "securepay.tinkoff.ru": self = .prod
+        default: self = .custom(rawValue)
+        }
+    }
+
+    public var description: String {
+        switch self {
+        case .test: return "test"
+        case .preProd: return "preProd"
+        case .prod: return "prod"
+        case .custom: return "custom"
+        }
+    }
 }
 
 struct ConfigSdkEnvironment: RawRepresentable {
@@ -65,11 +94,6 @@ public class AcquiringSdkConfiguration: NSObject {
     public let credential: AcquiringSdkCredential
     public let serverEnvironment: AcquiringSdkEnvironment
     public let requestsTimeoutInterval: TimeInterval
-    @available(*, deprecated, message: "Property does not affect anything")
-    public var fpsEnabled = false
-    /// Показывать ошибки после выполнения запроса
-    @available(*, deprecated, message: "Property does not affect anything")
-    public var showErrorAlert = true
     let configEnvironment: ConfigSdkEnvironment
 
     /// Язык платёжной формы. На каком языке сервер будет присылать тексты ошибок клиенту
@@ -80,11 +104,10 @@ public class AcquiringSdkConfiguration: NSObject {
     /// По умолчанию (если параметр не передан) - форма оплаты считается на русском языке
     public private(set) var language: AcquiringSdkLanguage?
 
-    /// Логгер сетевых запросов. Реализация - `ASDKApiLoggerDelegate`
-    public var logger: LoggerDelegate?
-
-    /// Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
-    public var tinkoffPayStatusCacheLifeTime: TimeInterval
+    /// Объект логирующий сетевые запросы. Для включения логов, передать свой объект реализовавший протокол ILogger
+    /// или уже существующий дефолтный объект типа Logger.
+    /// По дефолту nil, логи отключены
+    let logger: ILogger?
 
     /// Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     let tokenProvider: ITokenProvider?
@@ -98,24 +121,29 @@ public class AcquiringSdkConfiguration: NSObject {
     ///   - credential: учетные данные `AcquiringSdkConfiguration` Выдается после подключения к **Тинькофф Эквайринг API**
     ///   - server: `AcquiringSdkEnvironment` по умолчанию используется `test` - тестовый сервер
     ///   - requestsTimeoutInterval: `TimeInterval` таймаут сетевых запросов, значение по-умолчанию - 40 секунд
-    ///   - tinkoffPayStatusCacheLifeTime: `TimeInterval` Время в секундах, в течение которого хранится в памяти состояние доступности TinkoffPay
+    ///   - logger: `ILogger` Объект логирующий сетевые запросы
     ///   - tokenProvider: Объект, предоставляющий токен для подписи запроса в **Тинькофф Эквайринг API** на основе параметров,  отправляемых с body
     ///   - urlSessionAuthChallengeService: Запрашивает данные и способ аутентификация для `URLSession`.
     ///   При nil используется реализация на усмотрение `AcquiringSDK`
     /// - Returns: AcquiringSdkConfiguration
     public init(
         credential: AcquiringSdkCredential,
-        server: AcquiringSdkEnvironment = .test,
+        server: AcquiringSdkEnvironment,
         requestsTimeoutInterval: TimeInterval = 40,
-        tinkoffPayStatusCacheLifeTime: TimeInterval = 300,
+        logger: ILogger? = nil,
         tokenProvider: ITokenProvider? = nil,
         urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
-        self.tinkoffPayStatusCacheLifeTime = tinkoffPayStatusCacheLifeTime
+        self.logger = logger
         serverEnvironment = server
-        configEnvironment = server == .test ? .test : .prod
+        configEnvironment = {
+            switch server {
+            case .prod, .custom: return .prod
+            case .test, .preProd: return .test
+            }
+        }()
         self.tokenProvider = tokenProvider
         self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
     }

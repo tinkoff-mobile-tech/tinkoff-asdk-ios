@@ -8,7 +8,7 @@
 import UIKit
 
 /// Показывает бабл с информацией внутри. Умеет презентоваться снизу вверх.
-final class SnackbarView: UIView, ShadowAvailable {
+final class SnackbarView: UIView {
 
     /// Стандартный размер снекбара
     static var defaultSize: CGSize { Constants.defaultSize }
@@ -16,6 +16,8 @@ final class SnackbarView: UIView, ShadowAvailable {
     override var intrinsicContentSize: CGSize { frame.size }
 
     private let contentView = UIView()
+
+    private var shadowStyle: ShadowStyle?
 
     // MARK: - Inits
 
@@ -27,6 +29,10 @@ final class SnackbarView: UIView, ShadowAvailable {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        userInterfaceThemeDidChange(style: UIScreen.main.traitCollection.userInterfaceStyle)
     }
 
     // MARK: - Public
@@ -49,7 +55,7 @@ extension SnackbarView {
     func configure(with config: Configuration) {
         prepareForReuse()
         configureSnack(style: config.style)
-        configureSnack(data: config.data)
+        configureSnack(data: config.content)
         config.onDidConfigure?()
     }
 
@@ -58,13 +64,27 @@ extension SnackbarView {
         layer.cornerRadius = style.cornerRadius
         contentView.layer.cornerRadius = style.cornerRadius
         contentView.backgroundColor = style.backgroundColor
+        shadowStyle = style.shadow
+        applyShadow(for: UIScreen.main.traitCollection.userInterfaceStyle)
+    }
 
-        if let shadow = style.shadow {
-            dropShadow(with: shadow)
+    private func applyShadow(for style: UIUserInterfaceStyle?) {
+        guard let style = style else { return }
+        switch style {
+        case .dark:
+            removeShadow()
+        default:
+            if let shadowStyle = shadowStyle {
+                dropShadow(with: shadowStyle)
+            }
         }
     }
 
-    private func configureSnack(data: Data) {
+    private func userInterfaceThemeDidChange(style: UIUserInterfaceStyle) {
+        applyShadow(for: style)
+    }
+
+    private func configureSnack(data: Content) {
         switch data {
         case let .view(subContentView, insets):
             contentView.addSubview(subContentView)
@@ -73,6 +93,13 @@ extension SnackbarView {
             let loaderView = LoaderTitleView()
             configureSnack(data: .view(contentView: loaderView, insets: Constants.insets))
             loaderView.configure(config)
+        case let .iconTitle(icon, text):
+            let view = IconTitleView()
+            configureSnack(data: .view(contentView: view, insets: Constants.insets))
+            view.configure(
+                with: .buildAddCardButton(icon: icon, text: text)
+                    .set(contentInsets: .zero)
+            )
         case .none:
             break
         }
@@ -105,28 +132,33 @@ extension SnackbarView {
 extension SnackbarView {
 
     struct Configuration {
-        let data: Data
+        let content: Content
         let style: Style
 
         var onDidConfigure: (() -> Void)?
     }
 
-    enum Data {
+    enum Content {
         case view(contentView: UIView, insets: UIEdgeInsets = .zero)
         case loader(configuration: LoaderTitleView.Configuration)
+        case iconTitle(icon: UIImage?, text: String?)
         case none
     }
 
     struct Style {
-        let backgroundColor: UIColor?
+        var backgroundColor: UIColor?
         let cornerRadius: CGFloat
         let shadow: ShadowStyle?
 
+        func set(backgroundColor: UIColor?) -> Self {
+            var shadowCopy = self
+            shadowCopy.backgroundColor = backgroundColor
+            return shadowCopy
+        }
+
         static var base: Self {
             Self(
-                backgroundColor: UIColor.dynamicColor(
-                    dynamic: UIColor.Dynamic(light: .white, dark: .lightGray)
-                ),
+                backgroundColor: ASDKColors.Background.elevation3.color,
                 cornerRadius: 20,
                 shadow: .medium
             )

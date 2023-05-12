@@ -19,9 +19,6 @@
 
 import Foundation
 
-@available(*, deprecated, renamed: "Get3DSAppBasedCertsConfigPayload")
-public typealias GetCertsConfigResponse = Get3DSAppBasedCertsConfigPayload
-
 public struct Get3DSAppBasedCertsConfigPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case certificates = "certificatesInfo"

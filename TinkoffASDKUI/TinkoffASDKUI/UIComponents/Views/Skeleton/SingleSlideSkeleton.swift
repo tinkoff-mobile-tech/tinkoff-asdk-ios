@@ -78,7 +78,7 @@ class SingleSlideSkeleton {
         )
 
         gradientView.onDeinit = {
-            observer = nil
+            observer = withExtendedLifetime(observer) { nil }
         }
 
         return (gradientView, gradientLayer, skeletonsContainerView)

@@ -13,7 +13,7 @@ import UIKit
 }
 
 @IBDesignable
-open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
+open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate, FloatingTextFieldDelegate {
     private var _maskFormat: String
     private var _autocomplete: Bool
     private var _autocompleteOnFocus: Bool
@@ -277,5 +277,38 @@ internal extension MaskedTextFieldDelegate {
         let from: UITextPosition = field.position(from: field.beginningOfDocument, offset: position)!
         let to: UITextPosition = field.position(from: from, offset: 0)!
         field.selectedTextRange = field.textRange(from: from, to: to)
+    }
+}
+
+// MARK: - MaskedTextFieldDelegate + Mask Updating
+
+extension MaskedTextFieldDelegate {
+    /// Вспомогательный метод для обновления маски
+    ///
+    /// По-умолчанию `MaskedTextFieldDelegate` не пересчитывает расположение символов
+    /// после обновления маски. Чтобы принудить пересчет, дополнительно вызывается метод
+    /// `textField(_:shouldChangeCharactersIn:replacementString:)
+    func update(maskFormat: String, using textField: UITextField) -> Bool {
+        guard self.maskFormat != maskFormat,
+              let textRange = textField.emptyRangeAtEnd
+        else { return false }
+
+        self.maskFormat = maskFormat
+        _ = self.textField(textField, shouldChangeCharactersIn: textRange, replacementString: "")
+        return true
+    }
+}
+
+// MARK: - UITextField + Helpers
+
+private extension UITextField {
+    var emptyRangeAtEnd: NSRange? {
+        textRange(from: endOfDocument, to: endOfDocument)
+            .map { uiTextRange in
+                NSRange(
+                    location: offset(from: beginningOfDocument, to: uiTextRange.start),
+                    length: offset(from: uiTextRange.start, to: uiTextRange.end)
+                )
+            }
     }
 }

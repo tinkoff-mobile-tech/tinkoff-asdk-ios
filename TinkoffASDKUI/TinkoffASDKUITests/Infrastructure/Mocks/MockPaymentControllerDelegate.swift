@@ -9,12 +9,11 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class MockPaymentControllerDelegate: PaymentControllerDelegate {
-
     // MARK: - paymentController
 
     struct DidFinishPaymentPassedArguments {
-        let controller: PaymentController
-        let didFinishPayment: PaymentProcess
+        let controller: IPaymentController
+        let didFinishPayment: IPaymentProcess
         let state: GetPaymentStatePayload
         let cardId: String?
         let rebillId: String?
@@ -24,8 +23,8 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     var paymentControllerDidFinishPaymentReturnStub: (DidFinishPaymentPassedArguments) -> Void = { _ in }
 
     func paymentController(
-        _ controller: PaymentController,
-        didFinishPayment: PaymentProcess,
+        _ controller: IPaymentController,
+        didFinishPayment: IPaymentProcess,
         with state: GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
@@ -44,8 +43,8 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     // MARK: - paymentController
 
     struct WasCancelledPassedArguments {
-        let controller: PaymentController
-        let paymentWasCancelled: PaymentProcess
+        let controller: IPaymentController
+        let paymentWasCancelled: IPaymentProcess
         let cardId: String?
         let rebillId: String?
     }
@@ -54,8 +53,8 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     var paymentControllerPaymentWasCancelledReturnStub: (WasCancelledPassedArguments) -> Void = { _ in }
 
     func paymentController(
-        _ controller: PaymentController,
-        paymentWasCancelled: PaymentProcess,
+        _ controller: IPaymentController,
+        paymentWasCancelled: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {
@@ -73,7 +72,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     // MARK: - paymentController
 
     struct DidFailedPassedArguments {
-        let controller: PaymentController
+        let controller: IPaymentController
         let didFailedError: Error
         let cardId: String?
         let rebillId: String?
@@ -83,7 +82,7 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     var paymentControllerDidFailedReturnStub: (DidFailedPassedArguments) -> Void = { _ in }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?

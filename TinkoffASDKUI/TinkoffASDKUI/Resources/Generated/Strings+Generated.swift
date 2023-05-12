@@ -10,6 +10,90 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Loc {
+  internal enum Acquiring {
+    internal enum AddNewCard {
+      /// Добавить
+      internal static let addButton = Loc.tr("Localizable", "Acquiring.AddNewCard.AddButton", fallback: "Добавить")
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.AddNewCard.ButtonClose", fallback: "Закрыть")
+      /// Новая карта
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.AddNewCard.ScreenTitle", fallback: "Новая карта")
+    }
+    internal enum CardField {
+      /// 123
+      internal static let cvvPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.CVVPlaceholder", fallback: "123")
+      /// CVC
+      internal static let cvvTitle = Loc.tr("Localizable", "Acquiring.CardField.CVVTitle", fallback: "CVC")
+      /// Номер
+      internal static let panTitle = Loc.tr("Localizable", "Acquiring.CardField.PanTitle", fallback: "Номер")
+      /// 07/30
+      internal static let termPlaceholder = Loc.tr("Localizable", "Acquiring.CardField.TermPlaceholder", fallback: "07/30")
+      /// Срок
+      internal static let termTitle = Loc.tr("Localizable", "Acquiring.CardField.TermTitle", fallback: "Срок")
+    }
+    internal enum CardList {
+      /// Добавить новую
+      internal static let addCard = Loc.tr("Localizable", "Acquiring.CardList.AddCard", fallback: "Добавить новую")
+      /// Карта %@ добавлена
+      internal static func addSnackBar(_ p1: Any) -> String {
+        return Loc.tr("Localizable", "Acquiring.CardList.AddSnackBar", String(describing: p1), fallback: "Карта %@ добавлена")
+      }
+      /// Изменить
+      internal static let buttonChange = Loc.tr("Localizable", "Acquiring.CardList.ButtonChange", fallback: "Изменить")
+      /// Готово
+      internal static let buttonDone = Loc.tr("Localizable", "Acquiring.CardList.ButtonDone", fallback: "Готово")
+      /// Удаляем карту
+      internal static let deleteSnackBar = Loc.tr("Localizable", "Acquiring.CardList.DeleteSnackBar", fallback: "Удаляем карту")
+      /// Ваши карты
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.CardList.ScreenTitle", fallback: "Ваши карты")
+    }
+    internal enum Common {
+      /// Альфа Банк
+      internal static let alfaCardTitle = Loc.tr("Localizable", "Acquiring.Common.AlfaCardTitle", fallback: "Альфа Банк")
+      /// Газпром Банк
+      internal static let gazpromCardTitle = Loc.tr("Localizable", "Acquiring.Common.GazpromCardTitle", fallback: "Газпром Банк")
+      /// Райффайзен Банк
+      internal static let raiffeisenCardTitle = Loc.tr("Localizable", "Acquiring.Common.RaiffeisenCardTitle", fallback: "Райффайзен Банк")
+      /// СберБанк
+      internal static let sberCardTitle = Loc.tr("Localizable", "Acquiring.Common.SberCardTitle", fallback: "СберБанк")
+      /// Тинькофф
+      internal static let tcsCardTitle = Loc.tr("Localizable", "Acquiring.Common.TcsCardTitle", fallback: "Тинькофф")
+      /// Банк ВТБ
+      internal static let vtbCardTitle = Loc.tr("Localizable", "Acquiring.Common.VtbCardTitle", fallback: "Банк ВТБ")
+    }
+    internal enum EmailField {
+      /// Получить квитанцию
+      internal static let switchButton = Loc.tr("Localizable", "Acquiring.EmailField.SwitchButton", fallback: "Получить квитанцию")
+      /// Электронная почта
+      internal static let title = Loc.tr("Localizable", "Acquiring.EmailField.Title", fallback: "Электронная почта")
+    }
+    internal enum PaymentCard {
+      /// Сменить карту
+      internal static let changeButton = Loc.tr("Localizable", "Acquiring.PaymentCard.ChangeButton", fallback: "Сменить карту")
+    }
+    internal enum PaymentNewCard {
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.PaymentNewCard.ButtonClose", fallback: "Закрыть")
+      /// Оплатить
+      internal static let paymentButton = Loc.tr("Localizable", "Acquiring.PaymentNewCard.PaymentButton", fallback: "Оплатить")
+      /// Оплата картой
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.PaymentNewCard.ScreenTitle", fallback: "Оплата картой")
+    }
+    internal enum Sbp {
+      /// Выбор банка
+      internal static let screenTitle = Loc.tr("Localizable", "Acquiring.SBP.ScreenTitle", fallback: "Выбор банка")
+    }
+    internal enum SBPAllBanks {
+      /// Название
+      internal static let searchPlaceholder = Loc.tr("Localizable", "Acquiring.SBPAllBanks.SearchPlaceholder", fallback: "Название")
+    }
+    internal enum SBPBanks {
+      /// Другой банк
+      internal static let anotherBank = Loc.tr("Localizable", "Acquiring.SBPBanks.AnotherBank", fallback: "Другой банк")
+      /// Закрыть
+      internal static let buttonClose = Loc.tr("Localizable", "Acquiring.SBPBanks.ButtonClose", fallback: "Закрыть")
+    }
+  }
   internal enum AcquiringPayment {
     internal enum Button {
       /// Выбрать другую карту
@@ -17,8 +101,6 @@ internal enum Loc {
     }
   }
   internal enum CardList {
-    /// Карты для оплаты
-    internal static let title = Loc.tr("Localizable", "CardList.title", fallback: "Карты для оплаты")
     internal enum Alert {
       internal enum Action {
         /// Отмена
@@ -40,18 +122,104 @@ internal enum Loc {
     internal enum Button {
       /// Добавить новую карту
       internal static let addNewCard = Loc.tr("Localizable", "CardList.button.addNewCard", fallback: "Добавить новую карту")
+      /// Другой картой
+      internal static let anotherCard = Loc.tr("Localizable", "CardList.button.anotherCard", fallback: "Другой картой")
+    }
+    internal enum Screen {
+      internal enum Title {
+        /// Оплата картой
+        internal static let paymentByCard = Loc.tr("Localizable", "CardList.screen.title.paymentByCard", fallback: "Оплата картой")
+      }
     }
     internal enum Status {
       /// У вас нет сохраненных карт
       internal static let noCards = Loc.tr("Localizable", "CardList.status.noCards", fallback: "У вас нет сохраненных карт")
     }
   }
+  internal enum CommonAlert {
+    /// Понятно
+    internal static let button = Loc.tr("Localizable", "CommonAlert.Button", fallback: "Понятно")
+    internal enum AddCard {
+      /// Карта уже добавлена
+      internal static let title = Loc.tr("Localizable", "CommonAlert.AddCard.Title", fallback: "Карта уже добавлена")
+    }
+    internal enum DeleteCard {
+      /// Не получилось удалить карту
+      internal static let title = Loc.tr("Localizable", "CommonAlert.DeleteCard.Title", fallback: "Не получилось удалить карту")
+    }
+    internal enum SBPNoBank {
+      /// Установите его или выберите другой банк
+      internal static let description = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Description", fallback: "Установите его или выберите другой банк")
+      /// Не получилось найти приложение этого банка
+      internal static let title = Loc.tr("Localizable", "CommonAlert.SBPNoBank.Title", fallback: "Не получилось найти приложение этого банка")
+    }
+    internal enum SomeProblem {
+      /// Попробуйте снова через пару минут
+      internal static let description = Loc.tr("Localizable", "CommonAlert.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
+      /// У нас проблема, мы уже решаем ее
+      internal static let title = Loc.tr("Localizable", "CommonAlert.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
+    }
+  }
   internal enum CommonSheet {
+    internal enum FailedPayment {
+      /// Понятно
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.FailedPayment.PrimaryButton", fallback: "Понятно")
+      /// Не получилось оплатить
+      internal static let title = Loc.tr("Localizable", "CommonSheet.FailedPayment.Title", fallback: "Не получилось оплатить")
+    }
     internal enum Paid {
       /// Понятно
       internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.Paid.PrimaryButton", fallback: "Понятно")
       /// Оплачено
       internal static let title = Loc.tr("Localizable", "CommonSheet.Paid.Title", fallback: "Оплачено")
+    }
+    internal enum PaymentFailed {
+      /// Попробуйте другой способ оплаты
+      internal static let description = Loc.tr("Localizable", "CommonSheet.PaymentFailed.Description", fallback: "Попробуйте другой способ оплаты")
+      /// Выбрать другой способ
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.PaymentFailed.PrimaryButton", fallback: "Выбрать другой способ")
+      /// Ошибка при оплате
+      internal static let title = Loc.tr("Localizable", "CommonSheet.PaymentFailed.Title", fallback: "Ошибка при оплате")
+    }
+    internal enum PaymentForm {
+      /// Оплатить другим способом
+      internal static let anotherMethodTitle = Loc.tr("Localizable", "CommonSheet.PaymentForm.AnotherMethodTitle", fallback: "Оплатить другим способом")
+      /// Оплатить картой
+      internal static let byCardPrimaryButton = Loc.tr("Localizable", "CommonSheet.PaymentForm.ByCardPrimaryButton", fallback: "Оплатить картой")
+      /// Картой
+      internal static let byCardTitle = Loc.tr("Localizable", "CommonSheet.PaymentForm.ByCardTitle", fallback: "Картой")
+      /// В приложении любого банка
+      internal static let sbpDescription = Loc.tr("Localizable", "CommonSheet.PaymentForm.SBPDescription", fallback: "В приложении любого банка")
+      /// Оплатить
+      internal static let sbpPrimaryButton = Loc.tr("Localizable", "CommonSheet.PaymentForm.SBPPrimaryButton", fallback: "Оплатить")
+      /// СБП
+      internal static let sbpTitle = Loc.tr("Localizable", "CommonSheet.PaymentForm.SBPTitle", fallback: "СБП")
+      /// В приложении Тинькофф
+      internal static let tinkoffPayDescription = Loc.tr("Localizable", "CommonSheet.PaymentForm.TinkoffPayDescription", fallback: "В приложении Тинькофф")
+      /// Оплатить с Тинькофф
+      internal static let tinkoffPayPrimaryButton = Loc.tr("Localizable", "CommonSheet.PaymentForm.TinkoffPayPrimaryButton", fallback: "Оплатить с Тинькофф")
+      /// TinkoffPay
+      internal static let tinkoffPayTitle = Loc.tr("Localizable", "CommonSheet.PaymentForm.TinkoffPayTitle", fallback: "TinkoffPay")
+      /// К оплате
+      internal static let toPayTitle = Loc.tr("Localizable", "CommonSheet.PaymentForm.ToPayTitle", fallback: "К оплате")
+      internal enum TinkoffPay {
+        internal enum FailedPayment {
+          /// Выбрать другой способ оплаты
+          internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.PaymentForm.TinkoffPay.FailedPayment.PrimaryButton", fallback: "Выбрать другой способ оплаты")
+        }
+        internal enum TimedOut {
+          /// Попробовать снова
+          internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.PaymentForm.TinkoffPay.TimedOut.PrimaryButton", fallback: "Попробовать снова")
+        }
+      }
+    }
+    internal enum PaymentWaiting {
+      /// Оплатить
+      internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.PaymentWaiting.PrimaryButton", fallback: "Оплатить")
+      /// Закрыть
+      internal static let secondaryButton = Loc.tr("Localizable", "CommonSheet.PaymentWaiting.SecondaryButton", fallback: "Закрыть")
+      /// Ждем оплату в приложении банка
+      internal static let title = Loc.tr("Localizable", "CommonSheet.PaymentWaiting.Title", fallback: "Ждем оплату в приложении банка")
     }
     internal enum Processing {
       /// Это займет некоторое время
@@ -59,71 +227,69 @@ internal enum Loc {
       /// Обрабатываем платеж
       internal static let title = Loc.tr("Localizable", "CommonSheet.Processing.Title", fallback: "Обрабатываем платеж")
     }
-  }
-  internal enum Sbp {
-    internal enum BanksList {
-      internal enum Button {
-        /// Продолжить
-        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Button.Title", fallback: "Продолжить")
-      }
-      internal enum Header {
-        /// Мы откроем приложение этого банка для подтверждения оплаты
-        internal static let subtitle = Loc.tr("Localizable", "SBP.BanksList.Header.Subtitle", fallback: "Мы откроем приложение этого банка для подтверждения оплаты")
-        /// Выберите банк
-        internal static let title = Loc.tr("Localizable", "SBP.BanksList.Header.Title", fallback: "Выберите банк")
-      }
+    internal enum TimeoutFailed {
+      /// Попробуйте оплатить снова
+      internal static let description = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.Description", fallback: "Попробуйте оплатить снова")
+      /// Закрыть
+      internal static let secondaryButton = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.SecondaryButton", fallback: "Закрыть")
+      /// Время оплаты истекло
+      internal static let title = Loc.tr("Localizable", "CommonSheet.TimeoutFailed.Title", fallback: "Время оплаты истекло")
     }
-    internal enum EmptyBanks {
-      /// Для оплаты через СБП необходимо иметь установленными банковские приложения
-      internal static let description = Loc.tr("Localizable", "SBP.EmptyBanks.Description", fallback: "Для оплаты через СБП необходимо иметь установленными банковские приложения")
-      /// Не найдено ни одного банковского приложения
-      internal static let title = Loc.tr("Localizable", "SBP.EmptyBanks.Title", fallback: "Не найдено ни одного банковского приложения")
-      internal enum ConfirmationButton {
+    internal enum TinkoffPay {
+      internal enum Paid {
         /// Понятно
-        internal static let title = Loc.tr("Localizable", "SBP.EmptyBanks.ConfirmationButton.Title", fallback: "Понятно")
+        internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.TinkoffPay.Paid.PrimaryButton", fallback: "Понятно")
+        /// Оплачено
+        internal static let title = Loc.tr("Localizable", "CommonSheet.TinkoffPay.Paid.Title", fallback: "Оплачено")
       }
-      internal enum InformationButton {
-        /// Информация на сайте СБП
-        internal static let title = Loc.tr("Localizable", "SBP.EmptyBanks.InformationButton.Title", fallback: "Информация на сайте СБП")
+      internal enum TimedOut {
+        /// Понятно
+        internal static let primaryButton = Loc.tr("Localizable", "CommonSheet.TinkoffPay.TimedOut.PrimaryButton", fallback: "Понятно")
+        /// Время оплаты истекло
+        internal static let title = Loc.tr("Localizable", "CommonSheet.TinkoffPay.TimedOut.Title", fallback: "Время оплаты истекло")
+      }
+      internal enum Waiting {
+        /// Отмена
+        internal static let secondaryButton = Loc.tr("Localizable", "CommonSheet.TinkoffPay.Waiting.SecondaryButton", fallback: "Отмена")
+        /// Ожидаем оплату в приложении банка
+        internal static let title = Loc.tr("Localizable", "CommonSheet.TinkoffPay.Waiting.Title", fallback: "Ожидаем оплату в приложении банка")
       }
     }
-    internal enum Error {
-      /// Попробуйте еще раз
-      internal static let description = Loc.tr("Localizable", "SBP.Error.Description", fallback: "Попробуйте еще раз")
-      /// Не удалось выполнить оплату через СБП
-      internal static let title = Loc.tr("Localizable", "SBP.Error.Title", fallback: "Не удалось выполнить оплату через СБП")
+  }
+  internal enum CommonStub {
+    internal enum NoCards {
+      /// Добавить
+      internal static let button = Loc.tr("Localizable", "CommonStub.NoCards.Button", fallback: "Добавить")
+      /// Здесь будут ваши карты
+      internal static let description = Loc.tr("Localizable", "CommonStub.NoCards.Description", fallback: "Здесь будут ваши карты")
     }
-    internal enum LoadingStatus {
-      /// Ожидаем подтверждения платежа
-      internal static let title = Loc.tr("Localizable", "SBP.LoadingStatus.Title", fallback: "Ожидаем подтверждения платежа")
+    internal enum NoCardsToPay {
+      /// Оплатить новой
+      internal static let button = Loc.tr("Localizable", "CommonStub.NoCardsToPay.Button", fallback: "Оплатить новой")
+      /// Нет карт для оплаты
+      internal static let description = Loc.tr("Localizable", "CommonStub.NoCardsToPay.Description", fallback: "Нет карт для оплаты")
     }
-    internal enum OpenApplication {
-      /// Не удалось открыть приложение
-      internal static let error = Loc.tr("Localizable", "SBP.OpenApplication.Error", fallback: "Не удалось открыть приложение")
+    internal enum NoNetwork {
+      /// Обновить
+      internal static let button = Loc.tr("Localizable", "CommonStub.NoNetwork.Button", fallback: "Обновить")
+      /// Проверьте доступ к интернету и попробуйте еще раз
+      internal static let description = Loc.tr("Localizable", "CommonStub.NoNetwork.Description", fallback: "Проверьте доступ к интернету и попробуйте еще раз")
+      /// Не загрузилось
+      internal static let title = Loc.tr("Localizable", "CommonStub.NoNetwork.Title", fallback: "Не загрузилось")
+    }
+    internal enum SomeProblem {
+      /// Понятно
+      internal static let button = Loc.tr("Localizable", "CommonStub.SomeProblem.Button", fallback: "Понятно")
+      /// Попробуйте снова через пару минут
+      internal static let description = Loc.tr("Localizable", "CommonStub.SomeProblem.Description", fallback: "Попробуйте снова через пару минут")
+      /// У нас проблема, мы уже решаем ее
+      internal static let title = Loc.tr("Localizable", "CommonStub.SomeProblem.Title", fallback: "У нас проблема, мы уже решаем ее")
     }
   }
   internal enum Tp {
-    internal enum Error {
-      /// Попробуйте еще раз
-      internal static let description = Loc.tr("Localizable", "TP.Error.Description", fallback: "Попробуйте еще раз")
-      /// Не удалось выполнить оплату через Tinkoff Pay
-      internal static let title = Loc.tr("Localizable", "TP.Error.Title", fallback: "Не удалось выполнить оплату через Tinkoff Pay")
-    }
     internal enum LoadingStatus {
       /// Ожидаем подтверждения платежа
       internal static let title = Loc.tr("Localizable", "TP.LoadingStatus.Title", fallback: "Ожидаем подтверждения платежа")
-    }
-    internal enum NoTinkoffBankApp {
-      /// Скачайте приложение или выберите другой способ оплаты
-      internal static let description = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Description", fallback: "Скачайте приложение или выберите другой способ оплаты")
-      /// У вас не установлено Tinkoff
-      internal static let title = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Title", fallback: "У вас не установлено Tinkoff")
-      internal enum Button {
-        /// Установить
-        internal static let install = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Button.Install", fallback: "Установить")
-        /// Отменить
-        internal static let сancel = Loc.tr("Localizable", "TP.NoTinkoffBankApp.Button.Сancel", fallback: "Отменить")
-      }
     }
   }
   internal enum TinkoffAcquiring {

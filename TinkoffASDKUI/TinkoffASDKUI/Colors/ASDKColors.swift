@@ -9,10 +9,6 @@ import UIKit
 
 struct ASDKColors {
 
-    static var tinkoffYellow: UIColor {
-        UIColor(hex: "#FFDD2D") ?? .clear
-    }
-
     static var black: UIColor {
         UIColor(hex: "#333333") ?? .clear
     }
@@ -66,6 +62,25 @@ struct ASDKColors {
 
 extension ASDKColors {
 
+    // MARK: - Foreground
+
+    struct Foreground {
+
+        // Static
+
+        static var brandTinkoffAccent: UIColor { UIColor(hex: "#FFDD2D") ?? .clear }
+        static var negativeAccent: UIColor { UIColor(hex: "#F52222") ?? .clear }
+
+        // Dynamic
+
+        static var skeleton: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: .black.withAlphaComponent(0.03),
+                dark: .white.withAlphaComponent(0.10)
+            )
+        }
+    }
+
     // MARK: - Background
 
     struct Background {
@@ -91,6 +106,13 @@ extension ASDKColors {
             )
         }
 
+        static var elevation3: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: .white,
+                dark: ASDKColors.black
+            )
+        }
+
         static var separator: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: ASDKColors.darkGray,
@@ -105,6 +127,13 @@ extension ASDKColors {
             )
         }
 
+        static var neutral1: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#001024")!.withAlphaComponent(0.03),
+                dark: .white.withAlphaComponent(0.10)
+            )
+        }
+
         static var neutral2: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: UIColor(hex: "#001024")!.withAlphaComponent(0.06),
@@ -116,6 +145,7 @@ extension ASDKColors {
     // MARK: - Text
 
     struct Text {
+
         static var primary: UIColor.Dynamic {
             UIColor.Dynamic(
                 light: ASDKColors.textPrimary,
@@ -123,14 +153,38 @@ extension ASDKColors {
             )
         }
 
-        static var secondary: UIColor {
-            UIColor(hex: "#9299A2") ?? .clear
+        static var primaryOnTinkoff: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: ASDKColors.textPrimary,
+                dark: ASDKColors.textPrimary
+            )
+        }
+
+        static var secondary: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#9299A2")!,
+                dark: UIColor(hex: "#9299A2")!
+            )
         }
 
         static var tertiary: UIColor.Dynamic {
             UIColor.Dynamic(
-                light: UIColor(hex: "#00102438") ?? .clear,
-                dark: UIColor(hex: "#FFFFFF4D") ?? .clear
+                light: UIColor(hex: "#001024")!.withAlphaComponent(0.22),
+                dark: UIColor.white.withAlphaComponent(0.3)
+            )
+        }
+
+        static var accent: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#428BF9")!,
+                dark: UIColor(hex: "#428BF9")!
+            )
+        }
+
+        static var negative: UIColor.Dynamic {
+            UIColor.Dynamic(
+                light: UIColor(hex: "#F52222")!,
+                dark: UIColor(hex: "#F52222")!
             )
         }
     }

@@ -13,5 +13,5 @@ public protocol YandexPayPaymentFlowDelegate: AnyObject {
     /// Вызывается для отображения шторки `YandexPay` поверх возвращаемого `UIViewController`
     func yandexPayPaymentFlowDidRequestViewControllerForPresentation(_ flow: IYandexPayPaymentFlow) -> UIViewController?
     /// Вызывается после завершения оплаты
-    func yandexPayPaymentFlow(_ flow: IYandexPayPaymentFlow, didCompleteWith result: YandexPayPaymentResult)
+    func yandexPayPaymentFlow(_ flow: IYandexPayPaymentFlow, didCompleteWith result: PaymentResult)
 }

@@ -14,20 +14,20 @@ final class YandexPayPaymentSheetPresenter {
     weak var view: ICommonSheetView?
     private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
-    private let paymentControllerUIProvider: PaymentControllerUIProvider
+    private let paymentControllerUIProvider: ThreeDSWebFlowDelegate
     private let paymentFlow: PaymentFlow
     private let base64Token: String
 
     // MARK: State
 
-    private var paymentResult: YandexPayPaymentResult = .cancelled
+    private var paymentResult: PaymentResult = .cancelled()
     private var canDismissView = false
 
     // MARK: Init
 
     init(
         paymentController: IPaymentController,
-        paymentControllerUIProvider: PaymentControllerUIProvider,
+        paymentControllerUIProvider: ThreeDSWebFlowDelegate,
         paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
@@ -44,21 +44,12 @@ final class YandexPayPaymentSheetPresenter {
 
 extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     func viewDidLoad() {
-        view?.update(state: .processing)
+        view?.update(state: SheetState.processing.toCommonSheetState(), animatePullableContainerUpdates: false)
 
-        switch paymentFlow {
-        case let .full(paymentOptions):
-            paymentController.performInitPayment(
-                paymentOptions: paymentOptions,
-                paymentSource: .yandexPay(base64Token: base64Token)
-            )
-        case let .finish(paymentId, customerOptions):
-            paymentController.performFinishPayment(
-                paymentId: paymentId,
-                paymentSource: .yandexPay(base64Token: base64Token),
-                customerOptions: customerOptions
-            )
-        }
+        paymentController.performPayment(
+            paymentFlow: paymentFlow,
+            paymentSource: .yandexPay(base64Token: base64Token)
+        )
     }
 
     func primaryButtonTapped() {
@@ -72,7 +63,7 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
     }
 
     func viewWasClosed() {
-        output?.yandexPayPaymentActivity(completedWith: paymentResult)
+        output?.yandexPayPaymentSheet(completedWith: paymentResult)
     }
 }
 
@@ -80,71 +71,74 @@ extension YandexPayPaymentSheetPresenter: ICommonSheetPresenter {
 
 extension YandexPayPaymentSheetPresenter: PaymentControllerDelegate {
     func paymentController(
-        _ controller: PaymentController,
-        didFinishPayment: PaymentProcess,
+        _ controller: IPaymentController,
+        didFinishPayment: IPaymentProcess,
         with state: TinkoffASDKCore.GetPaymentStatePayload,
         cardId: String?,
         rebillId: String?
     ) {
-        let paymentInfo = YandexPayPaymentResult.PaymentInfo(
-            paymentId: state.paymentId,
-            orderId: state.orderId,
-            amount: state.amount
-        )
-
+        let paymentInfo = state.toPaymentInfo()
         paymentResult = .succeeded(paymentInfo)
         canDismissView = true
-        view?.update(state: .paid)
+        view?.update(state: SheetState.paid.toCommonSheetState())
     }
 
     func paymentController(
-        _ controller: PaymentController,
-        paymentWasCancelled: PaymentProcess,
+        _ controller: IPaymentController,
+        paymentWasCancelled: IPaymentProcess,
         cardId: String?,
         rebillId: String?
     ) {
-        paymentResult = .cancelled
+        paymentResult = .cancelled()
         canDismissView = true
         view?.close()
     }
 
     func paymentController(
-        _ controller: PaymentController,
+        _ controller: IPaymentController,
         didFailed error: Error,
         cardId: String?,
         rebillId: String?
     ) {
         paymentResult = .failed(error)
         canDismissView = true
-        view?.update(state: .failed)
+        view?.update(state: SheetState.failed.toCommonSheetState())
     }
 }
 
-// MARK: - CommonSheetState + YandexPay States
+// MARK: - SheetState + CommonSheetState
 
-private extension CommonSheetState {
-    static var processing: CommonSheetState {
-        CommonSheetState(
-            status: .processing,
-            title: Loc.CommonSheet.Processing.title,
-            description: Loc.CommonSheet.Processing.description
-        )
-    }
+extension YandexPayPaymentSheetPresenter {
 
-    static var paid: CommonSheetState {
-        CommonSheetState(
-            status: .succeeded,
-            title: Loc.CommonSheet.Paid.title,
-            primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
-        )
-    }
+    enum SheetState {
+        case processing
+        case paid
+        case failed
 
-    static var failed: CommonSheetState {
-        CommonSheetState(
-            status: .failed,
-            title: Loc.YandexSheet.Failed.title,
-            description: Loc.YandexSheet.Failed.description,
-            primaryButtonTitle: Loc.YandexSheet.Failed.primaryButton
-        )
+        func toCommonSheetState() -> CommonSheetState {
+            switch self {
+            case .processing:
+                return CommonSheetState(
+                    status: .processing,
+                    title: Loc.CommonSheet.Processing.title,
+                    description: Loc.CommonSheet.Processing.description
+                )
+
+            case .paid:
+                return CommonSheetState(
+                    status: .succeeded,
+                    title: Loc.CommonSheet.Paid.title,
+                    primaryButtonTitle: Loc.CommonSheet.Paid.primaryButton
+                )
+
+            case .failed:
+                return CommonSheetState(
+                    status: .failed,
+                    title: Loc.YandexSheet.Failed.title,
+                    description: Loc.YandexSheet.Failed.description,
+                    primaryButtonTitle: Loc.YandexSheet.Failed.primaryButton
+                )
+            }
+        }
     }
 }

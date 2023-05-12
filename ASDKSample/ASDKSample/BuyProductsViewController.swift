@@ -17,25 +17,21 @@
 //  limitations under the License.
 //
 
-import PassKit
 import TinkoffASDKCore
 import TinkoffASDKUI
 import TinkoffASDKYandexPay
 import UIKit
 
-// swiftlint:disable file_length
 class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
         case products
-        /// открыть экран оплаты и перейти к оплате
-        case pay
+        /// оплатить с помощью главной формы оплаты
+        case mainFormPayment
         /// оплатить с карты - выбрать карту из списка и сделать этот платеж родительским
         case payAndSaveAsParent
         /// оплатить
         case payRequrent
-        /// оплатить с помощью `ApplePay`
-        case payApplePay
         /// оплатить с помощью `Системы Быстрых Платежей`
         /// сгенерировать QR-код для оплаты
         case paySbpQrCode
@@ -46,6 +42,8 @@ class BuyProductsViewController: UIViewController {
         case yandexPayFull
         /// Кнопка `YandexPay` c завершающим флоу оплаты (платеж инициируется вне SDK)
         case yandexPayFinish
+        /// Оплатить с помощью `TinkoffPay`
+        case tinkoffPay
     }
 
     var products: [Product] = []
@@ -53,11 +51,12 @@ class BuyProductsViewController: UIViewController {
     var coreSDK: AcquiringSdk!
     var customerKey: String!
     var customerEmail: String?
-    weak var scaner: AcquiringScanerProtocol?
 
-    lazy var paymentApplePayConfiguration = AcquiringUISDK.ApplePayConfiguration()
-    var paymentCardId: PaymentCard?
-    var paymentCardParentPaymentId: PaymentCard?
+    lazy var selectedRebillCard: PaymentCard? = rebillCards.last
+    private var rebillCards: [PaymentCard] { activeCards.filter { $0.parentPaymentId != nil } }
+    private var activeCards = [PaymentCard]()
+
+    private lazy var cardsController = uiSDK.cardsController(customerKey: customerKey)
 
     @IBOutlet var tableView: UITableView!
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
@@ -65,14 +64,12 @@ class BuyProductsViewController: UIViewController {
     private var fullPaymentFlowYandexPayButton: IYandexPayButtonContainer?
     private var finishPaymentFlowYandexPayButton: IYandexPayButtonContainer?
 
-    private var paymentData: PaymentInitData?
-    private var cardRebillIds: [PaymentCard]?
     private var tableViewCells: [TableViewCellType] = [
         .products,
-        .pay,
+        .mainFormPayment,
+        .tinkoffPay,
         .payAndSaveAsParent,
         .payRequrent,
-        .payApplePay,
         .paySbpQrCode,
         .paySbpUrl,
     ]
@@ -87,11 +84,7 @@ class BuyProductsViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
 
-        uiSDK.setupCardListDataProvider(for: customerKey, statusListener: self)
-        try? uiSDK.cardListReloadData()
-        uiSDK.addCardNeedSetCheckTypeHandler = {
-            AppSetting.shared.addCardChekType
-        }
+        updateCards()
 
         if products.count > 1 {
             buttonAddToCart.isEnabled = false
@@ -101,8 +94,27 @@ class BuyProductsViewController: UIViewController {
         setupYandexPayButton()
     }
 
+    private func updateCards() {
+        cardsController.getActiveCards { [weak self] result in
+            switch result {
+            case let .success(cards):
+                self?.activeCards = cards
+                self?.tableView.reloadData()
+            case .failure:
+                break
+            }
+        }
+    }
+
     private func setupYandexPayButton() {
-        let configuration = YandexPaySDKConfiguration(environment: .sandbox, locale: .system)
+        let environment: YandexPaySDKConfiguration.Environment = {
+            switch AppSetting.shared.serverType {
+            case .prod, .custom: return .production
+            case .test, .preProd: return .sandbox
+            }
+        }()
+
+        let configuration = YandexPaySDKConfiguration(environment: environment, locale: .system)
 
         uiSDK.yandexPayButtonContainerFactory(with: configuration) { [weak self] result in
             guard let self = self else { return }
@@ -135,14 +147,15 @@ class BuyProductsViewController: UIViewController {
     private func selectRebuildCard() {
         guard let viewController = UIStoryboard(name: "Main", bundle: Bundle.main)
             .instantiateViewController(withIdentifier: "SelectRebuildCardViewController") as? SelectRebuildCardViewController,
-            let cards: [PaymentCard] = cardRebillIds,
-            !cards.isEmpty else {
+            !rebillCards.isEmpty else {
             return
         }
 
-        viewController.cards = cards
-        viewController.onSelectCard = { card in
-            self.paymentCardParentPaymentId = card
+        viewController.cards = rebillCards
+        viewController.onSelectCard = { [weak self] card in
+            guard let self = self else { return }
+
+            self.selectedRebillCard = card
             if let index = self.tableViewCells.firstIndex(of: .payRequrent) {
                 self.tableView.beginUpdates()
                 self.tableView.reloadSections(IndexSet(integer: index), with: .fade)
@@ -167,8 +180,8 @@ class BuyProductsViewController: UIViewController {
         let amount = productsAmount()
         let randomOrderId = String(Int64.random(in: 1000 ... 10000))
         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: customerKey)
-        paymentData.description = "Краткое описние товара"
-
+        paymentData.description = "Краткое описание товара"
+        paymentData.payType = .oneStage
         var receiptItems: [Item] = []
         products.forEach { product in
             let item = Item(
@@ -195,220 +208,122 @@ class BuyProductsViewController: UIViewController {
         return paymentData
     }
 
-    private func acquiringViewConfiguration() -> AcquiringViewConfiguration {
-        let viewConfigration = AcquiringViewConfiguration()
-        viewConfigration.scaner = scaner
-        viewConfigration.tinkoffPayButtonStyle = TinkoffPayButton.DynamicStyle(lightStyle: .whiteBordered, darkStyle: .blackBordered)
-
-        viewConfigration.fields = []
-        // InfoFields.amount
-        let title = NSAttributedString(
-            string: Loc.Title.paymeny,
-
-            attributes: [.font: UIFont.boldSystemFont(ofSize: 22)]
-        )
-        // swiftlint:disable:next compiler_protocol_init
-        let amountString = Utils.formatAmount(NSDecimalNumber(floatLiteral: productsAmount()))
-
-        let amountTitle = NSAttributedString(
-            string: "\(Loc.Text.totalAmount) \(amountString)",
-
-            attributes: [.font: UIFont.systemFont(ofSize: 17)]
-        )
-        // fields.append
-        viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.amount(title: title, amount: amountTitle))
-
-        // InfoFields.detail
-        let productsDetatils = NSMutableAttributedString()
-        productsDetatils.append(NSAttributedString(string: "Книги\n", attributes: [.font: UIFont.systemFont(ofSize: 17)]))
-
-        let productsDetails = products.map { $0.name }.joined(separator: ", ")
-        let detailsFieldTitle = NSAttributedString(
-            string: productsDetails,
-            attributes: [
-                .font: UIFont.systemFont(ofSize: 13),
-                .foregroundColor: UIColor(red: 0.573, green: 0.6, blue: 0.635, alpha: 1),
-            ]
-        )
-        viewConfigration.fields.append(AcquiringViewConfiguration.InfoFields.detail(title: detailsFieldTitle))
-
-        if AppSetting.shared.showEmailField {
-            let emailField = AcquiringViewConfiguration.InfoFields.email(
-                value: nil,
-                placeholder: Loc.Plaseholder.email
-            )
-            viewConfigration.fields.append(emailField)
-        }
-
-        viewConfigration.featuresOptions.fpsEnabled = AppSetting.shared.paySBP
-        viewConfigration.featuresOptions.tinkoffPayEnabled = AppSetting.shared.tinkoffPay
-
-        viewConfigration.viewTitle = Loc.Title.pay
-
-        return viewConfigration
-    }
-
-    private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>) {
-        switch response {
-        case let .success(result):
-            var message = Loc.Text.paymentStatusAmount
-            message.append(" \(Utils.formatAmount(result.amount)) ")
-
-            if result.status == .cancelled {
-                message.append(Loc.Text.paymentStatusCancel)
-            } else {
-                message.append(" ")
-                message.append(Loc.Text.paymentStatusSuccess)
-                message.append("\npaymentId = \(result.paymentId)")
-            }
-
-            if AppSetting.shared.acquiring {
-                uiSDK.presentAlertView(on: self, title: message, icon: result.status == .cancelled ? .error : .success)
-            } else {
-                let alertView = UIAlertController(title: "Tinkoff Acquaring", message: message, preferredStyle: .alert)
-                alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
-                present(alertView, animated: true, completion: nil)
-            }
-
-        case let .failure(error):
-            if AppSetting.shared.acquiring {
-                uiSDK.presentAlertView(on: self, title: error.localizedDescription, icon: .error)
-            } else {
-                let alertView = UIAlertController(title: "Tinkoff Acquaring", message: error.localizedDescription, preferredStyle: .alert)
-                alertView.addAction(UIAlertAction(title: Loc.Button.ok, style: .default, handler: nil))
-                present(alertView, animated: true, completion: nil)
-            }
-        }
-    }
-
-    private func presentPaymentView(paymentData: PaymentInitData, viewConfigration: AcquiringViewConfiguration) {
-        uiSDK.presentPaymentView(
-            on: self,
-            acquiringPaymentStageConfiguration: AcquiringPaymentStageConfiguration(
-                paymentStage: .`init`(paymentData: paymentData)
-            ),
-            configuration: viewConfigration,
-            tinkoffPayDelegate: nil
-        ) { [weak self] response in
-            self?.responseReviewing(response)
-        }
-    }
-
-    func pay() {
-        presentPaymentView(paymentData: createPaymentData(), viewConfigration: acquiringViewConfiguration())
-    }
-
-    func pay(_ complete: @escaping (() -> Void)) {
-        uiSDK.pay(
-            on: self,
-            initPaymentData: createPaymentData(),
-            cardRequisites: PaymentSourceData.cardNumber(number: "!!!номер карты!!!", expDate: "1120", cvv: "111"),
-            infoEmail: nil,
-            configuration: acquiringViewConfiguration()
-        ) { [weak self] response in
-            complete()
-            self?.responseReviewing(response)
-        }
-    }
-
-    func payByApplePay() {
-
-        let paymentData = createPaymentData()
-
-        let request = PKPaymentRequest()
-        request.merchantIdentifier = paymentApplePayConfiguration.merchantIdentifier
-        request.supportedNetworks = paymentApplePayConfiguration.supportedNetworks
-        request.merchantCapabilities = paymentApplePayConfiguration.capabilties
-        request.countryCode = paymentApplePayConfiguration.countryCode
-        request.currencyCode = paymentApplePayConfiguration.currencyCode
-        request.shippingContact = paymentApplePayConfiguration.shippingContact
-        request.billingContact = paymentApplePayConfiguration.billingContact
-
-        request.paymentSummaryItems = [
-            PKPaymentSummaryItem(
-                label: paymentData.description ?? "",
-                amount: NSDecimalNumber(value: Double(paymentData.amount) / Double(100.0))
-            ),
-        ]
-
-        guard let viewController = PKPaymentAuthorizationViewController(paymentRequest: request) else {
-            return
-        }
-
-        viewController.delegate = self
-
-        present(viewController, animated: true, completion: nil)
-    }
-
     func payAndSaveAsParent() {
         var paymentData = createPaymentData()
         paymentData.savingAsParentPayment = true
 
-        presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfiguration())
+        let paymentOptions = PaymentOptions.create(from: paymentData)
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        let configuration = MainFormUIConfiguration(
+            orderDescription: paymentOptions.orderOptions.description
+        )
+
+        uiSDK.presentMainForm(
+            on: self,
+            paymentFlow: paymentFlow,
+            configuration: configuration,
+            cardScannerDelegate: nil
+        ) { [weak self] result in
+            self?.showAlert(with: result)
+        }
     }
 
     func charge(_ complete: @escaping (() -> Void)) {
-        if let parentPaymentId = paymentCardParentPaymentId?.parentPaymentId {
-            uiSDK.presentPaymentView(
+        if let parentPaymentId = selectedRebillCard?.parentPaymentId {
+
+            let paymentOptions = PaymentOptions.create(from: createPaymentData())
+            let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+            uiSDK.presentRecurrentPayment(
                 on: self,
-                paymentData: createPaymentData(),
-                parentPatmentId: parentPaymentId,
-                configuration: acquiringViewConfiguration()
-            ) { [weak self] response in
+                paymentFlow: paymentFlow,
+                rebillId: String(parentPaymentId),
+                failureDelegate: self
+            ) { [weak self] result in
                 complete()
-                self?.responseReviewing(response)
+                self?.showAlert(with: result)
             }
         }
     }
 
     func generateSbpQrImage() {
-        uiSDK.presentPaymentSbpQrImage(
-            on: self,
-            paymentData: createPaymentData(),
-            configuration: acquiringViewConfiguration()
-        ) { [weak self] response in
-            self?.responseReviewing(response)
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        uiSDK.presentDynamicSBPQR(on: self, paymentFlow: paymentFlow) { [weak self] result in
+            self?.showAlert(with: result)
         }
     }
 
     func generateSbpUrl() {
-        let acquiringPaymentStageConfiguration = AcquiringPaymentStageConfiguration(
-            paymentStage: .`init`(paymentData: createPaymentData())
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        uiSDK.presentSBPBanksList(on: self, paymentFlow: paymentFlow) { [weak self] result in
+            self?.showAlert(with: result)
+        }
+    }
+
+    private func payWithMainForm() {
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        let configuration = MainFormUIConfiguration(
+            orderDescription: paymentOptions.orderOptions.description
         )
-        let viewController = uiSDK.urlSBPPaymentViewController(
-            acquiringPaymentStageConfiguration: acquiringPaymentStageConfiguration,
-            configuration: acquiringViewConfiguration()
+
+        uiSDK.presentMainForm(
+            on: self,
+            paymentFlow: paymentFlow,
+            configuration: configuration,
+            cardScannerDelegate: self
+        ) { [weak self] result in
+            self?.showAlert(with: result)
+        }
+    }
+
+    private func payWithTinkoffPay() {
+        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        uiSDK.presentTinkoffPay(on: self, paymentFlow: paymentFlow) { [weak self] result in
+            self?.showAlert(with: result)
+        }
+    }
+
+    private func showAlert(with result: PaymentResult) {
+        let alert = UIAlertController(
+            title: result.alertTitle,
+            message: result.alertMessage,
+            preferredStyle: .alert
         )
-        present(viewController, animated: true, completion: nil)
+
+        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }
 
-extension BuyProductsViewController: CardListDataSourceStatusListener {
+extension BuyProductsViewController: ICardScannerDelegate {
+    func cardScanButtonDidPressed(on viewController: UIViewController, completion: @escaping CardScannerCompletion) {
+        let alert = UIAlertController.cardScannerMock(confirmationHandler: completion)
+        viewController.present(alert, animated: true)
+    }
+}
 
-    // MARK: CardListDataSourceStatusListener
+extension BuyProductsViewController: IRecurrentPaymentFailiureDelegate {
+    func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void) {
+        var initData = createPaymentData()
 
-    func cardsListUpdated(_ status: FetchStatus<[PaymentCard]>) {
-        switch status {
-        case let .object(cards):
-            if paymentCardId == nil {
-                paymentCardId = cards.first
+        let newPaymentData = initData.paymentFormData?.merging(additionalData) { $1 }
+        initData.paymentFormData = newPaymentData
+
+        coreSDK.initPayment(data: initData) { result in
+            if let paymentId = try? result.map({ $0.paymentId }).get() {
+                completion(.success(paymentId))
             }
-
-            cardRebillIds = cards.filter { card -> Bool in
-                card.parentPaymentId != nil
-            }
-
-            if paymentCardParentPaymentId == nil {
-                paymentCardParentPaymentId = cards.last(where: { card -> Bool in
-                    card.parentPaymentId != nil
-                })
-            }
-
-        default:
-            break
         }
-
-        tableView.reloadData()
     }
 }
 
@@ -425,22 +340,11 @@ extension BuyProductsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var result = 1
-
         switch tableViewCells[section] {
-        case .products:
-            result = products.count
-
-        case .payRequrent:
-            if cardRebillIds?.count ?? 0 > 0 {
-                result = 2
-            }
-
-        default:
-            result = 1
+        case .products: return products.count
+        case .payRequrent: return rebillCards.count > 0 ? 2 : 1
+        default: return 1
         }
-
-        return result
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -452,30 +356,13 @@ extension BuyProductsViewController: UITableViewDataSource {
             cell.textLabel?.text = product.name
             cell.detailTextLabel?.text = Utils.formatAmount(product.price)
             return cell
-
-        case .pay:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                cell.button.setTitle(Loc.Button.pay, for: .normal)
-                cell.button.isEnabled = true
-                cell.button.backgroundColor = yellowButtonColor()
-                cell.button.setImage(nil, for: .normal)
-                // открыть экран оплаты и оплатить
-                cell.onButtonTouch = { [weak self] in
-                    self?.pay()
-                }
-                // оплатить в один клик, не показывая экран оплаты
-                // cell.onButtonTouch = { [weak self, weak cell] in
-                //	cell?.activityIndicator.startAnimating()
-                //	cell?.button.isEnabled = false
-                //	self?.pay {
-                //		cell?.activityIndicator.stopAnimating()
-                //		cell?.button.isEnabled = true
-                //	}
-                // }
-
-                return cell
-            }
-
+        case .mainFormPayment:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell else { break }
+            cell.button.setTitle(Loc.Button.pay, for: .normal)
+            cell.button.backgroundColor = yellowButtonColor()
+            cell.button.setImage(nil, for: .normal)
+            cell.onButtonTouch = { [weak self] in self?.payWithMainForm() }
+            return cell
         case .payAndSaveAsParent:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(Loc.Button.pay, for: .normal)
@@ -495,11 +382,8 @@ extension BuyProductsViewController: UITableViewDataSource {
                     cell.button.setTitle(Loc.Button.paymentTryAgain, for: .normal)
                     cell.button.backgroundColor = yellowButtonColor()
                     cell.button.setImage(nil, for: .normal)
-                    if let card = paymentCardParentPaymentId {
-                        cell.button.isEnabled = (card.parentPaymentId != nil)
-                    } else {
-                        cell.button.isEnabled = false
-                    }
+
+                    cell.button.isEnabled = true
 
                     cell.onButtonTouch = { [weak self, weak cell] in
                         cell?.activityIndicator.startAnimating()
@@ -520,25 +404,11 @@ extension BuyProductsViewController: UITableViewDataSource {
                 return cell
             }
 
-        case .payApplePay:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                cell.button.setTitle(nil, for: .normal)
-                cell.button.backgroundColor = .clear
-                cell.button.setImage(Asset.buttonApplePay.image, for: .normal)
-                cell.button.isEnabled = uiSDK.canMakePaymentsApplePay(with: paymentApplePayConfiguration)
-
-                cell.onButtonTouch = { [weak self] in
-                    self?.payByApplePay()
-                }
-
-                return cell
-            }
-
         case .paySbpQrCode:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.isEnabled = uiSDK.canMakePaymentsSBP()
+                cell.button.isEnabled = AppSetting.shared.paySBP
                 cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpQrImage()
@@ -551,7 +421,7 @@ extension BuyProductsViewController: UITableViewDataSource {
             if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
                 cell.button.setTitle(nil, for: .normal)
                 cell.button.backgroundColor = .clear
-                cell.button.isEnabled = uiSDK.canMakePaymentsSBP()
+                cell.button.isEnabled = AppSetting.shared.paySBP
                 cell.button.setImage(Asset.logoSbp.image, for: .normal)
                 cell.onButtonTouch = { [weak self] in
                     self?.generateSbpUrl()
@@ -571,6 +441,13 @@ extension BuyProductsViewController: UITableViewDataSource {
                 cell.setContent(button, insets: UIEdgeInsets(horizontal: 64, vertical: 8))
             }
             return cell
+        case .tinkoffPay:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell else { break }
+            cell.button.setTitle("Tinkoff Pay", for: .normal)
+            cell.button.backgroundColor = yellowButtonColor()
+            cell.button.setImage(nil, for: .normal)
+            cell.onButtonTouch = { [weak self] in self?.payWithTinkoffPay() }
+            return cell
         }
 
         return tableView.defaultCell()
@@ -580,18 +457,18 @@ extension BuyProductsViewController: UITableViewDataSource {
         switch tableViewCells[section] {
         case .products:
             return Loc.Title.goods
-        case .pay:
+        case .mainFormPayment:
             return Loc.Title.paymeny
         case .payAndSaveAsParent:
             return Loc.Title.payAndSaveAsParent
         case .payRequrent:
             return Loc.Title.paymentTryAgain
-        case .payApplePay:
-            return Loc.Title.payByApplePay
         case .paySbpUrl, .paySbpQrCode:
             return Loc.Title.payBySBP
         case .yandexPayFull, .yandexPayFinish:
             return Loc.Title.yandexPay
+        case .tinkoffPay:
+            return "Оплатить с помощью Tinkoff Pay"
         }
     }
 
@@ -599,52 +476,32 @@ extension BuyProductsViewController: UITableViewDataSource {
         switch tableViewCells[section] {
         case .products:
             return "сумма: \(Utils.formatAmount(NSDecimalNumber(value: productsAmount())))"
-
-        case .pay:
-            let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
-            if cardsCount > 0 {
-                return "открыть платежную форму и перейти к оплате товара, доступно \(cardsCount) сохраненных карт"
-            }
-
-            return "открыть платежную форму и перейти к оплате товара"
+        case .mainFormPayment:
+            return "Открыть главную платежную форму и перейти к оплате товара"
         case .payAndSaveAsParent:
-            let cardsCount = (try? uiSDK.cardListNumberOfCards()) ?? 0
+            let cardsCount = activeCards.count
             if cardsCount > 0 {
                 return "открыть платежную форму и перейти к оплате товара. При удачной оплате этот платеж сохраниться как родительский. Доступно \(cardsCount) сохраненных карт"
             }
 
             return "оплатить и сделать этот платеж родительским"
         case .payRequrent:
-            if let card = paymentCardParentPaymentId, let parentPaymentId = card.parentPaymentId {
+            if let card = selectedRebillCard, let parentPaymentId = card.parentPaymentId {
                 return "оплатить с карты \(card.pan) \(card.expDateFormat() ?? ""), используя родительский платеж \(parentPaymentId)"
             }
 
             return "нет доступных родительских платежей"
 
-        case .payApplePay:
-            if uiSDK.canMakePaymentsApplePay(with: paymentApplePayConfiguration) {
-                return "оплатить с помощью ApplePay"
-            }
-
-            return "оплата с помощью ApplePay недоступна"
-
         case .paySbpUrl:
-            if uiSDK.canMakePaymentsSBP() {
-                return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
-            }
-
-            return "оплата недоступна"
-
+            return "сгенерировать url и открыть диалог для выбора приложения для оплаты"
         case .paySbpQrCode:
-            if uiSDK.canMakePaymentsSBP() {
-                return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
-            }
-
-            return "оплата недоступна"
+            return "сгенерировать QR-код для оплаты и показать его на экране, для сканирования и оплаты другим смартфоном"
         case .yandexPayFull:
             return "Full payment flow"
         case .yandexPayFinish:
             return "Finish payment flow"
+        case .tinkoffPay:
+            return "Открыть экран Tinkoff Pay и начать платеж"
         }
     }
 }
@@ -667,95 +524,40 @@ extension BuyProductsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {}
 }
 
-extension BuyProductsViewController: PKPaymentAuthorizationViewControllerDelegate {
-
-    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        controller.dismiss(animated: true, completion: nil)
-    }
-
-    func paymentAuthorizationViewController(
-        _ controller: PKPaymentAuthorizationViewController,
-        didAuthorizePayment payment: PKPayment,
-        handler completion: @escaping (PKPaymentAuthorizationResult) -> Void
-    ) {
-        let initData = createPaymentData()
-        uiSDK.performPaymentWithApplePay(
-            paymentData: initData,
-            paymentToken: payment.token,
-            acquiringConfiguration: AcquiringConfiguration(paymentStage: .none)
-        ) { result in
-            switch result {
-            case let .failure(error):
-                completion(PKPaymentAuthorizationResult(status: .failure, errors: [error]))
-            case .success:
-                completion(PKPaymentAuthorizationResult(status: .success, errors: nil))
-            }
-        }
-    }
-}
-
 // MARK: - IYandexPayButtonContainerDelegate
 
-extension BuyProductsViewController: YandexPayButtonContainerDelegate {
-    func yandexPayButtonContainer(
-        _ container: IYandexPayButtonContainer,
-        didRequestPaymentSheet completion: @escaping (YandexPayPaymentSheet?) -> Void
-    ) {
-        let paymentData = createPaymentData()
-        self.paymentData = paymentData
-
-        let order = YandexPayPaymentSheet.Order(
-            orderId: paymentData.orderId,
-            amount: paymentData.amount
-        )
-
-        let paymentSheet = YandexPayPaymentSheet(order: order)
-
-        completion(paymentSheet)
-    }
+extension BuyProductsViewController: IYandexPayButtonContainerDelegate {
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
         didRequestPaymentFlow completion: @escaping (PaymentFlow?) -> Void
     ) {
-        guard var initData = paymentData else { return }
-
-        let customerOptions = initData.customerKey.map {
-            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
-        }
+        let initData = createPaymentData()
 
         switch container {
         case fullPaymentFlowYandexPayButton as UIView?:
-            let orderOptions = OrderOptions(
-                orderId: initData.orderId,
-                amount: initData.amount,
-                description: initData.description,
-                receipt: initData.receipt,
-                shops: initData.shops,
-                receipts: initData.receipts,
-                savingAsParentPayment: initData.savingAsParentPayment ?? false
-            )
+            completion(.full(paymentOptions: .create(from: initData)))
 
-            initData.addPaymentData(["Sample_PaymentFlowType": "Full"])
-
-            let paymentOptions = PaymentOptions(
-                orderOptions: orderOptions,
-                customerOptions: customerOptions,
-                paymentData: initData.paymentFormData ?? [:]
-            )
-
-            completion(.full(paymentOptions: paymentOptions))
         case finishPaymentFlowYandexPayButton as UIView?:
             container.setLoaderVisible(true, animated: true)
-            initData.addPaymentData(["Sample_PaymentFlowType": "Finish"])
 
             coreSDK.initPayment(data: initData) { [weak container] result in
                 DispatchQueue.main.async {
                     container?.setLoaderVisible(false, animated: true)
                 }
 
-                let paymentFlow = try? result.map { payload in
-                    PaymentFlow.finish(paymentId: payload.paymentId, customerOptions: customerOptions)
+                let customerOptions = initData.customerKey.map {
+                    CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
+                }
+
+                let paymentFlow: PaymentFlow? = try? result.map { payload in
+                    let paymentOptions = FinishPaymentOptions(
+                        paymentId: payload.paymentId,
+                        amount: payload.amount,
+                        orderId: payload.orderId,
+                        customerOptions: customerOptions
+                    )
+                    return PaymentFlow.finish(paymentOptions: paymentOptions)
                 }.get()
 
                 completion(paymentFlow)
@@ -773,27 +575,61 @@ extension BuyProductsViewController: YandexPayButtonContainerDelegate {
 
     func yandexPayButtonContainer(
         _ container: IYandexPayButtonContainer,
-        didCompletePaymentWithResult result: YandexPayPaymentResult
+        didCompletePaymentWithResult result: PaymentResult
     ) {
-        let message: String = {
-            switch result {
-            case .cancelled:
-                return "\(Loc.Text.payment) \(Loc.Text.paymentStatusCancel)"
-            case let .succeeded(info):
-                return "\(Loc.Text.paymentStatusAmount) \(info.amount) \(Loc.Text.paymentStatusSuccess)"
-            case let .failed(error):
-                return "\(error)"
-            }
-        }()
+        showAlert(with: result)
+    }
+}
 
-        let alert = UIAlertController(
-            title: "YandexPay",
-            message: message,
-            preferredStyle: .alert
+// MARK: - PaymentOptions + PaymentInitData
+
+private extension PaymentOptions {
+    static func create(from initData: PaymentInitData) -> PaymentOptions {
+        let orderOptions = OrderOptions(
+            orderId: initData.orderId,
+            amount: initData.amount,
+            description: initData.description,
+            payType: initData.payType,
+            receipt: initData.receipt,
+            shops: initData.shops,
+            receipts: initData.receipts,
+            savingAsParentPayment: initData.savingAsParentPayment ?? false
         )
 
-        let action = UIAlertAction(title: Loc.Button.ok, style: .default)
-        alert.addAction(action)
-        present(alert, animated: true)
+        let customerOptions = initData.customerKey.map {
+            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
+        }
+
+        return PaymentOptions(
+            orderOptions: orderOptions,
+            customerOptions: customerOptions,
+            paymentData: initData.paymentFormData ?? [:]
+        )
+    }
+}
+
+// MARK: - PaymentResult + Helpers
+
+extension PaymentResult {
+    var alertTitle: String {
+        switch self {
+        case .succeeded:
+            return "Payment was successful"
+        case .failed:
+            return "An error occurred during payment"
+        case .cancelled:
+            return "Payment canceled by user"
+        }
+    }
+
+    var alertMessage: String {
+        switch self {
+        case let .succeeded(paymentInfo):
+            return "\(paymentInfo)"
+        case let .failed(error):
+            return "\(error)"
+        case let .cancelled(paymentInfo):
+            return paymentInfo.map { "\($0)" } ?? ""
+        }
     }
 }

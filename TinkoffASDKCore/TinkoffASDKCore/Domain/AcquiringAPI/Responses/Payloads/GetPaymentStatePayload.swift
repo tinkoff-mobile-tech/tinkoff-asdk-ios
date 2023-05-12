@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetPaymentStatePayload: Decodable {
+public struct GetPaymentStatePayload: Decodable, Equatable {
     private enum CodingKeys: CodingKey {
         case amount
         case orderId
@@ -39,13 +39,13 @@ public struct GetPaymentStatePayload: Decodable {
     public let paymentId: String
     public let amount: Int64
     public let orderId: String
-    public let status: PaymentStatus
+    public let status: AcquiringStatus
 
     public init(
         paymentId: String,
         amount: Int64,
         orderId: String,
-        status: PaymentStatus
+        status: AcquiringStatus
     ) {
         self.paymentId = paymentId
         self.amount = amount
@@ -58,6 +58,6 @@ public struct GetPaymentStatePayload: Decodable {
         paymentId = try container.decode(String.self, forKey: .paymentId)
         amount = try container.decode(Int64.self, forKey: .amount)
         orderId = try container.decode(String.self, forKey: .orderId)
-        status = try container.decodeIfPresent(PaymentStatus.self, forKey: .status) ?? .unknown
+        status = try container.decodeIfPresent(AcquiringStatus.self, forKey: .status) ?? .unknown
     }
 }

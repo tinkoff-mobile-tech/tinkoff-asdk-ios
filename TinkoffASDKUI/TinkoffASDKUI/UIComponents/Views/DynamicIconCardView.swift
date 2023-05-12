@@ -36,13 +36,8 @@ class DynamicIconCardView: UIView {
         setupViews()
         frameObserver = observe(
             \.center,
-            changeHandler: { _, _ in self.setupFrames() }
+            changeHandler: { [weak self] _, _ in self?.setupFrames() }
         )
-    }
-
-    private init(constants: Constants = Constants()) {
-        self.constants = constants
-        super.init(frame: CGRect(origin: .zero, size: constants.card.size))
     }
 
     // MARK: - Public
@@ -63,6 +58,10 @@ class DynamicIconCardView: UIView {
         }
     }
 
+    func clear() {
+        configure(model: Model(data: Data()))
+    }
+
     // MARK: - Private
 
     private func setupViews() {
@@ -72,7 +71,7 @@ class DynamicIconCardView: UIView {
 
         cardImageView.contentMode = .scaleAspectFill
         cardImageView.clipsToBounds = true
-        paymentSystemBadgeImageView.contentMode = .scaleAspectFill
+        paymentSystemBadgeImageView.contentMode = .scaleAspectFit
         paymentSystemBadgeImageView.clipsToBounds = true
 
         setupFrames()
@@ -112,6 +111,7 @@ class DynamicIconCardView: UIView {
     }
 
     private func configureBank(icon: Icon.Bank?) {
+        guard cardImageView.image != icon?.image else { return }
         cardImageView.alpha = icon == nil ? 0 as CGFloat : 1 as CGFloat
         cardImageView.image = icon?.image
     }
@@ -126,6 +126,8 @@ class DynamicIconCardView: UIView {
 // MARK: - Constants
 
 extension DynamicIconCardView {
+
+    static var defaultSize: CGSize { Constants.Card().size }
 
     struct Constants {
         var card = Card()
@@ -150,11 +152,27 @@ extension DynamicIconCardView {
 
 // MARK: - Other
 
+protocol IDynamicIconCardViewUpdater: AnyObject {
+    func update(config: DynamicIconCardView.Model)
+}
+
 extension DynamicIconCardView {
 
     struct Model {
         var data: Data
         var style = Style()
+
+        weak var updater: IDynamicIconCardViewUpdater?
+
+        init(
+            data: Data = Data(),
+            style: Style = Style(),
+            updater: IDynamicIconCardViewUpdater? = nil
+        ) {
+            self.data = data
+            self.style = style
+            self.updater = updater
+        }
     }
 
     struct Data {
@@ -194,21 +212,21 @@ extension DynamicIconCardView.Icon {
         var image: UIImage {
             switch self {
             case .tinkoff:
-                return Asset.Cards.cardTinkoff.image
+                return Asset.PaymentCard.Bank.tinkoff.image
             case .alpha:
-                return Asset.Cards.cardAlpha.image
+                return Asset.PaymentCard.Bank.alpha.image
             case .raiffaisen:
-                return Asset.Cards.cardRaiffaisen.image
+                return Asset.PaymentCard.Bank.raiffaisen.image
             case .vtb:
-                return Asset.Cards.cardVtb.image
+                return Asset.PaymentCard.Bank.vtb.image
             case .gazprom:
-                return Asset.Cards.cardGazprom.image
+                return Asset.PaymentCard.Bank.gazprom.image
             case .ozon:
-                return Asset.Cards.cardOzon.image
+                return Asset.PaymentCard.Bank.ozon.image
             case .sber:
-                return Asset.Cards.cardSber.image
+                return Asset.PaymentCard.Bank.sber.image
             case .other:
-                return Asset.Cards.cardOther.image
+                return Asset.PaymentCard.Bank.other.image
             }
         }
     }
@@ -229,33 +247,66 @@ extension DynamicIconCardView.Icon {
 
         func getImage(bank: Bank?) -> UIImage {
             let style = (bank == .raiffaisen || bank == nil) ? Style.plain : Style.white
-            return getImage(style: style)
+            return getImage(style: style, bank: bank)
         }
 
-        func getImage(style: Style) -> UIImage {
+        func getImage(style: Style, bank: Bank?) -> UIImage {
+            if #available(iOS 13.0, *), bank == .raiffaisen {
+                if let image = handleRaiffassenCase() {
+                    return image
+                }
+            }
+
             switch self {
             case .mir:
                 switch style {
                 case .white:
-                    return Asset.PaymentSystem.paymentSystemMirWhite.image
+                    return Asset.PaymentCard.PaymentSystem.mirWhite.image
                 case .plain:
-                    return Asset.PaymentSystem.paymentSystemMir.image
+                    return Asset.PaymentCard.PaymentSystem.mir.image
                 }
 
             case .visa:
                 switch style {
                 case .white:
-                    return Asset.PaymentSystem.paymentSystemVisaWhite.image
+                    return Asset.PaymentCard.PaymentSystem.visaWhite.image
                 case .plain:
-                    return Asset.PaymentSystem.paymentSystemVisa.image
+                    return Asset.PaymentCard.PaymentSystem.visa.image
                 }
             case .maestro:
-                return Asset.PaymentSystem.paymentSystemMaestro.image
+                return Asset.PaymentCard.PaymentSystem.maestro.image
             case .uninonPay:
-                return Asset.PaymentSystem.paymentSystemUnionpay.image
+                return Asset.PaymentCard.PaymentSystem.unionpay.image
             case .masterCard:
-                return Asset.PaymentSystem.paymentSystemMastercard.image
+                return Asset.PaymentCard.PaymentSystem.mastercard.image
             }
+        }
+
+        /// Всегда отдаем светлую иконку ПС для райф банка
+        private func handleRaiffassenCase() -> UIImage? {
+            let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+            switch self {
+            case .mir:
+                let image = Asset.PaymentCard.PaymentSystem.mir.image
+                guard let lightImage = image.imageAsset?.image(with: lightTrait),
+                      let cgImage = lightImage.cgImage
+                else {
+                    return image
+                }
+                return UIImage(cgImage: cgImage)
+            case .visa:
+                let image = Asset.PaymentCard.PaymentSystem.visa.image
+                guard let lightImage = image.imageAsset?.image(with: lightTrait),
+                      let cgImage = lightImage.cgImage
+                else {
+                    return image
+                }
+                return UIImage(cgImage: cgImage)
+            default:
+                break
+            }
+
+            return nil
         }
     }
 }

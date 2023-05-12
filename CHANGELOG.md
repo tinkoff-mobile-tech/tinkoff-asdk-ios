@@ -1,6 +1,65 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [MIC-6875] Payment system validation for Union Pay
+* [MIC-6827] Implemented CardFieldView
+* [MIC-6824] Redesigned Card List Cell
+* [MIC-6825] Card List Screen Redesign
+* [MIC-6843] Card List Screen Redesign - Cards Removal
+* [MIC-6837] Card List Screen Redesign - Integration
+* [MIC-6841] Card List Screen Redesign - Tests
+* [MIC-7545] Adapt CardList for Payment Card Selection Flow
+* [MIC-6833] Add New Card Screen Redisign - General Redisign
+* [MIC-6834] Add New Card Screen Redisign - Card List Integration
+* [MIC-6835] Add New Card Screen Redisign - Present Add Card Only Integration
+* [MIC-6836] Add New Card Screen Redisign - Sample add shortcut button for presenting Add Card
+* [MIC-6842] Add New Card Screen Redisign - Unit Tests
+* [MIC-7538] Add New Tinkoff Bins
+* [MIC-7380] SBP Redesign - without payment
+* [MIC-7384] Add payment sheet to SBP
+* [MIC-7703] MainForm - Add entry point in ASDKSample
+* [MIC-7702] MainForm - MVP module foundation
+* [MIC-7704] MainForm - Primary pay method block
+* [MIC-7775] MainForm - SavedCard view
+* [MIC-7828] MainForm - Provide payment data to CardPaymentForm
+* [MIC-7827] MainForm - Extend cvc field's touch area
+* [MIC-7705] MainForm - Update Button for configuring
+* [MIC-7706] MainForm - Other Payment Methods
+* [MIC-7952] MainForm - UI elements with own cells
+* [MIC-7707] MainForm - State changes handling
+* [MIC-8030] MainForm - Saved card selection
+* [MIC-8093] MainForm - Add primary payment method resolving logic
+* [MIC-7708] MainForm - Remove stub for primary payment method
+* [MIC-8013] MainForm - Card payment logic
+* [MIC-8037] MainForm - Add analytics data
+* [MIC-8020] MainForm - Add localization
+* [MIC-8596] MainForm - Change SBP Button's background color
+* [MIC-8760] MainForm - PullableContainer's height adapts to content height
+* [MIC-8761] MainForm - Keyboard handling logic takes into account the position of the button
+* [MIC-7699] CardPayment - Add common functionality of payment by card
+* [MIC-8068] SBP - Opening from main form
+* [MIC-4650] CardsController & AddCardController for working with payment cards with own UI
+* [MIC-8027] Integrate CardsController to AddNewCard module
+* [MIC-8026] Integrate CardsController to CardList module
+* [MIC-8050] Change add card icon
+* [MIC-8095] TinkoffPay - integrate to MainForm
+* [MIC-8096] TinkoffPay - integrate with independent button
+* [MIC-7776] PullableContainer refactoring
+* [EACQAPW-4707] Add correct sbp failures handling on MainForm
+* [MIC-8723] - Design review ui fixes - Pay by new card
+* [MIC-8719] - Design review ui fixes - Cards flow
+* [MIC-8786] Fix keyboard handling in recurrent payment module
+* [EACQAPW-4284] Testing SBPBanks module and services
+* [EACQAPW-4190] - YandexPay Flow Unit Tests
+* [EACQAPW-4189] - YandexPay Flow Error Handling Unit Tests
+* [EACQAPW-4188] - Add documentation for Acquiring v3
+
+### Fixed
+
+* [EACQAPW-4762] - Add PayType to PaymentOptions
+
 ## [2.19.0] - 2023-04-13Z
 
 ### Added
@@ -8,6 +67,8 @@
 * [EACQAPW-4510] Added public inits for `AgentData` и `SupplierInfo`
 
 ## [2.18.2] - 2023-03-28Z
+
+### Added
 
 * [MIC-8065] Update for Russian Certificates
 
@@ -64,7 +125,7 @@
 
 ## [2.14.1] - 2022-12-26Z
 
-### Added
+### Added 
 
 * [MIC-7301] AuthChallengeService injection ability for URLSession and WKWebView
 
