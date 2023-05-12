@@ -1,6 +1,12 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-7135] Properly forming query path in get url
+
+## [3.0.0] - 2023-05-12Z
+
 ### Added
 
 * [MIC-6875] Payment system validation for Union Pay
@@ -58,8 +64,8 @@
 
 ### Fixed
 
-* [EACQAPW-4762] - Add PayType to PaymentOptions
-* [MIC-7135] Properly forming query path in get url
+* [EACQAPW-4762] Add PayType to PaymentOptions
+* [EACQAPW-4772] Fix TinkoffPay Analytics
 
 ## [2.19.0] - 2023-04-13Z
 
