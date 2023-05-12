@@ -9,14 +9,18 @@ import Foundation
 
 struct GetTerminalPayMethodsRequest: AcquiringRequest {
     let baseURL: URL
-    let path: String
+    let path: String = "v2/GetTerminalPayMethods"
     let httpMethod: HTTPMethod = .get
     let tokenFormationStrategy: TokenFormationStrategy = .none
     let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy = .never
+    let queryItems: [URLQueryItem]
 
     init(baseURL: URL, terminalKey: String) {
         self.baseURL = baseURL
-        path = .pathWithQueries(terminalKey: terminalKey)
+        queryItems = [
+            URLQueryItem(name: Constants.Keys.terminalKey, value: terminalKey),
+            URLQueryItem(name: .paySourceKey, value: .paySourceValue),
+        ]
     }
 }
 
@@ -25,9 +29,4 @@ struct GetTerminalPayMethodsRequest: AcquiringRequest {
 private extension String {
     static let paySourceKey = "PaySource"
     static let paySourceValue = "SDK"
-
-    // TODO: MIC-7135 Add correct way to handle query parameters in NetworkClient
-    static func pathWithQueries(terminalKey: String) -> String {
-        "v2/GetTerminalPayMethods?\(Constants.Keys.terminalKey)=\(terminalKey)&\(paySourceKey)=\(paySourceValue)"
-    }
 }

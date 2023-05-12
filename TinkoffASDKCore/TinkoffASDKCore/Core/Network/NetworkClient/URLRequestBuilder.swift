@@ -40,6 +40,11 @@ final class URLRequestBuilder: IURLRequestBuilder {
         urlRequest.httpMethod = request.httpMethod.rawValue
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
 
+        if request.httpMethod.isAllowedToContainQuery, let query = formQuery(from: request.queryItems) {
+            // adding query to the `path` of URL
+            urlRequest.url = URL(string: (urlRequest.url?.absoluteString ?? "") + query)
+        }
+
         if request.httpMethod.isAllowedToContainBody, !request.parameters.isEmpty {
             switch request.parametersEncoding {
             case .json:
@@ -91,6 +96,13 @@ private extension URLRequestBuilder {
         .get()
 
         urlRequest.setContentTypeValueIfNeeded(.applicationFormUrlEncoded)
+    }
+
+    func formQuery(from items: [URLQueryItem]) -> String? {
+        guard !items.isEmpty else { return nil }
+        var components = URLComponents()
+        components.queryItems = items
+        return components.url?.absoluteString
     }
 }
 

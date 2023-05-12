@@ -59,6 +59,7 @@
 ### Fixed
 
 * [EACQAPW-4762] - Add PayType to PaymentOptions
+* [MIC-7135] Properly forming query path in get url
 
 ## [2.19.0] - 2023-04-13Z
 

@@ -27,6 +27,7 @@ struct NetworkRequestStub: NetworkRequest {
     let headers: HTTPHeaders
     let parameters: HTTPParameters
     let parametersEncoding: ParametersEncoding
+    let queryItems: [URLQueryItem]
 
     init(
         baseURL: URL = .doesNotMatter,
@@ -34,7 +35,8 @@ struct NetworkRequestStub: NetworkRequest {
         httpMethod: HTTPMethod = .get,
         headers: HTTPHeaders = [:],
         parameters: HTTPParameters = [:],
-        parametersEncoding: ParametersEncoding = .json
+        parametersEncoding: ParametersEncoding = .json,
+        queryItems: [URLQueryItem] = []
     ) {
         self.baseURL = baseURL
         self.path = path
@@ -42,5 +44,6 @@ struct NetworkRequestStub: NetworkRequest {
         self.headers = headers
         self.parameters = parameters
         self.parametersEncoding = parametersEncoding
+        self.queryItems = queryItems
     }
 }
