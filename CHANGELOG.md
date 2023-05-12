@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [3.0.0] - 2023-05-12Z
+
 ### Added
 
 * [MIC-6875] Payment system validation for Union Pay
