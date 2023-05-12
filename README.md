@@ -377,6 +377,12 @@ public struct PaymentInfo {
 `PaymentInfo` так же может располагаться и в `cancelled` в тех ситуациях, когда SDK начал процесс оплаты, но пользователь закрыл экран, не дождавшись завершения работы.
 
 ### Оплата с помощью платежной формы
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/main_form.png" width="30%" height="30%" hspace="10">
+    <img src="./Docs/images/flows/main_form_saved.png" width="30%" height="30%" hspace="10">
+  </kbd>
+<p/>
 
 В SDK реализована общая платежная форма. В ней отображаются несколько способов оплаты, доступных для данного терминала, и пользователь может выбрать любой из них:
 
@@ -423,6 +429,11 @@ public struct MainFormUIConfiguration {
 Платежная форма закроется по завершении оплаты и вернет в `completion` объект `PaymentResult`
 
 ### Оплата с помощью TinkoffPay
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/tinkoff_pay_start.png" width="30%" height="30%">
+  </kbd>
+<p/>
 
 Прежде всего для корректной работы `TinkoffPay` в вашем приложении необходимо добавить в `Info.plist` в массив по ключу `LSApplicationQueriesSchemes` значение `tinkoffbank`:
 
@@ -457,6 +468,13 @@ public func presentTinkoffPay(
 Оплата с помощью `TinkoffPay` также доступа с [платежной формы](#оплата-с-помощью-платежной-формы)
 
 ### Оплата с помощью Системы быстрых платежей
+
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/sbp.png" width="30%" height="30%" hspace="10">
+    <img src="./Docs/images/flows/sbp_banks.png" width="30%" height="30%" hspace="10">
+  </kbd>
+<p/>
 
 В SDK доступны несколько видов оплаты с помощью `СБП`. В данном разделе описан сценарий, при котором пользователю отображается список банков, поддерживающих оплату `СБП`. При выборе конкретного банка из списка произойдет переход в соответствующее банковское приложение.
 
@@ -526,6 +544,12 @@ public func presentSBPBanksList(
 Данный вид оплаты также доступен с [платежной формы](#оплата-с-помощью-платежной-формы)
 
 ### Оплата с помощью QR-кода Системы быстрых платежей
+
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/sbp_qr.png" width="30%" height="30%">
+  </kbd>
+<p/>
 
 В SDK есть возможность отобразить `QR-код` с ссылкой для совершения оплаты при помощи `Системы быстрых платежей`. После сканирования кода на устройстве пользователя откроется форма оплаты в банковском приложении. И здесь стоит выделить `2 вида QR`:
 
@@ -626,6 +650,13 @@ public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
 
 ### Оплата с помощью YandexPay
 
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/yandex_pay_start.png" width="30%" height="30%" hspace="10">
+    <img src="./Docs/images/flows/yandex_pay.png" width="30%" height="30%" hspace="10">
+  </kbd>
+<p/>
+
 Подробную инструкцию по интеграции кнопки YandexPay, настроенную на прием платежей с помощью `интернет-эквайринга Тинькофф Касса`, вы можете прочитать на [отдельной странице](./Docs/YandexPayIntergration.md)
 
 ## Управление банковскими картами
@@ -633,6 +664,12 @@ public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
 Помимо платежей в SDK предусмотрены точки входа для экранов управление картами
 
 ### Список сохраненных карт
+
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/cards_list.png" width="30%" height="30%">
+  </kbd>
+<p/>
 
 Для открытия экрана со списком сохраненных карт достаточно вызвать в `AcquiringUISDK` функцию:
 
@@ -654,6 +691,12 @@ public func presentCardList(
 Также вы можете передать, ссылку на реализацию [ICardScannerDelegate](#сканирование-карт), с помощью которой пользователь сможет отсканировать свою банковскую карту.
 
 ### Привязка новой карты
+
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/add_card.png" width="30%" height="30%">
+  </kbd>
+<p/>
 
 Возможность привязать новую карту доступна пользователю с экрана со списком карт, но при необходимости вы можете самостоятельно встроить ее в свое приложение.
 Для этого необходимо вызвать следующую функцию в `AcquringUISDK`:
@@ -701,6 +744,11 @@ public enum AddCardResult {
 ## Дополнительные возможности
 
 ### Сканирование карт
+<p align="center">
+  <kbd>
+    <img src="./Docs/images/flows/card_scanner_button.png" width="30%" height="30%">
+  </kbd>
+<p/>
 
 При запуске всех пользовательских сценариев, где может присутствовать поле ввода карточных данных, у вас есть возможность передать ссылку на реализацию протокола `ICardScannerDelegate`:
 
