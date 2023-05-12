@@ -441,7 +441,7 @@ extension MainFormPresenter {
                 cardScannerDelegate: cardScannerDelegate
             )
         case let .tinkoffPay(version):
-            let cancellable = tinkoffPayController.performPayment(paymentFlow: paymentFlow, method: version)
+            let cancellable = tinkoffPayController.performPayment(paymentFlow: paymentFlow.withTinkoffPayAnalytics(), method: version)
             presentationState = .tinkoffPayProcessing(cancellable)
             view?.showCommonSheet(state: .tinkoffPay.processing)
         case .sbp:
