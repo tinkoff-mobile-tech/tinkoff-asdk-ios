@@ -14,16 +14,16 @@ final class SBPBanksAssembly: ISBPBanksAssembly {
 
     // Dependencies
     private let acquiringSdk: AcquiringSdk
-    private let sbpConfiguration: SBPConfiguration
+    private let configuration: UISDKConfiguration
 
     // MARK: - Initialization
 
     init(
         acquiringSdk: AcquiringSdk,
-        sbpConfiguration: SBPConfiguration
+        configuration: UISDKConfiguration
     ) {
         self.acquiringSdk = acquiringSdk
-        self.sbpConfiguration = sbpConfiguration
+        self.configuration = configuration
     }
 
     // MARK: - ISBPBanksAssembly
@@ -68,7 +68,7 @@ extension SBPBanksAssembly {
     ) -> SBPBanksModule {
         let sbpPaymentSheetAssembly = SBPPaymentSheetAssembly(
             acquiringSdk: acquiringSdk,
-            sbpConfiguration: sbpConfiguration
+            configuration: configuration
         )
         let router = SBPBanksRouter(sbpBanksAssembly: self, sbpPaymentSheetAssembly: sbpPaymentSheetAssembly)
 

@@ -22,13 +22,11 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
     private let paymentStatusService: IPaymentStatusService
     private let repeatedRequestHelper: IRepeatedRequestHelper
     private let mainDispatchQueue: IDispatchQueue
-    private let sbpConfiguration: SBPConfiguration
 
     // MARK: Properties
 
     private let paymentId: String
-
-    private lazy var requestRepeatCount: Int = sbpConfiguration.paymentStatusRetriesCount
+    private var requestRepeatCount: Int
     private var canDismissView = true
 
     private var currentViewState: CommonSheetState = .waiting
@@ -42,14 +40,14 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
         paymentStatusService: IPaymentStatusService,
         repeatedRequestHelper: IRepeatedRequestHelper,
         mainDispatchQueue: IDispatchQueue,
-        sbpConfiguration: SBPConfiguration,
+        requestRepeatCount: Int,
         paymentId: String
     ) {
         self.output = output
         self.paymentStatusService = paymentStatusService
         self.repeatedRequestHelper = repeatedRequestHelper
+        self.requestRepeatCount = requestRepeatCount
         self.mainDispatchQueue = mainDispatchQueue
-        self.sbpConfiguration = sbpConfiguration
         self.paymentId = paymentId
     }
 }

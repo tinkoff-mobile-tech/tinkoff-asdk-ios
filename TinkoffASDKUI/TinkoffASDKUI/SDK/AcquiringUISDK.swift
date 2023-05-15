@@ -22,13 +22,12 @@ import TinkoffASDKCore
 import UIKit
 import WebKit
 
+/// Замыкание с результатом, вызываемое после закрытия экрана оплаты
 public typealias PaymentResultCompletion = (PaymentResult) -> Void
-public typealias PaymentCompletionHandler = (_ result: Result<GetPaymentStatePayload, Error>) -> Void
 
-public class AcquiringUISDK: NSObject {
-
-    public var acquiringSdk: AcquiringSdk
-    private let style: Style
+/// Фасад взаимодействия с модулем `TinkoffASDKUI` для совершения платежей
+public final class AcquiringUISDK {
+    // MARK: Dependencies
 
     private let paymentControllerAssembly: IPaymentControllerAssembly
     private let cardsControllerAssembly: ICardsControllerAssembly
@@ -47,30 +46,28 @@ public class AcquiringUISDK: NSObject {
 
     // MARK: Init
 
+    /// Фасад взаимодействия с модулем `TinkoffASDKUI` для совершения платежей
+    /// - Parameters:
+    ///   - coreSDKConfiguration: Конфигурация модуля `TinkoffASDKCore`
+    ///   - uiSDKConfiguration: Конфигурация модуля `TinkoffASDKUI`
     public convenience init(
-        configuration: AcquiringSdkConfiguration,
-        uiSDKConfiguration: UISDKConfiguration = UISDKConfiguration(),
-        style: Style = DefaultStyle()
+        coreSDKConfiguration: AcquiringSdkConfiguration,
+        uiSDKConfiguration: UISDKConfiguration = UISDKConfiguration()
     ) throws {
-        let coreSDK = try AcquiringSdk(configuration: configuration)
+        let coreSDK = try AcquiringSdk(configuration: coreSDKConfiguration)
 
         self.init(
             coreSDK: coreSDK,
-            configuration: configuration,
-            uiSDKConfiguration: uiSDKConfiguration,
-            style: style
+            configuration: coreSDKConfiguration,
+            uiSDKConfiguration: uiSDKConfiguration
         )
     }
 
     init(
         coreSDK: AcquiringSdk,
         configuration: AcquiringSdkConfiguration,
-        uiSDKConfiguration: UISDKConfiguration,
-        style: Style = DefaultStyle()
+        uiSDKConfiguration: UISDKConfiguration
     ) {
-        acquiringSdk = coreSDK
-        self.style = style
-
         lazy var defaultChallengeService = DefaultWebViewAuthChallengeService(certificateValidator: CertificateValidator.shared)
         webViewAuthChallengeService = uiSDKConfiguration.webViewAuthChallengeService ?? defaultChallengeService
 
@@ -103,11 +100,11 @@ public class AcquiringUISDK: NSObject {
         )
 
         sbpBanksAssembly = SBPBanksAssembly(
-            acquiringSdk: acquiringSdk,
-            sbpConfiguration: uiSDKConfiguration.sbpConfiguration
+            acquiringSdk: coreSDK,
+            configuration: uiSDKConfiguration
         )
 
-        sbpQrAssembly = SBPQrAssembly(acquiringSdk: acquiringSdk)
+        sbpQrAssembly = SBPQrAssembly(acquiringSdk: coreSDK)
 
         yandexPayButtonContainerFactoryProvider = YandexPayButtonContainerFactoryProvider(
             flowAssembly: YandexPayPaymentFlowAssembly(
@@ -158,57 +155,44 @@ public class AcquiringUISDK: NSObject {
             sbpBanksAssembly: sbpBanksAssembly
         )
     }
-}
-
-public extension AcquiringUISDK {
 
     // MARK: PaymentController
 
-    /// Создает новый `IPaymentController`, с помощью которого можно совершить оплату с прохождением проверки `3DS`
+    /// Создает новый `IPaymentController`, с помощью которого можно совершить оплату с прохождением проверки `3DS`, используя свой `UI`
     /// - Returns: IPaymentController
-    func paymentController() -> IPaymentController {
+    public func paymentController() -> IPaymentController {
         paymentControllerAssembly.paymentController()
     }
 
     // MARK: AddCardController
 
-    /// Создает новый `IAddCardController`, с помощью которого можно привязать новую карту с прохождением проверки 3DS
+    /// Создает новый `IAddCardController`, с помощью которого можно привязать новую карту с прохождением проверки 3DS, используя свой `UI`
     /// - Parameter customerKey: Идентификатор покупателя в системе продавца
     /// - Returns: IAddCardController
-    func addCardController(customerKey: String) -> IAddCardController {
+    public func addCardController(customerKey: String) -> IAddCardController {
         addCardControllerAssembly.addCardController(customerKey: customerKey)
     }
 
     // MARK: CardsController
 
-    func cardsController(customerKey: String) -> ICardsController {
+    /// Создает новый `ICardsController`, с помощью которого можно получить список активных карт,
+    /// удалить  и привязать новую карту с прохождением проверки 3DS, используя свой `UI`
+    /// - Parameter customerKey: Идентификатор покупателя в системе продавца
+    /// - Returns: ICardsController
+    public func cardsController(customerKey: String) -> ICardsController {
         cardsControllerAssembly.cardsController(customerKey: customerKey)
     }
-}
 
-public extension AcquiringUISDK {
-    /// Асинхронное создание фабрики `IYandexPayButtonContainerFactory`
-    ///
-    /// Ссылку на полученный таким образом объект можно хранить переиспользовать множество раз в различных точках приложения.
+    // MARK: MainForm
+
+    /// Отображает основную платежную форму с различными способами оплаты
     /// - Parameters:
-    ///   - configuration: Общаяя конфигурация `YandexPay`
-    ///   - initializer: Абстракция для инициализации фабрики. Используется для связывания модулей `TinkoffASDKUI` и `TinkoffASDKYandexPay`
-    ///   - completion: Callback с результатом создания фабрики. Вернет `Error` при сетевых ошибках или если способ оплаты через `YandexPay` недоступен для данного терминала.
-    func yandexPayButtonContainerFactory(
-        with configuration: YandexPaySDKConfiguration,
-        initializer: IYandexPayButtonContainerFactoryInitializer,
-        completion: @escaping (Result<IYandexPayButtonContainerFactory, Error>) -> Void
-    ) {
-        yandexPayButtonContainerFactoryProvider.yandexPayButtonContainerFactory(
-            with: configuration,
-            initializer: initializer,
-            completion: completion
-        )
-    }
-}
-
-public extension AcquiringUISDK {
-    func presentMainForm(
+    ///   - presentingViewController: `UIViewController`, поверх которого отобразится платежная форма
+    ///   - paymentFlow: Содержит тип платежа и параметры оплаты
+    ///   - configuration: Конфигурация платежной формы
+    ///   - cardScannerDelegate: Делегат, предоставляющий возможность отобразить карточный сканер поверх заданного экрана
+    ///   - completion: Замыкание с результатом, вызываемое после закрытия экрана оплаты
+    public func presentMainForm(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         configuration: MainFormUIConfiguration,
@@ -225,26 +209,30 @@ public extension AcquiringUISDK {
         presentingViewController.present(viewController, animated: true)
     }
 
-    /// Отображает экран добавления карты
+    // MARK: AddCard
+
+    /// Отображает экран привязки новой карты
     /// - Parameters:
-    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран привязки карты
     ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
-    ///   - cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
-    ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
-    func presentAddCard(
+    ///   - cardScannerDelegate: Делегат, предоставляющий возможность отобразить карточный сканер поверх заданного экрана
+    ///   - completion: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
+    public func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
         cardScannerDelegate: ICardScannerDelegate? = nil,
-        onViewWasClosed: ((AddCardResult) -> Void)? = nil
+        completion: ((AddCardResult) -> Void)? = nil
     ) {
         let navigationController = addNewCardAssembly.addNewCardNavigationController(
             customerKey: customerKey,
             cardScannerDelegate: cardScannerDelegate,
-            onViewWasClosed: onViewWasClosed
+            onViewWasClosed: completion
         )
 
         presentingViewController.present(navigationController, animated: true)
     }
+
+    // MARK: CardList
 
     /// Отображает экран со списком карт
     ///
@@ -252,9 +240,8 @@ public extension AcquiringUISDK {
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
     ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
-    ///   - cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
-    ///   - onViewWasClosed: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
-    func presentCardList(
+    ///   - cardScannerDelegate: Делегат, предоставляющий возможность отобразить карточный сканер поверх заданного экрана
+    public func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String,
         cardScannerDelegate: ICardScannerDelegate? = nil
@@ -266,27 +253,43 @@ public extension AcquiringUISDK {
         presentingViewController.present(navigationController, animated: true)
     }
 
-    func presentSBPBanksList(
+    // MARK: SBPBanksList
+
+    /// Отображает экран со списком приложений банков, с помощью которых можно провести оплату через `Систему быстрых платежей`
+    /// - Parameters:
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран со списком банков
+    ///   - paymentFlow: Содержит тип платежа и параметры оплаты
+    ///   - completion: Замыкание с результатом оплаты, вызываемое после закрытия экрана оплаты `СБП`
+    public func presentSBPBanksList(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
-        completion: @escaping PaymentResultCompletion
+        completion: PaymentResultCompletion? = nil
     ) {
         let module = sbpBanksAssembly.buildInitialModule(paymentFlow: paymentFlow, completion: completion)
         let navigation = UINavigationController.withElevationBar(rootViewController: module.view)
         presentingViewController.present(navigation, animated: true)
     }
 
-    func presentRecurrentPayment(
+    // MARK: RecurrentPayment
+
+    /// Отображает экран, выполняющий рекуррентный платеж
+    /// - Parameters:
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран рекуррентного платежа
+    ///   - paymentFlow: Содержит тип платежа и параметры оплаты
+    ///   - rebillId: Идентификатор родительского платежа, на основе которого будет произведено списание средств
+    ///   - failureDelegate: Делегат, обрабатывающий ошибку списание средств при вызове `v2/Charge`.
+    ///   Используется только при оплате на основе уже существующего `paymentId (PaymentFlow.finish)`.
+    ///   При `PaymentFlow.full` SDK способен самостоятельно обработать полученную ошибку.
+    ///   - completion: Замыкание с результатом оплаты, вызываемое после закрытия экрана рекуррентного платежа
+    public func presentRecurrentPayment(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
-        amount: Int64,
         rebillId: String,
-        failureDelegate: IRecurrentPaymentFailiureDelegate?,
-        completion: @escaping PaymentResultCompletion
+        failureDelegate: IRecurrentPaymentFailiureDelegate? = nil,
+        completion: PaymentResultCompletion? = nil
     ) {
         let viewController = recurrentPaymentAssembly.build(
             paymentFlow: paymentFlow,
-            amount: amount,
             rebillId: rebillId,
             failureDelegate: failureDelegate,
             moduleCompletion: completion
@@ -295,7 +298,14 @@ public extension AcquiringUISDK {
         presentingViewController.present(viewController, animated: true)
     }
 
-    func presentTinkoffPay(
+    // MARK: TinkoffPay
+
+    /// Отображает экран оплаты `TinkoffPay`
+    /// - Parameters:
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран оплаты `TinkoffPay`
+    ///   - paymentFlow: Содержит тип платежа и параметры оплаты
+    ///   - completion: Замыкание с результатом оплаты, вызываемое после закрытия экрана `TinkoffPay`
+    public func presentTinkoffPay(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         completion: PaymentResultCompletion? = nil
@@ -305,7 +315,15 @@ public extension AcquiringUISDK {
         presentingViewController.present(viewController, animated: true)
     }
 
-    func presentStaticQr(
+    // MARK: StaticSBPQR
+
+    /// Отображает экран с многоразовым `QR-кодом`, отсканировав который, пользователь сможет провести оплату с помощью `Системы быстрых платежей`
+    ///
+    /// При данном типе оплаты SDK никак не отслеживает статус платежа
+    /// - Parameters:
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран с `QR-кодом`
+    ///   - completion: Замыкание, вызываемое при закрытии экрана с `QR-кодом`
+    public func presentStaticSBPQR(
         on presentingViewController: UIViewController,
         completion: (() -> Void)? = nil
     ) {
@@ -313,12 +331,42 @@ public extension AcquiringUISDK {
         presentingViewController.present(viewController, animated: true)
     }
 
-    func presentDynamicQr(
+    // MARK: DynamicSBPQR
+
+    /// Отображает экран с одноразовым `QR-кодом`, отсканировав который, пользователь сможет провести оплату  с помощью `Системы быстрых платежей`
+    ///
+    /// При данном типе оплаты сумма и информация о платеже фиксируется, и SDK способен получить и обработать статус платежа
+    /// - Parameters:
+    ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран с `QR-кодом`
+    ///   - paymentFlow: Содержит тип платежа и параметры оплаты
+    ///   - completion: Замыкание с результатом оплаты, вызываемое после закрытия экрана с `QR-кодом`
+    public func presentDynamicSBPQR(
         on presentingViewController: UIViewController,
         paymentFlow: PaymentFlow,
         completion: @escaping PaymentResultCompletion
     ) {
         let viewController = sbpQrAssembly.buildForDynamicQr(paymentFlow: paymentFlow, moduleCompletion: completion)
         presentingViewController.present(viewController, animated: true)
+    }
+
+    // MARK: YandexPayButtonContainerFactory
+
+    /// Асинхронное создание фабрики `IYandexPayButtonContainerFactory`
+    ///
+    /// Ссылку на полученный таким образом объект можно хранить переиспользовать множество раз в различных точках приложения.
+    /// - Parameters:
+    ///   - configuration: Общаяя конфигурация `YandexPay`
+    ///   - initializer: Абстракция для инициализации фабрики. Используется для связывания модулей `TinkoffASDKUI` и `TinkoffASDKYandexPay`
+    ///   - completion: Callback с результатом создания фабрики. Вернет `Error` при сетевых ошибках или если способ оплаты через `YandexPay` недоступен для данного терминала.
+    public func yandexPayButtonContainerFactory(
+        with configuration: YandexPaySDKConfiguration,
+        initializer: IYandexPayButtonContainerFactoryInitializer,
+        completion: @escaping (Result<IYandexPayButtonContainerFactory, Error>) -> Void
+    ) {
+        yandexPayButtonContainerFactoryProvider.yandexPayButtonContainerFactory(
+            with: configuration,
+            initializer: initializer,
+            completion: completion
+        )
     }
 }

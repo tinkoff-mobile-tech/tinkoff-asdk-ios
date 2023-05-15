@@ -21,17 +21,13 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 struct SdkAssembly {
-    static func assembleUISDK(
-        credential: SdkCredentials,
-        style: Style = DefaultStyle()
-    ) throws -> AcquiringUISDK {
+    static func assembleUISDK(credential: SdkCredentials) throws -> AcquiringUISDK {
         let coreConfiguration = createCoreConfiguration(credential: credential)
         let uiConfiguration = UISDKConfiguration(addCardCheckType: AppSetting.shared.addCardChekType)
 
         return try AcquiringUISDK(
-            configuration: coreConfiguration,
-            uiSDKConfiguration: uiConfiguration,
-            style: style
+            coreSDKConfiguration: coreConfiguration,
+            uiSDKConfiguration: uiConfiguration
         )
     }
 

@@ -26,8 +26,6 @@ class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
         case products
-        /// открыть экран оплаты и перейти к оплате
-        case pay
         /// оплатить с помощью главной формы оплаты
         case mainFormPayment
         /// оплатить с карты - выбрать карту из списка и сделать этот платеж родительским
@@ -68,7 +66,6 @@ class BuyProductsViewController: UIViewController {
 
     private var tableViewCells: [TableViewCellType] = [
         .products,
-        .pay,
         .mainFormPayment,
         .tinkoffPay,
         .payAndSaveAsParent,
@@ -237,12 +234,10 @@ class BuyProductsViewController: UIViewController {
 
             let paymentOptions = PaymentOptions.create(from: createPaymentData())
             let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
-            let amount = paymentOptions.orderOptions.amount
 
             uiSDK.presentRecurrentPayment(
                 on: self,
                 paymentFlow: paymentFlow,
-                amount: amount,
                 rebillId: String(parentPaymentId),
                 failureDelegate: self
             ) { [weak self] result in
@@ -256,7 +251,7 @@ class BuyProductsViewController: UIViewController {
         let paymentOptions = PaymentOptions.create(from: createPaymentData())
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
-        uiSDK.presentDynamicQr(on: self, paymentFlow: paymentFlow) { [weak self] result in
+        uiSDK.presentDynamicSBPQR(on: self, paymentFlow: paymentFlow) { [weak self] result in
             self?.showAlert(with: result)
         }
     }
@@ -361,16 +356,6 @@ extension BuyProductsViewController: UITableViewDataSource {
             cell.textLabel?.text = product.name
             cell.detailTextLabel?.text = Utils.formatAmount(product.price)
             return cell
-
-        case .pay:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell {
-                cell.button.setTitle(Loc.Button.pay, for: .normal)
-                cell.button.isEnabled = true
-                cell.button.backgroundColor = yellowButtonColor()
-                cell.button.setImage(nil, for: .normal)
-                cell.onButtonTouch = {}
-                return cell
-            }
         case .mainFormPayment:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableViewCell.nibName) as? ButtonTableViewCell else { break }
             cell.button.setTitle(Loc.Button.pay, for: .normal)
@@ -472,8 +457,6 @@ extension BuyProductsViewController: UITableViewDataSource {
         switch tableViewCells[section] {
         case .products:
             return Loc.Title.goods
-        case .pay:
-            return Loc.Title.paymeny
         case .mainFormPayment:
             return Loc.Title.paymeny
         case .payAndSaveAsParent:
@@ -493,14 +476,6 @@ extension BuyProductsViewController: UITableViewDataSource {
         switch tableViewCells[section] {
         case .products:
             return "сумма: \(Utils.formatAmount(NSDecimalNumber(value: productsAmount())))"
-
-        case .pay:
-            let cardsCount = activeCards.count
-            if cardsCount > 0 {
-                return "открыть платежную форму и перейти к оплате товара, доступно \(cardsCount) сохраненных карт"
-            }
-
-            return "открыть платежную форму и перейти к оплате товара"
         case .mainFormPayment:
             return "Открыть главную платежную форму и перейти к оплате товара"
         case .payAndSaveAsParent:

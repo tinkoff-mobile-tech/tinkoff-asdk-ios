@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [3.0.0] - 2023-05-12Z
+
 ### Added
 
 * [MIC-6875] Payment system validation for Union Pay
@@ -54,10 +56,12 @@
 * [EACQAPW-4284] Testing SBPBanks module and services
 * [EACQAPW-4190] - YandexPay Flow Unit Tests
 * [EACQAPW-4189] - YandexPay Flow Error Handling Unit Tests
+* [EACQAPW-4188] - Add documentation for Acquiring v3
 
 ### Fixed
 
-* [EACQAPW-4762] - Add PayType to PaymentOptions
+* [EACQAPW-4762] Add PayType to PaymentOptions
+* [EACQAPW-4772] Fix TinkoffPay Analytics
 
 ## [2.19.0] - 2023-04-13Z
 

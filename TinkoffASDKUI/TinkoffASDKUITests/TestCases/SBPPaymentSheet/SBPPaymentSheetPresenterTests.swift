@@ -28,7 +28,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        setupSut(configuration: SBPConfiguration(), paymentId: "1234")
+        setupSut(paymentId: "1234")
     }
 
     override func tearDown() {
@@ -119,8 +119,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_status_formShowed_and_requests_allowed() {
         // given
         let paymentId = "11111"
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
         let payload1 = GetPaymentStatePayload.some(status: .formShowed)
         let payload2 = GetPaymentStatePayload.some(status: .authorized)
@@ -148,8 +147,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_status_confirming() {
         // given
         let paymentId = "11111"
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: 5)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: 5, paymentId: paymentId)
 
         let payload1 = GetPaymentStatePayload.some(status: .confirming)
         let payload2 = GetPaymentStatePayload.some(status: .confirming)
@@ -183,8 +181,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_getPaymentStatusFailed_and_requestsAllowed() {
         // given
         let paymentId = "11111"
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
         let error = NSError(domain: "error", code: 1234)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.failure(error), .failure(error)]
@@ -231,8 +228,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     func test_canDismissViewByUserInteraction_false() {
         // given
         let paymentId = "11111"
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: 1)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: 1, paymentId: paymentId)
 
         let payload = GetPaymentStatePayload.some(status: .confirming)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
@@ -292,8 +288,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     func test_viewWasClosed_when_waiting() {
         // given
         let paymentId = "11111"
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
         let payload = GetPaymentStatePayload.some(status: .formShowed)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
@@ -312,8 +307,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
     func test_viewWasClosed_when_paid_with_info() {
         // given
         let paymentId = "11111"
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: 2)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
         let payload = GetPaymentStatePayload.some(status: .authorized)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
@@ -333,7 +327,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 // MARK: - Private methods
 
 extension SBPPaymentSheetPresenterTests {
-    private func setupSut(configuration: SBPConfiguration, paymentId: String) {
+    private func setupSut(requestRepeatCount: Int = 10, paymentId: String) {
         viewMock = CommonSheetViewMock()
         paymentSheetOutputMock = SBPPaymentSheetPresenterOutputMock()
         paymentStatusServiceMock = PaymentStatusServiceMock()
@@ -345,7 +339,7 @@ extension SBPPaymentSheetPresenterTests {
             paymentStatusService: paymentStatusServiceMock,
             repeatedRequestHelper: repeatedRequestHelperMock,
             mainDispatchQueue: mainDispatchQueueMock,
-            sbpConfiguration: configuration,
+            requestRepeatCount: requestRepeatCount,
             paymentId: paymentId
         )
 
@@ -357,8 +351,7 @@ extension SBPPaymentSheetPresenterTests {
         paymentId: String,
         retriesCount: Int = 5
     ) {
-        let configuration = SBPConfiguration(paymentStatusRetriesCount: retriesCount)
-        setupSut(configuration: configuration, paymentId: paymentId)
+        setupSut(requestRepeatCount: retriesCount, paymentId: paymentId)
 
         let payload = GetPaymentStatePayload.some(status: status)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
