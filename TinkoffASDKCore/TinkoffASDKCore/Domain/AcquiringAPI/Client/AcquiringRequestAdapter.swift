@@ -89,6 +89,7 @@ private struct AdaptedRequest: AcquiringRequest {
     let decodingStrategy: AcquiringDecodingStrategy
     let terminalKeyProvidingStrategy: TerminalKeyProvidingStrategy
     let tokenFormationStrategy: TokenFormationStrategy
+    let queryItems: [URLQueryItem]
 }
 
 // MARK: - AcquiringRequest + Adaptation
@@ -112,7 +113,8 @@ private extension AcquiringRequest {
             parametersEncoding: parametersEncoding,
             decodingStrategy: decodingStrategy,
             terminalKeyProvidingStrategy: terminalKeyProvidingStrategy,
-            tokenFormationStrategy: tokenFormationStrategy
+            tokenFormationStrategy: tokenFormationStrategy,
+            queryItems: queryItems
         )
     }
 }
