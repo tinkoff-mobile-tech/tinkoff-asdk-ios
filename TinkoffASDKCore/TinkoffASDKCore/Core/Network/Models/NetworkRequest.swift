@@ -57,6 +57,7 @@ protocol NetworkRequest {
     var queryItems: [URLQueryItem] { get }
 }
 
+/// При добавлении новых значений не забудь проставить их в `AdaptedRequest` структуре
 extension NetworkRequest {
     var parameters: HTTPParameters { [:] }
     var headers: HTTPHeaders { [:] }
