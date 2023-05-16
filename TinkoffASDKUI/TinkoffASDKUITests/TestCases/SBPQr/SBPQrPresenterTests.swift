@@ -179,85 +179,271 @@ final class SBPQrPresenterTests: BaseTestCase {
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(viewMock.reloadDataCallsCount, 0)
     }
-
     
-//    func viewDidLoad() {
-//        view?.showCommonSheet(state: .processing, animatePullableContainerUpdates: false)
-//        loadQrData()
-//    }
-//
-//    private func loadQrData() {
-//        guard let paymentFlow = paymentFlow else {
-//            loadStaticQr()
-//            return
-//        }
-//
-//        switch paymentFlow {
-//        case let .full(paymentOptions):
-//            sbpService.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
-//                switch result {
-//                case let .success(initPayload):
-//                    self?.paymentId = initPayload.paymentId
-//                    self?.loadDynamicQr(paymentId: initPayload.paymentId)
-//                case let .failure(error):
-//                    self?.handleFailureGetQrData(error: error)
-//                }
-//            })
-//        case let .finish(paymentOptions):
-//            paymentId = paymentOptions.paymentId
-//            loadDynamicQr(paymentId: paymentOptions.paymentId)
-//        }
-//    }
-//
-//    private func loadDynamicQr(paymentId: String) {
-//        let qrData = GetQRData(paymentId: paymentId, paymentInvoiceType: .url)
-//        sbpService.getQR(data: qrData) { [weak self] result in
-//            self?.handleQr(result: result.map { .dynamicQr($0.qrCodeData) })
-//        }
-//    }
-//
-//    private func loadStaticQr() {
-//        sbpService.getStaticQR(data: .imageSVG) { [weak self] result in
-//            self?.handleQr(result: result.map { .staticQr($0.qrCodeData) })
-//        }
-//    }
-//
-//    private func handleQr(result: Result<QrImageType, Error>) {
-//        switch result {
-//        case let .success(qrType):
-//            handleSuccessGet(qrType: qrType)
-//        case let .failure(error):
-//            handleFailureGetQrData(error: error)
-//        }
-//    }
-//
-//    private func handleSuccessGet(qrType: QrImageType) {
-//        textHeaderPresenter = createTextHeaderPresener(for: qrType)
-//
-//        // Отображение Qr происходит после того как Qr будет загружен в WebView или ImageView. (зависит от типа)
-//        // Так как у web view есть задержка отображения.
-//        // Уведомление о загрузке приходит в методе qrDidLoad()
-//        DispatchQueue.performOnMain {
-//            self.qrImagePresenter.set(qrType: qrType)
-//            self.cellTypes = [.textHeader(self.textHeaderPresenter), .qrImage(self.qrImagePresenter)]
-//            self.view?.reloadData()
-//        }
-//    }
-//
-//    private func handleFailureGetQrData(error: Error) {
-//        DispatchQueue.performOnMain {
-//            self.moduleResult = .failed(error)
-//            self.viewUpdateStateIfNeeded(newState: .failed)
-//        }
-//    }
-//
-//    private func viewUpdateStateIfNeeded(newState: CommonSheetState) {
-//        if currentViewState != newState {
-//            currentViewState = newState
-//            view?.showCommonSheet(state: currentViewState)
-//        }
-//    }
+    func test_qrDidLoad_when_authorized() {
+        // given
+        configureSut(paymentFlow: .finishAny)
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .authorized))]
+        mainDispatchQueueMock.asyncAfterShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        
+        let payload = GetQRPayload.any
+        sbpServiceMock.getQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        viewMock.hideCommonSheetCallsCount = 0
+        mainDispatchQueueMock.asyncAfterCallsCount = 0
+        repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount = 0
+        paymentStatusServiceMock.getPaymentStateCallsCount = 0
+        mainDispatchQueueMock.asyncCallsCount = 0
+        viewMock.showCommonSheetCallsCount = 0
+        viewMock.showCommonSheetReceivedInvocations = []
+        
+        // when
+        sut.qrDidLoad()
+        
+        // then
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncAfterCallsCount, 1)
+        XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 1)
+        XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+    }
+    
+    func test_qrDidLoad_when_confirmed() {
+        // given
+        configureSut(paymentFlow: .finishAny)
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .confirmed))]
+        mainDispatchQueueMock.asyncAfterShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        
+        let payload = GetQRPayload.any
+        sbpServiceMock.getQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        viewMock.hideCommonSheetCallsCount = 0
+        mainDispatchQueueMock.asyncAfterCallsCount = 0
+        repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount = 0
+        paymentStatusServiceMock.getPaymentStateCallsCount = 0
+        mainDispatchQueueMock.asyncCallsCount = 0
+        viewMock.showCommonSheetCallsCount = 0
+        viewMock.showCommonSheetReceivedInvocations = []
+        
+        // when
+        sut.qrDidLoad()
+        
+        // then
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncAfterCallsCount, 1)
+        XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 1)
+        XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+    }
+    
+    func test_qrDidLoad_when_rejected() {
+        // given
+        configureSut(paymentFlow: .finishAny)
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .rejected))]
+        mainDispatchQueueMock.asyncAfterShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        
+        let payload = GetQRPayload.any
+        sbpServiceMock.getQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        viewMock.hideCommonSheetCallsCount = 0
+        mainDispatchQueueMock.asyncAfterCallsCount = 0
+        repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount = 0
+        paymentStatusServiceMock.getPaymentStateCallsCount = 0
+        mainDispatchQueueMock.asyncCallsCount = 0
+        viewMock.showCommonSheetCallsCount = 0
+        viewMock.showCommonSheetReceivedInvocations = []
+        
+        // when
+        sut.qrDidLoad()
+        
+        // then
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncAfterCallsCount, 1)
+        XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 1)
+        XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .failed)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+    }
+    
+    func test_qrDidLoad_when_undefinedStatus() {
+        // given
+        configureSut(paymentFlow: .finishAny)
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        let statuses: [Result<GetPaymentStatePayload, Error>] =
+        [.success(.some(status: .confirming)), .success(.some(status: .authorized))]
+        
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = statuses
+        mainDispatchQueueMock.asyncAfterShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        
+        let payload = GetQRPayload.any
+        sbpServiceMock.getQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        viewMock.hideCommonSheetCallsCount = 0
+        mainDispatchQueueMock.asyncAfterCallsCount = 0
+        repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount = 0
+        paymentStatusServiceMock.getPaymentStateCallsCount = 0
+        mainDispatchQueueMock.asyncCallsCount = 0
+        viewMock.showCommonSheetCallsCount = 0
+        viewMock.showCommonSheetReceivedInvocations = []
+        
+        // when
+        sut.qrDidLoad()
+        
+        // then
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncAfterCallsCount, 1)
+        XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 2)
+        XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 2)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 2)
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+    }
+    
+    func test_qrDidLoad_when_someFailedRequests() {
+        // given
+        configureSut(paymentFlow: .finishAny)
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        let error = NSError(domain: "error", code: 123456)
+        let statuses: [Result<GetPaymentStatePayload, Error>] =
+        [.failure(error), .failure(error), .failure(error), .success(.some(status: .authorized))]
+        
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = statuses
+        mainDispatchQueueMock.asyncAfterShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        
+        let payload = GetQRPayload.any
+        sbpServiceMock.getQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        viewMock.hideCommonSheetCallsCount = 0
+        mainDispatchQueueMock.asyncAfterCallsCount = 0
+        repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount = 0
+        paymentStatusServiceMock.getPaymentStateCallsCount = 0
+        mainDispatchQueueMock.asyncCallsCount = 0
+        viewMock.showCommonSheetCallsCount = 0
+        viewMock.showCommonSheetReceivedInvocations = []
+        
+        // when
+        sut.qrDidLoad()
+        
+        // then
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncAfterCallsCount, 1)
+        XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 4)
+        XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 4)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 4)
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+    }
+    
+    func test_qrDidLoad_when_paymentIdNil() {
+        // given
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .authorized))]
+        mainDispatchQueueMock.asyncAfterShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldCalls = true
 
+        // when
+        sut.qrDidLoad()
+        
+        // then
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+        XCTAssertEqual(mainDispatchQueueMock.asyncAfterCallsCount, 1)
+        XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 0)
+        XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 0)
+        XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 0)
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 0)
+    }
+    
+    func test_viewWasClosed() {
+        // given
+        var result: PaymentResult?
+        moduleCompletionMock = { res in
+            result = res
+        }
+        configureSut()
+        
+        // when
+        sut.viewWasClosed()
+        
+        // then
+        XCTAssertEqual(result, .cancelled())
+    }
+    
+    func test_numberOfRows() {
+        // given
+        let payload = GetStaticQRPayload(qrCodeData: "some data")
+        sbpServiceMock.getStaticQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        // when
+        let numberOfRows = sut.numberOfRows()
+
+        // then
+        XCTAssertEqual(numberOfRows, 2)
+    }
+    
+    func test_cellTypeAtIndexPath() {
+        // given
+        let payload = GetStaticQRPayload(qrCodeData: "some data")
+        sbpServiceMock.getStaticQRCompletionClosureInput = .success(payload)
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        sut.viewDidLoad()
+        
+        let anyTextHeaderPresenter = TextAndImageHeaderViewPresenter(title: "-")
+        let anyQrImagePresenter = QrImageViewPresenter(output: nil)
+        
+        // when
+        let cellType1 = sut.cellType(at: IndexPath(row: 0, section: 0))
+        let cellType2 = sut.cellType(at: IndexPath(row: 1, section: 0))
+        
+        // then
+        XCTAssertEqual(cellType1, .textHeader(anyTextHeaderPresenter))
+        XCTAssertEqual(cellType2, .qrImage(anyQrImagePresenter))
+    }
+    
+    func test_commonSheetViewDidTapPrimaryButton() {
+        // when
+        sut.commonSheetViewDidTapPrimaryButton()
+
+        // then
+        XCTAssertEqual(viewMock.closeViewCallsCount, 1)
+    }
+    
+    func test_commonSheetViewDidTapSecondaryButton() {
+        // when
+        sut.commonSheetViewDidTapSecondaryButton()
+
+        // then
+        XCTAssertEqual(viewMock.closeViewCallsCount, 1)
+    }
 }
 
 // MARK: - Private methods
