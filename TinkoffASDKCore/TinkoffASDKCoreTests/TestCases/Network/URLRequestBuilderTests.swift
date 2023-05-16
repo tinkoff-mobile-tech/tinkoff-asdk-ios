@@ -120,6 +120,42 @@ final class URLRequestBuilderTests: XCTestCase {
         XCTAssertNil(urlRequest.httpBody)
         XCTAssertNil(urlRequest.value(forHTTPHeaderField: .contentType))
     }
+
+    func test_formingQuery_for_get_request() throws {
+        // given
+        let expectedURL = #"https://www.tinkoff.ru/getPayMethods?en=hello&ru=%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82"#
+        let request = NetworkRequestStub(
+            path: "getPayMethods",
+            httpMethod: .get,
+            queryItems: [
+                URLQueryItem(name: "en", value: "hello"),
+                URLQueryItem(name: "ru", value: "привет"),
+            ]
+        )
+        // when
+        let urlRequest = try sut.build(request: request)
+
+        // then
+        XCTAssertEqual(urlRequest.url?.absoluteString, expectedURL)
+    }
+
+    func test_formingQuery_for_post_request() throws {
+        // given
+        let expectedURL = #"https://www.tinkoff.ru/getPayMethods"#
+        let request = NetworkRequestStub(
+            path: "getPayMethods",
+            httpMethod: .post,
+            queryItems: [
+                URLQueryItem(name: "en", value: "hello"),
+                URLQueryItem(name: "ru", value: "привет"),
+            ]
+        )
+        // when
+        let urlRequest = try sut.build(request: request)
+
+        // then
+        XCTAssertEqual(urlRequest.url?.absoluteString, expectedURL)
+    }
 }
 
 // MARK: - String + Constants

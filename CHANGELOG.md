@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+
+* [MIC-7135] Properly forming query path in get url
+
 ## [3.0.0] - 2023-05-12Z
 
 ### Added
