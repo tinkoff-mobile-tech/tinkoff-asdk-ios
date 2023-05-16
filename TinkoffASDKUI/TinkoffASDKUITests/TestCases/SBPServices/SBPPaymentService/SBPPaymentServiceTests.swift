@@ -195,14 +195,14 @@ extension SBPPaymentServiceTests {
     }
 }
 
-private extension PaymentFlow {
+extension PaymentFlow {
     static var fullRandom: PaymentFlow {
         let amount = 2000
         let randomOrderId = String(Int64.random(in: 1000 ... 10000))
         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: "any key")
         paymentData.description = "Краткое описание товара"
 
-        var receiptItems: [Item] = []
+        let receiptItems: [Item] = []
 
         paymentData.receipt = Receipt(
             shopCode: nil,

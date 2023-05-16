@@ -30,4 +30,18 @@ protocol IAcquiringSBPService {
         data: GetQRData,
         completion: @escaping (_ result: Result<GetQRPayload, Error>) -> Void
     ) -> Cancellable
+    
+    // MARK: Get Static QR
+
+    /// Выставить счет / принять оплату, сгенерировать QR для принятия платежей
+    ///
+    /// - Parameters:
+    ///   - data: `GetQRDataType` тип возвращаемых данных для генерации QR-кода
+    ///   - completion: результат операции `GetStaticQRPayload` в случае удачной регистрации и  `Error` - ошибка.
+    /// - Returns: `Cancellable`
+    @discardableResult
+    func getStaticQR(
+        data: GetQRDataType,
+        completion: @escaping (_ result: Result<GetStaticQRPayload, Error>) -> Void
+    ) -> Cancellable
 }

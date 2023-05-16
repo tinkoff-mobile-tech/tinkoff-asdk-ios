@@ -14,10 +14,12 @@ final class SBPQrPresenter: ISBPQrViewOutput {
 
     weak var view: ISBPQrViewInput?
 
-    private let acquiringSdk: AcquiringSdk
+    private let sbpService: IAcquiringSBPService & IAcquiringPaymentsService
     private let paymentFlow: PaymentFlow?
     private let repeatedRequestHelper: IRepeatedRequestHelper
     private let paymentStatusService: IPaymentStatusService
+    private let dispatchQueueType: IDispatchQueue.Type
+    private let mainDispatchQueue: IDispatchQueue
     private var moduleCompletion: PaymentResultCompletion?
 
     // MARK: Child Presenters
@@ -35,16 +37,19 @@ final class SBPQrPresenter: ISBPQrViewOutput {
     // MARK: Initialization
 
     init(
-        acquiringSdk: AcquiringSdk,
+        sbpService: IAcquiringSBPService & IAcquiringPaymentsService,
         paymentFlow: PaymentFlow?,
         repeatedRequestHelper: IRepeatedRequestHelper,
         paymentStatusService: IPaymentStatusService,
+        mainDispatchQueue: IDispatchQueue,
         moduleCompletion: PaymentResultCompletion?
     ) {
-        self.acquiringSdk = acquiringSdk
+        self.sbpService = sbpService
         self.paymentFlow = paymentFlow
         self.repeatedRequestHelper = repeatedRequestHelper
         self.paymentStatusService = paymentStatusService
+        dispatchQueueType = type(of: mainDispatchQueue)
+        self.mainDispatchQueue = mainDispatchQueue
         self.moduleCompletion = moduleCompletion
     }
 }
@@ -87,7 +92,7 @@ extension SBPQrPresenter: IQrImageViewPresenterOutput {
 
         // Через 10 секунд после показа динамического QR, начинаем отслеживание статуса
         // В случае со статическим QR отслеживания статуса не начнется
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+        mainDispatchQueue.asyncAfter(deadline: .now() + 10) { [weak self] in
             self?.getPaymentStatus()
         }
     }
@@ -104,7 +109,7 @@ extension SBPQrPresenter {
 
         switch paymentFlow {
         case let .full(paymentOptions):
-            acquiringSdk.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
+            sbpService.initPayment(data: .data(with: paymentOptions), completion: { [weak self] result in
                 switch result {
                 case let .success(initPayload):
                     self?.paymentId = initPayload.paymentId
@@ -120,14 +125,14 @@ extension SBPQrPresenter {
     }
 
     private func loadStaticQr() {
-        acquiringSdk.getStaticQR(data: .imageSVG) { [weak self] result in
+        sbpService.getStaticQR(data: .imageSVG) { [weak self] result in
             self?.handleQr(result: result.map { .staticQr($0.qrCodeData) })
         }
     }
 
     private func loadDynamicQr(paymentId: String) {
         let qrData = GetQRData(paymentId: paymentId, paymentInvoiceType: .url)
-        acquiringSdk.getQR(data: qrData) { [weak self] result in
+        sbpService.getQR(data: qrData) { [weak self] result in
             self?.handleQr(result: result.map { .dynamicQr($0.qrCodeData) })
         }
     }
@@ -147,7 +152,7 @@ extension SBPQrPresenter {
         // Отображение Qr происходит после того как Qr будет загружен в WebView или ImageView. (зависит от типа)
         // Так как у web view есть задержка отображения.
         // Уведомление о загрузке приходит в методе qrDidLoad()
-        DispatchQueue.performOnMain {
+        dispatchQueueType.performOnMain {
             self.qrImagePresenter.set(qrType: qrType)
             self.cellTypes = [.textHeader(self.textHeaderPresenter), .qrImage(self.qrImagePresenter)]
             self.view?.reloadData()
@@ -155,7 +160,7 @@ extension SBPQrPresenter {
     }
 
     private func handleFailureGetQrData(error: Error) {
-        DispatchQueue.performOnMain {
+        dispatchQueueType.performOnMain {
             self.moduleResult = .failed(error)
             self.viewUpdateStateIfNeeded(newState: .failed)
         }
@@ -167,13 +172,13 @@ extension SBPQrPresenter {
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentState(paymentId: paymentId) { result in
-                DispatchQueue.main.async {
+            self.paymentStatusService.getPaymentState(paymentId: paymentId) { [weak self] result in
+                self?.mainDispatchQueue.async {
                     switch result {
                     case let .success(payload):
-                        self.handleSuccessGet(payloadInfo: payload)
+                        self?.handleSuccessGet(payloadInfo: payload)
                     case let .failure(error):
-                        self.handleFailureGetPaymentStatus(error)
+                        self?.handleFailureGetPaymentStatus(error)
                     }
                 }
             }
