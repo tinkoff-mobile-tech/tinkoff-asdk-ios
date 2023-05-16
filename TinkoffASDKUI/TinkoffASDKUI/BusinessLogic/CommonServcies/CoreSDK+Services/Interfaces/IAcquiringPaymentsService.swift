@@ -49,4 +49,17 @@ protocol IAcquiringPaymentsService {
         data: ChargeData,
         completion: @escaping (_ result: Result<ChargePayload, Error>) -> Void
     ) -> Cancellable
+
+    // MARK: Get Payment State
+
+    /// Получить статус платежа
+    ///
+    /// - Parameters:
+    ///   - data: `GetPaymentStateData`
+    ///   - completion: результат операции `GetPaymentStatePayload` в случае удачного ответа и `Error` - в случае ошибки.
+    @discardableResult
+    func getPaymentState(
+        data: GetPaymentStateData,
+        completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
+    ) -> Cancellable
 }

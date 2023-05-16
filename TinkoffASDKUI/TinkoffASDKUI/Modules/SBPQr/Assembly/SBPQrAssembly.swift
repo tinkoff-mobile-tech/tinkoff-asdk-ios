@@ -39,7 +39,7 @@ final class SBPQrAssembly: ISBPQrAssembly {
 
 extension SBPQrAssembly {
     private func build(paymentFlow: PaymentFlow?, moduleCompletion: PaymentResultCompletion?) -> UIViewController {
-        let paymentStatusService = PaymentStatusService(acquiringSdk: acquiringSdk)
+        let paymentStatusService = PaymentStatusService(paymentService: acquiringSdk)
         let repeatedRequestHelper = RepeatedRequestHelper()
 
         let presenter = SBPQrPresenter(

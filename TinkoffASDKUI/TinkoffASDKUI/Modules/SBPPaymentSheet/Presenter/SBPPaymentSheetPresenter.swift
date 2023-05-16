@@ -21,6 +21,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
 
     private let paymentStatusService: IPaymentStatusService
     private let repeatedRequestHelper: IRepeatedRequestHelper
+    private let mainDispatchQueue: IDispatchQueue
 
     // MARK: Properties
 
@@ -38,6 +39,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
         output: ISBPPaymentSheetPresenterOutput?,
         paymentStatusService: IPaymentStatusService,
         repeatedRequestHelper: IRepeatedRequestHelper,
+        mainDispatchQueue: IDispatchQueue,
         requestRepeatCount: Int,
         paymentId: String
     ) {
@@ -45,6 +47,7 @@ final class SBPPaymentSheetPresenter: ICommonSheetPresenter {
         self.paymentStatusService = paymentStatusService
         self.repeatedRequestHelper = repeatedRequestHelper
         self.requestRepeatCount = requestRepeatCount
+        self.mainDispatchQueue = mainDispatchQueue
         self.paymentId = paymentId
     }
 }
@@ -99,7 +102,7 @@ extension SBPPaymentSheetPresenter {
             guard let self = self else { return }
 
             self.paymentStatusService.getPaymentState(paymentId: self.paymentId) { result in
-                DispatchQueue.main.async {
+                self.mainDispatchQueue.async {
                     switch result {
                     case let .success(payload):
                         self.handleSuccessGet(payloadInfo: payload)
