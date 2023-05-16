@@ -1,6 +1,10 @@
 # Changelog
 ## [Unreleased]
 
+### Added
+
+* [EACQAPW-4625] SBP Sheet tests
+
 ### Fixed
 
 * [MIC-7135] Properly forming query path in get url
