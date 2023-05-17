@@ -208,7 +208,7 @@ extension SBPQrPresenter {
         if let qrType = qrType, case QrImageType.dynamicQr = qrType {
             return TextAndImageHeaderViewPresenter(title: title, imageAsset: Asset.Sbp.sbpNoLogo)
         }
-        
+
         return TextAndImageHeaderViewPresenter(title: title)
     }
 

@@ -43,7 +43,7 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
         }
         return CancellableMock()
     }
-    
+
     // MARK: - getStaticQR
 
     typealias GetStaticQRArguments = (data: GetQRDataType, completion: (_ result: Result<GetStaticQRPayload, Error>) -> Void)

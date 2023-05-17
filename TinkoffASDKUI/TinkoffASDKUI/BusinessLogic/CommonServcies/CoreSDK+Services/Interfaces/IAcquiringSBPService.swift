@@ -30,7 +30,7 @@ protocol IAcquiringSBPService {
         data: GetQRData,
         completion: @escaping (_ result: Result<GetQRPayload, Error>) -> Void
     ) -> Cancellable
-    
+
     // MARK: Get Static QR
 
     /// Выставить счет / принять оплату, сгенерировать QR для принятия платежей

@@ -9,19 +9,20 @@ import Foundation
 
 protocol IDispatchQueue {
     static func performOnMain(_ block: @escaping () -> Void)
-    
+
     func async(
         group: DispatchGroup?,
         qos: DispatchQoS,
         flags: DispatchWorkItemFlags,
         execute work: @escaping @convention(block) () -> Void
     )
-    
+
     func asyncAfter(
         deadline: DispatchTime,
         qos: DispatchQoS,
         flags: DispatchWorkItemFlags,
-        execute work: @escaping @convention(block) () -> Void)
+        execute work: @escaping @convention(block) () -> Void
+    )
 
     func asyncDeduped(target: AnyObject, after delay: TimeInterval, execute work: @escaping @convention(block) () -> Void)
 }
@@ -35,7 +36,7 @@ extension IDispatchQueue {
     ) {
         async(group: group, qos: qos, flags: flags, execute: work)
     }
-    
+
     func asyncAfter(
         deadline: DispatchTime,
         qos: DispatchQoS = .unspecified,

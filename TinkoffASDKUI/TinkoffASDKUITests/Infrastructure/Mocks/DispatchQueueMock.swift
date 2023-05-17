@@ -10,7 +10,7 @@ import Foundation
 @testable import TinkoffASDKUI
 
 final class DispatchQueueMock: IDispatchQueue {
-    
+
     // MARK: - performOnMain
 
     static var performOnMainCallsCount = 0
@@ -41,7 +41,7 @@ final class DispatchQueueMock: IDispatchQueue {
             work()
         }
     }
-    
+
     // MARK: - asyncAfter
 
     typealias AsyncAfterArguments = (deadline: DispatchTime, qos: DispatchQoS, flags: DispatchWorkItemFlags, work: () -> Void)
