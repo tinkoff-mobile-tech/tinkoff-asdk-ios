@@ -25,11 +25,7 @@ final class QrImageViewPresenterTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        viewMock = QrImageViewInputMock()
-        presenterOutputMock = QrImageViewPresenterOutputMock()
-
-        setupSut(with: .dynamicQr(""), output: presenterOutputMock)
-        sut.view = viewMock
+        setupSut(with: .dynamicQr(""))
     }
 
     override func tearDown() {
@@ -80,7 +76,7 @@ final class QrImageViewPresenterTests: BaseTestCase {
 
     func test_when_qrType_nil() {
         // given
-        setupSut(with: nil, output: nil)
+        setupSut(with: nil)
         viewMock = QrImageViewInputMock()
 
         // when
@@ -95,7 +91,10 @@ final class QrImageViewPresenterTests: BaseTestCase {
 // MARK: - Private methods
 
 extension QrImageViewPresenterTests {
-    private func setupSut(with type: QrImageType?, output: IQrImageViewPresenterOutput?) {
-        sut = QrImageViewPresenter(qrType: type, output: output)
+    private func setupSut(with type: QrImageType?) {
+        viewMock = QrImageViewInputMock()
+        presenterOutputMock = QrImageViewPresenterOutputMock()
+        sut = QrImageViewPresenter(qrType: type, output: presenterOutputMock)
+        sut.view = viewMock
     }
 }

@@ -80,3 +80,12 @@ final class DispatchQueueMock: IDispatchQueue {
         }
     }
 }
+
+// MARK: - Public methods
+
+extension DispatchQueueMock {
+    static func resetPerformOnMain() {
+        DispatchQueueMock.performOnMainCallsCount = 0
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = false
+    }
+}
