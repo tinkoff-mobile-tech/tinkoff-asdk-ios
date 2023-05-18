@@ -43,10 +43,11 @@ extension SBPQrAssembly {
         let repeatedRequestHelper = RepeatedRequestHelper()
 
         let presenter = SBPQrPresenter(
-            acquiringSdk: acquiringSdk,
+            sbpService: acquiringSdk,
             paymentFlow: paymentFlow,
             repeatedRequestHelper: repeatedRequestHelper,
             paymentStatusService: paymentStatusService,
+            mainDispatchQueue: DispatchQueue.main,
             moduleCompletion: moduleCompletion
         )
 
