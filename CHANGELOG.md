@@ -4,6 +4,7 @@
 ### Added
 
 * [EACQAPW-4625] SBP Sheet tests
+* [EACQAPW-4626] Qr ImageView tests
 
 ### Fixed
 

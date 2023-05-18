@@ -22,7 +22,6 @@ final class SBPQrPresenterTests: BaseTestCase {
     var repeatedRequestHelperMock: RepeatedRequestHelperMock!
     var paymentStatusServiceMock: PaymentStatusServiceMock!
     var mainDispatchQueueMock: DispatchQueueMock!
-    var moduleCompletionMock: PaymentResultCompletion?
 
     // MARK: Setup
 
@@ -38,12 +37,10 @@ final class SBPQrPresenterTests: BaseTestCase {
         repeatedRequestHelperMock = nil
         paymentStatusServiceMock = nil
         mainDispatchQueueMock = nil
-        moduleCompletionMock = nil
 
         sut = nil
 
-        DispatchQueueMock.performOnMainCallsCount = 0
-        DispatchQueueMock.performOnMainBlockClosureShouldCalls = false
+        DispatchQueueMock.resetPerformOnMain()
 
         super.tearDown()
     }
@@ -384,10 +381,10 @@ final class SBPQrPresenterTests: BaseTestCase {
     func test_viewWasClosed() {
         // given
         var result: PaymentResult?
-        moduleCompletionMock = { res in
+        let moduleCompletionMock = { res in
             result = res
         }
-        configureSut()
+        configureSut(moduleCompletionMock: moduleCompletionMock)
 
         // when
         sut.viewWasClosed()
@@ -449,7 +446,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 // MARK: - Private methods
 
 extension SBPQrPresenterTests {
-    private func configureSut(paymentFlow: PaymentFlow? = nil) {
+    private func configureSut(paymentFlow: PaymentFlow? = nil, moduleCompletionMock: PaymentResultCompletion? = nil) {
         viewMock = SBPQrViewMock()
         sbpServiceMock = AcquiringSBPAndPaymentServiceMock()
         repeatedRequestHelperMock = RepeatedRequestHelperMock()
