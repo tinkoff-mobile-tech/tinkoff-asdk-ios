@@ -7,7 +7,7 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "NO"
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
@@ -47,6 +47,17 @@
                BuildableName = "TinkoffASDKUI-Unit-Tests.xctest"
                BlueprintName = "TinkoffASDKUI-Unit-Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B18F3A7B2A164565004E153B"
+               BuildableName = "ASDKSampleTests.xctest"
+               BlueprintName = "ASDKSampleTests"
+               ReferencedContainer = "container:ASDKSample.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
