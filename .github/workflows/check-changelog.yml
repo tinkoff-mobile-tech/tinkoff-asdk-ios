@@ -74,5 +74,5 @@ jobs:
             });
             }
 
-            const result = await createReviewComment();
+            const { data: result } = await createReviewComment();
             console.log(result);
