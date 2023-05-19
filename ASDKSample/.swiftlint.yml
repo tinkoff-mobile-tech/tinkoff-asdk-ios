@@ -7,6 +7,7 @@ included:
 
 excluded:
   - ASDKSample/Resources/Generated
+  - ASDKSampleTests
   - Pods
   - ../TinkoffASDKUI/TinkoffASDKUITests
   - ../TinkoffASDKCore/TinkoffASDKCoreTests
