@@ -32,6 +32,7 @@ jobs:
               pull_number: context.payload.pull_request.number
             });
             console.log(files);
+            const firstFilePath = files[0].filename
             const hasChangelog = files.some(file => file.filename === 'CHANGELOG.md');
             if (!hasChangelog) {
               console.log('CHANGELOG.md not found in pull request files');
@@ -40,7 +41,8 @@ jobs:
               🤠 Please update the **CHANGELOG.md** file.
               > Keep on going sir, next time do not break the rules 🫡
               `;
-              // core.setOutput('comment', comment);
+              core.setOutput('comment', comment);
+              core.setOutput('filePath', firstFilePath)
             }
 
       - name: Add comment
@@ -48,4 +50,19 @@ jobs:
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
-            console.log(context);
+            async function createReviewComment() {
+              const comments = [
+                {
+                  path: `${{ steps.files.outputs.filePath }}`,
+                  body: `${{ steps.files.outputs.comment }}`
+                }
+              ]
+              
+              await github.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                comments: comments   
+            });
+
+            createReviewComment();
