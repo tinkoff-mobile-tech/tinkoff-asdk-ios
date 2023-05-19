@@ -74,7 +74,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: context.payload.pull_request.number,
-                event: 'REQUEST_CHANGES',
+                event: 'COMMENT',
                 comments: comments   
              });
             }
