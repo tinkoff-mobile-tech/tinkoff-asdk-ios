@@ -79,6 +79,15 @@ jobs:
                 event: 'REQUEST_CHANGES',
                 comments: comments   
             });
+
+            await github.pulls.submitReview({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+            review_id: reviews[0].id,
+            event: 'REQUEST_CHANGES'
+            });
+
             }
 
             const { data: result } = await createReviewComment();
