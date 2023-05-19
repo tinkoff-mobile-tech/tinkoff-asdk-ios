@@ -49,21 +49,17 @@ jobs:
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
-            const { data: pullRequest } = await github.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
-
             const { data: reviews } = await github.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
             });
-            console.log(reviews);
-            // console.log(pullRequest);
 
-            async function createReviewComment() {
+            console.log(reviews);
+
+            async function createReviewCommentIfNeeded(reviews) {
+              if (reviews.length === 0) { return };
+
               const comments = [
                 {
                   path: `${{ steps.files.outputs.filePath }}`,
@@ -71,16 +67,14 @@ jobs:
                   position: 0
                 }
               ]
-
-            await github.pulls.submitReview({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.payload.pull_request.number,
-            review_id: reviews[0].id,
-            event: 'REQUEST_CHANGES'
-            });
-
+              
+              await github.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                event: 'REQUEST_CHANGES',
+                comments: comments   
+             });
             }
 
-            const { data: result } = await createReviewComment();
-            console.log(result);
+            await createReviewCommentIfNeeded(reviews);
