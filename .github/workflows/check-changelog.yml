@@ -42,7 +42,7 @@ jobs:
               > Keep on going sir, next time do not break the rules 🫡
               `;
               core.setOutput('comment', comment);
-              core.setOutput('filePath', firstFilePath)
+              core.setOutput('filePath', firstFilePath);
             }
 
       - name: Add comment
