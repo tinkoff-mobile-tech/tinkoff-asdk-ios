@@ -58,7 +58,7 @@ jobs:
             console.log(reviews);
 
             async function createReviewCommentIfNeeded(reviews) {
-              if (reviews.length === 0) { 
+              if (reviews.length > 0) { 
                 return; 
               }
 
