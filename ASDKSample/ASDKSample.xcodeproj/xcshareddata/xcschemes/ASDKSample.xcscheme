@@ -50,14 +50,13 @@
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B18F3A7B2A164565004E153B"
-               BuildableName = "ASDKSampleTests.xctest"
-               BlueprintName = "ASDKSampleTests"
-               ReferencedContainer = "container:ASDKSample.xcodeproj">
+               BlueprintIdentifier = "F0148F998E3ADB656B11D5429EA5C2B2"
+               BuildableName = "TinkoffASDKYandexPay-Unit-Tests.xctest"
+               BlueprintName = "TinkoffASDKYandexPay-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

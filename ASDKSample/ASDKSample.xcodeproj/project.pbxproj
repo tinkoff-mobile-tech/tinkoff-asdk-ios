@@ -37,7 +37,6 @@
 		57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8928F409A300809488 /* StageTestData.swift */; };
 		57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */; };
 		57EEFB9228F544D500809488 /* SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB9128F544D500809488 /* SHA256.swift */; };
-		97C97E019C138F36147EB0AB /* Pods_ASDKSampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FDE638166D4C10C5AD7D5B /* Pods_ASDKSampleTests.framework */; };
 		A87513892971CD6100FCD98A /* PROJECT_RULES.md in Resources */ = {isa = PBXBuildFile; fileRef = A87513882971CD6100FCD98A /* PROJECT_RULES.md */; };
 		A87513ED2979A32900FCD98A /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = A87513EC2979A32900FCD98A /* CHANGELOG.md */; };
 		B121157928EEBEB0007C6543 /* EditSdkCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */; };
@@ -78,7 +77,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		04FDE638166D4C10C5AD7D5B /* Pods_ASDKSampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C06D08923F1492C006FC588 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		2C2F7B8C2451726F008A2415 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -143,8 +141,6 @@
 		B1D01A1128F5A20800D429F4 /* JustButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustButton.swift; sourceTree = "<group>"; };
 		B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SdkAssembly.swift; sourceTree = "<group>"; };
 		B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Ext.swift"; sourceTree = "<group>"; };
-		B5845D2117FF4C5F6CEB1F2B /* Pods-ASDKSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
-		E610345C12917B80F720524D /* Pods-ASDKSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSampleTests.release.xcconfig"; path = "Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
 		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -164,7 +160,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B18F3A872A1645DA004E153B /* SnapshotTesting in Frameworks */,
-				97C97E019C138F36147EB0AB /* Pods_ASDKSampleTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,8 +171,6 @@
 			children = (
 				F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */,
 				F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */,
-				B5845D2117FF4C5F6CEB1F2B /* Pods-ASDKSampleTests.debug.xcconfig */,
-				E610345C12917B80F720524D /* Pods-ASDKSampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -298,7 +291,6 @@
 				2CB4749B246EAC890000509E /* AudioToolbox.framework */,
 				2C2F7B8C2451726F008A2415 /* WebKit.framework */,
 				0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */,
-				04FDE638166D4C10C5AD7D5B /* Pods_ASDKSampleTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -476,11 +468,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B18F3A842A164565004E153B /* Build configuration list for PBXNativeTarget "ASDKSampleTests" */;
 			buildPhases = (
-				F73F0DA0946B0331A566A51B /* [CP] Check Pods Manifest.lock */,
 				B18F3A782A164565004E153B /* Sources */,
 				B18F3A792A164565004E153B /* Frameworks */,
 				B18F3A7A2A164565004E153B /* Resources */,
-				0D04BE96FC2B3BF08BCF249D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -569,23 +559,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0D04BE96FC2B3BF08BCF249D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6CFAB7742899CF1424BA2DC0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -718,28 +691,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSample/Pods-ASDKSample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F73F0DA0946B0331A566A51B /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ASDKSampleTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1010,7 +961,6 @@
 		};
 		B18F3A822A164565004E153B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B5845D2117FF4C5F6CEB1F2B /* Pods-ASDKSampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1031,7 +981,6 @@
 		};
 		B18F3A832A164565004E153B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E610345C12917B80F720524D /* Pods-ASDKSampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

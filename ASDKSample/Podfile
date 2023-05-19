@@ -14,9 +14,9 @@ target 'ASDKSample' do
   pod 'SwiftGen', '~> 6.0'
 end
 
-target 'ASDKSampleTests' do
-  pod 'TestsSharedInfrastructure', :path => '../'
-end
+# target 'ASDKSampleTests' do
+#   pod 'TestsSharedInfrastructure', :path => '../'
+# end
 
 def install_githooks
   system("git config --local core.hooksPath \"$(git rev-parse --show-toplevel)/githooks\"")
