@@ -64,5 +64,6 @@ jobs:
                 pull_number: context.payload.pull_request.number,
                 comments: comments   
             });
-
+            }
+            
             await createReviewComment();
