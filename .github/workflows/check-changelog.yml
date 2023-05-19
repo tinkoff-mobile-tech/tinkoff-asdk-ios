@@ -26,16 +26,12 @@ jobs:
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
-            const { data: pullRequest } = await github.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
             const { data: files } = await github.pulls.listFiles({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number
             });
+            console.log(files);
             const hasChangelog = files.some(file => file.filename === 'CHANGELOG.md');
             if (!hasChangelog) {
               console.log('CHANGELOG.md not found in pull request files');
@@ -44,7 +40,7 @@ jobs:
               🤠 Please update the **CHANGELOG.md** file.
               > Keep on going sir, next time do not break the rules 🫡
               `;
-              core.setOutput('comment', comment);
+              // core.setOutput('comment', comment);
             }
 
       - name: Add comment
