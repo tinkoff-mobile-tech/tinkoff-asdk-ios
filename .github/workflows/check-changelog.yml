@@ -49,6 +49,14 @@ jobs:
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
+            const { data: pullRequest } = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+
+            console.log(pullRequest);
+
             async function createReviewComment() {
               const comments = [
                 {
