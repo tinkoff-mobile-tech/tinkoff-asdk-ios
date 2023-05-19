@@ -54,7 +54,8 @@ jobs:
               const comments = [
                 {
                   path: `${{ steps.files.outputs.filePath }}`,
-                  body: `${{ steps.files.outputs.comment }}`
+                  body: `${{ steps.files.outputs.comment }}`,
+                  position: 0
                 }
               ]
               
@@ -65,5 +66,5 @@ jobs:
                 comments: comments   
             });
             }
-            
+
             await createReviewComment();
