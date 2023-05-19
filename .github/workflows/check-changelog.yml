@@ -31,7 +31,6 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number
             });
-            console.log(files);
             const firstFilePath = files[0].filename
             const hasChangelog = files.some(file => file.filename === 'CHANGELOG.md');
             if (!hasChangelog) {
