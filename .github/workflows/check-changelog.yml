@@ -71,14 +71,6 @@ jobs:
                   position: 0
                 }
               ]
-              
-              await github.pulls.createReview({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: context.payload.pull_request.number,
-                event: 'REQUEST_CHANGES',
-                comments: comments   
-            });
 
             await github.pulls.submitReview({
             owner: context.repo.owner,
