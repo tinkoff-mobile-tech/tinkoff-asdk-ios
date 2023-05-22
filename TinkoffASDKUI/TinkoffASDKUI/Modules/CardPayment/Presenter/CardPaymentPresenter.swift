@@ -19,6 +19,8 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     private let cardsController: ICardsController?
     private let paymentController: IPaymentController
+    
+    private let mainDispatchQueue: IDispatchQueue
 
     // MARK: Properties
 
@@ -53,6 +55,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         cardListOutput: ICardListPresenterOutput?,
         cardsController: ICardsController?,
         paymentController: IPaymentController,
+        mainDispatchQueue: IDispatchQueue,
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
@@ -63,6 +66,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         self.cardListOutput = cardListOutput
         self.cardsController = cardsController
         self.paymentController = paymentController
+        self.mainDispatchQueue = mainDispatchQueue
         initialActiveCards = activeCards
         self.paymentFlow = paymentFlow
         self.amount = amount
@@ -238,7 +242,7 @@ extension CardPaymentPresenter {
         cardsController.getActiveCards(completion: { [weak self] result in
             guard let self = self else { return }
 
-            DispatchQueue.main.async {
+            self.mainDispatchQueue.async {
                 switch result {
                 case let .success(cards):
                     self.handleSuccessLoadCards(cards)

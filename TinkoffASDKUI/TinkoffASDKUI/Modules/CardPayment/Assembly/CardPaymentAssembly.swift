@@ -52,6 +52,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
             cardListOutput: cardListOutput,
             cardsController: cardsController,
             paymentController: paymentController,
+            mainDispatchQueue: DispatchQueue.main,
             activeCards: activeCards,
             paymentFlow: paymentFlow,
             amount: amount,
