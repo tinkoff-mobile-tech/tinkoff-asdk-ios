@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* [EACQAPW-4844] README corrections
+
 ## [3.0.0] - 2023-05-12Z
 
 ### Added
