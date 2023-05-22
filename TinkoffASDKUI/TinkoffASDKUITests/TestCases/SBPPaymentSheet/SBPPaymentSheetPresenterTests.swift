@@ -374,7 +374,7 @@ extension SBPPaymentSheetPresenterTests {
 
 // MARK: - Helpers
 
-private extension GetPaymentStatePayload {
+extension GetPaymentStatePayload {
     static func some(status: AcquiringStatus) -> GetPaymentStatePayload {
         GetPaymentStatePayload(paymentId: "121111", amount: 234, orderId: "324234", status: status)
     }

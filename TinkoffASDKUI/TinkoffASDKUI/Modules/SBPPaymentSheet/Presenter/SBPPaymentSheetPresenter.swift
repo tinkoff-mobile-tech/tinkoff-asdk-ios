@@ -101,13 +101,13 @@ extension SBPPaymentSheetPresenter {
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self else { return }
 
-            self.paymentStatusService.getPaymentState(paymentId: self.paymentId) { result in
-                self.mainDispatchQueue.async {
+            self.paymentStatusService.getPaymentState(paymentId: self.paymentId) { [weak self] result in
+                self?.mainDispatchQueue.async {
                     switch result {
                     case let .success(payload):
-                        self.handleSuccessGet(payloadInfo: payload)
+                        self?.handleSuccessGet(payloadInfo: payload)
                     case let .failure(error):
-                        self.handleFailureGetPaymentStatus(error)
+                        self?.handleFailureGetPaymentStatus(error)
                     }
                 }
             }

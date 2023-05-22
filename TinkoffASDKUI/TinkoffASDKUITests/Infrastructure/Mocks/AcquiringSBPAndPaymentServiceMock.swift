@@ -44,6 +44,27 @@ final class AcquiringSBPAndPaymentServiceMock: IAcquiringSBPService, IAcquiringP
         return CancellableMock()
     }
 
+    // MARK: - getStaticQR
+
+    typealias GetStaticQRArguments = (data: GetQRDataType, completion: (_ result: Result<GetStaticQRPayload, Error>) -> Void)
+
+    var getStaticQRCallsCount = 0
+    var getStaticQRReceivedArguments: GetStaticQRArguments?
+    var getStaticQRReceivedInvocations: [GetStaticQRArguments] = []
+    var getStaticQRCompletionClosureInput: Result<GetStaticQRPayload, Error>?
+
+    @discardableResult
+    func getStaticQR(data: GetQRDataType, completion: @escaping (_ result: Result<GetStaticQRPayload, Error>) -> Void) -> Cancellable {
+        getStaticQRCallsCount += 1
+        let arguments = (data, completion)
+        getStaticQRReceivedArguments = arguments
+        getStaticQRReceivedInvocations.append(arguments)
+        if let getStaticQRCompletionClosureInput = getStaticQRCompletionClosureInput {
+            completion(getStaticQRCompletionClosureInput)
+        }
+        return CancellableMock()
+    }
+
     // MARK: - initPayment
 
     typealias InitPaymentArguments = (data: PaymentInitData, completion: (_ result: Result<InitPayload, Error>) -> Void)
