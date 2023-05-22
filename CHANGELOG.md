@@ -4,6 +4,7 @@
 ### Added
 
 * [EACQAPW-4625] SBP Sheet tests
+* [EACQAPW-4198] Yandex Pay Display Button Tests
 
 ### Fixed
 
