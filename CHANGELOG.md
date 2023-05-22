@@ -5,6 +5,7 @@
 
 * [EACQAPW-4625] SBP Sheet tests
 * [EACQAPW-4626] Qr ImageView tests
+* [EACQAPW-4198] Yandex Pay Display Button Tests
 
 ### Fixed
 

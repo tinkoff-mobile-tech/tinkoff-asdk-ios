@@ -71,6 +71,32 @@ final class YandexPayButtonContainerFactoryProviderTests: BaseTestCase {
         XCTAssert(container === buttonContainerFactoryMock)
     }
 
+    func test_yandexPayButtonContainerFactory_failure_on_initialize() {
+        allureId(2358074, "Не отображаем кнопку YP, если не смогли проинициализировать Yandex SDK")
+
+        // given
+        buttonContainerFactoryInitializerMock.initializeButtonFactoryThrowableError = TestsError.basic
+        methodProviderMock.provideMethodCompletionClosureInput = .success(YandexPayMethod.fake())
+
+        var receivedError: Error?
+
+        // when
+        sut.yandexPayButtonContainerFactory(
+            with: .sandboxRu,
+            initializer: buttonContainerFactoryInitializerMock,
+            completion: { result in
+                switch result {
+                case let .failure(error):
+                    receivedError = error
+                default: break
+                }
+            }
+        )
+
+        // then
+        XCTAssertEqual(TestsError.basic, receivedError as? TestsError)
+    }
+
     func test_yandexPayButtonContainerFactory_failure() throws {
         allureId(2358072) // Инициализирован SDK YP
 
