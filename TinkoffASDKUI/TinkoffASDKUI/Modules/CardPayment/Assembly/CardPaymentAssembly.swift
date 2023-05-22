@@ -41,6 +41,18 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
+        let validator = CardRequisitesValidator()
+        let paymentSystemResolver = PaymentSystemResolver()
+        let bankResolver = BankResolver()
+        let inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
+
+        let cardFieldPresenterAssembly = CardFieldPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver,
+            inputMaskResolver: inputMaskResolver
+        )
+
         let router = CardPaymentRouter(
             cardListAssembly: cardListAssembly,
             cardScannerDelegate: cardScannerDelegate
@@ -49,6 +61,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let presenter = CardPaymentPresenter(
             router: router,
             output: output,
+            cardFieldPresenterAssembly: cardFieldPresenterAssembly,
             cardListOutput: cardListOutput,
             cardsController: cardsController,
             paymentController: paymentController,

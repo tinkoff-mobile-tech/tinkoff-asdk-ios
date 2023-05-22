@@ -20,6 +20,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     var viewMock: CardPaymentViewControllerInputMock!
     var routerMock: CardPaymentRouterMock!
     var outputMock: CardPaymentPresenterModuleOutputMock!
+    var cardFieldPresenterAssemblyMock: CardFieldPresenterAssemblyMock!
     var cardListOutputMock: CardListPresenterOutputMock!
     var cardsControllerMock: CardsControllerMock!
     var paymentControllerMock: PaymentControllerMock!
@@ -37,6 +38,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         viewMock = nil
         routerMock = nil
         outputMock = nil
+        cardFieldPresenterAssemblyMock = nil
         cardListOutputMock = nil
         cardsControllerMock = nil
         paymentControllerMock = nil
@@ -52,37 +54,37 @@ final class CardPaymentPresenterTests: BaseTestCase {
     func test_viewDidLoad_with_initialActiveCards() {
         // given
         setupSut(activeCards: createActiveCardsArray())
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
     }
-    
+
     func test_viewDidLoad_with_initialActiveCardsNil_and_cardsControllerNil() {
         // given
         setupSut(cardsController: nil)
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.showActivityIndicatorCallsCount, 1)
         XCTAssertEqual(viewMock.showActivityIndicatorReceivedArguments, .xlYellow)
         XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
     }
-    
+
     func test_viewDidLoad_with_initialActiveCardsNil_success() {
         // given
         cardsControllerMock.getActiveCardsStub = { completion in
             completion(.success(self.createActiveCardsArray()))
         }
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.showActivityIndicatorCallsCount, 1)
         XCTAssertEqual(viewMock.showActivityIndicatorReceivedArguments, .xlYellow)
@@ -91,7 +93,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideActivityIndicatorCallsCount, 1)
         XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
     }
-    
+
     func test_viewDidLoad_with_initialActiveCardsNil_failure() {
         // given
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
@@ -99,10 +101,10 @@ final class CardPaymentPresenterTests: BaseTestCase {
             completion(.failure(error))
         }
         mainDispatchQueueMock.asyncWorkShouldCalls = true
-        
+
         // when
         sut.viewDidLoad()
-        
+
         // then
         XCTAssertEqual(viewMock.showActivityIndicatorCallsCount, 1)
         XCTAssertEqual(viewMock.showActivityIndicatorReceivedArguments, .xlYellow)
@@ -111,15 +113,15 @@ final class CardPaymentPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideActivityIndicatorCallsCount, 1)
         XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
     }
-    
+
     func test_cellType_when_initialActiveCards() {
         // given
         setupSut(activeCards: createActiveCardsArray())
         sut.viewDidLoad()
-        
+
         // when
         let types = [0, 1, 2, 3].map { sut.cellType(for: $0) }
-        
+
         // then
         types.enumerated().forEach { index, type in
             switch type {
@@ -131,15 +133,15 @@ final class CardPaymentPresenterTests: BaseTestCase {
             }
         }
     }
-    
+
     func test_cellType_when_initialActiveCards_with_userEmailNil() {
         // given
         setupSut(activeCards: createActiveCardsArray(), paymentFlow: .fake())
         sut.viewDidLoad()
-        
+
         // when
         let types = [0, 1, 2].map { sut.cellType(for: $0) }
-        
+
         // then
         types.enumerated().forEach { index, type in
             switch type {
@@ -150,15 +152,15 @@ final class CardPaymentPresenterTests: BaseTestCase {
             }
         }
     }
-    
+
     func test_cellType_when_initialActiveCardsEmpty() {
         // given
         setupSut(activeCards: createActiveCardsEmptyArray())
         sut.viewDidLoad()
-        
+
         // when
         let types = [0, 1, 2, 3].map { sut.cellType(for: $0) }
-        
+
         // then
         types.enumerated().forEach { index, type in
             switch type {
@@ -170,49 +172,122 @@ final class CardPaymentPresenterTests: BaseTestCase {
             }
         }
     }
-    
+
     func test_closeButtonPressed() {
+        // given
+        sut.viewDidAppear()
+
         // when
         sut.closeButtonPressed()
-        
+
         // then
         XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
     }
-    
+
     func test_numberOfRows_with_activeCards_with_userEmailNil() {
         // given
         setupSut(activeCards: createActiveCardsArray(), paymentFlow: .fake())
         sut.viewDidLoad()
-        
+
         // when
         let numberOfRows = sut.numberOfRows()
-        
+
         // then
         XCTAssertEqual(numberOfRows, 3)
     }
-    
+
     func test_numberOfRows_with_activeCards() {
         // given
         setupSut(activeCards: createActiveCardsArray())
         sut.viewDidLoad()
-        
+
         // when
         let numberOfRows = sut.numberOfRows()
-        
+
         // then
         XCTAssertEqual(numberOfRows, 4)
     }
-    
+
     func test_numberOfRows_with_emptyActiveCards() {
         // given
         setupSut(activeCards: createActiveCardsEmptyArray())
         sut.viewDidLoad()
-        
+
         // when
         let numberOfRows = sut.numberOfRows()
-        
+
         // then
         XCTAssertEqual(numberOfRows, 4)
+    }
+
+    func test_switchAction_false() {
+        // given
+        setupSut(activeCards: createActiveCardsArray())
+        sut.viewDidLoad()
+        let type = sut.cellType(for: 1)
+
+        var switchPresenter: ISwitchViewOutput?
+
+        // when
+        switch type {
+        case let .getReceipt(presenter):
+            presenter.switchButtonValueChanged(to: false)
+            switchPresenter = presenter
+        // then
+        default: XCTFail("Wrong cell type")
+        }
+
+        XCTAssertNotNil(switchPresenter)
+        XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
+        XCTAssertEqual(viewMock.deleteCallsCount, 1)
+        XCTAssertEqual(viewMock.deleteReceivedArguments, 2)
+    }
+
+    func test_switchAction_true() {
+        // given
+        setupSut(activeCards: createActiveCardsArray(), paymentFlow: .fake())
+        sut.viewDidLoad()
+        let type = sut.cellType(for: 1)
+
+        var switchPresenter: ISwitchViewOutput?
+
+        // when
+        switch type {
+        case let .getReceipt(presenter):
+            presenter.switchButtonValueChanged(to: true)
+            switchPresenter = presenter
+        // then
+        default: XCTFail("Wrong cell type")
+        }
+
+        XCTAssertNotNil(switchPresenter)
+        XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
+        XCTAssertEqual(viewMock.insertCallsCount, 1)
+        XCTAssertEqual(viewMock.insertReceivedArguments, 2)
+    }
+
+    func test_scanButtonPressed() {
+        // given
+        let cardNumber = "1234567812345678"
+        let expiration = "2345"
+        let cvc = "111"
+        
+        let cardFieldPresenter = CardFieldViewOutputMock()
+        cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldPresenter
+        routerMock.showCardScannerCompletionClosureInput = (cardNumber, expiration, cvc)
+
+        // when
+        sut.scanButtonPressed()
+
+        // then
+        XCTAssertEqual(routerMock.showCardScannerCallsCount, 1)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeCallsCount, 3)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[0].0, .cardNumber)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[0].1, cardNumber)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[1].0, .expiration)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[1].1, expiration)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[2].0, .cvc)
+        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[2].1, cvc)
     }
 }
 
@@ -229,6 +304,7 @@ extension CardPaymentPresenterTests {
         viewMock = CardPaymentViewControllerInputMock()
         routerMock = CardPaymentRouterMock()
         outputMock = CardPaymentPresenterModuleOutputMock()
+        cardFieldPresenterAssemblyMock = CardFieldPresenterAssemblyMock()
         cardListOutputMock = CardListPresenterOutputMock()
         cardsControllerMock = cardsController
         paymentControllerMock = PaymentControllerMock()
@@ -237,6 +313,7 @@ extension CardPaymentPresenterTests {
         sut = CardPaymentPresenter(
             router: routerMock,
             output: outputMock,
+            cardFieldPresenterAssembly: cardFieldPresenterAssemblyMock,
             cardListOutput: cardListOutputMock,
             cardsController: cardsControllerMock,
             paymentController: paymentControllerMock,
@@ -249,11 +326,11 @@ extension CardPaymentPresenterTests {
 
         sut.view = viewMock
     }
-    
+
     private func createActiveCardsEmptyArray() -> [PaymentCard] {
         []
     }
-    
+
     private func createActiveCardsArray() -> [PaymentCard] {
         [
             PaymentCard(

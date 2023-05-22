@@ -14,12 +14,13 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
+    private let cardFieldPresenterAssembly: ICardFieldPresenterAssembly
     private weak var output: ICardPaymentPresenterModuleOutput?
     private weak var cardListOutput: ICardListPresenterOutput?
 
     private let cardsController: ICardsController?
     private let paymentController: IPaymentController
-    
+
     private let mainDispatchQueue: IDispatchQueue
 
     // MARK: Properties
@@ -52,6 +53,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
+        cardFieldPresenterAssembly: ICardFieldPresenterAssembly,
         cardListOutput: ICardListPresenterOutput?,
         cardsController: ICardsController?,
         paymentController: IPaymentController,
@@ -63,6 +65,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     ) {
         self.router = router
         self.output = output
+        self.cardFieldPresenterAssembly = cardFieldPresenterAssembly
         self.cardListOutput = cardListOutput
         self.cardsController = cardsController
         self.paymentController = paymentController
@@ -278,8 +281,8 @@ extension CardPaymentPresenter {
         savedCardPresenter?.presentationState = .selected(card: activeCard)
     }
 
-    private func createCardFieldViewPresenter() -> CardFieldPresenter {
-        CardFieldPresenter(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
+    private func createCardFieldViewPresenter() -> ICardFieldViewOutput {
+        cardFieldPresenterAssembly.build(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
     }
 
     private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {

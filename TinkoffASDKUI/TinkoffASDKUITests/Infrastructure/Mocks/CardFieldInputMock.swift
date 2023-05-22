@@ -67,12 +67,25 @@ class CardFieldInputMock: ICardFieldInput {
     // MARK: - validateWholeForm
 
     var validateWholeFormCallsCount = 0
-    var validateWholeFormReturnValue: CardFieldValidationResult!
+    var validateWholeFormReturnValue = CardFieldValidationResult()
 
     @discardableResult
     func validateWholeForm() -> CardFieldValidationResult {
         validateWholeFormCallsCount += 1
         return validateWholeFormReturnValue
+    }
+    
+    // MARK: - injectOutput
+
+    var injectOutputCallsCount = 0
+    var injectOutputReceivedArguments: ICardFieldOutput?
+    var injectOutputReceivedInvocations: [ICardFieldOutput] = []
+
+    func injectOutput(_ output: ICardFieldOutput) {
+        injectOutputCallsCount += 1
+        let arguments = (output)
+        injectOutputReceivedArguments = arguments
+        injectOutputReceivedInvocations.append(arguments)
     }
 }
 
