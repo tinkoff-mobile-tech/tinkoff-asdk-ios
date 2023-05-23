@@ -15,6 +15,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
     private let cardFieldPresenterAssembly: ICardFieldPresenterAssembly
+    private let switchViewPresenterAssembly: ISwitchViewPresenterAssembly
     private let emailViewPresenterAssembly: IEmailViewPresenterAssembly
     private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private weak var output: ICardPaymentPresenterModuleOutput?
@@ -56,6 +57,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
         cardFieldPresenterAssembly: ICardFieldPresenterAssembly,
+        switchViewPresenterAssembly: ISwitchViewPresenterAssembly,
         emailViewPresenterAssembly: IEmailViewPresenterAssembly,
         payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         cardListOutput: ICardListPresenterOutput?,
@@ -70,6 +72,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         self.router = router
         self.output = output
         self.cardFieldPresenterAssembly = cardFieldPresenterAssembly
+        self.switchViewPresenterAssembly = switchViewPresenterAssembly
         self.emailViewPresenterAssembly = emailViewPresenterAssembly
         self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.cardListOutput = cardListOutput
@@ -291,8 +294,11 @@ extension CardPaymentPresenter {
         cardFieldPresenterAssembly.build(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
     }
 
-    private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
-        SwitchViewPresenter(title: Loc.Acquiring.EmailField.switchButton, isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
+    private func createReceiptSwitchViewPresenter() -> ISwitchViewOutput {
+        let title = Loc.Acquiring.EmailField.switchButton
+        let isOn = !customerEmail.isEmpty
+
+        let presenter = switchViewPresenterAssembly.build(title: title, isOn: isOn) { [weak self] isOn in
             guard let self = self else { return }
 
             if isOn {
@@ -308,7 +314,9 @@ extension CardPaymentPresenter {
             self.activatePayButtonIfNeeded()
             self.view?.hideKeyboard()
             self.cardFieldPresenter.validateWholeForm()
-        })
+        }
+
+        return presenter
     }
 
     private func createEmailViewPresenter() -> IEmailViewOutput {
