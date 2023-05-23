@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol IPayButtonViewOutput: AnyObject {
+protocol IPayButtonViewOutput: IPayButtonViewPresenterInput, AnyObject {
     var view: IPayButtonViewInput? { get set }
     func payButtonTapped()
 }

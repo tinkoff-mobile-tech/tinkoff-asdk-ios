@@ -53,6 +53,9 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
             inputMaskResolver: inputMaskResolver
         )
 
+        let moneyFormatter = MoneyFormatter()
+        let payButtonViewPresenterAssembly = PayButtonViewPresenterAssembly(moneyFormatter: moneyFormatter)
+
         let router = CardPaymentRouter(
             cardListAssembly: cardListAssembly,
             cardScannerDelegate: cardScannerDelegate
@@ -62,6 +65,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
             router: router,
             output: output,
             cardFieldPresenterAssembly: cardFieldPresenterAssembly,
+            payButtonViewPresenterAssembly: payButtonViewPresenterAssembly,
             cardListOutput: cardListOutput,
             cardsController: cardsController,
             paymentController: paymentController,

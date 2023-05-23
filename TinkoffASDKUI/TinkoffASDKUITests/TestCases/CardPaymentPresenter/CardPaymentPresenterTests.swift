@@ -21,6 +21,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     var routerMock: CardPaymentRouterMock!
     var outputMock: CardPaymentPresenterModuleOutputMock!
     var cardFieldPresenterAssemblyMock: CardFieldPresenterAssemblyMock!
+    var payButtonViewPresenterAssemblyMock: PayButtonViewPresenterAssemblyMock!
     var cardListOutputMock: CardListPresenterOutputMock!
     var cardsControllerMock: CardsControllerMock!
     var paymentControllerMock: PaymentControllerMock!
@@ -39,6 +40,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         routerMock = nil
         outputMock = nil
         cardFieldPresenterAssemblyMock = nil
+        payButtonViewPresenterAssemblyMock = nil
         cardListOutputMock = nil
         cardsControllerMock = nil
         paymentControllerMock = nil
@@ -271,7 +273,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         let cardNumber = "1234567812345678"
         let expiration = "2345"
         let cvc = "111"
-        
+
         let cardFieldPresenter = CardFieldViewOutputMock()
         cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldPresenter
         routerMock.showCardScannerCompletionClosureInput = (cardNumber, expiration, cvc)
@@ -305,6 +307,7 @@ extension CardPaymentPresenterTests {
         routerMock = CardPaymentRouterMock()
         outputMock = CardPaymentPresenterModuleOutputMock()
         cardFieldPresenterAssemblyMock = CardFieldPresenterAssemblyMock()
+        payButtonViewPresenterAssemblyMock = PayButtonViewPresenterAssemblyMock()
         cardListOutputMock = CardListPresenterOutputMock()
         cardsControllerMock = cardsController
         paymentControllerMock = PaymentControllerMock()
@@ -314,6 +317,7 @@ extension CardPaymentPresenterTests {
             router: routerMock,
             output: outputMock,
             cardFieldPresenterAssembly: cardFieldPresenterAssemblyMock,
+            payButtonViewPresenterAssembly: payButtonViewPresenterAssemblyMock,
             cardListOutput: cardListOutputMock,
             cardsController: cardsControllerMock,
             paymentController: paymentControllerMock,

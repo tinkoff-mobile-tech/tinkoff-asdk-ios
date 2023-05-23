@@ -74,7 +74,7 @@ class CardFieldInputMock: ICardFieldInput {
         validateWholeFormCallsCount += 1
         return validateWholeFormReturnValue
     }
-    
+
     // MARK: - injectOutput
 
     var injectOutputCallsCount = 0
@@ -83,7 +83,7 @@ class CardFieldInputMock: ICardFieldInput {
 
     func injectOutput(_ output: ICardFieldOutput) {
         injectOutputCallsCount += 1
-        let arguments = (output)
+        let arguments = output
         injectOutputReceivedArguments = arguments
         injectOutputReceivedInvocations.append(arguments)
     }
