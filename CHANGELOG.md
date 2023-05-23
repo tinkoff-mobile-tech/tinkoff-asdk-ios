@@ -2,6 +2,9 @@
 ## [Unreleased]
 
 ### Added
+* [EACQAPW-4868] Make a Github Action to run snapshot tests
+
+### Added
 
 * [EACQAPW-4625] SBP Sheet tests
 * [EACQAPW-4626] Qr ImageView tests

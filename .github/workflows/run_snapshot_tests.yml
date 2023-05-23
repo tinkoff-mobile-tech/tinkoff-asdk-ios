@@ -1,0 +1,32 @@
+name: run snapshot tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run_snapshot_tests:
+    runs-on: macos-12
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+
+      - name: Bundle install
+        run: bundle install
+
+      - name: Prepare sample for snapshot tests
+        run: make snapshot_testing
+
+      - name: Run snapshot tests using RU locale
+        working-directory: ASDKSample
+        run:
+            xcodebuild -workspace 'ASDKSample.xcworkspace' test -scheme 'ASDKSampleTests-RU' -destination "platform=iOS Simulator,name=iPhone 13" | xcpretty
+
+      - name: Run snapshot tests using EN locale
+        working-directory: ASDKSample
+        run:
+            xcodebuild -workspace 'ASDKSample.xcworkspace' test -scheme 'ASDKSampleTests-EN' -destination "platform=iOS Simulator,name=iPhone 13" | xcpretty
