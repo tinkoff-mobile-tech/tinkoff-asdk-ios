@@ -15,6 +15,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
     private let cardFieldPresenterAssembly: ICardFieldPresenterAssembly
+    private let emailViewPresenterAssembly: IEmailViewPresenterAssembly
     private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private weak var output: ICardPaymentPresenterModuleOutput?
     private weak var cardListOutput: ICardListPresenterOutput?
@@ -55,6 +56,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
         cardFieldPresenterAssembly: ICardFieldPresenterAssembly,
+        emailViewPresenterAssembly: IEmailViewPresenterAssembly,
         payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         cardListOutput: ICardListPresenterOutput?,
         cardsController: ICardsController?,
@@ -68,6 +70,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
         self.router = router
         self.output = output
         self.cardFieldPresenterAssembly = cardFieldPresenterAssembly
+        self.emailViewPresenterAssembly = emailViewPresenterAssembly
         self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.cardListOutput = cardListOutput
         self.cardsController = cardsController
@@ -308,8 +311,8 @@ extension CardPaymentPresenter {
         })
     }
 
-    private func createEmailViewPresenter() -> EmailViewPresenter {
-        EmailViewPresenter(customerEmail: customerEmail, output: self)
+    private func createEmailViewPresenter() -> IEmailViewOutput {
+        emailViewPresenterAssembly.build(customerEmail: customerEmail, output: self)
     }
 
     private func createPayButtonViewPresenter() -> IPayButtonViewOutput {

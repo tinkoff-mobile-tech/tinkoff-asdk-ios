@@ -21,6 +21,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     var routerMock: CardPaymentRouterMock!
     var outputMock: CardPaymentPresenterModuleOutputMock!
     var cardFieldPresenterAssemblyMock: CardFieldPresenterAssemblyMock!
+    var emailViewPresenterAssemblyMock: EmailViewPresenterAssemblyMock!
     var payButtonViewPresenterAssemblyMock: PayButtonViewPresenterAssemblyMock!
     var cardListOutputMock: CardListPresenterOutputMock!
     var cardsControllerMock: CardsControllerMock!
@@ -40,6 +41,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         routerMock = nil
         outputMock = nil
         cardFieldPresenterAssemblyMock = nil
+        emailViewPresenterAssemblyMock = nil
         payButtonViewPresenterAssemblyMock = nil
         cardListOutputMock = nil
         cardsControllerMock = nil
@@ -307,6 +309,7 @@ extension CardPaymentPresenterTests {
         routerMock = CardPaymentRouterMock()
         outputMock = CardPaymentPresenterModuleOutputMock()
         cardFieldPresenterAssemblyMock = CardFieldPresenterAssemblyMock()
+        emailViewPresenterAssemblyMock = EmailViewPresenterAssemblyMock()
         payButtonViewPresenterAssemblyMock = PayButtonViewPresenterAssemblyMock()
         cardListOutputMock = CardListPresenterOutputMock()
         cardsControllerMock = cardsController
@@ -317,6 +320,7 @@ extension CardPaymentPresenterTests {
             router: routerMock,
             output: outputMock,
             cardFieldPresenterAssembly: cardFieldPresenterAssemblyMock,
+            emailViewPresenterAssembly: emailViewPresenterAssemblyMock,
             payButtonViewPresenterAssembly: payButtonViewPresenterAssemblyMock,
             cardListOutput: cardListOutputMock,
             cardsController: cardsControllerMock,

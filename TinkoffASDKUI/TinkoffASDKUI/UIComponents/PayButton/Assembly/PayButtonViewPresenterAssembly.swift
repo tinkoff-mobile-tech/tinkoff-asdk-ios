@@ -16,7 +16,7 @@ final class PayButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly {
         self.moneyFormatter = moneyFormatter
     }
 
-    // MARK: ICardFieldPresenterAssembly
+    // MARK: IPayButtonViewPresenterAssembly
 
     func build(
         presentationState: PayButtonViewPresentationState,

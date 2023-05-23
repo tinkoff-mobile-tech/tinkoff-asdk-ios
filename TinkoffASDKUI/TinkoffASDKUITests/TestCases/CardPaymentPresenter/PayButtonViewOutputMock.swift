@@ -13,16 +13,19 @@ final class PayButtonViewOutputMock: IPayButtonViewOutput {
         get { return underlyingPresentationState }
         set(value) { underlyingPresentationState = value }
     }
+
     var underlyingPresentationState: PayButtonViewPresentationState!
     var isLoading: Bool {
         get { return underlyingIsLoading }
         set(value) { underlyingIsLoading = value }
     }
+
     var underlyingIsLoading: Bool!
     var isEnabled: Bool {
         get { return underlyingIsEnabled }
         set(value) { underlyingIsEnabled = value }
     }
+
     var underlyingIsEnabled: Bool!
 
     // MARK: - payButtonTapped
@@ -57,7 +60,7 @@ final class PayButtonViewOutputMock: IPayButtonViewOutput {
 
     func set(enabled: Bool) {
         setCallsCount += 1
-        let arguments = (enabled)
+        let arguments = enabled
         setReceivedArguments = arguments
         setReceivedInvocations.append(arguments)
     }
