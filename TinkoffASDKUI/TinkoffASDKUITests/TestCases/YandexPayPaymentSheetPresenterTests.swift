@@ -84,6 +84,9 @@ final class YandexPayPaymentSheetPresenterTests: BaseTestCase {
     }
 
     func test_primaryButtonTapped() {
+        allureId(2358077, "Переход по primary кнопке в шторке Ошибка при оплате закрывает ASDK")
+        allureId(2358068, "Переход по primary кнопке в шторке Успешная оплата закрывает ASDK")
+
         // when
         sut.primaryButtonTapped()
 
@@ -101,6 +104,8 @@ final class YandexPayPaymentSheetPresenterTests: BaseTestCase {
     }
 
     func test_canDismissViewByUserInteraction() {
+        allureId(2358083, "Шторка с контентом Обработка платежа всегда находится в состоянии заблокированного UI")
+
         // when
         let result = sut.canDismissViewByUserInteraction()
 

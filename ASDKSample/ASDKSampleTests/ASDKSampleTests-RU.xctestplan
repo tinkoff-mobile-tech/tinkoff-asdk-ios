@@ -14,8 +14,8 @@
   },
   "testTargets" : [
     {
-      "selectedTests" : [
-        "YandexPayButtonTestsRU\/test_snapshot_yandexPayButton()"
+      "skippedTests" : [
+        "YandexPayButtonTestsEN"
       ],
       "target" : {
         "containerPath" : "container:ASDKSample.xcodeproj",
