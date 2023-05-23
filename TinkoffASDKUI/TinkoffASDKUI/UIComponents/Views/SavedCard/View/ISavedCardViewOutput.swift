@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ISavedCardViewOutput: AnyObject {
+protocol ISavedCardViewOutput: ISavedCardViewPresenterInput, AnyObject {
     var view: ISavedCardViewInput? { get set }
 
     func savedCardViewDidBeginCVCFieldEditing()

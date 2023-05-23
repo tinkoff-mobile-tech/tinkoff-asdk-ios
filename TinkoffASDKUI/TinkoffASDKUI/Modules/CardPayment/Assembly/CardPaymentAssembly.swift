@@ -44,6 +44,13 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let validator = CardRequisitesValidator()
         let paymentSystemResolver = PaymentSystemResolver()
         let bankResolver = BankResolver()
+
+        let savedCardViewPresenterAssembly = SavedCardViewPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver
+        )
+
         let inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
 
         let cardFieldPresenterAssembly = CardFieldPresenterAssembly(
@@ -67,6 +74,7 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let presenter = CardPaymentPresenter(
             router: router,
             output: output,
+            savedCardViewPresenterAssembly: savedCardViewPresenterAssembly,
             cardFieldPresenterAssembly: cardFieldPresenterAssembly,
             switchViewPresenterAssembly: switchViewPresenterAssembly,
             emailViewPresenterAssembly: emailViewPresenterAssembly,

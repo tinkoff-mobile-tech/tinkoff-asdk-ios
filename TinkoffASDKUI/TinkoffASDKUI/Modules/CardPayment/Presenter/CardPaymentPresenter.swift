@@ -14,6 +14,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
+    private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
     private let cardFieldPresenterAssembly: ICardFieldPresenterAssembly
     private let switchViewPresenterAssembly: ISwitchViewPresenterAssembly
     private let emailViewPresenterAssembly: IEmailViewPresenterAssembly
@@ -29,7 +30,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     // MARK: Properties
 
     private var cellTypes = [CardPaymentCellType]()
-    private var savedCardPresenter: SavedCardViewPresenter?
+    private var savedCardPresenter: ISavedCardViewOutput?
     private lazy var cardFieldPresenter = createCardFieldViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
     private lazy var emailPresenter = createEmailViewPresenter()
@@ -56,6 +57,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
+        savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
         cardFieldPresenterAssembly: ICardFieldPresenterAssembly,
         switchViewPresenterAssembly: ISwitchViewPresenterAssembly,
         emailViewPresenterAssembly: IEmailViewPresenterAssembly,
@@ -71,6 +73,7 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     ) {
         self.router = router
         self.output = output
+        self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
         self.cardFieldPresenterAssembly = cardFieldPresenterAssembly
         self.switchViewPresenterAssembly = switchViewPresenterAssembly
         self.emailViewPresenterAssembly = emailViewPresenterAssembly
@@ -286,7 +289,7 @@ extension CardPaymentPresenter {
     private func createSavedCardViewPresenterIfNeeded() {
         guard let activeCard = activeCards.first else { return }
 
-        savedCardPresenter = SavedCardViewPresenter(output: self)
+        savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
         savedCardPresenter?.presentationState = .selected(card: activeCard)
     }
 

@@ -20,6 +20,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     var viewMock: CardPaymentViewControllerInputMock!
     var routerMock: CardPaymentRouterMock!
     var outputMock: CardPaymentPresenterModuleOutputMock!
+    var savedCardViewPresenterAssemblyMock: SavedCardViewPresenterAssemblyMock!
     var cardFieldPresenterAssemblyMock: CardFieldPresenterAssemblyMock!
     var switchViewPresenterAssemblyMock: SwitchViewPresenterAssemblyMock!
     var emailViewPresenterAssemblyMock: EmailViewPresenterAssemblyMock!
@@ -41,6 +42,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         viewMock = nil
         routerMock = nil
         outputMock = nil
+        savedCardViewPresenterAssemblyMock = nil
         cardFieldPresenterAssemblyMock = nil
         switchViewPresenterAssemblyMock = nil
         emailViewPresenterAssemblyMock = nil
@@ -317,6 +319,7 @@ extension CardPaymentPresenterTests {
         viewMock = CardPaymentViewControllerInputMock()
         routerMock = CardPaymentRouterMock()
         outputMock = CardPaymentPresenterModuleOutputMock()
+        savedCardViewPresenterAssemblyMock = SavedCardViewPresenterAssemblyMock()
         cardFieldPresenterAssemblyMock = CardFieldPresenterAssemblyMock()
         switchViewPresenterAssemblyMock = SwitchViewPresenterAssemblyMock()
         emailViewPresenterAssemblyMock = EmailViewPresenterAssemblyMock()
@@ -329,6 +332,7 @@ extension CardPaymentPresenterTests {
         sut = CardPaymentPresenter(
             router: routerMock,
             output: outputMock,
+            savedCardViewPresenterAssembly: savedCardViewPresenterAssemblyMock,
             cardFieldPresenterAssembly: cardFieldPresenterAssemblyMock,
             switchViewPresenterAssembly: switchViewPresenterAssemblyMock,
             emailViewPresenterAssembly: emailViewPresenterAssemblyMock,
