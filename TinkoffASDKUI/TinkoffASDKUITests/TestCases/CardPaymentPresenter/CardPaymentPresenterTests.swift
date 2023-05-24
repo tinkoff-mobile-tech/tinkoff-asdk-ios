@@ -231,25 +231,25 @@ final class CardPaymentPresenterTests: BaseTestCase {
     func test_switchAction_false() {
         // given
         setupSut(activeCards: createActiveCardsArray())
-        
+
         let payButtonMock = PayButtonViewOutputMock()
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
-        
+
         let cardFieldMock = CardFieldViewOutputMock()
         cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldMock
-       
+
         let savedCardMock = SavedCardViewOutputMock()
         savedCardMock.underlyingIsValid = true
         savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
-        
+
         let switchMock = SwitchViewOutputMock()
         switchMock.underlyingIsOn = false
         switchViewPresenterAssemblyMock.buildReturnValue = switchMock
-        
+
         sut.viewDidLoad()
-        
+
         payButtonMock.setCallsCount = 0
-        
+
         // when
         switchViewPresenterAssemblyMock.buildReceivedArguments?.actionBlock?(false)
 
@@ -261,29 +261,29 @@ final class CardPaymentPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
         XCTAssertEqual(cardFieldMock.validateWholeFormCallsCount, 1)
     }
-    
+
     func test_switchAction_true() {
         // given
         setupSut(activeCards: createActiveCardsEmptyArray())
-        
+
         let payButtonMock = PayButtonViewOutputMock()
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
-        
+
         let cardFieldMock = CardFieldViewOutputMock()
         cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldMock
-       
+
         let savedCardMock = SavedCardViewOutputMock()
         savedCardMock.underlyingIsValid = false
         savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
-        
+
         let switchMock = SwitchViewOutputMock()
         switchMock.underlyingIsOn = true
         switchViewPresenterAssemblyMock.buildReturnValue = switchMock
-        
+
         sut.viewDidLoad()
-        
+
         payButtonMock.setCallsCount = 0
-        
+
         // when
         switchViewPresenterAssemblyMock.buildReceivedArguments?.actionBlock?(true)
 
@@ -295,7 +295,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
         XCTAssertEqual(cardFieldMock.validateWholeFormCallsCount, 1)
     }
-    
+
     func test_scanButtonPressed() {
         // given
         let cardNumber = "1234567812345678"
@@ -319,43 +319,273 @@ final class CardPaymentPresenterTests: BaseTestCase {
         XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[2].0, .cvc)
         XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[2].1, cvc)
     }
-    
+
     func test_cardFieldValidationResultDidChange_allValid() {
         // given
         setupSut(activeCards: createActiveCardsEmptyArray())
-        
+
         let payButtonMock = PayButtonViewOutputMock()
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
-        
+
         let switchMock = SwitchViewOutputMock()
         switchMock.underlyingIsOn = false
         switchViewPresenterAssemblyMock.buildReturnValue = switchMock
-        
+
         // when
         sut.cardFieldValidationResultDidChange(result: .allValid())
-        
+
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 2)
         XCTAssertEqual(payButtonMock.setReceivedInvocations[1], true)
     }
-    
+
     func test_cardFieldValidationResultDidChange_notValid() {
         // given
         setupSut(activeCards: createActiveCardsEmptyArray())
-        
+
         let payButtonMock = PayButtonViewOutputMock()
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
-        
+
         let switchMock = SwitchViewOutputMock()
         switchMock.underlyingIsOn = false
         switchViewPresenterAssemblyMock.buildReturnValue = switchMock
-        
+
         // when
         sut.cardFieldValidationResultDidChange(result: .notValid())
-        
+
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 2)
         XCTAssertEqual(payButtonMock.setReceivedInvocations[1], false)
+    }
+
+    func test_emailTextFieldDidBeginEditing() {
+        // given
+        let cardFieldPresenter = CardFieldViewOutputMock()
+        cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldPresenter
+
+        // when
+        sut.emailTextFieldDidBeginEditing(.fake())
+
+        // then
+        XCTAssertEqual(cardFieldPresenter.validateWholeFormCallsCount, 1)
+    }
+
+    func test_emailTextFieldDidChangeEmail() {
+        // given
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = false
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        // when
+        sut.emailTextField(.fake(), didChangeEmail: "", isValid: false)
+
+        // then
+        XCTAssertEqual(payButtonMock.setCallsCount, 2)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
+    func test_emailTextFieldDidPressReturn() {
+        // given
+        let cardFieldPresenter = CardFieldViewOutputMock()
+        cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldPresenter
+
+        // when
+        sut.emailTextFieldDidPressReturn(.fake())
+
+        // then
+        XCTAssertEqual(cardFieldPresenter.validateWholeFormCallsCount, 1)
+    }
+
+    func test_savedCardPresenterDidRequestReplacementFor() {
+        // given
+        let activeCards = createActiveCardsArray()
+        let paymentFlow = PaymentFlow.fullRandom
+        let paymentCard = PaymentCard.fake()
+        let amount: Int64 = 234
+
+        setupSut(activeCards: activeCards, paymentFlow: paymentFlow, amount: amount)
+
+        // when
+        sut.savedCardPresenter(.fake(), didRequestReplacementFor: paymentCard)
+
+        // then
+        XCTAssertEqual(routerMock.openCardPaymentListCallsCount, 1)
+        XCTAssertEqual(routerMock.openCardPaymentListReceivedArguments?.paymentFlow, paymentFlow)
+        XCTAssertEqual(routerMock.openCardPaymentListReceivedArguments?.amount, amount)
+        XCTAssertEqual(routerMock.openCardPaymentListReceivedArguments?.cards, activeCards)
+        XCTAssertEqual(routerMock.openCardPaymentListReceivedArguments?.selectedCard, paymentCard)
+    }
+
+    func test_savedCardPresenterDidUpdateCVC() {
+        // given
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = false
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        // when
+        sut.savedCardPresenter(.fake(), didUpdateCVC: "", isValid: false)
+
+        // then
+        XCTAssertEqual(payButtonMock.setCallsCount, 2)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
+    func test_payButtonViewTapped_when_activeCardsEmpty() {
+        // given
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let cardFieldPresenter = CardFieldViewOutputMock()
+        cardFieldPresenter.underlyingCardNumber = "1234567812345678"
+        cardFieldPresenter.underlyingExpiration = "1234"
+        cardFieldPresenter.underlyingCvc = "111"
+        cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldPresenter
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = false
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        // when
+        sut.payButtonViewTapped(FakePayButtonViewPresenterInput())
+
+        // then
+        XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
+        XCTAssertEqual(viewMock.startIgnoringInteractionEventsCallsCount, 1)
+        XCTAssertEqual(payButtonMock.startLoadingCallsCount, 1)
+        XCTAssertEqual(paymentControllerMock.performPaymentCallsCount, 1)
+    }
+
+    func test_payButtonViewTapped_when_activeCardsExists() {
+        // given
+        setupSut(activeCards: createActiveCardsArray())
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let cardFieldPresenter = CardFieldViewOutputMock()
+        cardFieldPresenter.underlyingCardNumber = "1234567812345678"
+        cardFieldPresenter.underlyingExpiration = "1234"
+        cardFieldPresenter.underlyingCvc = "111"
+        cardFieldPresenterAssemblyMock.buildReturnValue = cardFieldPresenter
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = true
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        // when
+        sut.payButtonViewTapped(FakePayButtonViewPresenterInput())
+
+        // then
+        XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
+        XCTAssertEqual(viewMock.startIgnoringInteractionEventsCallsCount, 1)
+        XCTAssertEqual(payButtonMock.startLoadingCallsCount, 1)
+        XCTAssertEqual(paymentControllerMock.performPaymentCallsCount, 1)
+    }
+
+    func test_cardListDidUpdate() {
+        // given
+        let cards = createActiveCardsArray()
+
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardMock.underlyingIsValid = false
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = false
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        // when
+        sut.cardList(didUpdate: cards)
+
+        // then
+        XCTAssertEqual(viewMock.reloadTableViewCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setCallsCount, 2)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
+    func test_cardListWillCloseAfterSelecting() {
+        // given
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = false
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        // when
+        sut.cardList(willCloseAfterSelecting: .fake())
+
+        // then
+        XCTAssertEqual(payButtonMock.setCallsCount, 2)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
+    func test_paymentControllerDidFinishPayment() {
+        // given
+        routerMock.closeScreenCompletionShouldCalls = true
+
+        // when
+        sut.paymentController(
+            paymentControllerMock,
+            didFinishPayment: PaymentProcessMock(),
+            with: .fake(),
+            cardId: "",
+            rebillId: ""
+        )
+
+        // then
+        XCTAssertEqual(viewMock.stopIgnoringInteractionEventsCallsCount, 1)
+        XCTAssertEqual(outputMock.cardPaymentWillCloseAfterFinishedPaymentCallsCount, 1)
+        XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(outputMock.cardPaymentDidCloseAfterFinishedPaymentCallsCount, 1)
+    }
+
+    func test_paymentControllerPaymentWasCancelled() {
+        // given
+        routerMock.closeScreenCompletionShouldCalls = true
+
+        // when
+        sut.paymentController(
+            paymentControllerMock,
+            paymentWasCancelled: PaymentProcessMock(),
+            cardId: "",
+            rebillId: ""
+        )
+
+        // then
+        XCTAssertEqual(viewMock.stopIgnoringInteractionEventsCallsCount, 1)
+        XCTAssertEqual(outputMock.cardPaymentDidCloseAfterCancelledPaymentCallsCount, 1)
+        XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(outputMock.cardPaymentDidCloseAfterCancelledPaymentCallsCount, 1)
+    }
+
+    func test_paymentControllerDidFailed() {
+        // given
+        routerMock.closeScreenCompletionShouldCalls = true
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+
+        // when
+        sut.paymentController(
+            paymentControllerMock,
+            didFailed: error,
+            cardId: "",
+            rebillId: ""
+        )
+
+        // then
+        XCTAssertEqual(viewMock.stopIgnoringInteractionEventsCallsCount, 1)
+        XCTAssertEqual(outputMock.cardPaymentWillCloseAfterFailedPaymentCallsCount, 1)
+        XCTAssertEqual(routerMock.closeScreenCallsCount, 1)
+        XCTAssertEqual(outputMock.cardPaymentDidCloseAfterFailedPaymentCallsCount, 1)
     }
 }
 
@@ -418,4 +648,37 @@ extension CardPaymentPresenterTests {
             ),
         ]
     }
+}
+
+// MARK: - Helpers
+
+extension EmailViewPresenter {
+    static func fake() -> EmailViewPresenter {
+        EmailViewPresenter(customerEmail: "", output: FakeEmailViewPresenterOutput())
+    }
+}
+
+extension SavedCardViewPresenter {
+    static func fake() -> SavedCardViewPresenter {
+        SavedCardViewPresenter(output: FakeSavedCardViewPresenterOutput())
+    }
+}
+
+private final class FakeEmailViewPresenterOutput: IEmailViewPresenterOutput {
+    func emailTextField(_ presenter: EmailViewPresenter, didChangeEmail email: String, isValid: Bool) {}
+}
+
+private final class FakeSavedCardViewPresenterOutput: ISavedCardViewPresenterOutput {
+    func savedCardPresenter(_ presenter: SavedCardViewPresenter, didUpdateCVC cvc: String, isValid: Bool) {}
+}
+
+private final class FakePayButtonViewPresenterInput: IPayButtonViewPresenterInput {
+    var presentationState: PayButtonViewPresentationState = .pay
+
+    var isLoading: Bool = false
+    var isEnabled: Bool = false
+
+    func startLoading() {}
+    func stopLoading() {}
+    func set(enabled: Bool) {}
 }

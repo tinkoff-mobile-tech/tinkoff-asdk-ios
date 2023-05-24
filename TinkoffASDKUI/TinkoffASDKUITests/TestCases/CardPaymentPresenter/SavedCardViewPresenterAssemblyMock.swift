@@ -18,7 +18,7 @@ final class SavedCardViewPresenterAssemblyMock: ISavedCardViewPresenterAssembly 
 
     func build(output: ISavedCardViewPresenterOutput) -> ISavedCardViewOutput {
         buildCallsCount += 1
-        let arguments = (output)
+        let arguments = output
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
         return buildReturnValue

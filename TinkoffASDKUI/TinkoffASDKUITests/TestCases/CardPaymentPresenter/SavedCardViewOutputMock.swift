@@ -13,11 +13,13 @@ final class SavedCardViewOutputMock: ISavedCardViewOutput {
         get { return underlyingPresentationState }
         set(value) { underlyingPresentationState = value }
     }
+
     var underlyingPresentationState: SavedCardPresentationState!
     var isValid: Bool {
         get { return underlyingIsValid }
         set(value) { underlyingIsValid = value }
     }
+
     var underlyingIsValid: Bool!
     var cardId: String?
     var cvc: String?
@@ -38,7 +40,7 @@ final class SavedCardViewOutputMock: ISavedCardViewOutput {
 
     func savedCardView(didChangeCVC cvcInputText: String) {
         savedCardViewCallsCount += 1
-        let arguments = (cvcInputText)
+        let arguments = cvcInputText
         savedCardViewReceivedArguments = arguments
         savedCardViewReceivedInvocations.append(arguments)
     }
