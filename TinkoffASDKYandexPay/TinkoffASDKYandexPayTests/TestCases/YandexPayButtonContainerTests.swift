@@ -124,6 +124,8 @@ final class YandexPayButtonContainerTests: BaseTestCase {
     }
 
     func test_didCompletePaymentWithResult_cancelled() throws {
+        allureId(2358055, "Передаем статус отмены в родительское приложение, если в YP была совершена отмена пользователем")
+
         // when
         sut.yandexPayButton(yandexPayButtonMock, didCompletePaymentWithResult: .cancelled)
 
@@ -134,6 +136,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
     }
 
     func test_didCompletePaymentWithResult_failed() throws {
+        allureId(2358048, "Передаем ошибку в родительское приложение, если YP вернул ошибку")
         let fakedError = YPPaymentError.invalidAmount
 
         // when
