@@ -64,6 +64,8 @@
 		B1D01A1228F5A20800D429F4 /* JustButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A1128F5A20800D429F4 /* JustButton.swift */; };
 		B1D01A1428F5AE6000D429F4 /* SdkAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */; };
 		B1DB069A295AD5DB006C9DAF /* UIAlertController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */; };
+		B1F10E182A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */; };
+		B1F10E1A2A1CF0BE00B34171 /* SampleTestsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F10E192A1CF0BE00B34171 /* SampleTestsHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +143,8 @@
 		B1D01A1128F5A20800D429F4 /* JustButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustButton.swift; sourceTree = "<group>"; };
 		B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SdkAssembly.swift; sourceTree = "<group>"; };
 		B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Ext.swift"; sourceTree = "<group>"; };
+		B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexPayPaymentSheetTestsRU.swift; sourceTree = "<group>"; };
+		B1F10E192A1CF0BE00B34171 /* SampleTestsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTestsHelper.swift; sourceTree = "<group>"; };
 		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
 		F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.release.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -400,6 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				B1AE347F2A17AC9400B31257 /* YandexPayHelper.swift */,
+				B1F10E192A1CF0BE00B34171 /* SampleTestsHelper.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -416,6 +421,7 @@
 			isa = PBXGroup;
 			children = (
 				B1AE34832A17ACDB00B31257 /* YandexPayButtonTestsRU.swift */,
+				B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */,
 			);
 			path = RU;
 			sourceTree = "<group>";
@@ -744,6 +750,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1F10E1A2A1CF0BE00B34171 /* SampleTestsHelper.swift in Sources */,
+				B1F10E182A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift in Sources */,
 				B1AE34822A17ACBA00B31257 /* YandexPayButtonTestsEN.swift in Sources */,
 				B1AE34842A17ACDB00B31257 /* YandexPayButtonTestsRU.swift in Sources */,
 				B1AE34802A17AC9400B31257 /* YandexPayHelper.swift in Sources */,
