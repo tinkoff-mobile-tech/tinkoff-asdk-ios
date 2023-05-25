@@ -54,14 +54,10 @@ final class YandexPayPaymentSheetAssemblyTestsRU: BaseTestCase {
         allureId(2358082, "Отображение Ошибки при оплате в темной теме")
 
         // given
-        let exp = expectation(description: #function)
         let state = YandexPayPaymentSheetPresenter.SheetState.failed
 
         // when
-        sheetViewController.update(state: state.toCommonSheetState())
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { exp.fulfill() }
-        wait(for: [exp], timeout: 1)
+        sheetViewController.update(state: state.toCommonSheetState(), animatePullableContainerUpdates: false)
 
         // then
         assertSnapshot(
@@ -82,14 +78,10 @@ final class YandexPayPaymentSheetAssemblyTestsRU: BaseTestCase {
         allureId(2358082, "Отображение контента Ошибки при оплате в темной теме")
 
         // given
-        let exp = expectation(description: #function)
         let state = YandexPayPaymentSheetPresenter.SheetState.processing
 
         // when
-        sheetViewController.update(state: state.toCommonSheetState())
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { exp.fulfill() }
-        wait(for: [exp], timeout: 1)
+        sheetViewController.update(state: state.toCommonSheetState(), animatePullableContainerUpdates: false)
 
         // then
         assertSnapshot(
@@ -110,14 +102,10 @@ final class YandexPayPaymentSheetAssemblyTestsRU: BaseTestCase {
         allureId(2358078, "Отображение Успешной оплаты в темной теме")
 
         // given
-        let exp = expectation(description: #function)
         let state = YandexPayPaymentSheetPresenter.SheetState.paid
 
         // when
-        sheetViewController.update(state: state.toCommonSheetState())
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { exp.fulfill() }
-        wait(for: [exp], timeout: 1)
+        sheetViewController.update(state: state.toCommonSheetState(), animatePullableContainerUpdates: false)
 
         // then
         assertSnapshot(
