@@ -106,6 +106,13 @@ final class AppSetting {
         }
     }
 
+    /// Используется для отключения анимаций в тестах
+    var setAnimationsEnabled = true {
+        willSet {
+            UIView.setAnimationsEnabled(newValue)
+        }
+    }
+
     // MARK: - Init
 
     private init() {
