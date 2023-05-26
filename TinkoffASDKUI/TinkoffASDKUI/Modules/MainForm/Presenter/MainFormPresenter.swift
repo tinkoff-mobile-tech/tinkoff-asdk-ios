@@ -13,6 +13,7 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
+    private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private let dataStateLoader: IMainFormDataStateLoader
     private let paymentController: IPaymentController
     private let tinkoffPayController: ITinkoffPayController
@@ -41,7 +42,7 @@ final class MainFormPresenter {
         output: self
     )
 
-    private lazy var payButtonPresenter = PayButtonViewPresenter(output: self)
+    private lazy var payButtonPresenter = payButtonViewPresenterAssembly.build(output: self)
     private lazy var otherPaymentMethodsHeaderPresenter = TextAndImageHeaderViewPresenter(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
 
     // MARK: State
@@ -55,6 +56,7 @@ final class MainFormPresenter {
 
     init(
         router: IMainFormRouter,
+        payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         dataStateLoader: IMainFormDataStateLoader,
         paymentController: IPaymentController,
         tinkoffPayController: ITinkoffPayController,
@@ -64,6 +66,7 @@ final class MainFormPresenter {
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
+        self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.dataStateLoader = dataStateLoader
         self.paymentController = paymentController
         self.tinkoffPayController = tinkoffPayController

@@ -45,12 +45,12 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     // MARK: Initialization
 
     init(
-        output: ICardFieldOutput? = nil,
+        output: ICardFieldOutput?,
         isScanButtonNeeded: Bool,
-        validator: ICardRequisitesValidator = CardRequisitesValidator(),
-        paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
-        bankResolver: IBankResolver = BankResolver(),
-        inputMaskResolver: ICardRequisitesMasksResolver = CardRequisitesMasksResolver(paymentSystemResolver: PaymentSystemResolver())
+        validator: ICardRequisitesValidator,
+        paymentSystemResolver: IPaymentSystemResolver,
+        bankResolver: IBankResolver,
+        inputMaskResolver: ICardRequisitesMasksResolver
     ) {
         self.output = output
         self.isScanButtonNeeded = isScanButtonNeeded

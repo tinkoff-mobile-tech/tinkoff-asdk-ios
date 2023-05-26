@@ -57,7 +57,19 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> AddNewCardViewController {
         let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
-        let cardFieldPresenter = CardFieldPresenter(isScanButtonNeeded: cardScannerDelegate != nil)
+
+        let validator = CardRequisitesValidator()
+        let paymentSystemResolver = PaymentSystemResolver()
+        let bankResolver = BankResolver()
+        let inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
+
+        let cardFieldPresenterAssembly = CardFieldPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver,
+            inputMaskResolver: inputMaskResolver
+        )
+        let cardFieldPresenter = cardFieldPresenterAssembly.build(isScanButtonNeeded: cardScannerDelegate != nil)
 
         let presenter = AddNewCardPresenter(
             cardsController: cardsController,
