@@ -10,4 +10,15 @@ git diff --diff-filter=d --staged --name-only | grep -e '\(.*\).swift$' | while 
   git add "$line"
 done
 
-echo "Swift Formatted"
+
+# Sets only once on assignment [sets path po Podfile.lock relative to git root]
+podfile_lock=$(git diff --diff-filter=d --staged --name-only | grep "Podfile.lock")
+
+# Проверка что не коммитется тестовый под в подфайле
+if [ -n "$podfile_lock" ]; then
+  if grep -q "TestsSharedInfrastructure" "$podfile_lock"; then
+    echo "TestsSharedInfrastructure is in Podfile.lock please DO NOT commit testing pods."
+    echo "Run in terminal [ make start ] command in order to rewrite Podfile.lock"
+    exit 1
+  fi
+fi
