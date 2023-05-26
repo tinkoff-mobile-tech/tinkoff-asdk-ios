@@ -18,7 +18,7 @@ do {
         }
     }
 
-    guard let startRange, let endRange else {
+    guard let startRange = startRange, let endRange = endRange else {
         exit(1)
     }
 
