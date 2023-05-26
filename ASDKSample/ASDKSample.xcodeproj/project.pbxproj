@@ -49,17 +49,32 @@
 		B1419C5A28D46D96005C61DE /* Assets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1419C5828D46D96005C61DE /* Assets+Generated.swift */; };
 		B156F90C28F0440000ABABDD /* UIEdgeInsets+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */; };
 		B156F90E28F06B3700ABABDD /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156F90D28F06B3700ABABDD /* UIView+Ext.swift */; };
+		B16DA1D62A1B96310046D04A /* README_SNAPSHOT_TESTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B16DA1D52A1B96310046D04A /* README_SNAPSHOT_TESTS.md */; };
+		B18F3A872A1645DA004E153B /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = B18F3A862A1645DA004E153B /* SnapshotTesting */; };
 		B1A4EDDB28F3FC2C004D0C99 /* ViewProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */; };
 		B1A4EDDD28F3FCB0004D0C99 /* GenericTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */; };
 		B1A4EDDF28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */; };
 		B1A4EDE128F3FD73004D0C99 /* VerticalEditableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */; };
 		B1A4EDE328F3FD86004D0C99 /* CredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */; };
+		B1AE34802A17AC9400B31257 /* YandexPayHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AE347F2A17AC9400B31257 /* YandexPayHelper.swift */; };
+		B1AE34822A17ACBA00B31257 /* YandexPayButtonTestsEN.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AE34812A17ACBA00B31257 /* YandexPayButtonTestsEN.swift */; };
+		B1AE34842A17ACDB00B31257 /* YandexPayButtonTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AE34832A17ACDB00B31257 /* YandexPayButtonTestsRU.swift */; };
 		B1C97B7828F46E4000DC007B /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */; };
 		B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A0F28F5731C00D429F4 /* AppSetting.swift */; };
 		B1D01A1228F5A20800D429F4 /* JustButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A1128F5A20800D429F4 /* JustButton.swift */; };
 		B1D01A1428F5AE6000D429F4 /* SdkAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D01A1328F5AE6000D429F4 /* SdkAssembly.swift */; };
 		B1DB069A295AD5DB006C9DAF /* UIAlertController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B18F3A802A164565004E153B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2C9C7EB3239FBCB200DE4071 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2C9C7EBA239FBCB200DE4071;
+			remoteInfo = ASDKSample;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,11 +124,18 @@
 		B1419C5828D46D96005C61DE /* Assets+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Generated.swift"; sourceTree = "<group>"; };
 		B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Ext.swift"; sourceTree = "<group>"; };
 		B156F90D28F06B3700ABABDD /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
+		B16DA1D52A1B96310046D04A /* README_SNAPSHOT_TESTS.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README_SNAPSHOT_TESTS.md; sourceTree = "<group>"; };
+		B18F3A7C2A164565004E153B /* ASDKSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ASDKSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1A4EDDA28F3FC2C004D0C99 /* ViewProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewProtocols.swift; sourceTree = "<group>"; };
 		B1A4EDDC28F3FCB0004D0C99 /* GenericTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTableCell.swift; sourceTree = "<group>"; };
 		B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalTitleSwitchView.swift; sourceTree = "<group>"; };
 		B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalEditableView.swift; sourceTree = "<group>"; };
 		B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsView.swift; sourceTree = "<group>"; };
+		B1AE34782A17AB8C00B31257 /* ASDKSampleTests-EN.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ASDKSampleTests-EN.xctestplan"; sourceTree = "<group>"; };
+		B1AE34792A17ABD900B31257 /* ASDKSampleTests-RU.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ASDKSampleTests-RU.xctestplan"; sourceTree = "<group>"; };
+		B1AE347F2A17AC9400B31257 /* YandexPayHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexPayHelper.swift; sourceTree = "<group>"; };
+		B1AE34812A17ACBA00B31257 /* YandexPayButtonTestsEN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexPayButtonTestsEN.swift; sourceTree = "<group>"; };
+		B1AE34832A17ACDB00B31257 /* YandexPayButtonTestsRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexPayButtonTestsRU.swift; sourceTree = "<group>"; };
 		B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 		B1D01A0F28F5731C00D429F4 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
 		B1D01A1128F5A20800D429F4 /* JustButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustButton.swift; sourceTree = "<group>"; };
@@ -130,6 +152,14 @@
 			files = (
 				2C2F7B8D2451726F008A2415 /* WebKit.framework in Frameworks */,
 				4749076CE49DE1C211DB4E08 /* Pods_ASDKSample.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B18F3A792A164565004E153B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B18F3A872A1645DA004E153B /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				2C9C7EBD239FBCB200DE4071 /* ASDKSample */,
+				B18F3A7D2A164565004E153B /* ASDKSampleTests */,
 				2C9C7EBC239FBCB200DE4071 /* Products */,
 				0ED7E563CF2CD86B8C9914F5 /* Pods */,
 				57622A602C9DDE929C6B40CF /* Frameworks */,
@@ -183,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				2C9C7EBB239FBCB200DE4071 /* ASDKSample.app */,
+				B18F3A7C2A164565004E153B /* ASDKSampleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -344,12 +376,65 @@
 			path = Strings;
 			sourceTree = "<group>";
 		};
+		B18F3A7D2A164565004E153B /* ASDKSampleTests */ = {
+			isa = PBXGroup;
+			children = (
+				B1AE347B2A17AC4400B31257 /* Tests */,
+				B1AE347A2A17AC2F00B31257 /* Infrastructure */,
+				B1AE34782A17AB8C00B31257 /* ASDKSampleTests-EN.xctestplan */,
+				B1AE34792A17ABD900B31257 /* ASDKSampleTests-RU.xctestplan */,
+				B16DA1D52A1B96310046D04A /* README_SNAPSHOT_TESTS.md */,
+			);
+			path = ASDKSampleTests;
+			sourceTree = "<group>";
+		};
 		B1A4EDD628F3FB38004D0C99 /* Creds */ = {
 			isa = PBXGroup;
 			children = (
 				B121157828EEBEB0007C6543 /* EditSdkCredentialsViewController.swift */,
 			);
 			name = Creds;
+			sourceTree = "<group>";
+		};
+		B1AE347A2A17AC2F00B31257 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				B1AE347F2A17AC9400B31257 /* YandexPayHelper.swift */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		B1AE347B2A17AC4400B31257 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B1AE34852A17AFF800B31257 /* Snapshots */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		B1AE347C2A17AC4B00B31257 /* RU */ = {
+			isa = PBXGroup;
+			children = (
+				B1AE34832A17ACDB00B31257 /* YandexPayButtonTestsRU.swift */,
+			);
+			path = RU;
+			sourceTree = "<group>";
+		};
+		B1AE347D2A17AC5400B31257 /* EN */ = {
+			isa = PBXGroup;
+			children = (
+				B1AE34812A17ACBA00B31257 /* YandexPayButtonTestsEN.swift */,
+			);
+			path = EN;
+			sourceTree = "<group>";
+		};
+		B1AE34852A17AFF800B31257 /* Snapshots */ = {
+			isa = PBXGroup;
+			children = (
+				B1AE347C2A17AC4B00B31257 /* RU */,
+				B1AE347D2A17AC5400B31257 /* EN */,
+			);
+			path = Snapshots;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -379,18 +464,43 @@
 			productReference = 2C9C7EBB239FBCB200DE4071 /* ASDKSample.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B18F3A7B2A164565004E153B /* ASDKSampleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B18F3A842A164565004E153B /* Build configuration list for PBXNativeTarget "ASDKSampleTests" */;
+			buildPhases = (
+				B18F3A782A164565004E153B /* Sources */,
+				B18F3A792A164565004E153B /* Frameworks */,
+				B18F3A7A2A164565004E153B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B18F3A812A164565004E153B /* PBXTargetDependency */,
+			);
+			name = ASDKSampleTests;
+			packageProductDependencies = (
+				B18F3A862A1645DA004E153B /* SnapshotTesting */,
+			);
+			productName = ASDKSampleTests;
+			productReference = B18F3A7C2A164565004E153B /* ASDKSampleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		2C9C7EB3239FBCB200DE4071 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1120;
+				LastSwiftUpdateCheck = 1410;
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = Tinkoff;
 				TargetAttributes = {
 					2C9C7EBA239FBCB200DE4071 = {
 						CreatedOnToolsVersion = 11.2.1;
+					};
+					B18F3A7B2A164565004E153B = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 2C9C7EBA239FBCB200DE4071;
 					};
 				};
 			};
@@ -404,11 +514,15 @@
 				ru,
 			);
 			mainGroup = 2C9C7EB2239FBCB200DE4071;
+			packageReferences = (
+				B18F3A852A1645DA004E153B /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+			);
 			productRefGroup = 2C9C7EBC239FBCB200DE4071 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				2C9C7EBA239FBCB200DE4071 /* ASDKSample */,
+				B18F3A7B2A164565004E153B /* ASDKSampleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -431,6 +545,14 @@
 				2C6560842476D18800DEA4A9 /* SegmentedTabeViewCell.xib in Resources */,
 				B1419C5528D46AB2005C61DE /* LaunchScreen.storyboard in Resources */,
 				2CFEEE08246EA4910009E633 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B18F3A7A2A164565004E153B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B16DA1D62A1B96310046D04A /* README_SNAPSHOT_TESTS.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,7 +740,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B18F3A782A164565004E153B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1AE34822A17ACBA00B31257 /* YandexPayButtonTestsEN.swift in Sources */,
+				B1AE34842A17ACDB00B31257 /* YandexPayButtonTestsRU.swift in Sources */,
+				B1AE34802A17AC9400B31257 /* YandexPayHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B18F3A812A164565004E153B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2C9C7EBA239FBCB200DE4071 /* ASDKSample */;
+			targetProxy = B18F3A802A164565004E153B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B1419C4B28D46AB2005C61DE /* Localizable.strings */ = {
@@ -819,6 +959,46 @@
 			};
 			name = Release;
 		};
+		B18F3A822A164565004E153B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WW6B78U563;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ivanglushko.ASDKSampleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ASDKSample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ASDKSample";
+			};
+			name = Debug;
+		};
+		B18F3A832A164565004E153B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WW6B78U563;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ivanglushko.ASDKSampleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ASDKSample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ASDKSample";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -840,7 +1020,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B18F3A842A164565004E153B /* Build configuration list for PBXNativeTarget "ASDKSampleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B18F3A822A164565004E153B /* Debug */,
+				B18F3A832A164565004E153B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B18F3A852A1645DA004E153B /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B18F3A862A1645DA004E153B /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B18F3A852A1645DA004E153B /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C9C7EB3239FBCB200DE4071 /* Project object */;
 }

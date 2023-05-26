@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "B039538E-6FB4-4BC9-BB1A-EAB50A1F06CF",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "YandexPayButtonTestsEN\/test_snapshot_yandexPayButton()"
+      ],
+      "target" : {
+        "containerPath" : "container:ASDKSample.xcodeproj",
+        "identifier" : "B18F3A7B2A164565004E153B",
+        "name" : "ASDKSampleTests"
+      }
+    }
+  ],
+  "version" : 1
+}

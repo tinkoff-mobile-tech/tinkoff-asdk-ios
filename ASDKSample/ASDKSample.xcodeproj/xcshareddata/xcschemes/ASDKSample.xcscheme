@@ -7,7 +7,7 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "NO"
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
@@ -46,6 +46,16 @@
                BlueprintIdentifier = "8B5DD01CE09B225B9FED247AFFA4DC2E"
                BuildableName = "TinkoffASDKUI-Unit-Tests.xctest"
                BlueprintName = "TinkoffASDKUI-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F0148F998E3ADB656B11D5429EA5C2B2"
+               BuildableName = "TinkoffASDKYandexPay-Unit-Tests.xctest"
+               BlueprintName = "TinkoffASDKYandexPay-Unit-Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>

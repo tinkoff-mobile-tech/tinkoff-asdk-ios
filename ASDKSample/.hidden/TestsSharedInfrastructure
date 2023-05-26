@@ -1,0 +1,31 @@
+#
+# Be sure to run `pod lib lint TestsSharedInfrastructure.podspec'
+
+Pod::Spec.new do |s|
+  s.name             = 'TestsSharedInfrastructure'
+  s.version          = '0.1.0'
+  s.summary          = 'TestsSharedInfrastructure.'
+  s.description      = 'Shared Tests Intrastructure for TinkoffASDK'
+  s.homepage         = 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS.git'
+  s.license          = { :type => 'MIT', :file => 'LICENSE' }
+  s.author           = { 'Ivan Glushko' => 'ivanglushkodev@yandex.ru' }
+  s.source           = { :git => 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS.git', :tag => s.version }
+  s.platform = :ios
+  s.swift_version = '5.0'
+  s.ios.deployment_target = '12.3'
+  s.source_files = [
+    'TinkoffASDKYandexPay/TinkoffASDKYandexPayTests/Infrastructure/**/*',
+    'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*',
+    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/**/*',
+  ]
+
+  s.pod_target_xcconfig = { 
+		'CODE_SIGN_IDENTITY' => '' 
+	}
+
+  s.frameworks = 'XCTest'
+
+  s.dependency 'TinkoffASDKCore'
+  s.dependency 'TinkoffASDKUI'
+  s.dependency 'TinkoffASDKYandexPay'
+end

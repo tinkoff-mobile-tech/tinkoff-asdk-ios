@@ -2,9 +2,11 @@
 ## [Unreleased]
 
 ### Added
-
+* [EACQAPW-4868] Make a Github Action to run snapshot tests
 * [EACQAPW-4625] SBP Sheet tests
 * [EACQAPW-4626] Qr ImageView tests
+* [EACQAPW-4198] Yandex Pay Display Button Tests
+* [EACQAPW-4195] Yandex Pay Interaction SDK Tests
 
 ### Fixed
 
