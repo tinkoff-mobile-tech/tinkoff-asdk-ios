@@ -19,4 +19,6 @@ protocol ICardFieldInput: AnyObject {
 
     @discardableResult
     func validateWholeForm() -> CardFieldValidationResult
+
+    func injectOutput(_ output: ICardFieldOutput)
 }

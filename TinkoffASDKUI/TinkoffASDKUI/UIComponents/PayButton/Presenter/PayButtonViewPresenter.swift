@@ -35,9 +35,9 @@ final class PayButtonViewPresenter: IPayButtonViewOutput, IPayButtonViewPresente
     // MARK: Init
 
     init(
-        presentationState: PayButtonViewPresentationState = .pay,
-        moneyFormatter: IMoneyFormatter = MoneyFormatter(),
-        output: IPayButtonViewPresenterOutput? = nil
+        presentationState: PayButtonViewPresentationState,
+        moneyFormatter: IMoneyFormatter,
+        output: IPayButtonViewPresenterOutput?
     ) {
         self.presentationState = presentationState
         self.moneyFormatter = moneyFormatter

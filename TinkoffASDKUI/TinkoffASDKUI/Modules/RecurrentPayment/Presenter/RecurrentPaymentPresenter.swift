@@ -14,6 +14,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     weak var view: IRecurrentPaymentViewInput?
 
+    private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private let paymentController: IPaymentController
     private let cardsController: ICardsController?
     private var paymentFlow: PaymentFlow
@@ -36,6 +37,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
     // MARK: Initialization
 
     init(
+        payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         paymentController: IPaymentController,
         cardsController: ICardsController?,
         paymentFlow: PaymentFlow,
@@ -44,6 +46,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) {
+        self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.paymentController = paymentController
         self.cardsController = cardsController
         self.paymentFlow = paymentFlow
@@ -152,8 +155,12 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
 // MARK: - Private
 
 extension RecurrentPaymentPresenter {
-    private func createPayButtonViewPresenter() -> PayButtonViewPresenter {
-        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: Int(amount)), output: self)
+    private func createPayButtonViewPresenter() -> IPayButtonViewOutput {
+        let presenter = payButtonViewPresenterAssembly
+            .build(
+                presentationState: .payWithAmount(amount: Int(amount)),
+                output: self
+            )
         presenter.set(enabled: false)
         return presenter
     }

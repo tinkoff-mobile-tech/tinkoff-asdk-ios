@@ -69,16 +69,9 @@ final class YandexPayHelper {
         return buttonContainer
     }
 
-    private static func getSDK() throws -> (ui: AcquiringUISDK, core: AcquiringSdk) {
-        let credential = AppSetting.shared.activeSdkCredentials
-        let coreSDK = try SdkAssembly.assembleCoreSDK(credential: credential)
-        let uiSDK = try SdkAssembly.assembleUISDK(credential: credential)
-        return (uiSDK, coreSDK)
-    }
-
     static func getYandexPayButtons(completion: @escaping (Result<ButtonsResult, Error>) -> Void) {
         let configuration = YandexPaySDKConfiguration(environment: .sandbox, locale: .system)
-        guard let (uiSDK, _) = try? getSDK() else {
+        guard let (uiSDK, _) = try? SampleTestsHelper.getSDK() else {
             completion(.failure(TestsError.basic))
             return
         }

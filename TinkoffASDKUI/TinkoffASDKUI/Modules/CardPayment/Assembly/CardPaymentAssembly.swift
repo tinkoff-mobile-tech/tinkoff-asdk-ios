@@ -41,6 +41,31 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
+        let validator = CardRequisitesValidator()
+        let paymentSystemResolver = PaymentSystemResolver()
+        let bankResolver = BankResolver()
+
+        let savedCardViewPresenterAssembly = SavedCardViewPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver
+        )
+
+        let inputMaskResolver = CardRequisitesMasksResolver(paymentSystemResolver: paymentSystemResolver)
+
+        let cardFieldPresenterAssembly = CardFieldPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver,
+            inputMaskResolver: inputMaskResolver
+        )
+
+        let switchViewPresenterAssembly = SwitchViewPresenterAssembly()
+        let emailViewPresenterAssembly = EmailViewPresenterAssembly()
+
+        let moneyFormatter = MoneyFormatter()
+        let payButtonViewPresenterAssembly = PayButtonViewPresenterAssembly(moneyFormatter: moneyFormatter)
+
         let router = CardPaymentRouter(
             cardListAssembly: cardListAssembly,
             cardScannerDelegate: cardScannerDelegate
@@ -49,9 +74,15 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         let presenter = CardPaymentPresenter(
             router: router,
             output: output,
+            savedCardViewPresenterAssembly: savedCardViewPresenterAssembly,
+            cardFieldPresenterAssembly: cardFieldPresenterAssembly,
+            switchViewPresenterAssembly: switchViewPresenterAssembly,
+            emailViewPresenterAssembly: emailViewPresenterAssembly,
+            payButtonViewPresenterAssembly: payButtonViewPresenterAssembly,
             cardListOutput: cardListOutput,
             cardsController: cardsController,
             paymentController: paymentController,
+            mainDispatchQueue: DispatchQueue.main,
             activeCards: activeCards,
             paymentFlow: paymentFlow,
             amount: amount,
