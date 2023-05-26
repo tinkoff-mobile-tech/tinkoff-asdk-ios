@@ -185,7 +185,7 @@ final class ActivityIndicatorView: UIView, Stylable {
 
     // MARK: - Style
 
-    struct Style {
+    struct Style: Equatable {
         static var standart: ActivityIndicatorView.Style {
             ActivityIndicatorView.Style()
         }

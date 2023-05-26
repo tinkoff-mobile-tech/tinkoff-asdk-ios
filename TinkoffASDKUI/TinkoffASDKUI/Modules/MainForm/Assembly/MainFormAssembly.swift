@@ -72,8 +72,12 @@ final class MainFormAssembly: IMainFormAssembly {
             tinkoffPayLandingAssembly: tinkoffPayLandingAssembly
         )
 
+        let moneyFormatter = MoneyFormatter()
+        let payButtonViewPresenterAssembly = PayButtonViewPresenterAssembly(moneyFormatter: moneyFormatter)
+
         let presenter = MainFormPresenter(
             router: router,
+            payButtonViewPresenterAssembly: payButtonViewPresenterAssembly,
             dataStateLoader: dataStateLoader,
             paymentController: paymentController,
             tinkoffPayController: tinkoffPayController,
