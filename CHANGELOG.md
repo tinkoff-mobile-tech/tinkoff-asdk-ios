@@ -7,6 +7,7 @@
 * [EACQAPW-4626] Qr ImageView tests
 * [EACQAPW-4198] Yandex Pay Display Button Tests
 * [EACQAPW-4195] Yandex Pay Interaction SDK Tests
+* [EACQAPW-4194] Card List Tests
 * [EACQAPW-4833] Card Payment Presenter tests 
 
 ### Fixed

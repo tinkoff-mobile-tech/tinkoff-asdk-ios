@@ -14,7 +14,9 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "YandexPayButtonTestsRU"
+        "CardListTestsRU",
+        "YandexPayButtonTestsRU",
+        "YandexPayPaymentSheetAssemblyTestsRU"
       ],
       "target" : {
         "containerPath" : "container:ASDKSample.xcodeproj",
