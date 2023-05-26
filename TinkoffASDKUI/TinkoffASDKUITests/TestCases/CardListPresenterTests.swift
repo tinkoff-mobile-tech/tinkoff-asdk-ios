@@ -94,7 +94,7 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideStubCallCounter, 2)
         XCTAssertEqual(viewMock.showDoneEditingButtonCallCounter, 2)
         XCTAssertEqual(viewMock.reloadCallCounter, 2)
-        XCTAssertTrue(addCardSection == nil)
+        XCTAssertNil(addCardSection)
     }
 
     func test_viewDidTapEditButton_when_editingCards() throws {
