@@ -173,6 +173,7 @@
 		0ED7E563CF2CD86B8C9914F5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
+				2C9C7EBC239FBCB200DE4071 /* Products */,
 				F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */,
 				F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */,
 			);
@@ -208,7 +209,6 @@
 			children = (
 				2C9C7EBD239FBCB200DE4071 /* ASDKSample */,
 				B18F3A7D2A164565004E153B /* ASDKSampleTests */,
-				2C9C7EBC239FBCB200DE4071 /* Products */,
 				0ED7E563CF2CD86B8C9914F5 /* Pods */,
 				57622A602C9DDE929C6B40CF /* Frameworks */,
 			);
@@ -221,6 +221,7 @@
 				B18F3A7C2A164565004E153B /* ASDKSampleTests.xctest */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		2C9C7EBD239FBCB200DE4071 /* ASDKSample */ = {

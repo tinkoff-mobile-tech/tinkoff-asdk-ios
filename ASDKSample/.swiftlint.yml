@@ -8,6 +8,7 @@ included:
 excluded:
   - ASDKSample/Resources/Generated
   - .hidden
+  - DerivedData
   - ASDKSampleTests
   - Pods
   - ../TinkoffASDKUI/TinkoffASDKUITests
