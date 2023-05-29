@@ -14,7 +14,7 @@ final class MoneyFormatterMock: IMoneyFormatter {
     var formatAmountCallsCount = 0
     var formatAmountReceivedArguments: Int?
     var formatAmountReceivedInvocations: [Int] = []
-    var formatAmountReturnValue: String!
+    var formatAmountReturnValue: String = ""
 
     func formatAmount(_ amount: Int) -> String {
         formatAmountCallsCount += 1
