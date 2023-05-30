@@ -30,27 +30,27 @@ final class PaymentSystemResolverTests: BaseTestCase {
 
     func test_resolvePaymentSystem_whenBinIsEqualToMir() throws {
         allureId(2419460, "PaymentSystemResolver определяет BIN для Мир")
-        try test_resolvePaymentSystem_when(by: .mir, expected: .mir)
+        try test_resolvePaymentSystem(by: .mir, expected: .mir)
     }
 
     func test_resolvePaymentSystemByBin_whenBinIsEqualToVisa() throws {
         allureId(2419456, "PaymentSystemResolver определяет BIN для Visa")
-        try test_resolvePaymentSystem_when(by: .visa, expected: .visa)
+        try test_resolvePaymentSystem(by: .visa, expected: .visa)
     }
 
     func test_resolvePaymentSystemByBin_whenBinIsEqualToMastercard() throws {
         allureId(2419457, "PaymentSystemResolver определяет BIN для Mastercard")
-        try test_resolvePaymentSystem_when(by: .masterCard, expected: .masterCard)
+        try test_resolvePaymentSystem(by: .masterCard, expected: .masterCard)
     }
 
     func test_resolvePaymentSystemByBin_whenBinIsEqualToUnion() throws {
         allureId(2419458, "PaymentSystemResolver определяет BIN для UnionPay")
-        try test_resolvePaymentSystem_when(by: .unionPay, expected: .unionPay)
+        try test_resolvePaymentSystem(by: .unionPay, expected: .unionPay)
     }
 
     func test_resolvePaymentSystemByBin_whenBinIsEqualToMaestro() throws {
         allureId(2419459, "PaymentSystemResolver определяет BIN для Maestro")
-        try test_resolvePaymentSystem_when(by: .maestro, expected: .maestro)
+        try test_resolvePaymentSystem(by: .maestro, expected: .maestro)
     }
 
     func test_notResolvePaymentSystemByBin_whenBinIsLessThanSixNumbers() {
@@ -88,7 +88,7 @@ final class PaymentSystemResolverTests: BaseTestCase {
 
     // MARK: - Private
 
-    private func test_resolvePaymentSystem_when(by bin: String, expected: PaymentSystem) throws {
+    private func test_resolvePaymentSystem(by bin: String, expected: PaymentSystem) throws {
         // when
         let paymentSystemDecision = sut.resolve(by: bin)
 
