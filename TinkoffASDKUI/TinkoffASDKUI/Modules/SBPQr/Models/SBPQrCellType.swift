@@ -6,7 +6,7 @@
 //
 
 enum SBPQrCellType: Equatable {
-    case textHeader(ITextAndImageHeaderViewOutput)
+    case textHeader(any ITextAndImageHeaderViewOutput)
     case qrImage(IQrImageViewOutput)
 
     static func == (lhs: SBPQrCellType, rhs: SBPQrCellType) -> Bool {

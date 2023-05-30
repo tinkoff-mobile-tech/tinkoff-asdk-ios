@@ -24,7 +24,7 @@ final class SBPQrPresenter: ISBPQrViewOutput {
 
     // MARK: Child Presenters
 
-    private lazy var textHeaderPresenter: ITextAndImageHeaderViewOutput = createTextHeaderPresener()
+    private lazy var textHeaderPresenter: any ITextAndImageHeaderViewOutput = createTextHeaderPresener()
     private lazy var qrImagePresenter = QrImageViewPresenter(output: self)
 
     // MARK: State
@@ -202,7 +202,7 @@ extension SBPQrPresenter {
         getPaymentStatus()
     }
 
-    private func createTextHeaderPresener(for qrType: QrImageType? = nil) -> ITextAndImageHeaderViewOutput {
+    private func createTextHeaderPresener(for qrType: QrImageType? = nil) -> any ITextAndImageHeaderViewOutput {
         let title = Loc.TinkoffAcquiring.View.Title.payQRCode
 
         if let qrType = qrType, case QrImageType.dynamicQr = qrType {
