@@ -9,6 +9,7 @@
 * [EACQAPW-4195] Yandex Pay Interaction SDK Tests
 * [EACQAPW-4194] Card List Tests
 * [EACQAPW-4833] Card Payment Presenter tests 
+* [EACQAPW-4924] BankResolver and PaymentSystemResolver Tests
 
 ### Fixed
 
