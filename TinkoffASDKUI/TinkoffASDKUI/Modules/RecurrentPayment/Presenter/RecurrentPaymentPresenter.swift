@@ -14,6 +14,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     weak var view: IRecurrentPaymentViewInput?
 
+    private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
     private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private let paymentController: IPaymentController
     private let cardsController: ICardsController?
@@ -25,7 +26,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     // MARK: Child Presenters
 
-    private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
+    private lazy var savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
     private lazy var payButtonPresenter = createPayButtonViewPresenter()
 
     // MARK: State
@@ -37,6 +38,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
     // MARK: Initialization
 
     init(
+        savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
         payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         paymentController: IPaymentController,
         cardsController: ICardsController?,
@@ -46,6 +48,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) {
+        self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
         self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.paymentController = paymentController
         self.cardsController = cardsController

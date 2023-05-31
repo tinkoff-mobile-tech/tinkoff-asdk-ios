@@ -13,6 +13,7 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
+    private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
     private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private let dataStateLoader: IMainFormDataStateLoader
     private let paymentController: IPaymentController
@@ -29,7 +30,7 @@ final class MainFormPresenter {
         orderDescription: configuration.orderDescription
     )
 
-    private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
+    private lazy var savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
 
     private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
         title: Loc.Acquiring.EmailField.switchButton,
@@ -56,6 +57,7 @@ final class MainFormPresenter {
 
     init(
         router: IMainFormRouter,
+        savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
         payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         dataStateLoader: IMainFormDataStateLoader,
         paymentController: IPaymentController,
@@ -66,6 +68,7 @@ final class MainFormPresenter {
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
+        self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
         self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.dataStateLoader = dataStateLoader
         self.paymentController = paymentController

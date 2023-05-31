@@ -654,22 +654,19 @@ extension CardPaymentPresenterTests {
 
 extension EmailViewPresenter {
     static func fake() -> EmailViewPresenter {
-        EmailViewPresenter(customerEmail: "", output: FakeEmailViewPresenterOutput())
+        EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
     }
 }
 
 extension SavedCardViewPresenter {
     static func fake() -> SavedCardViewPresenter {
-        SavedCardViewPresenter(output: FakeSavedCardViewPresenterOutput())
+        SavedCardViewPresenter(
+            validator: CardRequisitesValidatorMock(),
+            paymentSystemResolver: PaymentSystemResolverMock(),
+            bankResolver: BankResolverMock(),
+            output: SavedCardViewPresenterOutputMock()
+        )
     }
-}
-
-private final class FakeEmailViewPresenterOutput: IEmailViewPresenterOutput {
-    func emailTextField(_ presenter: EmailViewPresenter, didChangeEmail email: String, isValid: Bool) {}
-}
-
-private final class FakeSavedCardViewPresenterOutput: ISavedCardViewPresenterOutput {
-    func savedCardPresenter(_ presenter: SavedCardViewPresenter, didUpdateCVC cvc: String, isValid: Bool) {}
 }
 
 private final class FakePayButtonViewPresenterInput: IPayButtonViewPresenterInput {
