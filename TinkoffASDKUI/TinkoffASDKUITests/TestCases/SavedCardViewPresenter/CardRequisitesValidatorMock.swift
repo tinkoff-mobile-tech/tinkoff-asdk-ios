@@ -49,7 +49,7 @@ final class CardRequisitesValidatorMock: ICardRequisitesValidator {
     var validateInputCVCCallsCount = 0
     var validateInputCVCReceivedArguments: String?
     var validateInputCVCReceivedInvocations: [String?] = []
-    var validateInputCVCReturnValue: Bool!
+    var validateInputCVCReturnValue: Bool = false
 
     func validate(inputCVC: String?) -> Bool {
         validateInputCVCCallsCount += 1

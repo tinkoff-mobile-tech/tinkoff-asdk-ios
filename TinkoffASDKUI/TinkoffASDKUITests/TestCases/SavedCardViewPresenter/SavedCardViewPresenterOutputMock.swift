@@ -40,3 +40,17 @@ final class SavedCardViewPresenterOutputMock: ISavedCardViewPresenterOutput {
         didUpdateCVCReceivedInvocations.append(arguments)
     }
 }
+
+// MARK: - Public methods
+
+extension SavedCardViewPresenterOutputMock {
+    func fullReset() {
+        didRequestReplacementForCallsCount = 0
+        didRequestReplacementReceivedArguments = nil
+        didRequestReplacementReceivedInvocations = []
+
+        didUpdateCVCCallsCount = 0
+        didUpdateCVCReceivedArguments = nil
+        didUpdateCVCReceivedInvocations = []
+    }
+}
