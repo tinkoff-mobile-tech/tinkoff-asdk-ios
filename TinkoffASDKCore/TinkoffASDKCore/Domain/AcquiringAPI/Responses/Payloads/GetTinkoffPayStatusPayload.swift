@@ -26,6 +26,10 @@ public struct GetTinkoffPayStatusPayload {
     }
 
     public let status: Status
+
+    public init(status: Status) {
+        self.status = status
+    }
 }
 
 // MARK: - GetTinkoffPayStatusPayload + Decodable
