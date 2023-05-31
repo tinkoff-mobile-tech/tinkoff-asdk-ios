@@ -14,6 +14,8 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "AddCardTestsRU",
+        "CardFieldViewTestsRU",
         "CardListTestsRU",
         "YandexPayButtonTestsRU",
         "YandexPayPaymentSheetAssemblyTestsRU"

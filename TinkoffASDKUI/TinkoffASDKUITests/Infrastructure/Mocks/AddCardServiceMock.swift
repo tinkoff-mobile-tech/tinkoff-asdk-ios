@@ -85,6 +85,7 @@ public final class AddCardServiceMock: IAddCardService {
     public var getAddCardStateCallsCount = 0
     public var getAddCardStateReceivedArguments: GetAddCardStateArguments?
     public var getAddCardStateReceivedInvocations: [GetAddCardStateArguments] = []
+    public var getAddCardStateCompletionInput: Result<GetAddCardStatePayload, Error>?
     public var getAddCardStateReturnValue: Cancellable!
 
     @discardableResult
@@ -93,6 +94,9 @@ public final class AddCardServiceMock: IAddCardService {
         let arguments = (data, completion)
         getAddCardStateReceivedArguments = arguments
         getAddCardStateReceivedInvocations.append(arguments)
+        if let input = getAddCardStateCompletionInput {
+            completion(input)
+        }
         return getAddCardStateReturnValue
     }
 }

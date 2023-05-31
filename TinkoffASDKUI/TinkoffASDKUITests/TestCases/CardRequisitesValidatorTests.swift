@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 
-final class CardRequisitesValidatorTests: XCTestCase {
+final class CardRequisitesValidatorTests: BaseTestCase {
 
     // Dependencies
     var sutAsProtocol: ICardRequisitesValidator { sut }
@@ -46,6 +46,19 @@ final class CardRequisitesValidatorTests: XCTestCase {
         let isValid = sutAsProtocol.validate(inputPAN: "2201382000000104")
         // then
         XCTAssertEqual(isValid, true)
+    }
+
+    func test_validate_cardNumber_when_passed_various_numbers() throws {
+        allureId(2559792, "При исправлении невалидного номера карты title становится серым")
+        // given
+        let invalidCardNumber = "2201382000000105"
+        let validCardNumber = "2201382000000104"
+        // when
+        let isValidFirst = sutAsProtocol.validate(inputPAN: invalidCardNumber)
+        let isValidSecond = sutAsProtocol.validate(inputPAN: validCardNumber)
+        // then
+        XCTAssertEqual(isValidFirst, false)
+        XCTAssertEqual(isValidSecond, true)
     }
 
     func test_validate_cardNumber_failure() throws {

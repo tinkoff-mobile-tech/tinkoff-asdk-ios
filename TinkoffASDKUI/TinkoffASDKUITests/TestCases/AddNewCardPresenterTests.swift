@@ -57,11 +57,76 @@ final class AddNewCardPresenterTests: BaseTestCase {
 
     // MARK: - Tests
 
+    func test_viewDidLoad() {
+        // when
+        sut.viewDidLoad()
+        // then
+        XCTAssertEqual(viewMock.reloadCollectionCallsCount, 1)
+        XCTAssertEqual(viewMock.reloadCollectionReceivedArguments, [.cardField])
+    }
+
+    func test_viewDidAppear() {
+        // when
+        sut.viewDidAppear()
+        // then
+        XCTAssertEqual(viewMock.activateCardFieldCallsCount, 1)
+    }
+
+    func test_viewWasClosed() {
+        // given
+        var calledOnViewWasClosedWithCancelled = false
+        onViewWasClosedStub = {
+            if case AddCardResult.cancelled = $0 {
+                calledOnViewWasClosedWithCancelled = true
+            }
+        }
+
+        // when
+        sut.viewWasClosed()
+        // then
+        XCTAssertEqual(outputMock.addNewCardWasClosedCallsCount, 1)
+        XCTAssertEqual(outputMock.addNewCardWasClosedReceivedArguments, .cancelled)
+        XCTAssertTrue(calledOnViewWasClosedWithCancelled)
+    }
+
+    func test_cardFielViewPresenter() {
+        // when
+        let presenter = sut.cardFieldViewPresenter()
+        // then
+        XCTAssert(presenter === cardFieldPresenterMock)
+    }
+
+    func test_scanButtonPressed() {
+        // given
+        viewMock.showCardScannerCompletionStub = ("42223142353", "02/29", "111")
+        // when
+        sut.scanButtonPressed()
+        // then
+        let updatedFields = cardFieldPresenterMock.setTextFieldTypeReceivedInvocations.map { $0.0 }
+        XCTAssertEqual(viewMock.showCardScannerCallsCount, 1)
+        XCTAssertEqual(cardFieldPresenterMock.setTextFieldTypeCallsCount, 3)
+        XCTAssertEqual(updatedFields, [.cardNumber, .expiration, .cvc])
+    }
+
+    func test_view_setup() {
+        // given
+        sut.view = nil
+        let viewMock = AddNewCardViewMock()
+        // when
+        sut.view = viewMock
+        // then
+        XCTAssertEqual(viewMock.setAddButtonCallCounter, 1)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.animated, false)
+    }
+
     func test_addCard_success() throws {
         allureId(2397514, "Инициалилизируем 3DS web-view v1 по ответу v2/AttachCard")
         allureId(2397518, "Отображение нового списка карт в случае успешного добавления без прохождения 3ds")
         allureId(2397509, "Отпавляем запрос v2/AddCard при тапе на кнопку")
         allureId(2397535)
+        allureId(2397538, "Переход в промежуточное состояние добавления карты")
+
         // given
         let paymentCard = PaymentCard.fake()
         cardFieldPresenterMock.bootstrap()
@@ -173,6 +238,45 @@ final class AddNewCardPresenterTests: BaseTestCase {
         XCTAssertEqual(cardsControllerMock.addCardCallsCount, 0)
         XCTAssertEqual(viewMock.hideLoadingStateCallsCount, 0)
         XCTAssertEqual(outputMock.addNewCardDidReceiveCallsCount, 0)
+    }
+
+    func test_setAddButton_state_when_being_changed() {
+        allureId(2559471, "Кнопка Добавить неактивна")
+
+        // given
+        var validationResult = CardFieldValidationResult.allValid()
+        XCTAssertEqual(viewMock.setAddButtonCallCounter, 1)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
+
+        // when
+        sut.cardFieldValidationResultDidChange(result: validationResult)
+
+        // then
+        XCTAssertEqual(viewMock.setAddButtonCallCounter, 2)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, true)
+
+        // when
+        validationResult.cardNumberIsValid = false
+        sut.cardFieldValidationResultDidChange(result: validationResult)
+
+        // then
+        XCTAssertEqual(viewMock.setAddButtonCallCounter, 3)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
+    }
+
+    func test_setAddButton_state_when_field_are_valid() {
+        allureId(2559428, "Кнопка Добавить становится активной, если данные карты валидны")
+
+        // given
+        XCTAssertEqual(viewMock.setAddButtonCallCounter, 1)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
+
+        // when
+        sut.cardFieldValidationResultDidChange(result: .allValid())
+
+        // then
+        XCTAssertEqual(viewMock.setAddButtonCallCounter, 2)
+        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, true)
     }
 }
 
