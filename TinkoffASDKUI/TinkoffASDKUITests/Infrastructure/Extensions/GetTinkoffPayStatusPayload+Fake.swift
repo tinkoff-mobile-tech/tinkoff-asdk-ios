@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 
 extension GetTinkoffPayStatusPayload {
-    static func fake(status: GetTinkoffPayStatusPayload.Status? = nil) -> GetTinkoffPayStatusPayload {
-        GetTinkoffPayStatusPayload(status: status ?? .disallowed)
+    static func fake(status: GetTinkoffPayStatusPayload.Status = .disallowed) -> GetTinkoffPayStatusPayload {
+        GetTinkoffPayStatusPayload(status: status)
     }
 }

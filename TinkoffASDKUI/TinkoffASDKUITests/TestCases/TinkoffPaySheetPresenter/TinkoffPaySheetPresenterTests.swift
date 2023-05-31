@@ -48,16 +48,6 @@ final class TinkoffPaySheetPresenterTests: XCTestCase {
         XCTAssertEqual(viewMock.updateCallsCount, 1)
         XCTAssertEqual(viewMock.updateReceivedArguments?.state, state)
         XCTAssertTrue(viewMock.updateReceivedArguments?.animatePullableContainerUpdates == false)
-    }
-
-    func test_thatPresenterRequestsTinkoffPayStatus_whenViewDidLoad() {
-        // given
-        let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
-
-        // when
-        sut.viewDidLoad()
-
-        // then
         XCTAssertTrue(tinkoffPayServiceMock.invokedGetTinkoffPayStatus)
     }
 

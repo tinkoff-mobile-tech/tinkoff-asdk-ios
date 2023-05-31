@@ -8,7 +8,7 @@
 import TinkoffASDKCore
 
 extension TinkoffPayMethod {
-    static func fake(version: String? = nil) -> TinkoffPayMethod {
-        TinkoffPayMethod(version: version ?? "1.1.1")
+    static func fake() -> TinkoffPayMethod {
+        TinkoffPayMethod(version: "1.1.1")
     }
 }
