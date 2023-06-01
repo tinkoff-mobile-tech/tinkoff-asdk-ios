@@ -72,11 +72,22 @@ final class MainFormAssembly: IMainFormAssembly {
             tinkoffPayLandingAssembly: tinkoffPayLandingAssembly
         )
 
+        let validator = CardRequisitesValidator()
+        let paymentSystemResolver = PaymentSystemResolver()
+        let bankResolver = BankResolver()
+
+        let savedCardViewPresenterAssembly = SavedCardViewPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver
+        )
+
         let moneyFormatter = MoneyFormatter()
         let payButtonViewPresenterAssembly = PayButtonViewPresenterAssembly(moneyFormatter: moneyFormatter)
 
         let presenter = MainFormPresenter(
             router: router,
+            savedCardViewPresenterAssembly: savedCardViewPresenterAssembly,
             payButtonViewPresenterAssembly: payButtonViewPresenterAssembly,
             dataStateLoader: dataStateLoader,
             paymentController: paymentController,

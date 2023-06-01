@@ -271,8 +271,8 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideStubCallCounter, 1)
         XCTAssertEqual(viewMock.showEditButtonCallCounter, 1)
         XCTAssertEqual(viewMock.reloadCallArguments?.isEmpty, false)
-        XCTAssertEqual(bankResolverMock.resolveCallCounter, 1)
-        XCTAssertEqual(paymentSystemResolverMock.resolveCallCounter, 1)
+        XCTAssertEqual(bankResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
     }
 
     func test_viewDidTapCard_withCardListUseCase_shouldDoNothing() throws {
