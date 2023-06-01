@@ -10,6 +10,8 @@
 * [EACQAPW-4194] Card List Tests
 * [EACQAPW-4833] Card Payment Presenter tests
 * [EACQAPW-4912] Cell Presenters tests 
+* [EACQAPW-4924] BankResolver and PaymentSystemResolver Tests
+* [EACQAPW-4929] TinkoffPaySheetPresenter Tests
 
 ### Fixed
 
