@@ -63,6 +63,7 @@ final class TextAndImageHeaderViewPresenterTests: BaseTestCase {
 
         // given
         XCTAssertEqual(sut, copyObject as? TextAndImageHeaderViewPresenter)
+        XCTAssertTrue(sut !== (copyObject as? TextAndImageHeaderViewPresenter))
     }
 }
 

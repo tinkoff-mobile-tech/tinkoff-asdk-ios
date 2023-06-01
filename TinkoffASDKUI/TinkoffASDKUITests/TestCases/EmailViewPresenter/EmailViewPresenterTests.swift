@@ -31,6 +31,7 @@ final class EmailViewPresenterTests: BaseTestCase {
 
     override func tearDown() {
         viewMock = nil
+        outputMock = nil
 
         sut = nil
 

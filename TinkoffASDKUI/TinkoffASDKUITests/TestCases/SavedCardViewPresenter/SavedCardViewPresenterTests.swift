@@ -34,6 +34,10 @@ final class SavedCardViewPresenterTests: BaseTestCase {
 
     override func tearDown() {
         viewMock = nil
+        validatorMock = nil
+        paymentSystemResolverMock = nil
+        bankResolverMock = nil
+        outputMock = nil
 
         sut = nil
 
