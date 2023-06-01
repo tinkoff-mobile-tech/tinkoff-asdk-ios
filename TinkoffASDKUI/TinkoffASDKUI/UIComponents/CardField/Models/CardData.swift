@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CardData {
+struct CardData: Equatable {
     let cardNumber: String
     let expiration: String
     let cvc: String

@@ -22,6 +22,7 @@ import Foundation
 protocol ICardRequisitesValidator {
     func validate(inputPAN: String?) -> Bool
     func validate(validThruYear: Int, month: Int) -> Bool
+    func validate(inputValidThru: String?) -> Bool
     func validate(inputCVC: String?) -> Bool
 }
 

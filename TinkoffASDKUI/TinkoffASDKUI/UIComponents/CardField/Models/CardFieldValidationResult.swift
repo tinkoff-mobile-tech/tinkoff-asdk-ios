@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CardFieldValidationResult {
+struct CardFieldValidationResult: Equatable {
     var cardNumberIsValid = false
     var expirationIsValid = false
     var cvcIsValid = false

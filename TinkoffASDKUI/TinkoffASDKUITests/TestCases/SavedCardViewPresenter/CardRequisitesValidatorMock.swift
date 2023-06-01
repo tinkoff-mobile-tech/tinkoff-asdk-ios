@@ -17,7 +17,7 @@ final class CardRequisitesValidatorMock: ICardRequisitesValidator {
     var validateInputPANCallsCount = 0
     var validateInputPANReceivedArguments: String?
     var validateInputPANReceivedInvocations: [String?] = []
-    var validateInputPANReturnValue: Bool!
+    var validateInputPANReturnValue: Bool = false
 
     func validate(inputPAN: String?) -> Bool {
         validateInputPANCallsCount += 1
@@ -34,7 +34,7 @@ final class CardRequisitesValidatorMock: ICardRequisitesValidator {
     var validateValidThruYearCallsCount = 0
     var validateValidThruYearReceivedArguments: ValidateArguments?
     var validateValidThruYearReceivedInvocations: [ValidateArguments] = []
-    var validateValidThruYearReturnValue: Bool!
+    var validateValidThruYearReturnValue: Bool = false
 
     func validate(validThruYear: Int, month: Int) -> Bool {
         validateValidThruYearCallsCount += 1
@@ -42,6 +42,19 @@ final class CardRequisitesValidatorMock: ICardRequisitesValidator {
         validateValidThruYearReceivedArguments = arguments
         validateValidThruYearReceivedInvocations.append(arguments)
         return validateValidThruYearReturnValue
+    }
+
+    var validateInputValidThruYearCallsCount = 0
+    var validateInputValidThruYearReceivedArguments: String?
+    var validateInputValidThruYearReceivedInvocations: [String?] = []
+    var validateInputValidThruYearReturnValue: Bool = false
+
+    func validate(inputValidThru: String?) -> Bool {
+        validateInputValidThruYearCallsCount += 1
+        let arguments = inputValidThru
+        validateInputValidThruYearReceivedArguments = arguments
+        validateInputValidThruYearReceivedInvocations.append(arguments)
+        return validateInputValidThruYearReturnValue
     }
 
     // MARK: - validate
@@ -67,13 +80,21 @@ extension CardRequisitesValidatorMock {
         validateInputPANCallsCount = 0
         validateInputPANReceivedArguments = nil
         validateInputPANReceivedInvocations = []
+        validateInputPANReturnValue = false
 
         validateValidThruYearCallsCount = 0
         validateValidThruYearReceivedArguments = nil
         validateValidThruYearReceivedInvocations = []
+        validateValidThruYearReturnValue = false
+
+        validateInputValidThruYearCallsCount = 0
+        validateInputValidThruYearReceivedArguments = nil
+        validateInputValidThruYearReceivedInvocations = []
+        validateInputValidThruYearReturnValue = false
 
         validateInputCVCCallsCount = 0
         validateInputCVCReceivedArguments = nil
         validateInputCVCReceivedInvocations = []
+        validateInputCVCReturnValue = false
     }
 }
