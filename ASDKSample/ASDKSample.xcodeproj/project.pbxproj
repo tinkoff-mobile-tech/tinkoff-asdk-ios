@@ -37,6 +37,7 @@
 		57EEFB8A28F409A300809488 /* StageTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8928F409A300809488 /* StageTestData.swift */; };
 		57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */; };
 		57EEFB9228F544D500809488 /* SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EEFB9128F544D500809488 /* SHA256.swift */; };
+		5C107B1B2A272E47002BA8A0 /* TinkoffPaySheetTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C107B1A2A272E47002BA8A0 /* TinkoffPaySheetTestsRU.swift */; };
 		A87513892971CD6100FCD98A /* PROJECT_RULES.md in Resources */ = {isa = PBXBuildFile; fileRef = A87513882971CD6100FCD98A /* PROJECT_RULES.md */; };
 		A87513ED2979A32900FCD98A /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = A87513EC2979A32900FCD98A /* CHANGELOG.md */; };
 		B116E88D2A2762E600860DD6 /* AddCardTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = B116E88C2A2762E600860DD6 /* AddCardTestsRU.swift */; };
@@ -115,6 +116,7 @@
 		57EEFB8928F409A300809488 /* StageTestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StageTestData.swift; sourceTree = "<group>"; };
 		57EEFB8E28F486C200809488 /* SampleTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTokenProvider.swift; sourceTree = "<group>"; };
 		57EEFB9128F544D500809488 /* SHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHA256.swift; sourceTree = "<group>"; };
+		5C107B1A2A272E47002BA8A0 /* TinkoffPaySheetTestsRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinkoffPaySheetTestsRU.swift; sourceTree = "<group>"; };
 		A87513882971CD6100FCD98A /* PROJECT_RULES.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = PROJECT_RULES.md; sourceTree = "<group>"; };
 		A87513EC2979A32900FCD98A /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../../CHANGELOG.md; sourceTree = "<group>"; };
 		B116E88C2A2762E600860DD6 /* AddCardTestsRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardTestsRU.swift; sourceTree = "<group>"; };
@@ -427,6 +429,7 @@
 			children = (
 				B1AE34832A17ACDB00B31257 /* YandexPayButtonTestsRU.swift */,
 				B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */,
+				5C107B1A2A272E47002BA8A0 /* TinkoffPaySheetTestsRU.swift */,
 				B116E88C2A2762E600860DD6 /* AddCardTestsRU.swift */,
 				B116E8912A276B0D00860DD6 /* CardFieldViewTestsRU.swift */,
 			);
@@ -763,6 +766,7 @@
 				B116E8922A276B0D00860DD6 /* CardFieldViewTestsRU.swift in Sources */,
 				B1AE34822A17ACBA00B31257 /* YandexPayButtonTestsEN.swift in Sources */,
 				B1AE34842A17ACDB00B31257 /* YandexPayButtonTestsRU.swift in Sources */,
+				5C107B1B2A272E47002BA8A0 /* TinkoffPaySheetTestsRU.swift in Sources */,
 				B1AE34802A17AC9400B31257 /* YandexPayHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,6 +9,12 @@ import Foundation
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
+extension GetTinkoffLinkPayload {
+    static func fake() -> GetTinkoffLinkPayload {
+        GetTinkoffLinkPayload(redirectUrl: URL.empty)
+    }
+}
+
 final class AcquiringTinkoffPayServiceMock: IAcquiringTinkoffPayService {
     var invokedGetTinkoffPayLink = false
     var invokedGetTinkoffPayLinkCount = 0

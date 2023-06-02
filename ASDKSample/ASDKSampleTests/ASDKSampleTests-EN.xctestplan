@@ -17,6 +17,7 @@
         "AddCardTestsRU",
         "CardFieldViewTestsRU",
         "CardListTestsRU",
+        "TinkoffPaySheetTestsRU",
         "YandexPayButtonTestsRU",
         "YandexPayPaymentSheetAssemblyTestsRU"
       ],
