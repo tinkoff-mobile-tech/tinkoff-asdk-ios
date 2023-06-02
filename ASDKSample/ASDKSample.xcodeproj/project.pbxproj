@@ -67,7 +67,6 @@
 		B1DB069A295AD5DB006C9DAF /* UIAlertController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */; };
 		B1F10E182A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */; };
 		B1F10E1A2A1CF0BE00B34171 /* SampleTestsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F10E192A1CF0BE00B34171 /* SampleTestsHelper.swift */; };
-		D4452446B1F22A869881D2BE /* Pods_ASDKSampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23F1D7ED05532C83D20FD3EF /* Pods_ASDKSampleTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,7 +81,6 @@
 
 /* Begin PBXFileReference section */
 		0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		23F1D7ED05532C83D20FD3EF /* Pods_ASDKSampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ASDKSampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C06D08923F1492C006FC588 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		2C2F7B8C2451726F008A2415 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		2C4683FC247258BC0067DA48 /* BuyProductsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProductsViewController.swift; sourceTree = "<group>"; };
@@ -110,8 +108,6 @@
 		2CD7522224A36D19005FA56C /* RebuildCardTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RebuildCardTableViewCell.xib; sourceTree = "<group>"; };
 		2CD7522324A36D19005FA56C /* SelectRebuildCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectRebuildCardViewController.swift; sourceTree = "<group>"; };
 		2CFEEE07246EA4910009E633 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		3345072655C74A571C9D53D7 /* Pods-ASDKSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSampleTests.release.xcconfig"; path = "Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests.release.xcconfig"; sourceTree = "<group>"; };
-		3FA8F7D809DFF5905E51DC3E /* Pods-ASDKSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		576E765229769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+CardScannerMock.swift"; sourceTree = "<group>"; };
 		57D1C5C52975A9B900C6D1CA /* UITableView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Utils.swift"; sourceTree = "<group>"; };
 		57DE3DF62934ED2C00FD6F1B /* ContainerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTableViewCell.swift; sourceTree = "<group>"; };
@@ -170,7 +166,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B18F3A872A1645DA004E153B /* SnapshotTesting in Frameworks */,
-				D4452446B1F22A869881D2BE /* Pods_ASDKSampleTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,8 +178,6 @@
 				2C9C7EBC239FBCB200DE4071 /* Products */,
 				F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */,
 				F81D3060AC7698D20867DD17 /* Pods-ASDKSample.release.xcconfig */,
-				3FA8F7D809DFF5905E51DC3E /* Pods-ASDKSampleTests.debug.xcconfig */,
-				3345072655C74A571C9D53D7 /* Pods-ASDKSampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -305,7 +298,6 @@
 				2CB4749B246EAC890000509E /* AudioToolbox.framework */,
 				2C2F7B8C2451726F008A2415 /* WebKit.framework */,
 				0C0515196236F7F45BACBF2A /* Pods_ASDKSample.framework */,
-				23F1D7ED05532C83D20FD3EF /* Pods_ASDKSampleTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -486,11 +478,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B18F3A842A164565004E153B /* Build configuration list for PBXNativeTarget "ASDKSampleTests" */;
 			buildPhases = (
-				CB5E51141F4098ACCF9473D7 /* [CP] Check Pods Manifest.lock */,
 				B18F3A782A164565004E153B /* Sources */,
 				B18F3A792A164565004E153B /* Frameworks */,
 				B18F3A7A2A164565004E153B /* Resources */,
-				703D034A9DBBD739A62AF802 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -601,23 +591,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		703D034A9DBBD739A62AF802 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleTests/Pods-ASDKSampleTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		B126457F28C5EE7900DBC580 /* SwiftGen [TinkoffASDKUI] */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -693,28 +666,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
-		};
-		CB5E51141F4098ACCF9473D7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ASDKSampleTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
 		};
 		D7F4A4E825558AE900A8AD95 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1023,7 +974,6 @@
 		};
 		B18F3A822A164565004E153B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3FA8F7D809DFF5905E51DC3E /* Pods-ASDKSampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1044,7 +994,6 @@
 		};
 		B18F3A832A164565004E153B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3345072655C74A571C9D53D7 /* Pods-ASDKSampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

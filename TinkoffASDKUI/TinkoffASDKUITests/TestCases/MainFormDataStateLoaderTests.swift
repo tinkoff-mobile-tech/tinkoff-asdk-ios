@@ -72,7 +72,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
         XCTAssertTrue(methods.contains(.tinkoffPay(tpayPaymentMethod)))
     }
 
-    func test_thatTinkoffPayButtonIsNotDisplayed_whenResponseDoesNotContainsTPay() throws {
+    func test_thatTinkoffPayButtonIsNotDisplayed_whenResponseDoesNotContainTPay() throws {
         allureId(2497798, "Кнопка не отображается если GetTerminalPayMethods не вернул Tpay")
 
         // given
