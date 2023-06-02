@@ -15,6 +15,7 @@
     {
       "skippedTests" : [
         "CardListTestsRU",
+        "TinkoffPaySheetTestsRU",
         "YandexPayButtonTestsRU",
         "YandexPayPaymentSheetAssemblyTestsRU"
       ],

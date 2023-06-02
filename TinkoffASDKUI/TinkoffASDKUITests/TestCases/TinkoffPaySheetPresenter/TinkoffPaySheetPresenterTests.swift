@@ -9,7 +9,7 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 import XCTest
 
-final class TinkoffPaySheetPresenterTests: XCTestCase {
+final class TinkoffPaySheetPresenterTests: BaseTestCase {
 
     // MARK: Types
 
@@ -143,6 +143,8 @@ final class TinkoffPaySheetPresenterTests: XCTestCase {
     }
 
     func test_thatPresenterOpensTinkoffPayLandingAndSwitchesStateToCancelled_whenLinkWasNotOpened() {
+        allureId(2497803, "Отображение webView, если не установлено приложение МБ")
+
         // given
         let error = ErrorStub()
 
