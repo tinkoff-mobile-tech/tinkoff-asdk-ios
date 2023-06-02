@@ -116,4 +116,14 @@ final class CardRequisitesValidatorTests: BaseTestCase {
         // then
         XCTAssertEqual(isValid, false)
     }
+
+    func test_valid_validThruYear_invalid_values() {
+        allureId(2559746, "При вводе невалидного срока title становится красным")
+
+        // when
+        let isValidFirst = sutAsProtocol.validate(inputValidThru: "1333")
+        let isValidSecond = sutAsProtocol.validate(inputValidThru: "0044")
+        // then
+        XCTAssertEqual([isValidFirst, isValidSecond], [false, false])
+    }
 }
