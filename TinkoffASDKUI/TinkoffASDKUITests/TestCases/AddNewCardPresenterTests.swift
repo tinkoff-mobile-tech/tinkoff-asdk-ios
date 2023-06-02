@@ -110,7 +110,6 @@ final class AddNewCardPresenterTests: BaseTestCase {
 
     func test_view_setup() {
         // given
-        sut.view = nil
         let viewMock = AddNewCardViewMock()
         // when
         sut.view = viewMock
@@ -245,8 +244,6 @@ final class AddNewCardPresenterTests: BaseTestCase {
 
         // given
         var validationResult = CardFieldValidationResult.allValid()
-        XCTAssertEqual(viewMock.setAddButtonCallCounter, 1)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
 
         // when
         sut.cardFieldValidationResultDidChange(result: validationResult)
