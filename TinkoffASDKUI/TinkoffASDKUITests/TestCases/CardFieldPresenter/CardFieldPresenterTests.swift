@@ -75,6 +75,8 @@ final class CardFieldPresenterTests: BaseTestCase {
     }
 
     func test_validateWholeForm_when_notAllValid_2_fieldsForValidate() {
+        allureId(2559737, "При вводе невалидного номера карты title становится красным")
+
         // given
         sut.didEndEditing(fieldType: .expiration)
 
@@ -97,6 +99,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeReceivedArguments, result)
         XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 1)
         XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedArguments, .cardNumber)
         XCTAssertEqual(result.isValid, false)
     }
 
@@ -148,6 +151,9 @@ final class CardFieldPresenterTests: BaseTestCase {
     }
 
     func test_didFillField_cardNumber_isUpdatedCardNumber_textEmpty() {
+        allureId(2559802, "Курсор не перемещается после ввода номера карт МИР и UP")
+        allureId(2559796, "После ввода валидных данных карты курсор перемещается на поле ввода срока")
+
         // given
         setupSut(isScanButtonNeeded: true)
 
@@ -316,6 +322,41 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 0)
     }
 
+    func test_didBeginEditing_cardNumber_changes_state() {
+        allureId(2559792, "При исправлении невалидного номера карты title становится серым")
+
+        // given
+        let fieldType = CardFieldType.cardNumber
+        sut.didEndEditing(fieldType: fieldType)
+        validatorMock.fullReset()
+        outputMock.fullReset()
+
+        validatorMock.validateInputPANReturnValue = false
+        validatorMock.validateValidThruYearReturnValue = false
+        validatorMock.validateInputValidThruYearReturnValue = false
+        validatorMock.validateInputCVCReturnValue = false
+
+        // when
+        sut.didBeginEditing(fieldType: fieldType)
+
+        // then
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedArguments, fieldType)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 1)
+
+        // given
+        viewMock.fullReset()
+        validatorMock.validateInputPANReturnValue = true
+
+        // when
+        sut.didBeginEditing(fieldType: fieldType)
+
+        // then
+        XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 2)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[0], fieldType)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[1], fieldType)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 0)
+    }
+
     func test_didBeginEditing_expiration() {
         // given
         let fieldType = CardFieldType.expiration
@@ -344,7 +385,46 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 1)
     }
 
+    func test_didBeginEditing_expiration_changes_state() {
+        allureId(2559758, "При исправлении невалидного срока title становится серым")
+
+        // given
+        let fieldType = CardFieldType.expiration
+        sut.didEndEditing(fieldType: fieldType)
+        validatorMock.fullReset()
+        outputMock.fullReset()
+
+        validatorMock.validateInputPANReturnValue = true
+        validatorMock.validateValidThruYearReturnValue = false
+        validatorMock.validateInputValidThruYearReturnValue = false
+        validatorMock.validateInputCVCReturnValue = false
+
+        // when
+        sut.didBeginEditing(fieldType: fieldType)
+
+        // then
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedArguments, fieldType)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 1)
+
+        // given
+        viewMock.fullReset()
+        validatorMock.validateValidThruYearReturnValue = true
+        validatorMock.validateInputValidThruYearReturnValue = true
+
+        // when
+        sut.didBeginEditing(fieldType: fieldType)
+
+        // then
+        XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 3)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[0], .cardNumber)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[1], .expiration)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[2], .expiration)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 0)
+    }
+
     func test_didBeginEditing_cvc() {
+        allureId(2559746, "При вводе невалидного срока title становится красным")
+
         // given
         let fieldType = CardFieldType.cvc
         sut.didEndEditing(fieldType: .cvc)
@@ -369,6 +449,9 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[0], .cardNumber)
         XCTAssertEqual(viewMock.setHeaderNormalForReceivedInvocations[1], fieldType)
         XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 2)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 2)
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedInvocations[0], .expiration)
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedInvocations[1], .cvc)
     }
 
     func test_didEndEditing() {
