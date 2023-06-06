@@ -29,6 +29,7 @@ final class EventsModuleTests: BaseTestCase {
     }
 
     func test_applicationDidReceiveUserActivity() {
+        // given
         yandexPaySDKFacadeMock.isInitialized = true
         let activity = NSUserActivity(activityType: "some-activity")
         // when
@@ -39,6 +40,7 @@ final class EventsModuleTests: BaseTestCase {
     }
 
     func test_applicationDidReceiveOpen() {
+        // given
         yandexPaySDKFacadeMock.isInitialized = true
         let source = "sample"
         // when
@@ -58,6 +60,7 @@ final class EventsModuleTests: BaseTestCase {
     }
 
     func test_applicationDidBecomeActive() {
+        // given
         yandexPaySDKFacadeMock.isInitialized = true
         // when
         sut.applicationDidBecomeActive()
@@ -75,6 +78,7 @@ final class EventsModuleTests: BaseTestCase {
     }
 
     func test_applicationDidReceiveOpen_when_notInitialized() {
+        // given
         yandexPaySDKFacadeMock.isInitialized = false
         // when
         sut.applicationDidReceiveOpen(.doesNotMatter, sourceApplication: "sourcer")
@@ -83,6 +87,7 @@ final class EventsModuleTests: BaseTestCase {
     }
 
     func test_applicationWillEnterForeground_when_notInitialized() {
+        // given
         yandexPaySDKFacadeMock.isInitialized = false
         // when
         sut.applicationWillEnterForeground()
@@ -91,6 +96,7 @@ final class EventsModuleTests: BaseTestCase {
     }
 
     func test_applicationDidBecomeActive_when_notInitialized() {
+        // given
         yandexPaySDKFacadeMock.isInitialized = false
         // when
         sut.applicationDidBecomeActive()
