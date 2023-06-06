@@ -59,4 +59,45 @@ extension SdkCredentials {
         terminalPassword: StageTestData.terminalPassword,
         customerKey: StageTestData.customerKey
     )
+
+    static let testSbp1 = Self(
+        uuid: UUID().uuidString,
+        name: "Test SBP 1",
+        description: "1 Тестовый терминал с СБП",
+        publicKey: StageTestData.testPublicKey,
+        terminalKey: "1521204415922",
+        terminalPassword: StageTestData.terminalPassword,
+        customerKey: StageTestData.customerKey
+    )
+
+    static let testSbp2 = Self(
+        uuid: UUID().uuidString,
+        name: "Test SBP 2",
+        description: "2 Тестовый терминал с СБП",
+        publicKey: StageTestData.testPublicKey,
+        terminalKey: "1562595669054",
+        terminalPassword: StageTestData.terminalPassword,
+        customerKey: StageTestData.customerKey
+    )
+
+    static let testSbp3 = Self(
+        uuid: UUID().uuidString,
+        name: "Test SBP 3",
+        description: "3 Тестовый терминал с СБП",
+        publicKey: StageTestData.testPublicKey,
+        terminalKey: "1578942570730",
+        terminalPassword: StageTestData.terminalPassword,
+        customerKey: StageTestData.customerKey
+    )
+}
+
+extension Array where Element == SdkCredentials {
+
+    /// Список хардкоженных тестовых терминалов
+    static let testTerminals: Self = [
+        .test,
+        .testSbp1,
+        .testSbp2,
+        .testSbp3,
+    ]
 }
