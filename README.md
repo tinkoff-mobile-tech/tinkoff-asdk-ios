@@ -600,6 +600,8 @@ public func presentDynamicSBPQR(
 
 ### Рекуррентный платеж
 
+> :warning: Реккурентные платежи не работают с СБП
+
 При наличии идентификатора рекуррентого платежа `rebillId` вы так же можете совершить рекуррентный платеж. Для этого воспользуйтесь функцией в `AcquiringUISDK`:
 
 ```swift
@@ -793,10 +795,10 @@ public protocol ICardScannerDelegate: AnyObject {
 В таком случае пользователю отобразиться иконка сканера, по нажатии на которую вы можете отловить событие `cardScanButtonDidPressed` и отобразить экран сканера.
 
 ## Поддержка
-
-- Просьба, по возникающим вопросам обращаться на oplata@tinkoff.ru
-- Баги и feature-реквесты можно направлять в раздел [issues][issues]
-- Документация на сайте, описание [API методов][server-api]
+- Для сообщения о багах, пожалуйста, обратитесь к разделу [issues][issues].
+- Запросы на добавление новых функций и внесение изменений в функционал следует отправлять через менеджера или на acq_help@tinkoff.ru.
+- По всем вопросам, связанным с сценарием платежей и их работой, обращайтесь на acq_help@tinkoff.ru.
+- Документация [API методов][server-api].
 
 [acquiring]: https://www.tinkoff.ru/kassa/
 [acquiring-request-sign]: https://www.tinkoff.ru/kassa/develop/api/request-sign/

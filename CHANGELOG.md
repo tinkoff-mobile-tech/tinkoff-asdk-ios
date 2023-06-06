@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Added
+* [EACQAPW-4844] README corrections
 * [EACQAPW-4910] README add new capabilities CardController + PaymentController
 
 ### Fixed
