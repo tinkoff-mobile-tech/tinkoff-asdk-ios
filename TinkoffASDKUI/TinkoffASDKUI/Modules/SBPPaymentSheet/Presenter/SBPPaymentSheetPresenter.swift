@@ -143,7 +143,8 @@ extension SBPPaymentSheetPresenter {
             viewUpdateStateIfNeeded(newState: .timeout)
         default:
             canDismissView = true
-            viewUpdateStateIfNeeded(newState: .paymentFailed)
+            getPaymentStatus()
+            viewUpdateStateIfNeeded(newState: .waiting)
         }
     }
 
