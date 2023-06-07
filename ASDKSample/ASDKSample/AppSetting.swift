@@ -50,11 +50,11 @@ final class AppSetting {
     /// Список сохраненных Sdk Credentials
     var listOfSdkCredentials: [SdkCredentials] {
         get {
-            let result = try? formGetter(key: .keyListSdkCredentials, defaultValue: [activeSdkCredentials])
+            let result = try? formGetter(key: .keyListSdkCredentials, defaultValue: [SdkCredentials].testTerminals)
             if result == nil {
-                self.listOfSdkCredentials = [activeSdkCredentials]
+                self.listOfSdkCredentials = .testTerminals
             }
-            return result ?? [activeSdkCredentials]
+            return result ?? .testTerminals
         }
 
         set {
