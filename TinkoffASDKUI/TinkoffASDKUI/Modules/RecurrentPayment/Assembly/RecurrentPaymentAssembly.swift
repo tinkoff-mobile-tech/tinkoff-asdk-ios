@@ -58,6 +58,7 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
             paymentController: paymentController,
             cardsController: cardsController,
             paymentFlow: paymentFlow,
+            mainDispatchQueue: DispatchQueue.main,
             rebillId: rebillId,
             amount: paymentFlow.amount,
             failureDelegate: failureDelegate,

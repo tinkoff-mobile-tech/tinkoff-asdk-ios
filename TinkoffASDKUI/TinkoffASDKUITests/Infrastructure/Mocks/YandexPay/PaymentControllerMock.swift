@@ -27,4 +27,15 @@ final class PaymentControllerMock: IPaymentController {
         performPaymentReceivedArguments = arguments
         performPaymentReceivedInvocations.append(arguments)
     }
+
+    func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData) {
+        performPayment(paymentFlow: .full(paymentOptions: paymentOptions), paymentSource: paymentSource)
+    }
+
+    func performFinishPayment(paymentOptions: FinishPaymentOptions, paymentSource: PaymentSourceData) {
+        performPayment(
+            paymentFlow: .finish(paymentOptions: paymentOptions),
+            paymentSource: paymentSource
+        )
+    }
 }

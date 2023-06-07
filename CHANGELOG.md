@@ -14,12 +14,15 @@
 * [EACQAPW-4929] TinkoffPaySheetPresenter Tests
 * [EACQAPW-4932] TinkoffPay Tests
 * [EACQAPW-4193] Add Card Tests
+* [EACQAPW-5016] Reccurent Tests
 * [EACQAPW-5017] Cover Code Coverage on TinkoffASDKYandexPay.framework to 100%
 
 ### Fixed
 
 * [MIC-7135] Properly forming query path in get url
+* [EACQAPW-4593] Fixes for validation of card number
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
+* [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 
 ## [3.0.0] - 2023-05-12Z
 
