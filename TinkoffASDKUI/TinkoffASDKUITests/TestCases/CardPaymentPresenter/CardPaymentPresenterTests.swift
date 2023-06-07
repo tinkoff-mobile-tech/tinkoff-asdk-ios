@@ -669,7 +669,7 @@ extension SavedCardViewPresenter {
     }
 }
 
-private final class FakePayButtonViewPresenterInput: IPayButtonViewPresenterInput {
+final class FakePayButtonViewPresenterInput: IPayButtonViewPresenterInput {
     var presentationState: PayButtonViewPresentationState = .pay
 
     var isLoading: Bool = false
