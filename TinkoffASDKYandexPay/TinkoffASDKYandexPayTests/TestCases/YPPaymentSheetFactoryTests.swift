@@ -31,18 +31,12 @@ final class YPPaymentSheetFactoryTests: BaseTestCase {
 
     // MARK: - Tests
 
-    func test_create_sucess() {
+    func test_create_full_flow_sucess() {
         allureId(2358063, "Успешная инициализация шторки YP при нажатии кнопки")
 
         // given
-        let flow = PaymentFlow.fake()
-
-        let cardMethod = YPCardPaymentMethod(
-            gateway: "tinkoff",
-            gatewayMerchantId: fakeYPMethod.merchantId,
-            allowedAuthMethods: [.panOnly],
-            allowedCardNetworks: [.visa, .mastercard, .mir]
-        )
+        let flow = PaymentFlow.full(paymentOptions: .fake())
+        let cardMethod = formCardMethod()
 
         // when
         let ypSheet = sut.create(with: flow)
@@ -60,5 +54,40 @@ final class YPPaymentSheetFactoryTests: BaseTestCase {
         XCTAssertEqual(ypSheet.order.id, id)
         XCTAssertEqual(ypSheet.order.amount, "\(Double(orderAmount) / 100)")
         XCTAssertEqual(ypSheet.paymentMethods, [.card(cardMethod)])
+    }
+
+    func test_create_finish_flow_sucess() {
+        // given
+        let flow = PaymentFlow.finish(paymentOptions: .fake())
+        let cardMethod = formCardMethod()
+
+        // when
+        let ypSheet = sut.create(with: flow)
+
+        // then
+        var id = ""
+        var orderAmount: Int64 = .zero
+        if case let .finish(paymentOptions) = flow {
+            id = fakeYPMethod.merchantId + paymentOptions.orderId
+            orderAmount = paymentOptions.amount
+        }
+
+        XCTAssertEqual(ypSheet.countryCode, .ru)
+        XCTAssertEqual(ypSheet.currencyCode, .rub)
+        XCTAssertEqual(ypSheet.order.id, id)
+        XCTAssertEqual(ypSheet.order.amount, "\(Double(orderAmount) / 100)")
+        XCTAssertEqual(ypSheet.paymentMethods, [.card(cardMethod)])
+    }
+}
+
+extension YPPaymentSheetFactoryTests {
+
+    private func formCardMethod() -> YPCardPaymentMethod {
+        YPCardPaymentMethod(
+            gateway: "tinkoff",
+            gatewayMerchantId: fakeYPMethod.merchantId,
+            allowedAuthMethods: [.panOnly],
+            allowedCardNetworks: [.visa, .mastercard, .mir]
+        )
     }
 }

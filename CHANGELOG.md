@@ -15,6 +15,7 @@
 * [EACQAPW-4932] TinkoffPay Tests
 * [EACQAPW-4193] Add Card Tests
 * [EACQAPW-5016] Reccurent Tests
+* [EACQAPW-5017] Cover Code Coverage on TinkoffASDKYandexPay.framework to 100%
 
 ### Fixed
 
