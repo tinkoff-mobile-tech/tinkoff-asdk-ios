@@ -14,8 +14,8 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
 
     var sut: RecurrentPaymentPresenter!
 
-    // Mocksx`
-
+    // MARK: Mocks
+    
     var viewMock: RecurrentPaymentViewInputMock!
     var savedCardViewPresenterAssemblyMock: SavedCardViewPresenterAssemblyMock!
     var payButtonViewPresenterAssemblyMock: PayButtonViewPresenterAssemblyMock!
@@ -43,7 +43,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
 
         sut = nil
 
-        DispatchQueueMock.performOnMainCallsCount = 0
+        DispatchQueueMock.resetPerformOnMain()
 
         super.tearDown()
     }
