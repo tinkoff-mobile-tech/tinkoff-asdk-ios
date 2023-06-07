@@ -15,7 +15,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
     var sut: RecurrentPaymentPresenter!
 
     // MARK: Mocks
-    
+
     var viewMock: RecurrentPaymentViewInputMock!
     var savedCardViewPresenterAssemblyMock: SavedCardViewPresenterAssemblyMock!
     var payButtonViewPresenterAssemblyMock: PayButtonViewPresenterAssemblyMock!
