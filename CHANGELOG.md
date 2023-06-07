@@ -19,6 +19,8 @@
 ### Fixed
 
 * [MIC-7135] Properly forming query path in get url
+* [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
+
 
 ## [3.0.0] - 2023-05-12Z
 

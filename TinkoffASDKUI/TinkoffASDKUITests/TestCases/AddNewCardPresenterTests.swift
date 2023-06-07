@@ -65,11 +65,22 @@ final class AddNewCardPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.reloadCollectionReceivedArguments, [.cardField])
     }
 
-    func test_viewDidAppear() {
+    func test_viewDidAppear_when_notLoading() {
         // when
         sut.viewDidAppear()
         // then
         XCTAssertEqual(viewMock.activateCardFieldCallsCount, 1)
+    }
+
+    func test_viewDidAppear_when_loading() {
+        // given
+        viewMock.underlyingIsLoading = true
+
+        // when
+        sut.viewDidAppear()
+
+        // then
+        XCTAssertEqual(viewMock.activateCardFieldCallsCount, 0)
     }
 
     func test_viewWasClosed() {

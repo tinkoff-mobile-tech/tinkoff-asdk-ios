@@ -71,6 +71,10 @@ extension AddNewCardView {
         collectionView.reloadData()
     }
 
+    var isLoading: Bool {
+        blockingView.alpha == 1
+    }
+
     func showLoadingState() {
         blockingView.alpha = 1
         UIView.addPopingAnimation {
