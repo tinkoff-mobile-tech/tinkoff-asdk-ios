@@ -201,7 +201,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldReceivedArguments, .never)
         XCTAssertEqual(bankResolverMock.resolveCallsCount, 1)
-        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 2)
         XCTAssertEqual(viewMock.updateDynamicCardViewCallsCount, 1)
         XCTAssertEqual(viewMock.activateCallsCount, 0)
     }
@@ -226,7 +226,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 0)
         XCTAssertEqual(bankResolverMock.resolveCallsCount, 1)
-        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 2)
         XCTAssertEqual(viewMock.updateDynamicCardViewCallsCount, 1)
         XCTAssertEqual(viewMock.activateCallsCount, 0)
     }
@@ -251,9 +251,60 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 0)
         XCTAssertEqual(bankResolverMock.resolveCallsCount, 1)
-        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 2)
         XCTAssertEqual(viewMock.updateDynamicCardViewCallsCount, 0)
         XCTAssertEqual(viewMock.activateCallsCount, 0)
+    }
+
+    func test_didFillField_cardNumber_should_validate_form_if_starts_with_zero() {
+        // given
+        viewMock.updateCardNumberFieldReturnValue = false
+        // when
+        sut.didFillField(type: .cardNumber, text: "041234", filled: false)
+        // then
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedArguments, .cardNumber)
+    }
+
+    func test_didFillField_cardNumber_should_update_header_to_normal() {
+        // given
+        viewMock.updateCardNumberFieldReturnValue = false
+        sut.didFillField(type: .cardNumber, text: "0", filled: false)
+        viewMock.fullReset()
+        paymentSystemResolverMock.fullReset()
+        // when
+        sut.didFillField(type: .cardNumber, text: "", filled: false)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 0)
+        XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedArguments, .cardNumber)
+    }
+
+    func test_didFillField_cardNumber_should_validate_invalid_payment_system() {
+        // given
+        viewMock.updateCardNumberFieldReturnValue = false
+        // when
+        sut.didFillField(type: .cardNumber, text: "989898", filled: false)
+        // then
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 2)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderErrorForReceivedArguments, .cardNumber)
+    }
+
+    func test_didFillField_cardNumber_update_header_to_normal_invalid_payment_system() {
+        // given
+        viewMock.updateCardNumberFieldReturnValue = false
+        sut.didFillField(type: .cardNumber, text: "989898", filled: false)
+        viewMock.fullReset()
+        paymentSystemResolverMock.fullReset()
+        // when
+        sut.didFillField(type: .cardNumber, text: "98989", filled: false)
+        // then
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderErrorForCallsCount, 0)
+        XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 1)
+        XCTAssertEqual(viewMock.setHeaderNormalForReceivedArguments, .cardNumber)
     }
 
     func test_didFillField_expiration_when_filled() {
