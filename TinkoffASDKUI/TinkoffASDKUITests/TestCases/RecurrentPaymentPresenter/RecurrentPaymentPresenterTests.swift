@@ -211,7 +211,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         XCTAssertEqual(cellType1, .savedCard(SavedCardViewOutputMock()))
         XCTAssertEqual(cellType2, .payButton(PayButtonViewOutputMock()))
     }
-    
+
     func test_commonSheetViewDidTapPrimaryButton() {
         // when
         sut.commonSheetViewDidTapPrimaryButton()
