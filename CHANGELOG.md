@@ -14,6 +14,7 @@
 * [EACQAPW-4929] TinkoffPaySheetPresenter Tests
 * [EACQAPW-4932] TinkoffPay Tests
 * [EACQAPW-4193] Add Card Tests
+* [EACQAPW-5016] Reccurent Tests
 
 ### Fixed
 
