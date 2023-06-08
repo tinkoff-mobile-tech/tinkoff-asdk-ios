@@ -16,26 +16,22 @@ final class CardRequisitesValidatorTests: BaseTestCase {
     // Dependencies
     var sutAsProtocol: ICardRequisitesValidator { sut }
     var sut: CardRequisitesValidator!
-    var paymentSystemResolverMock: PaymentSystemResolverMock!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
 
-        let paymentSystemResolverMock = PaymentSystemResolverMock()
         let validator = CardRequisitesValidator(
-            paymentSystemResolver: paymentSystemResolverMock,
+            paymentSystemResolver: PaymentSystemResolver(),
             options: .disableExpiryDateValidation
         )
 
         sut = validator
-        self.paymentSystemResolverMock = paymentSystemResolverMock
     }
 
     override func tearDown() {
         sut = nil
-        paymentSystemResolverMock = nil
         super.tearDown()
     }
 
@@ -43,7 +39,7 @@ final class CardRequisitesValidatorTests: BaseTestCase {
 
     func test_validate_cardNumber_success() throws {
         // when
-        let isValid = sutAsProtocol.validate(inputPAN: "2201382000000104")
+        let isValid = sutAsProtocol.validate(inputPAN: .validCard)
         // then
         XCTAssertEqual(isValid, true)
     }
@@ -51,11 +47,10 @@ final class CardRequisitesValidatorTests: BaseTestCase {
     func test_validate_cardNumber_when_passed_various_numbers() throws {
         allureId(2559792, "При исправлении невалидного номера карты title становится серым")
         // given
-        let invalidCardNumber = "2201382000000105"
-        let validCardNumber = "2201382000000104"
+        let invalidCardNumber = "22013820000001045"
         // when
         let isValidFirst = sutAsProtocol.validate(inputPAN: invalidCardNumber)
-        let isValidSecond = sutAsProtocol.validate(inputPAN: validCardNumber)
+        let isValidSecond = sutAsProtocol.validate(inputPAN: .validCard)
         // then
         XCTAssertEqual(isValidFirst, false)
         XCTAssertEqual(isValidSecond, true)
@@ -64,6 +59,20 @@ final class CardRequisitesValidatorTests: BaseTestCase {
     func test_validate_cardNumber_failure() throws {
         // when
         let isValid = sutAsProtocol.validate(inputPAN: "2201382002500104")
+        // then
+        XCTAssertEqual(isValid, false)
+    }
+
+    func test_validate_cardNumber_starts_with_zero_failure() throws {
+        // when
+        let isValid = sutAsProtocol.validate(inputPAN: "0001382002500104")
+        // then
+        XCTAssertEqual(isValid, false)
+    }
+
+    func test_validate_cardNumber_unrecognized_payment_system_failure() throws {
+        // when
+        let isValid = sutAsProtocol.validate(inputPAN: "9999990000000000")
         // then
         XCTAssertEqual(isValid, false)
     }
@@ -126,4 +135,8 @@ final class CardRequisitesValidatorTests: BaseTestCase {
         // then
         XCTAssertEqual([isValidFirst, isValidSecond], [false, false])
     }
+}
+
+private extension String {
+    static let validCard = "2201382000000104"
 }
