@@ -21,6 +21,7 @@
 
 * [MIC-7135] Properly forming query path in get url
 * [EACQAPW-4593] Fixes for validation of card number
+* [EACQAPW-4690] Main form keyboard notifications
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
 * [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 

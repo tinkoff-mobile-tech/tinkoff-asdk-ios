@@ -92,7 +92,7 @@ final class MainFormViewController: UIViewController {
 
     private func setupKeyboardObserving() {
         keyboardService.onHeightDidChangeBlock = { [weak self] keyboardHeight, _ in
-            guard let self = self else { return }
+            guard let self = self, self.view.isFirstResponderInHierarchy else { return }
             self.currentAnchor = .expanded
 
             self.pullableContentDelegate?.updateHeight(
