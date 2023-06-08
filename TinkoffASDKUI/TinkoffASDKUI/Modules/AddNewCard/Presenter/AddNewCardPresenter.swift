@@ -65,7 +65,9 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     }
 
     func viewDidAppear() {
-        view?.activateCardField()
+        if view?.isLoading == false {
+            view?.activateCardField()
+        }
     }
 
     func viewWasClosed() {
