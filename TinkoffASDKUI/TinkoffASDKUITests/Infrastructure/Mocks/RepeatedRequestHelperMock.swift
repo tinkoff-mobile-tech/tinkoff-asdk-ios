@@ -1,10 +1,11 @@
 //
 //  RepeatedRequestHelperMock.swift
-//  Pods
+//  TinkoffASDKUI-Unit-Tests
 //
-//  Created by Ivan Glushko on 06.06.2023.
+//  Created by Aleksandr Pravosudov on 28.04.2023.
 //
 
+import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class RepeatedRequestHelperMock: IRepeatedRequestHelper {
@@ -12,17 +13,12 @@ final class RepeatedRequestHelperMock: IRepeatedRequestHelper {
     // MARK: - executeWithWaitingIfNeeded
 
     var executeWithWaitingIfNeededCallsCount = 0
-    var executeWithWaitingIfNeededReceivedArguments: () -> Void?
-    var executeWithWaitingIfNeededReceivedInvocations: [() -> Void] = []
-    var executeWithWaitingIfNeededActionClosureInput: ()?
+    var executeWithWaitingIfNeededActionShouldCalls = false
 
     func executeWithWaitingIfNeeded(action: @escaping () -> Void) {
         executeWithWaitingIfNeededCallsCount += 1
-        let arguments = action
-        executeWithWaitingIfNeededReceivedArguments = arguments
-        executeWithWaitingIfNeededReceivedInvocations.append(arguments)
-        if let executeWithWaitingIfNeededActionClosureInput = executeWithWaitingIfNeededActionClosureInput {
-            action(executeWithWaitingIfNeededActionClosureInput)
+        if executeWithWaitingIfNeededActionShouldCalls {
+            action()
         }
     }
 }

@@ -1,4 +1,7 @@
-install! 'cocoapods', share_schemes_for_development_pods: true, preserve_pod_file_structure: true
+install! 'cocoapods', 
+share_schemes_for_development_pods: true, 
+preserve_pod_file_structure: true, 
+generate_multiple_pod_projects: true
 
 platform :ios, '12.3'
 

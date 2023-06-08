@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-gem "cocoapods", "~> 1.11.3"
-gem 'fastlane', '~> 2.212.2'
+gem "cocoapods", "~> 1.12.1"
+gem 'fastlane', '~> 2.213.0'
 gem 'fastlane-plugin-changelog'
 
 # https://github.com/CocoaPods/CocoaPods/issues/10388
