@@ -205,6 +205,24 @@ extension UIView {
     }
 }
 
+extension UIView {
+    var firstResponderInHierarchy: UIView? {
+        guard !isFirstResponder else { return self }
+
+        for subview in subviews {
+            if let firstResponder = subview.firstResponderInHierarchy {
+                return firstResponder
+            }
+        }
+
+        return nil
+    }
+
+    var isFirstResponderInHierarchy: Bool {
+        firstResponderInHierarchy != nil
+    }
+}
+
 // MARK: - Constraints
 
 extension UIView {
