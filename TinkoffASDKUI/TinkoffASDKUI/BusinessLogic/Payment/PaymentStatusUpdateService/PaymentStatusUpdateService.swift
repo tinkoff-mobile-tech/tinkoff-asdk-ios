@@ -7,7 +7,9 @@
 
 import TinkoffASDKCore
 
+/// Обработка статусов платежей - картой и реккурентов
 final class PaymentStatusUpdateService: IPaymentStatusUpdateService {
+
     // MARK: Dependencies
 
     weak var delegate: IPaymentStatusUpdateServiceDelegate?
@@ -67,24 +69,25 @@ extension PaymentStatusUpdateService {
 
     private func handleStatus(data: FullPaymentData, isRequestRepeatAllowed: Bool) {
         switch data.payload.status {
-        case .authorized, .confirmed:
-            delegate?.paymentFinalStatusRecieved(data: data)
-            return
-        case .rejected:
-            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
-            return
-        case .deadlineExpired:
-            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
-            return
         case .cancelled:
             delegate?.paymentCancelStatusRecieved(data: data)
-            return
+        case .rejected:
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
+        case .deadlineExpired:
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(.timeout))
+        case let status where CardsStatuses.successList.contains(status):
+            delegate?.paymentFinalStatusRecieved(data: data)
+        case let status where AcquiringStatus.failureList.contains(status):
+            delegate?.paymentFailureStatusRecieved(data: data, error: Error)
         default: break
         }
 
         if isRequestRepeatAllowed {
+            /// В остальных случаях дергаем /GetState для получения финального статуса
             getPaymentStatus(data: data)
         } else {
+            /// Если исчерпан лимит запросов к GetState и статус все еще не обработан
+            /// Показываем ошибку timeout
             delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
         }
     }
@@ -99,4 +102,45 @@ extension PaymentStatusUpdateService {
             delegate?.paymentFailureStatusRecieved(data: data, error: error)
         }
     }
+}
+
+enum CardsStatuses {
+
+    /// Процессные статусы - начало обработки платежа
+    static let processingList: [AcquiringStatus] = [
+        .preauthorizing,
+        .authorizing,
+        .paychecking,
+    ]
+
+    /// Успешные статусы - платеж успешно совершен
+    static let successList: [AcquiringStatus] = [
+        .authorized,
+        .reversing,
+        .partialReversed,
+        .reversed,
+        .confirming,
+        .confirmed,
+        .refunding,
+        .asyncRefunding,
+        .refundedPartial,
+        .refunded,
+        .cancelRefunded,
+        .confirmChecking,
+    ]
+
+    /// Статусы ошибок - платеж не совершен
+    static let failureList: [AcquiringStatus] = [
+        .cancelled,
+        .authFail,
+        .rejected,
+        .deadlineExpired,
+        .attemptsExpired,
+    ]
+
+    /// Статусы 3DSecure - проверка 3DSecure
+    static let threedsList: [AcquiringStatus] = [
+        .checking3ds,
+        .checked3ds,
+    ]
 }
