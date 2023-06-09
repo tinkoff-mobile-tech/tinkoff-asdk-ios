@@ -13,6 +13,7 @@ final class MainFormPresenter {
 
     weak var view: IMainFormViewController?
     private let router: IMainFormRouter
+    private let mainFormOrderDetailsViewPresenterAssembly: IMainFormOrderDetailsViewPresenterAssembly
     private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
     private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private let dataStateLoader: IMainFormDataStateLoader
@@ -25,10 +26,8 @@ final class MainFormPresenter {
 
     // MARK: Child Presenters
 
-    private lazy var orderDetailsPresenter = MainFormOrderDetailsViewPresenter(
-        amount: paymentFlow.amount,
-        orderDescription: configuration.orderDescription
-    )
+    private lazy var orderDetailsPresenter = mainFormOrderDetailsViewPresenterAssembly
+        .build(amount: paymentFlow.amount, orderDescription: configuration.orderDescription)
 
     private lazy var savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
 
@@ -57,6 +56,7 @@ final class MainFormPresenter {
 
     init(
         router: IMainFormRouter,
+        mainFormOrderDetailsViewPresenterAssembly: IMainFormOrderDetailsViewPresenterAssembly,
         savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
         payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         dataStateLoader: IMainFormDataStateLoader,
@@ -68,6 +68,7 @@ final class MainFormPresenter {
         moduleCompletion: PaymentResultCompletion?
     ) {
         self.router = router
+        self.mainFormOrderDetailsViewPresenterAssembly = mainFormOrderDetailsViewPresenterAssembly
         self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
         self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.dataStateLoader = dataStateLoader
