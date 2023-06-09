@@ -24,3 +24,14 @@ final class MoneyFormatterMock: IMoneyFormatter {
         return formatAmountReturnValue
     }
 }
+
+// MARK: - Public methods
+
+extension MoneyFormatterMock {
+    func fullReset() {
+        formatAmountCallsCount = 0
+        formatAmountReceivedArguments = nil
+        formatAmountReceivedInvocations = []
+        formatAmountReturnValue = ""
+    }
+}

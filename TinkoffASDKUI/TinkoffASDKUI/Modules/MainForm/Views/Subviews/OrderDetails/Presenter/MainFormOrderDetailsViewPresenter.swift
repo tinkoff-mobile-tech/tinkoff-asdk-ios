@@ -22,7 +22,7 @@ final class MainFormOrderDetailsViewPresenter: IMainFormOrderDetailsViewOutput {
 
     // MARK: Init
 
-    init(moneyFormatter: IMoneyFormatter = MoneyFormatter(), amount: Int64, orderDescription: String?) {
+    init(moneyFormatter: IMoneyFormatter, amount: Int64, orderDescription: String?) {
         self.moneyFormatter = moneyFormatter
         self.amount = amount
         self.orderDescription = orderDescription
@@ -30,7 +30,7 @@ final class MainFormOrderDetailsViewPresenter: IMainFormOrderDetailsViewOutput {
 
     // MARK: IMainFormOrderDetailsViewOutput
 
-    func copy() -> IMainFormOrderDetailsViewOutput {
+    func copy() -> any IMainFormOrderDetailsViewOutput {
         MainFormOrderDetailsViewPresenter(moneyFormatter: moneyFormatter, amount: amount, orderDescription: orderDescription)
     }
 
@@ -40,5 +40,15 @@ final class MainFormOrderDetailsViewPresenter: IMainFormOrderDetailsViewOutput {
         view?.set(amountDescription: Loc.CommonSheet.PaymentForm.toPayTitle)
         view?.set(amount: moneyFormatter.formatAmount(Int(amount)))
         view?.set(orderDescription: orderDescription)
+    }
+}
+
+// MARK: - Equatable
+
+extension MainFormOrderDetailsViewPresenter {
+    static func == (lhs: MainFormOrderDetailsViewPresenter, rhs: MainFormOrderDetailsViewPresenter) -> Bool {
+        lhs.moneyFormatter === rhs.moneyFormatter &&
+            lhs.amount == rhs.amount &&
+            lhs.orderDescription == rhs.orderDescription
     }
 }
