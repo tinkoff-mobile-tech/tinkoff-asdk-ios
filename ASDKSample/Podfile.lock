@@ -18,11 +18,11 @@ PODS:
     - TinkoffASDKUI
     - YandexPaySDK/Dynamic (= 1.3.6)
   - YandexLoginSDK (2.1.1)
-  - YandexMobileMetrica/Dynamic (4.5.0):
-    - YandexMobileMetrica/Dynamic/Core (= 4.5.0)
-    - YandexMobileMetrica/Dynamic/Crashes (= 4.5.0)
-  - YandexMobileMetrica/Dynamic/Core (4.5.0)
-  - YandexMobileMetrica/Dynamic/Crashes (4.5.0):
+  - YandexMobileMetrica/Dynamic (4.5.2):
+    - YandexMobileMetrica/Dynamic/Core (= 4.5.2)
+    - YandexMobileMetrica/Dynamic/Crashes (= 4.5.2)
+  - YandexMobileMetrica/Dynamic/Core (4.5.2)
+  - YandexMobileMetrica/Dynamic/Crashes (4.5.2):
     - YandexMobileMetrica/Dynamic/Core
   - YandexPaySDK/Dynamic (1.3.6):
     - PromiseKit/CorePromise (~> 6.0)
@@ -67,9 +67,9 @@ SPEC CHECKSUMS:
   TinkoffASDKUI: af2ca72a3bb38fc6e0055dbe08bdc1b261322def
   TinkoffASDKYandexPay: 69e7a4232fec3ee089dd32a1135489b7b9d9bf1e
   YandexLoginSDK: ad9a07aca36a7748353af17c9cbbf2b83be9ba26
-  YandexMobileMetrica: 7dafc7d224077d4443ab3a587b82b24e9b6cc9c7
+  YandexMobileMetrica: f5368ee93f286c793d73b58da00929babfc897c1
   YandexPaySDK: 94cfd7f426b8fcdee6eda91e53d281da17489e28
 
-PODFILE CHECKSUM: b55f7f2bb919414459709dbbac65917d799d7b57
+PODFILE CHECKSUM: 6ea0e01127924f591a9ab1b1ce0ee841f3912e02
 
 COCOAPODS: 1.12.1

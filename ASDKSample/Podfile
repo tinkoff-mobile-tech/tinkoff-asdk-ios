@@ -3,7 +3,9 @@ share_schemes_for_development_pods: true,
 preserve_pod_file_structure: true, 
 generate_multiple_pod_projects: true
 
-platform :ios, '12.3'
+minimal_ios_version = '12.3'
+
+platform :ios, minimal_ios_version
 
 use_frameworks!
 target 'ASDKSample' do
@@ -26,5 +28,14 @@ def install_githooks
 end
 
 post_install do |installer|
+  # Устанавливаем хуки для git
   install_githooks
+  # Подменяем deployment версию iOS во всех под проектах
+  installer.generated_projects.each do |project|
+      project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimal_ios_version
+      end
+    end
+  end
 end
