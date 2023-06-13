@@ -19,7 +19,7 @@ final class TextAndImageHeaderViewPresenter: ITextAndImageHeaderViewOutput {
     private let title: String
     private let imageAsset: ImageAsset?
 
-    init(title: String, imageAsset: ImageAsset? = nil) {
+    init(title: String, imageAsset: ImageAsset?) {
         self.title = title
         self.imageAsset = imageAsset
     }

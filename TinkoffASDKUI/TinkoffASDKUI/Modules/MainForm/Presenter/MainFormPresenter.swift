@@ -15,7 +15,10 @@ final class MainFormPresenter {
     private let router: IMainFormRouter
     private let mainFormOrderDetailsViewPresenterAssembly: IMainFormOrderDetailsViewPresenterAssembly
     private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
+    private let switchViewPresenterAssembly: ISwitchViewPresenterAssembly
+    private let emailViewPresenterAssembly: IEmailViewPresenterAssembly
     private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
+    private let textAndImageHeaderViewPresenterAssembly: ITextAndImageHeaderViewPresenterAssembly
     private let dataStateLoader: IMainFormDataStateLoader
     private let paymentController: IPaymentController
     private let tinkoffPayController: ITinkoffPayController
@@ -31,19 +34,19 @@ final class MainFormPresenter {
 
     private lazy var savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
 
-    private lazy var getReceiptSwitchPresenter = SwitchViewPresenter(
-        title: Loc.Acquiring.EmailField.switchButton,
-        isOn: paymentFlow.customerOptions?.email?.isEmpty == false,
-        actionBlock: { [weak self] in self?.getReceiptSwitch(didChange: $0) }
-    )
+    private lazy var getReceiptSwitchPresenter = switchViewPresenterAssembly
+        .build(
+            title: Loc.Acquiring.EmailField.switchButton,
+            isOn: paymentFlow.customerOptions?.email?.isEmpty == false,
+            actionBlock: { [weak self] in self?.getReceiptSwitch(didChange: $0) }
+        )
 
-    private lazy var emailPresenter = EmailViewPresenter(
-        customerEmail: paymentFlow.customerOptions?.email ?? "",
-        output: self
-    )
+    private lazy var emailPresenter = emailViewPresenterAssembly
+        .build(customerEmail: paymentFlow.customerOptions?.email ?? "", output: self)
 
     private lazy var payButtonPresenter = payButtonViewPresenterAssembly.build(output: self)
-    private lazy var otherPaymentMethodsHeaderPresenter = TextAndImageHeaderViewPresenter(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
+    private lazy var otherPaymentMethodsHeaderPresenter = textAndImageHeaderViewPresenterAssembly
+        .build(title: Loc.CommonSheet.PaymentForm.anotherMethodTitle)
 
     // MARK: State
 
@@ -58,7 +61,10 @@ final class MainFormPresenter {
         router: IMainFormRouter,
         mainFormOrderDetailsViewPresenterAssembly: IMainFormOrderDetailsViewPresenterAssembly,
         savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
+        switchViewPresenterAssembly: ISwitchViewPresenterAssembly,
+        emailViewPresenterAssembly: IEmailViewPresenterAssembly,
         payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
+        textAndImageHeaderViewPresenterAssembly: ITextAndImageHeaderViewPresenterAssembly,
         dataStateLoader: IMainFormDataStateLoader,
         paymentController: IPaymentController,
         tinkoffPayController: ITinkoffPayController,
@@ -70,7 +76,10 @@ final class MainFormPresenter {
         self.router = router
         self.mainFormOrderDetailsViewPresenterAssembly = mainFormOrderDetailsViewPresenterAssembly
         self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
+        self.switchViewPresenterAssembly = switchViewPresenterAssembly
+        self.emailViewPresenterAssembly = emailViewPresenterAssembly
         self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
+        self.textAndImageHeaderViewPresenterAssembly = textAndImageHeaderViewPresenterAssembly
         self.dataStateLoader = dataStateLoader
         self.paymentController = paymentController
         self.tinkoffPayController = tinkoffPayController
