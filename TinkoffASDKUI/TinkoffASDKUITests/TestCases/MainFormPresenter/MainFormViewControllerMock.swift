@@ -82,3 +82,27 @@ final class MainFormViewControllerMock: IMainFormViewController {
         closeViewCallsCount += 1
     }
 }
+
+// MARK: - Public methods
+
+extension MainFormViewControllerMock {
+    func fullReset() {
+        showCommonSheetCallsCount = 0
+        showCommonSheetReceivedArguments = nil
+        showCommonSheetReceivedInvocations = []
+
+        hideCommonSheetCallsCount = 0
+        reloadDataCallsCount = 0
+
+        insertRowsCallsCount = 0
+        insertRowsReceivedArguments = nil
+        insertRowsReceivedInvocations = []
+
+        deleteRowsCallsCount = 0
+        deleteRowsReceivedArguments = nil
+        deleteRowsReceivedInvocations = []
+
+        hideKeyboardCallsCount = 0
+        closeViewCallsCount = 0
+    }
+}

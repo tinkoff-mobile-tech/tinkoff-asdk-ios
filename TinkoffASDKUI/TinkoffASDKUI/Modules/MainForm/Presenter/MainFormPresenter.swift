@@ -521,6 +521,22 @@ private extension PayButtonViewPresentationState {
 
 // MARK: - CommonSheetState + MainForm States
 
+enum MainFormState {
+    case processing
+    case paid
+    case paymentFailed
+    case somethingWentWrong
+
+    var rawValue: CommonSheetState {
+        switch self {
+        case .processing: return .processing
+        case .paid: return .paid
+        case .paymentFailed: return .paymentFailed
+        case .somethingWentWrong: return .somethingWentWrong
+        }
+    }
+}
+
 private extension CommonSheetState {
     static var processing: CommonSheetState {
         CommonSheetState(status: .processing)
