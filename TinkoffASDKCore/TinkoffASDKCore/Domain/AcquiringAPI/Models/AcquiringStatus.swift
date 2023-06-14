@@ -93,3 +93,47 @@ public enum AcquiringStatus: String, Decodable, Equatable {
         }
     }
 }
+
+public extension AcquiringStatus {
+
+    enum CardsStatuses {
+
+        /// Процессные статусы - начало обработки платежа
+        static let processingList: [AcquiringStatus] = [
+            .preauthorizing,
+            .authorizing,
+            .paychecking,
+        ]
+
+        /// Успешные статусы - платеж успешно совершен
+        public static let successList: [AcquiringStatus] = [
+            .authorized,
+            .reversing,
+            .partialReversed,
+            .reversed,
+            .confirming,
+            .confirmed,
+            .refunding,
+            .asyncRefunding,
+            .refundedPartial,
+            .refunded,
+            .cancelRefunded,
+            .confirmChecking,
+        ]
+
+        /// Статусы ошибок - платеж не совершен
+        public static let failureList: [AcquiringStatus] = [
+            .cancelled,
+            .authFail,
+            .rejected,
+            .deadlineExpired,
+            .attemptsExpired,
+        ]
+
+        /// Статусы 3DSecure - проверка 3DSecure
+        public static let threedsList: [AcquiringStatus] = [
+            .checking3ds,
+            .checked3ds,
+        ]
+    }
+}

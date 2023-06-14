@@ -68,17 +68,20 @@ extension PaymentStatusUpdateService {
     }
 
     private func handleStatus(data: FullPaymentData, isRequestRepeatAllowed: Bool) {
+        typealias Statuses = AcquiringStatus.CardsStatuses
+
         switch data.payload.status {
         case .cancelled:
             delegate?.paymentCancelStatusRecieved(data: data)
         case .rejected:
             delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
         case .deadlineExpired:
-            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(.timeout))
-        case let status where CardsStatuses.successList.contains(status):
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
+        case let status where Statuses.successList.contains(status):
             delegate?.paymentFinalStatusRecieved(data: data)
-        case let status where AcquiringStatus.failureList.contains(status):
-            delegate?.paymentFailureStatusRecieved(data: data, error: Error)
+        case let status where Statuses.failureList.contains(status):
+            let nsError = NSError(domain: status.rawValue, code: 0)
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .failStatus, underlyingError: nsError))
         default: break
         }
 
@@ -102,45 +105,4 @@ extension PaymentStatusUpdateService {
             delegate?.paymentFailureStatusRecieved(data: data, error: error)
         }
     }
-}
-
-enum CardsStatuses {
-
-    /// Процессные статусы - начало обработки платежа
-    static let processingList: [AcquiringStatus] = [
-        .preauthorizing,
-        .authorizing,
-        .paychecking,
-    ]
-
-    /// Успешные статусы - платеж успешно совершен
-    static let successList: [AcquiringStatus] = [
-        .authorized,
-        .reversing,
-        .partialReversed,
-        .reversed,
-        .confirming,
-        .confirmed,
-        .refunding,
-        .asyncRefunding,
-        .refundedPartial,
-        .refunded,
-        .cancelRefunded,
-        .confirmChecking,
-    ]
-
-    /// Статусы ошибок - платеж не совершен
-    static let failureList: [AcquiringStatus] = [
-        .cancelled,
-        .authFail,
-        .rejected,
-        .deadlineExpired,
-        .attemptsExpired,
-    ]
-
-    /// Статусы 3DSecure - проверка 3DSecure
-    static let threedsList: [AcquiringStatus] = [
-        .checking3ds,
-        .checked3ds,
-    ]
 }
