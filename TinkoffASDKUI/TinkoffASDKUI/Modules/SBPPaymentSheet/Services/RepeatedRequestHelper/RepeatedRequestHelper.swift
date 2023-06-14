@@ -56,7 +56,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
                 action()
             }
             self.timer = timer
-            RunLoop.current.add(timer, forMode: .common)
+            RunLoop.main.add(timer, forMode: .common)
         }
     }
 }
