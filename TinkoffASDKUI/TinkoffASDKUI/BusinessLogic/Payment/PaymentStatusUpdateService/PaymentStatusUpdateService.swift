@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 09.02.2023.
 //
 
+import Foundation
 import TinkoffASDKCore
 
 /// Обработка статусов платежей - картой и реккурентов
