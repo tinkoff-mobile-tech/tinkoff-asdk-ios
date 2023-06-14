@@ -11,6 +11,11 @@ gen:
 	bundle check || bundle install
 	cd 'ASDKSample'; bundle exec pod install || bundle exec pod install --repo-update
 
+
+# Открываем Package
+package:
+	open Package.swift
+
 clean_podlock:
 	git checkout -- ASDKSample/Podfile.lock
 

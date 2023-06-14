@@ -18,6 +18,8 @@ public enum AcquiringStatus: String, Decodable, Equatable {
     case formshowed = "FORMSHOWED"
     /// Система начала обработку оплаты платежа
     case authorizing = "AUTHORIZING"
+    /// Система начала проверку оплаты платежа
+    case paychecking = "PAY_CHECKING"
     /// Средства заблокированы, но не списаны
     case authorized = "AUTHORIZED"
     /// Покупатель начал аутентификацию по протоколу `3DSecure`. Статус может быть конечным, если клиент закрыл страницу ACS или не ввел код подтверждения 3Ds
@@ -26,16 +28,24 @@ public enum AcquiringStatus: String, Decodable, Equatable {
     case checked3ds = "3DS_CHECKED"
     /// Начало отмены блокировки средств
     case reversing = "REVERSING"
+    /// Произведена частичная отмена блокироваки денежных средств
+    case partialReversed = "PARTIAL_REVERSED"
     /// Денежные средства разблокированы
     case reversed = "REVERSED"
     /// Начало списания денежных средств
     case confirming = "CONFIRMING"
     /// Денежные средства успешно списаны
     case confirmed = "CONFIRMED"
+    /// Проверяем списание средств
+    case confirmChecking = "CONFIRM_CHECKING"
     /// Начало возврата денежных средств
     case refunding = "REFUNDING"
+    /// Начало возврата денежных средств
+    case asyncRefunding = "ASYNC_REFUNDING"
     /// Произведен возврат денежных средств
     case refunded = "REFUNDED"
+    /// Отмена возврата денежных средств
+    case cancelRefunded = "CANCEL_REFUNDED"
     /// Произведен частичный возврат денежных средств
     case refundedPartial = "PARTIAL_REFUNDED"
     /// Ошибка платежа. Истекли попытки оплаты
@@ -49,6 +59,10 @@ public enum AcquiringStatus: String, Decodable, Equatable {
     case formShowed = "FORM_SHOWED"
     /// Время отведенное на оплату закончилось
     case deadlineExpired = "DEADLINE_EXPIRED"
+    /// Истекло количество попыток
+    case attemptsExpired = "ATTEMPTS_EXPIRED"
+    /// Ошибка аутентификации
+    case authFail = "AUTH_FAIL"
 
     public init(rawValue: String) {
         switch rawValue {
@@ -77,5 +91,49 @@ public enum AcquiringStatus: String, Decodable, Equatable {
         case "DEADLINE_EXPIRED": self = .deadlineExpired
         default: self = .unknown
         }
+    }
+}
+
+public extension AcquiringStatus {
+
+    enum CardsStatuses {
+
+        /// Процессные статусы - начало обработки платежа
+        static let processingList: [AcquiringStatus] = [
+            .preauthorizing,
+            .authorizing,
+            .paychecking,
+        ]
+
+        /// Успешные статусы - платеж успешно совершен
+        public static let successList: [AcquiringStatus] = [
+            .authorized,
+            .reversing,
+            .partialReversed,
+            .reversed,
+            .confirming,
+            .confirmed,
+            .refunding,
+            .asyncRefunding,
+            .refundedPartial,
+            .refunded,
+            .cancelRefunded,
+            .confirmChecking,
+        ]
+
+        /// Статусы ошибок - платеж не совершен
+        public static let failureList: [AcquiringStatus] = [
+            .cancelled,
+            .authFail,
+            .rejected,
+            .deadlineExpired,
+            .attemptsExpired,
+        ]
+
+        /// Статусы 3DSecure - проверка 3DSecure
+        public static let threedsList: [AcquiringStatus] = [
+            .checking3ds,
+            .checked3ds,
+        ]
     }
 }
