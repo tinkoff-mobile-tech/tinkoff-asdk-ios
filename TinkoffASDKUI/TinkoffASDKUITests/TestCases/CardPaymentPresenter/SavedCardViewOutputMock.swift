@@ -21,7 +21,7 @@ final class SavedCardViewOutputMock: ISavedCardViewOutput {
         set(value) { underlyingIsValid = value }
     }
 
-    var underlyingIsValid: Bool!
+    var underlyingIsValid: Bool = false
     var cardId: String?
     var cvc: String?
 

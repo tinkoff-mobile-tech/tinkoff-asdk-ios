@@ -193,7 +193,7 @@ extension MainFormPresenter: ISavedCardViewPresenterOutput {
 extension MainFormPresenter {
     func getReceiptSwitch(didChange isOn: Bool) {
         guard let switchIndex = cellTypes.firstIndex(where: \.isGetReceiptSwitch) else {
-            return assertionFailure()
+            return
         }
 
         let emailIndex = switchIndex + 1
@@ -422,7 +422,7 @@ extension MainFormPresenter {
               dataState.primaryPaymentMethod == .card,
               savedCardPresenter.presentationState.isSelected
         else {
-            return assertionFailure("Something went wrong in presenter's logic")
+            return
         }
 
         let email = getReceiptSwitchPresenter.isOn ? emailPresenter.currentEmail : nil
