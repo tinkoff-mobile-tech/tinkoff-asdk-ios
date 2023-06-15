@@ -127,12 +127,12 @@ private extension BankResolverTests {
 
         // when
         let results = Bank.Bin.tinkoff.map { sut.resolve(cardNumber: $0) }
-        let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
+        let allResolvedBanksAreTinkoff = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
 
         // then
-        XCTAssertTrue(allResolvedBanksAreAlpha)
+        XCTAssertTrue(allResolvedBanksAreTinkoff)
     }
 
     func resolve_should_return_parsed_gazprom() throws {
@@ -144,12 +144,12 @@ private extension BankResolverTests {
 
         // when
         let results = Bank.Bin.gazprom.map { sut.resolve(cardNumber: $0) }
-        let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
+        let allResolvedBanksAreGazprom = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
 
         // then
-        XCTAssertTrue(allResolvedBanksAreAlpha)
+        XCTAssertTrue(allResolvedBanksAreGazprom)
     }
 
     func resolve_should_return_parsed_raifaissen() throws {
@@ -161,12 +161,12 @@ private extension BankResolverTests {
 
         // when
         let results = Bank.Bin.raiffaisen.map { sut.resolve(cardNumber: $0) }
-        let allResolvedBanksAreAlpha = results.allSatisfy { resolvedBank in
+        let allResolvedBanksAreRaiffaisen = results.allSatisfy { resolvedBank in
             resolvedBank == expectedResult
         }
 
         // then
-        XCTAssertTrue(allResolvedBanksAreAlpha)
+        XCTAssertTrue(allResolvedBanksAreRaiffaisen)
     }
 
     func resolve_should_return_parsed_other() throws {
