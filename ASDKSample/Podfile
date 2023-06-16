@@ -6,6 +6,7 @@ generate_multiple_pod_projects: true
 minimal_ios_version = '12.3'
 
 platform :ios, minimal_ios_version
+plugin 'cocoapods-no-autoimports'
 
 use_frameworks!
 target 'ASDKSample' do

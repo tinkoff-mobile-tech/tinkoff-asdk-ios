@@ -18,6 +18,7 @@
 * [EACQAPW-5016] Reccurent Tests
 * [EACQAPW-5017] Cover Code Coverage on TinkoffASDKYandexPay.framework to 100%
 * [EACQAPW-4761] Add New Bank Bins
+* [EACQAPW-4186] Cocoapods remove autoimports of UIKit
 
 ### Fixed
 
