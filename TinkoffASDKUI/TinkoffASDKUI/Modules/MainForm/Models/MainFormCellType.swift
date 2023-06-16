@@ -45,3 +45,21 @@ extension MainFormCellType {
         }
     }
 }
+
+// MARK: - Equatable
+
+extension MainFormCellType: Equatable {
+    static func == (lhs: MainFormCellType, rhs: MainFormCellType) -> Bool {
+        switch (lhs, rhs) {
+        case (.orderDetails, .orderDetails),
+             (.savedCard, .savedCard),
+             (.getReceiptSwitch, .getReceiptSwitch),
+             (.email, .email),
+             (.payButton, .payButton),
+             (.otherPaymentMethodsHeader, .otherPaymentMethodsHeader),
+             (.otherPaymentMethod, .otherPaymentMethod):
+            return true
+        default: return false
+        }
+    }
+}

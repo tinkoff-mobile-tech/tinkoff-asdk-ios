@@ -58,6 +58,72 @@ final class MainFormPresenterTests: BaseTestCase {
 
     // MARK: - Tests
 
+    func test_switchPresenterAction_to_on() {
+        // given
+        let isOn = true
+
+        let cardPaymentMethod = MainFormPaymentMethod.card
+        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardMock.presentationState = .selected(card: .fake())
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        sut.viewDidLoad()
+        payButtonMock.fullReset()
+
+        let expectedIndexPath = IndexPath(row: 3, section: 0)
+
+        // when
+        switchViewPresenterAssemblyMock.buildReceivedArguments?.actionBlock?(isOn)
+
+        // then
+        XCTAssertEqual(viewMock.insertRowsCallsCount, 1)
+        XCTAssertEqual(viewMock.insertRowsReceivedArguments, [expectedIndexPath])
+        XCTAssertEqual(viewMock.deleteRowsCallsCount, 0)
+        XCTAssertEqual(payButtonMock.setCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
+    func test_switchPresenterAction_to_off() {
+        // given
+        let isOn = false
+
+        let cardPaymentMethod = MainFormPaymentMethod.card
+        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardMock.presentationState = .selected(card: .fake())
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = true
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        sut.viewDidLoad()
+        payButtonMock.fullReset()
+
+        let expectedIndexPath = IndexPath(row: 3, section: 0)
+
+        // when
+        switchViewPresenterAssemblyMock.buildReceivedArguments?.actionBlock?(isOn)
+
+        // then
+        XCTAssertEqual(viewMock.insertRowsCallsCount, 0)
+        XCTAssertEqual(viewMock.deleteRowsCallsCount, 1)
+        XCTAssertEqual(viewMock.deleteRowsReceivedArguments, [expectedIndexPath])
+        XCTAssertEqual(payButtonMock.setCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
     func test_viewDidLoad_when_primaryPaymentMethodSbp_success() {
         // given
         let paymentFlow = PaymentFlow.fake()
@@ -155,18 +221,63 @@ final class MainFormPresenterTests: BaseTestCase {
         XCTAssertEqual(dataStateLoaderMock.loadStateReceivedArguments?.paymentFlow, paymentFlow)
     }
 
-//    func viewWasClosed() {
-//        moduleCompletion?(moduleResult)
-//        moduleCompletion = nil
-//    }
-//
-//    func numberOfRows() -> Int {
-//        cellTypes.count
-//    }
-//
-//    func cellType(at indexPath: IndexPath) -> MainFormCellType {
-//        cellTypes[indexPath.row]
-//    }
+    func test_viewWasClosed() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+        sut.cardPaymentWillCloseAfterFailedPayment(with: error, cardId: nil, rebillId: nil)
+
+        // when
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .failed(error))
+    }
+
+    func test_numberOfRows() {
+        // given
+        let sbpPaymentMethod = MainFormPaymentMethod.sbp
+        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod)
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        sut.viewDidLoad()
+
+        // when
+        let numberOfRows = sut.numberOfRows()
+
+        // then
+        XCTAssertEqual(numberOfRows, 4)
+    }
+
+    func test_cellTypeAtIndexPath() {
+        // given
+        let sbpPaymentMethod = MainFormPaymentMethod.sbp
+        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod)
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        sut.viewDidLoad()
+
+        let indexPath1 = IndexPath(row: 0, section: 0)
+        let indexPath2 = IndexPath(row: 1, section: 0)
+        let indexPath3 = IndexPath(row: 2, section: 0)
+        let indexPath4 = IndexPath(row: 3, section: 0)
+
+        // when
+        let cellType1 = sut.cellType(at: indexPath1)
+        let cellType2 = sut.cellType(at: indexPath2)
+        let cellType3 = sut.cellType(at: indexPath3)
+        let cellType4 = sut.cellType(at: indexPath4)
+
+        // then
+        XCTAssertEqual(cellType1, .orderDetails(MainFormOrderDetailsViewOutputMock()))
+        XCTAssertEqual(cellType2, .payButton(PayButtonViewOutputMock()))
+        XCTAssertEqual(cellType3, .otherPaymentMethodsHeader(TextAndImageHeaderViewOutputMock()))
+        XCTAssertEqual(cellType4, .otherPaymentMethod(.card))
+    }
 
     func test_didSelectRow_rowWithOtherPaymentMethodCard() {
         // given
@@ -884,6 +995,292 @@ final class MainFormPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.closeViewCallsCount, 1)
+    }
+
+    func test_tinkoffPayController_didReceiveIntermediate() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let payload = GetPaymentStatePayload.fake()
+
+        // when
+        sut.tinkoffPayController(tinkoffPayControllerMock, didReceiveIntermediate: payload)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .cancelled(payload.toPaymentInfo()))
+    }
+
+    func test_tinkoffPayController_completedDueToInabilityToOpenTinkoffPay() throws {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        routerMock.openTinkoffPayLandingCompletionShouldCalls = true
+
+        let url = try XCTUnwrap(URL(string: "https://www.tinkoff.ru"))
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+
+        // when
+        sut.tinkoffPayController(tinkoffPayControllerMock, completedDueToInabilityToOpenTinkoffPay: url, error: error)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .failed(error))
+        XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+    }
+
+    func test_tinkoffPayController_completedWithSuccessful() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let payload = GetPaymentStatePayload.fake()
+
+        // when
+        sut.tinkoffPayController(tinkoffPayControllerMock, completedWithSuccessful: payload)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .succeeded(payload.toPaymentInfo()))
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, .tinkoffPay.paid)
+    }
+
+    func test_tinkoffPayController_completedWithFailed() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let payload = GetPaymentStatePayload.fake()
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+
+        // when
+        sut.tinkoffPayController(tinkoffPayControllerMock, completedWithFailed: payload, error: error)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .failed(error))
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, .tinkoffPay.failedPaymentOnMainFormFlow)
+    }
+
+    func test_tinkoffPayController_completedWithTimeout() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let payload = GetPaymentStatePayload.fake()
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+
+        // when
+        sut.tinkoffPayController(tinkoffPayControllerMock, completedWithTimeout: payload, error: error)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .failed(error))
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, .tinkoffPay.timedOutOnMainFormFlow)
+    }
+
+    func test_tinkoffPayController_completedWith() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+
+        // when
+        sut.tinkoffPayController(tinkoffPayControllerMock, completedWith: error)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .failed(error))
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, .tinkoffPay.timedOutOnMainFormFlow)
+    }
+
+    func test_cardListDidUpdate() {
+        // given
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let cards = [PaymentCard].fake()
+
+        // when
+        sut.cardList(didUpdate: cards)
+
+        // then
+        XCTAssertEqual(savedCardMock.updatePresentationStateCallsCount, 1)
+        XCTAssertEqual(savedCardMock.updatePresentationStateReceivedArguments, cards)
+        XCTAssertEqual(viewMock.reloadDataCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+    }
+
+    func test_cardList_willCloseAfterSelecting() {
+        // given
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let card = PaymentCard.fake()
+
+        // when
+        sut.cardList(willCloseAfterSelecting: card)
+
+        // then
+        XCTAssertEqual(savedCardMock.presentationState, .selected(card: card))
+    }
+
+    func test_cardPaymentWillCloseAfterFinishedPayment() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let paymentData = FullPaymentData(
+            paymentProcess: PaymentProcessMock(),
+            payload: .fake(),
+            cardId: nil,
+            rebillId: nil
+        )
+
+        // when
+        sut.cardPaymentWillCloseAfterFinishedPayment(with: paymentData)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .succeeded(paymentData.payload.toPaymentInfo()))
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, MainFormState.paid.rawValue)
+    }
+
+    func test_cardPaymentWillCloseAfterFailedPayment() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+
+        // when
+        sut.cardPaymentWillCloseAfterFailedPayment(with: error, cardId: nil, rebillId: nil)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .failed(error))
+        XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, MainFormState.paymentFailed.rawValue)
+    }
+
+    func test_cardPaymentDidCloseAfterCancelledPayment() {
+        // given
+        var paymentResult: PaymentResult?
+        setupSut(moduleCompletion: { result in
+            paymentResult = result
+        })
+
+        // when
+        sut.cardPaymentDidCloseAfterCancelledPayment(with: PaymentProcessMock(), cardId: nil, rebillId: nil)
+        sut.viewWasClosed()
+
+        // then
+        XCTAssertEqual(paymentResult, .cancelled())
+        XCTAssertEqual(viewMock.closeViewCallsCount, 1)
+    }
+
+    func test_didLoadedSbpBanks() {
+        // given
+        let dataState = MainFormDataState.any(otherPaymentMethods: [.sbp])
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        sut.viewDidLoad()
+        let indexPath = IndexPath(row: 3, section: 0)
+
+        let sbpBanks: [SBPBank] = [.any, .anyWithUrl, .some(123)]
+
+        // when
+        sut.didLoaded(sbpBanks: sbpBanks)
+        sut.didSelectRow(at: indexPath)
+
+        // then
+        XCTAssertEqual(routerMock.openSBPReceivedArguments?.banks, sbpBanks)
+    }
+
+    func test_sbpPaymentSheetCompletedWithResult_succeeded() {
+        // given
+        let paymentInfo = PaymentResult.PaymentInfo(
+            paymentId: "123",
+            orderId: "123",
+            amount: 100,
+            paymentStatus: .confirmed
+        )
+
+        let paymentResult = PaymentResult.succeeded(paymentInfo)
+
+        // when
+        sut.sbpPaymentSheet(completedWith: paymentResult)
+
+        // then
+        XCTAssertEqual(viewMock.closeViewCallsCount, 1)
+    }
+
+    func test_sbpPaymentSheetCompletedWithResult_failed() {
+        // given
+        let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
+        let paymentResult = PaymentResult.failed(error)
+
+        // when
+        sut.sbpPaymentSheet(completedWith: paymentResult)
+
+        // then
+        XCTAssertEqual(viewMock.closeViewCallsCount, 0)
+    }
+
+    func test_sbpPaymentSheetCompletedWithResult_cancelled_where_paymentInfoNotNil() {
+        // given
+        let paymentInfo = PaymentResult.PaymentInfo(
+            paymentId: "123",
+            orderId: "123",
+            amount: 100,
+            paymentStatus: .confirmed
+        )
+        let paymentResult = PaymentResult.cancelled(paymentInfo)
+
+        // when
+        sut.sbpPaymentSheet(completedWith: paymentResult)
+
+        // then
+        XCTAssertEqual(viewMock.closeViewCallsCount, 1)
+    }
+
+    func test_sbpPaymentSheetCompletedWithResult_cancelled() {
+        // given
+        let paymentResult = PaymentResult.cancelled()
+
+        // when
+        sut.sbpPaymentSheet(completedWith: paymentResult)
+
+        // then
+        XCTAssertEqual(viewMock.closeViewCallsCount, 0)
     }
 }
 
