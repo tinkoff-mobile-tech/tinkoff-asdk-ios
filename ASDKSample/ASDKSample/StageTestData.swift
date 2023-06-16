@@ -19,6 +19,7 @@
 
 import TinkoffASDKCore
 import TinkoffASDKUI
+import UIKit
 
 /// Тестовые данные для проведения тестовых платежей
 public enum StageTestData {

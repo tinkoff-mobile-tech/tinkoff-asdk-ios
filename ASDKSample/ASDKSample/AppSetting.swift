@@ -18,6 +18,7 @@
 //
 
 import TinkoffASDKCore
+import UIKit
 
 final class AppSetting {
 

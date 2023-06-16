@@ -6,6 +6,7 @@
 //
 
 @testable import TinkoffASDKUI
+import UIKit
 
 final class CardScannerDelegateMock: ICardScannerDelegate {
     // MARK: - cardScanButtonDidPressed

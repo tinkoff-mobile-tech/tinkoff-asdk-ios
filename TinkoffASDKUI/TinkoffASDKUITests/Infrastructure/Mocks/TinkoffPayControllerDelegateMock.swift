@@ -5,6 +5,7 @@
 //  Created by Никита Васильев on 01.06.2023.
 //
 
+import Foundation
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 

@@ -7,6 +7,7 @@
 
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
+import UIKit
 
 final class ThreeDSWebViewAssemblyMock<GenericPayload: Decodable>: IThreeDSWebViewAssembly {
 
