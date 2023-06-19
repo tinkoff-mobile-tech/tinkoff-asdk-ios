@@ -6,6 +6,7 @@
 //
 
 @testable import TinkoffASDKYandexPay
+import UIKit
 
 final class ApplicationEventsReceiverMock: IApplicationEventsReceiver {
 

@@ -5,7 +5,7 @@
 //  Created by Aleksandr Pravosudov on 25.04.2023.
 //
 
-import Foundation
+import UIKit
 
 @testable import TinkoffASDKUI
 
