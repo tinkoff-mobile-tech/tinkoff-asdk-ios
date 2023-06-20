@@ -8,7 +8,7 @@ open_workspace:
 
 gen:
 # Устанавливаем зависимости для семпла
-	bundle check || bundle install
+	bundle check || bundle install --path vendor/bundle
 	cd 'ASDKSample'; bundle exec pod install || bundle exec pod install --repo-update
 
 

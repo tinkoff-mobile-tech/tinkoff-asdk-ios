@@ -83,16 +83,16 @@ extension PaymentStatusUpdateService {
         case let status where Statuses.failureList.contains(status):
             let nsError = NSError(domain: status.rawValue, code: 0)
             delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .failStatus, underlyingError: nsError))
-        default: break
-        }
 
-        if isRequestRepeatAllowed {
-            /// В остальных случаях дергаем /GetState для получения финального статуса
-            getPaymentStatus(data: data)
-        } else {
-            /// Если исчерпан лимит запросов к GetState и статус все еще не обработан
-            /// Показываем ошибку timeout
-            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
+        default:
+            if isRequestRepeatAllowed {
+                /// В остальных случаях дергаем /GetState для получения финального статуса
+                getPaymentStatus(data: data)
+            } else {
+                /// Если исчерпан лимит запросов к GetState и статус все еще не обработан
+                /// Показываем ошибку timeout
+                delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
+            }
         }
     }
 
