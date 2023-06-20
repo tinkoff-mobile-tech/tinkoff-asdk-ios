@@ -414,7 +414,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
         sut.viewDidLoad()
 
-        let anyTextHeaderPresenter = TextAndImageHeaderViewPresenter(title: "-")
+        let anyTextHeaderPresenter = TextAndImageHeaderViewPresenter(title: "-", imageAsset: nil)
         let anyQrImagePresenter = QrImageViewPresenter(output: nil)
 
         // when

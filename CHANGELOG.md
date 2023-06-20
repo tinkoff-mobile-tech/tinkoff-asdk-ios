@@ -12,6 +12,7 @@
 * [EACQAPW-4912] Cell Presenters tests 
 * [EACQAPW-4924] BankResolver and PaymentSystemResolver Tests
 * [EACQAPW-4929] TinkoffPaySheetPresenter Tests
+* [EACQAPW-4930] MainFormPresenter Tests
 * [EACQAPW-4931] MainFormOrderDetailsViewPresenter Tests
 * [EACQAPW-4932] TinkoffPay Tests
 * [EACQAPW-4193] Add Card Tests

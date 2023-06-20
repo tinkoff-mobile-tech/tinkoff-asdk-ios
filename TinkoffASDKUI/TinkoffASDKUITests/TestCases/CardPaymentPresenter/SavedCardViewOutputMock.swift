@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 23.05.2023.
 //
 
+import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class SavedCardViewOutputMock: ISavedCardViewOutput {
@@ -14,13 +15,13 @@ final class SavedCardViewOutputMock: ISavedCardViewOutput {
         set(value) { underlyingPresentationState = value }
     }
 
-    var underlyingPresentationState: SavedCardPresentationState!
+    var underlyingPresentationState: SavedCardPresentationState = .idle
     var isValid: Bool {
         get { return underlyingIsValid }
         set(value) { underlyingIsValid = value }
     }
 
-    var underlyingIsValid: Bool!
+    var underlyingIsValid: Bool = false
     var cardId: String?
     var cvc: String?
 
@@ -59,5 +60,18 @@ final class SavedCardViewOutputMock: ISavedCardViewOutput {
 
     func activateCVCField() {
         activateCVCFieldCallsCount += 1
+    }
+
+    // MARK: - updatePresentationState
+
+    var updatePresentationStateCallsCount = 0
+    var updatePresentationStateReceivedArguments: [PaymentCard]?
+    var updatePresentationStateReceivedInvocations: [[PaymentCard]] = []
+
+    func updatePresentationState(for cards: [PaymentCard]) {
+        updatePresentationStateCallsCount += 1
+        let arguments = cards
+        updatePresentationStateReceivedArguments = arguments
+        updatePresentationStateReceivedInvocations.append(arguments)
     }
 }

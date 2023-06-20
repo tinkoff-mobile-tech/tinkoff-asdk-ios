@@ -86,13 +86,19 @@ final class MainFormAssembly: IMainFormAssembly {
             bankResolver: bankResolver
         )
 
+        let switchViewPresenterAssembly = SwitchViewPresenterAssembly()
+        let emailViewPresenterAssembly = EmailViewPresenterAssembly()
         let payButtonViewPresenterAssembly = PayButtonViewPresenterAssembly(moneyFormatter: moneyFormatter)
+        let textAndImageHeaderViewPresenterAssembly = TextAndImageHeaderViewPresenterAssembly()
 
         let presenter = MainFormPresenter(
             router: router,
             mainFormOrderDetailsViewPresenterAssembly: mainFormOrderDetailsViewPresenterAssembly,
             savedCardViewPresenterAssembly: savedCardViewPresenterAssembly,
+            switchViewPresenterAssembly: switchViewPresenterAssembly,
+            emailViewPresenterAssembly: emailViewPresenterAssembly,
             payButtonViewPresenterAssembly: payButtonViewPresenterAssembly,
+            textAndImageHeaderViewPresenterAssembly: textAndImageHeaderViewPresenterAssembly,
             dataStateLoader: dataStateLoader,
             paymentController: paymentController,
             tinkoffPayController: tinkoffPayController,

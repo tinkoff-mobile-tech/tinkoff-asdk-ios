@@ -65,3 +65,22 @@ final class PayButtonViewOutputMock: IPayButtonViewOutput {
         setReceivedInvocations.append(arguments)
     }
 }
+
+// MARK: - Public methods
+
+extension PayButtonViewOutputMock {
+    func fullReset() {
+        view = nil
+        underlyingPresentationState = nil
+        underlyingIsLoading = nil
+        underlyingIsEnabled = nil
+
+        payButtonTappedCallsCount = 0
+        startLoadingCallsCount = 0
+        stopLoadingCallsCount = 0
+
+        setCallsCount = 0
+        setReceivedArguments = nil
+        setReceivedInvocations = []
+    }
+}

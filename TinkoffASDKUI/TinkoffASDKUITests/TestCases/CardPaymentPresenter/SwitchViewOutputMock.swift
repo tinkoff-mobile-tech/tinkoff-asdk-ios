@@ -14,7 +14,7 @@ final class SwitchViewOutputMock: ISwitchViewOutput {
         set(value) { underlyingIsOn = value }
     }
 
-    var underlyingIsOn: Bool!
+    var underlyingIsOn: Bool = false
 
     // MARK: - switchButtonValueChanged
 

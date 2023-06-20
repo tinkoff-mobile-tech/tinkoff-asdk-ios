@@ -209,7 +209,7 @@ extension SBPQrPresenter {
             return TextAndImageHeaderViewPresenter(title: title, imageAsset: Asset.Sbp.sbpNoLogo)
         }
 
-        return TextAndImageHeaderViewPresenter(title: title)
+        return TextAndImageHeaderViewPresenter(title: title, imageAsset: nil)
     }
 
     private func viewUpdateStateIfNeeded(newState: CommonSheetState) {
