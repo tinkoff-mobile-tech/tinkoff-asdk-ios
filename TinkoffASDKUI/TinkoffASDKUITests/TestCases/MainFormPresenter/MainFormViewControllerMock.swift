@@ -5,6 +5,7 @@
 //  Created by Aleksandr Pravosudov on 13.06.2023.
 //
 
+import Foundation
 @testable import TinkoffASDKUI
 
 final class MainFormViewControllerMock: IMainFormViewController {
