@@ -63,9 +63,9 @@ final class SavedCardViewPresenter: ISavedCardViewOutput, ISavedCardViewPresente
     // MARK: Init
 
     init(
-        validator: ICardRequisitesValidator = CardRequisitesValidator(),
-        paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
-        bankResolver: IBankResolver = BankResolver(),
+        validator: ICardRequisitesValidator,
+        paymentSystemResolver: IPaymentSystemResolver,
+        bankResolver: IBankResolver,
         output: ISavedCardViewPresenterOutput
     ) {
         self.validator = validator

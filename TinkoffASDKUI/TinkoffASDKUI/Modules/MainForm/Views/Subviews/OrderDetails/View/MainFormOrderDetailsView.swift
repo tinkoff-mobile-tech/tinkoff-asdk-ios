@@ -18,7 +18,7 @@ final class MainFormOrderDetailsView: UIView {
 
     // MARK: Dependencies
 
-    var presenter: IMainFormOrderDetailsViewOutput? {
+    var presenter: (any IMainFormOrderDetailsViewOutput)? {
         didSet {
             if oldValue?.view === self { oldValue?.view = nil }
             presenter?.view = self

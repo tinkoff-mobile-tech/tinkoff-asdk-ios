@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol IMainFormOrderDetailsViewOutput: AnyObject {
+protocol IMainFormOrderDetailsViewOutput: AnyObject, Equatable {
     var view: IMainFormOrderDetailsViewInput? { get set }
 
-    func copy() -> IMainFormOrderDetailsViewOutput
+    func copy() -> any IMainFormOrderDetailsViewOutput
 }

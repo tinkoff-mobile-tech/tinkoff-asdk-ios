@@ -21,6 +21,9 @@ final class YandexPayButtonContainerTests: BaseTestCase {
     var yandexPayPaymentFlowAssemblyMock: YandexPayPaymentFlowAssemblyMock!
     var yandexPayButtonContainerDelegateMock: YandexPayButtonContainerDelegateMock!
     var yandexPayButtonMock: YandexPayButtonMock!
+    var yandexPayPaymentFlowMock: YandexPayPaymentFlowMock!
+
+    var configuration: YandexPayButtonContainerConfiguration!
 
     // MARK: - Setup
 
@@ -33,9 +36,11 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         yPPaymentSheetFactoryMock = YPPaymentSheetFactoryMock()
         yandexPayPaymentFlowAssemblyMock = YandexPayPaymentFlowAssemblyMock()
         yandexPayButtonContainerDelegateMock = YandexPayButtonContainerDelegateMock()
+        yandexPayPaymentFlowMock = YandexPayPaymentFlowMock()
+        configuration = YandexPayButtonContainerConfiguration(theme: .init(appearance: .light))
 
         sut = YandexPayButtonContainer(
-            configuration: YandexPayButtonContainerConfiguration(theme: .init(appearance: .light)),
+            configuration: configuration,
             sdkButtonFactory: yandexPaySDKButtonFactoryMock,
             paymentSheetFactory: yPPaymentSheetFactoryMock,
             yandexPayPaymentFlowAssembly: yandexPayPaymentFlowAssemblyMock,
@@ -49,6 +54,8 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         yandexPayPaymentFlowAssemblyMock = nil
         yandexPayButtonContainerDelegateMock = nil
         yandexPayButtonMock = nil
+        yandexPayPaymentFlowMock = nil
+        configuration = nil
         sut = nil
 
         super.tearDown()
@@ -108,7 +115,6 @@ final class YandexPayButtonContainerTests: BaseTestCase {
 
         // given
         let info = YPPaymentInfo.fake()
-        let yandexPayPaymentFlowMock = YandexPayPaymentFlowMock()
         yandexPayPaymentFlowAssemblyMock.yandexPayPaymentFlowReturnValue = yandexPayPaymentFlowMock
         let fakedPaymentFlow = PaymentFlow.fake()
         cachePaymentFlow(flow: fakedPaymentFlow)
@@ -124,6 +130,8 @@ final class YandexPayButtonContainerTests: BaseTestCase {
     }
 
     func test_didCompletePaymentWithResult_cancelled() throws {
+        allureId(2358055, "Передаем статус отмены в родительское приложение, если в YP была совершена отмена пользователем")
+
         // when
         sut.yandexPayButton(yandexPayButtonMock, didCompletePaymentWithResult: .cancelled)
 
@@ -134,6 +142,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
     }
 
     func test_didCompletePaymentWithResult_failed() throws {
+        allureId(2358048, "Передаем ошибку в родительское приложение, если YP вернул ошибку")
         let fakedError = YPPaymentError.invalidAmount
 
         // when
@@ -149,6 +158,66 @@ final class YandexPayButtonContainerTests: BaseTestCase {
 
         XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultCallsCount, 1)
         XCTAssertTrue(isFailedWithError)
+    }
+
+    func test_yandexPayPaymentFlowDidRequestViewControllerForPresentation() {
+        // given
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationReturnValue = UIViewControllerMock()
+        // when
+        let viewController = sut.yandexPayPaymentFlowDidRequestViewControllerForPresentation(yandexPayPaymentFlowMock)
+        // then
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationCallsCount, 1)
+        XCTAssert(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationReceivedArguments === sut)
+        XCTAssertNotNil(viewController)
+    }
+
+    func test_yandexPayPaymentFlow() {
+        // when
+        sut.yandexPayPaymentFlow(yandexPayPaymentFlowMock, didCompleteWith: .failed(TestsError.basic))
+        // then
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultCallsCount, 1)
+        XCTAssert(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultReceivedArguments?.container === sut)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultReceivedArguments?.result, .failed(TestsError.basic))
+    }
+
+    func test_setLoaderVisible() {
+        // when
+        sut.setLoaderVisible(true, animated: false)
+        // then
+        XCTAssertEqual(yandexPayButtonMock.setLoaderVisibleCallsCount, 1)
+        XCTAssertEqual(yandexPayButtonMock.setLoaderVisibleReceivedArguments?.visible, true)
+        XCTAssertEqual(yandexPayButtonMock.setLoaderVisibleReceivedArguments?.animated, false)
+    }
+
+    func test_theme() {
+        // when
+        let receivedTheme = sut.theme
+        // then
+        XCTAssertEqual(receivedTheme.appearance.hashValue, configuration.theme.appearance.hashValue)
+    }
+
+    func test_reloadPersonalizationData() {
+        // given
+        var error: Error?
+        yandexPayButtonMock.reloadPersonalizationDataCompletionClosureInput = TestsError.basic
+        // when
+        sut.reloadPersonalizationData { err in error = err }
+        // then
+        XCTAssertEqual(yandexPayButtonMock.reloadPersonalizationDataCallsCount, 1)
+        XCTAssertNotNil(error)
+    }
+
+    func test_setTheme() {
+        let theme = YandexPayButtonContainerTheme(appearance: .dark)
+        // when
+        sut.setTheme(theme, animated: false)
+        // then
+        XCTAssertEqual(yandexPayButtonMock.setThemeCallsCount, 1)
+        XCTAssertEqual(
+            yandexPayButtonMock.setThemeReceivedArguments?.theme.appearance.hashValue,
+            theme.appearance.hashValue
+        )
+        XCTAssertEqual(yandexPayButtonMock.setThemeReceivedArguments?.animated, false)
     }
 }
 

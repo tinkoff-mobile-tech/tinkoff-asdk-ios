@@ -19,14 +19,14 @@ final class TextAndImageHeaderViewPresenter: ITextAndImageHeaderViewOutput {
     private let title: String
     private let imageAsset: ImageAsset?
 
-    init(title: String, imageAsset: ImageAsset? = nil) {
+    init(title: String, imageAsset: ImageAsset?) {
         self.title = title
         self.imageAsset = imageAsset
     }
 
     // MARK: ITextHeaderViewOutput
 
-    func copy() -> ITextAndImageHeaderViewOutput {
+    func copy() -> any ITextAndImageHeaderViewOutput {
         TextAndImageHeaderViewPresenter(title: title, imageAsset: imageAsset)
     }
 
@@ -35,5 +35,13 @@ final class TextAndImageHeaderViewPresenter: ITextAndImageHeaderViewOutput {
     private func setupView() {
         view?.set(title: title)
         view?.set(image: imageAsset?.image)
+    }
+}
+
+// MARK: - Equatable
+
+extension TextAndImageHeaderViewPresenter {
+    static func == (lhs: TextAndImageHeaderViewPresenter, rhs: TextAndImageHeaderViewPresenter) -> Bool {
+        lhs.title == rhs.title && lhs.imageAsset == rhs.imageAsset
     }
 }

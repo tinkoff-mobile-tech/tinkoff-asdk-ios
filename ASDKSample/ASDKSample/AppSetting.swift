@@ -18,6 +18,7 @@
 //
 
 import TinkoffASDKCore
+import UIKit
 
 final class AppSetting {
 
@@ -50,11 +51,11 @@ final class AppSetting {
     /// Список сохраненных Sdk Credentials
     var listOfSdkCredentials: [SdkCredentials] {
         get {
-            let result = try? formGetter(key: .keyListSdkCredentials, defaultValue: [activeSdkCredentials])
+            let result = try? formGetter(key: .keyListSdkCredentials, defaultValue: [SdkCredentials].testTerminals)
             if result == nil {
-                self.listOfSdkCredentials = [activeSdkCredentials]
+                self.listOfSdkCredentials = .testTerminals
             }
-            return result ?? [activeSdkCredentials]
+            return result ?? .testTerminals
         }
 
         set {
@@ -103,6 +104,13 @@ final class AppSetting {
     var languageId: String? {
         didSet {
             UserDefaults.standard.set(languageId, forKey: .keyLanguageId)
+        }
+    }
+
+    /// Используется для отключения анимаций в тестах
+    var setAnimationsEnabled = true {
+        willSet {
+            UIView.setAnimationsEnabled(newValue)
         }
     }
 

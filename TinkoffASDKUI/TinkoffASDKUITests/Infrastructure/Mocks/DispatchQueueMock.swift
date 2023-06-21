@@ -11,6 +11,18 @@ import Foundation
 
 final class DispatchQueueMock: IDispatchQueue {
 
+    // MARK: - performOnMain
+
+    static var performOnMainCallsCount = 0
+    static var performOnMainBlockClosureShouldCalls = false
+
+    static func performOnMain(_ block: @escaping () -> Void) {
+        performOnMainCallsCount += 1
+        if performOnMainBlockClosureShouldCalls {
+            block()
+        }
+    }
+
     // MARK: - async
 
     typealias AsyncArguments = (group: DispatchGroup?, qos: DispatchQoS, flags: DispatchWorkItemFlags, work: () -> Void)
@@ -26,6 +38,25 @@ final class DispatchQueueMock: IDispatchQueue {
         asyncReceivedArguments = arguments
         asyncReceivedInvocations.append(arguments)
         if asyncWorkShouldCalls {
+            work()
+        }
+    }
+
+    // MARK: - asyncAfter
+
+    typealias AsyncAfterArguments = (deadline: DispatchTime, qos: DispatchQoS, flags: DispatchWorkItemFlags, work: () -> Void)
+
+    var asyncAfterCallsCount = 0
+    var asyncAfterReceivedArguments: AsyncAfterArguments?
+    var asyncAfterReceivedInvocations: [AsyncAfterArguments] = []
+    var asyncAfterShouldCalls = false
+
+    func asyncAfter(deadline: DispatchTime, qos: DispatchQoS, flags: DispatchWorkItemFlags, execute work: @convention(block) @escaping () -> Void) {
+        asyncAfterCallsCount += 1
+        let arguments = (deadline, qos, flags, work)
+        asyncAfterReceivedArguments = arguments
+        asyncAfterReceivedInvocations.append(arguments)
+        if asyncAfterShouldCalls {
             work()
         }
     }
@@ -47,5 +78,14 @@ final class DispatchQueueMock: IDispatchQueue {
         if asyncDedupedWorkShouldCalls {
             work()
         }
+    }
+}
+
+// MARK: - Public methods
+
+extension DispatchQueueMock {
+    static func resetPerformOnMain() {
+        DispatchQueueMock.performOnMainCallsCount = 0
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = false
     }
 }

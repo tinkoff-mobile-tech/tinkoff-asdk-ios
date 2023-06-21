@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol ITextAndImageHeaderViewOutput: AnyObject {
+protocol ITextAndImageHeaderViewOutput: AnyObject, Equatable {
     var view: ITextAndImageHeaderViewInput? { get set }
 
-    func copy() -> ITextAndImageHeaderViewOutput
+    func copy() -> any ITextAndImageHeaderViewOutput
 }

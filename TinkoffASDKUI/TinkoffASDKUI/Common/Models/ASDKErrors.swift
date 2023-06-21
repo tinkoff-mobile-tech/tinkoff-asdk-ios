@@ -13,6 +13,7 @@ public struct ASDKError: Error {
         case timeout = 123_001
         case rejected = 123_002
         case missingCustomerKey = 123_003
+        case failStatus = 123_004
     }
 
     public let code: Code
@@ -38,6 +39,8 @@ extension ASDKError: LocalizedError {
                 return "Payment failed"
             case .missingCustomerKey:
                 return "No customer key"
+            case .failStatus:
+                return "Received fail status"
             }
         }()
 

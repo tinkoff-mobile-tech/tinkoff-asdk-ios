@@ -7,7 +7,7 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "NO"
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
@@ -33,20 +33,30 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C3C81D2058EE95A9FFAB9B9ACD4643CD"
+               BlueprintIdentifier = "A07A52452CEDA52FE2FFEB595F9B049B"
                BuildableName = "TinkoffASDKCore-Unit-Tests.xctest"
                BlueprintName = "TinkoffASDKCore-Unit-Tests"
-               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+               ReferencedContainer = "container:Pods/TinkoffASDKCore.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8B5DD01CE09B225B9FED247AFFA4DC2E"
+               BlueprintIdentifier = "5483BEE0943C67380F060796CD072C77"
                BuildableName = "TinkoffASDKUI-Unit-Tests.xctest"
                BlueprintName = "TinkoffASDKUI-Unit-Tests"
-               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+               ReferencedContainer = "container:Pods/TinkoffASDKUI.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1CC1F03AE158A5C12C9171A20BAA6FCC"
+               BuildableName = "TinkoffASDKYandexPay-Unit-Tests.xctest"
+               BlueprintName = "TinkoffASDKYandexPay-Unit-Tests"
+               ReferencedContainer = "container:Pods/TinkoffASDKYandexPay.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

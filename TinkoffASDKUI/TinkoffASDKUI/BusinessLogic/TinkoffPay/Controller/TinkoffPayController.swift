@@ -39,6 +39,7 @@ final class TinkoffPayController: ITinkoffPayController {
     private let paymentStatusRetriesCount: Int
     private let successfulStatuses: Set<AcquiringStatus>
     private let unsuccessfulStatuses: Set<AcquiringStatus>
+    private let mainDispatchQueue: IDispatchQueue
 
     // MARK: Init
 
@@ -50,8 +51,8 @@ final class TinkoffPayController: ITinkoffPayController {
         repeatedRequestHelper: IRepeatedRequestHelper,
         paymentStatusRetriesCount: Int,
         successfulStatuses: Set<AcquiringStatus> = [.authorized, .confirmed],
-        unsuccessfulStatuses: Set<AcquiringStatus> = [.rejected]
-
+        unsuccessfulStatuses: Set<AcquiringStatus> = [.rejected],
+        mainDispatchQueue: IDispatchQueue = DispatchQueue.main
     ) {
         self.paymentService = paymentService
         self.tinkoffPayService = tinkoffPayService
@@ -61,6 +62,7 @@ final class TinkoffPayController: ITinkoffPayController {
         self.paymentStatusRetriesCount = paymentStatusRetriesCount
         self.successfulStatuses = successfulStatuses
         self.unsuccessfulStatuses = unsuccessfulStatuses
+        self.mainDispatchQueue = mainDispatchQueue
     }
 
     // MARK: ITinkoffPayController
@@ -147,7 +149,7 @@ final class TinkoffPayController: ITinkoffPayController {
         repeatedRequestHelper.executeWithWaitingIfNeeded { [weak self] in
             guard let self = self, process.isActive else { return }
 
-            self.paymentStatusService.getPaymentState(paymentId: paymentId, receiveOn: .main) { result in
+            self.paymentStatusService.getPaymentState(paymentId: paymentId, receiveOn: self.mainDispatchQueue) { result in
                 guard process.isActive else { return }
 
                 switch result {
@@ -233,7 +235,7 @@ extension TinkoffPayController.Error: LocalizedError {
 private extension IPaymentStatusService {
     func getPaymentState(
         paymentId: String,
-        receiveOn queue: DispatchQueue,
+        receiveOn queue: IDispatchQueue,
         completion: @escaping (Result<GetPaymentStatePayload, Error>) -> Void
     ) {
         getPaymentState(paymentId: paymentId) { result in

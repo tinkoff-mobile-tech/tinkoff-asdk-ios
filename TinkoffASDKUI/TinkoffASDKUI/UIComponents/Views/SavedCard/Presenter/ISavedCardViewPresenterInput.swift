@@ -15,6 +15,8 @@ protocol ISavedCardViewPresenterInput: AnyObject {
     var cvc: String? { get }
 
     func activateCVCField()
+
+    func updatePresentationState(for cards: [PaymentCard])
 }
 
 extension ISavedCardViewPresenterInput {

@@ -4,10 +4,34 @@
 ### Added
 * [EACQAPW-4844] README corrections
 * [EACQAPW-4910] README add new capabilities CardController + PaymentController
+* [EACQAPW-4868] Make a Github Action to run snapshot tests
+* [EACQAPW-4625] SBP Sheet tests
+* [EACQAPW-4626] Qr ImageView tests
+* [EACQAPW-4198] Yandex Pay Display Button Tests
+* [EACQAPW-4195] Yandex Pay Interaction SDK Tests
+* [EACQAPW-4194] Card List Tests
+* [EACQAPW-4833] Card Payment Presenter tests
+* [EACQAPW-4912] Cell Presenters tests 
+* [EACQAPW-4924] BankResolver and PaymentSystemResolver Tests
+* [EACQAPW-4929] TinkoffPaySheetPresenter Tests
+* [EACQAPW-4930] MainFormPresenter Tests
+* [EACQAPW-4931] MainFormOrderDetailsViewPresenter Tests
+* [EACQAPW-4932] TinkoffPay Tests
+* [EACQAPW-4193] Add Card Tests
+* [EACQAPW-5016] Reccurent Tests
+* [EACQAPW-5017] Cover Code Coverage on TinkoffASDKYandexPay.framework to 100%
+* [EACQAPW-4761] Add New Bank Bins
+* [EACQAPW-4186] Cocoapods remove autoimports of UIKit
+* [EACQAPW-5207] PaymentStatusUpdateService Tests
 
 ### Fixed
 
 * [MIC-7135] Properly forming query path in get url
+* [EACQAPW-4593] Fixes for validation of card number
+* [EACQAPW-4690] Main form keyboard notifications
+* [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
+* [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
+* [EACQAPW-4996] Card payment proper status handles
 
 ## [3.0.0] - 2023-05-12Z
 

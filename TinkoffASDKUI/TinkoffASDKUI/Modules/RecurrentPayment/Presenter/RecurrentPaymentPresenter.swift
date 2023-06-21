@@ -14,9 +14,12 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     weak var view: IRecurrentPaymentViewInput?
 
+    private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
+    private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private let paymentController: IPaymentController
     private let cardsController: ICardsController?
     private var paymentFlow: PaymentFlow
+    private let dispatchQueueType: IDispatchQueue.Type
     private let rebillId: String
     private let amount: Int64
     private weak var failureDelegate: IRecurrentPaymentFailiureDelegate?
@@ -24,7 +27,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     // MARK: Child Presenters
 
-    private lazy var savedCardPresenter = SavedCardViewPresenter(output: self)
+    private lazy var savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
     private lazy var payButtonPresenter = createPayButtonViewPresenter()
 
     // MARK: State
@@ -36,17 +39,23 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
     // MARK: Initialization
 
     init(
+        savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
+        payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         paymentController: IPaymentController,
         cardsController: ICardsController?,
         paymentFlow: PaymentFlow,
+        mainDispatchQueue: IDispatchQueue,
         rebillId: String,
         amount: Int64,
         failureDelegate: IRecurrentPaymentFailiureDelegate?,
         moduleCompletion: PaymentResultCompletion?
     ) {
+        self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
+        self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.paymentController = paymentController
         self.cardsController = cardsController
         self.paymentFlow = paymentFlow
+        dispatchQueueType = type(of: mainDispatchQueue)
         self.rebillId = rebillId
         self.amount = amount
         self.failureDelegate = failureDelegate
@@ -152,8 +161,12 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
 // MARK: - Private
 
 extension RecurrentPaymentPresenter {
-    private func createPayButtonViewPresenter() -> PayButtonViewPresenter {
-        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: Int(amount)), output: self)
+    private func createPayButtonViewPresenter() -> IPayButtonViewOutput {
+        let presenter = payButtonViewPresenterAssembly
+            .build(
+                presentationState: .payWithAmount(amount: Int(amount)),
+                output: self
+            )
         presenter.set(enabled: false)
         return presenter
     }
@@ -206,7 +219,7 @@ extension RecurrentPaymentPresenter {
             failureDelegate?.recurrentPaymentNeedRepeatInit(additionalData: additionalData) { [weak self] result in
                 guard let self = self else { return }
 
-                DispatchQueue.performOnMain {
+                self.dispatchQueueType.performOnMain {
                     switch result {
                     case let .success(paymentId):
                         self.paymentController.performFinishPayment(

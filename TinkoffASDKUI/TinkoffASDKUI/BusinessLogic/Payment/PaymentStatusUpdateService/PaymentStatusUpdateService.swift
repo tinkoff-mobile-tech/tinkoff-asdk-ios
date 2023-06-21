@@ -5,9 +5,12 @@
 //  Created by Aleksandr Pravosudov on 09.02.2023.
 //
 
+import Foundation
 import TinkoffASDKCore
 
+/// Обработка статусов платежей - картой и реккурентов
 final class PaymentStatusUpdateService: IPaymentStatusUpdateService {
+
     // MARK: Dependencies
 
     weak var delegate: IPaymentStatusUpdateServiceDelegate?
@@ -66,26 +69,30 @@ extension PaymentStatusUpdateService {
     }
 
     private func handleStatus(data: FullPaymentData, isRequestRepeatAllowed: Bool) {
+        typealias Statuses = AcquiringStatus.CardsStatuses
+
         switch data.payload.status {
-        case .authorized, .confirmed:
-            delegate?.paymentFinalStatusRecieved(data: data)
-            return
-        case .rejected:
-            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
-            return
-        case .deadlineExpired:
-            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
-            return
         case .cancelled:
             delegate?.paymentCancelStatusRecieved(data: data)
-            return
-        default: break
-        }
-
-        if isRequestRepeatAllowed {
-            getPaymentStatus(data: data)
-        } else {
+        case .rejected:
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .rejected))
+        case .deadlineExpired:
             delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
+        case let status where Statuses.successList.contains(status):
+            delegate?.paymentFinalStatusRecieved(data: data)
+        case let status where Statuses.failureList.contains(status):
+            let nsError = NSError(domain: status.rawValue, code: 0)
+            delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .failStatus, underlyingError: nsError))
+
+        default:
+            if isRequestRepeatAllowed {
+                /// В остальных случаях дергаем /GetState для получения финального статуса
+                getPaymentStatus(data: data)
+            } else {
+                /// Если исчерпан лимит запросов к GetState и статус все еще не обработан
+                /// Показываем ошибку timeout
+                delegate?.paymentFailureStatusRecieved(data: data, error: ASDKError(code: .timeout))
+            }
         }
     }
 

@@ -21,6 +21,10 @@ import Foundation
 
 public struct GetTinkoffLinkPayload {
     public let redirectUrl: URL
+
+    public init(redirectUrl: URL) {
+        self.redirectUrl = redirectUrl
+    }
 }
 
 extension GetTinkoffLinkPayload: Decodable {

@@ -26,16 +26,12 @@ jobs:
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
-            const { data: pullRequest } = await github.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
             const { data: files } = await github.pulls.listFiles({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number
             });
+            const firstFilePath = files[0].filename
             const hasChangelog = files.some(file => file.filename === 'CHANGELOG.md');
             if (!hasChangelog) {
               console.log('CHANGELOG.md not found in pull request files');
@@ -45,6 +41,7 @@ jobs:
               > Keep on going sir, next time do not break the rules 🫡
               `;
               core.setOutput('comment', comment);
+              core.setOutput('filePath', firstFilePath);
             }
 
       - name: Add comment
@@ -52,47 +49,38 @@ jobs:
         with:
           github-token: ${{ secrets.tinkoff_bot_pat }}
           script: |
-            function needsToLeftAChangelogComment() {
-              const commentBody = `${{ steps.files.outputs.comment }}`;
-              return commentBody !== undefined && commentBody.length > 0;
-            }
+            const { data: reviews } = await github.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
 
-            async function leftChangelogComment(comments, commentBody) {
-              const existingComment = comments.find((comment) => comment.body.includes(commentBody));
-              if (!existingComment) {
-                await github.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  body: commentBody,
-                });
+            async function createReviewCommentIfNeeded(reviews) {
+              const comment = `${{ steps.files.outputs.comment }}`;
+
+              if (comment === undefined || comment.length < 1) {
+                return;
               }
-            }
 
-            async function removeChangelogCommentIfExists(comments) {
-              const existingComment = comments.find((comment) => comment.body.includes('CHANGELOG.md'));
-              if (existingComment) {
-                await github.issues.deleteComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: existingComment.id,
-                });
+              if (reviews.length > 0) { 
+                return; 
               }
-            }
 
-            async function runJob() {
-              const { data: comments } = await github.issues.listComments({
+              const comments = [
+                {
+                  path: `${{ steps.files.outputs.filePath }}`,
+                  body: comment,
+                  position: 0
+                }
+              ]
+              
+              await github.pulls.createReview({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-              });
-
-              if (needsToLeftAChangelogComment()) {
-                const commentBody = `${{ steps.files.outputs.comment }}`;
-                leftChangelogComment(comments, commentBody);
-              } else {
-                removeChangelogCommentIfExists(comments);
-              }
+                pull_number: context.payload.pull_request.number,
+                event: 'COMMENT',
+                comments: comments   
+             });
             }
 
-            runJob();
+            await createReviewCommentIfNeeded(reviews);

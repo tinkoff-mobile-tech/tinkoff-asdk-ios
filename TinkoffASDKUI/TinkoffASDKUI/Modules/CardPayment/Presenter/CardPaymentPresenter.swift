@@ -14,16 +14,23 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
 
     weak var view: ICardPaymentViewControllerInput?
     private let router: ICardPaymentRouter
+    private let savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly
+    private let cardFieldPresenterAssembly: ICardFieldPresenterAssembly
+    private let switchViewPresenterAssembly: ISwitchViewPresenterAssembly
+    private let emailViewPresenterAssembly: IEmailViewPresenterAssembly
+    private let payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly
     private weak var output: ICardPaymentPresenterModuleOutput?
     private weak var cardListOutput: ICardListPresenterOutput?
 
     private let cardsController: ICardsController?
     private let paymentController: IPaymentController
 
+    private let mainDispatchQueue: IDispatchQueue
+
     // MARK: Properties
 
     private var cellTypes = [CardPaymentCellType]()
-    private var savedCardPresenter: SavedCardViewPresenter?
+    private var savedCardPresenter: ISavedCardViewOutput?
     private lazy var cardFieldPresenter = createCardFieldViewPresenter()
     private lazy var receiptSwitchViewPresenter = createReceiptSwitchViewPresenter()
     private lazy var emailPresenter = createEmailViewPresenter()
@@ -50,9 +57,15 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     init(
         router: ICardPaymentRouter,
         output: ICardPaymentPresenterModuleOutput?,
+        savedCardViewPresenterAssembly: ISavedCardViewPresenterAssembly,
+        cardFieldPresenterAssembly: ICardFieldPresenterAssembly,
+        switchViewPresenterAssembly: ISwitchViewPresenterAssembly,
+        emailViewPresenterAssembly: IEmailViewPresenterAssembly,
+        payButtonViewPresenterAssembly: IPayButtonViewPresenterAssembly,
         cardListOutput: ICardListPresenterOutput?,
         cardsController: ICardsController?,
         paymentController: IPaymentController,
+        mainDispatchQueue: IDispatchQueue,
         activeCards: [PaymentCard]?,
         paymentFlow: PaymentFlow,
         amount: Int64,
@@ -60,9 +73,15 @@ final class CardPaymentPresenter: ICardPaymentViewControllerOutput {
     ) {
         self.router = router
         self.output = output
+        self.savedCardViewPresenterAssembly = savedCardViewPresenterAssembly
+        self.cardFieldPresenterAssembly = cardFieldPresenterAssembly
+        self.switchViewPresenterAssembly = switchViewPresenterAssembly
+        self.emailViewPresenterAssembly = emailViewPresenterAssembly
+        self.payButtonViewPresenterAssembly = payButtonViewPresenterAssembly
         self.cardListOutput = cardListOutput
         self.cardsController = cardsController
         self.paymentController = paymentController
+        self.mainDispatchQueue = mainDispatchQueue
         initialActiveCards = activeCards
         self.paymentFlow = paymentFlow
         self.amount = amount
@@ -238,7 +257,7 @@ extension CardPaymentPresenter {
         cardsController.getActiveCards(completion: { [weak self] result in
             guard let self = self else { return }
 
-            DispatchQueue.main.async {
+            self.mainDispatchQueue.async {
                 switch result {
                 case let .success(cards):
                     self.handleSuccessLoadCards(cards)
@@ -270,16 +289,19 @@ extension CardPaymentPresenter {
     private func createSavedCardViewPresenterIfNeeded() {
         guard let activeCard = activeCards.first else { return }
 
-        savedCardPresenter = SavedCardViewPresenter(output: self)
+        savedCardPresenter = savedCardViewPresenterAssembly.build(output: self)
         savedCardPresenter?.presentationState = .selected(card: activeCard)
     }
 
-    private func createCardFieldViewPresenter() -> CardFieldPresenter {
-        CardFieldPresenter(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
+    private func createCardFieldViewPresenter() -> ICardFieldViewOutput {
+        cardFieldPresenterAssembly.build(output: self, isScanButtonNeeded: isCardFieldScanButtonNeeded)
     }
 
-    private func createReceiptSwitchViewPresenter() -> SwitchViewPresenter {
-        SwitchViewPresenter(title: Loc.Acquiring.EmailField.switchButton, isOn: !customerEmail.isEmpty, actionBlock: { [weak self] isOn in
+    private func createReceiptSwitchViewPresenter() -> ISwitchViewOutput {
+        let title = Loc.Acquiring.EmailField.switchButton
+        let isOn = !customerEmail.isEmpty
+
+        let presenter = switchViewPresenterAssembly.build(title: title, isOn: isOn) { [weak self] isOn in
             guard let self = self else { return }
 
             if isOn {
@@ -295,15 +317,21 @@ extension CardPaymentPresenter {
             self.activatePayButtonIfNeeded()
             self.view?.hideKeyboard()
             self.cardFieldPresenter.validateWholeForm()
-        })
+        }
+
+        return presenter
     }
 
-    private func createEmailViewPresenter() -> EmailViewPresenter {
-        EmailViewPresenter(customerEmail: customerEmail, output: self)
+    private func createEmailViewPresenter() -> IEmailViewOutput {
+        emailViewPresenterAssembly.build(customerEmail: customerEmail, output: self)
     }
 
-    private func createPayButtonViewPresenter() -> PayButtonViewPresenter {
-        let presenter = PayButtonViewPresenter(presentationState: .payWithAmount(amount: Int(amount)), output: self)
+    private func createPayButtonViewPresenter() -> IPayButtonViewOutput {
+        let presenter = payButtonViewPresenterAssembly
+            .build(
+                presentationState: .payWithAmount(amount: Int(amount)),
+                output: self
+            )
         presenter.set(enabled: false)
         return presenter
     }

@@ -9,6 +9,13 @@
 
 final class AddNewCardViewMock: IAddNewCardView {
 
+    var isLoading: Bool {
+        get { return underlyingIsLoading }
+        set(value) { underlyingIsLoading = value }
+    }
+
+    var underlyingIsLoading: Bool = false
+
     // MARK: - reloadCollection
 
     var reloadCollectionCallsCount = 0

@@ -11,12 +11,12 @@ final class PaymentStatusService: IPaymentStatusService {
 
     // MARK: Dependencies
 
-    private let acquiringSdk: AcquiringSdk
+    private let paymentService: IAcquiringPaymentsService
 
     // MARK: Initialization
 
-    init(acquiringSdk: AcquiringSdk) {
-        self.acquiringSdk = acquiringSdk
+    init(paymentService: IAcquiringPaymentsService) {
+        self.paymentService = paymentService
     }
 
     // MARK: IPaymentStatusService
@@ -27,6 +27,6 @@ final class PaymentStatusService: IPaymentStatusService {
     ///   - completion: в случае success выдает статус платежа
     func getPaymentState(paymentId: String, completion: @escaping PaymentStatusServiceCompletion) {
         let stateData = GetPaymentStateData(paymentId: paymentId)
-        acquiringSdk.getPaymentState(data: stateData, completion: completion)
+        paymentService.getPaymentState(data: stateData, completion: completion)
     }
 }

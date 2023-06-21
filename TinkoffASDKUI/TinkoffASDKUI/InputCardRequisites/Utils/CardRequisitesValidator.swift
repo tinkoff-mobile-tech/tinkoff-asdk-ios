@@ -22,6 +22,7 @@ import Foundation
 protocol ICardRequisitesValidator {
     func validate(inputPAN: String?) -> Bool
     func validate(validThruYear: Int, month: Int) -> Bool
+    func validate(inputValidThru: String?) -> Bool
     func validate(inputCVC: String?) -> Bool
 }
 
@@ -53,12 +54,11 @@ final class CardRequisitesValidator: ICardRequisitesValidator {
     // MARK: PAN Validation
 
     func validate(inputPAN: String?) -> Bool {
-        guard let inputPAN = inputPAN else {
+        guard let inputPAN = inputPAN, !inputPAN.starts(with: "0") else {
             return false
         }
 
         let paymentSystem = paymentSystemResolver.resolve(by: inputPAN)
-
         return PANLengthValidator.validate(paymentSystem: paymentSystem, length: inputPAN.count)
             && PANLuhnValidator.validate(inputPAN)
     }
@@ -124,8 +124,10 @@ private enum PANLengthValidator {
             return (16 ... 19).contains(length)
         case .resolved(.maestro):
             return (13 ... 19).contains(length)
-        case .ambiguous, .unrecognized:
+        case .ambiguous:
             return (13 ... 28).contains(length)
+        case .unrecognized:
+            return false
         }
     }
 }

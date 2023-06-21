@@ -9,6 +9,7 @@ import Foundation
 
 protocol IAddNewCardView: AnyObject {
     func reloadCollection(sections: [AddNewCardSection])
+    var isLoading: Bool { get }
     func showLoadingState()
     func hideLoadingState()
     func closeScreen()

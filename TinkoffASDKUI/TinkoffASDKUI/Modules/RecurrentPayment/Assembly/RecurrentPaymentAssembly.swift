@@ -39,10 +39,26 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
         let paymentController = paymentControllerAssembly.paymentController()
         let cardsController = paymentFlow.customerKey.map { cardsControllerAssembly.cardsController(customerKey: $0) }
 
+        let validator = CardRequisitesValidator()
+        let paymentSystemResolver = PaymentSystemResolver()
+        let bankResolver = BankResolver()
+
+        let savedCardViewPresenterAssembly = SavedCardViewPresenterAssembly(
+            validator: validator,
+            paymentSystemResolver: paymentSystemResolver,
+            bankResolver: bankResolver
+        )
+
+        let moneyFormatter = MoneyFormatter()
+        let payButtonViewPresenterAssembly = PayButtonViewPresenterAssembly(moneyFormatter: moneyFormatter)
+
         let presenter = RecurrentPaymentPresenter(
+            savedCardViewPresenterAssembly: savedCardViewPresenterAssembly,
+            payButtonViewPresenterAssembly: payButtonViewPresenterAssembly,
             paymentController: paymentController,
             cardsController: cardsController,
             paymentFlow: paymentFlow,
+            mainDispatchQueue: DispatchQueue.main,
             rebillId: rebillId,
             amount: paymentFlow.amount,
             failureDelegate: failureDelegate,

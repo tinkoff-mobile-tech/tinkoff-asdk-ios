@@ -11,7 +11,7 @@ typealias TextAndImageHeaderTableCell = TableCell<TextAndImageHeaderView>
 final class TextAndImageHeaderView: UIView {
     // MARK: Dependencies
 
-    var presenter: ITextAndImageHeaderViewOutput? {
+    var presenter: (any ITextAndImageHeaderViewOutput)? {
         didSet {
             if oldValue?.view === self { oldValue?.view = nil }
             presenter?.view = self

@@ -12,12 +12,28 @@ import Foundation
 
 final class BankResolverMock: IBankResolver {
 
-    var resolveCallCounter = 0
-    var resolveStub: (_ cardNumber: String?) -> BankResult = { _ in .incorrectInput(error: .noValue)
-    }
+    // MARK: - resolve
+
+    var resolveCallsCount = 0
+    var resolveReceivedArguments: String?
+    var resolveReceivedInvocations: [String?] = []
+    var resolveReturnValue: BankResult = .incorrectInput(error: .noValue)
 
     func resolve(cardNumber: String?) -> BankResult {
-        resolveCallCounter += 1
-        return resolveStub(cardNumber)
+        resolveCallsCount += 1
+        let arguments = cardNumber
+        resolveReceivedArguments = arguments
+        resolveReceivedInvocations.append(arguments)
+        return resolveReturnValue
+    }
+}
+
+// MARK: - Public methods
+
+extension BankResolverMock {
+    func fullReset() {
+        resolveCallsCount = 0
+        resolveReceivedArguments = nil
+        resolveReceivedInvocations = []
     }
 }

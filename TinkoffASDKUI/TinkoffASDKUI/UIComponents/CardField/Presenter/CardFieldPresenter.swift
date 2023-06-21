@@ -36,6 +36,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
 
     private let isScanButtonNeeded: Bool
 
+    private var startValidatingCardNumber = false
     private var didEndEditingCardNumber = false
     private var didStartEditingExpiration = false
     private var didEndEditingExpiration = false
@@ -45,12 +46,12 @@ final class CardFieldPresenter: ICardFieldViewOutput {
     // MARK: Initialization
 
     init(
-        output: ICardFieldOutput? = nil,
+        output: ICardFieldOutput?,
         isScanButtonNeeded: Bool,
-        validator: ICardRequisitesValidator = CardRequisitesValidator(),
-        paymentSystemResolver: IPaymentSystemResolver = PaymentSystemResolver(),
-        bankResolver: IBankResolver = BankResolver(),
-        inputMaskResolver: ICardRequisitesMasksResolver = CardRequisitesMasksResolver(paymentSystemResolver: PaymentSystemResolver())
+        validator: ICardRequisitesValidator,
+        paymentSystemResolver: IPaymentSystemResolver,
+        bankResolver: IBankResolver,
+        inputMaskResolver: ICardRequisitesMasksResolver
     ) {
         self.output = output
         self.isScanButtonNeeded = isScanButtonNeeded
@@ -142,11 +143,28 @@ extension CardFieldPresenter {
         DynamicIconCardView.Model(data: DynamicIconCardView.Data())
     }
 
+    private func shouldStartValidateCardNumber(text: String) -> Bool {
+        let binCount = PaymentSystemResolver.Constants.binLength
+        switch text {
+        case text where text.starts(with: "0"):
+            return true
+        case text where text.count >= binCount && paymentSystemResolver.resolve(by: text) == .unrecognized:
+            return true
+        default:
+            return false
+        }
+    }
+
     private func didFillCardNumber(text: String, filled: Bool) {
         cardNumber = text
-        validate()
+        if shouldStartValidateCardNumber(text: text) {
+            startValidatingCardNumber = true
+            validateWholeForm()
+        } else {
+            clearVisualErrorState(for: .cardNumber)
+            validate()
+        }
         validateScanButtonState()
-
         var dynamicCardModel = createDynamicCardModel()
         dynamicCardModel.data.bank = bankResolver.resolve(cardNumber: text).getBank()?.icon
         dynamicCardModel.data.paymentSystem = paymentSystemResolver.resolve(by: text).getPaymentSystem()?.icon
@@ -195,7 +213,7 @@ extension CardFieldPresenter {
     private func fieldsToValidate() -> [CardFieldType] {
         if didEndEditingCvc { return CardFieldType.allCases }
         if didStartEditingCvc || didEndEditingExpiration { return [.cardNumber, .expiration] }
-        if didStartEditingExpiration || didEndEditingCardNumber { return [.cardNumber] }
+        if didStartEditingExpiration || didEndEditingCardNumber || startValidatingCardNumber { return [.cardNumber] }
 
         return []
     }

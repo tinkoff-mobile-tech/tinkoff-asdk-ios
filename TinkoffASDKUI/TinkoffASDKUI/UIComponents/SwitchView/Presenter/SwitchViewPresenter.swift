@@ -7,7 +7,7 @@
 
 typealias SwitchViewPresenterActionBlock = (Bool) -> Void
 
-final class SwitchViewPresenter: ISwitchViewOutput {
+final class SwitchViewPresenter: ISwitchViewOutput, ISwitchViewPresenterInput {
 
     // MARK: Dependencies
 
@@ -25,7 +25,7 @@ final class SwitchViewPresenter: ISwitchViewOutput {
 
     // MARK: Initialization
 
-    init(title: String, isOn: Bool = false, actionBlock: SwitchViewPresenterActionBlock? = nil) {
+    init(title: String, isOn: Bool, actionBlock: SwitchViewPresenterActionBlock?) {
         self.title = title
         self.isOn = isOn
         self.actionBlock = actionBlock

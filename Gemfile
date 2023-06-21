@@ -1,8 +1,9 @@
 source "https://rubygems.org"
 
-gem "cocoapods", "~> 1.11.3"
-gem 'fastlane', '~> 2.212.2'
+gem "cocoapods", "~> 1.12.1"
+gem 'fastlane', '~> 2.213.0'
 gem 'fastlane-plugin-changelog'
+gem 'cocoapods-no-autoimports'
 
 # https://github.com/CocoaPods/CocoaPods/issues/10388
 gem 'rexml', '~> 3.2.4'

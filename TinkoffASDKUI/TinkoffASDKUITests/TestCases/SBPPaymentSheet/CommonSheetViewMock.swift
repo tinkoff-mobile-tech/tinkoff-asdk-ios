@@ -1,17 +1,18 @@
 //
 //  CommonSheetViewMock.swift
-//  Pods
+//  TinkoffASDKUI-Unit-Tests
 //
-//  Created by Ivan Glushko on 20.04.2023.
+//  Created by Aleksandr Pravosudov on 28.04.2023.
 //
 
+import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class CommonSheetViewMock: ICommonSheetView {
 
     // MARK: - update
 
-    typealias UpdateArguments = (state: CommonSheetState, animateContainerUpdates: Bool)
+    typealias UpdateArguments = (state: CommonSheetState, animatePullableContainerUpdates: Bool)
 
     var updateCallsCount = 0
     var updateReceivedArguments: UpdateArguments?

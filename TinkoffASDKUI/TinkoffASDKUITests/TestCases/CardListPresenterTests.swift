@@ -77,6 +77,8 @@ final class CardListPresenterTests: BaseTestCase {
     }
 
     func test_viewDidTapEditButton_when_showingCards() throws {
+        allureId(2397530, "Переход в состояние редактирования списка карт")
+
         // given
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
 
@@ -84,9 +86,15 @@ final class CardListPresenterTests: BaseTestCase {
         sutAsProtocol.viewDidTapEditButton()
 
         // then
+        let addCardSection = viewMock.reloadCallArguments?.first(where: {
+            if case CardListSection.addCard = $0 { return true }
+            return false
+        })
+
         XCTAssertEqual(viewMock.hideStubCallCounter, 2)
         XCTAssertEqual(viewMock.showDoneEditingButtonCallCounter, 2)
         XCTAssertEqual(viewMock.reloadCallCounter, 2)
+        XCTAssertNil(addCardSection)
     }
 
     func test_viewDidTapEditButton_when_editingCards() throws {
@@ -263,8 +271,8 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideStubCallCounter, 1)
         XCTAssertEqual(viewMock.showEditButtonCallCounter, 1)
         XCTAssertEqual(viewMock.reloadCallArguments?.isEmpty, false)
-        XCTAssertEqual(bankResolverMock.resolveCallCounter, 1)
-        XCTAssertEqual(paymentSystemResolverMock.resolveCallCounter, 1)
+        XCTAssertEqual(bankResolverMock.resolveCallsCount, 1)
+        XCTAssertEqual(paymentSystemResolverMock.resolveCallsCount, 1)
     }
 
     func test_viewDidTapCard_withCardListUseCase_shouldDoNothing() throws {
@@ -281,6 +289,8 @@ final class CardListPresenterTests: BaseTestCase {
     }
 
     func test_viewDidTapAddCardCell_shouldOpenAddNewCard() throws {
+        allureId(2397529, "Переход на экран добавления карты")
+
         // when
         sutAsProtocol.viewDidTapAddCardCell()
 
@@ -312,6 +322,9 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2397531, "Отправляем запрос удаления карты при тапе на кнопку")
         allureId(2397536, "Уменьшение списка карт при успешном удаление карты")
         allureId(2397533, "Инициализируем заглушку в случае удаления последней карты")
+        allureId(2397540, "Выход из состояния редактирования списка карт")
+        allureId(2397539, "Промежуточное состояние при удалении карты")
+
         // given
         let cards = buildActiveCardsCache()
         let card = try XCTUnwrap(cards.first)

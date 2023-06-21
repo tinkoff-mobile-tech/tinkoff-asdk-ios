@@ -33,7 +33,7 @@ final class TinkoffPayAssembly: ITinkoffPayAssembly {
             paymentService: coreSDK,
             tinkoffPayService: coreSDK,
             applicationOpener: UIApplication.shared,
-            paymentStatusService: PaymentStatusService(acquiringSdk: coreSDK),
+            paymentStatusService: PaymentStatusService(paymentService: coreSDK),
             repeatedRequestHelper: RepeatedRequestHelper(),
             paymentStatusRetriesCount: configuration.paymentStatusRetriesCount
         )

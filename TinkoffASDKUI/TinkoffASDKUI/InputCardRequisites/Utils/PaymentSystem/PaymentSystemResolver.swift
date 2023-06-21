@@ -19,7 +19,7 @@
 
 import Foundation
 
-enum PaymentSystemDecision {
+enum PaymentSystemDecision: Equatable {
     case resolved(PaymentSystem)
     case ambiguous
     case unrecognized
@@ -29,6 +29,17 @@ enum PaymentSystemDecision {
             return paymentSystem
         } else {
             return nil
+        }
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case let (resolved(lPaymentSystem), .resolved(rPaymentSystem)):
+            return lPaymentSystem == rPaymentSystem
+        case (.ambiguous, .ambiguous), (.unrecognized, .unrecognized):
+            return true
+        default:
+            return false
         }
     }
 }
@@ -91,7 +102,7 @@ extension PaymentSystemResolver {
 
     // MARK: Constants
 
-    private enum Constants {
+    enum Constants {
         static let binLength = 6
     }
 }

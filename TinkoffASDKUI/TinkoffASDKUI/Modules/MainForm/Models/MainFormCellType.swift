@@ -8,12 +8,12 @@
 import Foundation
 
 enum MainFormCellType {
-    case orderDetails(IMainFormOrderDetailsViewOutput)
+    case orderDetails(any IMainFormOrderDetailsViewOutput)
     case savedCard(ISavedCardViewOutput)
     case getReceiptSwitch(ISwitchViewOutput)
     case email(IEmailViewOutput)
     case payButton(IPayButtonViewOutput)
-    case otherPaymentMethodsHeader(ITextAndImageHeaderViewOutput)
+    case otherPaymentMethodsHeader(any ITextAndImageHeaderViewOutput)
     case otherPaymentMethod(MainFormPaymentMethod)
 }
 
@@ -42,6 +42,24 @@ extension MainFormCellType {
             return true
         default:
             return false
+        }
+    }
+}
+
+// MARK: - Equatable
+
+extension MainFormCellType: Equatable {
+    static func == (lhs: MainFormCellType, rhs: MainFormCellType) -> Bool {
+        switch (lhs, rhs) {
+        case (.orderDetails, .orderDetails),
+             (.savedCard, .savedCard),
+             (.getReceiptSwitch, .getReceiptSwitch),
+             (.email, .email),
+             (.payButton, .payButton),
+             (.otherPaymentMethodsHeader, .otherPaymentMethodsHeader),
+             (.otherPaymentMethod, .otherPaymentMethod):
+            return true
+        default: return false
         }
     }
 }

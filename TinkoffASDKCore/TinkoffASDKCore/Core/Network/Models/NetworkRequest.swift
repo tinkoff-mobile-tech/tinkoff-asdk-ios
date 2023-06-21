@@ -33,6 +33,10 @@ extension HTTPMethod {
     var isAllowedToContainBody: Bool {
         self == .post
     }
+
+    var isAllowedToContainQuery: Bool {
+        self == .get
+    }
 }
 
 enum ParametersEncoding {
@@ -47,10 +51,16 @@ protocol NetworkRequest {
     var headers: HTTPHeaders { get }
     var parameters: HTTPParameters { get }
     var parametersEncoding: ParametersEncoding { get }
+
+    /// Используется только в `GET` запросах для формирования `query` строки
+    /// Добавляется в конце `url` ссылки после `path`
+    var queryItems: [URLQueryItem] { get }
 }
 
+/// При добавлении новых значений не забудь проставить их в `AdaptedRequest` структуре
 extension NetworkRequest {
     var parameters: HTTPParameters { [:] }
     var headers: HTTPHeaders { [:] }
     var parametersEncoding: ParametersEncoding { .json }
+    var queryItems: [URLQueryItem] { [] }
 }

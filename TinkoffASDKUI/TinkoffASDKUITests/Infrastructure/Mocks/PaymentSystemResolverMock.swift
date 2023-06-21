@@ -12,13 +12,28 @@ import Foundation
 
 final class PaymentSystemResolverMock: IPaymentSystemResolver {
 
-    var resolveCallCounter = 0
-    var resolveStub: (_ inputPan: String?) -> PaymentSystemDecision = { _ in
-        .unrecognized
-    }
+    // MARK: - resolve
+
+    var resolveCallsCount = 0
+    var resolveReceivedArguments: String?
+    var resolveReceivedInvocations: [String?] = []
+    var resolveReturnValue: PaymentSystemDecision = .unrecognized
 
     func resolve(by inputPAN: String?) -> PaymentSystemDecision {
-        resolveCallCounter += 1
-        return resolveStub(inputPAN)
+        resolveCallsCount += 1
+        let arguments = inputPAN
+        resolveReceivedArguments = arguments
+        resolveReceivedInvocations.append(arguments)
+        return resolveReturnValue
+    }
+}
+
+// MARK: - Public methods
+
+extension PaymentSystemResolverMock {
+    func fullReset() {
+        resolveCallsCount = 0
+        resolveReceivedArguments = nil
+        resolveReceivedInvocations = []
     }
 }

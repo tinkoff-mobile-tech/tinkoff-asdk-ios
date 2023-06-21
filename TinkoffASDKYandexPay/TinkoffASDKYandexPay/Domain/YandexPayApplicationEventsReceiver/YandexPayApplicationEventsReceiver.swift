@@ -8,7 +8,7 @@
 import Foundation
 
 public enum YandexPayApplicationEventsReceiver {
-    private static let module: IApplicationEventsReceiver = EventsModule(yandexPayFacade: YandexPaySDKFacade())
+    internal static var module: IApplicationEventsReceiver = EventsModule(yandexPayFacade: YandexPaySDKFacade())
 
     public static func applicationDidReceiveUserActivity(_ userActivity: NSUserActivity) {
         module.applicationDidReceiveUserActivity(userActivity)
@@ -27,7 +27,7 @@ public enum YandexPayApplicationEventsReceiver {
     }
 }
 
-private final class EventsModule: IApplicationEventsReceiver {
+final class EventsModule: IApplicationEventsReceiver {
     private let yandexPayFacade: IApplicationEventsReceiver & IYandexPaySDKInitializable
 
     init(yandexPayFacade: IApplicationEventsReceiver & IYandexPaySDKInitializable) {

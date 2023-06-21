@@ -77,13 +77,16 @@ final class YandexPayPaymentSheetPresenterTests: BaseTestCase {
         // then
         XCTAssertEqual(commonSheetViewMock.updateCallsCount, 1)
         XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.state, proccessing)
-        XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.animateContainerUpdates, false)
+        XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.animatePullableContainerUpdates, false)
         XCTAssertEqual(paymentControllerMock.performPaymentCallsCount, 1)
         XCTAssertEqual(paymentControllerMock.performPaymentReceivedArguments?.paymentFlow, fakedPaymentFlow)
         XCTAssertEqual(paymentControllerMock.performPaymentReceivedArguments?.paymentSource, .yandexPay(base64Token: .base64Token))
     }
 
     func test_primaryButtonTapped() {
+        allureId(2358077, "Переход по primary кнопке в шторке Ошибка при оплате закрывает ASDK")
+        allureId(2358068, "Переход по primary кнопке в шторке Успешная оплата закрывает ASDK")
+
         // when
         sut.primaryButtonTapped()
 
@@ -101,6 +104,8 @@ final class YandexPayPaymentSheetPresenterTests: BaseTestCase {
     }
 
     func test_canDismissViewByUserInteraction() {
+        allureId(2358083, "Шторка с контентом Обработка платежа всегда находится в состоянии заблокированного UI")
+
         // when
         let result = sut.canDismissViewByUserInteraction()
 
@@ -146,7 +151,7 @@ final class YandexPayPaymentSheetPresenterTests: BaseTestCase {
         // then
         XCTAssertEqual(commonSheetViewMock.updateCallsCount, 1)
         XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.state, State.paid.toCommonSheetState())
-        XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.animateContainerUpdates, true)
+        XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.animatePullableContainerUpdates, true)
         XCTAssertEqual(sut.canDismissViewByUserInteraction(), true)
         XCTAssertEqual(yandexPayPaymentSheetOutputMock.yandexPayPaymentSheetCallsCount, 1)
         XCTAssertEqual(yandexPayPaymentSheetOutputMock.yandexPayPaymentSheetReceivedArguments, .succeeded(expectedPaymentInfo))
@@ -204,6 +209,6 @@ final class YandexPayPaymentSheetPresenterTests: BaseTestCase {
         XCTAssertEqual(yandexPayPaymentSheetOutputMock.yandexPayPaymentSheetReceivedArguments, .failed(error))
         XCTAssertEqual(commonSheetViewMock.updateCallsCount, 1)
         XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.state, State.failed.toCommonSheetState())
-        XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.animateContainerUpdates, true)
+        XCTAssertEqual(commonSheetViewMock.updateReceivedArguments?.animatePullableContainerUpdates, true)
     }
 }

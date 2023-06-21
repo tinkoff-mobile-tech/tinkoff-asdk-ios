@@ -6,6 +6,7 @@
 //
 
 import TinkoffASDKUI
+import UIKit
 
 final class YandexPayButtonContainerDelegateMock: IYandexPayButtonContainerDelegate {
 

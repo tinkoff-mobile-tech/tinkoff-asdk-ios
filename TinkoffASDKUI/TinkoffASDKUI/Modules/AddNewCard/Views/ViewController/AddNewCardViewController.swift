@@ -81,6 +81,10 @@ extension AddNewCardViewController: IAddNewCardView {
         addCardView.reloadCollection(sections: sections)
     }
 
+    var isLoading: Bool {
+        addCardView.isLoading
+    }
+
     func showLoadingState() {
         addCardView.showLoadingState()
     }
