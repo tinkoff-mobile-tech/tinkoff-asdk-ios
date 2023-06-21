@@ -15,7 +15,7 @@ final class UIApplicationMock: IUIApplication {
     var canOpenURLCallsCount = 0
     var canOpenURLReceivedArguments: URL?
     var canOpenURLReceivedInvocations: [URL] = []
-    var canOpenURLReturnValue: Bool!
+    var canOpenURLReturnValue: Bool = false
 
     func canOpenURL(_ url: URL) -> Bool {
         canOpenURLCallsCount += 1
