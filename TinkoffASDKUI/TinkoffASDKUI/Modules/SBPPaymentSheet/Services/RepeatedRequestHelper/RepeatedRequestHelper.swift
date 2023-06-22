@@ -71,8 +71,3 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
 private extension TimeInterval {
     static let paymentStatusRequestDelay: TimeInterval = 3
 }
-
-private extension RunLoop {
-    /// Запущен ли ранлуп
-    var isRunning: Bool { currentMode != nil }
-}
