@@ -58,8 +58,10 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
             self.timer = timer
 
             RunLoop.current.add(timer, forMode: .common)
-            // Важно! Нужно явно запустить ранлуп, иначе таймер не будет работать
-            RunLoop.current.run()
+            if !RunLoop.current.isRunning {
+                // Важно! Нужно явно запустить ранлуп, иначе таймер не будет работать
+                RunLoop.current.run()
+            }
         }
     }
 }
@@ -68,4 +70,9 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
 
 private extension TimeInterval {
     static let paymentStatusRequestDelay: TimeInterval = 3
+}
+
+private extension RunLoop {
+    /// Запущен ли ранлуп
+    var isRunning: Bool { currentMode != nil }
 }
