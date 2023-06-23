@@ -1,14 +1,14 @@
 //
-//  MockPaymentControllerDelegate.swift
+//  ChargePaymentControllerDelegateMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
-//  Created by Ivan Glushko on 21.10.2022.
+//  Created by Никита Васильев on 22.06.2023.
 //
 
 import TinkoffASDKCore
-@testable import TinkoffASDKUI
+import TinkoffASDKUI
 
-final class MockPaymentControllerDelegate: PaymentControllerDelegate {
+final class ChargePaymentControllerDelegateMock: ChargePaymentControllerDelegate {
     // MARK: - paymentController
 
     struct DidFinishPaymentPassedArguments {
@@ -20,7 +20,6 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     }
 
     var paymentControllerDidFinishPaymentCallCounter = 0
-    var paymentControllerDidFinishPaymentParameters: (data: DidFinishPaymentPassedArguments, Void)?
     var paymentControllerDidFinishPaymentReturnStub: (DidFinishPaymentPassedArguments) -> Void = { _ in }
 
     func paymentController(
@@ -38,7 +37,6 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
             cardId: cardId,
             rebillId: rebillId
         )
-        paymentControllerDidFinishPaymentParameters = (args, ())
         paymentControllerDidFinishPaymentReturnStub(args)
     }
 
@@ -52,7 +50,6 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     }
 
     var paymentControllerPaymentWasCancelledCallCounter = 0
-    var paymentControllerPaymentWasCancelledParameters: (data: WasCancelledPassedArguments, Void)?
     var paymentControllerPaymentWasCancelledReturnStub: (WasCancelledPassedArguments) -> Void = { _ in }
 
     func paymentController(
@@ -61,16 +58,15 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        let data = WasCancelledPassedArguments(
-            controller: controller,
-            paymentWasCancelled: paymentWasCancelled,
-            cardId: cardId,
-            rebillId: rebillId
-        )
-
         paymentControllerPaymentWasCancelledCallCounter += 1
-        paymentControllerPaymentWasCancelledParameters = (data, ())
-        paymentControllerPaymentWasCancelledReturnStub(data)
+        paymentControllerPaymentWasCancelledReturnStub(
+            WasCancelledPassedArguments(
+                controller: controller,
+                paymentWasCancelled: paymentWasCancelled,
+                cardId: cardId,
+                rebillId: rebillId
+            )
+        )
     }
 
     // MARK: - paymentController
@@ -83,7 +79,6 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
     }
 
     var paymentControllerDidFailedCallCounter = 0
-    var paymentControllerDidFailedParameters: (data: DidFailedPassedArguments, Void)?
     var paymentControllerDidFailedReturnStub: (DidFailedPassedArguments) -> Void = { _ in }
 
     func paymentController(
@@ -92,15 +87,46 @@ final class MockPaymentControllerDelegate: PaymentControllerDelegate {
         cardId: String?,
         rebillId: String?
     ) {
-        let data = DidFailedPassedArguments(
+        paymentControllerDidFailedCallCounter += 1
+        paymentControllerDidFailedReturnStub(
+            DidFailedPassedArguments(
+                controller: controller,
+                didFailedError: error,
+                cardId: cardId,
+                rebillId: rebillId
+            )
+        )
+    }
+
+    struct ShouldRepeatWithRebillIdArgumentd {
+        let controller: IPaymentController
+        let failedPaymentProcess: IPaymentProcess
+        let rebillId: String?
+        let additionalData: [String: String]
+        let error: Error
+    }
+
+    var paymentControllerShouldRepeatWithRebillIdCallCounter = 0
+    var paymentControllerShouldRepeatWithRebillIdReturnParameters: (data: ShouldRepeatWithRebillIdArgumentd, Void)?
+    var paymentControllerShouldRepeatWithRebillIdReturnStub: (ShouldRepeatWithRebillIdArgumentd) -> Void = { _ in }
+
+    func paymentController(
+        _ controller: IPaymentController,
+        shouldRepeatWithRebillId rebillId: String,
+        failedPaymentProcess: IPaymentProcess,
+        additionalData: [String: String],
+        error: Error
+    ) {
+        let data = ShouldRepeatWithRebillIdArgumentd(
             controller: controller,
-            didFailedError: error,
-            cardId: cardId,
-            rebillId: rebillId
+            failedPaymentProcess: failedPaymentProcess,
+            rebillId: rebillId,
+            additionalData: additionalData,
+            error: error
         )
 
-        paymentControllerDidFailedCallCounter += 1
-        paymentControllerDidFailedParameters = (data, ())
-        paymentControllerDidFailedReturnStub(data)
+        paymentControllerShouldRepeatWithRebillIdCallCounter += 1
+        paymentControllerShouldRepeatWithRebillIdReturnParameters = (data, ())
+        paymentControllerShouldRepeatWithRebillIdReturnStub(data)
     }
 }

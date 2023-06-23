@@ -180,8 +180,172 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(cancelBlockTriggerCount, 1)
         XCTAssertEqual(completionBlockTriggerCount, 1)
     }
+
+    func test_startUpdateStatus_whenPaymentDidFinish() throws {
+        // given
+        let state = GetPaymentStatePayload.fake()
+
+        // when
+        sut.paymentDidFinish(
+            paymentProcessMock,
+            with: state,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+
+        // then
+        let data = try XCTUnwrap(paymentStatusUpdateServiceMock.startUpdateStatusIfNeededReceivedArguments)
+        XCTAssertEqual(data.cardId, .cardId)
+        XCTAssertEqual(data.rebillId, .rebillId)
+        XCTAssertEqual(data.payload, state)
+    }
+
+    func test_paymentControlleNotifiesChargePaymentDelegate_whenPaymentDidFailed() throws {
+        // given
+        let paymentId = String.paymentId
+        let errorStub = NSError(domain: "domain", code: 104)
+        let delegateMock = ChargePaymentControllerDelegateMock()
+        let additionalData = ["failMapiSessionId": "\(paymentId)", "recurringType": "12"]
+        paymentProcessMock.paymentId = paymentId
+
+        sut.delegate = delegateMock
+
+        // when
+        sut.paymentDidFailed(
+            paymentProcessMock,
+            with: errorStub,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+
+        // then
+        let data = try XCTUnwrap(delegateMock.paymentControllerShouldRepeatWithRebillIdReturnParameters?.data)
+        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 1)
+        XCTAssertEqual(data.rebillId, .rebillId)
+        XCTAssertEqual(data.additionalData, additionalData)
+    }
+
+    func test_paymentControllerNotifiesPaymentDelegate_whenPaymentDidFailed() throws {
+        // given
+        let errorStub = ErrorStub()
+        let delegateMock = MockPaymentControllerDelegate()
+
+        sut.delegate = delegateMock
+
+        // when
+        sut.paymentDidFailed(
+            paymentProcessMock,
+            with: errorStub,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+
+        // then
+        let data = try XCTUnwrap(delegateMock.paymentControllerDidFailedParameters?.data)
+        XCTAssertEqual(delegateMock.paymentControllerDidFailedCallCounter, 1)
+        XCTAssertEqual(data.rebillId, .rebillId)
+        XCTAssertEqual(data.cardId, .cardId)
+    }
+
+    func test_paymentControllerNotifiesPaymentDelegate_whenNeedToCollect3DSData() {
+        // given
+        let data = Checking3DSURLData.fake()
+
+        // when
+        var serviceInfo: ThreeDSDeviceInfo?
+        sut.payment(
+            paymentProcessMock,
+            needToCollect3DSData: data,
+            completion: { serviceInfo = $0 }
+        )
+
+        // then
+        let serviceInfoData = threeDSDeviceInfoProviderMock.stubbedCreateDeviceInfoResult
+        let threeDSData = threeDSWebFlowControllerMock.complete3DSMethodReceivedArguments
+        XCTAssertEqual(serviceInfo?.cresCallbackUrl, serviceInfoData.cresCallbackUrl)
+        XCTAssertEqual(serviceInfo?.screenHeight, serviceInfoData.screenHeight)
+        XCTAssertEqual(serviceInfo?.screenWidth, serviceInfoData.screenWidth)
+        XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
+        XCTAssertEqual(threeDSData?.notificationURL, data.notificationURL)
+        XCTAssertEqual(threeDSData?.tdsServerTransID, data.tdsServerTransID)
+        XCTAssertEqual(threeDSData?.notificationURL, data.notificationURL)
+    }
+
+    func test_paymentControllerNotifiesPaymentDelegate_whenPaymentFinalStatusReceived() throws {
+        // given
+        let payload = GetPaymentStatePayload.fake()
+        let data = FullPaymentData(
+            paymentProcess: paymentProcessMock,
+            payload: payload,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+        let delegateMock = MockPaymentControllerDelegate()
+
+        sut.delegate = delegateMock
+
+        // when
+        sut.paymentFinalStatusRecieved(data: data)
+
+        // then
+        let receivedData = try XCTUnwrap(delegateMock.paymentControllerDidFinishPaymentParameters?.data)
+        XCTAssertEqual(delegateMock.paymentControllerDidFinishPaymentCallCounter, 1)
+        XCTAssertEqual(receivedData.rebillId, data.rebillId)
+        XCTAssertEqual(receivedData.cardId, data.cardId)
+        XCTAssertEqual(receivedData.state, data.payload)
+    }
+
+    func test_paymentControllerNotifiesPaymentDelegate_whenPaymentCancelStatusReceived() throws {
+        // given
+        let payload = GetPaymentStatePayload.fake()
+        let data = FullPaymentData(
+            paymentProcess: paymentProcessMock,
+            payload: payload,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+        let delegateMock = MockPaymentControllerDelegate()
+
+        sut.delegate = delegateMock
+
+        // when
+        sut.paymentCancelStatusRecieved(data: data)
+
+        // then
+        let receivedData = try XCTUnwrap(delegateMock.paymentControllerPaymentWasCancelledParameters?.data)
+        XCTAssertEqual(delegateMock.paymentControllerPaymentWasCancelledCallCounter, 1)
+        XCTAssertEqual(receivedData.rebillId, data.rebillId)
+        XCTAssertEqual(receivedData.cardId, data.cardId)
+    }
+
+    func test_paymentControllerNotifiesPaymentDelegate_whenPaymentFailureStatusReceived() throws {
+        // given
+        let payload = GetPaymentStatePayload.fake()
+        let data = FullPaymentData(
+            paymentProcess: paymentProcessMock,
+            payload: payload,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+        let delegateMock = MockPaymentControllerDelegate()
+        let errorStub = ErrorStub()
+
+        sut.delegate = delegateMock
+
+        // when
+        sut.paymentFailureStatusRecieved(data: data, error: errorStub)
+
+        // then
+        let receivedData = try XCTUnwrap(delegateMock.paymentControllerDidFailedParameters?.data)
+        XCTAssertEqual(delegateMock.paymentControllerDidFailedCallCounter, 1)
+        XCTAssertEqual(receivedData.rebillId, data.rebillId)
+        XCTAssertEqual(receivedData.cardId, data.cardId)
+    }
 }
 
 private extension String {
     static let appBasedVersion = "2.1.0"
+    static let cardId = "cardId"
+    static let rebillId = "rebillId"
+    static let paymentId = "paymentId"
 }
