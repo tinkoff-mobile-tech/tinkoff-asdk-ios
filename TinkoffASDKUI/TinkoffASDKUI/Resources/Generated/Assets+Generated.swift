@@ -55,8 +55,8 @@ internal enum Asset {
     internal static let alarm = ImageAsset(name: "alarm")
     internal static let cardCross = ImageAsset(name: "card-cross")
     internal static let checkCirclePositive = ImageAsset(name: "check-circle-positive")
-    internal static let crossCircle = ImageAsset(name: "cross-circle")
     internal static let illustrationsCommonLightCard = ImageAsset(name: "illustrations-common-light-card")
+    internal static let stopSign = ImageAsset(name: "stop-sign")
     internal static let wiFiOff = ImageAsset(name: "wi-fi-off")
   }
   internal enum Logo {

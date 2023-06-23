@@ -42,7 +42,7 @@ final class CommonSheetStatusView: UIView {
             iconView.alpha = 1
             activityIndicator.alpha = .zero
         case .failed:
-            iconView.image = Asset.Illustrations.crossCircle.image
+            iconView.image = Asset.Illustrations.stopSign.image
             iconView.alpha = 1
             activityIndicator.alpha = .zero
         }

@@ -23,6 +23,8 @@
 * [EACQAPW-4761] Add New Bank Bins
 * [EACQAPW-4186] Cocoapods remove autoimports of UIKit
 * [EACQAPW-5207] PaymentStatusUpdateService Tests
+* [EACQAPW-5208] AppChecker and TinkoffPayAppChecker Tests
+* [EACQAPW-5209] MoneyFormatter Tests
 
 ### Fixed
 
@@ -32,6 +34,7 @@
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
 * [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 * [EACQAPW-4996] Card payment proper status handles
+* [EACQAPW-5231] Fix of images rendered badly
 * [EACQAPW-5258] RunLoop run caused bugy getState handles
 
 ## [3.0.0] - 2023-05-12Z
