@@ -32,6 +32,7 @@
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
 * [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 * [EACQAPW-4996] Card payment proper status handles
+* [EACQAPW-5231] Fix of images rendered badly
 
 ## [3.0.0] - 2023-05-12Z
 
