@@ -10,11 +10,11 @@ import TinkoffASDKCore
 
 final class ThreeDSWebFlowControllerMock: IThreeDSWebFlowController {
 
-    var underlyingWebFlowDelegate: ThreeDSWebFlowDelegate?
+    var underlyingWebFlowDelegate: (any ThreeDSWebFlowDelegate)?
     var webFlowDelegateCallsCount = 0
     var webFlowDelegateSetterCounter = 0
 
-    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
         get {
             webFlowDelegateCallsCount += 1
             return underlyingWebFlowDelegate

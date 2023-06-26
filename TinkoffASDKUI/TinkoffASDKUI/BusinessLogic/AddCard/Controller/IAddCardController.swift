@@ -11,7 +11,7 @@ import TinkoffASDKCore
 /// Объект, с помощью которого можно привязать новую карту с прохождением проверки `3DS`
 public protocol IAddCardController: AnyObject {
     /// Объект, предоставляющий UI-компоненты для прохождения 3DS Web Based Flow при привязке карты
-    var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? { get set }
 
     /// Идентификатор покупателя в системе Продавца, установленный для данного `IAddCardController`
     var customerKey: String { get }

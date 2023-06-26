@@ -10,7 +10,7 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 final class CardsControllerMock: ICardsController {
-    var webFlowDelegate: TinkoffASDKUI.ThreeDSWebFlowDelegate?
+    var webFlowDelegate: (any TinkoffASDKUI.ThreeDSWebFlowDelegate)?
     var customerKey: String = "test"
 
     var addCardCallsCount = 0

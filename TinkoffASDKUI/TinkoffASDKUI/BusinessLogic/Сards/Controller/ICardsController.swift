@@ -11,7 +11,7 @@ import TinkoffASDKCore
 /// Объект, позволяющий совершать основные операции с картами пользователя
 public protocol ICardsController: AnyObject {
     /// Объект, предоставляющий UI-компоненты для прохождения 3DS Web Based Flow при привязке карты
-    var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? { get set }
 
     /// Идентификатор покупателя в системе Продавца, установленный для данного `ICardsController`
     var customerKey: String { get }

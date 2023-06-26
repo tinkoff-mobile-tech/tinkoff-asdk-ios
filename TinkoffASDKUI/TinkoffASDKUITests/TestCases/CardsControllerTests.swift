@@ -136,6 +136,30 @@ final class CardsControllerTests: BaseTestCase {
         XCTAssertTrue(didReturnError)
     }
 
+    func test_get_webFlowDelegate() {
+        // given
+        let webFlowDelegateMock = ThreeDSWebFlowDelegateMock()
+        addCardControllerMock.webFlowDelegate = webFlowDelegateMock
+
+        // when
+        let webFlowDelegate = sut.webFlowDelegate as? ThreeDSWebFlowDelegateMock
+
+        // then
+        XCTAssertEqual(addCardControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, webFlowDelegate)
+    }
+
+    func test_set_webFlowDelegate() {
+        // given
+        let webFlowDelegateMock = ThreeDSWebFlowDelegateMock()
+
+        // when
+        sut.webFlowDelegate = webFlowDelegateMock
+        let webFlowDelegate = sut.webFlowDelegate as? ThreeDSWebFlowDelegateMock
+
+        // then
+        XCTAssertEqual(addCardControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, webFlowDelegate)
+    }
+
     func test_customerKey() {
         // given
         addCardControllerMock.underlyingCustomerKey = "some"

@@ -38,7 +38,7 @@ final class CardsController {
 // MARK: - ICardsController
 
 extension CardsController: ICardsController {
-    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
         get { addCardController.webFlowDelegate }
         set { addCardController.webFlowDelegate = newValue }
     }
