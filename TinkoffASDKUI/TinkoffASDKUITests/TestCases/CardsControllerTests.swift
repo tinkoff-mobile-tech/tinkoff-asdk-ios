@@ -289,4 +289,108 @@ final class CardsControllerTests: BaseTestCase {
         XCTAssertEqual(successCards, nil)
         XCTAssertEqual(faulireError, error)
     }
+
+    func test_addCard_success_when_cardIdNil() {
+        // given
+        let cardOptions = CardOptions.fake()
+
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+
+        let error = CardsController.Error.missingCardId
+        let expectedErrorText = "Unexpected nil for `cardId` after adding new card"
+
+        var addCardResult: AddCardResult?
+        let completion: (AddCardResult) -> Void = { result in
+            addCardResult = result
+        }
+        let payload = GetAddCardStatePayload.fake(status: .authorized, cardId: nil)
+
+        addCardControllerMock.addCardCompletionStub = .succeded(payload)
+
+        // when
+        sut.addCard(options: cardOptions, completion: completion)
+
+        // then
+        XCTAssertEqual(addCardControllerMock.addCardCallsCount, 1)
+        XCTAssertEqual(addCardControllerMock.addCardReceivedArguments?.options, cardOptions)
+        XCTAssertEqual(addCardResult, .failed(error))
+        XCTAssertEqual(expectedErrorText, error.errorDescription)
+        XCTAssertEqual(cardServiceMock.getCardListCallsCount, 0)
+        XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
+    }
+
+    func test_addCard_success_when_payloadCardId_notEqual_for_some_cardId() {
+        // given
+        let cardOptions = CardOptions.fake()
+
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+
+        var addCardResult: AddCardResult?
+        let completion: (AddCardResult) -> Void = { result in
+            addCardResult = result
+        }
+        let payloadCardId = "12345678"
+        let payload = GetAddCardStatePayload.fake(status: .authorized, cardId: payloadCardId)
+
+        let expectedErrorText = "Unexpected behavior of Acquiring API. Could not find added card with id \(payloadCardId) in `GetCardList` response"
+        addCardControllerMock.addCardCompletionStub = .succeded(payload)
+
+        let error = CardsController.Error.couldNotFindAddedCard(cardId: payloadCardId)
+
+        let customerKey = "some key"
+        let expectedData = GetCardListData(customerKey: customerKey)
+
+        addCardControllerMock.underlyingCustomerKey = customerKey
+
+        let cards: [PaymentCard] = .fake()
+        cardServiceMock.getCardListCompletionClosureInput = .success(cards)
+
+        // when
+        sut.addCard(options: cardOptions, completion: completion)
+
+        // then
+        XCTAssertEqual(addCardControllerMock.addCardCallsCount, 1)
+        XCTAssertEqual(addCardControllerMock.addCardReceivedArguments?.options, cardOptions)
+        XCTAssertEqual(addCardResult, .failed(error))
+        XCTAssertEqual(expectedErrorText, error.errorDescription)
+        XCTAssertEqual(cardServiceMock.getCardListCallsCount, 1)
+        XCTAssertEqual(cardServiceMock.getCardListReceivedArguments?.data, expectedData)
+        XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 2)
+    }
+
+    func test_addCard_success() {
+        // given
+        let cardOptions = CardOptions.fake()
+
+        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+
+        var addCardResult: AddCardResult?
+        let completion: (AddCardResult) -> Void = { result in
+            addCardResult = result
+        }
+        let payloadCardId = "124913"
+        let payload = GetAddCardStatePayload.fake(status: .authorized, cardId: payloadCardId)
+
+        addCardControllerMock.addCardCompletionStub = .succeded(payload)
+
+        let customerKey = "some key"
+        let expectedData = GetCardListData(customerKey: customerKey)
+
+        addCardControllerMock.underlyingCustomerKey = customerKey
+
+        let sberFakeCard = PaymentCard.sberFake()
+        let cards: [PaymentCard] = [.fakeInactive(), sberFakeCard, .fake()]
+        cardServiceMock.getCardListCompletionClosureInput = .success(cards)
+
+        // when
+        sut.addCard(options: cardOptions, completion: completion)
+
+        // then
+        XCTAssertEqual(addCardControllerMock.addCardCallsCount, 1)
+        XCTAssertEqual(addCardControllerMock.addCardReceivedArguments?.options, cardOptions)
+        XCTAssertEqual(addCardResult, .succeded(sberFakeCard))
+        XCTAssertEqual(cardServiceMock.getCardListCallsCount, 1)
+        XCTAssertEqual(cardServiceMock.getCardListReceivedArguments?.data, expectedData)
+        XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 2)
+    }
 }
