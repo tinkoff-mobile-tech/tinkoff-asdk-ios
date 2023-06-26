@@ -21,6 +21,7 @@
 * [EACQAPW-4761] Add New Bank Bins
 * [EACQAPW-4186] Cocoapods remove autoimports of UIKit
 * [EACQAPW-5207] PaymentStatusUpdateService Tests
+* [EACQAPW-5218] AddCardController final tests
 
 ### Fixed
 
