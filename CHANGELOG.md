@@ -25,6 +25,7 @@
 * [EACQAPW-5207] PaymentStatusUpdateService Tests
 * [EACQAPW-5208] AppChecker and TinkoffPayAppChecker Tests
 * [EACQAPW-5209] MoneyFormatter Tests
+* [EACQAPW-5238] PaymentController Tests
 * [EACQAPW-5262] CardsController Tests
 
 ### Fixed
