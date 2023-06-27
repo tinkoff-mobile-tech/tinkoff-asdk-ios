@@ -32,3 +32,11 @@ final class MockPaymentControllerUIProvider: ThreeDSWebFlowDelegate {
         return sourceViewControllerToPresentReturnStub()
     }
 }
+
+// MARK: - Equatable
+
+extension MockPaymentControllerUIProvider {
+    static func == (lhs: MockPaymentControllerUIProvider, rhs: MockPaymentControllerUIProvider) -> Bool {
+        lhs === rhs
+    }
+}

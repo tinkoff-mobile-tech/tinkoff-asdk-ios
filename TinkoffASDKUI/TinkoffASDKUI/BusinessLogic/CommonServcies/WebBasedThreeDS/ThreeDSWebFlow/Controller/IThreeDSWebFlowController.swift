@@ -11,7 +11,7 @@ import TinkoffASDKCore
 /// Объект, взаимодействующий с webView для подтверждения 3DS
 protocol IThreeDSWebFlowController: AnyObject {
     /// Объект, предоставляющий UI-компоненты для прохождения 3DS Web Based Flow
-    var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? { get set }
 
     /// Собирает данные об устройстве в скрытом webView после проверки версии 3DS
     ///

@@ -19,6 +19,16 @@ extension PaymentCard {
         )
     }
 
+    static func fakeInactive() -> Self {
+        PaymentCard(
+            pan: "34234",
+            cardId: "123213",
+            status: .inactive,
+            parentPaymentId: 123,
+            expDate: "0929"
+        )
+    }
+
     static func sberFake() -> Self {
         PaymentCard(
             pan: "427432",

@@ -20,3 +20,11 @@ final class YandexPayPaymentSheetUIProvider: ThreeDSWebFlowDelegate {
         view
     }
 }
+
+// MARK: - Equatable
+
+extension YandexPayPaymentSheetUIProvider {
+    static func == (lhs: YandexPayPaymentSheetUIProvider, rhs: YandexPayPaymentSheetUIProvider) -> Bool {
+        lhs === rhs
+    }
+}

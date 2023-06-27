@@ -17,8 +17,8 @@ final class CardServiceMock: ICardService {
     var getCardListCallsCount = 0
     var getCardListReceivedArguments: GetCardListArguments?
     var getCardListReceivedInvocations: [GetCardListArguments] = []
-    var getCardListReturnValue: Cancellable!
-    var getCardListCompletionStub: Result<[PaymentCard], Error>?
+    var getCardListCompletionClosureInput: Result<[PaymentCard], Error>?
+    var getCardListReturnValue = CancellableMock()
 
     @discardableResult
     func getCardList(data: GetCardListData, completion: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
@@ -26,8 +26,8 @@ final class CardServiceMock: ICardService {
         let arguments = (data, completion)
         getCardListReceivedArguments = arguments
         getCardListReceivedInvocations.append(arguments)
-        if let getCardListCompletionStub = getCardListCompletionStub {
-            completion(getCardListCompletionStub)
+        if let getCardListCompletionClosureInput = getCardListCompletionClosureInput {
+            completion(getCardListCompletionClosureInput)
         }
         return getCardListReturnValue
     }
@@ -39,7 +39,8 @@ final class CardServiceMock: ICardService {
     var removeCardCallsCount = 0
     var removeCardReceivedArguments: RemoveCardArguments?
     var removeCardReceivedInvocations: [RemoveCardArguments] = []
-    var removeCardReturnValue: Cancellable!
+    var removeCardCompletionClosureInput: Result<RemoveCardPayload, Error>?
+    var removeCardReturnValue = CancellableMock()
 
     @discardableResult
     func removeCard(data: RemoveCardData, completion: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void) -> Cancellable {
@@ -47,6 +48,9 @@ final class CardServiceMock: ICardService {
         let arguments = (data, completion)
         removeCardReceivedArguments = arguments
         removeCardReceivedInvocations.append(arguments)
+        if let removeCardCompletionClosureInput = removeCardCompletionClosureInput {
+            completion(removeCardCompletionClosureInput)
+        }
         return removeCardReturnValue
     }
 }

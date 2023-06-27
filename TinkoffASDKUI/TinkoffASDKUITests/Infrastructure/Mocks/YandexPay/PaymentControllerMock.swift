@@ -11,7 +11,7 @@ import TinkoffASDKCore
 final class PaymentControllerMock: IPaymentController {
 
     var delegate: PaymentControllerDelegate?
-    var webFlowDelegate: ThreeDSWebFlowDelegate?
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)?
 
     // MARK: - performPayment
 

@@ -20,22 +20,25 @@ final class CardsController {
 
     private let cardService: ICardService
     private let addCardController: IAddCardController
+    private let dispatchQueueType: IDispatchQueue.Type
 
     // MARK: Init
 
     init(
         cardService: ICardService,
-        addCardController: IAddCardController
+        addCardController: IAddCardController,
+        dispatchQueue: IDispatchQueue = DispatchQueue.main
     ) {
         self.cardService = cardService
         self.addCardController = addCardController
+        dispatchQueueType = type(of: dispatchQueue)
     }
 }
 
 // MARK: - ICardsController
 
 extension CardsController: ICardsController {
-    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
         get { addCardController.webFlowDelegate }
         set { addCardController.webFlowDelegate = newValue }
     }
@@ -43,8 +46,8 @@ extension CardsController: ICardsController {
     var customerKey: String { addCardController.customerKey }
 
     func addCard(options: CardOptions, completion: @escaping (AddCardResult) -> Void) {
-        let completionDecorator: (AddCardResult) -> Void = { result in
-            DispatchQueue.performOnMain { completion(result) }
+        let completionDecorator: (AddCardResult) -> Void = { [weak self] result in
+            self?.dispatchQueueType.performOnMain { completion(result) }
         }
 
         addCardController.addCard(options: options) { [weak self] result in
@@ -64,20 +67,20 @@ extension CardsController: ICardsController {
     func removeCard(cardId: String, completion: @escaping (Result<RemoveCardPayload, Swift.Error>) -> Void) {
         let data = RemoveCardData(cardId: cardId, customerKey: customerKey)
 
-        cardService.removeCard(data: data) { result in
-            DispatchQueue.performOnMain { completion(result) }
+        cardService.removeCard(data: data) { [weak self] result in
+            self?.dispatchQueueType.performOnMain { completion(result) }
         }
     }
 
     func getActiveCards(completion: @escaping (Result<[PaymentCard], Swift.Error>) -> Void) {
         let getCardListData = GetCardListData(customerKey: customerKey)
 
-        cardService.getCardList(data: getCardListData) { result in
+        cardService.getCardList(data: getCardListData) { [weak self] result in
             let filteredCardsResult = result.map { cards in
                 cards.filter { $0.status == .active }
             }
 
-            DispatchQueue.performOnMain { completion(filteredCardsResult) }
+            self?.dispatchQueueType.performOnMain { completion(filteredCardsResult) }
         }
     }
 }

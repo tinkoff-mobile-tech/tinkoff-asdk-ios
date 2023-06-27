@@ -10,12 +10,12 @@ import TinkoffASDKUI
 
 final class AddCardControllerMock: IAddCardController {
 
-    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
         get { underlyingWebFlowDelegate }
         set { underlyingWebFlowDelegate = newValue }
     }
 
-    var underlyingWebFlowDelegate: ThreeDSWebFlowDelegate!
+    var underlyingWebFlowDelegate: (any ThreeDSWebFlowDelegate)?
 
     var customerKey: String {
         get { underlyingCustomerKey }

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Результат проверки наличия установленного приложения с указанной схемой
-enum AppCheckingResult {
+enum AppCheckingResult: Equatable {
     /// Приложение установлено
     case installed
     /// Приложения не установлено

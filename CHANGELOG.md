@@ -2,6 +2,8 @@
 ## [Unreleased]
 
 ### Added
+* [EACQAPW-4844] README corrections
+* [EACQAPW-4910] README add new capabilities CardController + PaymentController
 * [EACQAPW-4868] Make a Github Action to run snapshot tests
 * [EACQAPW-4625] SBP Sheet tests
 * [EACQAPW-4626] Qr ImageView tests
@@ -21,6 +23,10 @@
 * [EACQAPW-4761] Add New Bank Bins
 * [EACQAPW-4186] Cocoapods remove autoimports of UIKit
 * [EACQAPW-5207] PaymentStatusUpdateService Tests
+* [EACQAPW-5208] AppChecker and TinkoffPayAppChecker Tests
+* [EACQAPW-5209] MoneyFormatter Tests
+* [EACQAPW-5238] PaymentController Tests
+* [EACQAPW-5262] CardsController Tests
 * [EACQAPW-5218] AddCardController final tests
 
 ### Fixed
@@ -31,6 +37,8 @@
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
 * [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 * [EACQAPW-4996] Card payment proper status handles
+* [EACQAPW-5231] Fix of images rendered badly
+* [EACQAPW-5258] RunLoop run caused bugy getState handles
 
 ## [3.0.0] - 2023-05-12Z
 

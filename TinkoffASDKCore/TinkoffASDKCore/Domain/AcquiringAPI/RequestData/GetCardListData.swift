@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct GetCardListData: Encodable {
+public struct GetCardListData: Encodable, Equatable {
     private enum CodingKeys: CodingKey {
         case customerKey
 

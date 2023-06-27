@@ -58,8 +58,10 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
             self.timer = timer
 
             RunLoop.current.add(timer, forMode: .common)
-            // Важно! Нужно явно запустить ранлуп, иначе таймер не будет работать
-            RunLoop.current.run()
+            if !RunLoop.current.isRunning {
+                // Важно! Нужно явно запустить ранлуп, иначе таймер не будет работать
+                RunLoop.current.run()
+            }
         }
     }
 }

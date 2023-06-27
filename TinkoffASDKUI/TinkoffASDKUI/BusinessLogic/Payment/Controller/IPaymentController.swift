@@ -13,7 +13,7 @@ public protocol IPaymentController: AnyObject {
     /// Делегат событий `IPaymentController`
     var delegate: PaymentControllerDelegate? { get set }
     /// Объект, предоставляющий UI-компоненты для прохождения 3DS Web Based Flow
-    var webFlowDelegate: ThreeDSWebFlowDelegate? { get set }
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? { get set }
 
     /// Совершает платеж с заданными параметрами
     ///
