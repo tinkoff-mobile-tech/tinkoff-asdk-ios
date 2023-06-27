@@ -28,6 +28,7 @@
 * [EACQAPW-5238] PaymentController Tests
 * [EACQAPW-5262] CardsController Tests
 * [EACQAPW-5218] AddCardController final tests
+* [EACQAPW-5281] CardRequisitesMasksResolver Tests
 
 ### Fixed
 
