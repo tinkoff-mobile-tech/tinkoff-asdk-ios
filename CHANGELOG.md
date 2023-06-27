@@ -36,6 +36,7 @@
 * [EACQAPW-4996] Card payment proper status handles
 * [EACQAPW-5231] Fix of images rendered badly (used png)
 * [EACQAPW-5258] RunLoop run caused bugy getState handles
+* [EACQAPW-5288] TPay Controller handle DEADLINE_EXPIRED
 * [EACQAPW-5297] Fix broken pdfs
 
 ## [3.0.0] - 2023-05-12Z
