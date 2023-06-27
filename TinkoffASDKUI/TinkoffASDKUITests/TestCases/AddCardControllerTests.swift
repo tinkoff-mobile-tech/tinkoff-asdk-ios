@@ -316,6 +316,186 @@ final class AddCardControllerTests: BaseTestCase {
         allureId(2559321, "Успешное добавление non 3ds карты")
         test_no3ds_success_addcard_full_flow(checkType: .no)
     }
+
+    func test_addCard_recevies_error_missing_paymentId_check3ds() {
+        // given
+        let sut = createAddCardController(checkType: .check3DS)
+        addCardServiceMock.addCardReturnValue = CancellableMock()
+        addCardServiceMock.addCardCompletionStub = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
+        var receivedExpectedError = false
+
+        // when
+        sut.addCard(options: CardOptions.fake(), completion: { result in
+            if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
+                if case .missingPaymentIdFor3DSFlow = castedError {
+                    receivedExpectedError = true
+                }
+            }
+        })
+        // then
+        XCTAssertEqual(addCardServiceMock.addCardCallsCount, 1)
+        XCTAssertTrue(receivedExpectedError)
+        XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 0)
+    }
+
+    func test_addCard_recevies_error_missing_paymentId_hold3ds() {
+        // given
+        let sut = createAddCardController(checkType: .hold3DS)
+        addCardServiceMock.addCardReturnValue = CancellableMock()
+        addCardServiceMock.addCardCompletionStub = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
+        var receivedExpectedError = false
+
+        // when
+        sut.addCard(options: CardOptions.fake(), completion: { result in
+            if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
+                if case .missingPaymentIdFor3DSFlow = castedError {
+                    receivedExpectedError = true
+                }
+            }
+        })
+        // then
+        XCTAssertEqual(addCardServiceMock.addCardCallsCount, 1)
+        XCTAssertTrue(receivedExpectedError)
+        XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 0)
+    }
+
+    func test_webflow_getter() {
+        // when
+        _ = sut.webFlowDelegate
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateCallsCount, 1)
+    }
+
+    func test_webflow_setter() {
+        // when
+        sut.webFlowDelegate = nil
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateSetterCounter, 1)
+    }
+
+    func test_complete3DSMethodIfNeededAndAttachCard_no_data() {
+        // given
+        let check3dsVersionPayload = Check3DSVersionPayload(
+            version: "2.0.0",
+            tdsServerTransID: nil,
+            threeDSMethodURL: nil,
+            paymentSystem: "visa"
+        )
+
+        sut = createAddCardController(checkType: .check3DS)
+        addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
+        addCardServiceMock.check3DSVersionCompletionStub = .success(check3dsVersionPayload)
+        addCardServiceMock.attachCardReturnValue = CancellableMock()
+        // when
+        addCardFlow_success(addCardCompletion: { _ in })
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 0)
+        XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 0)
+        XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 0)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 0)
+        XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
+    }
+
+    func test_complete3DSMethod_returns_error() {
+        // given
+        var receivedExpectedError = false
+        threeDSWebFlowControllerMock.complete3DSMethodThrowableError = TestsError.basic
+
+        // when
+        check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
+            switch result {
+            case let .failed(error) where (error as? TestsError) == .basic:
+                receivedExpectedError = true
+            default: break
+            }
+        })
+
+        // then
+        XCTAssertTrue(receivedExpectedError)
+        XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 0)
+    }
+
+    func test_missingMessageVersionFor3DS() {
+        // given
+        var receivedExpectedError = false
+        addCardServiceMock.attachCardCompletionStub = .success(
+            buildAttachCardPayload(attachCardStatus: .needConfirmation3DSACS(.fake()))
+        )
+
+        // when
+        check3DSFlow_success(checkType: .no, addCardCompletion: { result in
+            if case let .failed(error) = result, let castedErr = error as? AddCardController.Error {
+                if case .missingMessageVersionFor3DS = castedErr {
+                    receivedExpectedError = true
+                }
+            }
+        })
+
+        // then
+        XCTAssertTrue(receivedExpectedError)
+    }
+
+    func test_3DSConfirmationInWebView_error_invalidPaymentStatus() {
+
+        // given
+        var receivedExpectedError = false
+        addCardServiceMock.attachCardCompletionStub = .success(
+            buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake()))
+        )
+        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(.fake(status: .unknown))
+
+        // when
+        check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
+            guard case let .failed(error) = result else { return }
+            guard case let castedErr = error as? AddCardController.Error else { return }
+            guard case let .invalidPaymentStatus(status) = castedErr, status == .unknown else { return }
+            receivedExpectedError = true
+        })
+
+        // then
+        XCTAssertTrue(receivedExpectedError)
+    }
+
+    func test_getAddCardState_returns_error_on_failure() {
+        // given
+        var receivedExpectedError = false
+        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionInput = .failure(TestsError.basic)
+        addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
+
+        // when
+        check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
+            if case let .failed(error) = result, let castedError = error as? TestsError {
+                if castedError == .basic { receivedExpectedError = true }
+            }
+        })
+
+        // then
+        XCTAssertTrue(receivedExpectedError)
+    }
+
+    func test_validate_get_state_returns_error_on_wrong_status() {
+        // given
+        var receivedExpectedError = false
+        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .unknown))
+        addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
+
+        // when
+        check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
+            if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
+                if case let .invalidCardStatus(status) = castedError, status == .unknown {
+                    receivedExpectedError = true
+                }
+            }
+        })
+
+        // then
+        XCTAssertTrue(receivedExpectedError)
+    }
 }
 
 // MARK: - Helpers
