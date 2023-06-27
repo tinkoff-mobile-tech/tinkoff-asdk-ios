@@ -187,13 +187,13 @@ final class CardsControllerTests: BaseTestCase {
         let expectedData = RemoveCardData(cardId: cardId, customerKey: customerKey)
 
         var successPayload: RemoveCardPayload?
-        var faulireError: NSError?
+        var failureError: NSError?
         let completion: (Result<RemoveCardPayload, Error>) -> Void = { result in
             switch result {
             case let .success(payload):
                 successPayload = payload
             case let .failure(error):
-                faulireError = error as NSError
+                failureError = error as NSError
             }
         }
 
@@ -205,7 +205,7 @@ final class CardsControllerTests: BaseTestCase {
         XCTAssertEqual(cardServiceMock.removeCardReceivedArguments?.data, expectedData)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(successPayload, payload)
-        XCTAssertEqual(faulireError, nil)
+        XCTAssertEqual(failureError, nil)
     }
 
     func test_removeCard_failure() {
@@ -223,13 +223,13 @@ final class CardsControllerTests: BaseTestCase {
         let expectedData = RemoveCardData(cardId: cardId, customerKey: customerKey)
 
         var successPayload: RemoveCardPayload?
-        var faulireError: NSError?
+        var failureError: NSError?
         let completion: (Result<RemoveCardPayload, Error>) -> Void = { result in
             switch result {
             case let .success(payload):
                 successPayload = payload
             case let .failure(error):
-                faulireError = error as NSError
+                failureError = error as NSError
             }
         }
 
@@ -241,7 +241,7 @@ final class CardsControllerTests: BaseTestCase {
         XCTAssertEqual(cardServiceMock.removeCardReceivedArguments?.data, expectedData)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(successPayload, nil)
-        XCTAssertEqual(faulireError, error)
+        XCTAssertEqual(failureError, error)
     }
 
     func test_getActiveCards_success() {
@@ -258,13 +258,13 @@ final class CardsControllerTests: BaseTestCase {
         let expectedData = GetCardListData(customerKey: customerKey)
 
         var successCards: [PaymentCard]?
-        var faulireError: NSError?
+        var failureError: NSError?
         let completion: (Result<[PaymentCard], Error>) -> Void = { result in
             switch result {
             case let .success(cards):
                 successCards = cards
             case let .failure(error):
-                faulireError = error as NSError
+                failureError = error as NSError
             }
         }
 
@@ -276,7 +276,7 @@ final class CardsControllerTests: BaseTestCase {
         XCTAssertEqual(cardServiceMock.getCardListReceivedArguments?.data, expectedData)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(successCards, [])
-        XCTAssertEqual(faulireError, nil)
+        XCTAssertEqual(failureError, nil)
     }
 
     func test_getActiveCards_failure() {
@@ -293,13 +293,13 @@ final class CardsControllerTests: BaseTestCase {
         let expectedData = GetCardListData(customerKey: customerKey)
 
         var successCards: [PaymentCard]?
-        var faulireError: NSError?
+        var failureError: NSError?
         let completion: (Result<[PaymentCard], Error>) -> Void = { result in
             switch result {
             case let .success(cards):
                 successCards = cards
             case let .failure(error):
-                faulireError = error as NSError
+                failureError = error as NSError
             }
         }
 
@@ -311,7 +311,7 @@ final class CardsControllerTests: BaseTestCase {
         XCTAssertEqual(cardServiceMock.getCardListReceivedArguments?.data, expectedData)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(successCards, nil)
-        XCTAssertEqual(faulireError, error)
+        XCTAssertEqual(failureError, error)
     }
 
     func test_addCard_success_when_cardIdNil() {
