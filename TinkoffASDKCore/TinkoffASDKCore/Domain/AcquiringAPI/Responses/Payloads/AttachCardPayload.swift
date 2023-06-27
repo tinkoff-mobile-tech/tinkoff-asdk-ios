@@ -95,9 +95,6 @@ extension AttachCardPayload: Decodable {
                     )
                 )
             }
-        case .loop:
-            let requestKey = try container.decode(String.self, forKey: .requestKey)
-            attachCardStatus = .needConfirmationRandomAmount(requestKey)
         default:
             attachCardStatus = .done
         }
