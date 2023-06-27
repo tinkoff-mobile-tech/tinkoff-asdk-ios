@@ -26,7 +26,7 @@ final class PaymentController: IPaymentController {
 
     weak var delegate: PaymentControllerDelegate?
 
-    var webFlowDelegate: ThreeDSWebFlowDelegate? {
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
         get { threeDSWebFlowController.webFlowDelegate }
         set { threeDSWebFlowController.webFlowDelegate = newValue }
     }

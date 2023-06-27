@@ -25,7 +25,7 @@ public extension AddCardResult {
         switch (lhs, rhs) {
 
         case let (.succeded(lhsCard), .succeded(rhsCard)): return lhsCard == rhsCard
-        case let (.failed(lhsErr), .failed(rhsErr)): return lhsErr as NSError === rhsErr as NSError
+        case let (.failed(lhsErr), .failed(rhsErr)): return lhsErr as NSError == rhsErr as NSError
         case (.cancelled, .cancelled): return true
 
         default: return false

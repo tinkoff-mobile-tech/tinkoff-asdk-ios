@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum PaymentCardStatus: String, Decodable {
+public enum PaymentCardStatus: String, Decodable, Equatable {
     case active = "A"
     case inactive = "I"
     case deleted = "D"

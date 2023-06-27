@@ -19,7 +19,7 @@ final class ThreeDSWebFlowController: IThreeDSWebFlowController {
 
     // MARK: Dependencies
 
-    weak var webFlowDelegate: ThreeDSWebFlowDelegate?
+    weak var webFlowDelegate: (any ThreeDSWebFlowDelegate)?
     private let threeDSService: IAcquiringThreeDSService
     private let threeDSWebViewAssembly: IThreeDSWebViewAssembly
 

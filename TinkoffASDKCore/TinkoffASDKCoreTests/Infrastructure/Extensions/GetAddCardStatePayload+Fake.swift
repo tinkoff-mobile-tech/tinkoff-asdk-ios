@@ -9,11 +9,11 @@ import TinkoffASDKCore
 
 extension GetAddCardStatePayload {
 
-    static func fake(status: AcquiringStatus) -> Self {
+    static func fake(status: AcquiringStatus, cardId: String? = "234234") -> Self {
         GetAddCardStatePayload(
             requestKey: "requestKey",
             status: status,
-            cardId: "234234",
+            cardId: cardId,
             rebillId: ""
         )
     }

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Параметры карты
-public struct CardOptions {
+public struct CardOptions: Equatable {
     /// Номер карты
     public let pan: String
     /// Срок годности карты в формате `MM/YY`

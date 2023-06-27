@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct RemoveCardPayload: Decodable {
+public struct RemoveCardPayload: Decodable, Equatable {
     private enum CodingKeys: CodingKey {
         case cardId
         case cardStatus

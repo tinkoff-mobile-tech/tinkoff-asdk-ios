@@ -14,7 +14,7 @@ final class YandexPayPaymentSheetPresenter {
     weak var view: ICommonSheetView?
     private weak var output: IYandexPayPaymentSheetOutput?
     private let paymentController: IPaymentController
-    private let paymentControllerUIProvider: ThreeDSWebFlowDelegate
+    private let paymentControllerUIProvider: any ThreeDSWebFlowDelegate
     private let paymentFlow: PaymentFlow
     private let base64Token: String
 
@@ -27,7 +27,7 @@ final class YandexPayPaymentSheetPresenter {
 
     init(
         paymentController: IPaymentController,
-        paymentControllerUIProvider: ThreeDSWebFlowDelegate,
+        paymentControllerUIProvider: any ThreeDSWebFlowDelegate,
         paymentFlow: PaymentFlow,
         base64Token: String,
         output: IYandexPayPaymentSheetOutput
