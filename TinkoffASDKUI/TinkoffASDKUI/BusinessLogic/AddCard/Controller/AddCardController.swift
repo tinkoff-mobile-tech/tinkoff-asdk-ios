@@ -17,7 +17,6 @@ final class AddCardController {
     enum Error: Swift.Error {
         case missingPaymentIdFor3DSFlow
         case missingMessageVersionFor3DS
-        case unsupportedResponseStatus
         case invalidPaymentStatus(AcquiringStatus)
         case invalidCardStatus(AcquiringStatus)
     }
@@ -261,8 +260,6 @@ extension AddCardController {
                 attachPayload: attachPayload,
                 completion: completion
             )
-        case .needConfirmationRandomAmount:
-            completion(.failed(Error.unsupportedResponseStatus))
         }
     }
 
@@ -355,8 +352,6 @@ extension AddCardController.Error: LocalizedError {
             return "Unexpected nil for `paymentId` in `AddCard` response when using 3DS Flow"
         case .missingMessageVersionFor3DS:
             return "Unexpected nil for `messageVersion` when using 3DS v2 Flow"
-        case .unsupportedResponseStatus:
-            return "`LOOP_CHECKING` status is deprecated and not handling in Acquiring SDK"
         case let .invalidPaymentStatus(status):
             return "Something went wrong when withdrawing money from the card. \(status.rawValue) isn't valid final payment status"
         case let .invalidCardStatus(status):

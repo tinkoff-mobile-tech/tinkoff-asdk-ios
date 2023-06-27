@@ -38,7 +38,8 @@
 * [EACQAPW-4996] Card payment proper status handles
 * [EACQAPW-5231] Fix of images rendered badly
 * [EACQAPW-5258] RunLoop run caused bugy getState handles
-
+* [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
+ 
 ## [3.0.0] - 2023-05-12Z
 
 ### Added
