@@ -8,6 +8,13 @@
 import Foundation
 
 extension RunLoop {
-    /// Запущен ли ранлуп
+    /// Показывает запущен ли RunLoop
     var isRunning: Bool { currentMode != nil }
+
+    /// Запускает RunLoop, если он не запущет на текущем потоке
+    func runIfNeeded() {
+        if !isRunning {
+            run()
+        }
+    }
 }
