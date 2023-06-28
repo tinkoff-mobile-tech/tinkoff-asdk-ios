@@ -1,6 +1,8 @@
 # Changelog
 ## [Unreleased]
 
+## [3.1.0] - 2023-06-28Z
+
 ### Added
 * [EACQAPW-4844] README corrections
 * [EACQAPW-4910] README add new capabilities CardController + PaymentController
