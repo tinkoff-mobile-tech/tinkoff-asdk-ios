@@ -1,8 +1,9 @@
 {
   "images" : [
     {
-      "filename" : "sbp logo.pdf",
-      "idiom" : "universal"
+      "filename" : "sbp logo light.png",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
       "appearances" : [
@@ -11,8 +12,41 @@
           "value" : "dark"
         }
       ],
-      "filename" : "sbp logo 1.pdf",
-      "idiom" : "universal"
+      "filename" : "sbp logo dark.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "sbp logo light@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "sbp logo dark@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "sbp logo light@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "sbp logo dark@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

@@ -161,7 +161,7 @@ final class TinkoffPayController: ITinkoffPayController {
                         completedWithFailed: paymentState,
                         error: Error.didReceiveFailedPaymentState(paymentState)
                     )
-                case let .success(paymentState) where retryingAllowed:
+                case let .success(paymentState) where retryingAllowed && paymentState.status != .deadlineExpired:
                     self.delegate?.tinkoffPayController(self, didReceiveIntermediate: paymentState)
                     self.requestPaymentState(
                         paymentId: paymentId,
