@@ -9,11 +9,11 @@
 
 extension GetTerminalPayMethodsPayload {
 
-    static func fake(methods: [TerminalPayMethod]) -> Self {
+    static func fake(methods: [TerminalPayMethod], addCardScheme: Bool = false) -> Self {
         GetTerminalPayMethodsPayload(
             terminalInfo: TerminalInfo(
                 payMethods: methods,
-                addCardScheme: false
+                addCardScheme: addCardScheme
             )
         )
     }

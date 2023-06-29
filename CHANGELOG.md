@@ -9,6 +9,7 @@
 * [EACQAPW-5281] CardRequisitesMasksResolver Tests
 * [EACQAPW-5291] RepeatedRequestHelper Tests
 * [EACQAPW-5292] CardRequisitesValidator Tests
+* [EACQAPW-5307] MainFormDataStateLoader Tests
 
 ### Fixed
 
