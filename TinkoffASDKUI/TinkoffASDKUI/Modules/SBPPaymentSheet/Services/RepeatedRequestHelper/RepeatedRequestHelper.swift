@@ -12,7 +12,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
 
     // MARK: Dependencies
 
-    private weak var timer: Timer?
+    private let timerProvider: ITimerProvider
 
     // MARK: Properties
 
@@ -23,12 +23,16 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
 
     // MARK: Initialization
 
-    init(delay: TimeInterval = .paymentStatusRequestDelay) {
+    init(
+        timerProvider: ITimerProvider = TimerProvider(),
+        delay: TimeInterval = .paymentStatusRequestDelay
+    ) {
+        self.timerProvider = timerProvider
         self.delay = delay
     }
 
     deinit {
-        timer?.invalidate()
+        timerProvider.invalidateTimer()
     }
 
     // MARK: IRepeatedRequestHelper
@@ -42,7 +46,7 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
     /// Важно! Для корректной работы необходимо отправлять задачи с одного и того же потока
     /// - Parameter action: Блок который должен быть выполнен
     func executeWithWaitingIfNeeded(action: @escaping () -> Void) {
-        timer?.invalidate()
+        timerProvider.invalidateTimer()
 
         let currentTime = Date()
         let differenceInSeconds = currentTime.timeIntervalSince(lastExecutionTime)
@@ -51,17 +55,12 @@ final class RepeatedRequestHelper: IRepeatedRequestHelper {
             lastExecutionTime = Date()
             action()
         } else {
-            let timer = Timer(timeInterval: delay - differenceInSeconds, repeats: false) { [weak self] _ in
+            let actionDecorator = { [weak self] in
                 self?.lastExecutionTime = Date()
                 action()
             }
-            self.timer = timer
 
-            RunLoop.current.add(timer, forMode: .common)
-            if !RunLoop.current.isRunning {
-                // Важно! Нужно явно запустить ранлуп, иначе таймер не будет работать
-                RunLoop.current.run()
-            }
+            timerProvider.executeTimer(timeInterval: delay - differenceInSeconds, action: actionDecorator)
         }
     }
 }
