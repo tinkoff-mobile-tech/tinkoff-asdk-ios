@@ -227,4 +227,24 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
         let methods = try XCTUnwrap(state?.otherPaymentMethods)
         XCTAssertTrue(methods.isEmpty)
     }
+
+    func test_thatTinkoffPayIsNotDisplayed_whenStateIsFinish() throws {
+        // given
+        terminalServiceMock.getTerminalPayMethodsReturnValue = CancellableMock()
+        terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
+            .fake(methods: [.tinkoffPay(.fake())], addCardScheme: true)
+        )
+
+        // when
+        var state: MainFormDataState?
+        sut.loadState(for: .finish(paymentOptions: .fake())) { result in
+            if case let .success(data) = result {
+                state = data
+            }
+        }
+
+        // then
+        let methods = try XCTUnwrap(state?.otherPaymentMethods)
+        XCTAssertTrue(methods.isEmpty)
+    }
 }
