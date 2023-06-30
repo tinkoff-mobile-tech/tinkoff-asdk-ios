@@ -11,6 +11,7 @@
 * [EACQAPW-5292] CardRequisitesValidator Tests
 * [EACQAPW-5307] MainFormDataStateLoader Tests
 * [EACQAPW-5332] CardListPresenter Tests
+* [EACQAPW-5347] CardPaymentProcess Tests
 
 ### Fixed
 
