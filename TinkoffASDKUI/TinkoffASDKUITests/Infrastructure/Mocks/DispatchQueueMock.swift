@@ -14,11 +14,11 @@ final class DispatchQueueMock: IDispatchQueue {
     // MARK: - performOnMain
 
     static var performOnMainCallsCount = 0
-    static var performOnMainBlockClosureShouldCalls = false
+    static var performOnMainBlockClosureShouldExecute = false
 
     static func performOnMain(_ block: @escaping () -> Void) {
         performOnMainCallsCount += 1
-        if performOnMainBlockClosureShouldCalls {
+        if performOnMainBlockClosureShouldExecute {
             block()
         }
     }
@@ -30,14 +30,14 @@ final class DispatchQueueMock: IDispatchQueue {
     var asyncCallsCount = 0
     var asyncReceivedArguments: AsyncArguments?
     var asyncReceivedInvocations: [AsyncArguments] = []
-    var asyncWorkShouldCalls = false
+    var asyncWorkShouldExecute = false
 
     func async(group: DispatchGroup?, qos: DispatchQoS, flags: DispatchWorkItemFlags, execute work: @convention(block) @escaping () -> Void) {
         asyncCallsCount += 1
         let arguments = (group, qos, flags, work)
         asyncReceivedArguments = arguments
         asyncReceivedInvocations.append(arguments)
-        if asyncWorkShouldCalls {
+        if asyncWorkShouldExecute {
             work()
         }
     }
@@ -49,14 +49,14 @@ final class DispatchQueueMock: IDispatchQueue {
     var asyncAfterCallsCount = 0
     var asyncAfterReceivedArguments: AsyncAfterArguments?
     var asyncAfterReceivedInvocations: [AsyncAfterArguments] = []
-    var asyncAfterShouldCalls = false
+    var asyncAfterShouldExecute = false
 
     func asyncAfter(deadline: DispatchTime, qos: DispatchQoS, flags: DispatchWorkItemFlags, execute work: @convention(block) @escaping () -> Void) {
         asyncAfterCallsCount += 1
         let arguments = (deadline, qos, flags, work)
         asyncAfterReceivedArguments = arguments
         asyncAfterReceivedInvocations.append(arguments)
-        if asyncAfterShouldCalls {
+        if asyncAfterShouldExecute {
             work()
         }
     }
@@ -68,14 +68,14 @@ final class DispatchQueueMock: IDispatchQueue {
     var asyncDedupedCallsCount = 0
     var asyncDedupedReceivedArguments: AsyncDedupedArguments?
     var asyncDedupedReceivedInvocations: [AsyncDedupedArguments] = []
-    var asyncDedupedWorkShouldCalls = false
+    var asyncDedupedWorkShouldExecute = false
 
     func asyncDeduped(target: AnyObject, after delay: TimeInterval, execute work: @convention(block) @escaping () -> Void) {
         asyncDedupedCallsCount += 1
         let arguments = (target, delay, work)
         asyncDedupedReceivedArguments = arguments
         asyncDedupedReceivedInvocations.append(arguments)
-        if asyncDedupedWorkShouldCalls {
+        if asyncDedupedWorkShouldExecute {
             work()
         }
     }
@@ -86,6 +86,6 @@ final class DispatchQueueMock: IDispatchQueue {
 extension DispatchQueueMock {
     static func resetPerformOnMain() {
         DispatchQueueMock.performOnMainCallsCount = 0
-        DispatchQueueMock.performOnMainBlockClosureShouldCalls = false
+        DispatchQueueMock.performOnMainBlockClosureShouldExecute = false
     }
 }

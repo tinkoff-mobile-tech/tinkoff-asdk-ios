@@ -25,14 +25,14 @@ final class TimerProviderMock: ITimerProvider {
     var executeTimerCallsCount = 0
     var executeTimerReceivedArguments: ExecuteTimerArguments?
     var executeTimerReceivedInvocations: [ExecuteTimerArguments] = []
-    var executeTimerActionShouldCalls: Bool = false
+    var executeTimerActionShouldExecute: Bool = false
 
     func executeTimer(timeInterval: TimeInterval, repeats: Bool, action: @escaping () -> Void) {
         executeTimerCallsCount += 1
         let arguments = (timeInterval, repeats, action)
         executeTimerReceivedArguments = arguments
         executeTimerReceivedInvocations.append(arguments)
-        if executeTimerActionShouldCalls {
+        if executeTimerActionShouldExecute {
             action()
         }
     }

@@ -385,7 +385,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let payButtonMock = PayButtonViewOutputMock()
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
 
-        routerMock.openTinkoffPayLandingCompletionShouldCalls = true
+        routerMock.openTinkoffPayLandingCompletionShouldExecute = true
 
         let url = try XCTUnwrap(URL(string: "https://www.tinkoff.ru"))
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
@@ -507,7 +507,7 @@ final class MainFormPresenterTests: BaseTestCase {
 
     func test_commonSheetViewDidTapSecondaryButton_when_presentationState_payMethodsPresenting() throws {
         // given
-        routerMock.openTinkoffPayLandingCompletionShouldCalls = true
+        routerMock.openTinkoffPayLandingCompletionShouldExecute = true
 
         let url = try XCTUnwrap(URL(string: "https://www.tinkoff.ru"))
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
@@ -1021,7 +1021,7 @@ final class MainFormPresenterTests: BaseTestCase {
             paymentResult = result
         })
 
-        routerMock.openTinkoffPayLandingCompletionShouldCalls = true
+        routerMock.openTinkoffPayLandingCompletionShouldExecute = true
 
         let url = try XCTUnwrap(URL(string: "https://www.tinkoff.ru"))
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)

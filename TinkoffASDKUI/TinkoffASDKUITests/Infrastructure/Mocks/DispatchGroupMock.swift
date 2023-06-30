@@ -19,14 +19,14 @@ final class DispatchGroupMock: IDispatchGroup {
     var notifyCallsCount = 0
     var notifyReceivedArguments: NotifyArguments?
     var notifyReceivedInvocations: [NotifyArguments] = []
-    var notifyWorkShouldCalls = false
+    var notifyWorkShouldExecute = false
 
     func notify(qos: DispatchQoS, flags: DispatchWorkItemFlags, queue: DispatchQueue, execute work: @convention(block) @escaping () -> Void) {
         notifyCallsCount += 1
         let arguments = (qos, flags, queue, work)
         notifyReceivedArguments = arguments
         notifyReceivedInvocations.append(arguments)
-        if notifyWorkShouldCalls {
+        if notifyWorkShouldExecute {
             wait(for: 0.1)
             work()
         }

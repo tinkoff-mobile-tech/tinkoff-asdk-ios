@@ -15,7 +15,7 @@ final class SnackbarControllerMock: ISnackbarController {
 
     var showSnackViewCallsCount = 0
     var showSnackViewCallArguments: ShowSnackViewArguments?
-    var showSnackViewsShouldRunCompletion = true
+    var showSnackViewsShouldExecute = true
 
     func showSnackView(
         config: SnackbarView.Configuration,
@@ -24,7 +24,7 @@ final class SnackbarControllerMock: ISnackbarController {
     ) {
         showSnackViewCallsCount += 1
         showSnackViewCallArguments = (config, animated, completion)
-        if showSnackViewsShouldRunCompletion { completion?(true) }
+        if showSnackViewsShouldExecute { completion?(true) }
     }
 
     // MARK: - hideSnackView
@@ -33,11 +33,11 @@ final class SnackbarControllerMock: ISnackbarController {
 
     var hideSnackViewCallsCount = 0
     var hideSnackViewCallArguments: HideSnackViewArguments?
-    var hideSnackViewShouldRunCompletion = true
+    var hideSnackViewShouldExecute = true
 
     func hideSnackView(animated: Bool, completion: ((Bool) -> Void)?) {
         hideSnackViewCallsCount += 1
         hideSnackViewCallArguments = (animated, completion)
-        if hideSnackViewShouldRunCompletion { completion?(true) }
+        if hideSnackViewShouldExecute { completion?(true) }
     }
 }

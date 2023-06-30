@@ -159,8 +159,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let payload1 = GetPaymentStatePayload.some(status: .formShowed)
         let payload2 = GetPaymentStatePayload.some(status: .authorized)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload1), .success(payload2)]
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -191,8 +191,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let results: [Result<GetPaymentStatePayload, Error>] = payloads.map { .success($0) }
 
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = results
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -218,8 +218,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         let error = NSError(domain: "error", code: 1234)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.failure(error), .failure(error)]
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -267,8 +267,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         let payload = GetPaymentStatePayload.some(status: .confirming)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         sut.viewDidLoad()
 
@@ -327,8 +327,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         let payload = GetPaymentStatePayload.some(status: .formShowed)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
         sut.viewDidLoad()
 
         // when
@@ -346,8 +346,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         let payload = GetPaymentStatePayload.some(status: .authorized)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
         sut.viewDidLoad()
 
         // when
@@ -390,8 +390,8 @@ extension SBPPaymentSheetPresenterTests {
 
         let payload = GetPaymentStatePayload.some(status: status)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
     }
 
     private func commonTestsForThenViewDidLoadTests(status: CommonSheetState.Status, paymentId: String) {

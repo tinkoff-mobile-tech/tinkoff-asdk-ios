@@ -88,7 +88,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         cardsControllerMock.getActiveCardsStub = { completion in
             completion(.success(self.createActiveCardsArray()))
         }
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -108,7 +108,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         cardsControllerMock.getActiveCardsStub = { completion in
             completion(.failure(error))
         }
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -531,7 +531,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
 
     func test_paymentControllerDidFinishPayment() {
         // given
-        routerMock.closeScreenCompletionShouldCalls = true
+        routerMock.closeScreenCompletionShouldExecute = true
 
         // when
         sut.paymentController(
@@ -551,7 +551,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
 
     func test_paymentControllerPaymentWasCancelled() {
         // given
-        routerMock.closeScreenCompletionShouldCalls = true
+        routerMock.closeScreenCompletionShouldExecute = true
 
         // when
         sut.paymentController(
@@ -570,7 +570,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
 
     func test_paymentControllerDidFailed() {
         // given
-        routerMock.closeScreenCompletionShouldCalls = true
+        routerMock.closeScreenCompletionShouldExecute = true
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
 
         // when

@@ -118,7 +118,7 @@ final class PaymentStatusUpdateServiceTests: BaseTestCase {
         let first = GetPaymentStatePayload.fake(status: .new)
         let second = GetPaymentStatePayload.fake(status: .confirmed)
 
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(first), .success(second)]
 
         let data = FullPaymentData(paymentProcess: PaymentProcessMock(), payload: first, cardId: nil, rebillId: nil)
@@ -140,7 +140,7 @@ final class PaymentStatusUpdateServiceTests: BaseTestCase {
         let first = GetPaymentStatePayload.fake(status: .new)
         let second = GetPaymentStatePayload.fake(status: .confirmed)
 
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(first), .success(second)]
 
         let data = FullPaymentData(paymentProcess: PaymentProcessMock(), payload: first, cardId: nil, rebillId: nil)
@@ -163,7 +163,7 @@ final class PaymentStatusUpdateServiceTests: BaseTestCase {
         let first = GetPaymentStatePayload.fake(status: .new)
         let error = NSError(domain: "error", code: 123456)
 
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(first), .failure(error)]
 
         let data = FullPaymentData(paymentProcess: PaymentProcessMock(), payload: first, cardId: nil, rebillId: nil)
@@ -186,7 +186,7 @@ final class PaymentStatusUpdateServiceTests: BaseTestCase {
         let first = GetPaymentStatePayload.fake(status: .new)
         let error = NSError(domain: "error", code: 123456)
 
-        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldCalls = true
+        repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs =
             [.success(first), .failure(error), .failure(error), .failure(error)]
 

@@ -71,7 +71,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = []
 
         // when
@@ -123,7 +123,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
 
         // when
@@ -169,7 +169,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -196,7 +196,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsCount = 7
 
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -227,7 +227,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         sut.set(banks: loadedBanks)
 
@@ -257,7 +257,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         sut.set(banks: loadedBanks)
 
@@ -290,7 +290,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = []
 
         sut.set(banks: loadedBanks)
@@ -371,7 +371,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
 
         sut.viewDidLoad()
@@ -400,7 +400,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
 
         sut.viewDidLoad()
@@ -474,7 +474,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
 
         sut.viewDidLoad()
         let stub = try XCTUnwrap(viewMock.showStubViewReceivedArguments)
@@ -487,7 +487,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         dispatchGroupMock.leaveCallsCount = 0
         dispatchGroupMock.notifyCallsCount = 0
         dispatchGroupMock.notifyReceivedArguments = nil
-        dispatchGroupMock.notifyWorkShouldCalls = false
+        dispatchGroupMock.notifyWorkShouldExecute = false
 
         // when
         switch stub {
@@ -521,7 +521,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
-        mainDispatchQueueMock.asyncWorkShouldCalls = true
+        mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         sut.set(banks: loadedBanks)
         sut.viewDidLoad()
@@ -530,7 +530,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildCommonCallsCount = 0
         viewMock.reloadTableViewCallsCount = 0
         paymentServiceMock.loadPaymentQrCallsCount = 0
-        mainDispatchQueueMock.asyncWorkShouldCalls = false
+        mainDispatchQueueMock.asyncWorkShouldExecute = false
 
         // when
         switch stub {
@@ -558,7 +558,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
-        dispatchGroupMock.notifyWorkShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
 
         sut.viewDidLoad()
         let stub = try XCTUnwrap(viewMock.showStubViewReceivedArguments)
@@ -602,8 +602,8 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
-        dispatchGroupMock.notifyWorkShouldCalls = true
-        routerMock.closeScreenCompletionShouldCalls = true
+        dispatchGroupMock.notifyWorkShouldExecute = true
+        routerMock.closeScreenCompletionShouldExecute = true
 
         sut.viewDidLoad()
         let stub = try XCTUnwrap(viewMock.showStubViewReceivedArguments)
@@ -634,7 +634,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         }
 
         configureSut()
-        routerMock.closeScreenCompletionShouldCalls = true
+        routerMock.closeScreenCompletionShouldExecute = true
 
         // when
         sut.closeButtonPressed()
@@ -706,7 +706,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
-        mainDispatchQueueMock.asyncDedupedWorkShouldCalls = true
+        mainDispatchQueueMock.asyncDedupedWorkShouldExecute = true
 
         sut.set(qrPayload: .any, banks: loadedBanks)
         sut.viewDidLoad()
@@ -727,7 +727,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
-        mainDispatchQueueMock.asyncDedupedWorkShouldCalls = true
+        mainDispatchQueueMock.asyncDedupedWorkShouldExecute = true
 
         sut.set(qrPayload: .any, banks: loadedBanks)
         sut.viewDidLoad()
@@ -750,7 +750,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let loadedBanks = [SBPBank](repeating: .any, count: 5)
         cellPresentersAssemblyMock.buildReturnValue = anyCellPresenter
         cellPresentersAssemblyMock.buildWithActionReturnValue = anyCellPresenter
-        mainDispatchQueueMock.asyncDedupedWorkShouldCalls = true
+        mainDispatchQueueMock.asyncDedupedWorkShouldExecute = true
 
         sut.set(qrPayload: .any, banks: loadedBanks)
         sut.viewDidLoad()
@@ -798,7 +798,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         }
 
         configureSut()
-        routerMock.closeScreenCompletionShouldCalls = true
+        routerMock.closeScreenCompletionShouldExecute = true
 
         // when
         sut.sbpPaymentSheet(completedWith: .cancelled())

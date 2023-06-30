@@ -13,11 +13,11 @@ final class RepeatedRequestHelperMock: IRepeatedRequestHelper {
     // MARK: - executeWithWaitingIfNeeded
 
     var executeWithWaitingIfNeededCallsCount = 0
-    var executeWithWaitingIfNeededActionShouldCalls = false
+    var executeWithWaitingIfNeededActionShouldExecute = false
 
     func executeWithWaitingIfNeeded(action: @escaping () -> Void) {
         executeWithWaitingIfNeededCallsCount += 1
-        if executeWithWaitingIfNeededActionShouldCalls {
+        if executeWithWaitingIfNeededActionShouldExecute {
             action()
         }
     }
