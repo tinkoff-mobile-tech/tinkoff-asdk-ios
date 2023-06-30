@@ -182,21 +182,203 @@ final class CardPaymentProcessTests: XCTestCase {
     // MARK: - when start() + paymentsFlow == .finish()
 
     func test_Start_paymentFlow_finish_Check3DSVersion_success_hpayloadIsNotNill() throws {
-        let payload = Check3DSVersionPayload(
-            version: "",
-            tdsServerTransID: "",
-            threeDSMethodURL: "",
-            paymentSystem: ""
-        )
-
         // when
         let dependencies = try start_paymentFlow_finish(
-            check3DSVersionResult: .success(payload)
+            check3DSVersionResult: .success(.fake())
         )
 
         // then
         XCTAssertEqual(
             dependencies.paymentDelegateMock.paymentNeedCollect3DsCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DS_authorized() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DS(.fake()),
+            confirmationCompletion: .success(.fake())
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            .authorized
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DS_cancelled() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DS(.fake()),
+            confirmationCancelled: ()
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            .cancelled
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DSACS_authorized() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DSACS(.fake()),
+            confirmationCompletion: .success(.fake())
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            .authorized
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DSACS_cancelled() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DSACS(.fake()),
+            confirmationCancelled: ()
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            .cancelled
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DS2AppBased_authorized() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DS2AppBased(.fake()),
+            confirmationCompletion: .success(.fake())
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            .authorized
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DS2AppBased_cancelled() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DS2AppBased(.fake()),
+            confirmationCancelled: ()
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            1
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            .cancelled
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmation3DS2AppBased_failed() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .needConfirmation3DS2AppBased(.fake()),
+            confirmationCompletion: .failure(ErrorStub())
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            1
+        )
+    }
+
+    func test_Start_paymentFlow_finish_NeedConfirmationUnknown_doNothing() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .success(.fake()),
+            responseStatus: .unknown,
+            confirmationCompletion: .success(.fake())
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            0
+        )
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            0
+        )
+    }
+
+    func test_Start_paymentFlow_finish_Check3DSVersion_failure() throws {
+        // when
+        let dependencies = try start_paymentFlow_finish(
+            check3DSVersionResult: .failure(ErrorStub())
+        )
+
+        // then
+        XCTAssertEqual(
+            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
             1
         )
     }
@@ -219,6 +401,36 @@ final class CardPaymentProcessTests: XCTestCase {
             dependencies.paymentsServiceMock.finishAuthorizeCallCounter,
             1
         )
+    }
+
+    func test_thatOldRequestIsCancelled_whenNewRequestAssigned() {
+        // given
+        let dependencies = prepareSut()
+        let requestMock = CancellableMock()
+
+        dependencies.paymentsServiceMock.initPaymentStubReturn = { _ in requestMock }
+
+        // when
+        dependencies.sutAsPaymentProcess.start()
+        dependencies.sutAsPaymentProcess.cancel()
+
+        // then
+        XCTAssertTrue(requestMock.invokedCancel)
+    }
+
+    // MARK: Private
+
+    private func prepareSut() -> CardPaymentProcessTests.Dependencies {
+        let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
+        let paymentOptions = UIASDKTestsAssembly.makePaymentOptions()
+        let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
+
+        let dependencies = Self.makeDependecies(
+            paymentSource: paymentSource,
+            paymentFlow: paymentFlow
+        )
+
+        return dependencies
     }
 }
 
@@ -306,7 +518,10 @@ extension CardPaymentProcessTests {
     }
 
     func start_paymentFlow_finish(
-        check3DSVersionResult: Result<Check3DSVersionPayload, Error>
+        check3DSVersionResult: Result<Check3DSVersionPayload, Error>,
+        responseStatus: PaymentFinishResponseStatus = .done(.fake()),
+        confirmationCompletion: Result<GetPaymentStatePayload, Error>? = nil,
+        confirmationCancelled: Void? = nil
     ) throws -> Dependencies {
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
         let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
@@ -321,11 +536,25 @@ extension CardPaymentProcessTests {
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
         let threeDsServiceMock = dependencies.threeDsServiceMock
 
+        dependencies.paymentDelegateMock.paymentNeedCollect3DsCompletionInput = ThreeDSDeviceInfo(
+            cresCallbackUrl: URL.empty.absoluteString,
+            screenWidth: 300,
+            screenHeight: 800
+        )
+
         threeDsServiceMock.check3DSVersionStubReturnValue = { passedArgs -> Cancellable in
             // handle failure flow
             passedArgs.completion(check3DSVersionResult)
             return EmptyCancellable()
         }
+
+        dependencies.paymentsServiceMock.finishAuthorizeCompletionInput = .success(.fake(responseStatus: responseStatus))
+        dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCompletionInput = confirmationCompletion
+        dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCancelledInput = confirmationCancelled
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCompletionInput = confirmationCompletion
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSConfirmationCancelledInput = confirmationCancelled
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedConfirmationCancelledInput = confirmationCancelled
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCompletionInput = confirmationCompletion
 
         // when
 

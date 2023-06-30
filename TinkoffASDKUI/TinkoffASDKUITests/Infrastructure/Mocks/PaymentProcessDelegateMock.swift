@@ -74,7 +74,7 @@ final class PaymentProcessDelegateMock: PaymentProcessDelegate {
 
     var paymentNeedCollect3DsCallCounter = 0
     var paymentNeedCollect3DsPassedArguments: PaymentNeedCollect3DsPassedArguments?
-
+    var paymentNeedCollect3DsCompletionInput: TinkoffASDKCore.ThreeDSDeviceInfo?
     func payment(
         _ paymentProcess: IPaymentProcess,
         needToCollect3DSData checking3DSURLData: TinkoffASDKCore.Checking3DSURLData,
@@ -86,6 +86,9 @@ final class PaymentProcessDelegateMock: PaymentProcessDelegate {
             needToCollect3DSData: checking3DSURLData,
             completion: completion
         )
+        if let paymentNeedCollect3DsCompletionInput = paymentNeedCollect3DsCompletionInput {
+            completion(paymentNeedCollect3DsCompletionInput)
+        }
     }
 
     // MARK: - payment need 3ds confirmation

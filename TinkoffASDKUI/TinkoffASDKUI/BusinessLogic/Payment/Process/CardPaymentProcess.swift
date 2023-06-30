@@ -26,7 +26,7 @@ final class CardPaymentProcess: IPaymentProcess {
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     private let ipProvider: IIPAddressProvider
     private var isCancelled = Atomic(wrappedValue: false)
-    private var currentRequest: Atomic<Cancellable>?
+    private var currentRequest: Atomic<Cancellable?> = Atomic(wrappedValue: nil)
 
     let paymentSource: PaymentSourceData
     let paymentFlow: PaymentFlow
@@ -65,7 +65,7 @@ final class CardPaymentProcess: IPaymentProcess {
 
     func cancel() {
         isCancelled.store(newValue: true)
-        currentRequest?.wrappedValue.cancel()
+        currentRequest.wrappedValue?.cancel()
     }
 }
 
@@ -83,7 +83,7 @@ private extension CardPaymentProcess {
                 self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
             }
         }
-        currentRequest?.store(newValue: request)
+        currentRequest.store(newValue: request)
     }
 
     func check3DSVersion(data: Check3DSVersionData) {
@@ -99,7 +99,7 @@ private extension CardPaymentProcess {
                 self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
             }
         }
-        currentRequest?.store(newValue: request)
+        currentRequest.store(newValue: request)
     }
 
     func finishAuthorize(data: FinishAuthorizeData, threeDSVersion: String? = nil) {
@@ -115,7 +115,7 @@ private extension CardPaymentProcess {
                 self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)
             }
         }
-        currentRequest?.store(newValue: request)
+        currentRequest.store(newValue: request)
     }
 
     func handleInitResult(payload: InitPayload) {
