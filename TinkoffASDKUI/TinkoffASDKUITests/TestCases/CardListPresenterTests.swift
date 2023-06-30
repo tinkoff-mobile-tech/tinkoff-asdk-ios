@@ -38,18 +38,6 @@ final class CardListPresenterTests: BaseTestCase {
         cardsControllerMock = CardsControllerMock()
         router = CardListRouterMock()
         output = CardListPresenterOutputMock()
-
-        sut = CardListPresenter(
-            screenConfiguration: buildScreenConfiguration(),
-            cardsController: cardsControllerMock,
-            router: router,
-            imageResolver: paymentSystemImageResolverMock,
-            bankResolver: bankResolverMock,
-            paymentSystemResolver: paymentSystemResolverMock,
-            output: output
-        )
-
-        sut.view = viewMock
     }
 
     override func tearDown() {
@@ -67,6 +55,9 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2401647, "Инициализируем шиммер при инициализации экрана Списка Карт")
         allureId(2397505, "Отправляем запрос получения списка при инициализации SDK")
 
+        // given
+        prepareSut()
+
         // when
         sutAsProtocol.viewDidLoad()
 
@@ -80,6 +71,7 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2397530, "Переход в состояние редактирования списка карт")
 
         // given
+        prepareSut()
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
 
         // when
@@ -98,6 +90,9 @@ final class CardListPresenterTests: BaseTestCase {
     }
 
     func test_viewDidTapEditButton_when_editingCards() throws {
+        // given
+        prepareSut()
+
         // when
         sutAsProtocol.viewDidTapEditButton()
 
@@ -108,6 +103,9 @@ final class CardListPresenterTests: BaseTestCase {
     }
 
     func test_viewDidTapDoneEditingButton() throws {
+        // given
+        prepareSut()
+
         // when
         sutAsProtocol.viewDidTapDoneEditingButton()
 
@@ -119,6 +117,7 @@ final class CardListPresenterTests: BaseTestCase {
 
     func test_viewDidHideLoadingSnackbar_deactivateCard_success() throws {
         // given
+        prepareSut()
         sutAsProtocol.view(didTapDeleteOn: buildCardListCard())
 
         // when
@@ -129,9 +128,33 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(cardsControllerMock.getActiveCardsCallsCount, 0)
     }
 
+    func test_viewUpdatesSelectedCard() throws {
+        // given
+        prepareSut()
+        let fakeCard = PaymentCard.fake()
+        let cardList = buildCardListCard()
+        sutAsProtocol.view(didTapDeleteOn: cardList)
+        cardsControllerMock.removeCardStub = { _, completion in
+            completion(.success(.init(cardId: cardList.id, cardStatus: .active)))
+        }
+        sut.addNewCardDidReceive(result: .succeded(fakeCard))
+
+        // when
+        sutAsProtocol.viewDidHideRemovingCardSnackBar()
+
+        // then
+        let arg = try XCTUnwrap(viewMock.reloadCallArguments?.first)
+        if case let .cards(data) = arg {
+            XCTAssertEqual(data.first?.id, fakeCard.cardId)
+        } else {
+            XCTFail()
+        }
+    }
+
     func test_viewDidHideLoadingSnackbar_deactivateCard_failure() throws {
         allureId(2397534, "Инициализируем событие алерта при ошибке удаление")
         // given
+        prepareSut()
         let cards = buildActiveCardsCache()
         cardsControllerMock.removeCardStub = { _, completion in
             completion(.failure(TestsError.basic))
@@ -151,6 +174,7 @@ final class CardListPresenterTests: BaseTestCase {
 
     func test_view_didTapDeleteOn_success() throws {
         // given
+        prepareSut()
         let cardListCard = buildCardListCard()
         let expectation = expectation(description: #function)
 
@@ -172,6 +196,7 @@ final class CardListPresenterTests: BaseTestCase {
 
     func test_view_didTapDeleteOn_failure() throws {
         // given
+        prepareSut()
         let cardListCard = buildCardListCard()
         let expectation = expectation(description: #function)
 
@@ -197,6 +222,7 @@ final class CardListPresenterTests: BaseTestCase {
         // given
         var serverErrorModeStubShown = false
 
+        prepareSut()
         viewMock.showStubStub = { mode in
             if case StubMode.serverError = mode {
                 serverErrorModeStubShown = true
@@ -212,12 +238,43 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertTrue(serverErrorModeStubShown, "should show no cards stub")
     }
 
+    func test_viewDidHideShimmer_failure_shouldCloseScreen() {
+        // given
+        prepareSut()
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .failure(TestsError.basic))
+        if case let .serverError(action) = viewMock.showStubCallArguments {
+            action()
+        }
+
+        // then
+        XCTAssertEqual(viewMock.closeScreenCounter, 1)
+    }
+
+    func test_viewDidHideShimmer_network_failure_shouldHideShimmer() {
+        // given
+        prepareSut()
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(
+            fetchCardsResult: .failure(NSError(domain: "", code: NSURLErrorNotConnectedToInternet))
+        )
+        if case let .noNetwork(action) = viewMock.showStubCallArguments {
+            action()
+        }
+
+        // then
+        XCTAssertEqual(viewMock.hideShimmerCallCounter, 1)
+    }
+
     func test_viewDidHideShimmer_network_failure_shouldShow_noNetworkStub() throws {
         allureId(2397506, "Инициализируем заглушку в случае ошибки получения списка карт")
 
         // given
         var noNetworkStubShown = false
 
+        prepareSut()
         viewMock.showStubStub = { mode in
             if case StubMode.noNetwork = mode {
                 noNetworkStubShown = true
@@ -242,6 +299,7 @@ final class CardListPresenterTests: BaseTestCase {
         // given
         var isNoCardsMode = false
 
+        prepareSut()
         viewMock.showStubStub = { mode in
             if case StubMode.noCardsInCardList = mode {
                 isNoCardsMode = true
@@ -263,6 +321,9 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2397526, "Меняем состояние экрана карт на отображение полученного списка карт")
         allureId(2397528, "Определение ПС и банка-эмитента перед отображением карт")
 
+        // given
+        prepareSut()
+
         // when
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
 
@@ -277,6 +338,7 @@ final class CardListPresenterTests: BaseTestCase {
 
     func test_viewDidTapCard_withCardListUseCase_shouldDoNothing() throws {
         // given
+        prepareSut()
         let cards = buildActiveCardsCache()
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
 
@@ -288,8 +350,28 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.dismissCallCounter, 0)
     }
 
+    func test_viewDidTapCard_withCardListUseCase_shouldCloseScreen() {
+        // given
+        prepareSut(useCase: .cardPaymentList)
+        let cards = buildActiveCardsCache()
+        sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
+        cards.forEach { sut.addNewCardDidReceive(result: .succeded($0)) }
+
+        // when
+        sutAsProtocol.viewDidTapCard(cardIndex: 0)
+
+        // then
+        XCTAssertEqual(output.cardListWillCloseAfterSelectingCalls.count, 1)
+        XCTAssertEqual(output.cardListWillCloseAfterSelectingCalls, cards)
+        XCTAssertEqual(viewMock.closeScreenCounter, 1)
+        XCTAssertEqual(viewMock.dismissCallCounter, 0)
+    }
+
     func test_viewDidTapAddCardCell_shouldOpenAddNewCard() throws {
         allureId(2397529, "Переход на экран добавления карты")
+
+        // given
+        prepareSut()
 
         // when
         sutAsProtocol.viewDidTapAddCardCell()
@@ -298,8 +380,20 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
     }
 
-    func test_getCardList_unknownCustomer_error() {
+    func test_viewDidTapAddCardCell_shouldOpenCardPayment() throws {
         // given
+        prepareSut(useCase: .cardPaymentList)
+
+        // when
+        sutAsProtocol.viewDidTapAddCardCell()
+
+        // then
+        XCTAssertEqual(router.openCardPaymentCallsCount, 1)
+    }
+
+    func test_getCardList_unknownCustomer_error_when_configurationIsCardList() {
+        // given
+        prepareSut()
         let noSuchCustomerErrorCode = 7
         var didShowNoCardsStub = false
         viewMock.showStubStub = { stubMode in
@@ -312,10 +406,32 @@ final class CardListPresenterTests: BaseTestCase {
         sutAsProtocol.viewDidHideShimmer(
             fetchCardsResult: .failure(APIFailureError(errorCode: noSuchCustomerErrorCode))
         )
+        if case let .noCardsInCardList(action) = viewMock.showStubCallArguments {
+            action()
+        }
 
         // then
         XCTAssertEqual(viewMock.showStubCallCounter, 1)
         XCTAssertTrue(didShowNoCardsStub)
+        XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
+    }
+
+    func test_getCardList_unkownCustomer_error_when_configurationIsCardPaymentList() {
+        // given
+        prepareSut(useCase: .cardPaymentList)
+        let noSuchCustomerErrorCode = 7
+
+        // when
+        sutAsProtocol.viewDidHideShimmer(
+            fetchCardsResult: .failure(APIFailureError(errorCode: noSuchCustomerErrorCode))
+        )
+        if case let .noCardsInCardPaymentList(action) = viewMock.showStubCallArguments {
+            action()
+        }
+
+        // then
+        XCTAssertEqual(viewMock.showStubCallCounter, 1)
+        XCTAssertEqual(router.openCardPaymentCallsCount, 1)
     }
 
     func test_viewDidTapDelete() throws {
@@ -326,6 +442,7 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2397539, "Промежуточное состояние при удалении карты")
 
         // given
+        prepareSut()
         let cards = buildActiveCardsCache()
         let card = try XCTUnwrap(cards.first)
         let cardListCardToDelete = CardList.Card(from: card)
@@ -372,6 +489,7 @@ final class CardListPresenterTests: BaseTestCase {
         allureId(2397518, "Отображение нового списка карт в случае успешного добавления без прохождения 3ds")
         allureId(2397502)
         // given
+        prepareSut()
         let cards = buildActiveCardsCache()
         let paymentCard = PaymentCard.fake()
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
@@ -386,6 +504,9 @@ final class CardListPresenterTests: BaseTestCase {
     func test_viewDidShowAddedCardSnackbar() {
         allureId(2397518, "Отображение нового списка карт в случае успешного добавления без прохождения 3ds")
         allureId(2397502)
+        // given
+        prepareSut()
+
         // when
         sut.viewDidShowAddedCardSnackbar()
 
@@ -398,6 +519,7 @@ final class CardListPresenterTests: BaseTestCase {
 
     func test_viewDidShowAddedCardSnackbar_shows_doneEditingButton() {
         // given
+        prepareSut()
         sut.viewDidHideShimmer(fetchCardsResult: .success(buildActiveCardsCache()))
         // setting screenState to .editingCards
         sut.viewDidTapEditButton()
@@ -417,6 +539,9 @@ final class CardListPresenterTests: BaseTestCase {
     }
 
     func test_viewDidShowAddedCardSnackbar_shows_editButton() {
+        // given
+        prepareSut()
+
         // when
         sut.viewDidShowAddedCardSnackbar()
 
@@ -424,6 +549,56 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.showEditButtonCallCounter, 1)
         XCTAssertEqual(viewMock.hideStubCallCounter, 1)
         XCTAssertEqual(viewMock.reloadCallCounter, 1)
+    }
+
+    func test_viewDoesNotShowCards_whenAddCardResultIsCancelled() {
+        // given
+        prepareSut()
+
+        // when
+        sut.addNewCardDidReceive(result: .cancelled)
+
+        // then
+        XCTAssertEqual(viewMock.showAddedCardSnackbarCallCounter, 0)
+    }
+
+    func test_viewDoesNotShowCards_whenAddCardResultIsFailed() {
+        // given
+        prepareSut()
+
+        // when
+        sut.addNewCardDidReceive(result: .failed(ErrorStub()))
+
+        // then
+        XCTAssertEqual(viewMock.showAddedCardSnackbarCallCounter, 0)
+    }
+
+    func test_viewHideShimmer_whenCardsAreNotEmpty() {
+        // given
+        prepareSut()
+        sut.addNewCardDidReceive(result: .succeded(.fake()))
+
+        // when
+        sut.viewDidLoad()
+
+        // then
+        XCTAssertEqual(viewMock.hideShimmerCallCounter, 1)
+    }
+
+    // MARK: Private
+
+    private func prepareSut(useCase: CardListScreenConfiguration.UseCase = .cardList) {
+        sut = CardListPresenter(
+            screenConfiguration: buildScreenConfiguration(useCase: useCase),
+            cardsController: cardsControllerMock,
+            router: router,
+            imageResolver: paymentSystemImageResolverMock,
+            bankResolver: bankResolverMock,
+            paymentSystemResolver: paymentSystemResolverMock,
+            output: output
+        )
+
+        sut.view = viewMock
     }
 }
 

@@ -334,8 +334,4 @@ private extension String {
     static func format(pan: String) -> String {
         "• " + pan.suffix(4)
     }
-
-    static func format(validThru: String?) -> String {
-        validThru.map { $0.prefix(2) + "/" + $0.suffix(2) } ?? ""
-    }
 }
