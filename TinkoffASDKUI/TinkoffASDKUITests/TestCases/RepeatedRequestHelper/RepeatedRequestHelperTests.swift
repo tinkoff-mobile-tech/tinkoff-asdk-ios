@@ -44,7 +44,7 @@ final class RepeatedRequestHelperTests: BaseTestCase {
             actionsCallsCount += 1
         }
 
-        timerProviderMock.executeTimerActionShouldCalls = true
+        timerProviderMock.executeTimerActionShouldExecute = true
 
         // when
         sut.executeWithWaitingIfNeeded(action: action)
@@ -62,7 +62,7 @@ final class RepeatedRequestHelperTests: BaseTestCase {
             actionsCallsCount += 1
         }
 
-        timerProviderMock.executeTimerActionShouldCalls = true
+        timerProviderMock.executeTimerActionShouldExecute = true
 
         // when
         sut.executeWithWaitingIfNeeded(action: action)

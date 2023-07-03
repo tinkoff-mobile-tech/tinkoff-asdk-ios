@@ -10,6 +10,7 @@
 * [EACQAPW-5291] RepeatedRequestHelper Tests
 * [EACQAPW-5292] CardRequisitesValidator Tests
 * [EACQAPW-5307] MainFormDataStateLoader Tests
+* [EACQAPW-5331] Tests property names to one style
 * [EACQAPW-5332] CardListPresenter Tests
 * [EACQAPW-5347] CardPaymentProcess Tests
 

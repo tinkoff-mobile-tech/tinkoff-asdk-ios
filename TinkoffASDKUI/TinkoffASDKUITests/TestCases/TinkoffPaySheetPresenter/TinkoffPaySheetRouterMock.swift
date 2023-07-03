@@ -10,11 +10,11 @@
 final class TinkoffPaySheetRouterMock: ITinkoffPaySheetRouter {
     var invokedOpenTinkoffPayLanding = false
     var invokedOpenTinkoffPayLandingCount = 0
-    var openTinkoffPayLandingCompletionShouldCalls = true
+    var openTinkoffPayLandingCompletionShouldExecute = true
     func openTinkoffPayLanding(completion: TinkoffASDKUI.VoidBlock?) {
         invokedOpenTinkoffPayLanding = true
         invokedOpenTinkoffPayLandingCount += 1
-        if openTinkoffPayLandingCompletionShouldCalls {
+        if openTinkoffPayLandingCompletionShouldExecute {
             completion?()
         }
     }

@@ -58,11 +58,11 @@ final class MainFormRouterMock: IMainFormRouter {
     // MARK: - openTinkoffPayLanding
 
     var openTinkoffPayLandingCallsCount = 0
-    var openTinkoffPayLandingCompletionShouldCalls = false
+    var openTinkoffPayLandingCompletionShouldExecute = false
 
     func openTinkoffPayLanding(completion: VoidBlock?) {
         openTinkoffPayLandingCallsCount += 1
-        if openTinkoffPayLandingCompletionShouldCalls {
+        if openTinkoffPayLandingCompletionShouldExecute {
             completion?()
         }
     }

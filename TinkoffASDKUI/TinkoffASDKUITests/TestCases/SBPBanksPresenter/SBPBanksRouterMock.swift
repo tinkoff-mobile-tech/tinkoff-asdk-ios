@@ -13,11 +13,11 @@ final class SBPBanksRouterMock: ISBPBanksRouter {
     // MARK: - closeScreen
 
     var closeScreenCallsCount = 0
-    var closeScreenCompletionShouldCalls = false
+    var closeScreenCompletionShouldExecute = false
 
     func closeScreen(completion: VoidBlock?) {
         closeScreenCallsCount += 1
-        if closeScreenCompletionShouldCalls {
+        if closeScreenCompletionShouldExecute {
             completion?()
         }
     }

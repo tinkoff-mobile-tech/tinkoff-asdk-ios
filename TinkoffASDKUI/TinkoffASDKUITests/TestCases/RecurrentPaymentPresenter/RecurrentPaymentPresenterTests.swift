@@ -293,7 +293,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         let paymentId = "112233"
         failureDelegateMock.recurrentPaymentNeedRepeatInitCompletionClosureInput = .success(paymentId)
 
-        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
 
         let savedCardMock = SavedCardViewOutputMock()
         savedCardMock.cardId = cardId
@@ -328,7 +328,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         let error = NSError(domain: "error", code: 123456)
         failureDelegateMock.recurrentPaymentNeedRepeatInitCompletionClosureInput = .failure(error)
 
-        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
 
         let savedCardMock = SavedCardViewOutputMock()
         savedCardMock.cardId = cardId
@@ -356,7 +356,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         let error = NSError(domain: "error", code: 123456)
         failureDelegateMock.recurrentPaymentNeedRepeatInitCompletionClosureInput = .failure(error)
 
-        DispatchQueueMock.performOnMainBlockClosureShouldCalls = true
+        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
 
         let payButtonMock = PayButtonViewOutputMock()
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
