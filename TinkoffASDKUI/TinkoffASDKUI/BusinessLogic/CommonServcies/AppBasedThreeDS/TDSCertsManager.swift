@@ -32,12 +32,12 @@ final class TDSCertsManager: ITDSCertsManager {
 
     // Dependencies
 
-    private let acquiringSdk: AcquiringSdk
-    private let tdsWrapper: TDSWrapper
+    private let acquiringSdk: IAcquiringThreeDSService
+    private let tdsWrapper: ITDSWrapper
 
     // Init
 
-    init(acquiringSdk: AcquiringSdk, tdsWrapper: TDSWrapper) {
+    init(acquiringSdk: IAcquiringThreeDSService, tdsWrapper: ITDSWrapper) {
         self.acquiringSdk = acquiringSdk
         self.tdsWrapper = tdsWrapper
     }

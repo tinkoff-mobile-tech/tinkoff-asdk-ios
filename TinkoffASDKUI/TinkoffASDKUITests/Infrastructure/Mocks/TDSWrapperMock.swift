@@ -30,4 +30,33 @@ final class TDSWrapperMock: ITDSWrapper {
         createTransactionReceivedInvocations.append(arguments)
         return createTransactionReturnValue
     }
+
+    // MARK: - checkCertificates
+
+    var checkCertificatesCallsCount = 0
+    var checkCertificatesReturnValue: [CertificateState]!
+
+    func checkCertificates() -> [CertificateState] {
+        checkCertificatesCallsCount += 1
+        return checkCertificatesReturnValue
+    }
+
+    // MARK: - update
+
+    typealias UpdateArguments = (requests: [CertificateUpdatingRequest], queue: DispatchQueue, completion: ([CertificateUpdatingRequest: TDSWrapperError]) -> Void)
+
+    var updateCallsCount = 0
+    var updateReceivedArguments: UpdateArguments?
+    var updateReceivedInvocations: [UpdateArguments] = []
+    var updateCompletionClosureInput: [CertificateUpdatingRequest: TDSWrapperError]?
+
+    func update(with requests: [CertificateUpdatingRequest], receiveOn queue: DispatchQueue, _ completion: @escaping ([CertificateUpdatingRequest: TDSWrapperError]) -> Void) {
+        updateCallsCount += 1
+        let arguments = (requests, queue, completion)
+        updateReceivedArguments = arguments
+        updateReceivedInvocations.append(arguments)
+        if let updateCompletionClosureInput = updateCompletionClosureInput {
+            completion(updateCompletionClosureInput)
+        }
+    }
 }

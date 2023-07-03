@@ -29,6 +29,14 @@ protocol ITDSWrapper {
         directoryServerID: String,
         messageVersion: String
     ) throws -> ITransaction
+
+    func checkCertificates() -> [CertificateState]
+
+    func update(
+        with requests: [CertificateUpdatingRequest],
+        receiveOn queue: DispatchQueue,
+        _ completion: @escaping ([CertificateUpdatingRequest: TDSWrapperError]) -> Void
+    )
 }
 
 extension TDSWrapper: ITDSWrapper {
