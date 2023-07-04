@@ -49,4 +49,24 @@ public struct CertificateData: Decodable {
     public let sha256Fingerprint: String
     public let algorithm: CertificateAlgorithm
     public let forceUpdateFlag: Bool
+
+    public init(
+        paymentSystem: String,
+        directoryServerID: String,
+        type: CertificateType,
+        url: URL,
+        notAfterDate: Date,
+        sha256Fingerprint: String,
+        algorithm: CertificateAlgorithm,
+        forceUpdateFlag: Bool
+    ) {
+        self.paymentSystem = paymentSystem
+        self.directoryServerID = directoryServerID
+        self.type = type
+        self.url = url
+        self.notAfterDate = notAfterDate
+        self.sha256Fingerprint = sha256Fingerprint
+        self.algorithm = algorithm
+        self.forceUpdateFlag = forceUpdateFlag
+    }
 }

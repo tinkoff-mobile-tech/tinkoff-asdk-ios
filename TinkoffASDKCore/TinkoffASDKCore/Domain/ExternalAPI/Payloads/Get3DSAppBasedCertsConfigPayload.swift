@@ -25,4 +25,8 @@ public struct Get3DSAppBasedCertsConfigPayload: Decodable {
     }
 
     public let certificates: [CertificateData]
+
+    public init(certificates: [CertificateData]) {
+        self.certificates = certificates
+    }
 }

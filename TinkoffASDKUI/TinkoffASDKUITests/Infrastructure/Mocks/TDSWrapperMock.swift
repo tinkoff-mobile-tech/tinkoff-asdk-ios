@@ -34,7 +34,7 @@ final class TDSWrapperMock: ITDSWrapper {
     // MARK: - checkCertificates
 
     var checkCertificatesCallsCount = 0
-    var checkCertificatesReturnValue: [CertificateState]!
+    var checkCertificatesReturnValue: [CertificateState] = []
 
     func checkCertificates() -> [CertificateState] {
         checkCertificatesCallsCount += 1
