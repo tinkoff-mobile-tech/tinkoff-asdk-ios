@@ -20,7 +20,18 @@
 import TinkoffASDKCore
 import UIKit
 
-final class ImageLoader {
+protocol IImageLoader {
+    @discardableResult
+    func loadImage(
+        url: URL,
+        preCacheClosure: @escaping (UIImage) -> UIImage,
+        completion: @escaping (Result<UIImage, Swift.Error>) -> Void
+    ) -> UUID?
+
+    func cancelImageLoad(uuid: UUID)
+}
+
+final class ImageLoader: IImageLoader {
 
     enum Error: Swift.Error {
         case failedToLoadImage

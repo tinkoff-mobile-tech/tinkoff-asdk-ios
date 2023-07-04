@@ -42,31 +42,26 @@ protocol ICellImageLoader {
 
 final class CellImageLoader: ICellImageLoader {
 
-    private let imageLoader: ImageLoader
+    private let imageLoader: IImageLoader
+    private let imageProcessorFactory: IImageProcessorFactory
     private var imageProcessors = [ImageProcessor]()
 
     private var requests = [UIImageView: UUID]()
 
     private var type: CellImageLoaderType = .default {
         didSet {
-            let scale = UIScreen.main.scale
-
-            switch type {
-            case .round:
-                imageProcessors = [RoundImageProcessor()]
-            case let .size(size):
-                imageProcessors = [SizeImageProcessor(size: size, scale: scale)]
-            case let .roundAndSize(size):
-                imageProcessors = [RoundImageProcessor(), SizeImageProcessor(size: size, scale: scale)]
-            case .default:
-                imageProcessors = []
-            }
+            imageProcessors = imageProcessorFactory.makeImageProcesssors(for: type)
         }
     }
 
-    init(imageLoader: ImageLoader, type: CellImageLoaderType = .default) {
+    init(
+        imageLoader: IImageLoader,
+        type: CellImageLoaderType = .default,
+        imageProcessorFactory: IImageProcessorFactory
+    ) {
         self.imageLoader = imageLoader
         self.type = type
+        self.imageProcessorFactory = imageProcessorFactory
     }
 
     func set(type: CellImageLoaderType) {
@@ -86,7 +81,7 @@ extension CellImageLoader {
                 processor.processImage(image)
             }
         } completion: { result in
-            DispatchQueue.main.async {
+            DispatchQueue.performOnMain {
                 completion(result)
             }
         }
@@ -102,7 +97,7 @@ extension CellImageLoader {
                 processor.processImage(image)
             }
         } completion: { [weak self] result in
-            DispatchQueue.main.async {
+            DispatchQueue.performOnMain {
                 switch result {
                 case let .success(image):
                     imageView.image = image
