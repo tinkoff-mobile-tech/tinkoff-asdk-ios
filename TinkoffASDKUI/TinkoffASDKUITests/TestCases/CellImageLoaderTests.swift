@@ -16,7 +16,7 @@ final class CellImageLoaderTests: XCTestCase {
 
     // MARK: Set Up
 
-    func test_thatCellImageLoaderChangeType_whenTypeIsDefault() {
+    func test_thatCellImageLoaderChangseType_whenTypeIsDefault() {
         // given
         let sut = prepareSut(type: .size(.zero))
 
@@ -27,7 +27,7 @@ final class CellImageLoaderTests: XCTestCase {
         XCTAssertEqual(imageProcessorFactoryMock.makeImageProcesssorsCallsCount, 1)
     }
 
-    func test_thatCellImageLoaderChangeType_whenTypeIsSize() {
+    func test_thatCellImageLoaderChangesType_whenTypeIsSize() {
         // given
         let sut = prepareSut(type: .default)
 
@@ -38,7 +38,7 @@ final class CellImageLoaderTests: XCTestCase {
         XCTAssertEqual(imageProcessorFactoryMock.makeImageProcesssorsCallsCount, 1)
     }
 
-    func test_thatCellImageLoaderChangeType_whenTypeIsRoundAndSize() {
+    func test_thatCellImageLoaderChangesType_whenTypeIsRoundAndSize() {
         // given
         let sut = prepareSut(type: .default)
 
@@ -49,7 +49,7 @@ final class CellImageLoaderTests: XCTestCase {
         XCTAssertEqual(imageProcessorFactoryMock.makeImageProcesssorsCallsCount, 1)
     }
 
-    func test_thatCellImageLoaderChangeType_whenTypeIsRound() {
+    func test_thatCellImageLoaderChangesType_whenTypeIsRound() {
         // given
         let sut = prepareSut(type: .default)
 
@@ -86,7 +86,7 @@ final class CellImageLoaderTests: XCTestCase {
         XCTAssertEqual(imageLoaderMock.cancelImageLoadCallsCount, 1)
     }
 
-    func test_thatCellImageLoader_whenLoadRemoteImageJustForCache() {
+    func test_thatCellImageLoaderLoadsRemoteImageJustForCache() {
         // given
         let uuid = UUID()
         let sut = prepareSut(type: .default)

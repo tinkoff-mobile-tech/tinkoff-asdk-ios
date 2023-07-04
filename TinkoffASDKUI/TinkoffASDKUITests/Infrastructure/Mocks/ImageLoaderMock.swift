@@ -27,7 +27,7 @@ final class ImageLoaderMock: IImageLoader {
         loadImageReceivedArguments = arguments
         loadImageReceivedInvocations.append(arguments)
         if let loadImagePreCacheClosureClosureInput = loadImagePreCacheClosureClosureInput {
-            preCacheClosure(loadImagePreCacheClosureClosureInput)
+            _ = preCacheClosure(loadImagePreCacheClosureClosureInput)
         }
         if let loadImageCompletionClosureInput = loadImageCompletionClosureInput {
             completion(loadImageCompletionClosureInput)

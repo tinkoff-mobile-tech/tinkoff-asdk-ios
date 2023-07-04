@@ -5,7 +5,6 @@
 //  Created by Никита Васильев on 03.07.2023.
 //
 
-@testable import TinkoffASDKUI
 import UIKit
 
 protocol IImageProcessorFactory {
