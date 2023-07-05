@@ -145,4 +145,24 @@ final class AcquiringThreeDsServiceMock: IAcquiringThreeDSService {
         }
         return submit3DSAuthorizationV2ReturnValue
     }
+
+    // MARK: - getCertsConfig
+
+    var getCertsConfigCallsCount = 0
+    var getCertsConfigReceivedArguments: ((Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void)?
+    var getCertsConfigReceivedInvocations: [(Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void] = []
+    var getCertsConfigCompletionClosureInput: Result<Get3DSAppBasedCertsConfigPayload, Error>?
+    var getCertsConfigReturnValue: Cancellable = CancellableMock()
+
+    @discardableResult
+    func getCertsConfig(completion: @escaping (Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void) -> Cancellable {
+        getCertsConfigCallsCount += 1
+        let arguments = completion
+        getCertsConfigReceivedArguments = arguments
+        getCertsConfigReceivedInvocations.append(arguments)
+        if let getCertsConfigCompletionClosureInput = getCertsConfigCompletionClosureInput {
+            completion(getCertsConfigCompletionClosureInput)
+        }
+        return getCertsConfigReturnValue
+    }
 }

@@ -68,4 +68,14 @@ protocol IAcquiringThreeDSService {
         data: CresData,
         completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void
     ) -> Cancellable
+
+    // MARK: Get Certs Config
+
+    /// Получить конфигурацию для работы с сертификатами 3DS AppBased
+    ///
+    /// - Parameter completion: Callback с результатом запроса. `Get3DSAppBasedCertsConfigPayload` - при успехе, `Error` - при ошибке
+    /// - Returns: Cancellable
+    @discardableResult
+    func getCertsConfig(completion: @escaping (Result<Get3DSAppBasedCertsConfigPayload, Error>) -> Void
+    ) -> Cancellable
 }
