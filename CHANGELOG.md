@@ -15,6 +15,7 @@
 * [EACQAPW-5347] CardPaymentProcess Tests
 * [EACQAPW-5362] CellImageLoader Tests
 * [EACQAPW-5371] TDSCertsManager Tests
+* [EACQAPW-5400] TDSTimeoutResolver Tests
 
 ### Fixed
 
