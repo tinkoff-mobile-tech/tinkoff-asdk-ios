@@ -22,7 +22,7 @@ import TinkoffASDKCore
 final class ChargePaymentProcess: IPaymentProcess {
     private let paymentsService: IAcquiringPaymentsService
     private var isCancelled = Atomic(wrappedValue: false)
-    private var currentRequest: Atomic<Cancellable>?
+    private var currentRequest = Atomic<Cancellable?>(wrappedValue: nil)
 
     let paymentSource: PaymentSourceData
     let paymentFlow: PaymentFlow
@@ -54,7 +54,7 @@ final class ChargePaymentProcess: IPaymentProcess {
 
     func cancel() {
         isCancelled.store(newValue: true)
-        currentRequest?.wrappedValue.cancel()
+        currentRequest.wrappedValue?.cancel()
     }
 }
 
@@ -71,7 +71,7 @@ private extension ChargePaymentProcess {
                 self.handleError(error: error)
             }
         }
-        currentRequest?.store(newValue: request)
+        currentRequest.store(newValue: request)
     }
 
     func finishPayment(paymentId: String) {
@@ -96,7 +96,7 @@ private extension ChargePaymentProcess {
                 self.handleError(error: error)
             }
         }
-        currentRequest?.store(newValue: request)
+        currentRequest.store(newValue: request)
     }
 
     func handleInitResult(payload: InitPayload) {
