@@ -16,6 +16,7 @@
 * [EACQAPW-5362] CellImageLoader Tests
 * [EACQAPW-5371] TDSCertsManager Tests
 * [EACQAPW-5400] TDSTimeoutResolver Tests
+* [EACQAPW-5401] YandexPayPaymentProcess Tests
 
 ### Fixed
 
