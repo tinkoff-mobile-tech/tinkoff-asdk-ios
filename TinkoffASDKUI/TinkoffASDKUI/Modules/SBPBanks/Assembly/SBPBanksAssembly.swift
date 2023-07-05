@@ -76,7 +76,10 @@ extension SBPBanksAssembly {
         let bankAppChecker = SBPBankAppChecker(appChecker: AppChecker())
         let bankAppOpener = SBPBankAppOpener(application: UIApplication.shared)
 
-        let cellImageLoader = CellImageLoader(imageLoader: ImageLoader(urlDataLoader: acquiringSdk))
+        let cellImageLoader = CellImageLoader(
+            imageLoader: ImageLoader(urlDataLoader: acquiringSdk),
+            imageProcessorFactory: ImageProcessorFactory()
+        )
         cellImageLoader.set(type: .roundAndSize(.logoImageSize))
         let cellPresentersAssembly = SBPBankCellPresenterAssembly(cellImageLoader: cellImageLoader)
 
