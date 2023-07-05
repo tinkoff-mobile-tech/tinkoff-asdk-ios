@@ -194,6 +194,20 @@ final class ChargePaymentProcessTests: XCTestCase {
             1
         )
     }
+
+    func test_Start_paymentFlow_cancel_request() {
+        // given
+        let cancellableMock = CancellableMock()
+        let dependencies = Self.makeDependencies(paymentFlow: .full(paymentOptions: .fake()))
+        dependencies.paymentsServiceMock.initPaymentStubReturn = { _ in cancellableMock }
+
+        // when
+        dependencies.sut.start()
+        dependencies.sut.cancel()
+
+        // then
+        XCTAssertTrue(cancellableMock.invokedCancel)
+    }
 }
 
 extension ChargePaymentProcessTests {

@@ -17,6 +17,7 @@
 * [EACQAPW-5371] TDSCertsManager Tests
 * [EACQAPW-5400] TDSTimeoutResolver Tests
 * [EACQAPW-5401] YandexPayPaymentProcess Tests
+* [EACQAPW-5415] ChargePaymentProcess Tests
 
 ### Fixed
 
