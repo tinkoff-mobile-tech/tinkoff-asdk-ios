@@ -60,6 +60,30 @@ final class PaymentControllerTests: BaseTestCase {
 
     // MARK: - Tests
 
+    func test_get_webFlowDelegate() {
+        // given
+        let webFlowDelegateMock = ThreeDSWebFlowDelegateMock()
+        threeDSWebFlowControllerMock.webFlowDelegate = webFlowDelegateMock
+
+        // when
+        let webFlowDelegate = sut.webFlowDelegate as? ThreeDSWebFlowDelegateMock
+
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, webFlowDelegate)
+    }
+
+    func test_set_webFlowDelegate() {
+        // given
+        let webFlowDelegateMock = ThreeDSWebFlowDelegateMock()
+
+        // when
+        sut.webFlowDelegate = webFlowDelegateMock
+        let webFlowDelegate = sut.webFlowDelegate as? ThreeDSWebFlowDelegateMock
+
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, webFlowDelegate)
+    }
+
     func test_need3DSConfirmation_success() {
         allureId(2358072) // ASDK совершил редирект на ACSurl для прохождения 3DS v1
         allureId(2358067, "Инициализация web-view 3DS v1 по ответу v2/FinishAuthorize")
@@ -121,6 +145,71 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 1)
         let value = try XCTUnwrap(completionValue)
         XCTAssertEqual(fakedGetPaymentState, value)
+    }
+
+    func test_need3DSConfirmationACS_failure() throws {
+        // given
+        let error = NSError(domain: "error", code: 123456)
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .failed(error)
+
+        var resultPayload: GetPaymentStatePayload?
+        var resultError: NSError?
+        let completion: (Result<GetPaymentStatePayload, Error>) -> Void = { result in
+            switch result {
+            case let .success(payload):
+                resultPayload = payload
+            case let .failure(err):
+                resultError = err as NSError
+            }
+        }
+
+        // when
+        sut.payment(
+            paymentProcessMock,
+            need3DSConfirmationACS: .fake(),
+            version: "2.0.0",
+            confirmationCancelled: {},
+            completion: completion
+        )
+
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 1)
+        XCTAssertEqual(resultPayload, nil)
+        XCTAssertEqual(resultError, error)
+    }
+
+    func test_need3DSConfirmationACS_canceled() throws {
+        // given
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .cancelled
+
+        var isConfirmationCancelledCalled = false
+        let confirmationCancelled: () -> Void = { isConfirmationCancelledCalled = true }
+
+        var resultPayload: GetPaymentStatePayload?
+        var resultError: NSError?
+        let completion: (Result<GetPaymentStatePayload, Error>) -> Void = { result in
+            switch result {
+            case let .success(payload):
+                resultPayload = payload
+            case let .failure(err):
+                resultError = err as NSError
+            }
+        }
+
+        // when
+        sut.payment(
+            paymentProcessMock,
+            need3DSConfirmationACS: .fake(),
+            version: "2.0.0",
+            confirmationCancelled: confirmationCancelled,
+            completion: completion
+        )
+
+        // then
+        XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 1)
+        XCTAssertTrue(isConfirmationCancelledCalled)
+        XCTAssertEqual(resultPayload, nil)
+        XCTAssertEqual(resultError, nil)
     }
 
     func test_performPayment_yandexPay() {
@@ -200,7 +289,7 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(data.payload, state)
     }
 
-    func test_paymentControlleNotifiesChargePaymentDelegate_whenPaymentDidFailed() throws {
+    func test_paymentControlleNotifiesChargePaymentDelegate_whenPaymentDidFailed_104() throws {
         // given
         let paymentId = String.paymentId
         let errorStub = NSError(domain: "domain", code: 104)
@@ -223,6 +312,27 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.additionalData, additionalData)
+    }
+
+    func test_paymentControlleNotifiesChargePaymentDelegate_whenPaymentDidFailed() throws {
+        // given
+        let paymentId = String.paymentId
+        let errorStub = NSError(domain: "domain", code: 111)
+        let delegateMock = ChargePaymentControllerDelegateMock()
+        paymentProcessMock.paymentId = paymentId
+
+        sut.delegate = delegateMock
+
+        // when
+        sut.paymentDidFailed(
+            paymentProcessMock,
+            with: errorStub,
+            cardId: .cardId,
+            rebillId: .rebillId
+        )
+
+        // then
+        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 0)
     }
 
     func test_paymentControllerNotifiesPaymentDelegate_whenPaymentDidFailed() throws {
