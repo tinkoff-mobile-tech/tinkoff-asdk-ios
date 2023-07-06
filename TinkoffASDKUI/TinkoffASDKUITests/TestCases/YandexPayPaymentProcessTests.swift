@@ -282,6 +282,68 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeedCollect3DsCallCounter, .zero)
         XCTAssertEqual(paymentProcessDelegateMock.paymentDidFailedCallCounter, .zero)
     }
+
+    func test_returnPaymentId_whenPaymentFlowIsFull() {
+        // given
+        let payloadMock = InitPayload.fake()
+        let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
+        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
+
+        // when
+        sut.start()
+        let paymentId = sut.paymentId
+
+        // then
+        XCTAssertEqual(paymentId, payloadMock.paymentId)
+    }
+
+    func test_returnPaymentId_whenPaymentFlowIsFinish() {
+        // given
+        let paymentOptions = FinishPaymentOptions.fake()
+        let sut = prepareSut(paymentFlow: .finish(paymentOptions: paymentOptions))
+        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
+
+        // when
+        sut.start()
+        let paymentId = sut.paymentId
+
+        // then
+        XCTAssertEqual(paymentId, paymentOptions.paymentId)
+    }
+
+    func test_cancelRequestCancels() {
+        // given
+        let mockCancellable = CancellableMock()
+        let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
+
+        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
+        paymentServiceMock.initPaymentStubReturn = { _ in
+            mockCancellable
+        }
+
+        // when
+        sut.start()
+        sut.cancel()
+
+        // then
+        XCTAssertTrue(mockCancellable.invokedCancel)
+    }
+
+    func test_thatPaymentProcessNotifiesDelegate() {
+        // given
+        let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
+
+        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionInput = .success(.fake(responseStatus: .needConfirmation3DS(.fake())))
+
+        paymentProcessDelegateMock.paymentNeed3DsConfirmationCompletionInput = .failure(ErrorStub())
+
+        // when
+        sut.start()
+
+        // then
+        XCTAssertEqual(paymentProcessDelegateMock.paymentDidFailedCallCounter, 1)
+    }
 }
 
 // MARK: - Helpers
