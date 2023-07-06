@@ -86,9 +86,18 @@ final class PaymentSystemResolverTests: BaseTestCase {
         else { XCTFail("PaymentSystemDecision must be equal to unrecognized") }
     }
 
+    func test_notResolvePaymentSystem_whenBinLengthIsLessThanTwo() {
+        // when
+        let paymentSystemDecision = sut.resolve(by: "6")
+
+        // then
+        if case .ambiguous = paymentSystemDecision {}
+        else { XCTFail("PaymentSystemDecision must be equal to ambiguous") }
+    }
+
     // MARK: - Private
 
-    private func test_resolvePaymentSystem(by bin: String, expected: PaymentSystem) throws {
+    private func test_resolvePaymentSystem(by bin: String, expected: PaymentSystem?) throws {
         // when
         let paymentSystemDecision = sut.resolve(by: bin)
 

@@ -81,9 +81,7 @@ final class PaymentSystemResolver: IPaymentSystemResolver {
         switch matchedPaymentSystems.first {
         case let .some(paymentSystem) where matchedPaymentSystems.count == 1:
             return .resolved(paymentSystem)
-        case .some:
-            return .ambiguous
-        case .none:
+        case .some, .none:
             return .unrecognized
         }
     }

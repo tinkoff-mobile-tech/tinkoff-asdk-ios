@@ -19,6 +19,7 @@
 * [EACQAPW-5401] YandexPayPaymentProcess Tests
 * [EACQAPW-5410] PaymentController more Tests
 * [EACQAPW-5415] ChargePaymentProcess Tests
+* [EACQAPW-5418] PaymentSystemResolver Tests
 
 ### Fixed
 
