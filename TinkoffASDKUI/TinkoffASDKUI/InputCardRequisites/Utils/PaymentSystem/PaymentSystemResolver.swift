@@ -25,9 +25,10 @@ enum PaymentSystemDecision: Equatable {
     case unrecognized
 
     func getPaymentSystem() -> PaymentSystem? {
-        if case let .resolved(paymentSystem) = self {
+        switch self {
+        case let .resolved(paymentSystem):
             return paymentSystem
-        } else {
+        default:
             return nil
         }
     }
