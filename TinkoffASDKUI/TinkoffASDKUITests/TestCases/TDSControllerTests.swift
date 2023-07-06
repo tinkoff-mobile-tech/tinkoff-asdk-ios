@@ -114,6 +114,27 @@ final class TDSControllerTests: BaseTestCase {
         XCTAssertEqual(acquiringThreeDSServiceMock.submit3DSAuthorizationV2CallsCount, 1)
     }
 
+    func test_completed_with_doChallenge_success() throws {
+        // given
+        let fakedResult = GetPaymentStatePayload.fake()
+
+        try setupStartAppBasedFlow()
+        timeoutResolverMock.underlyingChallengeValue = 1
+        sut.doChallenge(with: .fake())
+
+        let completionEvent = CompletionEvent(sdkTransactionID: "", transactionStatus: "")
+        acquiringThreeDSServiceMock.submit3DSAuthorizationV2ReturnValue = EmptyCancellable()
+        acquiringThreeDSServiceMock.submit3DSAuthorizationV2CompletionClosureInput = .success(fakedResult)
+
+        // when
+        sut.completed(completionEvent)
+
+        // then
+        XCTAssertEqual(acquiringThreeDSServiceMock.submit3DSAuthorizationV2CallsCount, 1)
+        XCTAssertEqual(transactionMock.closeCallsCount, 1)
+        XCTAssertEqual(acquiringThreeDSServiceMock.submit3DSAuthorizationV2CallsCount, 1)
+    }
+
     func test_cancelled() throws {
         // given
         var didCallCancellation = false
