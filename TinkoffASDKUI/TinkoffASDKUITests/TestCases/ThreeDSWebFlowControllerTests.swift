@@ -142,4 +142,19 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         XCTAssertTrue(viewControllerMock.invokedPresentAnimatedParameters?.viewControllerToPresent === navController)
         XCTAssertEqual(requestUrlInWebView?.absoluteString, data.acsUrl)
     }
+
+    func test_complete3DSMethod() throws {
+        // given
+        let data = Checking3DSURLData.fake()
+        let delegateMock = ThreeDSWebFlowDelegateMock()
+        sut.webFlowDelegate = delegateMock
+
+        // when
+        try sut.complete3DSMethod(checking3DSURLData: data)
+
+        // then
+        XCTAssertEqual(threeDSServiceMock.createChecking3DSURLCallCounter, 1)
+        XCTAssertEqual(threeDSServiceMock.createChecking3DSURLRecievedArgumetns, data)
+        XCTAssertEqual(delegateMock.hiddenWebViewToCollect3DSDataCallsCount, 1)
+    }
 }

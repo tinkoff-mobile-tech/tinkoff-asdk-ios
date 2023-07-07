@@ -13,7 +13,7 @@ final class ThreeDSWebFlowDelegateMock: ThreeDSWebFlowDelegate {
     // MARK: - hiddenWebViewToCollect3DSData
 
     var hiddenWebViewToCollect3DSDataCallsCount = 0
-    var hiddenWebViewToCollect3DSDataReturnValue: WKWebView!
+    var hiddenWebViewToCollect3DSDataReturnValue: WKWebView = .init(frame: .zero)
 
     func hiddenWebViewToCollect3DSData() -> WKWebView {
         hiddenWebViewToCollect3DSDataCallsCount += 1
