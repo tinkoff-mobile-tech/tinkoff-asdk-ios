@@ -12,10 +12,6 @@ import ThreeDSWrapper
 
 final class TransactionMock: ITransaction {
 
-    deinit {
-        print("deinit")
-    }
-
     // MARK: - getAuthenticationRequestParameters
 
     var getAuthenticationRequestParametersThrowableError: Error?

@@ -27,7 +27,7 @@ extension Check3DSVersionPayload {
             )
         case .appBased:
             return Check3DSVersionPayload(
-                version: "2.0.0",
+                version: "2.1.0",
                 tdsServerTransID: "tdsServerTransID",
                 threeDSMethodURL: "threeDSMethodURL",
                 paymentSystem: "mock"
