@@ -20,6 +20,8 @@
 * [EACQAPW-5410] PaymentController more Tests
 * [EACQAPW-5415] ChargePaymentProcess Tests
 * [EACQAPW-5418] PaymentSystemResolver Tests
+* [EACQAPW-4452] App Based Flow Payment support
+* [EACQAPW-4453] Update Third Party bundled xcframeworks
 
 ### Fixed
 
