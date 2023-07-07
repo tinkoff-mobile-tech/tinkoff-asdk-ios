@@ -17,7 +17,7 @@ final class TinkoffPayController: ITinkoffPayController {
         case didReceiveFailedPaymentState(GetPaymentStatePayload)
     }
 
-    private final class Process: Cancellable {
+    final class Process: Cancellable {
         var isActive: Bool { !isCancelled.wrappedValue }
         private let isCancelled = Atomic(wrappedValue: false)
 
