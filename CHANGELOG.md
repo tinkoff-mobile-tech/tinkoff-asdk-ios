@@ -20,6 +20,7 @@
 * [EACQAPW-5410] PaymentController more Tests
 * [EACQAPW-5415] ChargePaymentProcess Tests
 * [EACQAPW-5418] PaymentSystemResolver Tests
+* [EACQAPW-5429] TinkoffPayController Tests
 
 ### Fixed
 
