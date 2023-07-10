@@ -19,7 +19,7 @@
 
 import Foundation
 
-public struct Checking3DSURLData {
+public struct Checking3DSURLData: Equatable {
     public var tdsServerTransID: String
     public var threeDSMethodURL: String
     public var notificationURL: String

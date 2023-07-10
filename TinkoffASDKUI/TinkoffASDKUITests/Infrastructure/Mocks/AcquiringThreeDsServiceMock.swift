@@ -77,10 +77,12 @@ final class AcquiringThreeDsServiceMock: IAcquiringThreeDSService {
     }
 
     var createChecking3DSURLCallCounter = 0
+    var createChecking3DSURLRecievedArgumetns: Checking3DSURLData?
     var createChecking3DSURLReturnStub: (CreateChecking3DSURLPassedArguments) throws -> URLRequest = { _ in .empty }
 
     func createChecking3DSURL(data: Checking3DSURLData) throws -> URLRequest {
         createChecking3DSURLCallCounter += 1
+        createChecking3DSURLRecievedArgumetns = data
         let args = CreateChecking3DSURLPassedArguments(data: data)
         return try createChecking3DSURLReturnStub(args)
     }
