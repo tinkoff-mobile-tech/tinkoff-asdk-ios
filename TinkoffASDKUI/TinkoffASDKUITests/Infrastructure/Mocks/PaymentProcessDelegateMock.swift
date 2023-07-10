@@ -10,6 +10,25 @@ import TinkoffASDKCore
 
 final class PaymentProcessDelegateMock: PaymentProcessDelegate {
 
+    // MARK: - startAppBasedFlow
+
+    typealias StartAppBasedFlowArguments = (check3dsPayload: Check3DSVersionPayload, completion: (Result<ThreeDSDeviceInfo, Error>) -> Void)
+
+    var startAppBasedFlowCallsCount = 0
+    var startAppBasedFlowReceivedArguments: StartAppBasedFlowArguments?
+    var startAppBasedFlowReceivedInvocations: [StartAppBasedFlowArguments] = []
+    var startAppBasedFlowCompletionClosureInput: Result<ThreeDSDeviceInfo, Error>?
+
+    func startAppBasedFlow(check3dsPayload: Check3DSVersionPayload, completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void) {
+        startAppBasedFlowCallsCount += 1
+        let arguments = (check3dsPayload, completion)
+        startAppBasedFlowReceivedArguments = arguments
+        startAppBasedFlowReceivedInvocations.append(arguments)
+        if let startAppBasedFlowCompletionClosureInput = startAppBasedFlowCompletionClosureInput {
+            completion(startAppBasedFlowCompletionClosureInput)
+        }
+    }
+
     // MARK: - paymentDidFinish
 
     struct PaymentDidFinishPassedArguments {

@@ -1,0 +1,3215 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "TopLevel",
+    "printedName": "TopLevel",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "CertificateAlgorithm",
+        "printedName": "CertificateAlgorithm",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "rsa",
+            "printedName": "rsa",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(ThreeDSWrapper.CertificateAlgorithm.Type) -> ThreeDSWrapper.CertificateAlgorithm",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateAlgorithm",
+                    "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                    "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "ThreeDSWrapper.CertificateAlgorithm.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateAlgorithm",
+                        "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                        "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO3rsayA2CmF",
+            "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO3rsayA2CmF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "ec",
+            "printedName": "ec",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(ThreeDSWrapper.CertificateAlgorithm.Type) -> ThreeDSWrapper.CertificateAlgorithm",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateAlgorithm",
+                    "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                    "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "ThreeDSWrapper.CertificateAlgorithm.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateAlgorithm",
+                        "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                        "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO2ecyA2CmF",
+            "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO2ecyA2CmF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateAlgorithm",
+                "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateAlgorithm",
+                "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO2eeoiySbAC_ACtFZ",
+            "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO2eeoiySbAC_ACtFZ",
+            "moduleName": "ThreeDSWrapper",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO9hashValueSivp",
+            "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO9hashValueSivp",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO9hashValueSivg",
+                "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO9hashValueSivg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO4hash4intoys6HasherVz_tF",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO",
+        "mangledName": "$s14ThreeDSWrapper20CertificateAlgorithmO",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "AccessControl",
+          "Frozen",
+          "RawDocComment"
+        ],
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "CertificateSource",
+        "printedName": "CertificateSource",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "bundle",
+            "printedName": "bundle",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(ThreeDSWrapper.CertificateSource.Type) -> ThreeDSWrapper.CertificateSource",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateSource",
+                    "printedName": "ThreeDSWrapper.CertificateSource",
+                    "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "ThreeDSWrapper.CertificateSource.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateSource",
+                        "printedName": "ThreeDSWrapper.CertificateSource",
+                        "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:14ThreeDSWrapper17CertificateSourceO6bundleyA2CmF",
+            "mangledName": "$s14ThreeDSWrapper17CertificateSourceO6bundleyA2CmF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "remote",
+            "printedName": "remote",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(ThreeDSWrapper.CertificateSource.Type) -> (Foundation.URL) -> ThreeDSWrapper.CertificateSource",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Foundation.URL) -> ThreeDSWrapper.CertificateSource",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateSource",
+                        "printedName": "ThreeDSWrapper.CertificateSource",
+                        "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(url: Foundation.URL)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "URL",
+                            "printedName": "Foundation.URL",
+                            "usr": "s:10Foundation3URLV"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "ThreeDSWrapper.CertificateSource.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateSource",
+                        "printedName": "ThreeDSWrapper.CertificateSource",
+                        "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:14ThreeDSWrapper17CertificateSourceO6remoteyAC10Foundation3URLV_tcACmF",
+            "mangledName": "$s14ThreeDSWrapper17CertificateSourceO6remoteyAC10Foundation3URLV_tcACmF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper17CertificateSourceO9hashValueSivp",
+            "mangledName": "$s14ThreeDSWrapper17CertificateSourceO9hashValueSivp",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper17CertificateSourceO9hashValueSivg",
+                "mangledName": "$s14ThreeDSWrapper17CertificateSourceO9hashValueSivg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper17CertificateSourceO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s14ThreeDSWrapper17CertificateSourceO4hash4intoys6HasherVz_tF",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateSource",
+                "printedName": "ThreeDSWrapper.CertificateSource",
+                "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateSource",
+                "printedName": "ThreeDSWrapper.CertificateSource",
+                "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper17CertificateSourceO2eeoiySbAC_ACtFZ",
+            "mangledName": "$s14ThreeDSWrapper17CertificateSourceO2eeoiySbAC_ACtFZ",
+            "moduleName": "ThreeDSWrapper",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:14ThreeDSWrapper17CertificateSourceO",
+        "mangledName": "$s14ThreeDSWrapper17CertificateSourceO",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "AccessControl",
+          "Frozen",
+          "RawDocComment"
+        ],
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "CertificateState",
+        "printedName": "CertificateState",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "certificateType",
+            "printedName": "certificateType",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateType",
+                "printedName": "ThreeDSWrapper.CertificateType",
+                "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper16CertificateStateV15certificateTypeAA0cF0Ovp",
+            "mangledName": "$s14ThreeDSWrapper16CertificateStateV15certificateTypeAA0cF0Ovp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateType",
+                    "printedName": "ThreeDSWrapper.CertificateType",
+                    "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper16CertificateStateV15certificateTypeAA0cF0Ovg",
+                "mangledName": "$s14ThreeDSWrapper16CertificateStateV15certificateTypeAA0cF0Ovg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "directoryServerID",
+            "printedName": "directoryServerID",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper16CertificateStateV17directoryServerIDSSvp",
+            "mangledName": "$s14ThreeDSWrapper16CertificateStateV17directoryServerIDSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper16CertificateStateV17directoryServerIDSSvg",
+                "mangledName": "$s14ThreeDSWrapper16CertificateStateV17directoryServerIDSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "algorithm",
+            "printedName": "algorithm",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateAlgorithm",
+                "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper16CertificateStateV9algorithmAA0C9AlgorithmOvp",
+            "mangledName": "$s14ThreeDSWrapper16CertificateStateV9algorithmAA0C9AlgorithmOvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateAlgorithm",
+                    "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                    "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper16CertificateStateV9algorithmAA0C9AlgorithmOvg",
+                "mangledName": "$s14ThreeDSWrapper16CertificateStateV9algorithmAA0C9AlgorithmOvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "source",
+            "printedName": "source",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateSource",
+                "printedName": "ThreeDSWrapper.CertificateSource",
+                "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper16CertificateStateV6sourceAA0C6SourceOvp",
+            "mangledName": "$s14ThreeDSWrapper16CertificateStateV6sourceAA0C6SourceOvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateSource",
+                    "printedName": "ThreeDSWrapper.CertificateSource",
+                    "usr": "s:14ThreeDSWrapper17CertificateSourceO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper16CertificateStateV6sourceAA0C6SourceOvg",
+                "mangledName": "$s14ThreeDSWrapper16CertificateStateV6sourceAA0C6SourceOvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "notAfterDate",
+            "printedName": "notAfterDate",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Date",
+                "printedName": "Foundation.Date",
+                "usr": "s:10Foundation4DateV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper16CertificateStateV12notAfterDate10Foundation0G0Vvp",
+            "mangledName": "$s14ThreeDSWrapper16CertificateStateV12notAfterDate10Foundation0G0Vvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Date",
+                    "printedName": "Foundation.Date",
+                    "usr": "s:10Foundation4DateV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper16CertificateStateV12notAfterDate10Foundation0G0Vvg",
+                "mangledName": "$s14ThreeDSWrapper16CertificateStateV12notAfterDate10Foundation0G0Vvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "sha256Fingerprint",
+            "printedName": "sha256Fingerprint",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper16CertificateStateV17sha256FingerprintSSvp",
+            "mangledName": "$s14ThreeDSWrapper16CertificateStateV17sha256FingerprintSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper16CertificateStateV17sha256FingerprintSSvg",
+                "mangledName": "$s14ThreeDSWrapper16CertificateStateV17sha256FingerprintSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14ThreeDSWrapper16CertificateStateV",
+        "mangledName": "$s14ThreeDSWrapper16CertificateStateV",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "CertificateType",
+        "printedName": "CertificateType",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "dsRootCA",
+            "printedName": "dsRootCA",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(ThreeDSWrapper.CertificateType.Type) -> ThreeDSWrapper.CertificateType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateType",
+                    "printedName": "ThreeDSWrapper.CertificateType",
+                    "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "ThreeDSWrapper.CertificateType.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateType",
+                        "printedName": "ThreeDSWrapper.CertificateType",
+                        "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:14ThreeDSWrapper15CertificateTypeO8dsRootCAyA2CmF",
+            "mangledName": "$s14ThreeDSWrapper15CertificateTypeO8dsRootCAyA2CmF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "dsPublicKey",
+            "printedName": "dsPublicKey",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(ThreeDSWrapper.CertificateType.Type) -> ThreeDSWrapper.CertificateType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateType",
+                    "printedName": "ThreeDSWrapper.CertificateType",
+                    "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "ThreeDSWrapper.CertificateType.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateType",
+                        "printedName": "ThreeDSWrapper.CertificateType",
+                        "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:14ThreeDSWrapper15CertificateTypeO11dsPublicKeyyA2CmF",
+            "mangledName": "$s14ThreeDSWrapper15CertificateTypeO11dsPublicKeyyA2CmF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(rawValue:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "ThreeDSWrapper.CertificateType?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateType",
+                    "printedName": "ThreeDSWrapper.CertificateType",
+                    "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14ThreeDSWrapper15CertificateTypeO8rawValueACSgSS_tcfc",
+            "mangledName": "$s14ThreeDSWrapper15CertificateTypeO8rawValueACSgSS_tcfc",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "rawValue",
+            "printedName": "rawValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper15CertificateTypeO8rawValueSSvp",
+            "mangledName": "$s14ThreeDSWrapper15CertificateTypeO8rawValueSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper15CertificateTypeO8rawValueSSvg",
+                "mangledName": "$s14ThreeDSWrapper15CertificateTypeO8rawValueSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:14ThreeDSWrapper15CertificateTypeO",
+        "mangledName": "$s14ThreeDSWrapper15CertificateTypeO",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "AccessControl",
+          "Frozen",
+          "RawDocComment"
+        ],
+        "enumRawTypeName": "String",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "RawRepresentable",
+            "printedName": "RawRepresentable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "RawValue",
+                "printedName": "RawValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:SY",
+            "mangledName": "$sSY"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "CertificateUpdatingRequest",
+        "printedName": "CertificateUpdatingRequest",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "certificateType",
+            "printedName": "certificateType",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateType",
+                "printedName": "ThreeDSWrapper.CertificateType",
+                "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV15certificateTypeAA0cG0Ovp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV15certificateTypeAA0cG0Ovp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateType",
+                    "printedName": "ThreeDSWrapper.CertificateType",
+                    "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV15certificateTypeAA0cG0Ovg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV15certificateTypeAA0cG0Ovg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "directoryServerID",
+            "printedName": "directoryServerID",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV17directoryServerIDSSvp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV17directoryServerIDSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV17directoryServerIDSSvg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV17directoryServerIDSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "algorithm",
+            "printedName": "algorithm",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateAlgorithm",
+                "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV9algorithmAA0C9AlgorithmOvp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV9algorithmAA0C9AlgorithmOvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateAlgorithm",
+                    "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                    "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV9algorithmAA0C9AlgorithmOvg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV9algorithmAA0C9AlgorithmOvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "notAfterDate",
+            "printedName": "notAfterDate",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Date",
+                "printedName": "Foundation.Date",
+                "usr": "s:10Foundation4DateV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV12notAfterDate10Foundation0H0Vvp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV12notAfterDate10Foundation0H0Vvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Date",
+                    "printedName": "Foundation.Date",
+                    "usr": "s:10Foundation4DateV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV12notAfterDate10Foundation0H0Vvg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV12notAfterDate10Foundation0H0Vvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "sha256Fingerprint",
+            "printedName": "sha256Fingerprint",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV17sha256FingerprintSSvp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV17sha256FingerprintSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV17sha256FingerprintSSvg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV17sha256FingerprintSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "url",
+            "printedName": "url",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "URL",
+                "printedName": "Foundation.URL",
+                "usr": "s:10Foundation3URLV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV3url10Foundation3URLVvp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV3url10Foundation3URLVvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "URL",
+                    "printedName": "Foundation.URL",
+                    "usr": "s:10Foundation3URLV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV3url10Foundation3URLVvg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV3url10Foundation3URLVvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(certificateType:directoryServerID:algorithm:notAfterDate:sha256Fingerprint:url:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateUpdatingRequest",
+                "printedName": "ThreeDSWrapper.CertificateUpdatingRequest",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateType",
+                "printedName": "ThreeDSWrapper.CertificateType",
+                "usr": "s:14ThreeDSWrapper15CertificateTypeO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateAlgorithm",
+                "printedName": "ThreeDSWrapper.CertificateAlgorithm",
+                "usr": "s:14ThreeDSWrapper20CertificateAlgorithmO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Date",
+                "printedName": "Foundation.Date",
+                "usr": "s:10Foundation4DateV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "URL",
+                "printedName": "Foundation.URL",
+                "usr": "s:10Foundation3URLV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV15certificateType17directoryServerID9algorithm12notAfterDate17sha256Fingerprint3urlAcA0cG0O_SSAA0C9AlgorithmO10Foundation0N0VSSAN3URLVtcfc",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV15certificateType17directoryServerID9algorithm12notAfterDate17sha256Fingerprint3urlAcA0cG0O_SSAA0C9AlgorithmO10Foundation0N0VSSAN3URLVtcfc",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV9hashValueSivp",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV9hashValueSivp",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV9hashValueSivg",
+                "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV9hashValueSivg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV4hash4intoys6HasherVz_tF",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV4hash4intoys6HasherVz_tF",
+            "moduleName": "ThreeDSWrapper",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateUpdatingRequest",
+                "printedName": "ThreeDSWrapper.CertificateUpdatingRequest",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CertificateUpdatingRequest",
+                "printedName": "ThreeDSWrapper.CertificateUpdatingRequest",
+                "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV2eeoiySbAC_ACtFZ",
+            "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV2eeoiySbAC_ACtFZ",
+            "moduleName": "ThreeDSWrapper",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV",
+        "mangledName": "$s14ThreeDSWrapper26CertificateUpdatingRequestV",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "TdsSdkIos",
+        "printedName": "TdsSdkIos",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "TDSWrapper",
+        "printedName": "TDSWrapper",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "sdkVersion",
+            "printedName": "sdkVersion",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC10sdkVersionSSvp",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC10sdkVersionSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC10sdkVersionSSvg",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC10sdkVersionSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "Final"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "warnings",
+            "printedName": "warnings",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[TdsSdkIos.Warning]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Warning",
+                    "printedName": "TdsSdkIos.Warning",
+                    "usr": "s:9TdsSdkIos7WarningC"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC8warningsSay9TdsSdkIos7WarningCGvp",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC8warningsSay9TdsSdkIos7WarningCGvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[TdsSdkIos.Warning]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Warning",
+                        "printedName": "TdsSdkIos.Warning",
+                        "usr": "s:9TdsSdkIos7WarningC"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC8warningsSay9TdsSdkIos7WarningCGvg",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC8warningsSay9TdsSdkIos7WarningCGvg",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "Final"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "createTransaction",
+            "printedName": "createTransaction(directoryServerID:messageVersion:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Transaction",
+                "printedName": "TdsSdkIos.Transaction",
+                "usr": "s:9TdsSdkIos11TransactionC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC17createTransaction17directoryServerID14messageVersion9TdsSdkIos0E0CSS_SStKF",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC17createTransaction17directoryServerID14messageVersion9TdsSdkIos0E0CSS_SStKF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "checkCertificates",
+            "printedName": "checkCertificates()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[ThreeDSWrapper.CertificateState]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateState",
+                    "printedName": "ThreeDSWrapper.CertificateState",
+                    "usr": "s:14ThreeDSWrapper16CertificateStateV"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC17checkCertificatesSayAA16CertificateStateVGyF",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC17checkCertificatesSayAA16CertificateStateVGyF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "update",
+            "printedName": "update(with:receiveOn:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[ThreeDSWrapper.CertificateUpdatingRequest]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CertificateUpdatingRequest",
+                    "printedName": "ThreeDSWrapper.CertificateUpdatingRequest",
+                    "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV"
+                  }
+                ],
+                "usr": "s:Sa"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "([ThreeDSWrapper.CertificateUpdatingRequest : ThreeDSWrapper.TDSWrapperError]) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Dictionary",
+                    "printedName": "[ThreeDSWrapper.CertificateUpdatingRequest : ThreeDSWrapper.TDSWrapperError]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CertificateUpdatingRequest",
+                        "printedName": "ThreeDSWrapper.CertificateUpdatingRequest",
+                        "usr": "s:14ThreeDSWrapper26CertificateUpdatingRequestV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "TDSWrapperError",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError",
+                        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV"
+                      }
+                    ],
+                    "usr": "s:SD"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC6update4with9receiveOn_ySayAA26CertificateUpdatingRequestVG_So17OS_dispatch_queueCySDyAhA0C5ErrorVGctF",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC6update4with9receiveOn_ySayAA26CertificateUpdatingRequestVG_So17OS_dispatch_queueCySDyAhA0C5ErrorVGctF",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "SDKConfiguration",
+            "printedName": "SDKConfiguration",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "uiCustomization",
+                "printedName": "uiCustomization",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "TdsSdkIos.UiCustomization?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UiCustomization",
+                        "printedName": "TdsSdkIos.UiCustomization",
+                        "usr": "s:9TdsSdkIos15UiCustomizationC"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV15uiCustomization9TdsSdkIos02UiF0CSgvp",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV15uiCustomization9TdsSdkIos02UiF0CSgvp",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Optional",
+                        "printedName": "TdsSdkIos.UiCustomization?",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "UiCustomization",
+                            "printedName": "TdsSdkIos.UiCustomization",
+                            "usr": "s:9TdsSdkIos15UiCustomizationC"
+                          }
+                        ],
+                        "usr": "s:Sq"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV15uiCustomization9TdsSdkIos02UiF0CSgvg",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV15uiCustomization9TdsSdkIos02UiF0CSgvg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "locale",
+                "printedName": "locale",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Locale",
+                    "printedName": "Foundation.Locale",
+                    "usr": "s:10Foundation6LocaleV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV6locale10Foundation6LocaleVvp",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV6locale10Foundation6LocaleVvp",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Locale",
+                        "printedName": "Foundation.Locale",
+                        "usr": "s:10Foundation6LocaleV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV6locale10Foundation6LocaleVvg",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV6locale10Foundation6LocaleVvg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Constructor",
+                "name": "init",
+                "printedName": "init(uiCustomization:locale:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SDKConfiguration",
+                    "printedName": "ThreeDSWrapper.TDSWrapper.SDKConfiguration",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "TdsSdkIos.UiCustomization?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UiCustomization",
+                        "printedName": "TdsSdkIos.UiCustomization",
+                        "usr": "s:9TdsSdkIos15UiCustomizationC"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Locale",
+                    "printedName": "Foundation.Locale",
+                    "usr": "s:10Foundation6LocaleV"
+                  }
+                ],
+                "declKind": "Constructor",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV15uiCustomization6localeAE9TdsSdkIos02UiF0CSg_10Foundation6LocaleVtcfc",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV15uiCustomization6localeAE9TdsSdkIos02UiF0CSg_10Foundation6LocaleVtcfc",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "init_kind": "Designated"
+              }
+            ],
+            "declKind": "Struct",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "isFromExtension": true
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "Environment",
+            "printedName": "Environment",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "production",
+                "printedName": "production",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Environment",
+                    "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV10productionAEvpZ",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC11EnvironmentV10productionAEvpZ",
+                "moduleName": "ThreeDSWrapper",
+                "static": true,
+                "declAttributes": [
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Environment",
+                        "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                        "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV10productionAEvgZ",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC11EnvironmentV10productionAEvgZ",
+                    "moduleName": "ThreeDSWrapper",
+                    "static": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "test",
+                "printedName": "test",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Environment",
+                    "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV4testAEvpZ",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC11EnvironmentV4testAEvpZ",
+                "moduleName": "ThreeDSWrapper",
+                "static": true,
+                "declAttributes": [
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Environment",
+                        "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                        "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV4testAEvgZ",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC11EnvironmentV4testAEvgZ",
+                    "moduleName": "ThreeDSWrapper",
+                    "static": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Struct",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC11EnvironmentV",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "isFromExtension": true
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "WrapperConfiguration",
+            "printedName": "WrapperConfiguration",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "environment",
+                "printedName": "environment",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Environment",
+                    "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV11environmentAC11EnvironmentVvp",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV11environmentAC11EnvironmentVvp",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Environment",
+                        "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                        "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV11environmentAC11EnvironmentVvg",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV11environmentAC11EnvironmentVvg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "session",
+                "printedName": "session",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "URLSession",
+                    "printedName": "Foundation.URLSession",
+                    "usr": "c:objc(cs)NSURLSession"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV7sessionSo12NSURLSessionCvp",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV7sessionSo12NSURLSessionCvp",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "URLSession",
+                        "printedName": "Foundation.URLSession",
+                        "usr": "c:objc(cs)NSURLSession"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV7sessionSo12NSURLSessionCvg",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV7sessionSo12NSURLSessionCvg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "requestsTimeout",
+                "printedName": "requestsTimeout",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV15requestsTimeoutSdvp",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV15requestsTimeoutSdvp",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Double",
+                        "printedName": "Swift.Double",
+                        "usr": "s:Sd"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV15requestsTimeoutSdvg",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV15requestsTimeoutSdvg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "userDefaults",
+                "printedName": "userDefaults",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UserDefaults",
+                    "printedName": "Foundation.UserDefaults",
+                    "usr": "c:objc(cs)NSUserDefaults"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV12userDefaultsSo06NSUserG0Cvp",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV12userDefaultsSo06NSUserG0Cvp",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UserDefaults",
+                        "printedName": "Foundation.UserDefaults",
+                        "usr": "c:objc(cs)NSUserDefaults"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV12userDefaultsSo06NSUserG0Cvg",
+                    "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV12userDefaultsSo06NSUserG0Cvg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Constructor",
+                "name": "init",
+                "printedName": "init(environment:session:requestsTimeout:userDefaults:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WrapperConfiguration",
+                    "printedName": "ThreeDSWrapper.TDSWrapper.WrapperConfiguration",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Environment",
+                    "printedName": "ThreeDSWrapper.TDSWrapper.Environment",
+                    "usr": "s:14ThreeDSWrapper10TDSWrapperC11EnvironmentV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "URLSession",
+                    "printedName": "Foundation.URLSession",
+                    "hasDefaultArg": true,
+                    "usr": "c:objc(cs)NSURLSession"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "hasDefaultArg": true,
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UserDefaults",
+                    "printedName": "Foundation.UserDefaults",
+                    "hasDefaultArg": true,
+                    "usr": "c:objc(cs)NSUserDefaults"
+                  }
+                ],
+                "declKind": "Constructor",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV11environment7session15requestsTimeout12userDefaultsAeC11EnvironmentV_So12NSURLSessionCSdSo06NSUserK0Ctcfc",
+                "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV11environment7session15requestsTimeout12userDefaultsAeC11EnvironmentV_So12NSURLSessionCSdSo06NSUserK0Ctcfc",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "init_kind": "Designated"
+              }
+            ],
+            "declKind": "Struct",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "isFromExtension": true
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(sdkConfiguration:wrapperConfiguration:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "TDSWrapper",
+                "printedName": "ThreeDSWrapper.TDSWrapper",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SDKConfiguration",
+                "printedName": "ThreeDSWrapper.TDSWrapper.SDKConfiguration",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC16SDKConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WrapperConfiguration",
+                "printedName": "ThreeDSWrapper.TDSWrapper.WrapperConfiguration",
+                "usr": "s:14ThreeDSWrapper10TDSWrapperC20WrapperConfigurationV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14ThreeDSWrapper10TDSWrapperC16sdkConfiguration07wrapperE0A2C16SDKConfigurationV_AC07WrapperE0Vtcfc",
+            "mangledName": "$s14ThreeDSWrapper10TDSWrapperC16sdkConfiguration07wrapperE0A2C16SDKConfigurationV_AC07WrapperE0Vtcfc",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "Convenience",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "init_kind": "Convenience"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:14ThreeDSWrapper10TDSWrapperC",
+        "mangledName": "$s14ThreeDSWrapper10TDSWrapperC",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "Final",
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "hasMissingDesignatedInitializers": true
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "TdsSdkIos",
+        "printedName": "TdsSdkIos",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "TDSWrapperError",
+        "printedName": "TDSWrapperError",
+        "children": [
+          {
+            "kind": "TypeDecl",
+            "name": "Code",
+            "printedName": "Code",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "internalError",
+                "printedName": "internalError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(ThreeDSWrapper.TDSWrapperError.Code.Type) -> ThreeDSWrapper.TDSWrapperError.Code",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Code",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Code",
+                            "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO08internalD0yA2EmF",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO08internalD0yA2EmF",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 0
+              },
+              {
+                "kind": "Var",
+                "name": "networkError",
+                "printedName": "networkError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(ThreeDSWrapper.TDSWrapperError.Code.Type) -> ThreeDSWrapper.TDSWrapperError.Code",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Code",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Code",
+                            "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO07networkD0yA2EmF",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO07networkD0yA2EmF",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 1
+              },
+              {
+                "kind": "Var",
+                "name": "couldNotFindCertificate",
+                "printedName": "couldNotFindCertificate",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(ThreeDSWrapper.TDSWrapperError.Code.Type) -> ThreeDSWrapper.TDSWrapperError.Code",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Code",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Code",
+                            "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO23couldNotFindCertificateyA2EmF",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO23couldNotFindCertificateyA2EmF",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 2
+              },
+              {
+                "kind": "Var",
+                "name": "certificateDataIsCorrupted",
+                "printedName": "certificateDataIsCorrupted",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(ThreeDSWrapper.TDSWrapperError.Code.Type) -> ThreeDSWrapper.TDSWrapperError.Code",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Code",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Code",
+                            "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO26certificateDataIsCorruptedyA2EmF",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO26certificateDataIsCorruptedyA2EmF",
+                "moduleName": "ThreeDSWrapper",
+                "declAttributes": [
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 3
+              },
+              {
+                "kind": "Constructor",
+                "name": "init",
+                "printedName": "init(rawValue:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "ThreeDSWrapper.TDSWrapperError.Code?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Code",
+                        "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Constructor",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO8rawValueAESgSi_tcfc",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO8rawValueAESgSi_tcfc",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "init_kind": "Designated"
+              },
+              {
+                "kind": "Var",
+                "name": "rawValue",
+                "printedName": "rawValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO8rawValueSivp",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO8rawValueSivp",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO8rawValueSivg",
+                    "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO8rawValueSivg",
+                    "moduleName": "ThreeDSWrapper",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Enum",
+            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO",
+            "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4CodeO",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "AccessControl",
+              "Frozen",
+              "RawDocComment"
+            ],
+            "enumRawTypeName": "Int",
+            "isEnumExhaustive": true,
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Equatable",
+                "printedName": "Equatable",
+                "usr": "s:SQ",
+                "mangledName": "$sSQ"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Hashable",
+                "printedName": "Hashable",
+                "usr": "s:SH",
+                "mangledName": "$sSH"
+              },
+              {
+                "kind": "Conformance",
+                "name": "RawRepresentable",
+                "printedName": "RawRepresentable",
+                "children": [
+                  {
+                    "kind": "TypeWitness",
+                    "name": "RawValue",
+                    "printedName": "RawValue",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:SY",
+                "mangledName": "$sSY"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Sendable",
+                "printedName": "Sendable",
+                "usr": "s:s8SendableP",
+                "mangledName": "$ss8SendableP"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "code",
+            "printedName": "code",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Code",
+                "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4codeAC4CodeOvp",
+            "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4codeAC4CodeOvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Code",
+                    "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                    "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4codeAC4CodeOvg",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4codeAC4CodeOvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "message",
+            "printedName": "message",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV7messageSSvp",
+            "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV7messageSSvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV7messageSSvg",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV7messageSSvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "underlyingErrors",
+            "printedName": "underlyingErrors",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.Error]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Error",
+                    "printedName": "Swift.Error",
+                    "usr": "s:s5ErrorP"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV16underlyingErrorsSays0D0_pGvp",
+            "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV16underlyingErrorsSays0D0_pGvp",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[Swift.Error]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Error",
+                        "printedName": "Swift.Error",
+                        "usr": "s:s5ErrorP"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV16underlyingErrorsSays0D0_pGvg",
+                "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV16underlyingErrorsSays0D0_pGvg",
+                "moduleName": "ThreeDSWrapper",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(code:message:underlyingErrors:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "TDSWrapperError",
+                "printedName": "ThreeDSWrapper.TDSWrapperError",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Code",
+                "printedName": "ThreeDSWrapper.TDSWrapperError.Code",
+                "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4CodeO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.Error]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Error",
+                    "printedName": "Swift.Error",
+                    "usr": "s:s5ErrorP"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV4code7message16underlyingErrorsA2C4CodeO_SSSays0D0_pGtcfc",
+            "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV4code7message16underlyingErrorsA2C4CodeO_SSSays0D0_pGtcfc",
+            "moduleName": "ThreeDSWrapper",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14ThreeDSWrapper15TDSWrapperErrorV",
+        "mangledName": "$s14ThreeDSWrapper15TDSWrapperErrorV",
+        "moduleName": "ThreeDSWrapper",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "TdsSdkIos",
+        "printedName": "TdsSdkIos",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "TdsSdkIos",
+        "printedName": "TdsSdkIos",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "ThreeDSWrapper"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "ThreeDS2Service",
+        "printedName": "ThreeDS2Service",
+        "declKind": "Class",
+        "usr": "s:9TdsSdkIos15ThreeDS2ServiceC",
+        "mangledName": "$s9TdsSdkIos15ThreeDS2ServiceC",
+        "moduleName": "TdsSdkIos",
+        "isExternal": true
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": [
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Core\/Utils\/Bundle+Resources.swift",
+      "kind": "StringLiteral",
+      "offset": 476,
+      "length": 25,
+      "value": "\"ThreeDSWrapperResources\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Core\/Utils\/Bundle+Resources.swift",
+      "kind": "StringLiteral",
+      "offset": 535,
+      "length": 8,
+      "value": "\"bundle\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Services\/CertificateFilesMapProvider.swift",
+      "kind": "StringLiteral",
+      "offset": 3696,
+      "length": 6,
+      "value": "\"json\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/CertificateTarget.swift",
+      "kind": "StringLiteral",
+      "offset": 677,
+      "length": 5,
+      "value": "\"&$*\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Repositories\/FingerprintReplacementsRepository.swift",
+      "kind": "StringLiteral",
+      "offset": 1731,
+      "length": 25,
+      "value": "\"replacedFingerprintsKey\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Repositories\/FingerprintReplacementsRepository.swift",
+      "kind": "StringLiteral",
+      "offset": 1779,
+      "length": 6,
+      "value": "\"null\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Core\/Services\/PEMDecoder.swift",
+      "kind": "StringLiteral",
+      "offset": 1033,
+      "length": 29,
+      "value": "\"-----BEGIN CERTIFICATE-----\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Core\/Services\/PEMDecoder.swift",
+      "kind": "StringLiteral",
+      "offset": 1091,
+      "length": 27,
+      "value": "\"-----END CERTIFICATE-----\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Repositories\/RemoteCertificatesRepository.swift",
+      "kind": "StringLiteral",
+      "offset": 1905,
+      "length": 27,
+      "value": "\"certificatesDictionaryKey\""
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Core\/Services\/StatusCodeValidator.swift",
+      "kind": "IntegerLiteral",
+      "offset": 287,
+      "length": 3,
+      "value": "200"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Core\/Services\/StatusCodeValidator.swift",
+      "kind": "IntegerLiteral",
+      "offset": 295,
+      "length": 3,
+      "value": "299"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/SDK\/TDSWrapper+Assemble.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3601,
+      "length": 2,
+      "value": "15"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 409,
+      "length": 1,
+      "value": "1"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 721,
+      "length": 2,
+      "value": "21"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 918,
+      "length": 2,
+      "value": "22"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1143,
+      "length": 2,
+      "value": "23"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 409,
+      "length": 1,
+      "value": "1"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 721,
+      "length": 2,
+      "value": "21"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 918,
+      "length": 2,
+      "value": "22"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1143,
+      "length": 2,
+      "value": "23"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 409,
+      "length": 1,
+      "value": "1"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 721,
+      "length": 2,
+      "value": "21"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 918,
+      "length": 2,
+      "value": "22"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "IntegerLiteral",
+      "offset": 1143,
+      "length": 2,
+      "value": "23"
+    },
+    {
+      "filePath": "\/Users\/User\/gitlab-runner\/builds\/_X3o7fMF\/0\/coretech-mobile-ios\/core\/Development\/ThreeDSWrapper\/Sources\/Domain\/Models\/TDSWrapperError.swift",
+      "kind": "Array",
+      "offset": 1646,
+      "length": 2,
+      "value": "[]"
+    }
+  ]
+}

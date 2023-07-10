@@ -10,26 +10,6 @@ import ThreeDSWrapper
 
 @testable import TinkoffASDKUI
 
-extension ProgressDialog {
-
-    static func fake() -> ProgressDialog {
-        ProgressDialog(nil)
-    }
-}
-
-extension AuthenticationRequestParameters {
-
-    static func fake() -> AuthenticationRequestParameters {
-        AuthenticationRequestParameters(
-            deviceData: "deviceData",
-            sdkTransId: "sdkTransId",
-            sdkAppID: "sdkAppID",
-            sdkReferenceNum: "sdkReferenceNum",
-            ephemeralPublic: "ephemeralPublic"
-        )
-    }
-}
-
 final class TransactionMock: ITransaction {
 
     // MARK: - getAuthenticationRequestParameters

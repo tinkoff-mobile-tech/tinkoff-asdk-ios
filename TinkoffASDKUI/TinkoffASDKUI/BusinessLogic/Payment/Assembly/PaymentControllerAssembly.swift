@@ -27,33 +27,28 @@ protocol IPaymentControllerAssembly {
 final class PaymentControllerAssembly: IPaymentControllerAssembly {
     private let coreSDK: AcquiringSdk
     private let threeDSWebFlowAssembly: IThreeDSWebFlowControllerAssembly
+    private let appBasedFlowControllerAssembly: ITDSControllerAssembly
     private let sdkConfiguration: AcquiringSdkConfiguration
     private let uiSDKConfiguration: UISDKConfiguration
+    private let tdsCertsManager: ITDSCertsManager
 
     init(
         coreSDK: AcquiringSdk,
         threeDSWebFlowAssembly: IThreeDSWebFlowControllerAssembly,
+        appBasedFlowControllerAssembly: ITDSControllerAssembly,
         sdkConfiguration: AcquiringSdkConfiguration,
-        uiSDKConfiguration: UISDKConfiguration
+        uiSDKConfiguration: UISDKConfiguration,
+        tdsCertsManager: ITDSCertsManager
     ) {
         self.coreSDK = coreSDK
         self.threeDSWebFlowAssembly = threeDSWebFlowAssembly
+        self.appBasedFlowControllerAssembly = appBasedFlowControllerAssembly
         self.sdkConfiguration = sdkConfiguration
         self.uiSDKConfiguration = uiSDKConfiguration
+        self.tdsCertsManager = tdsCertsManager
     }
 
     func paymentController() -> IPaymentController {
-        let tdsWrapper = TDSWrapperBuilder(
-            env: sdkConfiguration.serverEnvironment,
-            language: sdkConfiguration.language
-        ).build()
-        let tdsTimeoutResolver = TDSTimeoutResolver()
-        let tdsController = TDSController(
-            threeDsService: coreSDK,
-            tdsWrapper: tdsWrapper,
-            tdsTimeoutResolver: tdsTimeoutResolver
-        )
-
         let paymentStatusService = PaymentStatusService(paymentService: coreSDK)
         let repeatedRequestHelper = RepeatedRequestHelper(delay: .paymentStatusRequestDelay)
         let paymentStatusUpdateService = PaymentStatusUpdateService(
@@ -67,7 +62,7 @@ final class PaymentControllerAssembly: IPaymentControllerAssembly {
             threeDSWebFlowController: threeDSWebFlowAssembly.threeDSWebFlowController(),
             threeDSService: coreSDK,
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
-            tdsController: tdsController,
+            tdsController: appBasedFlowControllerAssembly.assemble(),
             paymentStatusUpdateService: paymentStatusUpdateService
         )
     }

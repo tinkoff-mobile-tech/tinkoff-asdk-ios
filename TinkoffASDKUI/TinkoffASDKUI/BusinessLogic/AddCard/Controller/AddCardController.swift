@@ -34,6 +34,7 @@ final class AddCardController {
     private let checkType: PaymentCardCheckType
     private let cardStateSuccessfulStatuses: Set<AcquiringStatus>
     private let paymentStateSuccessfulStatuses: Set<AcquiringStatus>
+    private let tdsController: ITDSController
 
     // MARK: Init
 
@@ -44,6 +45,7 @@ final class AddCardController {
         threeDSService: IAcquiringThreeDSService,
         customerKey: String,
         checkType: PaymentCardCheckType,
+        tdsController: ITDSController,
         successfulStatuses: Set<AcquiringStatus> = [.completed],
         paymentStateSuccessfulStatuses: Set<AcquiringStatus> = [.authorized, .confirmed]
     ) {
@@ -53,6 +55,7 @@ final class AddCardController {
         self.threeDSService = threeDSService
         self.customerKey = customerKey
         self.checkType = checkType
+        self.tdsController = tdsController
         cardStateSuccessfulStatuses = successfulStatuses
         self.paymentStateSuccessfulStatuses = paymentStateSuccessfulStatuses
     }
@@ -151,8 +154,15 @@ extension AddCardController {
         requestKey: String,
         completion: @escaping Completion
     ) {
-        if let tdsServerTransID = check3DSPayload.tdsServerTransID,
-           let threeDSMethodURL = check3DSPayload.threeDSMethodURL {
+        switch check3DSPayload.receiveVersion() {
+        case .v1:
+            attachCard(requestKey: requestKey, options: options, completion: completion)
+
+        // TODO: EACQAPW-5432 ждет задачу чтобы убрать appBased из case
+        case .v2, .appBased:
+            guard let tdsServerTransID = check3DSPayload.tdsServerTransID,
+                  let threeDSMethodURL = check3DSPayload.threeDSMethodURL
+            else { return }
 
             let checking3DSURLData = Checking3DSURLData(
                 tdsServerTransID: tdsServerTransID,
@@ -167,8 +177,31 @@ extension AddCardController {
                 messageVersion: check3DSPayload.version,
                 completion: completion
             )
-        } else {
-            attachCard(requestKey: requestKey, options: options, completion: completion)
+
+            // TODO: EACQAPW-5432 ждет задачу а именно доработки МАПИ
+            // Интеграция 3ds-app-based flow [флоу привязки карты]
+
+            /*
+             case .appBased:
+                 tdsController.startAppBasedFlow(
+                     check3dsPayload: check3DSPayload,
+                     completion: { [weak self] result in
+                         guard let self = self else { return }
+                         switch result {
+                         case let .success(deviceInfo):
+                             self.attachCard(
+                                 requestKey: requestKey,
+                                 options: options,
+                                 deviceData: deviceInfo,
+                                 messageVersion: check3DSPayload.version,
+                                 completion: completion
+                             )
+                         case let .failure(error):
+                             completion(.failed(error))
+                         }
+                     }
+                 )
+             */
         }
     }
 
@@ -226,6 +259,7 @@ extension AddCardController {
                     completion: completion
                 )
             case let .failure(error):
+                self.tdsController.stop()
                 completion(.failed(error))
             }
         }
@@ -255,6 +289,17 @@ extension AddCardController {
                 attachPayload: attachPayload,
                 completion: completion
             )
+        case let .needConfirmation3DS2AppBased(confirmationAppBasedData):
+            guard let messageVersion = messageVersion else {
+                return completion(.failed(Error.missingMessageVersionFor3DS))
+            }
+            confirm3DSAppBased(
+                confirmationData: confirmationAppBasedData,
+                messageVersion: messageVersion,
+                attachPayload: attachPayload,
+                completion: completion
+            )
+
         case .done:
             getState(
                 attachPayload: attachPayload,
@@ -295,6 +340,27 @@ extension AddCardController {
                     completion: completion
                 )
             }
+        }
+    }
+
+    /// Подтверждает привязку карты с помощью `App Based 3DS v2`
+    private func confirm3DSAppBased(
+        confirmationData: Confirmation3DS2AppBasedData,
+        messageVersion: String,
+        attachPayload: AttachCardPayload,
+        completion: @escaping Completion
+    ) {
+        DispatchQueue.performOnMain { [weak self] in
+            self?.tdsController.cancelHandler = {
+                completion(.cancelled)
+            }
+
+            self?.tdsController.completionHandler = { result in
+                print(try? result.get())
+                fatalError()
+            }
+
+            self?.tdsController.doChallenge(with: confirmationData)
         }
     }
 

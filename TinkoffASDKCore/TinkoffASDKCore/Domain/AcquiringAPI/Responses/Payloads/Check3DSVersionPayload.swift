@@ -65,3 +65,34 @@ extension Check3DSVersionPayload: Decodable {
         paymentSystem = try container.decodeIfPresent(String.self, forKey: .paymentSystem)
     }
 }
+
+// MARK: - Check3DSVersionPayload + ThreeDSVersion
+
+public extension Check3DSVersionPayload {
+
+    /// Версия 3дс
+    ///
+    /// Извлеченная по косвенным параметрам из `Check3DSVersionPayload`
+    enum ThreeDSVersion {
+        /// 1.0.0
+        case v1
+        /// 2.0.0 ACS
+        case v2
+        /// 2.1.0 App based
+        case appBased
+    }
+
+    /// Получить версию 3дс
+    func receiveVersion() -> ThreeDSVersion {
+        let hasTdsServerTransID = tdsServerTransID != nil
+        let hasThreeDSMethodURL = threeDSMethodURL != nil
+        let hasPaymentSystem = paymentSystem != nil
+
+        /// Смотрим на наличие необходимых параметров для флоу
+        switch (hasTdsServerTransID, hasThreeDSMethodURL, hasPaymentSystem) {
+        case (true, true, true): return .appBased
+        case (true, true, _): return .v2
+        default: return .v1
+        }
+    }
+}

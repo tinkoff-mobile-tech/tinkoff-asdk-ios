@@ -15,17 +15,20 @@ Pod::Spec.new do |spec|
 	spec.ios.deployment_target = '12.3'
 	spec.source = { :git => 'https://github.com/TinkoffCreditSystems/AcquiringSdk_IOS.git', :tag => spec.version }
 	spec.source_files = 'TinkoffASDKUI/TinkoffASDKUI/**/*.swift'
-  	spec.resource_bundles = {
-    	'TinkoffASDKUIResources' => ['TinkoffASDKUI/TinkoffASDKUI/**/*.{lproj,strings,xib,xcassets,imageset,png}']
-  	}
+  spec.resource_bundles = {
+    'TinkoffASDKUIResources' => ['TinkoffASDKUI/TinkoffASDKUI/**/*.{lproj,strings,xib,xcassets,imageset,png}']
+  }
 	spec.pod_target_xcconfig = { 
 		'CODE_SIGN_IDENTITY' => '' 
 	}
-
-  	spec.vendored_frameworks = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
-    spec.preserve_paths = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
 	spec.dependency 'TinkoffASDKCore'
-
+  spec.vendored_frameworks = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
+  spec.preserve_paths = ['ThirdParty/ThreeDSWrapper.xcframework', 'ThirdParty/TdsSdkIos.xcframework']
+  spec.resources = [
+    'ThirdParty/TdsSdkIos.xcframework/ios-arm64/TdsSdkIos.framework/TdsSdkIosResources.bundle',
+    'ThirdParty/ThreeDSWrapper.xcframework/ios-arm64/ThreeDSWrapper.framework/ThreeDSWrapperResources.bundle'
+  ]
+  
 	spec.test_spec 'Tests' do |test_spec|
 	test_spec.source_files = 
 	'TinkoffASDKUI/TinkoffASDKUITests/**/*', 

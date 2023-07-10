@@ -8,13 +8,17 @@
 @testable import TinkoffASDKUI
 
 final class TimeoutResolverMock: ITimeoutResolver {
+
     var mapiValue: String {
-        get { return underlyingMapiValue }
+        get {
+            mapiValueGetCalls += 1
+            return underlyingMapiValue
+        }
         set(value) { underlyingMapiValue = value }
     }
 
-    var underlyingMapiValue: String!
-    var challengeValueGetCalls: Int = 0
+    var mapiValueGetCalls: Int = 0
+    lazy var underlyingMapiValue: String = "05"
 
     var challengeValue: Int {
         get {
@@ -24,5 +28,6 @@ final class TimeoutResolverMock: ITimeoutResolver {
         set(value) { underlyingChallengeValue = value }
     }
 
-    var underlyingChallengeValue: Int!
+    var challengeValueGetCalls: Int = 0
+    var underlyingChallengeValue: Int = 5
 }

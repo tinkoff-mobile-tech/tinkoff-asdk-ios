@@ -22,12 +22,24 @@ import TinkoffASDKCore
 
 typealias PaymentCompletionHandler = (_ result: Result<GetPaymentStatePayload, Error>) -> Void
 
+/// Используется для проведения транзакции 3дс через App Based Flow
 protocol ITDSController: AnyObject {
     var completionHandler: PaymentCompletionHandler? { get set }
     var cancelHandler: (() -> Void)? { get set }
 
-    /// Начинает испытание на стороне 3дс-сдк
+    /// 1. Запускает App Based Flow проверку
+    func startAppBasedFlow(
+        check3dsPayload: Check3DSVersionPayload,
+        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+    )
+
+    /// 2. Начинает испытание на стороне 3дс-сдк
     func doChallenge(with appBasedData: Confirmation3DS2AppBasedData)
+
+    /// Приостанавливает выполнение транзакции
+    ///
+    /// Используем в случае получения ошибок от асдк
+    func stop()
 }
 
 final class TDSController: ITDSController {
@@ -37,6 +49,14 @@ final class TDSController: ITDSController {
     private let threeDsService: IAcquiringThreeDSService
     private let tdsWrapper: ITDSWrapper
     private let tdsTimeoutResolver: ITimeoutResolver
+    private let tdsCertsManager: ITDSCertsManager
+    private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
+    private let mainQueue: any IDispatchQueue
+
+    // TODO: EACQAPW-5434 Убрать костыль задержки в TDSController
+    // Костыль нужен для решения проблемы одновременных анимаций модалок.
+    // Из-за этого не показывается шторка асдк с ошибкой оплаты
+    private let delayExecutor: IDelayedExecutor
 
     // 3ds sdk properties
 
@@ -50,15 +70,40 @@ final class TDSController: ITDSController {
     var cancelHandler: (() -> Void)?
 
     // Init
-
     init(
         threeDsService: IAcquiringThreeDSService,
         tdsWrapper: ITDSWrapper,
-        tdsTimeoutResolver: ITimeoutResolver
+        tdsTimeoutResolver: ITimeoutResolver,
+        tdsCertsManager: ITDSCertsManager,
+        threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
+        delayExecutor: IDelayedExecutor,
+        mainQueue: IDispatchQueue
     ) {
         self.threeDsService = threeDsService
         self.tdsWrapper = tdsWrapper
         self.tdsTimeoutResolver = tdsTimeoutResolver
+        self.tdsCertsManager = tdsCertsManager
+        self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
+        self.delayExecutor = delayExecutor
+        self.mainQueue = mainQueue
+    }
+
+    /// Запускает App Based Flow проверку
+    func startAppBasedFlow(
+        check3dsPayload: Check3DSVersionPayload,
+        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+    ) {
+        guard let paymentSystem = check3dsPayload.paymentSystem
+        else {
+            completion(.failure(AppBasedControllerError.noPaymentSystem))
+            return
+        }
+
+        getDeviceInfo(
+            paymentSystem: paymentSystem,
+            messageVersion: check3dsPayload.version,
+            completion: completion
+        )
     }
 
     /// Начинает испытание на стороне 3дс-сдк
@@ -78,7 +123,69 @@ final class TDSController: ITDSController {
         )
     }
 
-    func startAppBasedFlow(
+    func stop() {
+        finishTransaction()
+        clear()
+    }
+}
+
+// MARK: - Private
+
+extension TDSController {
+
+    /// Получает необходимые параметры для проведения 3дс
+    private func getDeviceInfo(
+        paymentSystem: String,
+        messageVersion: String,
+        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+    ) {
+        tdsCertsManager.checkAndUpdateCertsIfNeeded(for: paymentSystem) { [weak self] result in
+            guard let self = self else { return }
+
+            do {
+                let matchingDirectoryServerID = try result.get()
+                // getting auth params
+                let authParams = try self.startTransaction(
+                    directoryServerID: matchingDirectoryServerID,
+                    messageVersion: messageVersion
+                )
+
+                // enriching request with additional params
+                let deviceInfo = self.gatherThreeDSDeviceInfo(
+                    messageVersion: messageVersion,
+                    authParams: authParams
+                )
+
+                completion(.success(deviceInfo))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    /// Добавляет необходимые параметры в `FinishAuthorizeData`
+    private func gatherThreeDSDeviceInfo(
+        messageVersion: String,
+        authParams: AuthenticationRequestParameters
+    ) -> ThreeDSDeviceInfo {
+        let deviceInfoFromProvider = threeDSDeviceInfoProvider.deviceInfo
+        return ThreeDSDeviceInfo(
+            threeDSCompInd: deviceInfoFromProvider.threeDSCompInd,
+            cresCallbackUrl: deviceInfoFromProvider.cresCallbackUrl,
+            languageId: deviceInfoFromProvider.language,
+            screenWidth: deviceInfoFromProvider.screenWidth,
+            screenHeight: deviceInfoFromProvider.screenHeight,
+            sdkAppID: authParams.getSDKAppID(),
+            sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
+            sdkReferenceNumber: authParams.getSDKReferenceNumber(),
+            sdkTransID: authParams.getSDKTransactionID(),
+            sdkMaxTimeout: tdsTimeoutResolver.mapiValue,
+            sdkEncData: authParams.getDeviceData()
+        )
+    }
+
+    /// Запускаем app based flow сценарий
+    private func startTransaction(
         directoryServerID: String,
         messageVersion: String
     ) throws -> AuthenticationRequestParameters {
@@ -109,36 +216,35 @@ final class TDSController: ITDSController {
             ephemeralPublic: sdkEphemPubKeyBase64
         )
     }
-}
 
-// MARK: - Private
-
-private extension TDSController {
-
-    func buildCresValue(with transStatus: String) throws -> String {
-        guard let challengeParams = challengeParams else {
-            return String()
+    private func sendCompletionWithDelay(result: Result<GetPaymentStatePayload, Error>) {
+        delayExecutor.execute { [weak self] in
+            guard let self = self else { return }
+            self.completionHandler?(result)
         }
+    }
+
+    private func buildCresValue(with transStatus: String) throws -> String {
+        guard let challengeParams = challengeParams else { return "" }
         let acsTransID = try challengeParams.getAcsTransactionId()
         let threeDSTransID = try challengeParams.get3DSServerTransactionId()
 
         let cresValue = "{\"threeDSServerTransID\":\"\(threeDSTransID)\",\"acsTransID\":\"\(acsTransID)\",\"transStatus\":\"\(transStatus)\"}"
+
         let encodedString = Data(cresValue.utf8).base64EncodedString()
-
         let noPaddingEncodedString = encodedString.replacingOccurrences(of: "=", with: "")
-
         return noPaddingEncodedString
     }
 
-    func finishTransaction() {
-        transaction?.close()
-        DispatchQueue.main.async {
-            self.progressView?.close()
+    private func finishTransaction() {
+        type(of: mainQueue).performOnMain {
+            self.progressView?.stop()
+            self.transaction?.close()
         }
     }
 
-    func clear() {
-        transaction = nil
+    private func clear() {
+        if transaction != nil { transaction = nil }
         progressView = nil
         challengeParams = nil
     }
@@ -164,13 +270,15 @@ extension TDSController: ChallengeStatusReceiver {
 
     func cancelled() {
         finishTransaction()
-        cancelHandler?()
+        delayExecutor.execute { [weak self] in
+            self?.cancelHandler?()
+        }
         clear()
     }
 
     func timedout() {
         finishTransaction()
-        completionHandler?(.failure(TDSFlowError.timeout))
+        sendCompletionWithDelay(result: .failure(TDSFlowError.timeout))
         clear()
     }
 
@@ -178,11 +286,8 @@ extension TDSController: ChallengeStatusReceiver {
         finishTransaction()
         let errorDescription = protocolErrorEvent.getErrorMessage().getErrorDescription()
         let errorCode = Int(protocolErrorEvent.getErrorMessage().getErrorCode()) ?? 1
-
-        completionHandler?(.failure(NSError(
-            domain: errorDescription,
-            code: errorCode
-        )))
+        let error = NSError(domain: errorDescription, code: errorCode)
+        sendCompletionWithDelay(result: .failure(error))
         clear()
     }
 
@@ -190,11 +295,23 @@ extension TDSController: ChallengeStatusReceiver {
         finishTransaction()
         let errorDescription = runtimeErrorEvent.getErrorMessage()
         let errorCode = Int(runtimeErrorEvent.getErrorCode()) ?? 1
-
-        completionHandler?(.failure(NSError(
-            domain: errorDescription,
-            code: errorCode
-        )))
+        let error = NSError(domain: errorDescription, code: errorCode)
+        sendCompletionWithDelay(result: .failure(error))
         clear()
+    }
+}
+
+// MARK: - Error
+
+private extension TDSController {
+    enum AppBasedControllerError: LocalizedError {
+        case noPaymentSystem
+
+        var errorDescription: String? {
+            switch self {
+            case .noPaymentSystem:
+                return "Couldn't retrieve paymentSystem"
+            }
+        }
     }
 }

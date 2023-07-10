@@ -20,22 +20,22 @@
 import Foundation
 
 public struct ThreeDSDeviceInfo {
-    let threeDSCompInd: String
-    let javaEnabled: String
-    let colorDepth: Int
-    let language: String
-    let timezone: Int
-    let screenHeight: Int
-    let screenWidth: Int
-    let cresCallbackUrl: String
-    let sdkAppID: String?
-    let sdkEphemPubKey: String?
-    let sdkReferenceNumber: String?
-    let sdkTransID: String?
-    let sdkMaxTimeout: String?
-    let sdkEncData: String?
-    let sdkInterface: String
-    let sdkUiType: String
+    public let threeDSCompInd: String
+    public let javaEnabled: String
+    public let colorDepth: Int
+    public let language: String
+    public let timezone: Int
+    public let screenHeight: Int
+    public let screenWidth: Int
+    public let cresCallbackUrl: String
+    public let sdkAppID: String?
+    public let sdkEphemPubKey: String?
+    public let sdkReferenceNumber: String?
+    public let sdkTransID: String?
+    public let sdkMaxTimeout: String?
+    public let sdkEncData: String?
+    public let sdkInterface: String
+    public let sdkUiType: String
 
     public init(
         threeDSCompInd: String = "Y",

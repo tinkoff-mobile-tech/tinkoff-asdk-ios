@@ -111,6 +111,7 @@ extension PaymentController: PaymentProcessDelegate {
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
             self.paymentProcess = nil
+            self.tdsController.stop()
 
             guard !self.intercept(error: error, paymentProcess: paymentProcess, rebillId: rebillId) else { return }
 
@@ -186,6 +187,16 @@ extension PaymentController: PaymentProcessDelegate {
         tdsController.completionHandler = completion
         tdsController.cancelHandler = confirmationCancelled
         tdsController.doChallenge(with: data)
+    }
+
+    func startAppBasedFlow(
+        check3dsPayload: Check3DSVersionPayload,
+        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+    ) {
+        tdsController.startAppBasedFlow(
+            check3dsPayload: check3dsPayload,
+            completion: completion
+        )
     }
 }
 

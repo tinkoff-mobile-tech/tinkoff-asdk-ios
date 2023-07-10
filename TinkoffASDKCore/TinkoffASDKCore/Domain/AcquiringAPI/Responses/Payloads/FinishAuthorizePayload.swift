@@ -59,6 +59,8 @@ public struct FinishAuthorizePayload: Decodable {
                 responseStatus = .needConfirmation3DS(confirmation3DS)
             } else if let confirmation3DSACS = try? Confirmation3DSDataACS(from: decoder) {
                 responseStatus = .needConfirmation3DSACS(confirmation3DSACS)
+            } else if let confirmation3DSAppBasedData = try? Confirmation3DS2AppBasedData(from: decoder) {
+                responseStatus = .needConfirmation3DS2AppBased(confirmation3DSAppBasedData)
             } else {
                 throw DecodingError.typeMismatch(
                     Self.self,

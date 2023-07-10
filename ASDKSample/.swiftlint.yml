@@ -118,13 +118,13 @@ trailing_whitespace:
 custom_rules:
   wrong_todo_syntax:
     name: "Wrong TODO syntax"
-    regex: '\/\/\s*TODO:(?!\s*MIC-\d+)'
-    message: "Use TODO: MIC-1111 syntax"
+    regex: '\/\/\s*TODO:(?!\s*(EACQAPW|MIC)-\d+)'
+    message: "Use TODO: MIC-1111 or EACQAPW-1111 syntax"
     severity: warning
   wrong_fixme_syntax:
     name: "Wrong FIXME syntax"
-    regex: '\/\/\s*FIXME:(?!\s*MIC-\d+)'
-    message: "Use FIXME: MIC-1111 syntax"
+    regex: '\/\/\s*FIXME:(?!\s*(EACQAPW|MIC)-\d+)'
+    message: "Use FIXME: MIC-1111 or EACQAPW-1111 syntax"
     severity: warning
   explicitly_calling_dot_init:
     name: "Explicitly calling .init(...)"
