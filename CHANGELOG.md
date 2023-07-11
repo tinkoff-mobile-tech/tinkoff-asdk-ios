@@ -23,6 +23,7 @@
 * [EACQAPW-5429] TinkoffPayController Tests
 * [EACQAPW-4452] App Based Flow Payment support
 * [EACQAPW-4453] Update Third Party bundled xcframeworks
+* [EACQAPW-5460] ImageLoader Tests
 
 ### Fixed
 

@@ -37,11 +37,11 @@ final class ImageLoader: IImageLoader {
         case failedToLoadImage
     }
 
-    private let urlDataLoader: AcquiringSdk
+    private let urlDataLoader: IDataLoader
     private let cache = NSCache<NSURL, UIImage>()
     private var requests = [UUID: Cancellable]()
 
-    init(urlDataLoader: AcquiringSdk) {
+    init(urlDataLoader: IDataLoader) {
         self.urlDataLoader = urlDataLoader
     }
 

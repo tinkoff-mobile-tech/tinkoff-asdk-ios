@@ -21,8 +21,12 @@ import struct CoreGraphics.CGSize
 import Foundation
 import UIKit
 
+public protocol IDataLoader {
+    func loadData(with url: URL, completion: @escaping (Result<Data, Error>) -> Void) -> Cancellable
+}
+
 /// `AcquiringSdk`  позволяет конфигурировать SDK и осуществлять взаимодействие с **Тинькофф Эквайринг API**  https://oplata.tinkoff.ru/landing/develop/
-public final class AcquiringSdk: NSObject {
+public final class AcquiringSdk: NSObject, IDataLoader {
     /// Текущий IP адрес
     public var ipAddress: IPAddress? {
         ipAddressProvider.ipAddress
