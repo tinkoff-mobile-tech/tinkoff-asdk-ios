@@ -48,14 +48,14 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.updateCallsCount, 1)
         XCTAssertEqual(viewMock.updateReceivedArguments?.state, state)
         XCTAssertTrue(viewMock.updateReceivedArguments?.animatePullableContainerUpdates == false)
-        XCTAssertTrue(tinkoffPayServiceMock.invokedGetTinkoffPayStatus)
+        XCTAssertEqual(tinkoffPayServiceMock.getTinkoffPayStatusCallsCount, 1)
     }
 
     func test_thatPresenterPerformsPayment_whenStatusIsAllowed() {
         // given
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
         let method = TinkoffPayMethod.fake()
-        tinkoffPayServiceMock.stubbedGetTinkoffPayStatusCompletion = .success(.fake(status: .allowed(method)))
+        tinkoffPayServiceMock.getTinkoffPayStatusCompletionClosureInput = .success(.fake(status: .allowed(method)))
 
         // when
         sut.viewDidLoad()
@@ -67,7 +67,7 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
     func test_thatPresenterUpdatesStateToFailed_whenRequestFailed() {
         // given
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
-        tinkoffPayServiceMock.stubbedGetTinkoffPayStatusCompletion = .failure(ErrorStub())
+        tinkoffPayServiceMock.getTinkoffPayStatusCompletionClosureInput = .failure(ErrorStub())
         let state = State.failedPaymentOnIndependentFlow
 
         // when
@@ -80,7 +80,7 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
     func test_thatPresenterUpdatesStateToFailed_whenStatusIsDisallowed() {
         // given
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
-        tinkoffPayServiceMock.stubbedGetTinkoffPayStatusCompletion = .success(.fake(status: .disallowed))
+        tinkoffPayServiceMock.getTinkoffPayStatusCompletionClosureInput = .success(.fake(status: .disallowed))
         let state = State.failedPaymentOnIndependentFlow
 
         // when
