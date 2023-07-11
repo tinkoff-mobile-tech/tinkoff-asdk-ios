@@ -42,7 +42,7 @@ final class CardsControllerTests: BaseTestCase {
 
         sut = nil
 
-        DispatchQueueMock.resetPerformOnMain()
+        DispatchQueueMock.fullStaticReset()
 
         super.tearDown()
     }
@@ -75,7 +75,7 @@ final class CardsControllerTests: BaseTestCase {
         addCardControllerMock.addCardCompletionStub = .cancelled
         var mappedResultToCancelled = false
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.addCard(options: CardOptions.fake(), completion: { result in
@@ -97,7 +97,7 @@ final class CardsControllerTests: BaseTestCase {
         addCardControllerMock.addCardCompletionStub = .failed(TestsError.basic)
         var mappedResultToFailure = false
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.addCard(options: CardOptions.fake(), completion: { result in
@@ -122,7 +122,7 @@ final class CardsControllerTests: BaseTestCase {
         addCardControllerMock.addCardCompletionStub = .succeded(.fake(status: .authorized))
         var didReturnError = false
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.addCard(options: CardOptions.fake(), completion: { result in
@@ -177,7 +177,7 @@ final class CardsControllerTests: BaseTestCase {
         let status = PaymentCardStatus.inactive
         let customerKey = "some key"
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         let payload = RemoveCardPayload(cardId: cardId, cardStatus: status)
         cardServiceMock.removeCardCompletionClosureInput = .success(payload)
@@ -214,7 +214,7 @@ final class CardsControllerTests: BaseTestCase {
         let customerKey = "some key"
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         cardServiceMock.removeCardCompletionClosureInput = .failure(error)
 
@@ -251,7 +251,7 @@ final class CardsControllerTests: BaseTestCase {
         let cards: [PaymentCard] = [.fakeInactive()]
         cardServiceMock.getCardListCompletionClosureInput = .success(cards)
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         addCardControllerMock.underlyingCustomerKey = customerKey
 
@@ -286,7 +286,7 @@ final class CardsControllerTests: BaseTestCase {
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
         cardServiceMock.getCardListCompletionClosureInput = .failure(error)
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         addCardControllerMock.underlyingCustomerKey = customerKey
 
@@ -318,7 +318,7 @@ final class CardsControllerTests: BaseTestCase {
         // given
         let cardOptions = CardOptions.fake()
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         let error = CardsController.Error.missingCardId
         let expectedErrorText = "Unexpected nil for `cardId` after adding new card"
@@ -347,7 +347,7 @@ final class CardsControllerTests: BaseTestCase {
         // given
         let cardOptions = CardOptions.fake()
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         var addCardResult: AddCardResult?
         let completion: (AddCardResult) -> Void = { result in
@@ -386,7 +386,7 @@ final class CardsControllerTests: BaseTestCase {
         // given
         let cardOptions = CardOptions.fake()
 
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         var addCardResult: AddCardResult?
         let completion: (AddCardResult) -> Void = { result in

@@ -40,7 +40,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         sut = nil
 
-        DispatchQueueMock.resetPerformOnMain()
+        DispatchQueueMock.fullStaticReset()
 
         super.tearDown()
     }
@@ -51,7 +51,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         // given
         let payload = GetStaticQRPayload(qrCodeData: "any data")
         sbpServiceMock.getStaticQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -70,7 +70,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         // given
         let error = NSError(domain: "error", code: 123456)
         sbpServiceMock.getStaticQRCompletionClosureInput = .failure(error)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -93,7 +93,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -113,7 +113,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         let error = NSError(domain: "error", code: 123456)
         sbpServiceMock.getQRCompletionClosureInput = .failure(error)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -137,7 +137,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         let getQrPayload = GetQRPayload.any
         sbpServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
         sbpServiceMock.getQRCompletionClosureInput = .success(getQrPayload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -160,7 +160,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         let getQrPayload = GetQRPayload.any
         sbpServiceMock.initPaymentCompletionClosureInput = .failure(error)
         sbpServiceMock.getQRCompletionClosureInput = .success(getQrPayload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
         sut.viewDidLoad()
@@ -182,12 +182,12 @@ final class SBPQrPresenterTests: BaseTestCase {
         configureSut(paymentFlow: .finishAny)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .authorized))]
-        mainDispatchQueueMock.asyncAfterShouldExecute = true
+        mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         viewMock.hideCommonSheetCallsCount = 0
@@ -217,12 +217,12 @@ final class SBPQrPresenterTests: BaseTestCase {
         configureSut(paymentFlow: .finishAny)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .confirmed))]
-        mainDispatchQueueMock.asyncAfterShouldExecute = true
+        mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         viewMock.hideCommonSheetCallsCount = 0
@@ -252,12 +252,12 @@ final class SBPQrPresenterTests: BaseTestCase {
         configureSut(paymentFlow: .finishAny)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .rejected))]
-        mainDispatchQueueMock.asyncAfterShouldExecute = true
+        mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         viewMock.hideCommonSheetCallsCount = 0
@@ -290,12 +290,12 @@ final class SBPQrPresenterTests: BaseTestCase {
             [.success(.some(status: .confirming)), .success(.some(status: .authorized))]
 
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = statuses
-        mainDispatchQueueMock.asyncAfterShouldExecute = true
+        mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         viewMock.hideCommonSheetCallsCount = 0
@@ -329,12 +329,12 @@ final class SBPQrPresenterTests: BaseTestCase {
             [.failure(error), .failure(error), .failure(error), .success(.some(status: .authorized))]
 
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = statuses
-        mainDispatchQueueMock.asyncAfterShouldExecute = true
+        mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         viewMock.hideCommonSheetCallsCount = 0
@@ -363,7 +363,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         // given
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .authorized))]
-        mainDispatchQueueMock.asyncAfterShouldExecute = true
+        mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
@@ -397,7 +397,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         // given
         let payload = GetStaticQRPayload(qrCodeData: "some data")
         sbpServiceMock.getStaticQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         // when
@@ -411,7 +411,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         // given
         let payload = GetStaticQRPayload(qrCodeData: "some data")
         sbpServiceMock.getStaticQRCompletionClosureInput = .success(payload)
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = true
+        DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
 
         let anyTextHeaderPresenter = TextAndImageHeaderViewPresenter(title: "-", imageAsset: nil)
