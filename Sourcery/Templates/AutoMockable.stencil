@@ -94,10 +94,10 @@ import {{ import }}
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
-        {%else%}{ param.name|upperFirstLetter }ClosureInput: {{ closureInputType }}?{% endif %}
+        {%else%}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}{% endif %}
     {% endfor %}
     {% if not method.returnTypeName.isVoid and not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ '!' if not method.isOptionalReturnType }}
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{% if method.returnTypeName|replace:"","" == 'Cancellable' %} = CancellableMock(){% else %}{{ '!' if not method.isOptionalReturnType }}{% endif %}
     {% endif %}
 
 {% if method.isInitializer %}
@@ -132,7 +132,7 @@ import {{ import }}
         {% call swiftifyMethodName method.shortName %}ReceivedInvocations = []
         {% for param in method.parameters where param.isClosure %}
         {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
-        {%else%}{ param.name|upperFirstLetter }ClosureInput = nil
+        {%else%}{{ param.name|upperFirstLetter }}ClosureInput = nil
         {% endif %}
         {% endfor %}
         {% if method.throws %}
@@ -209,11 +209,12 @@ import {{ import }}
     {% call mockMethod method %}
 {% endfor %}
 }
-{% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
+{% if type.allMethods.count != 0 %}
 
 // MARK: - Resets
 
 extension {{ type.name | replace:"I","" }}Mock {
+    {% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
     static func fullStaticReset() {
     {% for method in type.allMethods|static %}
         {% call fullResetMethod method %}
@@ -223,6 +224,7 @@ extension {{ type.name | replace:"I","" }}Mock {
     {% endfor %}
     }
 
+    {% endif %}
     func fullReset() {
     {% for method in type.allMethods|!definedInExtension where not method.isStatic %}
         {% call fullResetMethod method %}
