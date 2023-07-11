@@ -39,14 +39,22 @@ import {{ import }}
         {{ shortNameOfTheMethod }}ReceivedArguments = arguments
         {{ shortNameOfTheMethod }}ReceivedInvocations.append(arguments)
         {% for param in method.parameters where param.isClosure %}
+        {% if param.typeName.closure.parameters.count == 0 %}
+        if {{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ShouldExecute {
+            {{ param.name}}()
+        }
+        {%else%}
         {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
         if let {{ closureInput }} = {{ closureInput }} {
             {{ param.name}}({{ closureInput }})
         }
+        {% endif %}
         {% endfor -%}
         {% endif %}
 {% endmacro %}
-{% macro methodClosureName method %}{% call swiftifyMethodName method.shortName %}Clos2213ure{% endmacro %}
+{% macro methodClosureName method %}{% call swiftifyMethodName method.shortName %}Closure{% endmacro %}
+{% macro resetClosureMethod method %}{% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+    {%else%}{ param.name|upperFirstLetter }ClosureInput = nil{% endif %}{% endmacro %}
 
 {% macro closureReturnTypeName method %}{% if method.isOptionalReturnType %}{{ method.unwrappedReturnTypeName }}?{% else %}{{ method.returnTypeName }}{% endif %}{% endmacro %}
 
@@ -57,13 +65,13 @@ import {{ import }}
 {% macro methodClosureCallParameters method %}{% for param in method.parameters %}{{ param.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endmacro %}
 
 {% macro mockMethod method %}
-    // MARK: - {{ method.shortName }}
-    {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{% endfor %}{%endif%}{% endset %}
-    {% set prefferedArgumentsType %}{% if method.parameters.count > 1 %}{{ method.shortName|upperFirstLetter }}Arguments{% else %}{{ argumentsType }}{% endif %}{% endset %}
-    {% if method.parameters.count > 1 %}
 
+    // MARK: - {{ method.shortName }}
+
+    {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{% endfor %}{%endif%}{% endset %}
+    {% set prefferedArgumentsType %}{{ method.shortName|upperFirstLetter }}Arguments{% endset %}
+    
     typealias {{ method.shortName|upperFirstLetter }}Arguments = {{ argumentsType }}
-    {% endif %}
 
     {% if method.throws %}
         {% call methodThrowableErrorDeclaration method %}
@@ -84,9 +92,9 @@ import {{ import }}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
     {% endif %}
     {% for param in method.parameters where param.isClosure %}
-    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})?
-    {% endset %}
-    var {% call swiftifyMethodName method.shortName %}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}
+    {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
+    {% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+        {%else%}{ param.name|upperFirstLetter }ClosureInput: {{ closureInputType }}?{% endif %}
     {% endfor %}
     {% if not method.returnTypeName.isVoid and not method.isInitializer %}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ '!' if not method.isOptionalReturnType }}
@@ -113,30 +121,23 @@ import {{ import }}
         return {% call swiftifyMethodName method.shortName %}ReturnValue
         {% endif %}
     }
-
 {% endif %}
 {% endmacro %}
 
-{% macro resetMethod method %}
-        {# for type method which are mocked, a way to reset the invocation, argument, etc #}
-        {% if method.isStatic and not method.isInitializer %} //MARK: - {{ method.shortName }}
+{% macro fullResetMethod method %}
         {% if not method.isInitializer %}
         {% call swiftifyMethodName method.shortName %}CallsCount = 0
         {% endif %}
-        {% if method.parameters.count == 1 %}
-        {% call swiftifyMethodName method.shortName %}Received{% for param in method.parameters %}{{ param.name|upperFirstLetter }}{% endfor %} = nil
-        {% call swiftifyMethodName method.shortName %}ReceivedInvocations = []
-        {% elif not method.parameters.count == 0 %}
         {% call swiftifyMethodName method.shortName %}ReceivedArguments = nil
         {% call swiftifyMethodName method.shortName %}ReceivedInvocations = []
+        {% for param in method.parameters where param.isClosure %}
+        {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+        {%else%}{ param.name|upperFirstLetter }ClosureInput = nil
         {% endif %}
-        {% call methodClosureName method %} = nil
+        {% endfor %}
         {% if method.throws %}
         {% call swiftifyMethodName method.shortName %}ThrowableError = nil
         {% endif %}
-        
-        {% endif %}
-
 {% endmacro %}
 
 {% macro mockOptionalVariable variable %}
@@ -199,22 +200,38 @@ import {{ import }}
 {% macro mockedVariableName variable %}{{ variable.name }}{% endmacro %}
 
 {% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}{% if type.name != "AutoMockable" %}
-{% call accessLevel type.accessLevel %}final class {{ type.name }}Mock: {{ type.name }} {
+{% call accessLevel type.accessLevel %}final class {{ type.name | replace:"I","" }}Mock: {{ type.name }} {
     {% if type.accessLevel == "public" %}public init() {}{% endif %}
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}
-{% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
-    static func reset()
-    {
-    {% for method in type.allMethods|static %}
-        {% call resetMethod method %}
-    {% endfor %}
-    }
-{% endif %}
-
 {% for method in type.allMethods|!definedInExtension %}
     {% call mockMethod method %}
 {% endfor %}
 }
-{% endif %}{% endfor %}
+{% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
+
+// MARK: - Resets
+
+extension {{ type.name | replace:"I","" }}Mock {
+    static func fullStaticReset() {
+    {% for method in type.allMethods|static %}
+        {% call fullResetMethod method %}
+        {% if not forloop.last %}
+
+        {% endif %}
+    {% endfor %}
+    }
+
+    func fullReset() {
+    {% for method in type.allMethods|!definedInExtension where not method.isStatic %}
+        {% call fullResetMethod method %}
+        {% if not forloop.last %}
+
+        {% endif %}
+    {% endfor %}
+    }
+}
+{% endif %}
+{% endif %}
+{% endfor %}
