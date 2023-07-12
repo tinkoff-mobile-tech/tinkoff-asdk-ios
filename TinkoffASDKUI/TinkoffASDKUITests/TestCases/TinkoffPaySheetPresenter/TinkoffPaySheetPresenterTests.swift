@@ -163,7 +163,7 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
         )
 
         // then
-        XCTAssertTrue(routerMock.invokedOpenTinkoffPayLanding)
+        XCTAssertEqual(routerMock.openTinkoffPayLandingCallsCount, 1)
     }
 
     func test_thatPresenterChangesStateToCancelled_whenIntermediatePaymentStateDidReceive() {
@@ -254,6 +254,8 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
             moduleCompletionResult = result
         }
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
+
+        routerMock.openTinkoffPayLandingCompletionShouldExecute = true
 
         // when
         action(sut)
