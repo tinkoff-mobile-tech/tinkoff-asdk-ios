@@ -26,6 +26,7 @@
 * [EACQAPW-5460] ImageLoader Tests
 * [EACQAPW-5472] TDSWrapperBuilder Tests
 * [EACQAPW-5482] TDSFlowErrorTests Tests
+* [EACQAPW-5501] PaymentSystemImageResolver Tests
 
 ### Fixed
 
