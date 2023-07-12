@@ -41,7 +41,7 @@ import {{ import }}
         {% for param in method.parameters where param.isClosure %}
         {% if param.typeName.closure.parameters.count == 0 %}
         if {{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ShouldExecute {
-            {{ param.name}}()
+            {{ param.name}}{{ '?' if param.isOptional }}()
         }
         {%else%}
         {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
@@ -84,13 +84,8 @@ import {{ import }}
             {{ true }}
         {% endfor -%}
     {% endset %}
-    {% if method.parameters.count == 1 and not hasNonEscapingClosures %}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedArguments: {{ prefferedArgumentsType }}?
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
-    {% elif not method.parameters.count == 0 and not hasNonEscapingClosures %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedArguments: {{ prefferedArgumentsType }}?
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
-    {% endif %}
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
