@@ -347,9 +347,9 @@ final class MainFormPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentCount, 1)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentParameters?.paymentFlow, modifiedPaymentFlow)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentParameters?.method, tinkoffPayMethod)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentCallsCount, 1)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentReceivedArguments?.paymentFlow, modifiedPaymentFlow)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentReceivedArguments?.method, tinkoffPayMethod)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
         XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, .tinkoffPay.processing)
     }
@@ -376,7 +376,7 @@ final class MainFormPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideKeyboardCallsCount, 0)
         XCTAssertEqual(routerMock.openCardPaymentCallsCount, 0)
         XCTAssertEqual(routerMock.openSBPCallsCount, 0)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentCount, 0)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentCallsCount, 0)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 0)
     }
 
@@ -913,9 +913,9 @@ final class MainFormPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.hideKeyboardCallsCount, 1)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentCount, 1)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentParameters?.paymentFlow, modifiedPaymentFlow)
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentParameters?.method, tinkoffPayMethod)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentCallsCount, 1)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentReceivedArguments?.paymentFlow, modifiedPaymentFlow)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentReceivedArguments?.method, tinkoffPayMethod)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
         XCTAssertEqual(viewMock.showCommonSheetReceivedArguments?.state, .tinkoffPay.processing)
     }

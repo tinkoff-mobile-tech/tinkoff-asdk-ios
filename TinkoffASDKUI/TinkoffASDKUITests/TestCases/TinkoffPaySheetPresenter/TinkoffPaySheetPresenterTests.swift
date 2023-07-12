@@ -61,7 +61,7 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
         sut.viewDidLoad()
 
         // then
-        XCTAssertEqual(tinkoffPayControllerMock.invokedPerformPaymentCount, 1)
+        XCTAssertEqual(tinkoffPayControllerMock.performPaymentCallsCount, 1)
     }
 
     func test_thatPresenterUpdatesStateToFailed_whenRequestFailed() {
