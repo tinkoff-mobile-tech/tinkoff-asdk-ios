@@ -95,7 +95,7 @@ private extension TDSCertsManager {
         }
     }
 
-    func shouldUpdate(_ configCert: CertificateData, _ wrapperCerts: [CertificateState]) -> Bool {
+    func shouldUpdate(_ configCert: CertificateData, _ wrapperCerts: [ICertificateState]) -> Bool {
         !wrapperCerts.contains {
             $0.directoryServerID == configCert.directoryServerID
                 && $0.certificateType == mapCertificateType(configCert.type)

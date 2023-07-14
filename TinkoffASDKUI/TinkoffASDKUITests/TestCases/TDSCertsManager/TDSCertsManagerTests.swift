@@ -174,6 +174,82 @@ final class TDSCertsManagerTests: BaseTestCase {
         XCTAssertEqual(serverId, nil)
         XCTAssertEqual(error, TDSFlowError.updatingCertsError(failures))
     }
+
+    func test_returnsError_whenCertsAreEmpty() {
+        // given
+        let paymentSystem = "Some"
+
+        let payload = Get3DSAppBasedCertsConfigPayload.fake(certificates: [])
+
+        acquiringSdkMock.getCertsConfigCompletionClosureInput = .success(payload)
+
+        // when
+        var result: Result<String, Error>?
+        sut.checkAndUpdateCertsIfNeeded(for: paymentSystem, completion: { result = $0 })
+
+        // then
+        if case let .failure(error) = result {
+            XCTAssertEqual(TDSFlowError.invalidPaymentSystem as NSError, error as NSError)
+        } else {
+            XCTFail()
+        }
+    }
+
+    func test_filterCerts() throws {
+        // given
+        let paymentSystem = "Some"
+        let directoryServerID = "123"
+
+        let certificate1 = CertificateData.fake(type: .rootCA, algorithm: .ec, forceUpdateFlag: false)
+        let certificate2 = CertificateData.fake(type: .publicKey, algorithm: .rsa, forceUpdateFlag: false)
+        let payload = Get3DSAppBasedCertsConfigPayload.fake(certificates: [certificate1, certificate2])
+
+        acquiringSdkMock.getCertsConfigCompletionClosureInput = .success(payload)
+        tdsWrapperMock.checkCertificatesReturnValue = [CertificateStateStub(directoryServerID: directoryServerID)]
+
+        // when
+        sut.checkAndUpdateCertsIfNeeded(for: paymentSystem, completion: { _ in })
+
+        // then
+        let certs = try XCTUnwrap(tdsWrapperMock.updateReceivedArguments?.requests)
+
+        XCTAssertEqual(certs.count, 2)
+        XCTAssertEqual(certs[0].directoryServerID, directoryServerID)
+        XCTAssertEqual(certs[0].certificateType, .dsRootCA)
+        XCTAssertEqual(certs[0].sha256Fingerprint, certificate1.sha256Fingerprint)
+        XCTAssertEqual(certs[1].directoryServerID, directoryServerID)
+        XCTAssertEqual(certs[1].certificateType, .dsPublicKey)
+        XCTAssertEqual(certs[1].sha256Fingerprint, certificate2.sha256Fingerprint)
+    }
+
+    func test_filterCerts_empty() throws {
+        // given
+        let paymentSystem = "Some"
+        let directoryServerID = "123"
+
+        let certificate1 = CertificateData.fake(type: .publicKey, algorithm: .ec, forceUpdateFlag: false)
+        let payload = Get3DSAppBasedCertsConfigPayload.fake(certificates: [certificate1])
+
+        tdsWrapperMock.checkCertificatesReturnValue = [
+            CertificateStateStub(
+                certificateType: .dsPublicKey,
+                directoryServerID: directoryServerID,
+                sha256Fingerprint: "some"
+            ),
+        ]
+        acquiringSdkMock.getCertsConfigCompletionClosureInput = .success(payload)
+
+        // when
+        var result: Result<String, Error>?
+        sut.checkAndUpdateCertsIfNeeded(for: paymentSystem, completion: { result = $0 })
+
+        // then
+        if case let .success(data) = result {
+            XCTAssertEqual(data, directoryServerID)
+        } else {
+            XCTFail()
+        }
+    }
 }
 
 // MARK: - Helpers
