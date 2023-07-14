@@ -29,6 +29,7 @@
 * [EACQAPW-5501] PaymentSystemImageResolver Tests
 * [EACQAPW-5504] TDSController Tests
 * [EACQAPW-5528] PaymentSystem Tests
+* [EACQAPW-5551] Move to Static linking
 
 ### Fixed
 
