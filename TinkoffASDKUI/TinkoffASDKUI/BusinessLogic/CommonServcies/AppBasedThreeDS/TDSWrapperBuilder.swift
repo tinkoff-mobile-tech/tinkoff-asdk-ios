@@ -22,7 +22,7 @@ import TinkoffASDKCore
 import UIKit
 
 protocol ITDSWrapperBuilder {
-    func build() -> TDSWrapper
+    func build() -> ITDSWrapper
 }
 
 final class TDSWrapperBuilder: ITDSWrapperBuilder {
@@ -38,7 +38,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
         self.language = language
     }
 
-    func build() -> TDSWrapper {
+    func build() -> ITDSWrapper {
         let locale: Locale
 
         switch language {
