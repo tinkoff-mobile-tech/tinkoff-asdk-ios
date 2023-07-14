@@ -30,7 +30,7 @@ protocol ITDSWrapper {
         messageVersion: String
     ) throws -> ITransaction
 
-    func checkCertificates() -> [CertificateState]
+    func checkCertificates() -> [ICertificateState]
 
     func update(
         with requests: [CertificateUpdatingRequest],
@@ -40,6 +40,9 @@ protocol ITDSWrapper {
 }
 
 extension TDSWrapper: ITDSWrapper {
+    func checkCertificates() -> [ICertificateState] {
+        certificates()
+    }
 
     func createTransaction(directoryServerID: String, messageVersion: String) throws -> ITransaction {
         let transaction: Transaction = try createTransaction(
@@ -48,6 +51,10 @@ extension TDSWrapper: ITDSWrapper {
         )
 
         return transaction
+    }
+
+    private func certificates() -> [CertificateState] {
+        checkCertificates()
     }
 }
 
