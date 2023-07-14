@@ -244,7 +244,6 @@ extension TDSController {
     }
 
     private func clear() {
-        if transaction != nil { transaction = nil }
         progressView = nil
         challengeParams = nil
     }
