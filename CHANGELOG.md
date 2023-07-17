@@ -1,6 +1,9 @@
 # Changelog
 ## [Unreleased]
 
+### Fixed
+* [EACQAPW-5561] Tinkoff Pay doesn't pass SuccessURL & FailURL in /Init
+
 ## [3.1.0] - 2023-06-28Z
 
 ### Added
