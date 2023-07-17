@@ -70,7 +70,7 @@
 
     // MARK: - {{ methodName }}
 
-    {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{% endfor %}{%endif%}{% endset %}
+    {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{% if param.typeAttributes.escaping %}{{ param.unwrappedTypeName }}{% elif param.isOptional %}{{ param.unwrappedTypeName }}{% else %}{{ param.typeName }}{% endif %}{% endfor %}{%endif%}{% endset %}
     {% set prefferedArgumentsType %}{{ methodName|upperFirstLetter }}Arguments{% endset %}
     
     typealias {{ methodName|upperFirstLetter }}Arguments = {{ argumentsType }}
@@ -86,8 +86,8 @@
             {{ true }}
         {% endfor -%}
     {% endset %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}{% if method.parameters.count == 1 and method.parameters.first.isOptional %}?{% else %}{% endif %}
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}{% if method.parameters.count == 1 and method.parameters.first.isOptional %}?{% else %}{% endif %}] = []
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
