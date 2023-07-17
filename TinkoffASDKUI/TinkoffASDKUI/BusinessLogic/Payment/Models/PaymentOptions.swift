@@ -28,7 +28,7 @@ public struct PaymentOptions: Equatable {
     /// Ссылки для возврата на страницы успешной или неуспешной оплаты, используемые по завершении процесса оплаты во внешнем приложении
     ///
     /// Используется только для оплаты через `Tinkoff Pay`
-    public let paymentCallbackURL: PaymentCallbackURL?
+    public var paymentCallbackURL: PaymentCallbackURL?
     /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
     ///
     /// `Key: String` – 20 знаков,
