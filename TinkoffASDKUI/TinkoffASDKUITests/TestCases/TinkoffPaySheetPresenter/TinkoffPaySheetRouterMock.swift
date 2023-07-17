@@ -11,11 +11,11 @@ final class TinkoffPaySheetRouterMock: ITinkoffPaySheetRouter {
 
     // MARK: - openTinkoffPayLanding
 
-    typealias OpenTinkoffPayLandingArguments = VoidBlock?
+    typealias OpenTinkoffPayLandingArguments = VoidBlock
 
     var openTinkoffPayLandingCallsCount = 0
     var openTinkoffPayLandingReceivedArguments: OpenTinkoffPayLandingArguments?
-    var openTinkoffPayLandingReceivedInvocations: [OpenTinkoffPayLandingArguments] = []
+    var openTinkoffPayLandingReceivedInvocations: [OpenTinkoffPayLandingArguments?] = []
     var openTinkoffPayLandingCompletionShouldExecute = false
 
     func openTinkoffPayLanding(completion: VoidBlock?) {

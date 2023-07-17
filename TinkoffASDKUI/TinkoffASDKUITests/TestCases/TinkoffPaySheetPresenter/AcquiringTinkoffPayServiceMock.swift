@@ -17,7 +17,7 @@ final class AcquiringTinkoffPayServiceMock: IAcquiringTinkoffPayService {
 
     var getTinkoffPayLinkCallsCount = 0
     var getTinkoffPayLinkReceivedArguments: GetTinkoffPayLinkArguments?
-    var getTinkoffPayLinkReceivedInvocations: [GetTinkoffPayLinkArguments] = []
+    var getTinkoffPayLinkReceivedInvocations: [GetTinkoffPayLinkArguments?] = []
     var getTinkoffPayLinkCompletionClosureInput: Result<GetTinkoffLinkPayload, Error>?
     var getTinkoffPayLinkReturnValue: Cancellable = CancellableMock()
 
@@ -39,7 +39,7 @@ final class AcquiringTinkoffPayServiceMock: IAcquiringTinkoffPayService {
 
     var getTinkoffPayStatusCallsCount = 0
     var getTinkoffPayStatusReceivedArguments: GetTinkoffPayStatusArguments?
-    var getTinkoffPayStatusReceivedInvocations: [GetTinkoffPayStatusArguments] = []
+    var getTinkoffPayStatusReceivedInvocations: [GetTinkoffPayStatusArguments?] = []
     var getTinkoffPayStatusCompletionClosureInput: Result<GetTinkoffPayStatusPayload, Error>?
     var getTinkoffPayStatusReturnValue: Cancellable = CancellableMock()
 

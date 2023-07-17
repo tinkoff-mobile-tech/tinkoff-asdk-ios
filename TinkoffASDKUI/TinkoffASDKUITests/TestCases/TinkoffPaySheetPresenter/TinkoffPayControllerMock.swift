@@ -17,7 +17,7 @@ final class TinkoffPayControllerMock: ITinkoffPayController {
 
     var performPaymentCallsCount = 0
     var performPaymentReceivedArguments: PerformPaymentArguments?
-    var performPaymentReceivedInvocations: [PerformPaymentArguments] = []
+    var performPaymentReceivedInvocations: [PerformPaymentArguments?] = []
     var performPaymentReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
