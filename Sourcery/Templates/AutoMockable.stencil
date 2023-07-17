@@ -26,9 +26,9 @@
 {% endmacro %}
 
 {# !!! methodReceivedParameters - Пока не описанный метод. #}
-{% macro methodReceivedParameters method %}
+{% macro methodReceivedParameters method methodName %}
         {% if method.parameters.count > 0 %}
-        {% set shortNameOfTheMethod %}{% call swiftifyMethodName method.shortName %}{% endset %}
+        {% set shortNameOfTheMethod %}{{ methodName }}{% endset %}
         let arguments = ({% call methodClosureCallParameters method %})
         {{ shortNameOfTheMethod }}ReceivedArguments = arguments
         {{ shortNameOfTheMethod }}ReceivedInvocations.append(arguments)
@@ -99,7 +99,7 @@
 
 {% if method.isInitializer %}
     {% call accessLevel method.accessLevel %}required {{ method.name }} {
-        {% call methodReceivedParameters method %}
+        {% call methodReceivedParameters method methodName %}
     }
 {% else %}
     {% for name, attribute in method.attributes %}
@@ -112,7 +112,7 @@
         {% call methodThrowableErrorUsage method %}
         {% endif %}
         {{ methodName }}CallsCount += 1
-        {% call methodReceivedParameters method %}
+        {% call methodReceivedParameters method methodName %}
         {% if method.returnTypeName.isVoid %}
         {% else %}
         return {{ methodName }}ReturnValue
