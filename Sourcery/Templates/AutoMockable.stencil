@@ -122,19 +122,19 @@
 {% endmacro %}
 
 {# !!! fullResetMethod - Пока не описанный метод. #}
-{% macro fullResetMethod method %}
+{% macro fullResetMethod method methodName %}
         {% if not method.isInitializer %}
-        {% call swiftifyMethodName method.shortName %}CallsCount = 0
+        {{ methodName }}CallsCount = 0
         {% endif %}
-        {% call swiftifyMethodName method.shortName %}ReceivedArguments = nil
-        {% call swiftifyMethodName method.shortName %}ReceivedInvocations = []
+        {{ methodName }}ReceivedArguments = nil
+        {{ methodName }}ReceivedInvocations = []
         {% for param in method.parameters where param.isClosure %}
-        {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+        {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
         {%else%}{{ param.name|upperFirstLetter }}ClosureInput = nil
         {% endif %}
         {% endfor %}
         {% if method.throws %}
-        {% call swiftifyMethodName method.shortName %}ThrowableError = nil
+        {{ methodName }}ThrowableError = nil
         {% endif %}
 {% endmacro %}
 
@@ -256,7 +256,8 @@ extension {% call removeFirstLetter type.name %}Mock {
     {% endif %}
     func fullReset() {
     {% for method in type.allMethods|!definedInExtension where not method.isStatic %}
-        {% call fullResetMethod method %}
+        {% set uniqMethodName %}{% if hasDoubleNamesInMethods == 'yes' %}{% call uniqShortName method %}{% else %}{% call swiftifyMethodName method.shortName %}{% endif %}{% endset%}
+        {% call fullResetMethod method uniqMethodName %}
         {% if not forloop.last %}
 
         {% endif %}
