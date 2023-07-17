@@ -1,8 +1,3 @@
-{# 
-Текущие проблемы который были решены костыльно. 
-1) Вместо удаления первого символа в названии мока, используется replace большой буквы 'I', что в некоторых кейсах удаляет нужные буквы из названия.
-#}
-
 {# !!! swiftifyMethodName - Удаляет лишние символы из названия метода. #}
 {% macro swiftifyMethodName name %}{{ name | replace:"(","_" | replace:")","" | replace:":","_" | replace:"`","" | snakeToCamelCase | lowerFirstWord }}{% endmacro %}
 
@@ -14,6 +9,9 @@
 
 {# !!! staticSpecifier - Добавляет static к методу c пробелом, если он статичный. Учитывает инициализаторы. #}
 {% macro staticSpecifier method %}{% if method.isStatic and not method.isInitializer %}static {% endif %}{% endmacro %}
+
+{# !!! removeFirstLetter - Удаляет первый символ у строки. #}
+{% macro removeFirstLetter string %}{% for i in 0...string.count %}{% if not forloop.first and not forloop.last %}{{ type.name[i] }}{% endif %}{% endfor %}{% endmacro %}
 
 {# !!! methodThrowableErrorDeclaration - Пока не описанный метод. #}
 {% macro methodThrowableErrorDeclaration method %}
@@ -68,35 +66,35 @@
 {% macro methodClosureCallParameters method %}{% for param in method.parameters %}{{ param.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endmacro %}
 
 {# !!! mockMethod - Пока не описанный метод. #}
-{% macro mockMethod method %}
+{% macro mockMethod method methodName %}
 
-    // MARK: - {{ method.shortName }}
+    // MARK: - {{ methodName }}
 
     {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{% endfor %}{%endif%}{% endset %}
-    {% set prefferedArgumentsType %}{{ method.shortName|upperFirstLetter }}Arguments{% endset %}
+    {% set prefferedArgumentsType %}{{ methodName|upperFirstLetter }}Arguments{% endset %}
     
-    typealias {{ method.shortName|upperFirstLetter }}Arguments = {{ argumentsType }}
+    typealias {{ methodName|upperFirstLetter }}Arguments = {{ argumentsType }}
 
     {% if method.throws %}
         {% call methodThrowableErrorDeclaration method %}
     {% endif %}
     {% if not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}CallsCount = 0
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}CallsCount = 0
     {% endif %}
     {% set hasNonEscapingClosures %}
         {%- for param in method.parameters where param.isClosure and not param.typeAttributes.escaping %}
             {{ true }}
         {% endfor -%}
     {% endset %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedArguments: {{ prefferedArgumentsType }}?
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
-    {% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+    {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
         {%else%}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}{% endif %}
     {% endfor %}
     {% if not method.returnTypeName.isVoid and not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{% if method.returnTypeName|replace:"","" == 'Cancellable' %} = CancellableMock(){% else %}{{ '!' if not method.isOptionalReturnType }}{% endif %}
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{% if method.returnTypeName|replace:"","" == 'Cancellable' %} = CancellableMock(){% else %}{{ '!' if not method.isOptionalReturnType }}{% endif %}
     {% endif %}
 
 {% if method.isInitializer %}
@@ -113,11 +111,11 @@
         {% if method.throws %}
         {% call methodThrowableErrorUsage method %}
         {% endif %}
-        {% call swiftifyMethodName method.shortName %}CallsCount += 1
+        {{ methodName }}CallsCount += 1
         {% call methodReceivedParameters method %}
         {% if method.returnTypeName.isVoid %}
         {% else %}
-        return {% call swiftifyMethodName method.shortName %}ReturnValue
+        return {{ methodName }}ReturnValue
         {% endif %}
     }
 {% endif %}
@@ -210,23 +208,41 @@
 {# !!! mockedVariableName - Пока не описанный метод. #}
 {% macro mockedVariableName variable %}{{ variable.name }}{% endmacro %}
 
+{# ============================================ #}
 {# !!! Вся логика генерации начинается ниже !!! #}
+{# ============================================ #}
 
 {% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}{% if type.name != "AutoMockable" %}
-{% call accessLevel type.accessLevel %}final class {{ type.name | replace:"I","" }}Mock: {{ type.name }} {
+
+{# !!! Определяем количество методов в классе, которые находятся не в extension (считается количество получившихся символов, а не количество элементов) #}
+{% set methodsNotInExtensionLine %}{% for method in type.allMethods|!definedInExtension %}true{{ '/' if not forloop.last }}{%endfor%}{% endset%}
+{% set arrayOfMethodsNotInExtension %}{{ methodsNotInExtensionLine|split:"/" }}{% endset %}
+{% set countOfMethodsNotInExtension %}{{ arrayOfMethodsNotInExtension.count }}{% endset %}
+    
+{# !!! Определяем количество методов в классе с дублирующими названиями, которые находятся не в extension (считается количество получившихся символов, а не количество элементов) #}
+{% set trueFalseLine %}{% outer: for firstMethod in type.allMethods|!definedInExtension %}{% inner: for secondMethod in type.allMethods|!definedInExtension %}{% if firstMethod.shortName == secondMethod.shortName %}true{% else %}false{% endif %}{{ '/' if not forloop.inner.last }}{% endfor %}{{ '/' if not forloop.outer.last }}{% endfor %}{% endset %}
+{% set onlyTrueLine %}{{ trueFalseLine | replace:"false/","" | replace:"false",""  }}{% endset%}
+{% set arrayOfTrue %}{{ onlyTrueLine|split:"/" }}{% endset%}
+{% set countOfTrue %}{{ arrayOfTrue.count }}{% endset%}
+
+{# !!! Дается ответ, есть ли в классе методы с дублирующим названием или нет #}
+{% set hasDoubleNamesInMethods %}{% if countOfMethodsNotInExtension == countOfTrue %}no{% else %}yes{% endif%}{% endset %}
+
+{% call accessLevel type.accessLevel %}final class {% call removeFirstLetter type.name %}Mock: {{ type.name }} {
     {% if type.accessLevel == "public" %}public init() {}{% endif %}
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}
 {% for method in type.allMethods|!definedInExtension %}
-    {% call mockMethod method %}
+    {% set uniqMethodName %}{% if hasDoubleNamesInMethods == 'yes' %}{% call uniqShortName method %}{% else %}{% call swiftifyMethodName method.shortName %}{% endif %}{% endset%}
+    {% call mockMethod method uniqMethodName %}
 {% endfor %}
 }
 {% if type.allMethods.count != 0 %}
 
 // MARK: - Resets
 
-extension {{ type.name | replace:"I","" }}Mock {
+extension {% call removeFirstLetter type.name %}Mock {
     {% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
     static func fullStaticReset() {
     {% for method in type.allMethods|static %}
