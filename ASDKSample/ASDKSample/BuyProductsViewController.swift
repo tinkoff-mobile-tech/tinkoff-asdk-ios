@@ -284,7 +284,13 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func payWithTinkoffPay() {
-        let paymentOptions = PaymentOptions.create(from: createPaymentData())
+        let paymentCallbackURL = PaymentCallbackURL(
+            successURL: "https://tinkoff.ru/SuccessURL",
+            failureURL: "https://tinkoff.ru/FailureURL"
+        )
+
+        var paymentOptions = PaymentOptions.create(from: createPaymentData())
+        paymentOptions.paymentCallbackURL = paymentCallbackURL
         let paymentFlow = PaymentFlow.full(paymentOptions: paymentOptions)
 
         uiSDK.presentTinkoffPay(on: self, paymentFlow: paymentFlow) { [weak self] result in

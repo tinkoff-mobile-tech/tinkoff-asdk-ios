@@ -37,6 +37,11 @@
 
 * [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
 
+## [3.1.1] - 2023-07-17Z
+
+### Fixed
+* [EACQAPW-5561] Tinkoff Pay doesn't pass SuccessURL & FailURL in /Init
+
 ## [3.1.0] - 2023-06-28Z
 
 ### Added
@@ -72,7 +77,7 @@
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
 * [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 * [EACQAPW-4996] Card payment proper status handles
-* [EACQAPW-5231] Fix of images rendered badly
+* [EACQAPW-5231] Fix of images rendered badly (used png)
 * [EACQAPW-5258] RunLoop run caused bugy getState handles
 * [EACQAPW-5288] TPay Controller handle DEADLINE_EXPIRED
 * [EACQAPW-5297] Fix broken pdfs
