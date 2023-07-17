@@ -11,9 +11,11 @@ final class SwitchViewInputMock: ISwitchViewInput {
 
     // MARK: - setNameLabel
 
+    typealias SetNameLabelArguments = String
+
     var setNameLabelCallsCount = 0
-    var setNameLabelReceivedArguments: String?
-    var setNameLabelReceivedInvocations: [String?] = []
+    var setNameLabelReceivedArguments: SetNameLabelArguments?
+    var setNameLabelReceivedInvocations: [SetNameLabelArguments?] = []
 
     func setNameLabel(text: String?) {
         setNameLabelCallsCount += 1
@@ -24,9 +26,11 @@ final class SwitchViewInputMock: ISwitchViewInput {
 
     // MARK: - setSwitchButtonState
 
+    typealias SetSwitchButtonStateArguments = Bool
+
     var setSwitchButtonStateCallsCount = 0
-    var setSwitchButtonStateReceivedArguments: Bool?
-    var setSwitchButtonStateReceivedInvocations: [Bool] = []
+    var setSwitchButtonStateReceivedArguments: SetSwitchButtonStateArguments?
+    var setSwitchButtonStateReceivedInvocations: [SetSwitchButtonStateArguments?] = []
 
     func setSwitchButtonState(isOn: Bool) {
         setSwitchButtonStateCallsCount += 1
@@ -36,7 +40,7 @@ final class SwitchViewInputMock: ISwitchViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension SwitchViewInputMock {
     func fullReset() {
