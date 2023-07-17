@@ -86,8 +86,8 @@
             {{ true }}
         {% endfor -%}
     {% endset %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}{% if method.parameters.count == 1 and method.parameters.first.isOptional %}?{% else %}{% endif %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}{% if method.parameters.count == 1 and method.parameters.first.isOptional %}?{% else %}{% endif %}] = []
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
