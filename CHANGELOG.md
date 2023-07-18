@@ -33,6 +33,7 @@
 * [EACQAPW-5551] Move to Static linking
 * [EACQAPW-5556] CardPaymentProcess Tests
 * [EACQAPW-5562] ExternalAPIClient Tests
+* [EACQAPW-5581] CardDataFormatter Tests
 
 ### Fixed
 
