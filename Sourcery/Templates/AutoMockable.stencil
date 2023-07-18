@@ -69,11 +69,12 @@
 {% macro mockMethod method methodName %}
 
     // MARK: - {{ methodName }}
-
     {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{% if param.typeAttributes.escaping %}{{ param.unwrappedTypeName }}{% elif param.isOptional %}{{ param.unwrappedTypeName }}{% else %}{{ param.typeName }}{% endif %}{% endfor %}{%endif%}{% endset %}
     {% set prefferedArgumentsType %}{{ methodName|upperFirstLetter }}Arguments{% endset %}
-    
+    {% if not method.parameters.count == 0 %}
+
     typealias {{ methodName|upperFirstLetter }}Arguments = {{ argumentsType }}
+    {% endif %}
 
     {% if method.throws %}
         {% call methodThrowableErrorDeclaration method %}
@@ -86,8 +87,10 @@
             {{ true }}
         {% endfor -%}
     {% endset %}
+    {% if not method.parameters.count == 0 %}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
+    {% endif %}
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
@@ -123,19 +126,21 @@
 
 {# !!! fullResetMethod - Пока не описанный метод. #}
 {% macro fullResetMethod method methodName %}
+        {% if method.throws %}
+        {{ methodName }}ThrowableError = nil
+        {% endif %}
         {% if not method.isInitializer %}
         {{ methodName }}CallsCount = 0
         {% endif %}
+        {% if not method.parameters.count == 0 %}
         {{ methodName }}ReceivedArguments = nil
         {{ methodName }}ReceivedInvocations = []
+        {% endif %}
         {% for param in method.parameters where param.isClosure %}
         {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
         {%else%}{{ param.name|upperFirstLetter }}ClosureInput = nil
         {% endif %}
         {% endfor %}
-        {% if method.throws %}
-        {{ methodName }}ThrowableError = nil
-        {% endif %}
 {% endmacro %}
 
 {# !!! mockOptionalVariable - Пока не описанный метод. #}
