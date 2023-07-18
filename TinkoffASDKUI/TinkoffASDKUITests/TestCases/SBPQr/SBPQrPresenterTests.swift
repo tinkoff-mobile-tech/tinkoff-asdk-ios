@@ -17,7 +17,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     // MARK: Mocks
 
-    var viewMock: SBPQrViewMock!
+    var viewMock: SBPQrViewInputMock!
     var sbpServiceMock: AcquiringSBPAndPaymentServiceMock!
     var repeatedRequestHelperMock: RepeatedRequestHelperMock!
     var paymentStatusServiceMock: PaymentStatusServiceMock!
@@ -77,10 +77,10 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 2)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .processing)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].state.status, .failed)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .processing)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.state.status, .failed)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(sbpServiceMock.getStaticQRCallsCount, 1)
         XCTAssertEqual(sbpServiceMock.getStaticQRReceivedArguments?.data, .imageSVG)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
@@ -100,8 +100,8 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .processing)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .processing)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, false)
         XCTAssertEqual(sbpServiceMock.getQRCallsCount, 1)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(viewMock.reloadDataCallsCount, 1)
@@ -120,10 +120,10 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 2)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .processing)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].state.status, .failed)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .processing)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.state.status, .failed)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(sbpServiceMock.getQRCallsCount, 1)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
         XCTAssertEqual(viewMock.reloadDataCallsCount, 0)
@@ -144,8 +144,8 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .processing)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .processing)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, false)
         XCTAssertEqual(sbpServiceMock.initPaymentCallsCount, 1)
         XCTAssertEqual(sbpServiceMock.getQRCallsCount, 1)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
@@ -167,10 +167,10 @@ final class SBPQrPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 2)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .processing)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].state.status, .failed)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .processing)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.state.status, .failed)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(sbpServiceMock.initPaymentCallsCount, 1)
         XCTAssertEqual(sbpServiceMock.getQRCallsCount, 0)
         XCTAssertEqual(DispatchQueueMock.performOnMainCallsCount, 1)
@@ -208,8 +208,8 @@ final class SBPQrPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, true)
     }
 
     func test_qrDidLoad_when_confirmed() {
@@ -243,8 +243,8 @@ final class SBPQrPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, true)
     }
 
     func test_qrDidLoad_when_rejected() {
@@ -278,8 +278,8 @@ final class SBPQrPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .failed)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .failed)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, true)
     }
 
     func test_qrDidLoad_when_undefinedStatus() {
@@ -316,8 +316,8 @@ final class SBPQrPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 2)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 2)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, true)
     }
 
     func test_qrDidLoad_when_someFailedRequests() {
@@ -355,8 +355,8 @@ final class SBPQrPresenterTests: BaseTestCase {
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 4)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 4)
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 1)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state.status, .succeeded)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state.status, .succeeded)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, true)
     }
 
     func test_qrDidLoad_when_paymentIdNil() {
@@ -447,7 +447,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
 extension SBPQrPresenterTests {
     private func configureSut(paymentFlow: PaymentFlow? = nil, moduleCompletionMock: PaymentResultCompletion? = nil) {
-        viewMock = SBPQrViewMock()
+        viewMock = SBPQrViewInputMock()
         sbpServiceMock = AcquiringSBPAndPaymentServiceMock()
         repeatedRequestHelperMock = RepeatedRequestHelperMock()
         paymentStatusServiceMock = PaymentStatusServiceMock()

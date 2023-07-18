@@ -1,5 +1,5 @@
 //
-//  SBPQrViewMock.swift
+//  SBPQrViewInputMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
 //  Created by Aleksandr Pravosudov on 15.05.2023.
@@ -7,7 +7,7 @@
 
 @testable import TinkoffASDKUI
 
-final class SBPQrViewMock: ISBPQrViewInput {
+final class SBPQrViewInputMock: ISBPQrViewInput {
 
     // MARK: - showCommonSheet
 
@@ -15,7 +15,7 @@ final class SBPQrViewMock: ISBPQrViewInput {
 
     var showCommonSheetCallsCount = 0
     var showCommonSheetReceivedArguments: ShowCommonSheetArguments?
-    var showCommonSheetReceivedInvocations: [ShowCommonSheetArguments] = []
+    var showCommonSheetReceivedInvocations: [ShowCommonSheetArguments?] = []
 
     func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         showCommonSheetCallsCount += 1
@@ -46,5 +46,21 @@ final class SBPQrViewMock: ISBPQrViewInput {
 
     func closeView() {
         closeViewCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension SBPQrViewInputMock {
+    func fullReset() {
+        showCommonSheetCallsCount = 0
+        showCommonSheetReceivedArguments = nil
+        showCommonSheetReceivedInvocations = []
+
+        hideCommonSheetCallsCount = 0
+
+        reloadDataCallsCount = 0
+
+        closeViewCallsCount = 0
     }
 }
