@@ -256,7 +256,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
 
     func test_payButtonViewTapped_when_paymentFlowFull() {
         // given
-        let paymentFlow = PaymentFlow.fullRandom
+        let paymentFlow = PaymentFlow.fakeFullRandom
         let cardId = "1234567"
         let cvc = "111"
         setupSut(paymentFlow: paymentFlow)
@@ -284,7 +284,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
 
     func test_payButtonViewTapped_when_paymentFlowFinish_and_failureDelegateSuccess() {
         // given
-        let paymentFlow = PaymentFlow.finishAny
+        let paymentFlow = PaymentFlow.fakeFinish
 
         let cardId = "1234567"
         let cvc = "111"
@@ -319,7 +319,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
 
     func test_payButtonViewTapped_when_paymentFlowFinish_and_failureDelegateError() {
         // given
-        let paymentFlow = PaymentFlow.finishAny
+        let paymentFlow = PaymentFlow.fakeFinish
 
         let cardId = "1234567"
         let cvc = "111"

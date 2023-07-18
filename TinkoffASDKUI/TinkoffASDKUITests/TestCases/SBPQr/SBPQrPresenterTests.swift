@@ -89,7 +89,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_when_paymentFlowFinish_success() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
 
         let payload = GetQRPayload.any
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
@@ -109,7 +109,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_when_paymentFlowFinish_failure() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
 
         let error = NSError(domain: "error", code: 123456)
         sbpServiceMock.getQRCompletionClosureInput = .failure(error)
@@ -131,9 +131,9 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_when_paymentFlowFull_success() {
         // given
-        configureSut(paymentFlow: .fullRandom)
+        configureSut(paymentFlow: .fakeFullRandom)
 
-        let initPayload = InitPayload.any
+        let initPayload = InitPayload.fake
         let getQrPayload = GetQRPayload.any
         sbpServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
         sbpServiceMock.getQRCompletionClosureInput = .success(getQrPayload)
@@ -154,7 +154,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_when_paymentFlowFull_failure() {
         // given
-        configureSut(paymentFlow: .fullRandom)
+        configureSut(paymentFlow: .fakeFullRandom)
 
         let error = NSError(domain: "error", code: 123456)
         let getQrPayload = GetQRPayload.any
@@ -179,9 +179,9 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_qrDidLoad_when_authorized() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
-        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .authorized))]
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .authorized))]
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
@@ -214,9 +214,9 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_qrDidLoad_when_confirmed() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
-        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .confirmed))]
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .confirmed))]
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
@@ -249,9 +249,9 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_qrDidLoad_when_rejected() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
-        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .rejected))]
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .rejected))]
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
@@ -284,10 +284,10 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_qrDidLoad_when_undefinedStatus() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         let statuses: [Result<GetPaymentStatePayload, Error>] =
-            [.success(.some(status: .confirming)), .success(.some(status: .authorized))]
+            [.success(.fake(status: .confirming)), .success(.fake(status: .authorized))]
 
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = statuses
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
@@ -322,11 +322,11 @@ final class SBPQrPresenterTests: BaseTestCase {
 
     func test_qrDidLoad_when_someFailedRequests() {
         // given
-        configureSut(paymentFlow: .finishAny)
+        configureSut(paymentFlow: .fakeFinish)
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         let error = NSError(domain: "error", code: 123456)
         let statuses: [Result<GetPaymentStatePayload, Error>] =
-            [.failure(error), .failure(error), .failure(error), .success(.some(status: .authorized))]
+            [.failure(error), .failure(error), .failure(error), .success(.fake(status: .authorized))]
 
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = statuses
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
@@ -362,7 +362,7 @@ final class SBPQrPresenterTests: BaseTestCase {
     func test_qrDidLoad_when_paymentIdNil() {
         // given
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
-        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.some(status: .authorized))]
+        paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .authorized))]
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 

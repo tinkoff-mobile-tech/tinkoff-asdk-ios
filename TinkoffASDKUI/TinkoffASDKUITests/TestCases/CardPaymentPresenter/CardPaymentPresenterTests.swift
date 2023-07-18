@@ -402,7 +402,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     func test_savedCardPresenterDidRequestReplacementFor() {
         // given
         let activeCards = createActiveCardsArray()
-        let paymentFlow = PaymentFlow.fullRandom
+        let paymentFlow = PaymentFlow.fakeFullRandom
         let paymentCard = PaymentCard.fake()
         let amount: Int64 = 234
 
@@ -595,7 +595,7 @@ extension CardPaymentPresenterTests {
     private func setupSut(
         cardsController: CardsControllerMock? = CardsControllerMock(),
         activeCards: [PaymentCard]? = nil,
-        paymentFlow: PaymentFlow = .fullRandom,
+        paymentFlow: PaymentFlow = .fakeFullRandom,
         amount: Int64 = 100,
         isCardFieldScanButtonNeeded: Bool = false
     ) {
