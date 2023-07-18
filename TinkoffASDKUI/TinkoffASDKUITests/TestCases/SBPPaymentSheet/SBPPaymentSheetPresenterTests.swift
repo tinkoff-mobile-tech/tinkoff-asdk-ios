@@ -126,13 +126,13 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.timeout.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.timeout.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
 
         for index in 0 ..< retriesCount {
-            XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedInvocations[index].paymentId, paymentId)
+            XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedInvocations[index]?.paymentId, paymentId)
         }
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 10)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 10)
@@ -167,10 +167,10 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.paid.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.paid.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
@@ -199,12 +199,12 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 3)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.processing.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[2].state, SBPSheetState.paid.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[2].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.processing.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[2]?.state, SBPSheetState.paid.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[2]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 5)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 5)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
@@ -226,10 +226,10 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.paymentFailed.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.paymentFailed.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
@@ -396,10 +396,10 @@ extension SBPPaymentSheetPresenterTests {
 
     private func commonTestsForThenViewDidLoadTests(status: CommonSheetState.Status, paymentId: String) {
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state.status, status)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state.status, status)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 1)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
