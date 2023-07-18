@@ -28,6 +28,9 @@
 {# !!! methodClosureCallParameters - Добавляет все параметры метода. #}
 {% macro methodClosureCallParameters method %}{% for param in method.parameters %}{{ param.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endmacro %}
 
+{# !!! mockedVariableName - Просто обертка над названием переменной. #}
+{% macro mockedVariableName variable %}{{ variable.name }}{% endmacro %}
+
 {# !!! methodReceivedParameters - Добавляет реализацию связанную с переданными параметрами в метод. #}
 {% macro methodReceivedParameters method methodName %}
         {% if method.parameters.count > 0 %}
@@ -50,7 +53,7 @@
         {% endif %}
 {% endmacro %}
 
-{# !!! mockMethod - Пока не описанный метод. #}
+{# !!! mockMethod - Создает метод со всеми нужными ему полями. #}
 {% macro mockMethod method methodName %}
 
     // MARK: - {{ methodName }}
@@ -77,7 +80,7 @@
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
     {% endif %}
     {% for param in method.parameters where param.isClosure %}
-    {% set closureInputType %} ({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
+    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
         {%else%}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}{% endif %}
     {% endfor %}
@@ -109,7 +112,7 @@
 {% endif %}
 {% endmacro %}
 
-{# !!! fullResetMethod - Пока не описанный метод. #}
+{# !!! fullResetMethod - Создает реализацию метода, который обнуляет все параметры. #}
 {% macro fullResetMethod method methodName %}
         {% if method.throws %}
         {{ methodName }}ThrowableError = nil
@@ -194,9 +197,6 @@
 
 {# !!! underlyingMockedVariableName - Пока не описанный метод. #}
 {% macro underlyingMockedVariableName variable %}underlying{{ variable.name|upperFirstLetter }}{% endmacro %}
-
-{# !!! mockedVariableName - Пока не описанный метод. #}
-{% macro mockedVariableName variable %}{{ variable.name }}{% endmacro %}
 
 {# ============================================ #}
 {# !!! Вся логика генерации начинается ниже !!! #}
