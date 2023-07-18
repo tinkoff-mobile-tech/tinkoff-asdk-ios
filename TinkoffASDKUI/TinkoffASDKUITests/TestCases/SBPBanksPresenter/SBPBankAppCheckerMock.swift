@@ -12,9 +12,11 @@ final class SBPBankAppCheckerMock: ISBPBankAppChecker {
 
     // MARK: - bankAppsPreferredByMerchant
 
+    typealias BankAppsPreferredByMerchantArguments = [SBPBank]
+
     var bankAppsPreferredByMerchantCallsCount = 0
-    var bankAppsPreferredByMerchantReceivedArguments: [SBPBank]?
-    var bankAppsPreferredByMerchantReceivedInvocations: [[SBPBank]] = []
+    var bankAppsPreferredByMerchantReceivedArguments: BankAppsPreferredByMerchantArguments?
+    var bankAppsPreferredByMerchantReceivedInvocations: [BankAppsPreferredByMerchantArguments?] = []
     var bankAppsPreferredByMerchantReturnValue: [SBPBank]!
 
     func bankAppsPreferredByMerchant(from allBanks: [SBPBank]) -> [SBPBank] {
@@ -23,5 +25,15 @@ final class SBPBankAppCheckerMock: ISBPBankAppChecker {
         bankAppsPreferredByMerchantReceivedArguments = arguments
         bankAppsPreferredByMerchantReceivedInvocations.append(arguments)
         return bankAppsPreferredByMerchantReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension SBPBankAppCheckerMock {
+    func fullReset() {
+        bankAppsPreferredByMerchantCallsCount = 0
+        bankAppsPreferredByMerchantReceivedArguments = nil
+        bankAppsPreferredByMerchantReceivedInvocations = []
     }
 }
