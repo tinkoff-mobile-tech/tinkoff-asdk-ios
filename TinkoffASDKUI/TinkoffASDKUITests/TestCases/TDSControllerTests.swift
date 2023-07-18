@@ -242,6 +242,47 @@ final class TDSControllerTests: BaseTestCase {
         XCTAssertTrue(value.code > 0)
         XCTAssertEqual(transactionMock.closeCallsCount, 1)
     }
+
+    func test_stop() {
+        // given
+        setupAndStartAppBasedFlow()
+
+        // when
+        sut.stop()
+
+        // then
+        XCTAssertEqual(transactionMock.closeCallsCount, 1)
+    }
+
+    func test_startAppBasedFlow_returnsError() {
+        // when
+        var result: Result<ThreeDSDeviceInfo, Error>?
+        sut.startAppBasedFlow(check3dsPayload: .fake(version: .v1), completion: { result = $0 })
+
+        // then
+        if case let .failure(error) = result {
+            XCTAssertEqual(error.localizedDescription, "Couldn't retrieve paymentSystem")
+        } else {
+            XCTFail()
+        }
+    }
+
+    func test_throwError() {
+        // given
+        let errorStub = ErrorStub()
+        transactionMock.getAuthenticationRequestParametersThrowableError = errorStub
+
+        // when
+        var result: Result<ThreeDSDeviceInfo, Error>?
+        setupAndStartAppBasedFlow { result = $0 }
+
+        // then
+        if case let .failure(error) = result {
+            XCTAssertEqual(errorStub as NSError, error as NSError)
+        } else {
+            XCTFail()
+        }
+    }
 }
 
 extension TDSControllerTests {

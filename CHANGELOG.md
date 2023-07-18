@@ -24,10 +24,23 @@
 * [EACQAPW-4452] App Based Flow Payment support
 * [EACQAPW-4453] Update Third Party bundled xcframeworks
 * [EACQAPW-5460] ImageLoader Tests
+* [EACQAPW-5472] TDSWrapperBuilder Tests
+* [EACQAPW-5482] TDSFlowErrorTests Tests
+* [EACQAPW-5501] PaymentSystemImageResolver Tests
+* [EACQAPW-5504] TDSController Tests
+* [EACQAPW-5528] PaymentSystem Tests
+* [EACQAPW-5532] TDSCertsManager Tests
+* [EACQAPW-5551] Move to Static linking
+* [EACQAPW-5556] CardPaymentProcess Tests
 
 ### Fixed
 
 * [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
+
+## [3.1.1] - 2023-07-17Z
+
+### Fixed
+* [EACQAPW-5561] Tinkoff Pay doesn't pass SuccessURL & FailURL in /Init
 
 ## [3.1.0] - 2023-06-28Z
 
@@ -64,7 +77,7 @@
 * [EACQAPW-4741] Keyboard wrong appearing on AddNewCard screen
 * [EACQAPW-4742] Handle unknown statuses in sbp payment sheet
 * [EACQAPW-4996] Card payment proper status handles
-* [EACQAPW-5231] Fix of images rendered badly
+* [EACQAPW-5231] Fix of images rendered badly (used png)
 * [EACQAPW-5258] RunLoop run caused bugy getState handles
 * [EACQAPW-5288] TPay Controller handle DEADLINE_EXPIRED
 * [EACQAPW-5297] Fix broken pdfs

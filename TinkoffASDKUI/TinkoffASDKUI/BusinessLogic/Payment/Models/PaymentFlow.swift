@@ -72,6 +72,7 @@ extension PaymentFlow {
             let newPaymentOptions = PaymentOptions(
                 orderOptions: paymentOptions.orderOptions,
                 customerOptions: paymentOptions.customerOptions,
+                paymentCallbackURL: paymentOptions.paymentCallbackURL,
                 paymentData: (paymentOptions.paymentData ?? [:]).merging(paymentData) { $1 }
             )
             return .full(paymentOptions: newPaymentOptions)
