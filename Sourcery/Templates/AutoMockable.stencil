@@ -143,6 +143,7 @@
 
 {# !!! mockNonOptionalVariable - Пока не описанный метод. #}
 {% macro mockNonOptionalVariable variable %}
+
     {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }} {
         get { return {% call underlyingMockedVariableName variable %} }
         set(value) { {% call underlyingMockedVariableName variable %} = value }
