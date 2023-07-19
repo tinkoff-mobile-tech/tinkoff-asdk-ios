@@ -46,7 +46,7 @@
         {%else%}
         {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
         if let {{ closureInput }} = {{ closureInput }} {
-            {{ param.name}}({{ closureInput }})
+            {{ param.name}}{{ '?' if param.isOptional }}({{ closureInput }})
         }
         {% endif %}
         {% endfor -%}
