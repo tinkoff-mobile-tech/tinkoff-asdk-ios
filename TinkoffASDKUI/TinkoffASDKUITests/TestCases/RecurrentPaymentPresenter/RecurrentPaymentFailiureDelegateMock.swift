@@ -8,7 +8,6 @@
 @testable import TinkoffASDKUI
 
 final class RecurrentPaymentFailiureDelegateMock: IRecurrentPaymentFailiureDelegate {
-    init() {}
 
     // MARK: - recurrentPaymentNeedRepeatInit
 
@@ -16,7 +15,7 @@ final class RecurrentPaymentFailiureDelegateMock: IRecurrentPaymentFailiureDeleg
 
     var recurrentPaymentNeedRepeatInitCallsCount = 0
     var recurrentPaymentNeedRepeatInitReceivedArguments: RecurrentPaymentNeedRepeatInitArguments?
-    var recurrentPaymentNeedRepeatInitReceivedInvocations: [RecurrentPaymentNeedRepeatInitArguments] = []
+    var recurrentPaymentNeedRepeatInitReceivedInvocations: [RecurrentPaymentNeedRepeatInitArguments?] = []
     var recurrentPaymentNeedRepeatInitCompletionClosureInput: Result<PaymentId, Error>?
 
     func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void) {
@@ -27,5 +26,16 @@ final class RecurrentPaymentFailiureDelegateMock: IRecurrentPaymentFailiureDeleg
         if let recurrentPaymentNeedRepeatInitCompletionClosureInput = recurrentPaymentNeedRepeatInitCompletionClosureInput {
             completion(recurrentPaymentNeedRepeatInitCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension RecurrentPaymentFailiureDelegateMock {
+    func fullReset() {
+        recurrentPaymentNeedRepeatInitCallsCount = 0
+        recurrentPaymentNeedRepeatInitReceivedArguments = nil
+        recurrentPaymentNeedRepeatInitReceivedInvocations = []
+        recurrentPaymentNeedRepeatInitCompletionClosureInput = nil
     }
 }
