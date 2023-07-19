@@ -174,3 +174,9 @@ extension SavedCardViewPresenter {
         )
     }
 }
+
+extension EmailViewPresenter {
+    static func fake() -> EmailViewPresenter {
+        EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
+    }
+}

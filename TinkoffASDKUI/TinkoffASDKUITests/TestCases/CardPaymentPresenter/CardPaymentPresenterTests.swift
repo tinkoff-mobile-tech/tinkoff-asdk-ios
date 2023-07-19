@@ -652,12 +652,6 @@ extension CardPaymentPresenterTests {
 
 // MARK: - Helpers
 
-extension EmailViewPresenter {
-    static func fake() -> EmailViewPresenter {
-        EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
-    }
-}
-
 final class FakePayButtonViewPresenterInput: IPayButtonViewPresenterInput {
     var presentationState: PayButtonViewPresentationState = .pay
 
