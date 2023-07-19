@@ -24,8 +24,8 @@ final class TimerProviderMock: ITimerProvider {
 
     var executeTimerCallsCount = 0
     var executeTimerReceivedArguments: ExecuteTimerArguments?
-    var executeTimerReceivedInvocations: [ExecuteTimerArguments] = []
-    var executeTimerActionShouldExecute: Bool = false
+    var executeTimerReceivedInvocations: [ExecuteTimerArguments?] = []
+    var executeTimerActionShouldExecute = false
 
     func executeTimer(timeInterval: TimeInterval, repeats: Bool, action: @escaping () -> Void) {
         executeTimerCallsCount += 1
@@ -36,10 +36,17 @@ final class TimerProviderMock: ITimerProvider {
             action()
         }
     }
+}
 
-    // MARK: - executeTimer helper
+// MARK: - Resets
 
-    func executeTimer(timeInterval: TimeInterval, action: @escaping () -> Void) {
-        executeTimer(timeInterval: timeInterval, repeats: false, action: action)
+extension TimerProviderMock {
+    func fullReset() {
+        invalidateTimerCallsCount = 0
+
+        executeTimerCallsCount = 0
+        executeTimerReceivedArguments = nil
+        executeTimerReceivedInvocations = []
+        executeTimerActionShouldExecute = false
     }
 }
