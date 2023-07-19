@@ -230,7 +230,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
 
         // when
-        sut.savedCardPresenter(.fake(), didUpdateCVC: "", isValid: false)
+        sut.savedCardPresenter(.fake, didUpdateCVC: "", isValid: false)
 
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 2)
@@ -247,7 +247,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
 
         // when
-        sut.savedCardPresenter(.fake(), didUpdateCVC: "", isValid: false)
+        sut.savedCardPresenter(.fake, didUpdateCVC: "", isValid: false)
 
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 2)

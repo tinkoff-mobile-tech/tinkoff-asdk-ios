@@ -148,3 +148,29 @@ extension SBPBank {
         SBPBank(name: "name \(uniqValue)", logoURL: nil, schema: "scheme \(uniqValue)")
     }
 }
+
+extension MainFormDataState {
+    static func fake(
+        primaryPaymentMethod: MainFormPaymentMethod = .sbp,
+        otherPaymentMethods: [MainFormPaymentMethod] = [.card],
+        cards: [PaymentCard]? = .fake()
+    ) -> MainFormDataState {
+        MainFormDataState(
+            primaryPaymentMethod: primaryPaymentMethod,
+            otherPaymentMethods: otherPaymentMethods,
+            cards: cards,
+            sbpBanks: nil
+        )
+    }
+}
+
+extension SavedCardViewPresenter {
+    static var fake: SavedCardViewPresenter {
+        SavedCardViewPresenter(
+            validator: CardRequisitesValidatorMock(),
+            paymentSystemResolver: PaymentSystemResolverMock(),
+            bankResolver: BankResolverMock(),
+            output: SavedCardViewPresenterOutputMock()
+        )
+    }
+}

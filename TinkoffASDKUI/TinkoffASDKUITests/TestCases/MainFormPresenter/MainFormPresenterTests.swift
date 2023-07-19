@@ -63,7 +63,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let isOn = true
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let savedCardMock = SavedCardViewOutputMock()
@@ -94,7 +94,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let isOn = false
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let savedCardMock = SavedCardViewOutputMock()
@@ -130,7 +130,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let sbpPaymentMethod = MainFormPaymentMethod.sbp
-        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: sbpPaymentMethod)
         let cards = dataState.cards
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
@@ -164,7 +164,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let sbpPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(
+        let dataState = MainFormDataState.fake(
             primaryPaymentMethod: sbpPaymentMethod,
             otherPaymentMethods: [],
             cards: nil
@@ -241,7 +241,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_numberOfRows() {
         // given
         let sbpPaymentMethod = MainFormPaymentMethod.sbp
-        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: sbpPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         sut.viewDidLoad()
@@ -256,7 +256,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_cellTypeAtIndexPath() {
         // given
         let sbpPaymentMethod = MainFormPaymentMethod.sbp
-        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: sbpPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         sut.viewDidLoad()
@@ -284,7 +284,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let paymentFlow = PaymentFlow.fake()
         setupSut(paymentFlow: paymentFlow)
 
-        let dataState = MainFormDataState.any()
+        let dataState = MainFormDataState.fake()
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let modifiedPaymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState)
@@ -307,7 +307,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let paymentFlow = PaymentFlow.fake()
         setupSut(paymentFlow: paymentFlow)
 
-        let dataState = MainFormDataState.any(otherPaymentMethods: [.sbp])
+        let dataState = MainFormDataState.fake(otherPaymentMethods: [.sbp])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let modifiedPaymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState).withSBPAnalytics()
@@ -331,7 +331,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let tinkoffPayMethod = TinkoffPayMethod(version: "any version")
-        let dataState = MainFormDataState.any(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
+        let dataState = MainFormDataState.fake(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let modifiedPaymentFlow = paymentFlow
@@ -357,7 +357,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_didSelectRow_anyOtherRow() {
         // given
         let tinkoffPayMethod = TinkoffPayMethod(version: "any version")
-        let dataState = MainFormDataState.any(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
+        let dataState = MainFormDataState.fake(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         sut.viewDidLoad()
@@ -423,7 +423,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_commonSheetViewDidTapPrimaryButton_when_presentationState_tinkoffPayProcessing() throws {
         // given
         let tinkoffPayMethod = TinkoffPayMethod(version: "any version")
-        let dataState = MainFormDataState.any(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
+        let dataState = MainFormDataState.fake(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let payButtonMock = PayButtonViewOutputMock()
@@ -584,7 +584,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_commonSheetViewDidTapSecondaryButton_when_presentationState_tinkoffPayProcessing() {
         // given
         let tinkoffPayMethod = TinkoffPayMethod(version: "any version")
-        let dataState = MainFormDataState.any(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
+        let dataState = MainFormDataState.fake(otherPaymentMethods: [.tinkoffPay(tinkoffPayMethod)])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let indexPath = IndexPath(row: 3, section: 0)
@@ -605,7 +605,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let sbpPaymentMethod = MainFormPaymentMethod.sbp
-        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: sbpPaymentMethod)
         let cards = dataState.cards
         let expectedPaymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState)
 
@@ -616,7 +616,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let paymentCard = PaymentCard.fake()
 
         // when
-        sut.savedCardPresenter(.any, didRequestReplacementFor: paymentCard)
+        sut.savedCardPresenter(.fake, didRequestReplacementFor: paymentCard)
 
         // then
         XCTAssertEqual(routerMock.openCardPaymentListCallsCount, 1)
@@ -631,7 +631,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let sbpPaymentMethod = MainFormPaymentMethod.sbp
-        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPaymentMethod, cards: nil)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: sbpPaymentMethod, cards: nil)
         let expectedPaymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
@@ -640,7 +640,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let paymentCard = PaymentCard.fake()
 
         // when
-        sut.savedCardPresenter(.any, didRequestReplacementFor: paymentCard)
+        sut.savedCardPresenter(.fake, didRequestReplacementFor: paymentCard)
 
         // then
         XCTAssertEqual(routerMock.openCardPaymentListCallsCount, 1)
@@ -652,7 +652,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_savedCardPresenter_didUpdateCVC() {
         // given
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod, cards: [.fake()])
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod, cards: [.fake()])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let payButtonMock = PayButtonViewOutputMock()
@@ -663,7 +663,7 @@ final class MainFormPresenterTests: BaseTestCase {
         payButtonMock.fullReset()
 
         // when
-        sut.savedCardPresenter(.any, didUpdateCVC: "111", isValid: false)
+        sut.savedCardPresenter(.fake, didUpdateCVC: "111", isValid: false)
 
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 1)
@@ -675,7 +675,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let isOn = true
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let savedCardMock = SavedCardViewOutputMock()
@@ -706,7 +706,7 @@ final class MainFormPresenterTests: BaseTestCase {
         let isOn = false
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let savedCardMock = SavedCardViewOutputMock()
@@ -758,7 +758,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let cardId = "12345678"
@@ -799,7 +799,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let cardId = "12345678"
@@ -845,7 +845,7 @@ final class MainFormPresenterTests: BaseTestCase {
     func test_payButtonViewTapped_when_primaryPaymentMethodCard_and_cardId_with_cvc_nil() {
         // given
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let savedCardMock = SavedCardViewOutputMock()
@@ -873,7 +873,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let cardPaymentMethod = MainFormPaymentMethod.card
-        let dataState = MainFormDataState.any(primaryPaymentMethod: cardPaymentMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: cardPaymentMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let modifiedPaymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState)
@@ -898,7 +898,7 @@ final class MainFormPresenterTests: BaseTestCase {
 
         let tinkoffPayMethod = TinkoffPayMethod(version: "any version")
         let payMethod = MainFormPaymentMethod.tinkoffPay(tinkoffPayMethod)
-        let dataState = MainFormDataState.any(primaryPaymentMethod: payMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: payMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let modifiedPaymentFlow = paymentFlow
@@ -926,7 +926,7 @@ final class MainFormPresenterTests: BaseTestCase {
         setupSut(paymentFlow: paymentFlow)
 
         let sbpPayMethod = MainFormPaymentMethod.sbp
-        let dataState = MainFormDataState.any(primaryPaymentMethod: sbpPayMethod)
+        let dataState = MainFormDataState.fake(primaryPaymentMethod: sbpPayMethod)
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         let modifiedPaymentFlow = paymentFlow.withPrimaryMethodAnalytics(dataState: dataState).withSBPAnalytics()
@@ -1209,7 +1209,7 @@ final class MainFormPresenterTests: BaseTestCase {
 
     func test_didLoadedSbpBanks() {
         // given
-        let dataState = MainFormDataState.any(otherPaymentMethods: [.sbp])
+        let dataState = MainFormDataState.fake(otherPaymentMethods: [.sbp])
         dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
 
         sut.viewDidLoad()
@@ -1324,33 +1324,5 @@ extension MainFormPresenterTests {
         )
 
         sut.view = viewMock
-    }
-}
-
-// MARK: - Helpers
-
-extension MainFormDataState {
-    static func any(
-        primaryPaymentMethod: MainFormPaymentMethod = .sbp,
-        otherPaymentMethods: [MainFormPaymentMethod] = [.card],
-        cards: [PaymentCard]? = .fake()
-    ) -> MainFormDataState {
-        MainFormDataState(
-            primaryPaymentMethod: primaryPaymentMethod,
-            otherPaymentMethods: otherPaymentMethods,
-            cards: cards,
-            sbpBanks: nil
-        )
-    }
-}
-
-extension SavedCardViewPresenter {
-    static var any: SavedCardViewPresenter {
-        SavedCardViewPresenter(
-            validator: CardRequisitesValidatorMock(),
-            paymentSystemResolver: PaymentSystemResolverMock(),
-            bankResolver: BankResolverMock(),
-            output: SavedCardViewPresenterOutputMock()
-        )
     }
 }

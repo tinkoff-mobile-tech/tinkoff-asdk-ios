@@ -409,7 +409,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         setupSut(activeCards: activeCards, paymentFlow: paymentFlow, amount: amount)
 
         // when
-        sut.savedCardPresenter(.fake(), didRequestReplacementFor: paymentCard)
+        sut.savedCardPresenter(.fake, didRequestReplacementFor: paymentCard)
 
         // then
         XCTAssertEqual(routerMock.openCardPaymentListCallsCount, 1)
@@ -429,7 +429,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         switchViewPresenterAssemblyMock.buildReturnValue = switchMock
 
         // when
-        sut.savedCardPresenter(.fake(), didUpdateCVC: "", isValid: false)
+        sut.savedCardPresenter(.fake, didUpdateCVC: "", isValid: false)
 
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 2)
@@ -655,17 +655,6 @@ extension CardPaymentPresenterTests {
 extension EmailViewPresenter {
     static func fake() -> EmailViewPresenter {
         EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
-    }
-}
-
-extension SavedCardViewPresenter {
-    static func fake() -> SavedCardViewPresenter {
-        SavedCardViewPresenter(
-            validator: CardRequisitesValidatorMock(),
-            paymentSystemResolver: PaymentSystemResolverMock(),
-            bankResolver: BankResolverMock(),
-            output: SavedCardViewPresenterOutputMock()
-        )
     }
 }
 
