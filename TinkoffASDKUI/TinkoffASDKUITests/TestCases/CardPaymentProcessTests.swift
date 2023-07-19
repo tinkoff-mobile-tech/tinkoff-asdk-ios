@@ -593,12 +593,7 @@ extension CardPaymentProcessTests {
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
         let threeDsServiceMock = dependencies.threeDsServiceMock
 
-        dependencies.paymentDelegateMock.paymentNeedCollect3DsCompletionInput = ThreeDSDeviceInfo(
-            cresCallbackUrl: URL.empty.absoluteString,
-            screenWidth: 300,
-            screenHeight: 800
-        )
-
+        dependencies.paymentDelegateMock.paymentNeedCollect3DsCompletionInput = ThreeDSDeviceInfo.fake()
         threeDsServiceMock.check3DSVersionStubReturnValue = { passedArgs -> Cancellable in
             // handle failure flow
             passedArgs.completion(check3DSVersionResult)

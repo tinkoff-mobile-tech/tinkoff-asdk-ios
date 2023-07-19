@@ -129,28 +129,31 @@ final class CredentialsView: UIView, CredentialsViewInput {
         borderView.layer.borderColor = UIColor.lightGray.cgColor
         borderView.layer.borderWidth = 1
         borderView.layer.cornerRadius = 10
-        borderView.backgroundColor = UIColor.white
-
+        borderView.backgroundColor = .dynamic(light: .white, dark: .darkGray)
         verticalStackView.axis = .vertical
         verticalStackView.spacing = UIConstants.verticalStackSpacing
 
+        var deleteButtonImage = Asset.Icons.delete.image
+            .resizeImageVerticallyIfNeeded(fitSize: UIConstants.buttonImageSize)
+            .addInsetsInside(inset: UIConstants.buttonImageInset)
+        deleteButtonImage = deleteButtonImage?.withRenderingMode(.alwaysTemplate)
+        deleteButton.tintColor = .dynamicText
         deleteButton.setImage(
-            Asset.Icons.delete.image
-                .resizeImageVerticallyIfNeeded(fitSize: UIConstants.buttonImageSize)
-                .addInsetsInside(inset: UIConstants.buttonImageInset),
+            deleteButtonImage,
             for: .normal
         )
         deleteButton.setTitle(Loc.CredentialsView.Title.delete, for: .normal)
-        deleteButton.setTitleColor(.darkGray, for: .normal)
+        deleteButton.setTitleColor(.dynamicText, for: .normal)
 
-        editButton.setImage(
-            Asset.Icons.editing.image
-                .resizeImageVerticallyIfNeeded(fitSize: UIConstants.buttonImageSize)
-                .addInsetsInside(inset: UIConstants.buttonImageInset),
-            for: .normal
-        )
+        var editButtonImage = Asset.Icons.editing.image
+            .resizeImageVerticallyIfNeeded(fitSize: UIConstants.buttonImageSize)
+            .addInsetsInside(inset: UIConstants.buttonImageInset)
+
+        editButtonImage = editButtonImage?.withRenderingMode(.alwaysTemplate)
+        editButton.tintColor = .dynamicText
+        editButton.setImage(editButtonImage, for: .normal)
         editButton.setTitle(Loc.CredentialsView.Title.edit, for: .normal)
-        editButton.setTitleColor(.darkGray, for: .normal)
+        editButton.setTitleColor(.dynamicText, for: .normal)
 
         setupConstraints()
     }

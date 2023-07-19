@@ -30,25 +30,67 @@ public extension IThreeDSDeviceInfoProvider {
     }
 }
 
+/// Возвращает информацию для 3DS App Based SDK транзакции
+public protocol IAppBasedSdkUiProvider {
+    /// Тип интерфейса Native/HTML/Both через который пойдет транзакция
+    func sdkInterface() -> TdsSdkInterface
+    /// Тип ui-ая для проверки
+    func sdkUiTypes() -> [TdsSdkUiType]
+}
+
+public struct AppBasedSdkUiProvider: IAppBasedSdkUiProvider {
+    let prefferedInterface: TdsSdkInterface
+    let prefferedUiTypes: [TdsSdkUiType]
+
+    public func sdkInterface() -> TdsSdkInterface {
+        prefferedInterface
+    }
+
+    public func sdkUiTypes() -> [TdsSdkUiType] {
+        prefferedUiTypes
+    }
+
+    public init(prefferedInterface: TdsSdkInterface, prefferedUiTypes: [TdsSdkUiType]) {
+        self.prefferedInterface = prefferedInterface
+        self.prefferedUiTypes = prefferedUiTypes
+    }
+}
+
 final class ThreeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider {
     private let languageProvider: ILanguageProvider
     private let urlBuilder: IThreeDSURLBuilder
+    private let sdkUiProvider: IAppBasedSdkUiProvider
 
     init(
         languageProvider: ILanguageProvider,
-        urlBuilder: IThreeDSURLBuilder
+        urlBuilder: IThreeDSURLBuilder,
+        sdkUiProvider: IAppBasedSdkUiProvider
     ) {
         self.languageProvider = languageProvider
         self.urlBuilder = urlBuilder
+        self.sdkUiProvider = sdkUiProvider
     }
 
     func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo {
         ThreeDSDeviceInfo(
+            // BRW
             threeDSCompInd: threeDSCompInd,
-            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString,
-            languageId: (languageProvider.language ?? .ru).rawValue,
+            javaEnabled: "true",
+            colorDepth: 32,
+            language: (languageProvider.language ?? .ru).rawValue,
+            timezone: TimeZone.current.secondsFromGMT() / 60,
+            screenHeight: Int(UIScreen.main.bounds.height * UIScreen.main.scale),
             screenWidth: Int(UIScreen.main.bounds.width * UIScreen.main.scale),
-            screenHeight: Int(UIScreen.main.bounds.height * UIScreen.main.scale)
+            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString,
+            // SDK
+            sdkAppID: nil,
+            sdkEphemPubKey: nil,
+            sdkReferenceNumber: nil,
+            sdkTransID: nil,
+            sdkMaxTimeout: nil,
+            sdkEncData: nil,
+            sdkInterface: sdkUiProvider.sdkInterface(),
+            sdkUiType: sdkUiProvider.sdkUiTypes().map { $0.rawValue }.joined(separator: ",")
         )
     }
 }
