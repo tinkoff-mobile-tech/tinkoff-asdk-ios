@@ -12,9 +12,11 @@ final class SBPPaymentServiceMock: ISBPPaymentService {
 
     // MARK: - loadPaymentQr
 
+    typealias LoadPaymentQrArguments = SBPPaymentServiceCompletion
+
     var loadPaymentQrCallsCount = 0
-    var loadPaymentQrReceivedArguments: SBPPaymentServiceCompletion?
-    var loadPaymentQrReceivedInvocations: [SBPPaymentServiceCompletion] = []
+    var loadPaymentQrReceivedArguments: LoadPaymentQrArguments?
+    var loadPaymentQrReceivedInvocations: [LoadPaymentQrArguments?] = []
     var loadPaymentQrCompletionClosureInput: Result<GetQRPayload, Error>?
 
     func loadPaymentQr(completion: @escaping SBPPaymentServiceCompletion) {
@@ -25,5 +27,16 @@ final class SBPPaymentServiceMock: ISBPPaymentService {
         if let loadPaymentQrCompletionClosureInput = loadPaymentQrCompletionClosureInput {
             completion(loadPaymentQrCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension SBPPaymentServiceMock {
+    func fullReset() {
+        loadPaymentQrCallsCount = 0
+        loadPaymentQrReceivedArguments = nil
+        loadPaymentQrReceivedInvocations = []
+        loadPaymentQrCompletionClosureInput = nil
     }
 }
