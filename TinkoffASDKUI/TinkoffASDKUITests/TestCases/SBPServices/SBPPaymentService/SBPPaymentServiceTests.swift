@@ -42,7 +42,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
         let paymentFlow = PaymentFlow.fakeFullRandom
         setupSut(with: paymentFlow)
 
-        let anyPayload = GetQRPayload.any
+        let anyPayload = GetQRPayload.fake
         acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.fake)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
 
@@ -73,7 +73,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
         let paymentFlow = PaymentFlow.fakeFullRandom
         setupSut(with: paymentFlow)
 
-        let anyPayload = GetQRPayload.any
+        let anyPayload = GetQRPayload.fake
         let error = NSError(domain: "error", code: 123456)
         acquiringSBPServiceMock.initPaymentCompletionClosureInput = .failure(error)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
@@ -126,7 +126,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
         let paymentFlow = PaymentFlow.fakeFinish
         setupSut(with: paymentFlow)
 
-        let anyPayload = GetQRPayload.any
+        let anyPayload = GetQRPayload.fake
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
 
         var isSuccessLoaded = false

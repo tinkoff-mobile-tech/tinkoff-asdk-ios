@@ -91,7 +91,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         // given
         configureSut(paymentFlow: .fakeFinish)
 
-        let payload = GetQRPayload.any
+        let payload = GetQRPayload.fake
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
@@ -134,7 +134,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         configureSut(paymentFlow: .fakeFullRandom)
 
         let initPayload = InitPayload.fake
-        let getQrPayload = GetQRPayload.any
+        let getQrPayload = GetQRPayload.fake
         sbpServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
         sbpServiceMock.getQRCompletionClosureInput = .success(getQrPayload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
@@ -157,7 +157,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         configureSut(paymentFlow: .fakeFullRandom)
 
         let error = NSError(domain: "error", code: 123456)
-        let getQrPayload = GetQRPayload.any
+        let getQrPayload = GetQRPayload.fake
         sbpServiceMock.initPaymentCompletionClosureInput = .failure(error)
         sbpServiceMock.getQRCompletionClosureInput = .success(getQrPayload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
@@ -185,7 +185,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
-        let payload = GetQRPayload.any
+        let payload = GetQRPayload.fake
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
@@ -220,7 +220,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
-        let payload = GetQRPayload.any
+        let payload = GetQRPayload.fake
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
@@ -255,7 +255,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
-        let payload = GetQRPayload.any
+        let payload = GetQRPayload.fake
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
@@ -293,7 +293,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
-        let payload = GetQRPayload.any
+        let payload = GetQRPayload.fake
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()
@@ -332,7 +332,7 @@ final class SBPQrPresenterTests: BaseTestCase {
         mainDispatchQueueMock.asyncAfterWorkShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
-        let payload = GetQRPayload.any
+        let payload = GetQRPayload.fake
         sbpServiceMock.getQRCompletionClosureInput = .success(payload)
         DispatchQueueMock.performOnMainBlockShouldExecute = true
         sut.viewDidLoad()

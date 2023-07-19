@@ -62,14 +62,14 @@ final class SBPBanksPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_startEmpty_and_successLoadedBanksAndQR_with_no_prefferedBanks() {
         // given
         let skeletonsCount = 7
-        let loadedBanks = [SBPBank](repeating: .any, count: 3)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 3)
         let emptyCellsCount = max(skeletonsCount - loadedBanks.count, 0)
         let skeletonsAndBanksCount = skeletonsCount + loadedBanks.count
         let cellPresentersAssemblyCallsCount = skeletonsAndBanksCount + emptyCellsCount
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
-        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.fake)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = []
@@ -97,7 +97,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildCommonInvocations.enumerated().forEach { index, cellType in
             switch index {
             case 0 ..< skeletonsCount: XCTAssertEqual(cellType, .skeleton)
-            case skeletonsCount ..< skeletonsAndBanksCount: XCTAssertEqual(cellType, .bank(.any))
+            case skeletonsCount ..< skeletonsAndBanksCount: XCTAssertEqual(cellType, .bank(.fake))
             case skeletonsAndBanksCount ..< cellPresentersAssemblyCallsCount: XCTAssertEqual(cellType, .blank)
                 fallthrough
             default: break
@@ -113,15 +113,15 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsCount = 7
         let otherBankCount = 1
         let skeletonsWithOtherBankCount = skeletonsCount + otherBankCount
-        let loadedBanks = [SBPBank](repeating: .any, count: 6)
-        let preferredBanks = [SBPBank](repeating: .any, count: 4)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 6)
+        let preferredBanks = [SBPBank](repeating: .fake, count: 4)
         let emptyCellsCount = max(skeletonsCount - preferredBanks.count - otherBankCount, 0)
         let skeletonsAndBanksWithOtherCount = skeletonsWithOtherBankCount + preferredBanks.count
         let cellPresentersAssemblyCallsCount = skeletonsAndBanksWithOtherCount + emptyCellsCount
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
-        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.fake)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
@@ -153,7 +153,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
             case skeletonsCount ..< skeletonsWithOtherBankCount:
                 XCTAssertEqual(cellType, otherButtonType)
             case skeletonsWithOtherBankCount ..< skeletonsAndBanksWithOtherCount:
-                XCTAssertEqual(cellType, .bank(.any))
+                XCTAssertEqual(cellType, .bank(.fake))
             case skeletonsAndBanksWithOtherCount ..< cellPresentersAssemblyCallsCount: XCTAssertEqual(cellType, .blank)
                 fallthrough
             default: break
@@ -166,7 +166,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsCount = 7
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldExecute = true
@@ -195,7 +195,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         // given
         let skeletonsCount = 7
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         dispatchGroupMock.notifyWorkShouldExecute = true
 
         // when
@@ -221,11 +221,11 @@ final class SBPBanksPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_startWithBanks_and_failureLoadedQR_with_serverError() {
         // given
         let skeletonsCount = 7
-        let loadedBanks = [SBPBank](repeating: .any, count: 3)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 3)
 
         let error = NSError(domain: "error", code: 1234)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
@@ -251,11 +251,11 @@ final class SBPBanksPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_startWithBanks_and_failureLoadedQR_with_internetError() {
         // given
         let skeletonsCount = 7
-        let loadedBanks = [SBPBank](repeating: .any, count: 3)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 3)
 
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
@@ -281,14 +281,14 @@ final class SBPBanksPresenterTests: BaseTestCase {
     func test_viewDidLoad_when_startWithBanks_and_successLoadedQR_with_no_prefferedBanks() {
         // given
         let skeletonsCount = 7
-        let loadedBanks = [SBPBank](repeating: .any, count: 3)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 3)
         let emptyCellsCount = max(skeletonsCount - loadedBanks.count, 0)
         let skeletonsAndBanksCount = skeletonsCount + loadedBanks.count
         let cellPresentersAssemblyCallsCount = skeletonsAndBanksCount + emptyCellsCount
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
-        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.fake)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         mainDispatchQueueMock.asyncWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = []
@@ -314,7 +314,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildCommonInvocations.enumerated().forEach { index, cellType in
             switch index {
             case 0 ..< skeletonsCount: XCTAssertEqual(cellType, .skeleton)
-            case skeletonsCount ..< skeletonsAndBanksCount: XCTAssertEqual(cellType, .bank(.any))
+            case skeletonsCount ..< skeletonsAndBanksCount: XCTAssertEqual(cellType, .bank(.fake))
             case skeletonsAndBanksCount ..< cellPresentersAssemblyCallsCount: XCTAssertEqual(cellType, .blank)
                 fallthrough
             default: break
@@ -324,10 +324,10 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_when_startWithFullData_with_notNilQrPayload() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
 
         // when
         sut.viewDidLoad()
@@ -338,14 +338,14 @@ final class SBPBanksPresenterTests: BaseTestCase {
         XCTAssertEqual(cellPresentersAssemblyMock.buildCommonCallsCount, loadedBanks.count)
 
         cellPresentersAssemblyMock.buildCommonInvocations.forEach {
-            XCTAssertEqual($0, .bank(.any))
+            XCTAssertEqual($0, .bank(.fake))
         }
     }
 
     func test_viewDidLoad_when_startWithFullData_with_nilQrPayload() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
 
         sut.set(qrPayload: nil, banks: loadedBanks)
 
@@ -363,13 +363,13 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let otherImage = Asset.Sbp.sbpLogo
         let otherName = Loc.Acquiring.SBPBanks.anotherBank
         let otherButtonType: SBPBankCellType = .bankButton(imageAsset: otherImage, name: otherName)
-        let loadedBanks = Array(1 ... 10).map { SBPBank.some($0) }
-        let preferredBanks = Array(1 ... 4).map { SBPBank.some($0) }
-        let notPreferredBanks = Array(5 ... 10).map { SBPBank.some($0) }
+        let loadedBanks = Array(1 ... 10).map { SBPBank.fake($0) }
+        let preferredBanks = Array(1 ... 4).map { SBPBank.fake($0) }
+        let notPreferredBanks = Array(5 ... 10).map { SBPBank.fake($0) }
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
-        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.fake)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
@@ -385,7 +385,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         // then
         XCTAssertEqual(routerMock.showCallsCount, 1)
         XCTAssertEqual(routerMock.showReceivedArguments?.banks, notPreferredBanks)
-        XCTAssertEqual(routerMock.showReceivedArguments?.qrPayload, .any)
+        XCTAssertEqual(routerMock.showReceivedArguments?.qrPayload, .fake)
     }
 
     func test_otherBankCellPresenter_action_when_presenterNil() throws {
@@ -393,12 +393,12 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let otherImage = Asset.Sbp.sbpLogo
         let otherName = Loc.Acquiring.SBPBanks.anotherBank
         let otherButtonType: SBPBankCellType = .bankButton(imageAsset: otherImage, name: otherName)
-        let loadedBanks = Array(1 ... 10).map { SBPBank.some($0) }
-        let preferredBanks = Array(1 ... 4).map { SBPBank.some($0) }
+        let loadedBanks = Array(1 ... 10).map { SBPBank.fake($0) }
+        let preferredBanks = Array(1 ... 4).map { SBPBank.fake($0) }
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
-        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.any)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
+        paymentServiceMock.loadPaymentQrCompletionClosureInput = .success(.fake)
         banksServiceMock.loadBanksCompletionClosureInput = .success(loadedBanks)
         dispatchGroupMock.notifyWorkShouldExecute = true
         bankAppCheckerMock.bankAppsPreferredByMerchantReturnValue = preferredBanks
@@ -418,13 +418,13 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_anyBankCellPresenter_action_with_successOpen() throws {
         // given
-        let qrPayload = GetQRPayload.any
+        let qrPayload = GetQRPayload.fake
         let neededURL = URL(string: qrPayload.qrCodeData)
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
         bankAppOpenerMock.openBankAppCompletionClosureInput = true
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         let anyBankInvocationOptional = cellPresentersAssemblyMock.buildCellTypeActionReceivedInvocations.first
@@ -443,13 +443,13 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_anyBankCellPresenter_action_with_failureOpen() throws {
         // given
-        let qrPayload = GetQRPayload.any
+        let qrPayload = GetQRPayload.fake
         let neededURL = URL(string: qrPayload.qrCodeData)
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
         bankAppOpenerMock.openBankAppCompletionClosureInput = false
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         let anyBankInvocationOptional = cellPresentersAssemblyMock.buildCellTypeActionReceivedInvocations.first
@@ -471,7 +471,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         let skeletonsCount = 7
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldExecute = true
@@ -516,9 +516,9 @@ final class SBPBanksPresenterTests: BaseTestCase {
         // given
         let skeletonsCount = 7
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
-        let loadedBanks = [SBPBank](repeating: .any, count: 3)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 3)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldExecute = true
@@ -555,7 +555,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         // given
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldExecute = true
@@ -599,7 +599,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
         let error = NSError(domain: "error", code: 123456)
 
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
         paymentServiceMock.loadPaymentQrCompletionClosureInput = .failure(error)
         banksServiceMock.loadBanksCompletionClosureInput = .failure(error)
         dispatchGroupMock.notifyWorkShouldExecute = true
@@ -670,12 +670,12 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_prefetchForRows() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
         let cellPresenterMock = SBPBankCellPresenterMock()
         cellPresentersAssemblyMock.buildCellTypeReturnValue = cellPresenterMock
         cellPresentersAssemblyMock.buildCellTypeActionReturnValue = cellPresenterMock
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         // when
@@ -687,11 +687,11 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_numberOfRows() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 7)
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 7)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         // when
@@ -703,12 +703,12 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_searchTextDidChange_with_notEmptyText() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
         mainDispatchQueueMock.asyncDedupedWorkShouldExecute = true
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         viewMock.reloadTableViewCallsCount = 0
@@ -724,12 +724,12 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_searchTextDidChange_when_textEmpty() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
         mainDispatchQueueMock.asyncDedupedWorkShouldExecute = true
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         sut.searchTextDidChange(to: "1")
@@ -747,12 +747,12 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_searchTextDidChange_when_textEqualLastText() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
-        cellPresentersAssemblyMock.buildCellTypeReturnValue = anyCellPresenter
-        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = anyCellPresenter
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
+        cellPresentersAssemblyMock.buildCellTypeReturnValue = fakeCellPresenter
+        cellPresentersAssemblyMock.buildCellTypeActionReturnValue = fakeCellPresenter
         mainDispatchQueueMock.asyncDedupedWorkShouldExecute = true
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         viewMock.reloadTableViewCallsCount = 0
@@ -767,7 +767,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
 
     func test_didSelectRowAtIndex() {
         // given
-        let loadedBanks = [SBPBank](repeating: .any, count: 5)
+        let loadedBanks = [SBPBank](repeating: .fake, count: 5)
         let cellPresenterMock = SBPBankCellPresenterMock()
 
         var isCellPresenterActionCalled = false
@@ -778,7 +778,7 @@ final class SBPBanksPresenterTests: BaseTestCase {
         cellPresentersAssemblyMock.buildCellTypeReturnValue = cellPresenterMock
         cellPresentersAssemblyMock.buildCellTypeActionReturnValue = cellPresenterMock
 
-        sut.set(qrPayload: .any, banks: loadedBanks)
+        sut.set(qrPayload: .fake, banks: loadedBanks)
         sut.viewDidLoad()
 
         // when
@@ -849,27 +849,7 @@ extension SBPBanksPresenterTests {
         CellImageLoaderMock()
     }
 
-    var anyCellPresenter: ISBPBankCellPresenter {
+    var fakeCellPresenter: ISBPBankCellPresenter {
         SBPBankCellPresenter(cellType: .blank, action: {}, cellImageLoader: cellImageLoaderMock)
-    }
-}
-
-// MARK: - Helpers
-
-extension GetQRPayload {
-    static let any = GetQRPayload(qrCodeData: "https://www.google.com", orderId: "1234", paymentId: "4567")
-}
-
-extension SBPBank {
-    static var any: SBPBank {
-        SBPBank(name: "name", logoURL: nil, schema: "scheme")
-    }
-
-    static var anyWithUrl: SBPBank {
-        SBPBank(name: "name", logoURL: URL(string: "https://www.google.com"), schema: "scheme")
-    }
-
-    static func some(_ uniqValue: Int) -> SBPBank {
-        SBPBank(name: "name \(uniqValue)", logoURL: nil, schema: "scheme \(uniqValue)")
     }
 }

@@ -130,3 +130,21 @@ extension FinishAuthorizePayload {
         )
     }
 }
+
+extension GetQRPayload {
+    static let fake = GetQRPayload(qrCodeData: "https://www.google.com", orderId: "1234", paymentId: "4567")
+}
+
+extension SBPBank {
+    static var fake: SBPBank {
+        SBPBank(name: "name", logoURL: nil, schema: "scheme")
+    }
+
+    static var fakeWithUrl: SBPBank {
+        SBPBank(name: "name", logoURL: URL(string: "https://www.google.com"), schema: "scheme")
+    }
+
+    static func fake(_ uniqValue: Int) -> SBPBank {
+        SBPBank(name: "name \(uniqValue)", logoURL: nil, schema: "scheme \(uniqValue)")
+    }
+}

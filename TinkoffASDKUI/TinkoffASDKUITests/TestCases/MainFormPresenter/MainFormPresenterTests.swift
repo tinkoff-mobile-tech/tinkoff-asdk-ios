@@ -1215,7 +1215,7 @@ final class MainFormPresenterTests: BaseTestCase {
         sut.viewDidLoad()
         let indexPath = IndexPath(row: 3, section: 0)
 
-        let sbpBanks: [SBPBank] = [.any, .anyWithUrl, .some(123)]
+        let sbpBanks: [SBPBank] = [.fake, .fakeWithUrl, .fake(123)]
 
         // when
         sut.didLoaded(sbpBanks: sbpBanks)

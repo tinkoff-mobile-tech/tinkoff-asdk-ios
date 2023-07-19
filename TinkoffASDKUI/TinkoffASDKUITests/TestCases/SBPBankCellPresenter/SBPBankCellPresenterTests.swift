@@ -44,7 +44,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
     func test_setupCell_when_bankType_and_notLoadedImageStatus_successLoaded() {
         // given
         let image = UIImage()
-        let bank = SBPBank.anyWithUrl
+        let bank = SBPBank.fakeWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .success(image)
 
@@ -64,7 +64,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
     func test_setupCell_when_bankType_with_logoUrlNil_and_notLoadedImageStatus() {
         // given
         let image = UIImage()
-        let bank = SBPBank.any
+        let bank = SBPBank.fake
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .success(image)
 
@@ -81,7 +81,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
     func test_setupCell_when_bankType_and_notLoadedImageStatus_failureLoaded() {
         // given
         let error = NSError(domain: "error", code: 123456)
-        let bank = SBPBank.anyWithUrl
+        let bank = SBPBank.fakeWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .failure(error)
 
@@ -102,7 +102,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         // given
         let error = NSError(domain: "error", code: 123456)
         let image = UIImage()
-        let bank = SBPBank.anyWithUrl
+        let bank = SBPBank.fakeWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .failure(error)
 
@@ -133,7 +133,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
     func test_setupCell_when_bankType_and_loadedImageStatus() {
         // given
         let image = UIImage()
-        let bank = SBPBank.anyWithUrl
+        let bank = SBPBank.fakeWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = .success(image)
 
@@ -160,7 +160,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
     func test_setupCell_when_bankType_and_repeatLoadingInProcess() {
         // given
         let error = NSError(domain: "error", code: 123456)
-        let bank = SBPBank.anyWithUrl
+        let bank = SBPBank.fakeWithUrl
         setupSut(with: .bank(bank))
 
         cellImageLoaderMock.loadImageCompletionClosureInput = .failure(error)
@@ -189,7 +189,7 @@ final class SBPBankCellPresenterTests: BaseTestCase {
 
     func test_setupCell_when_bankType_and_loadingInProcess() {
         // given
-        let bank = SBPBank.anyWithUrl
+        let bank = SBPBank.fakeWithUrl
         setupSut(with: .bank(bank))
         cellImageLoaderMock.loadImageCompletionClosureInput = nil
         sut.cell = cellMock
