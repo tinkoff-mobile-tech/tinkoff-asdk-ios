@@ -32,3 +32,11 @@ final class SBPBankCellPresenterMock: ISBPBankCellPresenter {
         startLoadingCellImageIfNeededCallsCount += 1
     }
 }
+
+// MARK: - Resets
+
+extension SBPBankCellPresenterMock {
+    func fullReset() {
+        startLoadingCellImageIfNeededCallsCount = 0
+    }
+}
