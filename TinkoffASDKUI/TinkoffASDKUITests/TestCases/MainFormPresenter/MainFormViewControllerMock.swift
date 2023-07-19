@@ -16,7 +16,7 @@ final class MainFormViewControllerMock: IMainFormViewController {
 
     var showCommonSheetCallsCount = 0
     var showCommonSheetReceivedArguments: ShowCommonSheetArguments?
-    var showCommonSheetReceivedInvocations: [ShowCommonSheetArguments] = []
+    var showCommonSheetReceivedInvocations: [ShowCommonSheetArguments?] = []
 
     func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         showCommonSheetCallsCount += 1
@@ -43,9 +43,11 @@ final class MainFormViewControllerMock: IMainFormViewController {
 
     // MARK: - insertRows
 
+    typealias InsertRowsArguments = [IndexPath]
+
     var insertRowsCallsCount = 0
-    var insertRowsReceivedArguments: [IndexPath]?
-    var insertRowsReceivedInvocations: [[IndexPath]] = []
+    var insertRowsReceivedArguments: InsertRowsArguments?
+    var insertRowsReceivedInvocations: [InsertRowsArguments?] = []
 
     func insertRows(at indexPaths: [IndexPath]) {
         insertRowsCallsCount += 1
@@ -56,9 +58,11 @@ final class MainFormViewControllerMock: IMainFormViewController {
 
     // MARK: - deleteRows
 
+    typealias DeleteRowsArguments = [IndexPath]
+
     var deleteRowsCallsCount = 0
-    var deleteRowsReceivedArguments: [IndexPath]?
-    var deleteRowsReceivedInvocations: [[IndexPath]] = []
+    var deleteRowsReceivedArguments: DeleteRowsArguments?
+    var deleteRowsReceivedInvocations: [DeleteRowsArguments?] = []
 
     func deleteRows(at indexPaths: [IndexPath]) {
         deleteRowsCallsCount += 1
@@ -84,7 +88,7 @@ final class MainFormViewControllerMock: IMainFormViewController {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension MainFormViewControllerMock {
     func fullReset() {
@@ -93,6 +97,7 @@ extension MainFormViewControllerMock {
         showCommonSheetReceivedInvocations = []
 
         hideCommonSheetCallsCount = 0
+
         reloadDataCallsCount = 0
 
         insertRowsCallsCount = 0
@@ -104,6 +109,7 @@ extension MainFormViewControllerMock {
         deleteRowsReceivedInvocations = []
 
         hideKeyboardCallsCount = 0
+
         closeViewCallsCount = 0
     }
 }

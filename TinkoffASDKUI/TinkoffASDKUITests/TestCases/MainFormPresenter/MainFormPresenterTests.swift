@@ -213,10 +213,10 @@ final class MainFormPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.showCommonSheetCallsCount, 2)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].state, MainFormState.processing.rawValue)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].state, MainFormState.somethingWentWrong.rawValue)
-        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.state, MainFormState.processing.rawValue)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.state, MainFormState.somethingWentWrong.rawValue)
+        XCTAssertEqual(viewMock.showCommonSheetReceivedInvocations[1]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(dataStateLoaderMock.loadStateCallsCount, 1)
         XCTAssertEqual(dataStateLoaderMock.loadStateReceivedArguments?.paymentFlow, paymentFlow)
     }
