@@ -124,10 +124,10 @@ final class SBPBankCellPresenterTests: BaseTestCase {
         XCTAssertEqual(cellImageLoaderMock.loadImageCallsCount, 1)
         XCTAssertEqual(cellImageLoaderMock.loadImageReceivedArguments?.url, bank.logoURL)
         XCTAssertEqual(cellMock.setLogoCallsCount, 2)
-        XCTAssertEqual(cellMock.setLogoReceivedInvocations[0].image, Asset.Sbp.sbpNoImage.image)
-        XCTAssertEqual(cellMock.setLogoReceivedInvocations[1].image, image)
-        XCTAssertEqual(cellMock.setLogoReceivedInvocations[0].animated, false)
-        XCTAssertEqual(cellMock.setLogoReceivedInvocations[1].animated, true)
+        XCTAssertEqual(cellMock.setLogoReceivedInvocations[0]?.image, Asset.Sbp.sbpNoImage.image)
+        XCTAssertEqual(cellMock.setLogoReceivedInvocations[1]?.image, image)
+        XCTAssertEqual(cellMock.setLogoReceivedInvocations[0]?.animated, false)
+        XCTAssertEqual(cellMock.setLogoReceivedInvocations[1]?.animated, true)
     }
 
     func test_setupCell_when_bankType_and_loadedImageStatus() {
