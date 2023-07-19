@@ -15,8 +15,8 @@ final class EmailViewPresenterAssemblyMock: IEmailViewPresenterAssembly {
 
     var buildCallsCount = 0
     var buildReceivedArguments: BuildArguments?
-    var buildReceivedInvocations: [BuildArguments] = []
-    var buildReturnValue: IEmailViewOutput = EmailViewOutputMock()
+    var buildReceivedInvocations: [BuildArguments?] = []
+    var buildReturnValue = EmailViewOutputMock()
 
     func build(customerEmail: String, output: IEmailViewPresenterOutput) -> IEmailViewOutput {
         buildCallsCount += 1
@@ -24,5 +24,15 @@ final class EmailViewPresenterAssemblyMock: IEmailViewPresenterAssembly {
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
         return buildReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension EmailViewPresenterAssemblyMock {
+    func fullReset() {
+        buildCallsCount = 0
+        buildReceivedArguments = nil
+        buildReceivedInvocations = []
     }
 }
