@@ -180,3 +180,17 @@ extension EmailViewPresenter {
         EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
     }
 }
+
+extension ProtocolErrorEvent {
+    static func fake() -> ProtocolErrorEvent {
+        ProtocolErrorEvent(
+            sdkTransactionID: .doesntMatter,
+            errorMessage: ErrorMessage(
+                errorCode: .doesntMatter,
+                errorDescription: .doesntMatter,
+                errorDetails: .doesntMatter,
+                transactionID: .doesntMatter
+            )
+        )
+    }
+}
