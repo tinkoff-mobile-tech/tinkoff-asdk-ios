@@ -17,11 +17,11 @@ public enum TdsSdkUiType: String, CaseIterable, Codable {
     case singleSelect = "02"
     /// Чекмарки
     case multiSelect = "03"
+    /// Out of band (OOB) authentication represents the authentication mechanism
+    /// that involves the presence of two varied signals from two distinct channels or networks.
     case oob = "04"
     /// Своя html форма
     case html = "05"
-    case htmlOob = "06"
-    case information = "07"
 
     static func allValues() -> String {
         Self.allCases.map { $0.rawValue }.joined(separator: ",")
