@@ -75,10 +75,10 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_startAppBasedFlow_happy_path() throws {
         // given
-        let expectation = XCTestExpectation(description: #function)
+        mainQueueMock.asyncWorkShouldExecute = true
+
         transactionMock.getAuthenticationRequestParametersReturnValue = .fake()
         transactionMock.getProgressViewReturnValue = ProgressDialogMock()
-        transactionMock.getProgressViewClosure = { expectation.fulfill() }
         var didReceiveThreeDSInfo = false
 
         // when
@@ -89,11 +89,10 @@ final class TDSControllerTests: BaseTestCase {
             }
         }
 
-        wait(for: [expectation], timeout: .defaultAnimationDuration)
-
         // then
         XCTAssertEqual(transactionMock.getAuthenticationRequestParametersCallsCount, 1)
         XCTAssertEqual(transactionMock.getProgressViewCallsCount, 1)
+        XCTAssertEqual(mainQueueMock.asyncCallsCount, 1)
         XCTAssertTrue(didReceiveThreeDSInfo)
     }
 

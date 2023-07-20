@@ -195,7 +195,7 @@ extension TDSController {
         )
         self.transaction = transaction
 
-        DispatchQueue.main.async {
+        mainQueue.async {
             self.progressView = transaction.getProgressView()
             self.progressView?.start()
         }
