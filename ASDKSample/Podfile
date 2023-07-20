@@ -20,6 +20,10 @@ target 'ASDKSample' do
   pod 'SwiftGen', '~> 6.0'
 end
 
+target 'ASDKSampleUITests' do
+  pod 'UITestUtils', :git => 'https://gitlab.tcsbank.ru/coretech-mobile-ios/uitestutils.git', :tag => '1.1.3'
+end
+
 # target 'ASDKSampleTests' do
 #   pod 'TestsSharedInfrastructure', :path => '../'
 # end

@@ -30,6 +30,17 @@
                ReferencedContainer = "container:ASDKSample.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F7D00F0B2A6932D600B68B6F"
+               BuildableName = "ASDKSampleUITests.xctest"
+               BlueprintName = "ASDKSampleUITests"
+               ReferencedContainer = "container:ASDKSample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
