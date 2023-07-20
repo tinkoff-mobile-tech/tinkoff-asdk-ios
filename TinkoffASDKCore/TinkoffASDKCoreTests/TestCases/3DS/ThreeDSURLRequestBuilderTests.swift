@@ -79,4 +79,107 @@ final class ThreeDSURLRequestBuilderTests: BaseTestCase {
         XCTAssertEqual(request.url?.absoluteString, data.acsUrl)
         XCTAssertEqual(request.value(forHTTPHeaderField: "User-Agent"), String.expectedUserAgent)
     }
+
+    func test_build3DSCheckURLRequest() throws {
+        // given
+        let data = Checking3DSURLData.fake()
+        urlBuilderMock.urlReturnValue = .doesNotMatter
+
+        // when
+        let urlRequest = try? sut.build3DSCheckURLRequest(requestData: data)
+
+        // then
+        let request = try XCTUnwrap(urlRequest)
+        XCTAssertEqual(request.url?.absoluteString, data.threeDSMethodURL)
+        XCTAssertEqual(request.value(forHTTPHeaderField: "User-Agent"), String.expectedUserAgent)
+    }
+
+    func test_build3DSCheckURLRequest_failed() throws {
+        // given
+        let data = Checking3DSURLData.fake(threeDSMethodURL: .invalidURL)
+        urlBuilderMock.urlReturnValue = .doesNotMatter
+
+        // when
+        var urlRequest: URLRequest?
+        var err: Error?
+
+        do {
+            urlRequest = try sut.build3DSCheckURLRequest(requestData: data)
+        } catch {
+            err = error
+        }
+
+        // then
+        XCTAssertNil(urlRequest)
+        XCTAssertNotNil(err)
+    }
+
+    func test_buildConfirmation3DSACSRequest_failed() throws {
+        // given
+        var data = Confirmation3DSDataACS.fake()
+        data.acsUrl = .invalidURL
+        urlBuilderMock.urlReturnValue = .doesNotMatter
+
+        // when
+        var urlRequest: URLRequest?
+        var err: Error?
+
+        do {
+            urlRequest = try sut.buildConfirmation3DSRequestACS(requestData: data, version: "")
+        } catch {
+            err = error
+        }
+
+        // then
+        XCTAssertNil(urlRequest)
+        XCTAssertNotNil(err)
+    }
+
+    func test_buildConfirmation3DSRequestACS_failed() throws {
+        // given
+        var data = Confirmation3DSDataACS.fake()
+        data.acsUrl = .invalidURL
+        urlBuilderMock.urlReturnValue = .doesNotMatter
+
+        // when
+        var urlRequest: URLRequest?
+        var err: Error?
+
+        do {
+            urlRequest = try sut.buildConfirmation3DSRequestACS(requestData: data, version: "")
+        } catch {
+            err = error
+        }
+
+        // then
+        XCTAssertNil(urlRequest)
+        XCTAssertNotNil(err)
+    }
+
+    func test_buildConfirmation3DSRequest_failed() throws {
+        // given
+        var data = Confirmation3DSData.fake()
+        data.acsUrl = .invalidURL
+        urlBuilderMock.urlReturnValue = .doesNotMatter
+
+        // when
+        var urlRequest: URLRequest?
+        var err: Error?
+
+        do {
+            urlRequest = try sut.buildConfirmation3DSRequest(requestData: data)
+        } catch {
+            err = error
+        }
+
+        // then
+        XCTAssertNil(urlRequest)
+        XCTAssertNotNil(err)
+    }
+}
+
+// MARK: Constants
+
+private extension String {
+    static let invalidURL = ""
 }

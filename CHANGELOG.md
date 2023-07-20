@@ -35,6 +35,7 @@
 * [EACQAPW-5562] ExternalAPIClient Tests
 * [EACQAPW-5581] CardDataFormatter Tests
 * [EACQAPW-5583] URLDataLoaderTests Tests
+* [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
 
 ### Fixed
 
