@@ -7,6 +7,7 @@
 "title.paymentCardList" = "Saved cards";
 "title.qrcode" = "QR-code";
 "title.savingCard" = "Saving card";
+"title.appBasedSdkInterface" = "App Based 3DS SDK Interface";
 "title.chooseServer" = "Choose server";
 "title.customServer" = "Custom server";
 "title.paymentFormLanguage" = "Payment Form Language";
@@ -33,6 +34,7 @@
 "text.totalAmount" = "total amount";
 "text.payBySBP.description" = "Show generate QR-code on main screen, add sbp button on a payment screen";
 "text.addCardCheckType.description" = "NO - save card without checking. In this case parent payment not generated.\n3DS - save card with 3ds chenking with payment for 1 ruble and refund 1 ruble. Cards without supported 3DS not saved. In success, if card is saved, this paymen save as the parent.\nHOLD - try payment for 1 ruble and refund 1 ruble.In success, if card is saved, this paymen save as the parent.\n3DSHOLD - save card with 3ds chenking with payment for 1 ruble and refund 1 ruble. Cards without supported 3DS not saved. In success, if card is saved, this paymen save as the parent.";
+"text.appBasedSdkInterface.description" = "Lists all of the SDK Interface types that the device supports for displaying specific challenge user interfaces within the 3DS SDK";
 "text.chooseServerDescription" = "Change server for requests in SDK";
 "text.customServerDescription" = "Custom server address will be using when custom server type picked";
 "text.language.description" = "auto - Set system language region for payment form.\nru - Set Russian language for payment form.\nen - Set English language for payment form";

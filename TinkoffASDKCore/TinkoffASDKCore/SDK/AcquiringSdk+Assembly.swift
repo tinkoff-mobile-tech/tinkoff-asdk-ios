@@ -54,9 +54,15 @@ public extension AcquiringSdk {
             tokenProvider: configuration.tokenProvider
         )
 
+        let appBasedSdkUiProvider = AppBasedSdkUiProvider(
+            prefferedInterface: configuration.appBasedSdkInterface,
+            prefferedUiTypes: TdsSdkUiType.allCases
+        )
+
         let threeDSFacade = ThreeDSFacade.build(
             acquiringURLProvider: acquiringURLProvider,
             languageProvider: languageProvider,
+            appBasedSdkUiProvider: appBasedSdkUiProvider,
             decoder: acquiringDecoder
         )
 
@@ -144,13 +150,18 @@ private extension ThreeDSFacade {
     static func build(
         acquiringURLProvider: IURLProvider,
         languageProvider: ILanguageProvider,
+        appBasedSdkUiProvider: IAppBasedSdkUiProvider,
         decoder: IAcquiringDecoder
     ) -> ThreeDSFacade {
         let urlBuilder = ThreeDSURLBuilder(baseURLProvider: acquiringURLProvider)
         let deviceInfoProvider = DeviceInfoProvider()
         let urlRequestBuilder = ThreeDSURLRequestBuilder(urlBuilder: urlBuilder, deviceInfoProvider: deviceInfoProvider)
         let webViewHandlerBuilder = ThreeDSWebViewHandlerBuilder(threeDSURLBuilder: urlBuilder, decoder: decoder)
-        let deviceParamsProviderBuilder = ThreeDSDeviceParamsProviderBuilder(languageProvider: languageProvider, urlBuilder: urlBuilder)
+        let deviceParamsProviderBuilder = ThreeDSDeviceParamsProviderBuilder(
+            languageProvider: languageProvider,
+            urlBuilder: urlBuilder,
+            appBasedSdkUiProvider: appBasedSdkUiProvider
+        )
 
         return ThreeDSFacade(
             threeDSURLBuilder: urlBuilder,

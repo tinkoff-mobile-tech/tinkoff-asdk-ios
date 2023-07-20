@@ -31,14 +31,12 @@ final class EditSdkCredentialsViewController: UIViewController {
     }
 
     private func setupViews() {
-        view.backgroundColor = .white
         view.addSubview(tableView)
         setupTableView()
     }
 
     private func setupTableView() {
-        tableView.pinEdgesToSafeArea()
-        tableView.backgroundColor = .white
+        tableView.makeEqualToSuperview()
         tableView.dataSource = self
         tableView.delegate = self
         tableView.allowsSelection = false
@@ -83,15 +81,18 @@ extension EditSdkCredentialsViewController: UITableViewDelegate {
                 return tableView.defaultCell()
             }
 
+            var addImage = Asset.Icons.add.image
+                .resizeImageVerticallyIfNeeded(fitSize: UIConstants.addButtonSize)
+                .addInsetsInside(inset: UIConstants.addButtonImageInset)
+
+            addImage = addImage?.withRenderingMode(.alwaysTemplate)
+            cell.tintColor = .dynamicText
+
             cell.configure(
                 model: JustButton.Model(
                     id: 0,
                     title: Loc.Credentials.Buttons.add,
-                    image: Asset.Icons.add.image
-                        .resizeImageVerticallyIfNeeded(
-                            fitSize: UIConstants.addButtonSize
-                        )
-                        .addInsetsInside(inset: UIConstants.addButtonImageInset),
+                    image: addImage,
                     onTap: { [weak self] in
                         self?.addSdkCredsTemplateCell()
                     }

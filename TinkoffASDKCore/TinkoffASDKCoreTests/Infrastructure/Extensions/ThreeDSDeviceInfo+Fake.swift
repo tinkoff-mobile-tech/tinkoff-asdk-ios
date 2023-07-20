@@ -10,6 +10,23 @@
 extension ThreeDSDeviceInfo {
 
     static func fake() -> ThreeDSDeviceInfo {
-        ThreeDSDeviceInfo(cresCallbackUrl: "cresCallbackUrl", screenWidth: 100, screenHeight: 100)
+        ThreeDSDeviceInfo(
+            threeDSCompInd: "Y",
+            javaEnabled: "true",
+            colorDepth: 32,
+            language: "ru",
+            timezone: 3,
+            screenHeight: 100,
+            screenWidth: 100,
+            cresCallbackUrl: "cresCallbackUrl",
+            sdkAppID: nil,
+            sdkEphemPubKey: nil,
+            sdkReferenceNumber: nil,
+            sdkTransID: nil,
+            sdkMaxTimeout: nil,
+            sdkEncData: nil,
+            sdkInterface: .both,
+            sdkUiType: TdsSdkUiType.allValues()
+        )
     }
 }

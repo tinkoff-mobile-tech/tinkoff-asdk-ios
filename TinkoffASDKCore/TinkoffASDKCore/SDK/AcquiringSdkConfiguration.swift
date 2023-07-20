@@ -115,6 +115,9 @@ public class AcquiringSdkConfiguration: NSObject {
     /// Запрашивает данные и способ аутентификация для `URLSession`
     let urlSessionAuthChallengeService: IURLSessionAuthChallengeService?
 
+    /// Тип интерфейса для проведения 3DS транзакции через App Based Flow
+    let appBasedSdkInterface: TdsSdkInterface
+
     /// Инициализация конфигурации для `AcquiringSdk`
     ///
     /// - Parameters:
@@ -132,7 +135,8 @@ public class AcquiringSdkConfiguration: NSObject {
         requestsTimeoutInterval: TimeInterval = 40,
         logger: ILogger? = nil,
         tokenProvider: ITokenProvider? = nil,
-        urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil
+        urlSessionAuthChallengeService: IURLSessionAuthChallengeService? = nil,
+        appBasedSdkInterface: TdsSdkInterface = .both
     ) {
         self.credential = credential
         self.requestsTimeoutInterval = requestsTimeoutInterval
@@ -146,5 +150,6 @@ public class AcquiringSdkConfiguration: NSObject {
         }()
         self.tokenProvider = tokenProvider
         self.urlSessionAuthChallengeService = urlSessionAuthChallengeService
+        self.appBasedSdkInterface = appBasedSdkInterface
     }
 }

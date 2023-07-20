@@ -33,6 +33,8 @@ final class SettingsTableViewController: UITableViewController {
         case acquiring
         /// какой тип проверки использоваться при сохранении карты
         case addCardCheckType
+        /// какой тип интерфейса использовать для App Based SDK
+        case appBasedSdkUiInterface
         /// какой тип сервера будет использоваться при запросах
         case server
         /// адрес кастомного сервера
@@ -44,7 +46,8 @@ final class SettingsTableViewController: UITableViewController {
     }
 
     private var tableViewCells: [TableViewCellType] = []
-    private var availableCardChekType: [String] = []
+    private var availableCardChekType: [PaymentCardCheckType] = []
+    private var availableAppBasedSdkInterface: [TdsSdkInterface] = []
     private var availableServers: [AcquiringSdkEnvironment] = []
     private var availableLanguage: [String] = []
 
@@ -69,24 +72,23 @@ final class SettingsTableViewController: UITableViewController {
     }
 
     func updateTableViewCells() {
+        availableCardChekType = [.no, .check3DS, .hold3DS, .hold]
+        availableAppBasedSdkInterface = [.native, .html, .both]
+        availableServers = [.test, .preProd, .prod, .custom("")]
+        availableLanguage = ["auto", "ru", "en"]
 
-        availableCardChekType = []
-        availableCardChekType.append(PaymentCardCheckType.no.rawValue)
-        availableCardChekType.append(PaymentCardCheckType.check3DS.rawValue)
-        availableCardChekType.append(PaymentCardCheckType.hold3DS.rawValue)
-        availableCardChekType.append(PaymentCardCheckType.hold.rawValue)
-
-        availableServers = []
-        availableServers.append(.test)
-        availableServers.append(.preProd)
-        availableServers.append(.prod)
-        availableServers.append(.custom(""))
-
-        availableLanguage.append("auto")
-        availableLanguage.append("ru")
-        availableLanguage.append("en")
-
-        tableViewCells = [.credentials, .paySBP, .tinkoffPay, .showEmail, .acquiring, .addCardCheckType, .server, .customServer, .language]
+        tableViewCells = [
+            .credentials,
+            .paySBP,
+            .tinkoffPay,
+            .showEmail,
+            .acquiring,
+            .addCardCheckType,
+            .appBasedSdkUiInterface,
+            .server,
+            .customServer,
+            .language,
+        ]
     }
 
     // MARK: - Table view data source
@@ -184,20 +186,40 @@ final class SettingsTableViewController: UITableViewController {
             if let cell = tableView.dequeueReusableCell(withIdentifier: SegmentedTabeViewCell.nibName) as? SegmentedTabeViewCell {
                 cell.segmentedControl.removeAllSegments()
                 for (index, title) in availableCardChekType.enumerated() {
-                    cell.segmentedControl.insertSegment(withTitle: title, at: index, animated: false)
-                    if AppSetting.shared.addCardChekType.rawValue == title {
+                    cell.segmentedControl.insertSegment(withTitle: title.rawValue, at: index, animated: false)
+                    if AppSetting.shared.addCardChekType.rawValue == title.rawValue {
                         cell.segmentedControl.selectedSegmentIndex = index
                     }
                 }
 
                 cell.onSegmentedChanged = { [weak self] index in
                     if let value = self?.availableCardChekType[index] {
-                        AppSetting.shared.addCardChekType = PaymentCardCheckType(rawValue: value)
+                        AppSetting.shared.addCardChekType = value
                     }
                 }
 
                 return cell
             }
+
+        case .appBasedSdkUiInterface:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: SegmentedTabeViewCell.nibName) as? SegmentedTabeViewCell {
+                cell.segmentedControl.removeAllSegments()
+                for (index, interface) in availableAppBasedSdkInterface.enumerated() {
+                    cell.segmentedControl.insertSegment(withTitle: interface.title, at: index, animated: false)
+                    if AppSetting.shared.appBasedSdkInterface == interface {
+                        cell.segmentedControl.selectedSegmentIndex = index
+                    }
+                }
+
+                cell.onSegmentedChanged = { [weak self] index in
+                    if let value = self?.availableAppBasedSdkInterface[index] {
+                        AppSetting.shared.appBasedSdkInterface = value
+                    }
+                }
+
+                return cell
+            }
+
         case .server:
             if let cell = tableView.dequeueReusableCell(withIdentifier: SegmentedTabeViewCell.nibName) as? SegmentedTabeViewCell {
                 cell.segmentedControl.removeAllSegments()
@@ -231,7 +253,7 @@ final class SettingsTableViewController: UITableViewController {
                 )
                 cell.configure(model: model)
                 cell.apply(style: .basic)
-                cell.innerView.textField.placeholder = "Fill me"
+                cell.innerView.textField.placeholder = "https://custom-server.com"
                 cell.innerView.textField.removeTarget(nil, action: nil, for: .allEvents)
                 cell.innerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
                 return cell
@@ -298,6 +320,8 @@ final class SettingsTableViewController: UITableViewController {
             return Loc.Name.acquiring
         case .addCardCheckType:
             return Loc.Title.savingCard
+        case .appBasedSdkUiInterface:
+            return Loc.Title.appBasedSdkInterface
         case .server:
             return Loc.Title.chooseServer
         case .customServer:
@@ -321,6 +345,8 @@ final class SettingsTableViewController: UITableViewController {
             return Loc.Text.Acquiring.description
         case .addCardCheckType:
             return Loc.Text.AddCardCheckType.description
+        case .appBasedSdkUiInterface:
+            return Loc.Text.AppBasedSdkInterface.description
         case .server:
             return Loc.Text.chooseServerDescription
         case .customServer:

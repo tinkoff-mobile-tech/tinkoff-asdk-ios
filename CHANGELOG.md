@@ -37,6 +37,7 @@
 * [EACQAPW-5581] CardDataFormatter Tests
 * [EACQAPW-5583] URLDataLoaderTests Tests
 * [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
+* [EACQAPW-5586] Added to Sample Option to choose App Based Sdk Interface
 
 ### Fixed
 
