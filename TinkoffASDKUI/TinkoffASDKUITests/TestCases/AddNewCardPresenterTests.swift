@@ -109,13 +109,14 @@ final class AddNewCardPresenterTests: BaseTestCase {
 
     func test_scanButtonPressed() {
         // given
-        viewMock.showCardScannerCompletionStub = ("42223142353", "02/29", "111")
+        viewMock.showCardScannerCompletionClosureInput = ("42223142353", "02/29", "111")
+
         // when
         sut.scanButtonPressed()
         // then
-        let updatedFields = cardFieldPresenterMock.setTextFieldTypeReceivedInvocations.map { $0.0 }
+        let updatedFields = cardFieldPresenterMock.setReceivedInvocations.map { $0?.0 }
         XCTAssertEqual(viewMock.showCardScannerCallsCount, 1)
-        XCTAssertEqual(cardFieldPresenterMock.setTextFieldTypeCallsCount, 3)
+        XCTAssertEqual(cardFieldPresenterMock.setCallsCount, 3)
         XCTAssertEqual(updatedFields, [.cardNumber, .expiration, .cvc])
     }
 
@@ -125,9 +126,9 @@ final class AddNewCardPresenterTests: BaseTestCase {
         // when
         sut.view = viewMock
         // then
-        XCTAssertEqual(viewMock.setAddButtonCallCounter, 1)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.animated, false)
+        XCTAssertEqual(viewMock.setAddButtonCallsCount, 1)
+        XCTAssertEqual(viewMock.setAddButtonReceivedArguments?.enabled, false)
+        XCTAssertEqual(viewMock.setAddButtonReceivedArguments?.animated, false)
     }
 
     func test_addCard_success() throws {
@@ -142,9 +143,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.succeded(paymentCard))
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .succeded(paymentCard)
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -169,9 +168,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.cancelled)
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .cancelled
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -199,9 +196,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.failed(error))
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .failed(error)
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -222,9 +217,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.failed(NSError(domain: "", code: 510)))
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .failed(NSError(domain: "", code: 510))
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -260,31 +253,31 @@ final class AddNewCardPresenterTests: BaseTestCase {
         sut.cardFieldValidationResultDidChange(result: validationResult)
 
         // then
-        XCTAssertEqual(viewMock.setAddButtonCallCounter, 2)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setAddButtonCallsCount, 2)
+        XCTAssertEqual(viewMock.setAddButtonReceivedArguments?.enabled, true)
 
         // when
         validationResult.cardNumberIsValid = false
         sut.cardFieldValidationResultDidChange(result: validationResult)
 
         // then
-        XCTAssertEqual(viewMock.setAddButtonCallCounter, 3)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
+        XCTAssertEqual(viewMock.setAddButtonCallsCount, 3)
+        XCTAssertEqual(viewMock.setAddButtonReceivedArguments?.enabled, false)
     }
 
     func test_setAddButton_state_when_field_are_valid() {
         allureId(2559428, "Кнопка Добавить становится активной, если данные карты валидны")
 
         // given
-        XCTAssertEqual(viewMock.setAddButtonCallCounter, 1)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, false)
+        XCTAssertEqual(viewMock.setAddButtonCallsCount, 1)
+        XCTAssertEqual(viewMock.setAddButtonReceivedArguments?.enabled, false)
 
         // when
         sut.cardFieldValidationResultDidChange(result: .allValid())
 
         // then
-        XCTAssertEqual(viewMock.setAddButtonCallCounter, 2)
-        XCTAssertEqual(viewMock.setAddButtonArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setAddButtonCallsCount, 2)
+        XCTAssertEqual(viewMock.setAddButtonReceivedArguments?.enabled, true)
     }
 }
 

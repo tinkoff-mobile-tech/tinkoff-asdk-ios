@@ -8,7 +8,6 @@
 @testable import TinkoffASDKUI
 
 final class TextAndImageHeaderViewOutputMock: ITextAndImageHeaderViewOutput {
-
     var view: ITextAndImageHeaderViewInput?
 
     // MARK: - copy
@@ -23,5 +22,13 @@ final class TextAndImageHeaderViewOutputMock: ITextAndImageHeaderViewOutput {
 
     static func == (lhs: TextAndImageHeaderViewOutputMock, rhs: TextAndImageHeaderViewOutputMock) -> Bool {
         return lhs.view === rhs.view
+    }
+}
+
+// MARK: - Resets
+
+extension TextAndImageHeaderViewOutputMock {
+    func fullReset() {
+        copyCallsCount = 0
     }
 }

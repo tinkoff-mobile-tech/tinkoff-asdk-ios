@@ -19,7 +19,7 @@ final class AddCardControllerTests: BaseTestCase {
     var addCardServiceMock: AddCardServiceMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var threeDSWebFlowControllerMock: ThreeDSWebFlowControllerMock!
-    var acquiringThreeDsServiceMock: AcquiringThreeDsServiceMock!
+    var acquiringThreeDsServiceMock: AcquiringThreeDSServiceMock!
     var tdsControllerMock: TDSControllerMock!
 
     // MARK: - Setup
@@ -29,7 +29,7 @@ final class AddCardControllerTests: BaseTestCase {
         addCardServiceMock = AddCardServiceMock()
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         threeDSWebFlowControllerMock = ThreeDSWebFlowControllerMock()
-        acquiringThreeDsServiceMock = AcquiringThreeDsServiceMock()
+        acquiringThreeDsServiceMock = AcquiringThreeDSServiceMock()
         tdsControllerMock = TDSControllerMock()
         sut = createAddCardController(checkType: .no)
     }
@@ -54,9 +54,9 @@ final class AddCardControllerTests: BaseTestCase {
         check3DSFlow_success(checkType: .check3DS)
 
         // then
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
         XCTAssertNotNil(addCardServiceMock.attachCardReceivedArguments?.data.deviceData)
     }
@@ -72,7 +72,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         sut = createAddCardController(checkType: .check3DS)
         addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
-        addCardServiceMock.check3DSVersionCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.check3DSVersionCompletionClosureInput = .failure(TestsError.basic)
         addCardServiceMock.attachCardReturnValue = CancellableMock()
         var didReturnError = false
 
@@ -93,7 +93,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
-        addCardServiceMock.attachCardCompletionStub = .success(buildAttachCardPayload(attachCardStatus: .done))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(buildAttachCardPayload(attachCardStatus: .done))
 
         // when
         check3DSFlow_success(checkType: .check3DS)
@@ -122,12 +122,12 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         var addCardReturnedCancelled = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake())
             )
         )
 
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .cancelled
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .cancelled
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -144,11 +144,11 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         var addCardReturnedCancelled = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DSACS(.fake()))
         )
 
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .cancelled
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .cancelled
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -166,12 +166,12 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         let error = TestsError.basic
         var addCardReturnedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake())
             )
         )
 
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .failed(error)
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .failed(error)
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -190,7 +190,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         addCardServiceMock.attachCardReturnValue = CancellableMock()
-        addCardServiceMock.attachCardCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.attachCardCompletionClosureInput = .failure(TestsError.basic)
         var didReturnError = false
 
         // when
@@ -201,7 +201,6 @@ final class AddCardControllerTests: BaseTestCase {
         })
 
         // then
-        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateCallsCount, Int.zero)
         XCTAssertTrue(didReturnError)
     }
 
@@ -213,7 +212,7 @@ final class AddCardControllerTests: BaseTestCase {
         sut = createAddCardController(checkType: .check3DS)
         let cardOptions = CardOptions(pan: "123123213", validThru: "0928", cvc: "123")
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sut.addCard(options: cardOptions, completion: { result in
@@ -233,7 +232,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sut.addCard(options: CardOptions.fake(), completion: { result in })
@@ -324,7 +323,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         let sut = createAddCardController(checkType: .check3DS)
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
+        addCardServiceMock.addCardCompletionClosureInput = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
         var receivedExpectedError = false
 
         // when
@@ -345,7 +344,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         let sut = createAddCardController(checkType: .hold3DS)
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
+        addCardServiceMock.addCardCompletionClosureInput = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
         var receivedExpectedError = false
 
         // when
@@ -363,17 +362,26 @@ final class AddCardControllerTests: BaseTestCase {
     }
 
     func test_webflow_getter() {
+        // given
+        let delegateMock = ThreeDSWebFlowDelegateMock()
+        threeDSWebFlowControllerMock.webFlowDelegate = delegateMock
+
         // when
-        _ = sut.webFlowDelegate
+        let sutMock = sut.webFlowDelegate as? ThreeDSWebFlowDelegateMock
+
         // then
-        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateCallsCount, 1)
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, sutMock)
     }
 
     func test_webflow_setter() {
+        // given
+        let delegateMock = ThreeDSWebFlowDelegateMock()
+
         // when
-        sut.webFlowDelegate = nil
+        sut.webFlowDelegate = delegateMock
+
         // then
-        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateSetterCounter, 1)
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, delegateMock)
     }
 
     func test_complete3DSMethodIfNeededAndAttachCard_no_data() {
@@ -387,16 +395,16 @@ final class AddCardControllerTests: BaseTestCase {
 
         sut = createAddCardController(checkType: .check3DS)
         addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
-        addCardServiceMock.check3DSVersionCompletionStub = .success(check3dsVersionPayload)
+        addCardServiceMock.check3DSVersionCompletionClosureInput = .success(check3dsVersionPayload)
         addCardServiceMock.attachCardReturnValue = CancellableMock()
         // when
         addCardFlow_success(addCardCompletion: { _ in })
         // then
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 0)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 0)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 0)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 0)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
     }
 
@@ -422,7 +430,7 @@ final class AddCardControllerTests: BaseTestCase {
     func test_missingMessageVersionFor3DS() {
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DSACS(.fake()))
         )
 
@@ -443,10 +451,10 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake()))
         )
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(.fake(status: .unknown))
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(.fake(status: .unknown))
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -463,9 +471,9 @@ final class AddCardControllerTests: BaseTestCase {
     func test_getAddCardState_returns_error_on_failure() {
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .failure(TestsError.basic)
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .failure(TestsError.basic)
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -482,9 +490,9 @@ final class AddCardControllerTests: BaseTestCase {
     func test_validate_get_state_returns_error_on_wrong_status() {
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .unknown))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .unknown))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -510,9 +518,9 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(.fake(status: .authorized))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DS(.fake())))
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(.fake(status: .authorized))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -523,9 +531,9 @@ extension AddCardControllerTests {
         // then
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 1)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
         XCTAssertNotNil(addCardServiceMock.attachCardReceivedArguments?.data.deviceData)
         XCTAssertEqual(addCardServiceMock.getAddCardStateCallsCount, 1)
@@ -537,9 +545,9 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -550,9 +558,9 @@ extension AddCardControllerTests {
         // then
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 1)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
         XCTAssertNotNil(addCardServiceMock.attachCardReceivedArguments?.data.deviceData)
         XCTAssertEqual(addCardServiceMock.getAddCardStateCallsCount, 1)
@@ -568,11 +576,11 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             .fake(status: attachStatus, attachCardStatus: attachCardStatus)
         )
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -583,9 +591,9 @@ extension AddCardControllerTests {
         // then
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
         XCTAssertNotNil(addCardServiceMock.attachCardReceivedArguments?.data.deviceData)
         XCTAssertEqual(addCardServiceMock.getAddCardStateCallsCount, 1)
@@ -597,9 +605,9 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .done))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .done))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -611,9 +619,9 @@ extension AddCardControllerTests {
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 0)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 0)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 0)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 0)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
         XCTAssertNil(addCardServiceMock.attachCardReceivedArguments?.data.deviceData)
         XCTAssertEqual(addCardServiceMock.getAddCardStateCallsCount, 1)
@@ -635,7 +643,7 @@ extension AddCardControllerTests {
     private func addCardFlow_success(addCardCompletion: @escaping (AddCardStateResult) -> Void = { _ in }) {
         // given
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .success(
+        addCardServiceMock.addCardCompletionClosureInput = .success(
             AddCardPayload(requestKey: "requestKey", paymentId: "32423423")
         )
 
@@ -651,7 +659,7 @@ extension AddCardControllerTests {
     ) {
         sut = createAddCardController(checkType: checkType)
         addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
-        addCardServiceMock.check3DSVersionCompletionStub = .success(build3DSVersionPayload())
+        addCardServiceMock.check3DSVersionCompletionClosureInput = .success(build3DSVersionPayload())
         addCardServiceMock.attachCardReturnValue = CancellableMock()
 
         // when

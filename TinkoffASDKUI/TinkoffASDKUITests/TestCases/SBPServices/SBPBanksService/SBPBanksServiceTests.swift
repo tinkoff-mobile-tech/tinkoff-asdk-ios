@@ -17,14 +17,14 @@ final class SBPBanksServiceTests: BaseTestCase {
 
     // MARK: Mocks
 
-    var acquiringSBPServiceMock: AcquiringSBPAndPaymentServiceMock!
+    var acquiringSBPServiceMock: AcquiringSdkMock!
 
     // MARK: Setup
 
     override func setUp() {
         super.setUp()
 
-        acquiringSBPServiceMock = AcquiringSBPAndPaymentServiceMock()
+        acquiringSBPServiceMock = AcquiringSdkMock()
         sut = SBPBanksService(acquiringSBPService: acquiringSBPServiceMock)
     }
 

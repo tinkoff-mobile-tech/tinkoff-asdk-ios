@@ -18,7 +18,7 @@ final class CellImageLoaderMock: ICellImageLoader {
 
     var loadImageCallsCount = 0
     var loadImageReceivedArguments: LoadImageArguments?
-    var loadImageReceivedInvocations: [LoadImageArguments] = []
+    var loadImageReceivedInvocations: [LoadImageArguments?] = []
     var loadImageCompletionClosureInput: Result<UIImage, Swift.Error>?
 
     func loadImage(url: URL, completion: @escaping (Result<UIImage, Swift.Error>) -> Void) {
@@ -31,13 +31,13 @@ final class CellImageLoaderMock: ICellImageLoader {
         }
     }
 
-    // MARK: - loadRemoteImage
+    // MARK: - loadAndSetRemoteImage
 
-    typealias LoadRemoteImageArguments = (url: URL, imageView: UIImageView, onFailureImage: UIImage?)
+    typealias LoadAndSetRemoteImageArguments = (url: URL, imageView: UIImageView, onFailureImage: UIImage?)
 
     var loadAndSetRemoteImageCallsCount = 0
-    var loadAndSetRemoteImageReceivedArguments: LoadRemoteImageArguments?
-    var loadAndSetRemoteImageReceivedInvocations: [LoadRemoteImageArguments] = []
+    var loadAndSetRemoteImageReceivedArguments: LoadAndSetRemoteImageArguments?
+    var loadAndSetRemoteImageReceivedInvocations: [LoadAndSetRemoteImageArguments?] = []
     var loadAndSetRemoteImageReturnValue: UUID?
 
     @discardableResult
@@ -51,9 +51,11 @@ final class CellImageLoaderMock: ICellImageLoader {
 
     // MARK: - cancelLoadIfNeeded
 
+    typealias CancelLoadIfNeededArguments = UIImageView
+
     var cancelLoadIfNeededCallsCount = 0
-    var cancelLoadIfNeededReceivedArguments: UIImageView?
-    var cancelLoadIfNeededReceivedInvocations: [UIImageView] = []
+    var cancelLoadIfNeededReceivedArguments: CancelLoadIfNeededArguments?
+    var cancelLoadIfNeededReceivedInvocations: [CancelLoadIfNeededArguments?] = []
 
     func cancelLoadIfNeeded(imageView: UIImageView) {
         cancelLoadIfNeededCallsCount += 1
@@ -64,9 +66,11 @@ final class CellImageLoaderMock: ICellImageLoader {
 
     // MARK: - loadRemoteImageJustForCache
 
+    typealias LoadRemoteImageJustForCacheArguments = URL
+
     var loadRemoteImageJustForCacheCallsCount = 0
-    var loadRemoteImageJustForCacheReceivedArguments: URL?
-    var loadRemoteImageJustForCacheReceivedInvocations: [URL] = []
+    var loadRemoteImageJustForCacheReceivedArguments: LoadRemoteImageJustForCacheArguments?
+    var loadRemoteImageJustForCacheReceivedInvocations: [LoadRemoteImageJustForCacheArguments?] = []
     var loadRemoteImageJustForCacheReturnValue: UUID?
 
     @discardableResult
@@ -80,9 +84,11 @@ final class CellImageLoaderMock: ICellImageLoader {
 
     // MARK: - cancelLoad
 
+    typealias CancelLoadArguments = UUID
+
     var cancelLoadCallsCount = 0
-    var cancelLoadReceivedArguments: UUID?
-    var cancelLoadReceivedInvocations: [UUID] = []
+    var cancelLoadReceivedArguments: CancelLoadArguments?
+    var cancelLoadReceivedInvocations: [CancelLoadArguments?] = []
 
     func cancelLoad(uuid: UUID) {
         cancelLoadCallsCount += 1
@@ -93,14 +99,47 @@ final class CellImageLoaderMock: ICellImageLoader {
 
     // MARK: - set
 
+    typealias SetArguments = CellImageLoaderType
+
     var setCallsCount = 0
-    var setReceivedArguments: CellImageLoaderType?
-    var setReceivedInvocations: [CellImageLoaderType] = []
+    var setReceivedArguments: SetArguments?
+    var setReceivedInvocations: [SetArguments?] = []
 
     func set(type: CellImageLoaderType) {
         setCallsCount += 1
         let arguments = type
         setReceivedArguments = arguments
         setReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension CellImageLoaderMock {
+    func fullReset() {
+        loadImageCallsCount = 0
+        loadImageReceivedArguments = nil
+        loadImageReceivedInvocations = []
+        loadImageCompletionClosureInput = nil
+
+        loadAndSetRemoteImageCallsCount = 0
+        loadAndSetRemoteImageReceivedArguments = nil
+        loadAndSetRemoteImageReceivedInvocations = []
+
+        cancelLoadIfNeededCallsCount = 0
+        cancelLoadIfNeededReceivedArguments = nil
+        cancelLoadIfNeededReceivedInvocations = []
+
+        loadRemoteImageJustForCacheCallsCount = 0
+        loadRemoteImageJustForCacheReceivedArguments = nil
+        loadRemoteImageJustForCacheReceivedInvocations = []
+
+        cancelLoadCallsCount = 0
+        cancelLoadReceivedArguments = nil
+        cancelLoadReceivedInvocations = []
+
+        setCallsCount = 0
+        setReceivedArguments = nil
+        setReceivedInvocations = []
     }
 }

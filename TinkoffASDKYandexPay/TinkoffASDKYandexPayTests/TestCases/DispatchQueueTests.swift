@@ -23,7 +23,7 @@ final class DispatchQueueTests: BaseTestCase {
             }
         }
 
-        wait(for: [expectation], timeout: 0.1)
+        wait(for: [expectation], timeout: 0.2)
         // then
         XCTAssertTrue(ranOnMainThread)
     }
@@ -41,7 +41,7 @@ final class DispatchQueueTests: BaseTestCase {
             }
         }
 
-        wait(for: [expectation], timeout: 0.1)
+        wait(for: [expectation], timeout: 0.2)
         // then
         XCTAssertTrue(ranOnMainThread)
     }

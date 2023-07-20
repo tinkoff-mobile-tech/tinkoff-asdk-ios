@@ -16,9 +16,9 @@ final class CardServiceMock: ICardService {
 
     var getCardListCallsCount = 0
     var getCardListReceivedArguments: GetCardListArguments?
-    var getCardListReceivedInvocations: [GetCardListArguments] = []
+    var getCardListReceivedInvocations: [GetCardListArguments?] = []
     var getCardListCompletionClosureInput: Result<[PaymentCard], Error>?
-    var getCardListReturnValue = CancellableMock()
+    var getCardListReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
     func getCardList(data: GetCardListData, completion: @escaping (_ result: Result<[PaymentCard], Error>) -> Void) -> Cancellable {
@@ -38,9 +38,9 @@ final class CardServiceMock: ICardService {
 
     var removeCardCallsCount = 0
     var removeCardReceivedArguments: RemoveCardArguments?
-    var removeCardReceivedInvocations: [RemoveCardArguments] = []
+    var removeCardReceivedInvocations: [RemoveCardArguments?] = []
     var removeCardCompletionClosureInput: Result<RemoveCardPayload, Error>?
-    var removeCardReturnValue = CancellableMock()
+    var removeCardReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
     func removeCard(data: RemoveCardData, completion: @escaping (_ result: Result<RemoveCardPayload, Error>) -> Void) -> Cancellable {
@@ -52,5 +52,21 @@ final class CardServiceMock: ICardService {
             completion(removeCardCompletionClosureInput)
         }
         return removeCardReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension CardServiceMock {
+    func fullReset() {
+        getCardListCallsCount = 0
+        getCardListReceivedArguments = nil
+        getCardListReceivedInvocations = []
+        getCardListCompletionClosureInput = nil
+
+        removeCardCallsCount = 0
+        removeCardReceivedArguments = nil
+        removeCardReceivedInvocations = []
+        removeCardCompletionClosureInput = nil
     }
 }

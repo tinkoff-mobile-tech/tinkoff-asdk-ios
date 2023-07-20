@@ -8,12 +8,22 @@
 @testable import TinkoffASDKUI
 
 final class TinkoffPayAppCheckerMock: ITinkoffPayAppChecker {
-    var invokedIsTinkoffPayAppInstalled = false
-    var invokedIsTinkoffPayAppInstalledCount = 0
-    var stubbedIsTinkoffPayAppInstalled: Bool = false
+
+    // MARK: - isTinkoffPayAppInstalled
+
+    var isTinkoffPayAppInstalledCallsCount = 0
+    var isTinkoffPayAppInstalledReturnValue = false
+
     func isTinkoffPayAppInstalled() -> Bool {
-        invokedIsTinkoffPayAppInstalled = true
-        invokedIsTinkoffPayAppInstalledCount += 1
-        return stubbedIsTinkoffPayAppInstalled
+        isTinkoffPayAppInstalledCallsCount += 1
+        return isTinkoffPayAppInstalledReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension TinkoffPayAppCheckerMock {
+    func fullReset() {
+        isTinkoffPayAppInstalledCallsCount = 0
     }
 }

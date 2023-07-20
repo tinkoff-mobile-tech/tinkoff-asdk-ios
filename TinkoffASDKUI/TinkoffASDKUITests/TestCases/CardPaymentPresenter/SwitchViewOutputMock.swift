@@ -10,18 +10,9 @@
 final class SwitchViewOutputMock: ISwitchViewOutput {
     var view: ISwitchViewInput?
 
-    var isOnGetterCount = 0
-    var isOnSetterCount = 0
-
     var isOn: Bool {
-        get {
-            isOnGetterCount += 1
-            return underlyingIsOn
-        }
-        set(value) {
-            isOnSetterCount += 1
-            underlyingIsOn = value
-        }
+        get { return underlyingIsOn }
+        set(value) { underlyingIsOn = value }
     }
 
     var underlyingIsOn = false

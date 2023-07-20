@@ -19,3 +19,11 @@ final class PaymentControllerAssemblyMock: IPaymentControllerAssembly {
         return paymentControllerReturnValue
     }
 }
+
+// MARK: - Resets
+
+extension PaymentControllerAssemblyMock {
+    func fullReset() {
+        paymentControllerCallsCount = 0
+    }
+}

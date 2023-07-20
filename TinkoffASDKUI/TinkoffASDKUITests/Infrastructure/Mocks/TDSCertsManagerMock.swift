@@ -16,7 +16,7 @@ final class TDSCertsManagerMock: ITDSCertsManager {
 
     var checkAndUpdateCertsIfNeededCallsCount = 0
     var checkAndUpdateCertsIfNeededReceivedArguments: CheckAndUpdateCertsIfNeededArguments?
-    var checkAndUpdateCertsIfNeededReceivedInvocations: [CheckAndUpdateCertsIfNeededArguments] = []
+    var checkAndUpdateCertsIfNeededReceivedInvocations: [CheckAndUpdateCertsIfNeededArguments?] = []
     var checkAndUpdateCertsIfNeededCompletionClosureInput: Result<String, Error>?
 
     func checkAndUpdateCertsIfNeeded(for paymentSystem: String, completion: @escaping (_ matchingDirectoryServerID: Result<String, Error>) -> Void) {
@@ -27,5 +27,16 @@ final class TDSCertsManagerMock: ITDSCertsManager {
         if let checkAndUpdateCertsIfNeededCompletionClosureInput = checkAndUpdateCertsIfNeededCompletionClosureInput {
             completion(checkAndUpdateCertsIfNeededCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension TDSCertsManagerMock {
+    func fullReset() {
+        checkAndUpdateCertsIfNeededCallsCount = 0
+        checkAndUpdateCertsIfNeededReceivedArguments = nil
+        checkAndUpdateCertsIfNeededReceivedInvocations = []
+        checkAndUpdateCertsIfNeededCompletionClosureInput = nil
     }
 }

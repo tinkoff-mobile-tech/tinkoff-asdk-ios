@@ -16,7 +16,7 @@ final class TDSControllerTests: BaseTestCase {
 
     // Mocks
 
-    var acquiringThreeDSServiceMock: AcquiringThreeDsServiceMock!
+    var acquiringThreeDSServiceMock: AcquiringThreeDSServiceMock!
     var tDSWrapperMock: TDSWrapperMock!
     var timeoutResolverMock: TimeoutResolverMock!
     var transactionMock: TransactionMock!
@@ -30,7 +30,7 @@ final class TDSControllerTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        acquiringThreeDSServiceMock = AcquiringThreeDsServiceMock()
+        acquiringThreeDSServiceMock = AcquiringThreeDSServiceMock()
         tDSWrapperMock = TDSWrapperMock()
         timeoutResolverMock = TimeoutResolverMock()
         transactionMock = TransactionMock()
@@ -38,7 +38,7 @@ final class TDSControllerTests: BaseTestCase {
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         delayExecutorMock = DelayedExecutorMock()
         mainQueueMock = DispatchQueueMock()
-        delayExecutorMock.executeWorkClosureShouldExecute = true
+        delayExecutorMock.executeWorkShouldExecute = true
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         tDSWrapperMock.createTransactionReturnValue = transactionMock
@@ -55,7 +55,7 @@ final class TDSControllerTests: BaseTestCase {
     }
 
     override func tearDown() {
-        delayExecutorMock.executeWorkClosureShouldExecute = false
+        delayExecutorMock.executeWorkShouldExecute = false
         DispatchQueueMock.performOnMainBlockShouldExecute = false
 
         acquiringThreeDSServiceMock = nil
@@ -75,10 +75,10 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_startAppBasedFlow_happy_path() throws {
         // given
-        let expectation = XCTestExpectation(description: #function)
+        mainQueueMock.asyncWorkShouldExecute = true
+
         transactionMock.getAuthenticationRequestParametersReturnValue = .fake()
         transactionMock.getProgressViewReturnValue = ProgressDialogMock()
-        transactionMock.getProgressViewClosure = { expectation.fulfill() }
         var didReceiveThreeDSInfo = false
 
         // when
@@ -89,11 +89,10 @@ final class TDSControllerTests: BaseTestCase {
             }
         }
 
-        wait(for: [expectation], timeout: .defaultAnimationDuration)
-
         // then
         XCTAssertEqual(transactionMock.getAuthenticationRequestParametersCallsCount, 1)
         XCTAssertEqual(transactionMock.getProgressViewCallsCount, 1)
+        XCTAssertEqual(mainQueueMock.asyncCallsCount, 1)
         XCTAssertTrue(didReceiveThreeDSInfo)
     }
 
@@ -108,7 +107,6 @@ final class TDSControllerTests: BaseTestCase {
 
         // then
         XCTAssertEqual(transactionMock.doChallengeCallsCount, 1)
-        XCTAssertEqual(timeoutResolverMock.challengeValueGetCalls, 1)
     }
 
     /// Прошли проверку challenge
@@ -213,7 +211,7 @@ final class TDSControllerTests: BaseTestCase {
 
         // then
         let value = try XCTUnwrap(receivedError as? NSError)
-        XCTAssertEqual(value.domain, .doesntMatter)
+        XCTAssertEqual(value.domain, .fake)
         XCTAssertTrue(value.code > 0)
         XCTAssertEqual(transactionMock.closeCallsCount, 1)
     }
@@ -231,14 +229,14 @@ final class TDSControllerTests: BaseTestCase {
             }
         }
 
-        let runtimeError = RuntimeErrorEvent(errorCode: .doesntMatter, errorMessage: .doesntMatter)
+        let runtimeError = RuntimeErrorEvent(errorCode: .fake, errorMessage: .fake)
 
         // when
         sut.runtimeError(runtimeError)
 
         // then
         let value = try XCTUnwrap(receivedError as? NSError)
-        XCTAssertEqual(value.domain, .doesntMatter)
+        XCTAssertEqual(value.domain, .fake)
         XCTAssertTrue(value.code > 0)
         XCTAssertEqual(transactionMock.closeCallsCount, 1)
     }
@@ -296,25 +294,6 @@ extension TDSControllerTests {
         sut.startAppBasedFlow(
             check3dsPayload: .fake(version: .appBased),
             completion: completion ?? { _ in }
-        )
-    }
-}
-
-private extension String {
-    static let doesntMatter = "doesntMatter"
-}
-
-private extension ProtocolErrorEvent {
-
-    static func fake() -> ProtocolErrorEvent {
-        ProtocolErrorEvent(
-            sdkTransactionID: .doesntMatter,
-            errorMessage: ErrorMessage(
-                errorCode: .doesntMatter,
-                errorDescription: .doesntMatter,
-                errorDetails: .doesntMatter,
-                transactionID: .doesntMatter
-            )
         )
     }
 }

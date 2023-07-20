@@ -9,17 +9,11 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 final class AddCardControllerMock: IAddCardController {
-
-    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
-        get { underlyingWebFlowDelegate }
-        set { underlyingWebFlowDelegate = newValue }
-    }
-
-    var underlyingWebFlowDelegate: (any ThreeDSWebFlowDelegate)?
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)?
 
     var customerKey: String {
-        get { underlyingCustomerKey }
-        set { underlyingCustomerKey = newValue }
+        get { return underlyingCustomerKey }
+        set(value) { underlyingCustomerKey = value }
     }
 
     var underlyingCustomerKey: String!
@@ -29,17 +23,28 @@ final class AddCardControllerMock: IAddCardController {
     typealias AddCardArguments = (options: CardOptions, completion: (AddCardStateResult) -> Void)
 
     var addCardCallsCount = 0
-    var addCardCompletionStub: AddCardStateResult?
     var addCardReceivedArguments: AddCardArguments?
-    var addCardReceivedInvocations: [AddCardArguments] = []
+    var addCardReceivedInvocations: [AddCardArguments?] = []
+    var addCardCompletionClosureInput: AddCardStateResult?
 
     func addCard(options: CardOptions, completion: @escaping (AddCardStateResult) -> Void) {
         addCardCallsCount += 1
         let arguments = (options, completion)
         addCardReceivedArguments = arguments
         addCardReceivedInvocations.append(arguments)
-        if let addCardCompletionStub = addCardCompletionStub {
-            completion(addCardCompletionStub)
+        if let addCardCompletionClosureInput = addCardCompletionClosureInput {
+            completion(addCardCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension AddCardControllerMock {
+    func fullReset() {
+        addCardCallsCount = 0
+        addCardReceivedArguments = nil
+        addCardReceivedInvocations = []
+        addCardCompletionClosureInput = nil
     }
 }
