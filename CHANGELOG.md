@@ -38,6 +38,7 @@
 * [EACQAPW-5583] URLDataLoaderTests Tests
 * [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
 * [EACQAPW-5586] Added to Sample Option to choose App Based Sdk Interface
+* [EACQAPW-5597] ThreeDSURLBuilder Tests
 
 ### Fixed
 
