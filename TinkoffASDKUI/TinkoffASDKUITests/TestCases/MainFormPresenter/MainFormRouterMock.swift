@@ -16,7 +16,7 @@ final class MainFormRouterMock: IMainFormRouter {
 
     var openCardPaymentListCallsCount = 0
     var openCardPaymentListReceivedArguments: OpenCardPaymentListArguments?
-    var openCardPaymentListReceivedInvocations: [OpenCardPaymentListArguments] = []
+    var openCardPaymentListReceivedInvocations: [OpenCardPaymentListArguments?] = []
 
     func openCardPaymentList(paymentFlow: PaymentFlow, cards: [PaymentCard], selectedCard: PaymentCard, cardListOutput: ICardListPresenterOutput?, cardPaymentOutput: ICardPaymentPresenterModuleOutput?, cardScannerDelegate: ICardScannerDelegate?) {
         openCardPaymentListCallsCount += 1
@@ -31,7 +31,7 @@ final class MainFormRouterMock: IMainFormRouter {
 
     var openCardPaymentCallsCount = 0
     var openCardPaymentReceivedArguments: OpenCardPaymentArguments?
-    var openCardPaymentReceivedInvocations: [OpenCardPaymentArguments] = []
+    var openCardPaymentReceivedInvocations: [OpenCardPaymentArguments?] = []
 
     func openCardPayment(paymentFlow: PaymentFlow, cards: [PaymentCard]?, output: ICardPaymentPresenterModuleOutput?, cardListOutput: ICardListPresenterOutput?, cardScannerDelegate: ICardScannerDelegate?) {
         openCardPaymentCallsCount += 1
@@ -46,7 +46,7 @@ final class MainFormRouterMock: IMainFormRouter {
 
     var openSBPCallsCount = 0
     var openSBPReceivedArguments: OpenSBPArguments?
-    var openSBPReceivedInvocations: [OpenSBPArguments] = []
+    var openSBPReceivedInvocations: [OpenSBPArguments?] = []
 
     func openSBP(paymentFlow: PaymentFlow, banks: [SBPBank]?, output: ISBPBanksModuleOutput?, paymentSheetOutput: ISBPPaymentSheetPresenterOutput?) {
         openSBPCallsCount += 1
@@ -57,13 +57,43 @@ final class MainFormRouterMock: IMainFormRouter {
 
     // MARK: - openTinkoffPayLanding
 
+    typealias OpenTinkoffPayLandingArguments = VoidBlock
+
     var openTinkoffPayLandingCallsCount = 0
+    var openTinkoffPayLandingReceivedArguments: OpenTinkoffPayLandingArguments?
+    var openTinkoffPayLandingReceivedInvocations: [OpenTinkoffPayLandingArguments?] = []
     var openTinkoffPayLandingCompletionShouldExecute = false
 
     func openTinkoffPayLanding(completion: VoidBlock?) {
         openTinkoffPayLandingCallsCount += 1
+        let arguments = completion
+        openTinkoffPayLandingReceivedArguments = arguments
+        openTinkoffPayLandingReceivedInvocations.append(arguments)
         if openTinkoffPayLandingCompletionShouldExecute {
             completion?()
         }
+    }
+}
+
+// MARK: - Resets
+
+extension MainFormRouterMock {
+    func fullReset() {
+        openCardPaymentListCallsCount = 0
+        openCardPaymentListReceivedArguments = nil
+        openCardPaymentListReceivedInvocations = []
+
+        openCardPaymentCallsCount = 0
+        openCardPaymentReceivedArguments = nil
+        openCardPaymentReceivedInvocations = []
+
+        openSBPCallsCount = 0
+        openSBPReceivedArguments = nil
+        openSBPReceivedInvocations = []
+
+        openTinkoffPayLandingCallsCount = 0
+        openTinkoffPayLandingReceivedArguments = nil
+        openTinkoffPayLandingReceivedInvocations = []
+        openTinkoffPayLandingCompletionShouldExecute = false
     }
 }

@@ -31,7 +31,7 @@ final class EmailViewInputMock: IEmailViewInput {
 
     var setTextFieldCallsCount = 0
     var setTextFieldReceivedArguments: SetTextFieldArguments?
-    var setTextFieldReceivedInvocations: [SetTextFieldArguments] = []
+    var setTextFieldReceivedInvocations: [SetTextFieldArguments?] = []
 
     func setTextField(text: String, animated: Bool) {
         setTextFieldCallsCount += 1
@@ -49,11 +49,12 @@ final class EmailViewInputMock: IEmailViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension EmailViewInputMock {
     func fullReset() {
         setTextFieldHeaderErrorCallsCount = 0
+
         setTextFieldHeaderNormalCallsCount = 0
 
         setTextFieldCallsCount = 0

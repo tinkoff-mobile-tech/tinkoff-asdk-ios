@@ -9,24 +9,27 @@
 
 final class EmailViewOutputMock: IEmailViewOutput {
     var view: IEmailViewInput?
+
     var customerEmail: String {
         get { return underlyingCustomerEmail }
         set(value) { underlyingCustomerEmail = value }
     }
 
     var underlyingCustomerEmail: String!
+
     var currentEmail: String {
         get { return underlyingCurrentEmail }
         set(value) { underlyingCurrentEmail = value }
     }
 
-    var underlyingCurrentEmail: String = ""
+    var underlyingCurrentEmail = ""
+
     var isEmailValid: Bool {
         get { return underlyingIsEmailValid }
         set(value) { underlyingIsEmailValid = value }
     }
 
-    var underlyingIsEmailValid: Bool = false
+    var underlyingIsEmailValid = false
 
     // MARK: - textFieldDidBeginEditing
 
@@ -38,9 +41,11 @@ final class EmailViewOutputMock: IEmailViewOutput {
 
     // MARK: - textFieldDidChangeText
 
+    typealias TextFieldDidChangeTextArguments = String
+
     var textFieldDidChangeTextCallsCount = 0
-    var textFieldDidChangeTextReceivedArguments: String?
-    var textFieldDidChangeTextReceivedInvocations: [String] = []
+    var textFieldDidChangeTextReceivedArguments: TextFieldDidChangeTextArguments?
+    var textFieldDidChangeTextReceivedInvocations: [TextFieldDidChangeTextArguments?] = []
 
     func textFieldDidChangeText(to text: String) {
         textFieldDidChangeTextCallsCount += 1
@@ -63,5 +68,21 @@ final class EmailViewOutputMock: IEmailViewOutput {
 
     func textFieldDidPressReturn() {
         textFieldDidPressReturnCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension EmailViewOutputMock {
+    func fullReset() {
+        textFieldDidBeginEditingCallsCount = 0
+
+        textFieldDidChangeTextCallsCount = 0
+        textFieldDidChangeTextReceivedArguments = nil
+        textFieldDidChangeTextReceivedInvocations = []
+
+        textFieldDidEndEditingCallsCount = 0
+
+        textFieldDidPressReturnCallsCount = 0
     }
 }

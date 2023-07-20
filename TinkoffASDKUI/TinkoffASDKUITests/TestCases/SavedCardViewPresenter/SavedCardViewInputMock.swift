@@ -11,9 +11,11 @@ final class SavedCardViewInputMock: ISavedCardViewInput {
 
     // MARK: - update
 
+    typealias UpdateArguments = SavedCardViewModel
+
     var updateCallsCount = 0
-    var updateReceivedArguments: SavedCardViewModel?
-    var updateReceivedInvocations: [SavedCardViewModel] = []
+    var updateReceivedArguments: UpdateArguments?
+    var updateReceivedInvocations: [UpdateArguments?] = []
 
     func update(with viewModel: SavedCardViewModel) {
         updateCallsCount += 1
@@ -40,9 +42,11 @@ final class SavedCardViewInputMock: ISavedCardViewInput {
 
     // MARK: - setCVCText
 
+    typealias SetCVCTextArguments = String
+
     var setCVCTextCallsCount = 0
-    var setCVCTextReceivedArguments: String?
-    var setCVCTextReceivedInvocations: [String] = []
+    var setCVCTextReceivedArguments: SetCVCTextArguments?
+    var setCVCTextReceivedInvocations: [SetCVCTextArguments?] = []
 
     func setCVCText(_ text: String) {
         setCVCTextCallsCount += 1
@@ -84,7 +88,7 @@ final class SavedCardViewInputMock: ISavedCardViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension SavedCardViewInputMock {
     func fullReset() {
@@ -93,6 +97,7 @@ extension SavedCardViewInputMock {
         updateReceivedInvocations = []
 
         showCVCFieldCallsCount = 0
+
         hideCVCFieldCallsCount = 0
 
         setCVCTextCallsCount = 0
@@ -100,8 +105,11 @@ extension SavedCardViewInputMock {
         setCVCTextReceivedInvocations = []
 
         setCVCFieldValidCallsCount = 0
+
         setCVCFieldInvalidCallsCount = 0
+
         activateCVCFieldCallsCount = 0
+
         deactivateCVCFieldCallsCount = 0
     }
 }

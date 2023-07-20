@@ -10,47 +10,47 @@ import TinkoffASDKCore
 
 final class SavedCardViewPresenterOutputMock: ISavedCardViewPresenterOutput {
 
-    // MARK: - didRequestReplacement
+    // MARK: - savedCardPresenterPresenterPaymentCard
 
-    typealias DidRequestReplacementArguments = (presenter: SavedCardViewPresenter, paymentCard: PaymentCard)
+    typealias SavedCardPresenterPresenterPaymentCardArguments = (presenter: SavedCardViewPresenter, paymentCard: PaymentCard)
 
-    var didRequestReplacementForCallsCount = 0
-    var didRequestReplacementReceivedArguments: DidRequestReplacementArguments?
-    var didRequestReplacementReceivedInvocations: [DidRequestReplacementArguments] = []
+    var savedCardPresenterPresenterPaymentCardCallsCount = 0
+    var savedCardPresenterPresenterPaymentCardReceivedArguments: SavedCardPresenterPresenterPaymentCardArguments?
+    var savedCardPresenterPresenterPaymentCardReceivedInvocations: [SavedCardPresenterPresenterPaymentCardArguments?] = []
 
     func savedCardPresenter(_ presenter: SavedCardViewPresenter, didRequestReplacementFor paymentCard: PaymentCard) {
-        didRequestReplacementForCallsCount += 1
+        savedCardPresenterPresenterPaymentCardCallsCount += 1
         let arguments = (presenter, paymentCard)
-        didRequestReplacementReceivedArguments = arguments
-        didRequestReplacementReceivedInvocations.append(arguments)
+        savedCardPresenterPresenterPaymentCardReceivedArguments = arguments
+        savedCardPresenterPresenterPaymentCardReceivedInvocations.append(arguments)
     }
 
-    // MARK: - didUpdateCVC
+    // MARK: - savedCardPresenterPresenterCvc
 
-    typealias DidUpdateCVCArguments = (presenter: SavedCardViewPresenter, cvc: String, isValid: Bool)
+    typealias SavedCardPresenterPresenterCvcArguments = (presenter: SavedCardViewPresenter, cvc: String, isValid: Bool)
 
-    var didUpdateCVCCallsCount = 0
-    var didUpdateCVCReceivedArguments: DidUpdateCVCArguments?
-    var didUpdateCVCReceivedInvocations: [DidUpdateCVCArguments] = []
+    var savedCardPresenterPresenterCvcCallsCount = 0
+    var savedCardPresenterPresenterCvcReceivedArguments: SavedCardPresenterPresenterCvcArguments?
+    var savedCardPresenterPresenterCvcReceivedInvocations: [SavedCardPresenterPresenterCvcArguments?] = []
 
     func savedCardPresenter(_ presenter: SavedCardViewPresenter, didUpdateCVC cvc: String, isValid: Bool) {
-        didUpdateCVCCallsCount += 1
+        savedCardPresenterPresenterCvcCallsCount += 1
         let arguments = (presenter, cvc, isValid)
-        didUpdateCVCReceivedArguments = arguments
-        didUpdateCVCReceivedInvocations.append(arguments)
+        savedCardPresenterPresenterCvcReceivedArguments = arguments
+        savedCardPresenterPresenterCvcReceivedInvocations.append(arguments)
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension SavedCardViewPresenterOutputMock {
     func fullReset() {
-        didRequestReplacementForCallsCount = 0
-        didRequestReplacementReceivedArguments = nil
-        didRequestReplacementReceivedInvocations = []
+        savedCardPresenterPresenterPaymentCardCallsCount = 0
+        savedCardPresenterPresenterPaymentCardReceivedArguments = nil
+        savedCardPresenterPresenterPaymentCardReceivedInvocations = []
 
-        didUpdateCVCCallsCount = 0
-        didUpdateCVCReceivedArguments = nil
-        didUpdateCVCReceivedInvocations = []
+        savedCardPresenterPresenterCvcCallsCount = 0
+        savedCardPresenterPresenterCvcReceivedArguments = nil
+        savedCardPresenterPresenterCvcReceivedInvocations = []
     }
 }

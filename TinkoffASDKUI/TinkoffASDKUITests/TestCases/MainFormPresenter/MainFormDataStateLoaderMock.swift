@@ -15,7 +15,7 @@ final class MainFormDataStateLoaderMock: IMainFormDataStateLoader {
 
     var loadStateCallsCount = 0
     var loadStateReceivedArguments: LoadStateArguments?
-    var loadStateReceivedInvocations: [LoadStateArguments] = []
+    var loadStateReceivedInvocations: [LoadStateArguments?] = []
     var loadStateCompletionClosureInput: Result<MainFormDataState, Error>?
 
     func loadState(for paymentFlow: PaymentFlow, completion: @escaping (Result<MainFormDataState, Error>) -> Void) {
@@ -26,5 +26,16 @@ final class MainFormDataStateLoaderMock: IMainFormDataStateLoader {
         if let loadStateCompletionClosureInput = loadStateCompletionClosureInput {
             completion(loadStateCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension MainFormDataStateLoaderMock {
+    func fullReset() {
+        loadStateCallsCount = 0
+        loadStateReceivedArguments = nil
+        loadStateReceivedInvocations = []
+        loadStateCompletionClosureInput = nil
     }
 }

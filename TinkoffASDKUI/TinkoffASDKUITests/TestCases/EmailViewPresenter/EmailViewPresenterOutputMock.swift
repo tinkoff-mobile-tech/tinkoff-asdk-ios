@@ -11,9 +11,11 @@ final class EmailViewPresenterOutputMock: IEmailViewPresenterOutput {
 
     // MARK: - emailTextFieldDidBeginEditing
 
+    typealias EmailTextFieldDidBeginEditingArguments = EmailViewPresenter
+
     var emailTextFieldDidBeginEditingCallsCount = 0
-    var emailTextFieldDidBeginEditingReceivedArguments: EmailViewPresenter?
-    var emailTextFieldDidBeginEditingReceivedInvocations: [EmailViewPresenter] = []
+    var emailTextFieldDidBeginEditingReceivedArguments: EmailTextFieldDidBeginEditingArguments?
+    var emailTextFieldDidBeginEditingReceivedInvocations: [EmailTextFieldDidBeginEditingArguments?] = []
 
     func emailTextFieldDidBeginEditing(_ presenter: EmailViewPresenter) {
         emailTextFieldDidBeginEditingCallsCount += 1
@@ -28,7 +30,7 @@ final class EmailViewPresenterOutputMock: IEmailViewPresenterOutput {
 
     var emailTextFieldCallsCount = 0
     var emailTextFieldReceivedArguments: EmailTextFieldArguments?
-    var emailTextFieldReceivedInvocations: [EmailTextFieldArguments] = []
+    var emailTextFieldReceivedInvocations: [EmailTextFieldArguments?] = []
 
     func emailTextField(_ presenter: EmailViewPresenter, didChangeEmail email: String, isValid: Bool) {
         emailTextFieldCallsCount += 1
@@ -39,9 +41,11 @@ final class EmailViewPresenterOutputMock: IEmailViewPresenterOutput {
 
     // MARK: - emailTextFieldDidEndEditing
 
+    typealias EmailTextFieldDidEndEditingArguments = EmailViewPresenter
+
     var emailTextFieldDidEndEditingCallsCount = 0
-    var emailTextFieldDidEndEditingReceivedArguments: EmailViewPresenter?
-    var emailTextFieldDidEndEditingReceivedInvocations: [EmailViewPresenter] = []
+    var emailTextFieldDidEndEditingReceivedArguments: EmailTextFieldDidEndEditingArguments?
+    var emailTextFieldDidEndEditingReceivedInvocations: [EmailTextFieldDidEndEditingArguments?] = []
 
     func emailTextFieldDidEndEditing(_ presenter: EmailViewPresenter) {
         emailTextFieldDidEndEditingCallsCount += 1
@@ -52,14 +56,38 @@ final class EmailViewPresenterOutputMock: IEmailViewPresenterOutput {
 
     // MARK: - emailTextFieldDidPressReturn
 
+    typealias EmailTextFieldDidPressReturnArguments = EmailViewPresenter
+
     var emailTextFieldDidPressReturnCallsCount = 0
-    var emailTextFieldDidPressReturnReceivedArguments: EmailViewPresenter?
-    var emailTextFieldDidPressReturnReceivedInvocations: [EmailViewPresenter] = []
+    var emailTextFieldDidPressReturnReceivedArguments: EmailTextFieldDidPressReturnArguments?
+    var emailTextFieldDidPressReturnReceivedInvocations: [EmailTextFieldDidPressReturnArguments?] = []
 
     func emailTextFieldDidPressReturn(_ presenter: EmailViewPresenter) {
         emailTextFieldDidPressReturnCallsCount += 1
         let arguments = presenter
         emailTextFieldDidPressReturnReceivedArguments = arguments
         emailTextFieldDidPressReturnReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension EmailViewPresenterOutputMock {
+    func fullReset() {
+        emailTextFieldDidBeginEditingCallsCount = 0
+        emailTextFieldDidBeginEditingReceivedArguments = nil
+        emailTextFieldDidBeginEditingReceivedInvocations = []
+
+        emailTextFieldCallsCount = 0
+        emailTextFieldReceivedArguments = nil
+        emailTextFieldReceivedInvocations = []
+
+        emailTextFieldDidEndEditingCallsCount = 0
+        emailTextFieldDidEndEditingReceivedArguments = nil
+        emailTextFieldDidEndEditingReceivedInvocations = []
+
+        emailTextFieldDidPressReturnCallsCount = 0
+        emailTextFieldDidPressReturnReceivedArguments = nil
+        emailTextFieldDidPressReturnReceivedInvocations = []
     }
 }

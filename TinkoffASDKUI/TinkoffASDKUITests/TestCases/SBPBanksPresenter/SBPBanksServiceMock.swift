@@ -12,9 +12,11 @@ final class SBPBanksServiceMock: ISBPBanksService {
 
     // MARK: - loadBanks
 
+    typealias LoadBanksArguments = SBPBanksServiceLoadBanksCompletion
+
     var loadBanksCallsCount = 0
-    var loadBanksReceivedArguments: SBPBanksServiceLoadBanksCompletion?
-    var loadBanksReceivedInvocations: [SBPBanksServiceLoadBanksCompletion] = []
+    var loadBanksReceivedArguments: LoadBanksArguments?
+    var loadBanksReceivedInvocations: [LoadBanksArguments?] = []
     var loadBanksCompletionClosureInput: Result<[SBPBank], Error>?
 
     func loadBanks(completion: @escaping SBPBanksServiceLoadBanksCompletion) {
@@ -25,5 +27,16 @@ final class SBPBanksServiceMock: ISBPBanksService {
         if let loadBanksCompletionClosureInput = loadBanksCompletionClosureInput {
             completion(loadBanksCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension SBPBanksServiceMock {
+    func fullReset() {
+        loadBanksCallsCount = 0
+        loadBanksReceivedArguments = nil
+        loadBanksReceivedInvocations = []
+        loadBanksCompletionClosureInput = nil
     }
 }

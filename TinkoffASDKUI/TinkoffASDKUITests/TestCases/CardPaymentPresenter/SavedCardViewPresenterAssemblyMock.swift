@@ -11,10 +11,12 @@ final class SavedCardViewPresenterAssemblyMock: ISavedCardViewPresenterAssembly 
 
     // MARK: - build
 
+    typealias BuildArguments = ISavedCardViewPresenterOutput
+
     var buildCallsCount = 0
-    var buildReceivedArguments: ISavedCardViewPresenterOutput?
-    var buildReceivedInvocations: [ISavedCardViewPresenterOutput] = []
-    var buildReturnValue: ISavedCardViewOutput = SavedCardViewOutputMock()
+    var buildReceivedArguments: BuildArguments?
+    var buildReceivedInvocations: [BuildArguments?] = []
+    var buildReturnValue = SavedCardViewOutputMock()
 
     func build(output: ISavedCardViewPresenterOutput) -> ISavedCardViewOutput {
         buildCallsCount += 1
@@ -22,5 +24,15 @@ final class SavedCardViewPresenterAssemblyMock: ISavedCardViewPresenterAssembly 
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
         return buildReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension SavedCardViewPresenterAssemblyMock {
+    func fullReset() {
+        buildCallsCount = 0
+        buildReceivedArguments = nil
+        buildReceivedInvocations = []
     }
 }

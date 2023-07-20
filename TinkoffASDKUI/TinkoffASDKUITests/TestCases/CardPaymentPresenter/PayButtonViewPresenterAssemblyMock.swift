@@ -15,8 +15,8 @@ final class PayButtonViewPresenterAssemblyMock: IPayButtonViewPresenterAssembly 
 
     var buildCallsCount = 0
     var buildReceivedArguments: BuildArguments?
-    var buildReceivedInvocations: [BuildArguments] = []
-    var buildReturnValue: IPayButtonViewOutput = PayButtonViewOutputMock()
+    var buildReceivedInvocations: [BuildArguments?] = []
+    var buildReturnValue = PayButtonViewOutputMock()
 
     func build(presentationState: PayButtonViewPresentationState, output: IPayButtonViewPresenterOutput?) -> IPayButtonViewOutput {
         buildCallsCount += 1
@@ -24,5 +24,15 @@ final class PayButtonViewPresenterAssemblyMock: IPayButtonViewPresenterAssembly 
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
         return buildReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension PayButtonViewPresenterAssemblyMock {
+    func fullReset() {
+        buildCallsCount = 0
+        buildReceivedArguments = nil
+        buildReceivedInvocations = []
     }
 }

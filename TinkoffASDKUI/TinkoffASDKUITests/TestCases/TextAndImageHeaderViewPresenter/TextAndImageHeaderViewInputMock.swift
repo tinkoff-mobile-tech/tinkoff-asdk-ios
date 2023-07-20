@@ -10,11 +10,13 @@ import UIKit
 
 final class TextAndImageHeaderViewInputMock: ITextAndImageHeaderViewInput {
 
-    // MARK: - set
+    // MARK: - setTitle
+
+    typealias SetTitleArguments = String
 
     var setTitleCallsCount = 0
-    var setTitleReceivedArguments: String?
-    var setTitleReceivedInvocations: [String?] = []
+    var setTitleReceivedArguments: SetTitleArguments?
+    var setTitleReceivedInvocations: [SetTitleArguments?] = []
 
     func set(title: String?) {
         setTitleCallsCount += 1
@@ -23,11 +25,13 @@ final class TextAndImageHeaderViewInputMock: ITextAndImageHeaderViewInput {
         setTitleReceivedInvocations.append(arguments)
     }
 
-    // MARK: - set
+    // MARK: - setImage
+
+    typealias SetImageArguments = UIImage
 
     var setImageCallsCount = 0
-    var setImageReceivedArguments: UIImage?
-    var setImageReceivedInvocations: [UIImage?] = []
+    var setImageReceivedArguments: SetImageArguments?
+    var setImageReceivedInvocations: [SetImageArguments?] = []
 
     func set(image: UIImage?) {
         setImageCallsCount += 1
@@ -37,7 +41,7 @@ final class TextAndImageHeaderViewInputMock: ITextAndImageHeaderViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension TextAndImageHeaderViewInputMock {
     func fullReset() {

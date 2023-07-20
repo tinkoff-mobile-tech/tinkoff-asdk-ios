@@ -15,7 +15,7 @@ final class MainFormOrderDetailsViewPresenterAssemblyMock: IMainFormOrderDetails
 
     var buildCallsCount = 0
     var buildReceivedArguments: BuildArguments?
-    var buildReceivedInvocations: [BuildArguments] = []
+    var buildReceivedInvocations: [BuildArguments?] = []
     var buildReturnValue = MainFormOrderDetailsViewOutputMock()
 
     func build(amount: Int64, orderDescription: String?) -> any IMainFormOrderDetailsViewOutput {
@@ -24,5 +24,15 @@ final class MainFormOrderDetailsViewPresenterAssemblyMock: IMainFormOrderDetails
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
         return buildReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension MainFormOrderDetailsViewPresenterAssemblyMock {
+    func fullReset() {
+        buildCallsCount = 0
+        buildReceivedArguments = nil
+        buildReceivedInvocations = []
     }
 }

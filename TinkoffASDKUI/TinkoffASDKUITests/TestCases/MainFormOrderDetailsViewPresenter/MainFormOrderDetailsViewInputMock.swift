@@ -11,9 +11,11 @@ final class MainFormOrderDetailsViewInputMock: IMainFormOrderDetailsViewInput {
 
     // MARK: - setAmountDescription
 
+    typealias SetAmountDescriptionArguments = String
+
     var setAmountDescriptionCallsCount = 0
-    var setAmountDescriptionReceivedArguments: String?
-    var setAmountDescriptionReceivedInvocations: [String] = []
+    var setAmountDescriptionReceivedArguments: SetAmountDescriptionArguments?
+    var setAmountDescriptionReceivedInvocations: [SetAmountDescriptionArguments?] = []
 
     func set(amountDescription: String) {
         setAmountDescriptionCallsCount += 1
@@ -24,9 +26,11 @@ final class MainFormOrderDetailsViewInputMock: IMainFormOrderDetailsViewInput {
 
     // MARK: - setAmount
 
+    typealias SetAmountArguments = String
+
     var setAmountCallsCount = 0
-    var setAmountReceivedArguments: String?
-    var setAmountReceivedInvocations: [String] = []
+    var setAmountReceivedArguments: SetAmountArguments?
+    var setAmountReceivedInvocations: [SetAmountArguments?] = []
 
     func set(amount: String) {
         setAmountCallsCount += 1
@@ -37,9 +41,11 @@ final class MainFormOrderDetailsViewInputMock: IMainFormOrderDetailsViewInput {
 
     // MARK: - setOrderDescription
 
+    typealias SetOrderDescriptionArguments = String
+
     var setOrderDescriptionCallsCount = 0
-    var setOrderDescriptionReceivedArguments: String?
-    var setOrderDescriptionReceivedInvocations: [String?] = []
+    var setOrderDescriptionReceivedArguments: SetOrderDescriptionArguments?
+    var setOrderDescriptionReceivedInvocations: [SetOrderDescriptionArguments?] = []
 
     func set(orderDescription: String?) {
         setOrderDescriptionCallsCount += 1
@@ -49,7 +55,7 @@ final class MainFormOrderDetailsViewInputMock: IMainFormOrderDetailsViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension MainFormOrderDetailsViewInputMock {
     func fullReset() {

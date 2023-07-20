@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 @testable import TinkoffASDKUI
 
 final class QrImageViewPresenterOutputMock: IQrImageViewPresenterOutput {
@@ -17,5 +16,13 @@ final class QrImageViewPresenterOutputMock: IQrImageViewPresenterOutput {
 
     func qrDidLoad() {
         qrDidLoadCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension QrImageViewPresenterOutputMock {
+    func fullReset() {
+        qrDidLoadCallsCount = 0
     }
 }

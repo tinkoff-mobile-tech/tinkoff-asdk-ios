@@ -17,7 +17,7 @@ final class SBPBankAppOpenerMock: ISBPBankAppOpener {
 
     var openBankAppCallsCount = 0
     var openBankAppReceivedArguments: OpenBankAppArguments?
-    var openBankAppReceivedInvocations: [OpenBankAppArguments] = []
+    var openBankAppReceivedInvocations: [OpenBankAppArguments?] = []
     var openBankAppCompletionClosureInput: Bool?
 
     func openBankApp(url: URL, _ bank: SBPBank, completion: @escaping SBPBankAppCheckerOpenBankAppCompletion) {
@@ -28,5 +28,16 @@ final class SBPBankAppOpenerMock: ISBPBankAppOpener {
         if let openBankAppCompletionClosureInput = openBankAppCompletionClosureInput {
             completion(openBankAppCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension SBPBankAppOpenerMock {
+    func fullReset() {
+        openBankAppCallsCount = 0
+        openBankAppReceivedArguments = nil
+        openBankAppReceivedInvocations = []
+        openBankAppCompletionClosureInput = nil
     }
 }

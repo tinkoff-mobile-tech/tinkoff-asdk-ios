@@ -9,11 +9,13 @@
 
 final class PayButtonViewInputMock: IPayButtonViewInput {
 
-    // MARK: - set
+    // MARK: - setConfiguration
+
+    typealias SetConfigurationArguments = Button.Configuration
 
     var setConfigurationCallsCount = 0
-    var setConfigurationReceivedArguments: Button.Configuration?
-    var setConfigurationReceivedInvocations: [Button.Configuration] = []
+    var setConfigurationReceivedArguments: SetConfigurationArguments?
+    var setConfigurationReceivedInvocations: [SetConfigurationArguments?] = []
 
     func set(configuration: Button.Configuration) {
         setConfigurationCallsCount += 1
@@ -22,19 +24,19 @@ final class PayButtonViewInputMock: IPayButtonViewInput {
         setConfigurationReceivedInvocations.append(arguments)
     }
 
-    // MARK: - set
+    // MARK: - setEnabledAnimated
 
-    typealias SetArguments = (enabled: Bool, animated: Bool)
+    typealias SetEnabledAnimatedArguments = (enabled: Bool, animated: Bool)
 
-    var setEnabledCallsCount = 0
-    var setEnabledReceivedArguments: SetArguments?
-    var setEnabledReceivedInvocations: [SetArguments] = []
+    var setEnabledAnimatedCallsCount = 0
+    var setEnabledAnimatedReceivedArguments: SetEnabledAnimatedArguments?
+    var setEnabledAnimatedReceivedInvocations: [SetEnabledAnimatedArguments?] = []
 
     func set(enabled: Bool, animated: Bool) {
-        setEnabledCallsCount += 1
+        setEnabledAnimatedCallsCount += 1
         let arguments = (enabled, animated)
-        setEnabledReceivedArguments = arguments
-        setEnabledReceivedInvocations.append(arguments)
+        setEnabledAnimatedReceivedArguments = arguments
+        setEnabledAnimatedReceivedInvocations.append(arguments)
     }
 
     // MARK: - startLoading
@@ -54,7 +56,7 @@ final class PayButtonViewInputMock: IPayButtonViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension PayButtonViewInputMock {
     func fullReset() {
@@ -62,11 +64,12 @@ extension PayButtonViewInputMock {
         setConfigurationReceivedArguments = nil
         setConfigurationReceivedInvocations = []
 
-        setEnabledCallsCount = 0
-        setEnabledReceivedArguments = nil
-        setEnabledReceivedInvocations = []
+        setEnabledAnimatedCallsCount = 0
+        setEnabledAnimatedReceivedArguments = nil
+        setEnabledAnimatedReceivedInvocations = []
 
         startLoadingCallsCount = 0
+
         stopLoadingCallsCount = 0
     }
 }

@@ -9,45 +9,65 @@ import Foundation
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-extension GetTinkoffLinkPayload {
-    static func fake() -> GetTinkoffLinkPayload {
-        GetTinkoffLinkPayload(redirectUrl: URL.empty)
+final class AcquiringTinkoffPayServiceMock: IAcquiringTinkoffPayService {
+
+    // MARK: - getTinkoffPayLink
+
+    typealias GetTinkoffPayLinkArguments = (data: GetTinkoffLinkData, completion: (Result<GetTinkoffLinkPayload, Error>) -> Void)
+
+    var getTinkoffPayLinkCallsCount = 0
+    var getTinkoffPayLinkReceivedArguments: GetTinkoffPayLinkArguments?
+    var getTinkoffPayLinkReceivedInvocations: [GetTinkoffPayLinkArguments?] = []
+    var getTinkoffPayLinkCompletionClosureInput: Result<GetTinkoffLinkPayload, Error>?
+    var getTinkoffPayLinkReturnValue: Cancellable = CancellableMock()
+
+    @discardableResult
+    func getTinkoffPayLink(data: GetTinkoffLinkData, completion: @escaping (Result<GetTinkoffLinkPayload, Error>) -> Void) -> Cancellable {
+        getTinkoffPayLinkCallsCount += 1
+        let arguments = (data, completion)
+        getTinkoffPayLinkReceivedArguments = arguments
+        getTinkoffPayLinkReceivedInvocations.append(arguments)
+        if let getTinkoffPayLinkCompletionClosureInput = getTinkoffPayLinkCompletionClosureInput {
+            completion(getTinkoffPayLinkCompletionClosureInput)
+        }
+        return getTinkoffPayLinkReturnValue
+    }
+
+    // MARK: - getTinkoffPayStatus
+
+    typealias GetTinkoffPayStatusArguments = (Result<GetTinkoffPayStatusPayload, Error>) -> Void
+
+    var getTinkoffPayStatusCallsCount = 0
+    var getTinkoffPayStatusReceivedArguments: GetTinkoffPayStatusArguments?
+    var getTinkoffPayStatusReceivedInvocations: [GetTinkoffPayStatusArguments?] = []
+    var getTinkoffPayStatusCompletionClosureInput: Result<GetTinkoffPayStatusPayload, Error>?
+    var getTinkoffPayStatusReturnValue: Cancellable = CancellableMock()
+
+    @discardableResult
+    func getTinkoffPayStatus(completion: @escaping (Result<GetTinkoffPayStatusPayload, Error>) -> Void) -> Cancellable {
+        getTinkoffPayStatusCallsCount += 1
+        let arguments = completion
+        getTinkoffPayStatusReceivedArguments = arguments
+        getTinkoffPayStatusReceivedInvocations.append(arguments)
+        if let getTinkoffPayStatusCompletionClosureInput = getTinkoffPayStatusCompletionClosureInput {
+            completion(getTinkoffPayStatusCompletionClosureInput)
+        }
+        return getTinkoffPayStatusReturnValue
     }
 }
 
-final class AcquiringTinkoffPayServiceMock: IAcquiringTinkoffPayService {
-    var invokedGetTinkoffPayLink = false
-    var invokedGetTinkoffPayLinkCount = 0
-    var invokedGetTinkoffPayLinkParameters: (data: GetTinkoffLinkData, Void)?
-    var invokedGetTinkoffPayLinkParametersList = [(data: GetTinkoffLinkData, Void)]()
-    var stubbedGetTinkoffPayLinkCompletion: Result<GetTinkoffLinkPayload, Error>?
+// MARK: - Resets
 
-    func getTinkoffPayLink(
-        data: TinkoffASDKCore.GetTinkoffLinkData,
-        completion: @escaping (Result<TinkoffASDKCore.GetTinkoffLinkPayload, Error>) -> Void
-    ) -> TinkoffASDKCore.Cancellable {
-        invokedGetTinkoffPayLink = true
-        invokedGetTinkoffPayLinkCount += 1
-        invokedGetTinkoffPayLinkParameters = (data, ())
-        invokedGetTinkoffPayLinkParametersList.append((data, ()))
-        if let stubbedCompletion = stubbedGetTinkoffPayLinkCompletion {
-            completion(stubbedCompletion)
-        }
-        return CancellableMock()
-    }
+extension AcquiringTinkoffPayServiceMock {
+    func fullReset() {
+        getTinkoffPayLinkCallsCount = 0
+        getTinkoffPayLinkReceivedArguments = nil
+        getTinkoffPayLinkReceivedInvocations = []
+        getTinkoffPayLinkCompletionClosureInput = nil
 
-    var invokedGetTinkoffPayStatus = false
-    var invokedGetTinkoffPayStatusCount = 0
-    var stubbedGetTinkoffPayStatusCompletion: Result<GetTinkoffPayStatusPayload, Error>?
-
-    func getTinkoffPayStatus(
-        completion: @escaping (Result<TinkoffASDKCore.GetTinkoffPayStatusPayload, Error>) -> Void
-    ) -> TinkoffASDKCore.Cancellable {
-        invokedGetTinkoffPayStatus = true
-        invokedGetTinkoffPayStatusCount += 1
-        if let stubbedCompletion = stubbedGetTinkoffPayStatusCompletion {
-            completion(stubbedCompletion)
-        }
-        return CancellableMock()
+        getTinkoffPayStatusCallsCount = 0
+        getTinkoffPayStatusReceivedArguments = nil
+        getTinkoffPayStatusReceivedInvocations = []
+        getTinkoffPayStatusCompletionClosureInput = nil
     }
 }

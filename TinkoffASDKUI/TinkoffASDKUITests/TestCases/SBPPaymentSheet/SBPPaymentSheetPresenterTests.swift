@@ -117,7 +117,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let status = AcquiringStatus.unknown
         commonSetupsForGivenViewDidLoadTests(status: status, paymentId: paymentId, retriesCount: retriesCount)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = .init(
-            repeating: .success(.some(status: .unknown)),
+            repeating: .success(.fake(status: .unknown)),
             count: retriesCount
         )
 
@@ -126,13 +126,13 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.timeout.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.timeout.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
 
         for index in 0 ..< retriesCount {
-            XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedInvocations[index].paymentId, paymentId)
+            XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedInvocations[index]?.paymentId, paymentId)
         }
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 10)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 10)
@@ -156,8 +156,8 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let paymentId = "11111"
         setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
-        let payload1 = GetPaymentStatePayload.some(status: .formShowed)
-        let payload2 = GetPaymentStatePayload.some(status: .authorized)
+        let payload1 = GetPaymentStatePayload.fake(status: .formShowed)
+        let payload2 = GetPaymentStatePayload.fake(status: .authorized)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload1), .success(payload2)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
@@ -167,10 +167,10 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.paid.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.paid.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
@@ -182,11 +182,11 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let paymentId = "11111"
         setupSut(requestRepeatCount: 5, paymentId: paymentId)
 
-        let payload1 = GetPaymentStatePayload.some(status: .confirming)
-        let payload2 = GetPaymentStatePayload.some(status: .confirming)
-        let payload3 = GetPaymentStatePayload.some(status: .confirming)
-        let payload4 = GetPaymentStatePayload.some(status: .confirming)
-        let payload5 = GetPaymentStatePayload.some(status: .authorized)
+        let payload1 = GetPaymentStatePayload.fake(status: .confirming)
+        let payload2 = GetPaymentStatePayload.fake(status: .confirming)
+        let payload3 = GetPaymentStatePayload.fake(status: .confirming)
+        let payload4 = GetPaymentStatePayload.fake(status: .confirming)
+        let payload5 = GetPaymentStatePayload.fake(status: .authorized)
         let payloads = [payload1, payload2, payload3, payload4, payload5]
         let results: [Result<GetPaymentStatePayload, Error>] = payloads.map { .success($0) }
 
@@ -199,12 +199,12 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 3)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.processing.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[2].state, SBPSheetState.paid.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[2].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.processing.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[2]?.state, SBPSheetState.paid.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[2]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 5)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 5)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
@@ -226,10 +226,10 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state, SBPSheetState.paymentFailed.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state, SBPSheetState.paymentFailed.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 2)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
@@ -265,7 +265,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let paymentId = "11111"
         setupSut(requestRepeatCount: 1, paymentId: paymentId)
 
-        let payload = GetPaymentStatePayload.some(status: .confirming)
+        let payload = GetPaymentStatePayload.fake(status: .confirming)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
@@ -325,7 +325,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let paymentId = "11111"
         setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
-        let payload = GetPaymentStatePayload.some(status: .formShowed)
+        let payload = GetPaymentStatePayload.fake(status: .formShowed)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
@@ -344,7 +344,7 @@ final class SBPPaymentSheetPresenterTests: BaseTestCase {
         let paymentId = "11111"
         setupSut(requestRepeatCount: 2, paymentId: paymentId)
 
-        let payload = GetPaymentStatePayload.some(status: .authorized)
+        let payload = GetPaymentStatePayload.fake(status: .authorized)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
@@ -388,7 +388,7 @@ extension SBPPaymentSheetPresenterTests {
     ) {
         setupSut(requestRepeatCount: retriesCount, paymentId: paymentId)
 
-        let payload = GetPaymentStatePayload.some(status: status)
+        let payload = GetPaymentStatePayload.fake(status: status)
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(payload)]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         mainDispatchQueueMock.asyncWorkShouldExecute = true
@@ -396,21 +396,13 @@ extension SBPPaymentSheetPresenterTests {
 
     private func commonTestsForThenViewDidLoadTests(status: CommonSheetState.Status, paymentId: String) {
         XCTAssertEqual(viewMock.updateCallsCount, 2)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].state.status, status)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[1].animatePullableContainerUpdates, true)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].state, SBPSheetState.waiting.rawValue)
-        XCTAssertEqual(viewMock.updateReceivedInvocations[0].animatePullableContainerUpdates, false)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.state.status, status)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[1]?.animatePullableContainerUpdates, true)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.state, SBPSheetState.waiting.rawValue)
+        XCTAssertEqual(viewMock.updateReceivedInvocations[0]?.animatePullableContainerUpdates, false)
         XCTAssertEqual(repeatedRequestHelperMock.executeWithWaitingIfNeededCallsCount, 1)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateCallsCount, 1)
         XCTAssertEqual(paymentStatusServiceMock.getPaymentStateReceivedArguments?.paymentId, paymentId)
         XCTAssertEqual(mainDispatchQueueMock.asyncCallsCount, 1)
-    }
-}
-
-// MARK: - Helpers
-
-extension GetPaymentStatePayload {
-    static func some(status: AcquiringStatus) -> GetPaymentStatePayload {
-        GetPaymentStatePayload(paymentId: "121111", amount: 234, orderId: "324234", status: status)
     }
 }

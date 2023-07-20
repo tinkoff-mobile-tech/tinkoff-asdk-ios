@@ -402,14 +402,14 @@ final class CardPaymentPresenterTests: BaseTestCase {
     func test_savedCardPresenterDidRequestReplacementFor() {
         // given
         let activeCards = createActiveCardsArray()
-        let paymentFlow = PaymentFlow.fullRandom
+        let paymentFlow = PaymentFlow.fakeFullRandom
         let paymentCard = PaymentCard.fake()
         let amount: Int64 = 234
 
         setupSut(activeCards: activeCards, paymentFlow: paymentFlow, amount: amount)
 
         // when
-        sut.savedCardPresenter(.fake(), didRequestReplacementFor: paymentCard)
+        sut.savedCardPresenter(.fake, didRequestReplacementFor: paymentCard)
 
         // then
         XCTAssertEqual(routerMock.openCardPaymentListCallsCount, 1)
@@ -429,7 +429,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
         switchViewPresenterAssemblyMock.buildReturnValue = switchMock
 
         // when
-        sut.savedCardPresenter(.fake(), didUpdateCVC: "", isValid: false)
+        sut.savedCardPresenter(.fake, didUpdateCVC: "", isValid: false)
 
         // then
         XCTAssertEqual(payButtonMock.setCallsCount, 2)
@@ -595,7 +595,7 @@ extension CardPaymentPresenterTests {
     private func setupSut(
         cardsController: CardsControllerMock? = CardsControllerMock(),
         activeCards: [PaymentCard]? = nil,
-        paymentFlow: PaymentFlow = .fullRandom,
+        paymentFlow: PaymentFlow = .fakeFullRandom,
         amount: Int64 = 100,
         isCardFieldScanButtonNeeded: Bool = false
     ) {
@@ -651,23 +651,6 @@ extension CardPaymentPresenterTests {
 }
 
 // MARK: - Helpers
-
-extension EmailViewPresenter {
-    static func fake() -> EmailViewPresenter {
-        EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
-    }
-}
-
-extension SavedCardViewPresenter {
-    static func fake() -> SavedCardViewPresenter {
-        SavedCardViewPresenter(
-            validator: CardRequisitesValidatorMock(),
-            paymentSystemResolver: PaymentSystemResolverMock(),
-            bankResolver: BankResolverMock(),
-            output: SavedCardViewPresenterOutputMock()
-        )
-    }
-}
 
 final class FakePayButtonViewPresenterInput: IPayButtonViewPresenterInput {
     var presentationState: PayButtonViewPresentationState = .pay
