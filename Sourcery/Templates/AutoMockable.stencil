@@ -219,7 +219,10 @@
 {# !!! Дается ответ, есть ли в классе методы с дублирующим названием или нет #}
 {% set hasDoubleNamesInMethods %}{% if countOfMethodsNotInExtension == countOfTrue %}no{% else %}yes{% endif%}{% endset %}
 
-final class {% if type.name[0] == 'I' %}{% call removeFirstLetter type.name %}{% else %}{{ type.name }}{% endif %}Mock: {{ type.name }} {
+{# !!! Достаем первую букву протокола. #}
+{% set typeNameFirstLetter %}{{ type.name.first }}{% endset%}
+
+final class {% if typeNameFirstLetter == 'I' %}{% call removeFirstLetter type.name %}{% else %}{{ type.name }}{% endif %}Mock: {{ type.name }} {
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}
@@ -232,7 +235,7 @@ final class {% if type.name[0] == 'I' %}{% call removeFirstLetter type.name %}{%
 
 // MARK: - Resets
 
-extension {% if type.name[0] == 'I' %}{% call removeFirstLetter type.name %}{% else %}{{ type.name }}{% endif %}Mock {
+extension {% if typeNameFirstLetter == 'I' %}{% call removeFirstLetter type.name %}{% else %}{{ type.name }}{% endif %}Mock {
     {% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
     static func fullStaticReset() {
     {% for method in type.allMethods|static %}
