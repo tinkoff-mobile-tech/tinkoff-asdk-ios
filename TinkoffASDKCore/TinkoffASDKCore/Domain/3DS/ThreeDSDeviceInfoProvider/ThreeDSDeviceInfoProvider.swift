@@ -42,17 +42,17 @@ public struct AppBasedSdkUiProvider: IAppBasedSdkUiProvider {
     let prefferedInterface: TdsSdkInterface
     let prefferedUiTypes: [TdsSdkUiType]
 
+    public init(prefferedInterface: TdsSdkInterface, prefferedUiTypes: [TdsSdkUiType]) {
+        self.prefferedInterface = prefferedInterface
+        self.prefferedUiTypes = prefferedUiTypes
+    }
+
     public func sdkInterface() -> TdsSdkInterface {
         prefferedInterface
     }
 
     public func sdkUiTypes() -> [TdsSdkUiType] {
         prefferedUiTypes
-    }
-
-    public init(prefferedInterface: TdsSdkInterface, prefferedUiTypes: [TdsSdkUiType]) {
-        self.prefferedInterface = prefferedInterface
-        self.prefferedUiTypes = prefferedUiTypes
     }
 }
 
