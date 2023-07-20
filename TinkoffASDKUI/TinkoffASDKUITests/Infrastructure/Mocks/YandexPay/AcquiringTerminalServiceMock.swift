@@ -12,11 +12,13 @@ final class AcquiringTerminalServiceMock: IAcquiringTerminalService {
 
     // MARK: - getTerminalPayMethods
 
+    typealias GetTerminalPayMethodsArguments = (Result<GetTerminalPayMethodsPayload, Error>) -> Void
+
     var getTerminalPayMethodsCallsCount = 0
-    var getTerminalPayMethodsReceivedArguments: ((Result<GetTerminalPayMethodsPayload, Error>) -> Void)?
-    var getTerminalPayMethodsReceivedInvocations: [(Result<GetTerminalPayMethodsPayload, Error>) -> Void] = []
+    var getTerminalPayMethodsReceivedArguments: GetTerminalPayMethodsArguments?
+    var getTerminalPayMethodsReceivedInvocations: [GetTerminalPayMethodsArguments?] = []
     var getTerminalPayMethodsCompletionClosureInput: Result<GetTerminalPayMethodsPayload, Error>?
-    var getTerminalPayMethodsReturnValue: Cancellable!
+    var getTerminalPayMethodsReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
     func getTerminalPayMethods(completion: @escaping (Result<GetTerminalPayMethodsPayload, Error>) -> Void) -> Cancellable {
@@ -28,5 +30,16 @@ final class AcquiringTerminalServiceMock: IAcquiringTerminalService {
             completion(getTerminalPayMethodsCompletionClosureInput)
         }
         return getTerminalPayMethodsReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension AcquiringTerminalServiceMock {
+    func fullReset() {
+        getTerminalPayMethodsCallsCount = 0
+        getTerminalPayMethodsReceivedArguments = nil
+        getTerminalPayMethodsReceivedInvocations = []
+        getTerminalPayMethodsCompletionClosureInput = nil
     }
 }
