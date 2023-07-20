@@ -9,37 +9,33 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class TinkoffPayControllerMock: ITinkoffPayController {
-    var invokedGetDelegate = false
-    var invokedGetDelegateCount = 0
-    var invokedSetDelegate = false
-    var invokedSetDelegateCount = 0
-    var stubbedDelegate: TinkoffPayControllerDelegate?
+    var delegate: TinkoffPayControllerDelegate?
 
-    var delegate: TinkoffASDKUI.TinkoffPayControllerDelegate? {
-        get {
-            invokedGetDelegate = true
-            invokedGetDelegateCount += 1
-            return stubbedDelegate
-        }
-        set {
-            invokedSetDelegate = true
-            invokedSetDelegateCount += 1
-        }
+    // MARK: - performPayment
+
+    typealias PerformPaymentArguments = (paymentFlow: PaymentFlow, method: TinkoffPayMethod)
+
+    var performPaymentCallsCount = 0
+    var performPaymentReceivedArguments: PerformPaymentArguments?
+    var performPaymentReceivedInvocations: [PerformPaymentArguments?] = []
+    var performPaymentReturnValue: Cancellable = CancellableMock()
+
+    @discardableResult
+    func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod) -> Cancellable {
+        performPaymentCallsCount += 1
+        let arguments = (paymentFlow, method)
+        performPaymentReceivedArguments = arguments
+        performPaymentReceivedInvocations.append(arguments)
+        return performPaymentReturnValue
     }
+}
 
-    var invokedPerformPayment = false
-    var invokedPerformPaymentCount = 0
-    var invokedPerformPaymentParameters: (paymentFlow: PaymentFlow, method: TinkoffPayMethod)?
-    var invokedPerformPaymentParametersList = [(paymentFlow: PaymentFlow, method: TinkoffPayMethod)]()
+// MARK: - Resets
 
-    func performPayment(
-        paymentFlow: TinkoffASDKUI.PaymentFlow,
-        method: TinkoffASDKCore.TinkoffPayMethod
-    ) -> TinkoffASDKCore.Cancellable {
-        invokedPerformPayment = true
-        invokedPerformPaymentCount += 1
-        invokedPerformPaymentParameters = (paymentFlow, method)
-        invokedPerformPaymentParametersList.append((paymentFlow, method))
-        return CancellableMock()
+extension TinkoffPayControllerMock {
+    func fullReset() {
+        performPaymentCallsCount = 0
+        performPaymentReceivedArguments = nil
+        performPaymentReceivedInvocations = []
     }
 }

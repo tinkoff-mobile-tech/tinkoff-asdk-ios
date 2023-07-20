@@ -9,18 +9,21 @@
 
 final class PayButtonViewOutputMock: IPayButtonViewOutput {
     var view: IPayButtonViewInput?
+
     var presentationState: PayButtonViewPresentationState {
         get { return underlyingPresentationState }
         set(value) { underlyingPresentationState = value }
     }
 
     var underlyingPresentationState: PayButtonViewPresentationState!
+
     var isLoading: Bool {
         get { return underlyingIsLoading }
         set(value) { underlyingIsLoading = value }
     }
 
     var underlyingIsLoading: Bool!
+
     var isEnabled: Bool {
         get { return underlyingIsEnabled }
         set(value) { underlyingIsEnabled = value }
@@ -54,9 +57,11 @@ final class PayButtonViewOutputMock: IPayButtonViewOutput {
 
     // MARK: - set
 
+    typealias SetArguments = Bool
+
     var setCallsCount = 0
-    var setReceivedArguments: Bool?
-    var setReceivedInvocations: [Bool] = []
+    var setReceivedArguments: SetArguments?
+    var setReceivedInvocations: [SetArguments?] = []
 
     func set(enabled: Bool) {
         setCallsCount += 1
@@ -66,17 +71,14 @@ final class PayButtonViewOutputMock: IPayButtonViewOutput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension PayButtonViewOutputMock {
     func fullReset() {
-        view = nil
-        underlyingPresentationState = nil
-        underlyingIsLoading = nil
-        underlyingIsEnabled = nil
-
         payButtonTappedCallsCount = 0
+
         startLoadingCallsCount = 0
+
         stopLoadingCallsCount = 0
 
         setCallsCount = 0

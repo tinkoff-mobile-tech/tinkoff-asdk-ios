@@ -40,7 +40,7 @@ final class SBPBanksServiceTests: BaseTestCase {
 
     func test_loadBanks_success() throws {
         // given
-        let payloadBanks = [SBPBank](repeating: .any, count: 5)
+        let payloadBanks = [SBPBank](repeating: .fake, count: 5)
         let payload = GetSBPBanksPayload(banks: payloadBanks)
         acquiringSBPServiceMock.loadSBPBanksCompletionClosureInput = .success(payload)
 

@@ -13,12 +13,19 @@ final class DispatchQueueMock: IDispatchQueue {
 
     // MARK: - performOnMain
 
+    typealias PerformOnMainArguments = () -> Void
+
     static var performOnMainCallsCount = 0
-    static var performOnMainBlockClosureShouldExecute = false
+    static var performOnMainReceivedArguments: PerformOnMainArguments?
+    static var performOnMainReceivedInvocations: [PerformOnMainArguments] = []
+    static var performOnMainBlockShouldExecute = false
 
     static func performOnMain(_ block: @escaping () -> Void) {
         performOnMainCallsCount += 1
-        if performOnMainBlockClosureShouldExecute {
+        let arguments = block
+        performOnMainReceivedArguments = arguments
+        performOnMainReceivedInvocations.append(arguments)
+        if performOnMainBlockShouldExecute {
             block()
         }
     }
@@ -49,14 +56,14 @@ final class DispatchQueueMock: IDispatchQueue {
     var asyncAfterCallsCount = 0
     var asyncAfterReceivedArguments: AsyncAfterArguments?
     var asyncAfterReceivedInvocations: [AsyncAfterArguments] = []
-    var asyncAfterShouldExecute = false
+    var asyncAfterWorkShouldExecute = false
 
     func asyncAfter(deadline: DispatchTime, qos: DispatchQoS, flags: DispatchWorkItemFlags, execute work: @convention(block) @escaping () -> Void) {
         asyncAfterCallsCount += 1
         let arguments = (deadline, qos, flags, work)
         asyncAfterReceivedArguments = arguments
         asyncAfterReceivedInvocations.append(arguments)
-        if asyncAfterShouldExecute {
+        if asyncAfterWorkShouldExecute {
             work()
         }
     }
@@ -81,11 +88,30 @@ final class DispatchQueueMock: IDispatchQueue {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension DispatchQueueMock {
-    static func resetPerformOnMain() {
-        DispatchQueueMock.performOnMainCallsCount = 0
-        DispatchQueueMock.performOnMainBlockClosureShouldExecute = false
+    static func fullStaticReset() {
+        performOnMainCallsCount = 0
+        performOnMainReceivedArguments = nil
+        performOnMainReceivedInvocations = []
+        performOnMainBlockShouldExecute = false
+    }
+
+    func fullReset() {
+        asyncCallsCount = 0
+        asyncReceivedArguments = nil
+        asyncReceivedInvocations = []
+        asyncWorkShouldExecute = false
+
+        asyncAfterCallsCount = 0
+        asyncAfterReceivedArguments = nil
+        asyncAfterReceivedInvocations = []
+        asyncAfterWorkShouldExecute = false
+
+        asyncDedupedCallsCount = 0
+        asyncDedupedReceivedArguments = nil
+        asyncDedupedReceivedInvocations = []
+        asyncDedupedWorkShouldExecute = false
     }
 }

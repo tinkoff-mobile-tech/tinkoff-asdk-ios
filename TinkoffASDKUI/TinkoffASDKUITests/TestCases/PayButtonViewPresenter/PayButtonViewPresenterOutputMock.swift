@@ -11,14 +11,26 @@ final class PayButtonViewPresenterOutputMock: IPayButtonViewPresenterOutput {
 
     // MARK: - payButtonViewTapped
 
+    typealias PayButtonViewTappedArguments = IPayButtonViewPresenterInput
+
     var payButtonViewTappedCallsCount = 0
-    var payButtonViewTappedReceivedArguments: IPayButtonViewPresenterInput?
-    var payButtonViewTappedReceivedInvocations: [IPayButtonViewPresenterInput] = []
+    var payButtonViewTappedReceivedArguments: PayButtonViewTappedArguments?
+    var payButtonViewTappedReceivedInvocations: [PayButtonViewTappedArguments?] = []
 
     func payButtonViewTapped(_ presenter: IPayButtonViewPresenterInput) {
         payButtonViewTappedCallsCount += 1
         let arguments = presenter
         payButtonViewTappedReceivedArguments = arguments
         payButtonViewTappedReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension PayButtonViewPresenterOutputMock {
+    func fullReset() {
+        payButtonViewTappedCallsCount = 0
+        payButtonViewTappedReceivedArguments = nil
+        payButtonViewTappedReceivedInvocations = []
     }
 }

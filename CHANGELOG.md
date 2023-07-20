@@ -13,6 +13,7 @@
 * [EACQAPW-5331] Tests property names to one style
 * [EACQAPW-5332] CardListPresenter Tests
 * [EACQAPW-5347] CardPaymentProcess Tests
+* [EACQAPW-5360] Sourcery teplate improvements
 * [EACQAPW-5362] CellImageLoader Tests
 * [EACQAPW-5371] TDSCertsManager Tests
 * [EACQAPW-5400] TDSTimeoutResolver Tests

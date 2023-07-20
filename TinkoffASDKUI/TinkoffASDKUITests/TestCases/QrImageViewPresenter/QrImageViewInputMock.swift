@@ -6,16 +6,17 @@
 //
 
 import Foundation
-
 @testable import TinkoffASDKUI
 
 final class QrImageViewInputMock: IQrImageViewInput {
 
-    // MARK: - set
+    // MARK: - setQrCodeHTML
+
+    typealias SetQrCodeHTMLArguments = String
 
     var setQrCodeHTMLCallsCount = 0
-    var setQrCodeHTMLReceivedArguments: String?
-    var setQrCodeHTMLReceivedInvocations: [String] = []
+    var setQrCodeHTMLReceivedArguments: SetQrCodeHTMLArguments?
+    var setQrCodeHTMLReceivedInvocations: [SetQrCodeHTMLArguments?] = []
 
     func set(qrCodeHTML: String) {
         setQrCodeHTMLCallsCount += 1
@@ -24,16 +25,32 @@ final class QrImageViewInputMock: IQrImageViewInput {
         setQrCodeHTMLReceivedInvocations.append(arguments)
     }
 
-    // MARK: - set
+    // MARK: - setQrCodeUrl
+
+    typealias SetQrCodeUrlArguments = String
 
     var setQrCodeUrlCallsCount = 0
-    var setQrCodeUrlReceivedArguments: String?
-    var setQrCodeUrlReceivedInvocations: [String] = []
+    var setQrCodeUrlReceivedArguments: SetQrCodeUrlArguments?
+    var setQrCodeUrlReceivedInvocations: [SetQrCodeUrlArguments?] = []
 
     func set(qrCodeUrl: String) {
         setQrCodeUrlCallsCount += 1
         let arguments = qrCodeUrl
         setQrCodeUrlReceivedArguments = arguments
         setQrCodeUrlReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension QrImageViewInputMock {
+    func fullReset() {
+        setQrCodeHTMLCallsCount = 0
+        setQrCodeHTMLReceivedArguments = nil
+        setQrCodeHTMLReceivedInvocations = []
+
+        setQrCodeUrlCallsCount = 0
+        setQrCodeUrlReceivedArguments = nil
+        setQrCodeUrlReceivedInvocations = []
     }
 }
