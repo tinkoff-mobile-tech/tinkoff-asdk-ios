@@ -68,7 +68,7 @@
         {% call methodThrowableErrorDeclaration method methodName %}
     {% endif %}
     {% if not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}CallsCount = 0
+    {% call staticSpecifier method %}var {{ methodName }}CallsCount = 0
     {% endif %}
     {% set hasNonEscapingClosures %}
         {%- for param in method.parameters where param.isClosure and not param.typeAttributes.escaping %}
@@ -76,8 +76,8 @@
         {% endfor -%}
     {% endset %}
     {% if not method.parameters.count == 0 %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
+    {% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
+    {% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
     {% endif %}
     {% for param in method.parameters where param.isClosure %}
     {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
@@ -85,7 +85,7 @@
         {%else%}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}{% endif %}
     {% endfor %}
     {% if not method.returnTypeName.isVoid and not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{% if method.returnTypeName|replace:"","" == 'Cancellable' %} = CancellableMock(){% else %}{{ '!' if not method.isOptionalReturnType }}{% endif %}
+    {% call staticSpecifier method %}var {{ methodName }}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{% if method.returnTypeName|replace:"","" == 'Cancellable' %} = CancellableMock(){% else %}{{ '!' if not method.isOptionalReturnType }}{% endif %}
     {% endif %}
 
 {% if method.isInitializer %}
@@ -98,7 +98,7 @@
     {{ value }}
     {% endfor %}
     {% endfor %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}func {{ method.name }}{{ ' async' if method.isAsync }}{{ ' throws' if method.throws }}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %} {
+    {% call staticSpecifier method %}func {{ method.name }}{{ ' async' if method.isAsync }}{{ ' throws' if method.throws }}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %} {
         {% if method.throws %}
         {% call methodThrowableErrorUsage method methodName %}
         {% endif %}
@@ -219,8 +219,7 @@
 {# !!! Дается ответ, есть ли в классе методы с дублирующим названием или нет #}
 {% set hasDoubleNamesInMethods %}{% if countOfMethodsNotInExtension == countOfTrue %}no{% else %}yes{% endif%}{% endset %}
 
-{% call accessLevel type.accessLevel %}final class {% call removeFirstLetter type.name %}Mock: {{ type.name }} {
-    {% if type.accessLevel == "public" %}public init() {}{% endif %}
+final class {% call removeFirstLetter type.name %}Mock: {{ type.name }} {
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}
