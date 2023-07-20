@@ -1,6 +1,6 @@
 //
 //
-//  SdkUiType+Ext.swift
+//  TdsSdkInterface+Ext.swift
 //
 //  Copyright (c) 2021 Tinkoff Bank
 //

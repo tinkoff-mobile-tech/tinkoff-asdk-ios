@@ -93,8 +93,8 @@ public struct ThreeDSDeviceInfo {
     /// specific challenge user interfaces within the 3DS SDK.
     ///
     /// Valid values for each Interface:
-    /// - Native UI = 01–04, 07
-    /// - HTML UI = 01–07
+    /// - Native UI = 01–04
+    /// - HTML UI = 01–05
     ///
     /// Values accepted:
     /// - 01 = Text
@@ -102,8 +102,6 @@ public struct ThreeDSDeviceInfo {
     /// - 03 = Multi Select
     /// - 04 = OOB
     /// - 05 = HTML Other (valid only for HTML UI)
-    /// - 06 = HTML OOB (valid only for HTML UI)
-    /// - 07 = Information
     public let sdkUiType: String
 
     // MARK: - Init
