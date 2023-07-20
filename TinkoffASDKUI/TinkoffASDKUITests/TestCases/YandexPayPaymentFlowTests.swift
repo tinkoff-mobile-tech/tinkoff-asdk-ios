@@ -68,7 +68,7 @@ final class YandexPayPaymentFlowTests: BaseTestCase {
         sut.yandexPayPaymentSheet(completedWith: .cancelled())
 
         // then
-        XCTAssertEqual(yandexPayPaymentFlowDelegateMock.didCompleteWithCallsCount, 1)
-        XCTAssertEqual(yandexPayPaymentFlowDelegateMock.didCompleteWithReceivedArguments?.result, .cancelled())
+        XCTAssertEqual(yandexPayPaymentFlowDelegateMock.yandexPayPaymentFlowCallsCount, 1)
+        XCTAssertEqual(yandexPayPaymentFlowDelegateMock.yandexPayPaymentFlowReceivedArguments?.result, .cancelled())
     }
 }
