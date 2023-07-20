@@ -9,7 +9,6 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class PaymentControllerMock: IPaymentController {
-
     var delegate: PaymentControllerDelegate?
     var webFlowDelegate: (any ThreeDSWebFlowDelegate)?
 
@@ -19,7 +18,7 @@ final class PaymentControllerMock: IPaymentController {
 
     var performPaymentCallsCount = 0
     var performPaymentReceivedArguments: PerformPaymentArguments?
-    var performPaymentReceivedInvocations: [PerformPaymentArguments] = []
+    var performPaymentReceivedInvocations: [PerformPaymentArguments?] = []
 
     func performPayment(paymentFlow: PaymentFlow, paymentSource: PaymentSourceData) {
         performPaymentCallsCount += 1
@@ -27,15 +26,14 @@ final class PaymentControllerMock: IPaymentController {
         performPaymentReceivedArguments = arguments
         performPaymentReceivedInvocations.append(arguments)
     }
+}
 
-    func performInitPayment(paymentOptions: PaymentOptions, paymentSource: PaymentSourceData) {
-        performPayment(paymentFlow: .full(paymentOptions: paymentOptions), paymentSource: paymentSource)
-    }
+// MARK: - Resets
 
-    func performFinishPayment(paymentOptions: FinishPaymentOptions, paymentSource: PaymentSourceData) {
-        performPayment(
-            paymentFlow: .finish(paymentOptions: paymentOptions),
-            paymentSource: paymentSource
-        )
+extension PaymentControllerMock {
+    func fullReset() {
+        performPaymentCallsCount = 0
+        performPaymentReceivedArguments = nil
+        performPaymentReceivedInvocations = []
     }
 }
