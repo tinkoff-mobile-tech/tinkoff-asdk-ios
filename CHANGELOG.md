@@ -39,6 +39,7 @@
 * [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
 * [EACQAPW-5586] Added to Sample Option to choose App Based Sdk Interface
 * [EACQAPW-5597] ThreeDSURLBuilder Tests
+* [EACQAPW-5606] IPAddressFactory Tests
 
 ### Fixed
 
