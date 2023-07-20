@@ -10,52 +10,73 @@ import UIKit
 
 final class YandexPayButtonContainerDelegateMock: IYandexPayButtonContainerDelegate {
 
-    // MARK: - yandexPayButtonContainer - didCompletePaymentWithResult
+    // MARK: - yandexPayButtonContainerContainerResult
 
-    typealias DidCompletePaymentWithResultArguments = (container: IYandexPayButtonContainer, result: PaymentResult)
+    typealias YandexPayButtonContainerContainerResultArguments = (container: IYandexPayButtonContainer, result: PaymentResult)
 
-    var didCompletePaymentWithResultCallsCount = 0
-    var didCompletePaymentWithResultReceivedArguments: DidCompletePaymentWithResultArguments?
-    var didCompletePaymentWithResultReceivedInvocations: [DidCompletePaymentWithResultArguments] = []
+    var yandexPayButtonContainerContainerResultCallsCount = 0
+    var yandexPayButtonContainerContainerResultReceivedArguments: YandexPayButtonContainerContainerResultArguments?
+    var yandexPayButtonContainerContainerResultReceivedInvocations: [YandexPayButtonContainerContainerResultArguments?] = []
 
     func yandexPayButtonContainer(_ container: IYandexPayButtonContainer, didCompletePaymentWithResult result: PaymentResult) {
-        didCompletePaymentWithResultCallsCount += 1
+        yandexPayButtonContainerContainerResultCallsCount += 1
         let arguments = (container, result)
-        didCompletePaymentWithResultReceivedArguments = arguments
-        didCompletePaymentWithResultReceivedInvocations.append(arguments)
+        yandexPayButtonContainerContainerResultReceivedArguments = arguments
+        yandexPayButtonContainerContainerResultReceivedInvocations.append(arguments)
     }
 
-    // MARK: - yandexPayButtonContainerDidRequestViewControllerForPresentation
+    // MARK: - yandexPayButtonContainerDidRequestViewControllerForPresentationContainer
 
-    var yandexPayButtonContainerDidRequestViewControllerForPresentationCallsCount = 0
-    var yandexPayButtonContainerDidRequestViewControllerForPresentationReceivedArguments: IYandexPayButtonContainer?
-    var yandexPayButtonContainerDidRequestViewControllerForPresentationReceivedInvocations: [IYandexPayButtonContainer] = []
-    var yandexPayButtonContainerDidRequestViewControllerForPresentationReturnValue: UIViewController?
+    typealias YandexPayButtonContainerDidRequestViewControllerForPresentationContainerArguments = IYandexPayButtonContainer
+
+    var yandexPayButtonContainerDidRequestViewControllerForPresentationContainerCallsCount = 0
+    var yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedArguments: YandexPayButtonContainerDidRequestViewControllerForPresentationContainerArguments?
+    var yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedInvocations: [YandexPayButtonContainerDidRequestViewControllerForPresentationContainerArguments?] = []
+    var yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReturnValue: UIViewController?
 
     func yandexPayButtonContainerDidRequestViewControllerForPresentation(_ container: IYandexPayButtonContainer) -> UIViewController? {
-        yandexPayButtonContainerDidRequestViewControllerForPresentationCallsCount += 1
+        yandexPayButtonContainerDidRequestViewControllerForPresentationContainerCallsCount += 1
         let arguments = container
-        yandexPayButtonContainerDidRequestViewControllerForPresentationReceivedArguments = arguments
-        yandexPayButtonContainerDidRequestViewControllerForPresentationReceivedInvocations.append(arguments)
-        return yandexPayButtonContainerDidRequestViewControllerForPresentationReturnValue
+        yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedArguments = arguments
+        yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedInvocations.append(arguments)
+        return yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReturnValue
     }
 
-    // MARK: - yandexPayButtonContainer
+    // MARK: - yandexPayButtonContainerContainer
 
-    typealias DidRequestPaymentFlowArguments = (container: IYandexPayButtonContainer, completion: (_ paymentFlow: PaymentFlow?) -> Void)
+    typealias YandexPayButtonContainerContainerArguments = (container: IYandexPayButtonContainer, completion: (_ paymentFlow: PaymentFlow?) -> Void)
 
-    var didRequestPaymentFlowCallsCount = 0
-    var didRequestPaymentFlowReceivedArguments: DidRequestPaymentFlowArguments?
-    var didRequestPaymentFlowReceivedInvocations: [DidRequestPaymentFlowArguments] = []
-    var didRequestPaymentFlowCompletionClosureInput: PaymentFlow??
+    var yandexPayButtonContainerContainerCallsCount = 0
+    var yandexPayButtonContainerContainerReceivedArguments: YandexPayButtonContainerContainerArguments?
+    var yandexPayButtonContainerContainerReceivedInvocations: [YandexPayButtonContainerContainerArguments?] = []
+    var yandexPayButtonContainerContainerCompletionClosureInput: PaymentFlow??
 
     func yandexPayButtonContainer(_ container: IYandexPayButtonContainer, didRequestPaymentFlow completion: @escaping (_ paymentFlow: PaymentFlow?) -> Void) {
-        didRequestPaymentFlowCallsCount += 1
+        yandexPayButtonContainerContainerCallsCount += 1
         let arguments = (container, completion)
-        didRequestPaymentFlowReceivedArguments = arguments
-        didRequestPaymentFlowReceivedInvocations.append(arguments)
-        if let didRequestPaymentFlowCompletionClosureInput = didRequestPaymentFlowCompletionClosureInput {
-            completion(didRequestPaymentFlowCompletionClosureInput)
+        yandexPayButtonContainerContainerReceivedArguments = arguments
+        yandexPayButtonContainerContainerReceivedInvocations.append(arguments)
+        if let yandexPayButtonContainerContainerCompletionClosureInput = yandexPayButtonContainerContainerCompletionClosureInput {
+            completion(yandexPayButtonContainerContainerCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayButtonContainerDelegateMock {
+    func fullReset() {
+        yandexPayButtonContainerContainerResultCallsCount = 0
+        yandexPayButtonContainerContainerResultReceivedArguments = nil
+        yandexPayButtonContainerContainerResultReceivedInvocations = []
+
+        yandexPayButtonContainerDidRequestViewControllerForPresentationContainerCallsCount = 0
+        yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedArguments = nil
+        yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedInvocations = []
+
+        yandexPayButtonContainerContainerCallsCount = 0
+        yandexPayButtonContainerContainerReceivedArguments = nil
+        yandexPayButtonContainerContainerReceivedInvocations = []
+        yandexPayButtonContainerContainerCompletionClosureInput = nil
     }
 }
