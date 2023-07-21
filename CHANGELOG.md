@@ -41,6 +41,7 @@
 * [EACQAPW-5597] ThreeDSURLBuilder Tests
 * [EACQAPW-5606] IPAddressFactory Tests
 * [EACQAPW-5607] ThreeDSDeviceInfoProvider Tests
+* [EACQAPW-5614] EnvironmentParametersProvider Tests
 
 ### Fixed
 
