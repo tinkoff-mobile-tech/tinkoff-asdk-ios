@@ -7,44 +7,72 @@
 
 @testable import TinkoffASDKUI
 
-final class ISBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
+final class SBPBankCellPresenterAssemblyMock: ISBPBankCellPresenterAssembly {
+
+    // MARK: - Common
 
     var buildCommonCallsCount = 0
-    var buildCommonInvocations: [SBPBankCellType] = []
+    var buildCommonInvocations: [BuildCellTypeArguments?] = []
 
-    // MARK: - build
+    // MARK: - buildCellType
 
-    var buildCallsCount = 0
-    var buildReceivedArguments: SBPBankCellType?
-    var buildReceivedInvocations: [SBPBankCellType] = []
-    var buildReturnValue: ISBPBankCellPresenter!
+    typealias BuildCellTypeArguments = SBPBankCellType
+
+    var buildCellTypeCallsCount = 0
+    var buildCellTypeReceivedArguments: BuildCellTypeArguments?
+    var buildCellTypeReceivedInvocations: [BuildCellTypeArguments?] = []
+    var buildCellTypeReturnValue: ISBPBankCellPresenter!
 
     func build(cellType: SBPBankCellType) -> ISBPBankCellPresenter {
         buildCommonCallsCount += 1
-        buildCallsCount += 1
+        buildCommonInvocations.append(cellType)
+
+        buildCellTypeCallsCount += 1
         let arguments = cellType
-        buildReceivedArguments = arguments
-        buildReceivedInvocations.append(arguments)
-        buildCommonInvocations.append(arguments)
-        return buildReturnValue
+        buildCellTypeReceivedArguments = arguments
+        buildCellTypeReceivedInvocations.append(arguments)
+        return buildCellTypeReturnValue
     }
 
-    // MARK: - build
+    // MARK: - buildCellTypeAction
 
-    typealias BuildWithActionArguments = (cellType: SBPBankCellType, action: VoidBlock)
+    typealias BuildCellTypeActionArguments = (cellType: SBPBankCellType, action: VoidBlock)
 
-    var buildWithActionCallsCount = 0
-    var buildWithActionReceivedArguments: BuildWithActionArguments?
-    var buildWithActionReceivedInvocations: [BuildWithActionArguments] = []
-    var buildWithActionReturnValue: ISBPBankCellPresenter!
+    var buildCellTypeActionCallsCount = 0
+    var buildCellTypeActionReceivedArguments: BuildCellTypeActionArguments?
+    var buildCellTypeActionReceivedInvocations: [BuildCellTypeActionArguments?] = []
+    var buildCellTypeActionShouldExecute = false
+    var buildCellTypeActionReturnValue: ISBPBankCellPresenter!
 
     func build(cellType: SBPBankCellType, action: @escaping VoidBlock) -> ISBPBankCellPresenter {
         buildCommonCallsCount += 1
-        buildWithActionCallsCount += 1
-        let arguments = (cellType, action)
-        buildWithActionReceivedArguments = arguments
-        buildWithActionReceivedInvocations.append(arguments)
         buildCommonInvocations.append(cellType)
-        return buildWithActionReturnValue
+
+        buildCellTypeActionCallsCount += 1
+        let arguments = (cellType, action)
+        buildCellTypeActionReceivedArguments = arguments
+        buildCellTypeActionReceivedInvocations.append(arguments)
+        if buildCellTypeActionShouldExecute {
+            action()
+        }
+        return buildCellTypeActionReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension SBPBankCellPresenterAssemblyMock {
+    func fullReset() {
+        buildCommonCallsCount = 0
+        buildCommonInvocations = []
+
+        buildCellTypeCallsCount = 0
+        buildCellTypeReceivedArguments = nil
+        buildCellTypeReceivedInvocations = []
+
+        buildCellTypeActionCallsCount = 0
+        buildCellTypeActionReceivedArguments = nil
+        buildCellTypeActionReceivedInvocations = []
+        buildCellTypeActionShouldExecute = false
     }
 }

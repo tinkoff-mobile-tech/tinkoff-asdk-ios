@@ -115,7 +115,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
 
     func test_thatSBPIsDisplayed_whenResponseContainsSbp() throws {
         // given
-        let banks = [SBPBank.fake()]
+        let banks = [SBPBank.fake]
         terminalServiceMock.getTerminalPayMethodsReturnValue = CancellableMock()
         terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
             .fake(methods: [.sbp])
@@ -141,7 +141,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
     func test_thatSBPIsNotPrimary_whenBanksListIsEmpty() throws {
         // given
         let errorStub = ErrorStub()
-        let banks = [SBPBank.fake()]
+        let banks = [SBPBank.fake]
         terminalServiceMock.getTerminalPayMethodsReturnValue = CancellableMock()
         terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
             .fake(methods: [.sbp])

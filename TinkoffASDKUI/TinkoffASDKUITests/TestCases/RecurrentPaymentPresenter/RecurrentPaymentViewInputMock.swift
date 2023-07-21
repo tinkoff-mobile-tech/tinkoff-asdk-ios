@@ -15,7 +15,7 @@ final class RecurrentPaymentViewInputMock: IRecurrentPaymentViewInput {
 
     var showCommonSheetCallsCount = 0
     var showCommonSheetReceivedArguments: ShowCommonSheetArguments?
-    var showCommonSheetReceivedInvocations: [ShowCommonSheetArguments] = []
+    var showCommonSheetReceivedInvocations: [ShowCommonSheetArguments?] = []
 
     func showCommonSheet(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         showCommonSheetCallsCount += 1
@@ -54,5 +54,23 @@ final class RecurrentPaymentViewInputMock: IRecurrentPaymentViewInput {
 
     func closeView() {
         closeViewCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension RecurrentPaymentViewInputMock {
+    func fullReset() {
+        showCommonSheetCallsCount = 0
+        showCommonSheetReceivedArguments = nil
+        showCommonSheetReceivedInvocations = []
+
+        hideCommonSheetCallsCount = 0
+
+        hideKeyboardCallsCount = 0
+
+        reloadDataCallsCount = 0
+
+        closeViewCallsCount = 0
     }
 }

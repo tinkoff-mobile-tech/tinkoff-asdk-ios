@@ -40,7 +40,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         // given
         let sut = prepareSut(paymentStatusRetriesCount: 10)
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = (0 ... .paymentStatusRetriesCount).map { _ in
             .success(.fake(status: .checking3ds))
@@ -62,7 +62,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         // given
         let sut = prepareSut(paymentStatusRetriesCount: 1)
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .deadlineExpired))]
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         applicationOpenerMock.canOpenURLReturnValue = true
@@ -83,7 +83,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .authorized))]
@@ -103,7 +103,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .rejected))]
@@ -122,7 +122,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .checked3ds))]
@@ -141,7 +141,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.success(.fake(status: .checked3ds))]
@@ -160,7 +160,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.failure(ErrorStub())]
@@ -179,7 +179,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
         paymentStatusServiceMock.getPaymentStateCompletionClosureInputs = [.failure(ErrorStub())]
@@ -209,7 +209,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         let sut = prepareSut(paymentStatusRetriesCount: 1)
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .failure(ErrorStub())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .failure(ErrorStub())
 
         // when
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
@@ -225,7 +225,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         queueMock.asyncWorkShouldExecute = true
 
         paymentService.initPaymentCompletionInput = .success(.fake())
-        tinkoffPayServiceMock.stubbedGetTinkoffPayLinkCompletion = .success(.fake())
+        tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = false
 
         // when

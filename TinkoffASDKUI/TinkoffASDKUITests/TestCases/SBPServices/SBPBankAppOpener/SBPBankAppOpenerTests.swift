@@ -42,7 +42,7 @@ final class SBPBankAppOpenerTests: BaseTestCase {
         // given
         let someUrlOptional = URL(string: "https://www.google.com")
         let someUrl = try XCTUnwrap(someUrlOptional)
-        let bank = SBPBank.any
+        let bank = SBPBank.fake
         applicationMock.openCompletionClosureInput = true
 
         var isOpenSuccess = false

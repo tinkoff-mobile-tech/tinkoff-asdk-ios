@@ -15,8 +15,8 @@ final class CardFieldPresenterAssemblyMock: ICardFieldPresenterAssembly {
 
     var buildCallsCount = 0
     var buildReceivedArguments: BuildArguments?
-    var buildReceivedInvocations: [BuildArguments] = []
-    var buildReturnValue: ICardFieldViewOutput = CardFieldViewOutputMock()
+    var buildReceivedInvocations: [BuildArguments?] = []
+    var buildReturnValue = CardFieldViewOutputMock()
 
     func build(output: ICardFieldOutput?, isScanButtonNeeded: Bool) -> ICardFieldViewOutput {
         buildCallsCount += 1
@@ -24,5 +24,15 @@ final class CardFieldPresenterAssemblyMock: ICardFieldPresenterAssembly {
         buildReceivedArguments = arguments
         buildReceivedInvocations.append(arguments)
         return buildReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension CardFieldPresenterAssemblyMock {
+    func fullReset() {
+        buildCallsCount = 0
+        buildReceivedArguments = nil
+        buildReceivedInvocations = []
     }
 }

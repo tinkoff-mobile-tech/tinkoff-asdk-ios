@@ -13,14 +13,22 @@ final class MainFormOrderDetailsViewOutputMock: IMainFormOrderDetailsViewOutput 
     // MARK: - copy
 
     var copyCallsCount = 0
-    var copyReturnValue: (any IMainFormOrderDetailsViewOutput)?
+    var copyReturnValue: (any IMainFormOrderDetailsViewOutput)!
 
     func copy() -> any IMainFormOrderDetailsViewOutput {
         copyCallsCount += 1
-        return copyReturnValue!
+        return copyReturnValue
     }
 
     static func == (lhs: MainFormOrderDetailsViewOutputMock, rhs: MainFormOrderDetailsViewOutputMock) -> Bool {
         return lhs.view === rhs.view
+    }
+}
+
+// MARK: - Resets
+
+extension MainFormOrderDetailsViewOutputMock {
+    func fullReset() {
+        copyCallsCount = 0
     }
 }

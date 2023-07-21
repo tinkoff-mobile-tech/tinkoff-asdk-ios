@@ -251,39 +251,3 @@ final class TDSCertsManagerTests: BaseTestCase {
         }
     }
 }
-
-// MARK: - Helpers
-
-extension Get3DSAppBasedCertsConfigPayload {
-    static func fake(certificates: [CertificateData]) -> Get3DSAppBasedCertsConfigPayload {
-        Get3DSAppBasedCertsConfigPayload(certificates: certificates)
-    }
-}
-
-extension CertificateData {
-    static func fake(type: CertificateType, algorithm: CertificateAlgorithm, forceUpdateFlag: Bool) -> CertificateData {
-        CertificateData(
-            paymentSystem: "Some",
-            directoryServerID: "123",
-            type: type,
-            url: .doesNotMatter,
-            notAfterDate: .distantFuture,
-            sha256Fingerprint: "some",
-            algorithm: algorithm,
-            forceUpdateFlag: forceUpdateFlag
-        )
-    }
-}
-
-extension CertificateUpdatingRequest {
-    static func fake() -> CertificateUpdatingRequest {
-        CertificateUpdatingRequest(
-            certificateType: .dsRootCA,
-            directoryServerID: "asd",
-            algorithm: .ec,
-            notAfterDate: .distantFuture,
-            sha256Fingerprint: "asd",
-            url: .doesNotMatter
-        )
-    }
-}

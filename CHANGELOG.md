@@ -13,6 +13,7 @@
 * [EACQAPW-5331] Tests property names to one style
 * [EACQAPW-5332] CardListPresenter Tests
 * [EACQAPW-5347] CardPaymentProcess Tests
+* [EACQAPW-5360] Sourcery teplate improvements
 * [EACQAPW-5362] CellImageLoader Tests
 * [EACQAPW-5371] TDSCertsManager Tests
 * [EACQAPW-5400] TDSTimeoutResolver Tests
@@ -36,6 +37,11 @@
 * [EACQAPW-5581] CardDataFormatter Tests
 * [EACQAPW-5583] URLDataLoaderTests Tests
 * [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
+* [EACQAPW-5586] Added to Sample Option to choose App Based Sdk Interface
+* [EACQAPW-5597] ThreeDSURLBuilder Tests
+* [EACQAPW-5606] IPAddressFactory Tests
+* [EACQAPW-5607] ThreeDSDeviceInfoProvider Tests
+* [EACQAPW-5614] EnvironmentParametersProvider Tests
 * [EACQAPW-5588] Added UITests target and added tests utils methods
 
 ### Fixed

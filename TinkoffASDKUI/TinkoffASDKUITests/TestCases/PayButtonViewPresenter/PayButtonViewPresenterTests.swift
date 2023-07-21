@@ -63,9 +63,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
         sut.set(enabled: true)
 
         // then
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, true)
     }
 
     func test_setEnabled_false() {
@@ -73,9 +73,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
         sut.set(enabled: false)
 
         // then
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, false)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, true)
     }
 
     func test_payButton_Tapped() {
@@ -97,9 +97,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 1)
         XCTAssertEqual(viewMock.setConfigurationReceivedArguments?.title, title)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, false)
         XCTAssertEqual(viewMock.stopLoadingCallsCount, 1)
     }
 
@@ -114,9 +114,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 1)
         XCTAssertEqual(viewMock.setConfigurationReceivedArguments?.title, title)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, false)
         XCTAssertEqual(viewMock.stopLoadingCallsCount, 1)
     }
 
@@ -132,9 +132,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, false)
         XCTAssertEqual(viewMock.startLoadingCallsCount, 1)
     }
 
@@ -147,9 +147,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, false)
         XCTAssertEqual(viewMock.stopLoadingCallsCount, 1)
     }
 
@@ -162,9 +162,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, false)
         XCTAssertEqual(viewMock.stopLoadingCallsCount, 1)
     }
 
@@ -174,9 +174,9 @@ final class PayButtonViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 1)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.enabled, true)
-        XCTAssertEqual(viewMock.setEnabledReceivedArguments?.animated, false)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 1)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.enabled, true)
+        XCTAssertEqual(viewMock.setEnabledAnimatedReceivedArguments?.animated, false)
         XCTAssertEqual(viewMock.stopLoadingCallsCount, 1)
     }
 
@@ -186,7 +186,7 @@ final class PayButtonViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setConfigurationCallsCount, 0)
-        XCTAssertEqual(viewMock.setEnabledCallsCount, 0)
+        XCTAssertEqual(viewMock.setEnabledAnimatedCallsCount, 0)
         XCTAssertEqual(viewMock.stopLoadingCallsCount, 0)
     }
 }

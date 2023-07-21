@@ -1,100 +1,96 @@
-// swiftlint:disable line_length
-// swiftlint:disable variable_name
-
-import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
-
-{% for import in argument.autoMockableImports %}
-import {{ import }}
-{% endfor %}
-
-{% for import in argument.autoMockableTestableImports %}
-@testable import {{ import }}
-{% endfor %}
-
+{# !!! swiftifyMethodName - Удаляет лишние символы из названия метода. #}
 {% macro swiftifyMethodName name %}{{ name | replace:"(","_" | replace:")","" | replace:":","_" | replace:"`","" | snakeToCamelCase | lowerFirstWord }}{% endmacro %}
 
+{# !!! uniqShortName - Делает название метода более уникальным, добавляя к нему названия первых двух параметров, если параметры не являются closure. #}
+{% macro uniqShortName method %}{% call swiftifyMethodName method.shortName %}{% for param in method.parameters %}{% if forloop.counter < 3 %}{{ param.name|upperFirstLetter if not param.isClosure }}{% endif %}{% endfor %}{% endmacro %}
+
+{# !!! accessLevel - Добавляет нужный уровень доступа к методу c пробелом. internal игнорируется. #}
 {% macro accessLevel level %}{% if level != 'internal' %}{{ level }} {% endif %}{% endmacro %}
 
+{# !!! staticSpecifier - Добавляет static к методу c пробелом, если он статичный. Учитывает инициализаторы. #}
 {% macro staticSpecifier method %}{% if method.isStatic and not method.isInitializer %}static {% endif %}{% endmacro %}
 
-{% macro methodThrowableErrorDeclaration method %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ThrowableError: Error?
+{# !!! removeFirstLetter - Удаляет первый символ у строки. #}
+{% macro removeFirstLetter string %}{% for i in 0...string.count %}{% if not forloop.first and not forloop.last %}{{ type.name[i] }}{% endif %}{% endfor %}{% endmacro %}
+
+{# !!! methodThrowableErrorDeclaration - Добавляет свойство отвечающие за throws метода если нужно. #}
+{% macro methodThrowableErrorDeclaration method methodName %}
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ThrowableError: Error?
 {% endmacro %}
 
-{% macro methodThrowableErrorUsage method %}
-        if let error = {% call swiftifyMethodName method.shortName %}ThrowableError {
+{# !!! methodThrowableErrorUsage - Добавляет реализацию throws в метод. #}
+{% macro methodThrowableErrorUsage method methodName %}
+        if let error = {{ methodName }}ThrowableError {
             throw error
         }
 {% endmacro %}
 
-{% macro methodReceivedParameters method %}
+{# !!! methodClosureCallParameters - Добавляет все параметры метода. #}
+{% macro methodClosureCallParameters method %}{% for param in method.parameters %}{{ param.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endmacro %}
+
+{# !!! mockedVariableName - Просто обертка над названием переменной. #}
+{% macro mockedVariableName variable %}{{ variable.name }}{% endmacro %}
+
+{# !!! methodReceivedParameters - Добавляет реализацию связанную с переданными параметрами в метод. #}
+{% macro methodReceivedParameters method methodName %}
         {% if method.parameters.count > 0 %}
-        {% set shortNameOfTheMethod %}{% call swiftifyMethodName method.shortName %}{% endset %}
+        {% set shortNameOfTheMethod %}{{ methodName }}{% endset %}
         let arguments = ({% call methodClosureCallParameters method %})
         {{ shortNameOfTheMethod }}ReceivedArguments = arguments
         {{ shortNameOfTheMethod }}ReceivedInvocations.append(arguments)
         {% for param in method.parameters where param.isClosure %}
+        {% if param.typeName.closure.parameters.count == 0 %}
+        if {{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ShouldExecute {
+            {{ param.name}}{{ '?' if param.isOptional }}()
+        }
+        {%else%}
         {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
         if let {{ closureInput }} = {{ closureInput }} {
-            {{ param.name}}({{ closureInput }})
+            {{ param.name}}{{ '?' if param.isOptional }}({{ closureInput }})
         }
+        {% endif %}
         {% endfor -%}
         {% endif %}
 {% endmacro %}
-{% macro methodClosureName method %}{% call swiftifyMethodName method.shortName %}Clos2213ure{% endmacro %}
 
-{% macro closureReturnTypeName method %}{% if method.isOptionalReturnType %}{{ method.unwrappedReturnTypeName }}?{% else %}{{ method.returnTypeName }}{% endif %}{% endmacro %}
+{# !!! mockMethod - Создает метод со всеми нужными ему полями. #}
+{% macro mockMethod method methodName %}
 
-{% macro methodClosureDeclaration method %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call methodClosureName method %}: (({% for param in method.parameters %}{{ param.typeName }}{% if not forloop.last %}, {% endif %}{% endfor %}) {% if method.isAsync %}async {% endif %}{% if method.throws %}throws {% endif %}-> {% if method.isInitializer %}Void{% else %}{% call closureReturnTypeName method %}{% endif %})?
-{% endmacro %}
+    // MARK: - {{ methodName }}
+    {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{% if param.typeAttributes.escaping %}{{ param.unwrappedTypeName }}{% elif param.isOptional %}{{ param.unwrappedTypeName }}{% else %}{{ param.typeName }}{% endif %}{% endfor %}{%endif%}{% endset %}
+    {% set prefferedArgumentsType %}{{ methodName|upperFirstLetter }}Arguments{% endset %}
+    {% if not method.parameters.count == 0 %}
 
-{% macro methodClosureCallParameters method %}{% for param in method.parameters %}{{ param.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endmacro %}
-
-{% macro mockMethod method %}
-    // MARK: - {{ method.shortName }}
-    {% set argumentsType %}{% if method.parameters.count > 1 %}({% for param in method.parameters %}{{ param.name }}: {{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){% else %}{% for param in method.parameters %}{{ param.unwrappedTypeName if param.typeAttributes.escaping else param.typeName }}{% endfor %}{%endif%}{% endset %}
-    {% set prefferedArgumentsType %}{% if method.parameters.count > 1 %}{{ method.shortName|upperFirstLetter }}Arguments{% else %}{{ argumentsType }}{% endif %}{% endset %}
-    {% if method.parameters.count > 1 %}
-
-    typealias {{ method.shortName|upperFirstLetter }}Arguments = {{ argumentsType }}
+    typealias {{ methodName|upperFirstLetter }}Arguments = {{ argumentsType }}
     {% endif %}
 
     {% if method.throws %}
-        {% call methodThrowableErrorDeclaration method %}
+        {% call methodThrowableErrorDeclaration method methodName %}
     {% endif %}
     {% if not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}CallsCount = 0
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}CallsCount = 0
     {% endif %}
     {% set hasNonEscapingClosures %}
         {%- for param in method.parameters where param.isClosure and not param.typeAttributes.escaping %}
             {{ true }}
         {% endfor -%}
     {% endset %}
-    {% if method.parameters.count == 1 and not hasNonEscapingClosures %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedArguments: {{ prefferedArgumentsType }}?
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
-    {% elif not method.parameters.count == 0 and not hasNonEscapingClosures %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedArguments: {{ prefferedArgumentsType }}?
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReceivedInvocations: [{{ prefferedArgumentsType }}] = []
+    {% if not method.parameters.count == 0 %}
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedArguments: {{ prefferedArgumentsType }}?
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
     {% endif %}
     {% for param in method.parameters where param.isClosure %}
-    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})?
-    {% endset %}
-    var {% call swiftifyMethodName method.shortName %}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}
+    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
+    {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+        {%else%}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}{% endif %}
     {% endfor %}
     {% if not method.returnTypeName.isVoid and not method.isInitializer %}
-    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {% call swiftifyMethodName method.shortName %}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ '!' if not method.isOptionalReturnType }}
+    {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}var {{ methodName }}ReturnValue: {{ '(' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{{ method.returnTypeName }}{{ ')' if method.returnTypeName.isClosure and not method.isOptionalReturnType }}{% if method.returnTypeName|replace:"","" == 'Cancellable' %} = CancellableMock(){% else %}{{ '!' if not method.isOptionalReturnType }}{% endif %}
     {% endif %}
 
 {% if method.isInitializer %}
     {% call accessLevel method.accessLevel %}required {{ method.name }} {
-        {% call methodReceivedParameters method %}
+        {% call methodReceivedParameters method methodName %}
     }
 {% else %}
     {% for name, attribute in method.attributes %}
@@ -104,50 +100,50 @@ import {{ import }}
     {% endfor %}
     {% call accessLevel method.accessLevel %}{% call staticSpecifier method %}func {{ method.name }}{{ ' async' if method.isAsync }}{{ ' throws' if method.throws }}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %} {
         {% if method.throws %}
-        {% call methodThrowableErrorUsage method %}
+        {% call methodThrowableErrorUsage method methodName %}
         {% endif %}
-        {% call swiftifyMethodName method.shortName %}CallsCount += 1
-        {% call methodReceivedParameters method %}
+        {{ methodName }}CallsCount += 1
+        {% call methodReceivedParameters method methodName %}
         {% if method.returnTypeName.isVoid %}
         {% else %}
-        return {% call swiftifyMethodName method.shortName %}ReturnValue
+        return {{ methodName }}ReturnValue
         {% endif %}
     }
-
 {% endif %}
 {% endmacro %}
 
-{% macro resetMethod method %}
-        {# for type method which are mocked, a way to reset the invocation, argument, etc #}
-        {% if method.isStatic and not method.isInitializer %} //MARK: - {{ method.shortName }}
-        {% if not method.isInitializer %}
-        {% call swiftifyMethodName method.shortName %}CallsCount = 0
-        {% endif %}
-        {% if method.parameters.count == 1 %}
-        {% call swiftifyMethodName method.shortName %}Received{% for param in method.parameters %}{{ param.name|upperFirstLetter }}{% endfor %} = nil
-        {% call swiftifyMethodName method.shortName %}ReceivedInvocations = []
-        {% elif not method.parameters.count == 0 %}
-        {% call swiftifyMethodName method.shortName %}ReceivedArguments = nil
-        {% call swiftifyMethodName method.shortName %}ReceivedInvocations = []
-        {% endif %}
-        {% call methodClosureName method %} = nil
+{# !!! fullResetMethod - Создает реализацию метода, который обнуляет все параметры. #}
+{% macro fullResetMethod method methodName %}
         {% if method.throws %}
-        {% call swiftifyMethodName method.shortName %}ThrowableError = nil
+        {{ methodName }}ThrowableError = nil
         {% endif %}
-        
+        {% if not method.isInitializer %}
+        {{ methodName }}CallsCount = 0
         {% endif %}
-
+        {% if not method.parameters.count == 0 %}
+        {{ methodName }}ReceivedArguments = nil
+        {{ methodName }}ReceivedInvocations = []
+        {% endif %}
+        {% for param in method.parameters where param.isClosure %}
+        {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
+        {%else%}{{ param.name|upperFirstLetter }}ClosureInput = nil
+        {% endif %}
+        {% endfor %}
 {% endmacro %}
 
+{# !!! mockOptionalVariable - Пока не описанный метод. #}
 {% macro mockOptionalVariable variable %}
     {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }}
 {% endmacro %}
 
+{# !!! mockNonOptionalArrayOrDictionaryVariable - Пока не описанный метод. #}
 {% macro mockNonOptionalArrayOrDictionaryVariable variable %}
     {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }} = {% if variable.isArray %}[]{% elif variable.isDictionary %}[:]{% endif %}
 {% endmacro %}
 
+{# !!! mockNonOptionalVariable - Пока не описанный метод. #}
 {% macro mockNonOptionalVariable variable %}
+
     {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }} {
         get { return {% call underlyingMockedVariableName variable %} }
         set(value) { {% call underlyingMockedVariableName variable %} = value }
@@ -156,22 +152,27 @@ import {{ import }}
     {% call accessLevel variable.readAccess %}var {% call underlyingMockedVariableName variable %}: {{ wrappedTypeName }}!
 {% endmacro %}
 
+{# !!! variableThrowableErrorDeclaration - Пока не описанный метод. #}
 {% macro variableThrowableErrorDeclaration variable %}
     {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}ThrowableError: Error?
 {% endmacro %}
 
+{# !!! variableThrowableErrorUsage - Пока не описанный метод. #}
 {% macro variableThrowableErrorUsage variable %}
             if let error = {% call mockedVariableName variable %}ThrowableError {
                 throw error
             }
 {% endmacro %}
 
+{# !!! variableClosureDeclaration - Пока не описанный метод. #}
 {% macro variableClosureDeclaration variable %}
     {% call accessLevel variable.readAccess %}var {% call variableClosureName variable %}: (() {% if variable.isAsync %}async {% endif %}{% if variable.throws %}throws {% endif %}-> {{ variable.typeName }})?
 {% endmacro %}
 
+{# !!! variableClosureName - Пока не описанный метод. #}
 {% macro variableClosureName variable %}{% call mockedVariableName variable %}Closure{% endmacro %}
 
+{# !!! mockAsyncOrThrowingVariable - Пока не описанный метод. #}
 {% macro mockAsyncOrThrowingVariable variable %}
     {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}CallsCount = 0
 
@@ -195,26 +196,65 @@ import {{ import }}
     {% call variableClosureDeclaration method %}
 {% endmacro %}
 
+{# !!! underlyingMockedVariableName - Пока не описанный метод. #}
 {% macro underlyingMockedVariableName variable %}underlying{{ variable.name|upperFirstLetter }}{% endmacro %}
-{% macro mockedVariableName variable %}{{ variable.name }}{% endmacro %}
+
+{# ============================================ #}
+{# !!! Вся логика генерации начинается ниже !!! #}
+{# ============================================ #}
 
 {% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}{% if type.name != "AutoMockable" %}
-{% call accessLevel type.accessLevel %}final class {{ type.name }}Mock: {{ type.name }} {
+
+{# !!! Определяем количество методов в классе, которые находятся не в extension (считается количество получившихся символов, а не количество элементов) #}
+{% set methodsNotInExtensionLine %}{% for method in type.allMethods|!definedInExtension %}true{{ '/' if not forloop.last }}{%endfor%}{% endset%}
+{% set arrayOfMethodsNotInExtension %}{{ methodsNotInExtensionLine|split:"/" }}{% endset %}
+{% set countOfMethodsNotInExtension %}{{ arrayOfMethodsNotInExtension.count }}{% endset %}
+    
+{# !!! Определяем количество методов в классе с дублирующими названиями, которые находятся не в extension (считается количество получившихся символов, а не количество элементов) #}
+{% set trueFalseLine %}{% outer: for firstMethod in type.allMethods|!definedInExtension %}{% inner: for secondMethod in type.allMethods|!definedInExtension %}{% if firstMethod.shortName == secondMethod.shortName %}true{% else %}false{% endif %}{{ '/' if not forloop.inner.last }}{% endfor %}{{ '/' if not forloop.outer.last }}{% endfor %}{% endset %}
+{% set onlyTrueLine %}{{ trueFalseLine | replace:"false/","" | replace:"false",""  }}{% endset%}
+{% set arrayOfTrue %}{{ onlyTrueLine|split:"/" }}{% endset%}
+{% set countOfTrue %}{{ arrayOfTrue.count }}{% endset%}
+
+{# !!! Дается ответ, есть ли в классе методы с дублирующим названием или нет #}
+{% set hasDoubleNamesInMethods %}{% if countOfMethodsNotInExtension == countOfTrue %}no{% else %}yes{% endif%}{% endset %}
+
+{% call accessLevel type.accessLevel %}final class {% call removeFirstLetter type.name %}Mock: {{ type.name }} {
     {% if type.accessLevel == "public" %}public init() {}{% endif %}
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}
-{% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
-    static func reset()
-    {
-    {% for method in type.allMethods|static %}
-        {% call resetMethod method %}
-    {% endfor %}
-    }
-{% endif %}
-
 {% for method in type.allMethods|!definedInExtension %}
-    {% call mockMethod method %}
+    {% set uniqMethodName %}{% if hasDoubleNamesInMethods == 'yes' %}{% call uniqShortName method %}{% else %}{% call swiftifyMethodName method.shortName %}{% endif %}{% endset%}
+    {% call mockMethod method uniqMethodName %}
 {% endfor %}
 }
-{% endif %}{% endfor %}
+{% if type.allMethods.count != 0 %}
+
+// MARK: - Resets
+
+extension {% call removeFirstLetter type.name %}Mock {
+    {% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
+    static func fullStaticReset() {
+    {% for method in type.allMethods|static %}
+        {% call fullResetMethod method %}
+        {% if not forloop.last %}
+
+        {% endif %}
+    {% endfor %}
+    }
+
+    {% endif %}
+    func fullReset() {
+    {% for method in type.allMethods|!definedInExtension where not method.isStatic %}
+        {% set uniqMethodName %}{% if hasDoubleNamesInMethods == 'yes' %}{% call uniqShortName method %}{% else %}{% call swiftifyMethodName method.shortName %}{% endif %}{% endset%}
+        {% call fullResetMethod method uniqMethodName %}
+        {% if not forloop.last %}
+
+        {% endif %}
+    {% endfor %}
+    }
+}
+{% endif %}
+{% endif %}
+{% endfor %}

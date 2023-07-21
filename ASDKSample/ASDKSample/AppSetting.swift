@@ -89,6 +89,12 @@ final class AppSetting {
         }
     }
 
+    var appBasedSdkInterface: TdsSdkInterface = .both {
+        didSet {
+            UserDefaults.standard.set(appBasedSdkInterface.rawValue, forKey: .keyAppBasedSdkInterface)
+        }
+    }
+
     var serverType: AcquiringSdkEnvironment = .test {
         didSet {
             UserDefaults.standard.set(serverType.rawValue, forKey: .keyServerType)
@@ -125,6 +131,10 @@ final class AppSetting {
         acquiring = userDefaults.bool(forKey: .keyKindForAlertView)
         if let value = userDefaults.string(forKey: .keyAddCardCheckType) {
             addCardChekType = PaymentCardCheckType(rawValue: value)
+        }
+
+        if let appBasedSdkInterfaceValue = userDefaults.string(forKey: .keyAppBasedSdkInterface) {
+            appBasedSdkInterface = TdsSdkInterface(rawValue: appBasedSdkInterfaceValue) ?? .both
         }
 
         if let value = userDefaults.string(forKey: .keyServerType) {
@@ -177,6 +187,7 @@ private extension String {
     static let keyShowEmailField = "SettingKeyShowEmailField"
     static let keyKindForAlertView = "KindForAlertView"
     static let keyAddCardCheckType = "AddCardChekType"
+    static let keyAppBasedSdkInterface = "AppBasedSdkInterface"
     static let keyServerType = "ServerType"
     static let keyCustomServer = "CustomServer"
     static let keyLanguageId = "LanguageId"
