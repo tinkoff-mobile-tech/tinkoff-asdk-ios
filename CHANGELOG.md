@@ -36,6 +36,7 @@
 * [EACQAPW-5581] CardDataFormatter Tests
 * [EACQAPW-5583] URLDataLoaderTests Tests
 * [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
+* [EACQAPW-5588] Added UITests target and added tests utils methods
 
 ### Fixed
 
