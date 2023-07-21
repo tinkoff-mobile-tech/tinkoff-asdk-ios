@@ -2,7 +2,7 @@
 {% macro swiftifyMethodName name %}{{ name | replace:"(","_" | replace:")","" | replace:":","_" | replace:"`","" | snakeToCamelCase | lowerFirstWord }}{% endmacro %}
 
 {# !!! uniqShortName - Делает название метода более уникальным, добавляя к нему названия первых двух параметров, если параметры не являются closure. #}
-{% macro uniqShortName method %}{% call swiftifyMethodName method.shortName %}{% for param in method.parameters %}{% if forloop.counter < 3 %}{{ param.name|upperFirstLetter if not param.isClosure }}{% endif %}{% endfor %}{% endmacro %}
+{% macro uniqShortName method %}{% call swiftifyMethodName method.shortName %}{% for param in method.parameters %}{% if forloop.counter < 3 and param.argumentLabel.count == 0 %}{{ param.name|upperFirstLetter if not param.isClosure }}{% elif forloop.counter < 3 %}{% set argumentLabel %}{{ param.argumentLabel }}{% endset %}{{ argumentLabel|upperFirstLetter if not param.isClosure }}{% endif %}{% endfor %}{% endmacro %}
 
 {# !!! accessLevel - Добавляет нужный уровень доступа к методу c пробелом. internal игнорируется. #}
 {% macro accessLevel level %}{% if level != 'internal' %}{{ level }} {% endif %}{% endmacro %}
