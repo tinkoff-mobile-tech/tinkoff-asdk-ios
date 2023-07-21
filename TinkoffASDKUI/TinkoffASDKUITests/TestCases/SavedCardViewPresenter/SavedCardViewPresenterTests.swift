@@ -236,9 +236,9 @@ final class SavedCardViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setCVCFieldInvalidCallsCount, 1)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterCvcCallsCount, 2)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterCvcReceivedArguments?.cvc, cvc)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterCvcReceivedArguments?.isValid, false)
+        XCTAssertEqual(outputMock.savedCardPresenterDidUpdateCVCCallsCount, 2)
+        XCTAssertEqual(outputMock.savedCardPresenterDidUpdateCVCReceivedArguments?.cvc, cvc)
+        XCTAssertEqual(outputMock.savedCardPresenterDidUpdateCVCReceivedArguments?.isValid, false)
     }
 
     func test_savedCardViewDidChangeCVC_oldValue() {
@@ -250,7 +250,7 @@ final class SavedCardViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.setCVCFieldInvalidCallsCount, 0)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterCvcCallsCount, 0)
+        XCTAssertEqual(outputMock.savedCardPresenterDidUpdateCVCCallsCount, 0)
     }
 
     func test_savedCardViewDidBeginCVCFieldEditing_when_shouldShowValidState() {
@@ -278,7 +278,7 @@ final class SavedCardViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.deactivateCVCFieldCallsCount, 1)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterPaymentCardCallsCount, 0)
+        XCTAssertEqual(outputMock.savedCardPresenterDidUpdateCVCCallsCount, 0)
     }
 
     func test_savedCardViewIsSelected_when_presentationState_selected_and_showChangeDescriptionTrue() {
@@ -292,8 +292,8 @@ final class SavedCardViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.deactivateCVCFieldCallsCount, 1)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterPaymentCardCallsCount, 1)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterPaymentCardReceivedArguments?.paymentCard, paymentCard)
+        XCTAssertEqual(outputMock.savedCardPresenterDidRequestReplacementForCallsCount, 1)
+        XCTAssertEqual(outputMock.savedCardPresenterDidRequestReplacementForReceivedArguments?.paymentCard, paymentCard)
     }
 
     func test_savedCardViewIsSelected_when_presentationState_selected_and_showChangeDescriptionFalse() {
@@ -307,7 +307,7 @@ final class SavedCardViewPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(viewMock.deactivateCVCFieldCallsCount, 1)
-        XCTAssertEqual(outputMock.savedCardPresenterPresenterPaymentCardCallsCount, 0)
+        XCTAssertEqual(outputMock.savedCardPresenterDidUpdateCVCCallsCount, 0)
     }
 }
 
