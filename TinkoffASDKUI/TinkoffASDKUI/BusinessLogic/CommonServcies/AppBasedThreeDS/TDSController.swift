@@ -171,16 +171,21 @@ extension TDSController {
         let deviceInfoFromProvider = threeDSDeviceInfoProvider.deviceInfo
         return ThreeDSDeviceInfo(
             threeDSCompInd: deviceInfoFromProvider.threeDSCompInd,
-            cresCallbackUrl: deviceInfoFromProvider.cresCallbackUrl,
-            languageId: deviceInfoFromProvider.language,
-            screenWidth: deviceInfoFromProvider.screenWidth,
+            javaEnabled: deviceInfoFromProvider.javaEnabled,
+            colorDepth: deviceInfoFromProvider.colorDepth,
+            language: deviceInfoFromProvider.language,
+            timezone: deviceInfoFromProvider.timezone,
             screenHeight: deviceInfoFromProvider.screenHeight,
+            screenWidth: deviceInfoFromProvider.screenWidth,
+            cresCallbackUrl: deviceInfoFromProvider.cresCallbackUrl,
             sdkAppID: authParams.getSDKAppID(),
             sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
             sdkReferenceNumber: authParams.getSDKReferenceNumber(),
             sdkTransID: authParams.getSDKTransactionID(),
             sdkMaxTimeout: tdsTimeoutResolver.mapiValue,
-            sdkEncData: authParams.getDeviceData()
+            sdkEncData: authParams.getDeviceData(),
+            sdkInterface: deviceInfoFromProvider.sdkInterface,
+            sdkUiType: deviceInfoFromProvider.sdkUiType
         )
     }
 

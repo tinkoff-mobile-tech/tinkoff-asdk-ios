@@ -31,6 +31,7 @@ extension HorizontalTitleSwitchView {
     struct Style {
         static let basic = Style()
         var spacingBetween: CGFloat = 15
+        var switchTextColor: UIColor = .dynamicText
     }
 }
 
@@ -83,6 +84,7 @@ final class HorizontalTitleSwitchView: UIView, ConfigurableAndReusable, Stylable
     func apply(style: Style) {
         setupViews()
         spacingBetween = style.spacingBetween
+        label.textColor = style.switchTextColor
 
         switchView.makeConstraints { make in
             [

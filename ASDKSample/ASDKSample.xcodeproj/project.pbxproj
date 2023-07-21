@@ -59,6 +59,8 @@
 		B1A4EDDF28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */; };
 		B1A4EDE128F3FD73004D0C99 /* VerticalEditableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */; };
 		B1A4EDE328F3FD86004D0C99 /* CredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */; };
+		B1AC71B72A6802C700A0FCD5 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AC71B62A6802C700A0FCD5 /* UIColor+Ext.swift */; };
+		B1AC71B92A680AE500A0FCD5 /* TdsSdkInterface+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AC71B82A680AE500A0FCD5 /* TdsSdkInterface+Ext.swift */; };
 		B1AE34802A17AC9400B31257 /* YandexPayHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AE347F2A17AC9400B31257 /* YandexPayHelper.swift */; };
 		B1AE34822A17ACBA00B31257 /* YandexPayButtonTestsEN.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AE34812A17ACBA00B31257 /* YandexPayButtonTestsEN.swift */; };
 		B1AE34842A17ACDB00B31257 /* YandexPayButtonTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AE34832A17ACDB00B31257 /* YandexPayButtonTestsRU.swift */; };
@@ -139,6 +141,8 @@
 		B1A4EDDE28F3FD4B004D0C99 /* HorizontalTitleSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalTitleSwitchView.swift; sourceTree = "<group>"; };
 		B1A4EDE028F3FD73004D0C99 /* VerticalEditableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalEditableView.swift; sourceTree = "<group>"; };
 		B1A4EDE228F3FD86004D0C99 /* CredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsView.swift; sourceTree = "<group>"; };
+		B1AC71B62A6802C700A0FCD5 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
+		B1AC71B82A680AE500A0FCD5 /* TdsSdkInterface+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TdsSdkInterface+Ext.swift"; sourceTree = "<group>"; };
 		B1AE34782A17AB8C00B31257 /* ASDKSampleTests-EN.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ASDKSampleTests-EN.xctestplan"; sourceTree = "<group>"; };
 		B1AE34792A17ABD900B31257 /* ASDKSampleTests-RU.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ASDKSampleTests-RU.xctestplan"; sourceTree = "<group>"; };
 		B1AE347F2A17AC9400B31257 /* YandexPayHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexPayHelper.swift; sourceTree = "<group>"; };
@@ -342,7 +346,9 @@
 				B156F90D28F06B3700ABABDD /* UIView+Ext.swift */,
 				B1C97B7728F46E4000DC007B /* UIImage+Ext.swift */,
 				B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */,
+				B1AC71B82A680AE500A0FCD5 /* TdsSdkInterface+Ext.swift */,
 				57D1C5C52975A9B900C6D1CA /* UITableView+Utils.swift */,
+				B1AC71B62A6802C700A0FCD5 /* UIColor+Ext.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -747,6 +753,8 @@
 				B1D01A1028F5731C00D429F4 /* AppSetting.swift in Sources */,
 				57D1C5C62975A9B900C6D1CA /* UITableView+Utils.swift in Sources */,
 				576E765329769FB1009AF5E2 /* UIAlertController+CardScannerMock.swift in Sources */,
+				B1AC71B92A680AE500A0FCD5 /* TdsSdkInterface+Ext.swift in Sources */,
+				B1AC71B72A6802C700A0FCD5 /* UIColor+Ext.swift in Sources */,
 				2C4D782E23F42090003A355D /* SettingsTableViewController.swift in Sources */,
 				57EEFB8F28F486C200809488 /* SampleTokenProvider.swift in Sources */,
 				2C9C7EBF239FBCB200DE4071 /* AppDelegate.swift in Sources */,
