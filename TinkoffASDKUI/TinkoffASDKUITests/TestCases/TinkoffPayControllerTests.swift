@@ -92,7 +92,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerDidOpenURLCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerDidOpenTinkoffPayCallsCount, 1)
         XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithSuccessfulCallsCount, 1)
     }
 
@@ -131,7 +131,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerDidReceiveIntermediateCallsCount, 1)
     }
 
     func test_thatControllerCompletesWithTimeout_whenStatusIsSuccess() {
@@ -188,7 +188,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithErrorCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithCallsCount, 1)
     }
 
     func test_thatControllerNotifiesDelegate_whenErrorOccurred() {
@@ -201,7 +201,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithErrorCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithCallsCount, 1)
     }
 
     func test_thatControllerNotifiesDelegate_whenGetLinkErrorOccurred() {
@@ -215,7 +215,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithErrorCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithCallsCount, 1)
     }
 
     func test_thatControllerNotifiesDelegate_whenUnableToOpenExternalApp() {
@@ -232,7 +232,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerInabilityToOpenTinkoffPayCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayCallsCount, 1)
     }
 
     func test_thatControllerCancelsRequest_whenStatusIsSuccess() {

@@ -11,58 +11,58 @@ import TinkoffASDKCore
 
 final class TinkoffPayControllerDelegateMock: TinkoffPayControllerDelegate {
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerDidReceiveIntermediate
 
     typealias TinkoffPayControllerDidReceiveIntermediateArguments = (tinkoffPayController: ITinkoffPayController, paymentState: GetPaymentStatePayload)
 
-    var tinkoffPayControllerCallsCount = 0
-    var tinkoffPayControllerReceivedArguments: TinkoffPayControllerDidReceiveIntermediateArguments?
-    var tinkoffPayControllerReceivedInvocations: [TinkoffPayControllerDidReceiveIntermediateArguments] = []
+    var tinkoffPayControllerDidReceiveIntermediateCallsCount = 0
+    var tinkoffPayControllerDidReceiveIntermediateReceivedArguments: TinkoffPayControllerDidReceiveIntermediateArguments?
+    var tinkoffPayControllerDidReceiveIntermediateReceivedInvocations: [TinkoffPayControllerDidReceiveIntermediateArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, didReceiveIntermediate paymentState: GetPaymentStatePayload) {
-        tinkoffPayControllerCallsCount += 1
+        tinkoffPayControllerDidReceiveIntermediateCallsCount += 1
         let arguments = (tinkoffPayController, paymentState)
-        tinkoffPayControllerReceivedArguments = arguments
-        tinkoffPayControllerReceivedInvocations.append(arguments)
+        tinkoffPayControllerDidReceiveIntermediateReceivedArguments = arguments
+        tinkoffPayControllerDidReceiveIntermediateReceivedInvocations.append(arguments)
     }
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerDidOpenTinkoffPay
 
     typealias TinkoffPayControllerDidOpenTinkoffPayArguments = (tinkoffPayController: ITinkoffPayController, url: URL)
 
-    var tinkoffPayControllerDidOpenURLCallsCount = 0
-    var tinkoffPayControllerDidOpenURLReceivedArguments: TinkoffPayControllerDidOpenTinkoffPayArguments?
-    var tinkoffPayControllerDidOpenURLReceivedInvocations: [TinkoffPayControllerDidOpenTinkoffPayArguments] = []
+    var tinkoffPayControllerDidOpenTinkoffPayCallsCount = 0
+    var tinkoffPayControllerDidOpenTinkoffPayReceivedArguments: TinkoffPayControllerDidOpenTinkoffPayArguments?
+    var tinkoffPayControllerDidOpenTinkoffPayReceivedInvocations: [TinkoffPayControllerDidOpenTinkoffPayArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, didOpenTinkoffPay url: URL) {
-        tinkoffPayControllerDidOpenURLCallsCount += 1
+        tinkoffPayControllerDidOpenTinkoffPayCallsCount += 1
         let arguments = (tinkoffPayController, url)
-        tinkoffPayControllerDidOpenURLReceivedArguments = arguments
-        tinkoffPayControllerDidOpenURLReceivedInvocations.append(arguments)
+        tinkoffPayControllerDidOpenTinkoffPayReceivedArguments = arguments
+        tinkoffPayControllerDidOpenTinkoffPayReceivedInvocations.append(arguments)
     }
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPay
 
-    typealias TinkoffPayControllerInabilityToOpenTinkoffPayArguments = (tinkoffPayController: ITinkoffPayController, url: URL, error: Error)
+    typealias TinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayArguments = (tinkoffPayController: ITinkoffPayController, url: URL, error: Error)
 
-    var tinkoffPayControllerInabilityToOpenTinkoffPayCallsCount = 0
-    var tinkoffPayControllerInabilityToOpenTinkoffPayReceivedArguments: TinkoffPayControllerInabilityToOpenTinkoffPayArguments?
-    var tinkoffPayControllerInabilityToOpenTinkoffPayReceivedInvocations: [TinkoffPayControllerInabilityToOpenTinkoffPayArguments] = []
+    var tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayCallsCount = 0
+    var tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayReceivedArguments: TinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayArguments?
+    var tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayReceivedInvocations: [TinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, completedDueToInabilityToOpenTinkoffPay url: URL, error: Error) {
-        tinkoffPayControllerInabilityToOpenTinkoffPayCallsCount += 1
+        tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayCallsCount += 1
         let arguments = (tinkoffPayController, url, error)
-        tinkoffPayControllerInabilityToOpenTinkoffPayReceivedArguments = arguments
-        tinkoffPayControllerInabilityToOpenTinkoffPayReceivedInvocations.append(arguments)
+        tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayReceivedArguments = arguments
+        tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayReceivedInvocations.append(arguments)
     }
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerCompletedWithSuccessful
 
     typealias TinkoffPayControllerCompletedWithSuccessfulArguments = (tinkoffPayController: ITinkoffPayController, paymentState: GetPaymentStatePayload)
 
     var tinkoffPayControllerCompletedWithSuccessfulCallsCount = 0
     var tinkoffPayControllerCompletedWithSuccessfulReceivedArguments: TinkoffPayControllerCompletedWithSuccessfulArguments?
-    var tinkoffPayControllerCompletedWithSuccessfulReceivedInvocations: [TinkoffPayControllerCompletedWithSuccessfulArguments] = []
+    var tinkoffPayControllerCompletedWithSuccessfulReceivedInvocations: [TinkoffPayControllerCompletedWithSuccessfulArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, completedWithSuccessful paymentState: GetPaymentStatePayload) {
         tinkoffPayControllerCompletedWithSuccessfulCallsCount += 1
@@ -71,13 +71,13 @@ final class TinkoffPayControllerDelegateMock: TinkoffPayControllerDelegate {
         tinkoffPayControllerCompletedWithSuccessfulReceivedInvocations.append(arguments)
     }
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerCompletedWithFailed
 
     typealias TinkoffPayControllerCompletedWithFailedArguments = (tinkoffPayController: ITinkoffPayController, paymentState: GetPaymentStatePayload, error: Error)
 
     var tinkoffPayControllerCompletedWithFailedCallsCount = 0
     var tinkoffPayControllerCompletedWithFailedReceivedArguments: TinkoffPayControllerCompletedWithFailedArguments?
-    var tinkoffPayControllerCompletedWithFailedReceivedInvocations: [TinkoffPayControllerCompletedWithFailedArguments] = []
+    var tinkoffPayControllerCompletedWithFailedReceivedInvocations: [TinkoffPayControllerCompletedWithFailedArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, completedWithFailed paymentState: GetPaymentStatePayload, error: Error) {
         tinkoffPayControllerCompletedWithFailedCallsCount += 1
@@ -86,13 +86,13 @@ final class TinkoffPayControllerDelegateMock: TinkoffPayControllerDelegate {
         tinkoffPayControllerCompletedWithFailedReceivedInvocations.append(arguments)
     }
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerCompletedWithTimeout
 
     typealias TinkoffPayControllerCompletedWithTimeoutArguments = (tinkoffPayController: ITinkoffPayController, paymentState: GetPaymentStatePayload, error: Error)
 
     var tinkoffPayControllerCompletedWithTimeoutCallsCount = 0
     var tinkoffPayControllerCompletedWithTimeoutReceivedArguments: TinkoffPayControllerCompletedWithTimeoutArguments?
-    var tinkoffPayControllerCompletedWithTimeoutReceivedInvocations: [TinkoffPayControllerCompletedWithTimeoutArguments] = []
+    var tinkoffPayControllerCompletedWithTimeoutReceivedInvocations: [TinkoffPayControllerCompletedWithTimeoutArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, completedWithTimeout paymentState: GetPaymentStatePayload, error: Error) {
         tinkoffPayControllerCompletedWithTimeoutCallsCount += 1
@@ -101,18 +101,52 @@ final class TinkoffPayControllerDelegateMock: TinkoffPayControllerDelegate {
         tinkoffPayControllerCompletedWithTimeoutReceivedInvocations.append(arguments)
     }
 
-    // MARK: - tinkoffPayController
+    // MARK: - tinkoffPayControllerCompletedWith
 
-    typealias TinkoffPayControllerCompletedWithErrorArguments = (tinkoffPayController: ITinkoffPayController, error: Error)
+    typealias TinkoffPayControllerCompletedWithArguments = (tinkoffPayController: ITinkoffPayController, error: Error)
 
-    var tinkoffPayControllerCompletedWithErrorCallsCount = 0
-    var tinkoffPayControllerCompletedWithErrorReceivedArguments: TinkoffPayControllerCompletedWithErrorArguments?
-    var tinkoffPayControllerCompletedWithErrorReceivedInvocations: [TinkoffPayControllerCompletedWithErrorArguments] = []
+    var tinkoffPayControllerCompletedWithCallsCount = 0
+    var tinkoffPayControllerCompletedWithReceivedArguments: TinkoffPayControllerCompletedWithArguments?
+    var tinkoffPayControllerCompletedWithReceivedInvocations: [TinkoffPayControllerCompletedWithArguments?] = []
 
     func tinkoffPayController(_ tinkoffPayController: ITinkoffPayController, completedWith error: Error) {
-        tinkoffPayControllerCompletedWithErrorCallsCount += 1
+        tinkoffPayControllerCompletedWithCallsCount += 1
         let arguments = (tinkoffPayController, error)
-        tinkoffPayControllerCompletedWithErrorReceivedArguments = arguments
-        tinkoffPayControllerCompletedWithErrorReceivedInvocations.append(arguments)
+        tinkoffPayControllerCompletedWithReceivedArguments = arguments
+        tinkoffPayControllerCompletedWithReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension TinkoffPayControllerDelegateMock {
+    func fullReset() {
+        tinkoffPayControllerDidReceiveIntermediateCallsCount = 0
+        tinkoffPayControllerDidReceiveIntermediateReceivedArguments = nil
+        tinkoffPayControllerDidReceiveIntermediateReceivedInvocations = []
+
+        tinkoffPayControllerDidOpenTinkoffPayCallsCount = 0
+        tinkoffPayControllerDidOpenTinkoffPayReceivedArguments = nil
+        tinkoffPayControllerDidOpenTinkoffPayReceivedInvocations = []
+
+        tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayCallsCount = 0
+        tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayReceivedArguments = nil
+        tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayReceivedInvocations = []
+
+        tinkoffPayControllerCompletedWithSuccessfulCallsCount = 0
+        tinkoffPayControllerCompletedWithSuccessfulReceivedArguments = nil
+        tinkoffPayControllerCompletedWithSuccessfulReceivedInvocations = []
+
+        tinkoffPayControllerCompletedWithFailedCallsCount = 0
+        tinkoffPayControllerCompletedWithFailedReceivedArguments = nil
+        tinkoffPayControllerCompletedWithFailedReceivedInvocations = []
+
+        tinkoffPayControllerCompletedWithTimeoutCallsCount = 0
+        tinkoffPayControllerCompletedWithTimeoutReceivedArguments = nil
+        tinkoffPayControllerCompletedWithTimeoutReceivedInvocations = []
+
+        tinkoffPayControllerCompletedWithCallsCount = 0
+        tinkoffPayControllerCompletedWithReceivedArguments = nil
+        tinkoffPayControllerCompletedWithReceivedInvocations = []
     }
 }
