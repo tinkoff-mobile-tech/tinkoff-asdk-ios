@@ -69,14 +69,14 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         // given
         let fakedViewController = UIViewControllerMock()
 
-        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReturnValue = fakedViewController
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationReturnValue = fakedViewController
 
         // when
         let resultedViewController = sut.yandexPayButtonDidRequestViewControllerForPresentation(yandexPayButtonMock)
 
         // then
         XCTAssertEqual(
-            yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationContainerCallsCount,
+            yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationCallsCount,
             1
         )
 
@@ -91,7 +91,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         let fakedPaymentSheet = YPPaymentSheet.fake()
         let paymentFlow = PaymentFlow.full(paymentOptions: .fake())
 
-        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerCompletionClosureInput = paymentFlow
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCompletionClosureInput = paymentFlow
         yPPaymentSheetFactoryMock.createReturnValue = fakedPaymentSheet
 
         // when
@@ -102,7 +102,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         // then
         let sheet = try XCTUnwrap(receivedYandexPaymentSheet)
         XCTAssertEqual(fakedPaymentSheet, sheet)
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerCallsCount, 1)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCallsCount, 1)
         XCTAssertEqual(yPPaymentSheetFactoryMock.createCallsCount, 1)
         XCTAssertEqual(yPPaymentSheetFactoryMock.createReceivedArguments, paymentFlow)
     }
@@ -136,8 +136,8 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         sut.yandexPayButton(yandexPayButtonMock, didCompletePaymentWithResult: .cancelled)
 
         // then
-        let result = yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultReceivedArguments?.result
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultCallsCount, 1)
+        let result = yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.result
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultCallsCount, 1)
         XCTAssertEqual(result, .cancelled())
     }
 
@@ -149,25 +149,25 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         sut.yandexPayButton(yandexPayButtonMock, didCompletePaymentWithResult: .failed(fakedError))
 
         // then
-        let result = yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultReceivedArguments?.result
+        let result = yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.result
         let unwrappedResult = try XCTUnwrap(result)
         var isFailedWithError = false
         if case let PaymentResult.failed(error) = unwrappedResult {
             isFailedWithError = (error as? YPPaymentError) == fakedError
         }
 
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultCallsCount, 1)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultCallsCount, 1)
         XCTAssertTrue(isFailedWithError)
     }
 
     func test_yandexPayPaymentFlowDidRequestViewControllerForPresentation() {
         // given
-        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReturnValue = UIViewControllerMock()
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationReturnValue = UIViewControllerMock()
         // when
         let viewController = sut.yandexPayPaymentFlowDidRequestViewControllerForPresentation(yandexPayPaymentFlowMock)
         // then
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationContainerCallsCount, 1)
-        XCTAssert(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationContainerReceivedArguments === sut)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationCallsCount, 1)
+        XCTAssert(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidRequestViewControllerForPresentationReceivedArguments === sut)
         XCTAssertNotNil(viewController)
     }
 
@@ -175,9 +175,9 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         // when
         sut.yandexPayPaymentFlow(yandexPayPaymentFlowMock, didCompleteWith: .failed(TestsError.basic))
         // then
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultCallsCount, 1)
-        XCTAssert(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultReceivedArguments?.container === sut)
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerResultReceivedArguments?.result, .failed(TestsError.basic))
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultCallsCount, 1)
+        XCTAssert(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.container === sut)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.result, .failed(TestsError.basic))
     }
 
     func test_setLoaderVisible() {
@@ -224,7 +224,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
 extension YandexPayButtonContainerTests {
 
     private func cachePaymentFlow(flow: PaymentFlow = .fake()) {
-        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerContainerCompletionClosureInput = flow
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCompletionClosureInput = flow
         yPPaymentSheetFactoryMock.createReturnValue = YPPaymentSheet.fake()
 
         // кешируем paymentFlow локально в YandexPayButtonContainer
