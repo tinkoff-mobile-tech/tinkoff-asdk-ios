@@ -51,9 +51,11 @@ final class SBPBanksViewControllerMock: ISBPBanksViewController {
 
     // MARK: - showStubView
 
+    typealias ShowStubViewArguments = StubMode
+
     var showStubViewCallsCount = 0
-    var showStubViewReceivedArguments: StubMode?
-    var showStubViewReceivedInvocations: [StubMode] = []
+    var showStubViewReceivedArguments: ShowStubViewArguments?
+    var showStubViewReceivedInvocations: [ShowStubViewArguments?] = []
 
     func showStubView(mode: StubMode) {
         showStubViewCallsCount += 1
@@ -68,5 +70,27 @@ final class SBPBanksViewControllerMock: ISBPBanksViewController {
 
     func hideStubView() {
         hideStubViewCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension SBPBanksViewControllerMock {
+    func fullReset() {
+        setupNavigationWithCloseButtonCallsCount = 0
+
+        setupNavigationWithBackButtonCallsCount = 0
+
+        showSearchBarCallsCount = 0
+
+        hideSearchBarCallsCount = 0
+
+        reloadTableViewCallsCount = 0
+
+        showStubViewCallsCount = 0
+        showStubViewReceivedArguments = nil
+        showStubViewReceivedInvocations = []
+
+        hideStubViewCallsCount = 0
     }
 }

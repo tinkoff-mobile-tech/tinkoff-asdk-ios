@@ -24,7 +24,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        setupSut(with: .fullRandom)
+        setupSut(with: .fakeFullRandom)
     }
 
     override func tearDown() {
@@ -39,11 +39,11 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
     func test_loadPaymentQr_with_fullPaymentFlow_successBoth() throws {
         // given
-        let paymentFlow = PaymentFlow.fullRandom
+        let paymentFlow = PaymentFlow.fakeFullRandom
         setupSut(with: paymentFlow)
 
-        let anyPayload = GetQRPayload.any
-        acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.any)
+        let anyPayload = GetQRPayload.fake
+        acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.fake)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
 
         var isSuccessLoaded = false
@@ -70,10 +70,10 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
     func test_loadPaymentQr_with_fullPaymentFlow_failureInit() throws {
         // given
-        let paymentFlow = PaymentFlow.fullRandom
+        let paymentFlow = PaymentFlow.fakeFullRandom
         setupSut(with: paymentFlow)
 
-        let anyPayload = GetQRPayload.any
+        let anyPayload = GetQRPayload.fake
         let error = NSError(domain: "error", code: 123456)
         acquiringSBPServiceMock.initPaymentCompletionClosureInput = .failure(error)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
@@ -97,11 +97,11 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
     func test_loadPaymentQr_with_fullPaymentFlow_failureGetQr() throws {
         // given
-        let paymentFlow = PaymentFlow.fullRandom
+        let paymentFlow = PaymentFlow.fakeFullRandom
         setupSut(with: paymentFlow)
 
         let error = NSError(domain: "error", code: 123456)
-        acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.any)
+        acquiringSBPServiceMock.initPaymentCompletionClosureInput = .success(.fake)
         acquiringSBPServiceMock.getQRCompletionClosureInput = .failure(error)
 
         var isSuccessLoaded = false
@@ -123,10 +123,10 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
     func test_loadPaymentQr_with_finishPaymentFlow_success() throws {
         // given
-        let paymentFlow = PaymentFlow.finishAny
+        let paymentFlow = PaymentFlow.fakeFinish
         setupSut(with: paymentFlow)
 
-        let anyPayload = GetQRPayload.any
+        let anyPayload = GetQRPayload.fake
         acquiringSBPServiceMock.getQRCompletionClosureInput = .success(anyPayload)
 
         var isSuccessLoaded = false
@@ -153,7 +153,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
     func test_loadPaymentQr_with_finishPaymentFlow_failure() throws {
         // given
-        let paymentFlow = PaymentFlow.finishAny
+        let paymentFlow = PaymentFlow.fakeFinish
         setupSut(with: paymentFlow)
 
         let error = NSError(domain: "error", code: 123456)
@@ -179,74 +179,9 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
 // MARK: - Private methods
 
-extension InitPayload {
-    static let any = InitPayload(
-        amount: 324,
-        orderId: "324234",
-        paymentId: "2222",
-        status: .authorized
-    )
-}
-
 extension SBPPaymentServiceTests {
     private func setupSut(with paymentFlow: PaymentFlow) {
         acquiringSBPServiceMock = AcquiringSBPAndPaymentServiceMock()
         sut = SBPPaymentService(acquiringService: acquiringSBPServiceMock, paymentFlow: paymentFlow)
-    }
-}
-
-extension PaymentFlow {
-    static var fullRandom: PaymentFlow {
-        let amount = 2000
-        let randomOrderId = String(Int64.random(in: 1000 ... 10000))
-        var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount), orderId: randomOrderId, customerKey: "any key")
-        paymentData.description = "Краткое описание товара"
-
-        let receiptItems: [Item] = []
-
-        paymentData.receipt = Receipt(
-            shopCode: nil,
-            email: "email@email.com",
-            taxation: .osn,
-            phone: "+79876543210",
-            items: receiptItems,
-            agentData: nil,
-            supplierInfo: nil,
-            customer: nil,
-            customerInn: nil
-        )
-
-        let paymentOptions = PaymentOptions.create(from: paymentData)
-        return PaymentFlow.full(paymentOptions: paymentOptions)
-    }
-
-    static var finishAny: PaymentFlow {
-        let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
-        let options = FinishPaymentOptions(paymentId: "32423", amount: 100, orderId: "id", customerOptions: customerOptions)
-        return PaymentFlow.finish(paymentOptions: options)
-    }
-}
-
-private extension PaymentOptions {
-    static func create(from initData: PaymentInitData) -> PaymentOptions {
-        let orderOptions = OrderOptions(
-            orderId: initData.orderId,
-            amount: initData.amount,
-            description: initData.description,
-            receipt: initData.receipt,
-            shops: initData.shops,
-            receipts: initData.receipts,
-            savingAsParentPayment: initData.savingAsParentPayment ?? false
-        )
-
-        let customerOptions = initData.customerKey.map {
-            CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
-        }
-
-        return PaymentOptions(
-            orderOptions: orderOptions,
-            customerOptions: customerOptions,
-            paymentData: initData.paymentFormData ?? [:]
-        )
     }
 }

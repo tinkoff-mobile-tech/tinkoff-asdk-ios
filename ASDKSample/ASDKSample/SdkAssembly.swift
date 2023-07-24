@@ -47,7 +47,8 @@ struct SdkAssembly {
             credential: sdkCredential,
             server: AppSetting.shared.serverType,
             logger: nil, // для включения логирования, заменить nil на Logger()
-            tokenProvider: tokenProvider
+            tokenProvider: tokenProvider,
+            appBasedSdkInterface: AppSetting.shared.appBasedSdkInterface
         )
 
         return acquiringSDKConfiguration

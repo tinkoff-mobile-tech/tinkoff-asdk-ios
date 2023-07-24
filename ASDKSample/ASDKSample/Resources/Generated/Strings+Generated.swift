@@ -170,6 +170,10 @@ internal enum Loc {
       /// 3DSHOLD – при привязке карты выполняем проверку, поддерживает карта 3DS или нет. Если карта поддерживает 3DS выполняем списание и затем отмену на 1 руб.
       internal static let description = Loc.tr("Localizable", "text.addCardCheckType.description", fallback: "NO – сохранить карту без проверок. Родительский платеж в случае успеха не создастся.\n3DS – при сохранении карты выполнить проверку 3DS и выполнить списание, а затем отмену на 1 р. Карты, не поддерживающие 3DS, привязаны не будут. В случае успеха сгенерируется родительский платеж, для рекуррентных платежей.\nHOLD – при сохранении сделать списание и затем отмену на 1 руб. В случае успеха сгенерируется родительский платеж для рекуррентных платежей.\n3DSHOLD – при привязке карты выполняем проверку, поддерживает карта 3DS или нет. Если карта поддерживает 3DS выполняем списание и затем отмену на 1 руб.")
     }
+    internal enum AppBasedSdkInterface {
+      /// Список всех типов интерфейсов SDK, поддерживаемых устройством для отображения определенных пользовательских задач в рамках 3DS SDK.
+      internal static let description = Loc.tr("Localizable", "text.appBasedSdkInterface.description", fallback: "Список всех типов интерфейсов SDK, поддерживаемых устройством для отображения определенных пользовательских задач в рамках 3DS SDK.")
+    }
     internal enum Language {
       /// auto - Устанавливается язык который выбран на устройстве.
       /// ru - Платежная форма на Русском языке.
@@ -184,6 +188,8 @@ internal enum Loc {
   internal enum Title {
     /// Уведомления, алерты
     internal static let acquiring = Loc.tr("Localizable", "title.Acquiring", fallback: "Уведомления, алерты")
+    /// App Based 3DS SDK Интерфейс
+    internal static let appBasedSdkInterface = Loc.tr("Localizable", "title.appBasedSdkInterface", fallback: "App Based 3DS SDK Интерфейс")
     /// AlertView
     internal static let aquaringAlertView = Loc.tr("Localizable", "title.aquaringAlertView", fallback: "AlertView")
     /// Корзина

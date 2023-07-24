@@ -27,9 +27,11 @@ final class CardPaymentViewControllerInputMock: ICardPaymentViewControllerInput 
 
     // MARK: - showActivityIndicator
 
+    typealias ShowActivityIndicatorArguments = ActivityIndicatorView.Style
+
     var showActivityIndicatorCallsCount = 0
-    var showActivityIndicatorReceivedArguments: ActivityIndicatorView.Style?
-    var showActivityIndicatorReceivedInvocations: [ActivityIndicatorView.Style] = []
+    var showActivityIndicatorReceivedArguments: ShowActivityIndicatorArguments?
+    var showActivityIndicatorReceivedInvocations: [ShowActivityIndicatorArguments?] = []
 
     func showActivityIndicator(with style: ActivityIndicatorView.Style) {
         showActivityIndicatorCallsCount += 1
@@ -64,9 +66,11 @@ final class CardPaymentViewControllerInputMock: ICardPaymentViewControllerInput 
 
     // MARK: - insert
 
+    typealias InsertArguments = Int
+
     var insertCallsCount = 0
-    var insertReceivedArguments: Int?
-    var insertReceivedInvocations: [Int] = []
+    var insertReceivedArguments: InsertArguments?
+    var insertReceivedInvocations: [InsertArguments?] = []
 
     func insert(row: Int) {
         insertCallsCount += 1
@@ -77,14 +81,44 @@ final class CardPaymentViewControllerInputMock: ICardPaymentViewControllerInput 
 
     // MARK: - delete
 
+    typealias DeleteArguments = Int
+
     var deleteCallsCount = 0
-    var deleteReceivedArguments: Int?
-    var deleteReceivedInvocations: [Int] = []
+    var deleteReceivedArguments: DeleteArguments?
+    var deleteReceivedInvocations: [DeleteArguments?] = []
 
     func delete(row: Int) {
         deleteCallsCount += 1
         let arguments = row
         deleteReceivedArguments = arguments
         deleteReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension CardPaymentViewControllerInputMock {
+    func fullReset() {
+        startIgnoringInteractionEventsCallsCount = 0
+
+        stopIgnoringInteractionEventsCallsCount = 0
+
+        showActivityIndicatorCallsCount = 0
+        showActivityIndicatorReceivedArguments = nil
+        showActivityIndicatorReceivedInvocations = []
+
+        hideActivityIndicatorCallsCount = 0
+
+        hideKeyboardCallsCount = 0
+
+        reloadTableViewCallsCount = 0
+
+        insertCallsCount = 0
+        insertReceivedArguments = nil
+        insertReceivedInvocations = []
+
+        deleteCallsCount = 0
+        deleteReceivedArguments = nil
+        deleteReceivedInvocations = []
     }
 }

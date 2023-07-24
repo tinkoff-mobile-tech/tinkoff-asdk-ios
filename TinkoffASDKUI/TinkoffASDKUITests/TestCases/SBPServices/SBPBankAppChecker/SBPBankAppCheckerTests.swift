@@ -40,7 +40,7 @@ final class SBPBankAppCheckerTests: BaseTestCase {
 
     func test_bankAppsPreferredByMerchant_when_installed() {
         // given
-        let loadedBanks = [SBPBank.some(1), SBPBank.some(2), SBPBank.some(3)]
+        let loadedBanks = [SBPBank.fake(1), SBPBank.fake(2), SBPBank.fake(3)]
         let banksSchemes = loadedBanks.map { $0.schema }
         appCheckerMock.checkApplicationReturnValue = .installed
 
@@ -55,7 +55,7 @@ final class SBPBankAppCheckerTests: BaseTestCase {
 
     func test_bankAppsPreferredByMerchant_when_notInstalled() {
         // given
-        let loadedBanks = [SBPBank.some(1), SBPBank.some(2), SBPBank.some(3)]
+        let loadedBanks = [SBPBank.fake(1), SBPBank.fake(2), SBPBank.fake(3)]
         let banksSchemes = loadedBanks.map { $0.schema }
         appCheckerMock.checkApplicationReturnValue = .notInstalled
 
@@ -70,7 +70,7 @@ final class SBPBankAppCheckerTests: BaseTestCase {
 
     func test_bankAppsPreferredByMerchant_when_ambiguous() {
         // given
-        let loadedBanks = [SBPBank.some(1), SBPBank.some(2), SBPBank.some(3)]
+        let loadedBanks = [SBPBank.fake(1), SBPBank.fake(2), SBPBank.fake(3)]
         let banksSchemes = loadedBanks.map { $0.schema }
         appCheckerMock.checkApplicationReturnValue = .ambiguous
 

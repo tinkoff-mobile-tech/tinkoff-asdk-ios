@@ -16,7 +16,8 @@ final class PaymentStatusServiceMock: IPaymentStatusService {
 
     var getPaymentStateCallsCount = 0
     var getPaymentStateReceivedArguments: GetPaymentStateArguments?
-    var getPaymentStateReceivedInvocations: [GetPaymentStateArguments] = []
+    var getPaymentStateReceivedInvocations: [GetPaymentStateArguments?] = []
+    var getPaymentStateCompletionClosureInput: Result<GetPaymentStatePayload, Error>?
     var getPaymentStateCompletionClosureInputs: [Result<GetPaymentStatePayload, Error>]?
     var lastPaymentStateCompletionClosureInputIndex = 0
 
@@ -25,10 +26,28 @@ final class PaymentStatusServiceMock: IPaymentStatusService {
         let arguments = (paymentId, completion)
         getPaymentStateReceivedArguments = arguments
         getPaymentStateReceivedInvocations.append(arguments)
+        if let getPaymentStateCompletionClosureInput = getPaymentStateCompletionClosureInput {
+            completion(getPaymentStateCompletionClosureInput)
+            return
+        }
+
         if let inputs = getPaymentStateCompletionClosureInputs,
            let result = inputs[safe: lastPaymentStateCompletionClosureInputIndex] {
             lastPaymentStateCompletionClosureInputIndex += 1
             completion(result)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension PaymentStatusServiceMock {
+    func fullReset() {
+        getPaymentStateCallsCount = 0
+        getPaymentStateReceivedArguments = nil
+        getPaymentStateReceivedInvocations = []
+        getPaymentStateCompletionClosureInput = nil
+        getPaymentStateCompletionClosureInputs = []
+        lastPaymentStateCompletionClosureInputIndex = 0
     }
 }

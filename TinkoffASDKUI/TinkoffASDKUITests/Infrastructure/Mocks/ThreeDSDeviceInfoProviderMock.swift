@@ -13,7 +13,7 @@ final class ThreeDSDeviceInfoProviderMock: IThreeDSDeviceInfoProvider {
     var invokedCreateDeviceInfoCount = 0
     var invokedCreateDeviceInfoParameters: (threeDSCompInd: String, Void)?
     var invokedCreateDeviceInfoParametersList = [(threeDSCompInd: String, Void)]()
-    var stubbedCreateDeviceInfoResult = ThreeDSDeviceInfo(cresCallbackUrl: URL.empty.absoluteString, screenWidth: 300, screenHeight: 800)
+    var stubbedCreateDeviceInfoResult = ThreeDSDeviceInfo.fake()
 
     func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo {
         invokedCreateDeviceInfo = true

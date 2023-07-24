@@ -15,16 +15,23 @@ protocol IThreeDSDeviceParamsProviderBuilder {
 final class ThreeDSDeviceParamsProviderBuilder: IThreeDSDeviceParamsProviderBuilder {
     private let languageProvider: ILanguageProvider
     private let urlBuilder: IThreeDSURLBuilder
+    private let appBasedSdkUiProvider: IAppBasedSdkUiProvider
 
-    init(languageProvider: ILanguageProvider, urlBuilder: IThreeDSURLBuilder) {
+    init(
+        languageProvider: ILanguageProvider,
+        urlBuilder: IThreeDSURLBuilder,
+        appBasedSdkUiProvider: IAppBasedSdkUiProvider
+    ) {
         self.languageProvider = languageProvider
         self.urlBuilder = urlBuilder
+        self.appBasedSdkUiProvider = appBasedSdkUiProvider
     }
 
     func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
         ThreeDSDeviceInfoProvider(
             languageProvider: languageProvider,
-            urlBuilder: urlBuilder
+            urlBuilder: urlBuilder,
+            sdkUiProvider: appBasedSdkUiProvider
         )
     }
 }

@@ -12,14 +12,26 @@ final class SBPBanksModuleOutputMock: ISBPBanksModuleOutput {
 
     // MARK: - didLoaded
 
+    typealias DidLoadedArguments = [SBPBank]
+
     var didLoadedCallsCount = 0
-    var didLoadedReceivedArguments: [SBPBank]?
-    var didLoadedReceivedInvocations: [[SBPBank]] = []
+    var didLoadedReceivedArguments: DidLoadedArguments?
+    var didLoadedReceivedInvocations: [DidLoadedArguments?] = []
 
     func didLoaded(sbpBanks: [SBPBank]) {
         didLoadedCallsCount += 1
         let arguments = sbpBanks
         didLoadedReceivedArguments = arguments
         didLoadedReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension SBPBanksModuleOutputMock {
+    func fullReset() {
+        didLoadedCallsCount = 0
+        didLoadedReceivedArguments = nil
+        didLoadedReceivedInvocations = []
     }
 }

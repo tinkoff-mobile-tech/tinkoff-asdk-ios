@@ -16,7 +16,7 @@ final class CommonSheetViewMock: ICommonSheetView {
 
     var updateCallsCount = 0
     var updateReceivedArguments: UpdateArguments?
-    var updateReceivedInvocations: [UpdateArguments] = []
+    var updateReceivedInvocations: [UpdateArguments?] = []
 
     func update(state: CommonSheetState, animatePullableContainerUpdates: Bool) {
         updateCallsCount += 1
@@ -31,5 +31,17 @@ final class CommonSheetViewMock: ICommonSheetView {
 
     func close() {
         closeCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension CommonSheetViewMock {
+    func fullReset() {
+        updateCallsCount = 0
+        updateReceivedArguments = nil
+        updateReceivedInvocations = []
+
+        closeCallsCount = 0
     }
 }

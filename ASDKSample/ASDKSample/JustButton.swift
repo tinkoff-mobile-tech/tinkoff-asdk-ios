@@ -68,7 +68,7 @@ extension JustButton: Stylable {
 
     struct Style {
         var insets: UIEdgeInsets = .zero
-        var textColor: UIColor = .black
+        var textColor: UIColor = .dynamicText
 
         static var basic: Style { Style() }
     }
