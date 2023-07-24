@@ -127,7 +127,7 @@ final class AddCardControllerTests: BaseTestCase {
             )
         )
 
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .cancelled
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .cancelled
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -148,7 +148,7 @@ final class AddCardControllerTests: BaseTestCase {
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DSACS(.fake()))
         )
 
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .cancelled
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .cancelled
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -171,7 +171,7 @@ final class AddCardControllerTests: BaseTestCase {
             )
         )
 
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .failed(error)
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .failed(error)
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -201,7 +201,6 @@ final class AddCardControllerTests: BaseTestCase {
         })
 
         // then
-        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateCallsCount, Int.zero)
         XCTAssertTrue(didReturnError)
     }
 
@@ -363,17 +362,26 @@ final class AddCardControllerTests: BaseTestCase {
     }
 
     func test_webflow_getter() {
+        // given
+        let delegateMock = ThreeDSWebFlowDelegateMock()
+        threeDSWebFlowControllerMock.webFlowDelegate = delegateMock
+
         // when
-        _ = sut.webFlowDelegate
+        let sutMock = sut.webFlowDelegate as? ThreeDSWebFlowDelegateMock
+
         // then
-        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateCallsCount, 1)
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, sutMock)
     }
 
     func test_webflow_setter() {
+        // given
+        let delegateMock = ThreeDSWebFlowDelegateMock()
+
         // when
-        sut.webFlowDelegate = nil
+        sut.webFlowDelegate = delegateMock
+
         // then
-        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegateSetterCounter, 1)
+        XCTAssertEqual(threeDSWebFlowControllerMock.webFlowDelegate as? ThreeDSWebFlowDelegateMock, delegateMock)
     }
 
     func test_complete3DSMethodIfNeededAndAttachCard_no_data() {
@@ -446,7 +454,7 @@ final class AddCardControllerTests: BaseTestCase {
         addCardServiceMock.attachCardCompletionStub = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake()))
         )
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(.fake(status: .unknown))
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(.fake(status: .unknown))
 
         // when
         check3DSFlow_success(checkType: .check3DS, addCardCompletion: { result in
@@ -464,7 +472,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         var receivedExpectedError = false
         addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
         addCardServiceMock.getAddCardStateCompletionInput = .failure(TestsError.basic)
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
@@ -483,7 +491,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         var receivedExpectedError = false
         addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
         addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .unknown))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
@@ -511,7 +519,7 @@ extension AddCardControllerTests {
         // given
         var addCardStateSucceded = false
         addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(.fake(status: .authorized))
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(.fake(status: .authorized))
         addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
@@ -538,7 +546,7 @@ extension AddCardControllerTests {
         // given
         var addCardStateSucceded = false
         addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
         addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
@@ -571,7 +579,7 @@ extension AddCardControllerTests {
         addCardServiceMock.attachCardCompletionStub = .success(
             .fake(status: attachStatus, attachCardStatus: attachCardStatus)
         )
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
         addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
@@ -598,7 +606,7 @@ extension AddCardControllerTests {
         // given
         var addCardStateSucceded = false
         addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .done))
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(.fake(status: .confirmed))
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
         addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 

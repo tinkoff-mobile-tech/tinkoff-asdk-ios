@@ -97,7 +97,7 @@ final class PaymentControllerTests: BaseTestCase {
             status: .authorized
         )
 
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(getPaymentStatePayload)
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(getPaymentStatePayload)
         var receivedResult: Result<GetPaymentStatePayload, Error>?
 
         // when
@@ -126,7 +126,7 @@ final class PaymentControllerTests: BaseTestCase {
 
         // given
         let fakedGetPaymentState = GetPaymentStatePayload.fake()
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(fakedGetPaymentState)
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(fakedGetPaymentState)
 
         // when
         var completionValue: GetPaymentStatePayload?
@@ -150,7 +150,7 @@ final class PaymentControllerTests: BaseTestCase {
     func test_need3DSConfirmationACS_failure() throws {
         // given
         let error = NSError(domain: "error", code: 123456)
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .failed(error)
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .failed(error)
 
         var resultPayload: GetPaymentStatePayload?
         var resultError: NSError?
@@ -180,7 +180,7 @@ final class PaymentControllerTests: BaseTestCase {
 
     func test_need3DSConfirmationACS_canceled() throws {
         // given
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .cancelled
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .cancelled
 
         var isConfirmationCancelledCalled = false
         let confirmationCancelled: () -> Void = { isConfirmationCancelledCalled = true }
