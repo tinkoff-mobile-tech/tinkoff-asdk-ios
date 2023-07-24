@@ -80,7 +80,7 @@
     {% call staticSpecifier method %}var {{ methodName }}ReceivedInvocations: [{{ prefferedArgumentsType }}?] = []
     {% endif %}
     {% for param in method.parameters where param.isClosure %}
-    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{% endfor %})? {% endset %}
+    {% set closureInputType %}({% for param in param.typeName.closure.parameters %}{{ param.typeName }}{{ ', ' if not forloop.last }}{% endfor %})? {% endset %}
     {% call staticSpecifier method %}var {{ methodName }}{% if param.typeName.closure.parameters.count == 0 %}{{ param.name|upperFirstLetter }}ShouldExecute = false
         {%else%}{{ param.name|upperFirstLetter }}ClosureInput: {{ closureInputType }}{% endif %}
     {% endfor %}
