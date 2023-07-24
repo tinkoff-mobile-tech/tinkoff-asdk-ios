@@ -17,7 +17,7 @@ final class TDSWrapperMock: ITDSWrapper {
     var createTransactionThrowableError: Error?
     var createTransactionCallsCount = 0
     var createTransactionReceivedArguments: CreateTransactionArguments?
-    var createTransactionReceivedInvocations: [CreateTransactionArguments] = []
+    var createTransactionReceivedInvocations: [CreateTransactionArguments?] = []
     var createTransactionReturnValue: ITransaction!
 
     func createTransaction(directoryServerID: String, messageVersion: String) throws -> ITransaction {
@@ -47,7 +47,7 @@ final class TDSWrapperMock: ITDSWrapper {
 
     var updateCallsCount = 0
     var updateReceivedArguments: UpdateArguments?
-    var updateReceivedInvocations: [UpdateArguments] = []
+    var updateReceivedInvocations: [UpdateArguments?] = []
     var updateCompletionClosureInput: [CertificateUpdatingRequest: TDSWrapperError]?
 
     func update(with requests: [CertificateUpdatingRequest], receiveOn queue: DispatchQueue, _ completion: @escaping ([CertificateUpdatingRequest: TDSWrapperError]) -> Void) {
@@ -58,5 +58,23 @@ final class TDSWrapperMock: ITDSWrapper {
         if let updateCompletionClosureInput = updateCompletionClosureInput {
             completion(updateCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension TDSWrapperMock {
+    func fullReset() {
+        createTransactionThrowableError = nil
+        createTransactionCallsCount = 0
+        createTransactionReceivedArguments = nil
+        createTransactionReceivedInvocations = []
+
+        checkCertificatesCallsCount = 0
+
+        updateCallsCount = 0
+        updateReceivedArguments = nil
+        updateReceivedInvocations = []
+        updateCompletionClosureInput = nil
     }
 }
