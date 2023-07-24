@@ -1,10 +1,3 @@
-//
-//  XCUIElement+Wait.swift
-//  UITests
-//
-//  Created by Andrey Belyaev on 10.10.2022.
-//
-
 import XCTest
 
 public extension XCUIElement {

@@ -1,10 +1,3 @@
-//
-//  BaseUITest.swift
-//  UITests
-//
-//  Created by Glushkov Gleb on 21.07.2023.
-//
-
 import XCTest
 
 open class BaseUITest: XCTestCase {

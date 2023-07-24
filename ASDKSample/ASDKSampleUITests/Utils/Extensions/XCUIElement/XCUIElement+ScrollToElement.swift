@@ -1,11 +1,3 @@
-//
-//  XCUIElement+ScrollToElement.swift
-//  UITests
-//
-//  Created by y.orekhova on 27.04.2020.
-//  Copyright © 2020 АО «Тинькофф Банк», лицензия ЦБ РФ № 2673. All rights reserved.
-//
-
 import XCTest
 
 public extension XCUIElement {

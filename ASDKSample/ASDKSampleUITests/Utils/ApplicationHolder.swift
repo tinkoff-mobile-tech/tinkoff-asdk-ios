@@ -1,10 +1,3 @@
-//
-//  ApplicationHolder.swift
-//  UITests
-//
-//  Created by Glushkov Gleb on 21.07.2023.
-//
-
 import Foundation
 import XCTest
 
