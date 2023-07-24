@@ -47,7 +47,7 @@ final class CardListViewControllerTests: BaseTestCase {
         sut.hideLoadingSnackbar()
         // then
         XCTAssertEqual(snackbarControllerMock.hideSnackViewCallsCount, 1)
-        XCTAssertEqual(snackbarControllerMock.hideSnackViewCallArguments?.animated, true)
+        XCTAssertEqual(snackbarControllerMock.hideSnackViewReceivedArguments?.animated, true)
         XCTAssertEqual(presenterMock.viewDidHideRemovingCardSnackBarCallsCount, 1)
     }
 
