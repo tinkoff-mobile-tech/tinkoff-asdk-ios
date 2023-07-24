@@ -30,7 +30,7 @@ struct FinishAuthorizeRequest: AcquiringRequest {
     init(
         requestData: FinishAuthorizeData,
         encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         ipAddressProvider: IIPAddressProvider,
         environmentParametersProvider: IEnvironmentParametersProvider,
         publicKey: SecKey,
@@ -54,7 +54,7 @@ private extension HTTPParameters {
     static func parameters(
         requestData: FinishAuthorizeData,
         encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         ipAddressProvider: IIPAddressProvider,
         environmentParametersProvider: IEnvironmentParametersProvider,
         publicKey: SecKey

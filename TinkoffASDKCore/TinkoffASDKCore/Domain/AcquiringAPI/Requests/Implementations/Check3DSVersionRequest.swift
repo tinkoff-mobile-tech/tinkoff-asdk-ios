@@ -30,7 +30,7 @@ struct Check3DSVersionRequest: AcquiringRequest {
     init(
         check3DSRequestData: Check3DSVersionData,
         encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         publicKey: SecKey,
         baseURL: URL
     ) {
@@ -50,7 +50,7 @@ private extension HTTPParameters {
     static func create(
         requestData: Check3DSVersionData,
         encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
         var parameters: HTTPParameters = [Constants.Keys.paymentId: requestData.paymentId]

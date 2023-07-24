@@ -31,7 +31,7 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
     private let baseURLProvider: IURLProvider
     private let publicKeyProvider: IPublicKeyProvider
     private let terminalKeyProvider: IStringProvider
-    private let cardDataFormatter: CardDataFormatter
+    private let cardDataFormatter: ICardDataFormatter
     private let rsaEncryptor: IRSAEncryptor
     private let ipAddressProvider: IIPAddressProvider
     private let environmentParametersProvider: IEnvironmentParametersProvider
@@ -40,7 +40,7 @@ final class AcquiringRequestBuilder: IAcquiringRequestBuilder {
         baseURLProvider: IURLProvider,
         publicKeyProvider: IPublicKeyProvider,
         terminalKeyProvider: IStringProvider,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         rsaEncryptor: IRSAEncryptor,
         ipAddressProvider: IIPAddressProvider,
         environmentParametersProvider: IEnvironmentParametersProvider
