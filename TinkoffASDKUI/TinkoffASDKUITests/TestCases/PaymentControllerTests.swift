@@ -360,6 +360,8 @@ final class PaymentControllerTests: BaseTestCase {
     func test_paymentControllerNotifiesPaymentDelegate_whenNeedToCollect3DSData() {
         // given
         let data = Checking3DSURLData.fake()
+        let deviceInfo = ThreeDSDeviceInfo.fake()
+        threeDSDeviceInfoProviderMock.createDeviceInfoReturnValue = deviceInfo
 
         // when
         var serviceInfo: ThreeDSDeviceInfo?
@@ -370,11 +372,10 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let serviceInfoData = threeDSDeviceInfoProviderMock.stubbedCreateDeviceInfoResult
         let threeDSData = threeDSWebFlowControllerMock.complete3DSMethodReceivedArguments
-        XCTAssertEqual(serviceInfo?.cresCallbackUrl, serviceInfoData.cresCallbackUrl)
-        XCTAssertEqual(serviceInfo?.screenHeight, serviceInfoData.screenHeight)
-        XCTAssertEqual(serviceInfo?.screenWidth, serviceInfoData.screenWidth)
+        XCTAssertEqual(serviceInfo?.cresCallbackUrl, deviceInfo.cresCallbackUrl)
+        XCTAssertEqual(serviceInfo?.screenHeight, deviceInfo.screenHeight)
+        XCTAssertEqual(serviceInfo?.screenWidth, deviceInfo.screenWidth)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
         XCTAssertEqual(threeDSData?.notificationURL, data.notificationURL)
         XCTAssertEqual(threeDSData?.tdsServerTransID, data.tdsServerTransID)

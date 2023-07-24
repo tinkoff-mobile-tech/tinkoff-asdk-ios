@@ -140,7 +140,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // then
         let arguments = paymentProcessDelegateMock.paymentNeed3DsConfirmationPassedArguments
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DsConfirmationCallCounter, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         let paymentProcess = try XCTUnwrap(arguments?.paymentProcess)
         XCTAssertEqualTypes(paymentProcess, sut)
         try assertCalledDelegateDidFinish(sut: sut, fakedGetPaymentState: fakedGetPaymentState)
@@ -188,7 +188,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // then
         let arguments = paymentProcessDelegateMock.paymentNeed3DSConfirmationACSPassedArguments
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DSConfirmationACSCallCounter, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         let paymentProcess = try XCTUnwrap(arguments?.paymentProcess)
         XCTAssertEqualTypes(paymentProcess, sut)
         try assertCalledDelegateDidFinish(sut: sut, fakedGetPaymentState: fakedGetPaymentState)
@@ -235,7 +235,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // then
         let arguments = paymentProcessDelegateMock.paymentNeed3DSConfirmationAppBasedPassedArguments
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.invokedCreateDeviceInfoCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         let paymentProcess = try XCTUnwrap(arguments?.paymentProcess)
         XCTAssertEqualTypes(paymentProcess, sut)
         try assertCalledDelegateDidFinish(sut: sut, fakedGetPaymentState: fakedGetPaymentState)
