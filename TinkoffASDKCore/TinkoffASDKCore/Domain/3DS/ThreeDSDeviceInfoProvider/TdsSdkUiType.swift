@@ -22,8 +22,4 @@ public enum TdsSdkUiType: String, CaseIterable, Codable {
     case oob = "04"
     /// Своя html форма
     case html = "05"
-
-    static func allValues() -> String {
-        Self.allCases.map { $0.rawValue }.joined(separator: ",")
-    }
 }

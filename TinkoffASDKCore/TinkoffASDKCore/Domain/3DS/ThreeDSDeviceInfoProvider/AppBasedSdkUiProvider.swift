@@ -17,11 +17,9 @@ public protocol IAppBasedSdkUiProvider {
 
 public struct AppBasedSdkUiProvider: IAppBasedSdkUiProvider {
     let prefferedInterface: TdsSdkInterface
-    let prefferedUiTypes: [TdsSdkUiType]
 
-    public init(prefferedInterface: TdsSdkInterface, prefferedUiTypes: [TdsSdkUiType]) {
+    public init(prefferedInterface: TdsSdkInterface) {
         self.prefferedInterface = prefferedInterface
-        self.prefferedUiTypes = prefferedUiTypes
     }
 
     public func sdkInterface() -> TdsSdkInterface {
@@ -29,6 +27,10 @@ public struct AppBasedSdkUiProvider: IAppBasedSdkUiProvider {
     }
 
     public func sdkUiTypes() -> [TdsSdkUiType] {
-        prefferedUiTypes
+        let allUiVariants = TdsSdkUiType.allCases
+        switch sdkInterface() {
+        case .native: return allUiVariants.filter { $0 != .html }
+        case .html, .both: return allUiVariants
+        }
     }
 }

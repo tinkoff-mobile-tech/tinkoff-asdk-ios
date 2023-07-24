@@ -26,7 +26,7 @@ extension ThreeDSDeviceInfo {
             sdkMaxTimeout: nil,
             sdkEncData: nil,
             sdkInterface: .both,
-            sdkUiType: TdsSdkUiType.allValues()
+            sdkUiType: TdsSdkUiType.allCases.map { $0.rawValue }.joined(separator: ",")
         )
     }
 }

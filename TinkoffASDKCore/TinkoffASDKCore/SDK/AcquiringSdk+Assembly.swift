@@ -55,8 +55,7 @@ public extension AcquiringSdk {
         )
 
         let appBasedSdkUiProvider = AppBasedSdkUiProvider(
-            prefferedInterface: configuration.appBasedSdkInterface,
-            prefferedUiTypes: TdsSdkUiType.allCases
+            prefferedInterface: configuration.appBasedSdkInterface
         )
 
         let threeDSFacade = ThreeDSFacade.build(
