@@ -60,7 +60,7 @@ final class YandexPayPaymentFlowTests: BaseTestCase {
         XCTAssertEqual(yandexPayPaymentSheetAssemblyMock.yandexPayPaymentSheetCallsCount, 1)
         XCTAssertEqual(sheetArguments?.paymentFlow, fakedPaymentFlow)
         XCTAssertEqual(sheetArguments?.base64Token, fakedToken)
-        XCTAssertEqual(viewControllerMock.invokedPresentAnimatedCount, 1)
+        XCTAssertEqual(viewControllerMock.presentCallsCount, 1)
     }
 
     func test_yandexPayPaymentSheet_completedWith() {

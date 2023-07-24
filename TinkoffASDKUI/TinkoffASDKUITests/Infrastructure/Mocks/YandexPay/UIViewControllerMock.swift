@@ -18,74 +18,69 @@ final class UIViewControllerMock: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public var invokedNavigationControllerGetter = false
-    public var invokedNavigationControllerGetterCount = 0
-    public var stubbedNavigationController: UINavigationController?
-    override public var navigationController: UINavigationController? {
-        invokedNavigationControllerGetter = true
-        invokedNavigationControllerGetterCount += 1
-        return stubbedNavigationController ?? super.navigationController
+    override var navigationController: UINavigationController? {
+        get { return underlyingNavigationController ?? super.navigationController }
+        set(value) { underlyingNavigationController = value }
     }
 
-    public var invokedPresentAnimated = false
-    public var invokedPresentAnimatedCount = 0
-    public var invokedPresentAnimatedParameters: (viewControllerToPresent: UIViewController, animated: Bool)?
-    public var invokedPresentAnimatedParametersList = [(viewControllerToPresent: UIViewController, animated: Bool)]()
-    public var shouldInvokePresentAnimatedCompletion = false
+    var underlyingNavigationController: UINavigationController?
 
-    override public func present(_ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> Void)?) {
-        invokedPresentAnimated = true
-        invokedPresentAnimatedCount += 1
-        invokedPresentAnimatedParameters = (viewControllerToPresent, animated)
-        invokedPresentAnimatedParametersList.append((viewControllerToPresent, animated))
-        if shouldInvokePresentAnimatedCompletion {
+    override var presentingViewController: UIViewController? {
+        get { return underlyingPresentingViewController }
+        set(value) { underlyingPresentingViewController = value }
+    }
+
+    var underlyingPresentingViewController: UIViewController?
+
+    override var presentedViewController: UIViewController? {
+        get { return underlyingPresentedViewController }
+        set(value) { underlyingPresentedViewController = value }
+    }
+
+    var underlyingPresentedViewController: UIViewController?
+
+    override var transitionCoordinator: UIViewControllerTransitionCoordinator? {
+        get { return underlyingTransitionCoordinator }
+        set(value) { underlyingTransitionCoordinator = value }
+    }
+
+    var underlyingTransitionCoordinator: UIViewControllerTransitionCoordinator?
+
+    // MARK: - present
+
+    typealias PresentArguments = (viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> Void)?)
+
+    var presentCallsCount = 0
+    var presentReceivedArguments: PresentArguments?
+    var presentReceivedInvocations: [PresentArguments?] = []
+    var presentCompletionShouldExecute = false
+
+    override func present(_ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        presentCallsCount += 1
+        let arguments = (viewControllerToPresent, animated, completion)
+        presentReceivedArguments = arguments
+        presentReceivedInvocations.append(arguments)
+        if presentCompletionShouldExecute {
             completion?()
         }
     }
 
-    public var invokedPresentingViewControllerGetter = false
-    public var invokedPresentingViewControllerGetterCount = 0
-    public var stubbedPresentingViewController: UIViewController!
+    // MARK: - dismiss
 
-    override public var presentingViewController: UIViewController? {
-        invokedPresentingViewControllerGetter = true
-        invokedPresentingViewControllerGetterCount += 1
-        return stubbedPresentingViewController
-    }
+    typealias DismissArguments = (animated: Bool, completion: (() -> Void)?)
 
-    public var invokedPresentedViewControllerGetter = false
-    public var invokedPresentedViewControllerGetterCount = 0
-    public var stubbedPresentedViewController: UIViewController!
+    var dismissCallsCount = 0
+    var dismissReceivedArguments: DismissArguments?
+    var dismissReceivedInvocations: [DismissArguments?] = []
+    var dismissCompletionShouldExecute = false
 
-    override public var presentedViewController: UIViewController? {
-        invokedPresentedViewControllerGetter = true
-        invokedPresentedViewControllerGetterCount += 1
-        return stubbedPresentedViewController
-    }
-
-    public var invokedDismissAnimated = false
-    public var invokedDismissAnimatedCount = 0
-    public var invokedDismissAnimatedParameters: (flag: Bool, Void)?
-    public var invokedDismissAnimatedParametersList = [(flag: Bool, Void)?]()
-    public var shouldInvokeDismissAnimatedCompletion = false
-
-    override public func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        invokedDismissAnimated = true
-        invokedDismissAnimatedCount += 1
-        invokedDismissAnimatedParameters = (flag, ())
-        invokedDismissAnimatedParametersList.append((flag, ()))
-        if shouldInvokeDismissAnimatedCompletion {
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        dismissCallsCount += 1
+        let arguments = (flag, completion)
+        dismissReceivedArguments = arguments
+        dismissReceivedInvocations.append(arguments)
+        if dismissCompletionShouldExecute {
             completion?()
         }
-    }
-
-    public var invokedTransitionCoordinatorGetter = false
-    public var invokedTransitionCoordinatorGetterCount = 0
-    public var stubbedTransitionCoordinator: UIViewControllerTransitionCoordinator?
-
-    override public var transitionCoordinator: UIViewControllerTransitionCoordinator? {
-        invokedTransitionCoordinatorGetter = true
-        invokedTransitionCoordinatorGetterCount += 1
-        return stubbedTransitionCoordinator
     }
 }

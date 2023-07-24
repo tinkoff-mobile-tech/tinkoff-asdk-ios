@@ -91,8 +91,8 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         XCTAssertEqual(threeDSWebFlowDelegateMock.sourceViewControllerToPresentCallsCount, 1)
         XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestCallCounter, 1)
         XCTAssertEqual(threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerCallsCount, 1)
-        XCTAssertEqual(viewControllerMock.invokedPresentAnimatedCount, 1)
-        XCTAssertTrue(viewControllerMock.invokedPresentAnimatedParameters?.viewControllerToPresent === navController)
+        XCTAssertEqual(viewControllerMock.presentCallsCount, 1)
+        XCTAssertTrue(viewControllerMock.presentReceivedArguments?.viewControllerToPresent === navController)
         XCTAssertEqual(requestUrlInWebView?.absoluteString, data.acsUrl)
     }
 
@@ -138,8 +138,8 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         XCTAssertEqual(threeDSWebFlowDelegateMock.sourceViewControllerToPresentCallsCount, 1)
         XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestACSCallCounter, 1)
         XCTAssertEqual(threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerCallsCount, 1)
-        XCTAssertEqual(viewControllerMock.invokedPresentAnimatedCount, 1)
-        XCTAssertTrue(viewControllerMock.invokedPresentAnimatedParameters?.viewControllerToPresent === navController)
+        XCTAssertEqual(viewControllerMock.presentCallsCount, 1)
+        XCTAssertTrue(viewControllerMock.presentReceivedArguments?.viewControllerToPresent === navController)
         XCTAssertEqual(requestUrlInWebView?.absoluteString, data.acsUrl)
     }
 
