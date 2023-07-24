@@ -239,7 +239,8 @@ extension {% if typeNameFirstLetter == 'I' %}{% call removeFirstLetter type.name
     {% if type.allMethods|static|count != 0 and type.allMethods|initializer|count != type.allMethods|static|count %}
     static func fullStaticReset() {
     {% for method in type.allMethods|static %}
-        {% call fullResetMethod method %}
+        {% set uniqMethodName %}{% if hasDoubleNamesInMethods == 'yes' %}{% call uniqShortName method %}{% else %}{% call swiftifyMethodName method.shortName %}{% endif %}{% endset%}
+        {% call fullResetMethod method uniqMethodName %}
         {% if not forloop.last %}
 
         {% endif %}
