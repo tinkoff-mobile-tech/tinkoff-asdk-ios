@@ -9,13 +9,16 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class TDSControllerMock: ITDSController {
+    var completionHandler: PaymentCompletionHandler?
+    var cancelHandler: (() -> Void)?
+
     // MARK: - startAppBasedFlow
 
     typealias StartAppBasedFlowArguments = (check3dsPayload: Check3DSVersionPayload, completion: (Result<ThreeDSDeviceInfo, Error>) -> Void)
 
     var startAppBasedFlowCallsCount = 0
     var startAppBasedFlowReceivedArguments: StartAppBasedFlowArguments?
-    var startAppBasedFlowReceivedInvocations: [StartAppBasedFlowArguments] = []
+    var startAppBasedFlowReceivedInvocations: [StartAppBasedFlowArguments?] = []
     var startAppBasedFlowCompletionClosureInput: Result<ThreeDSDeviceInfo, Error>?
 
     func startAppBasedFlow(check3dsPayload: Check3DSVersionPayload, completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void) {
@@ -28,33 +31,43 @@ final class TDSControllerMock: ITDSController {
         }
     }
 
-    // MARK: stop
+    // MARK: - doChallenge
+
+    typealias DoChallengeArguments = Confirmation3DS2AppBasedData
+
+    var doChallengeCallsCount = 0
+    var doChallengeReceivedArguments: DoChallengeArguments?
+    var doChallengeReceivedInvocations: [DoChallengeArguments?] = []
+
+    func doChallenge(with appBasedData: Confirmation3DS2AppBasedData) {
+        doChallengeCallsCount += 1
+        let arguments = appBasedData
+        doChallengeReceivedArguments = arguments
+        doChallengeReceivedInvocations.append(arguments)
+    }
+
+    // MARK: - stop
 
     var stopCallsCount = 0
 
     func stop() {
         stopCallsCount += 1
     }
+}
 
-    // MARK: cancelHandler
+// MARK: - Resets
 
-    var completionHandler: TinkoffASDKUI.PaymentCompletionHandler?
+extension TDSControllerMock {
+    func fullReset() {
+        startAppBasedFlowCallsCount = 0
+        startAppBasedFlowReceivedArguments = nil
+        startAppBasedFlowReceivedInvocations = []
+        startAppBasedFlowCompletionClosureInput = nil
 
-    var cancelHandler: (() -> Void)?
+        doChallengeCallsCount = 0
+        doChallengeReceivedArguments = nil
+        doChallengeReceivedInvocations = []
 
-    // MARK: - doChallenge
-
-    struct DoChallengePassedArguments {
-        let appBasedData: TinkoffASDKCore.Confirmation3DS2AppBasedData
-    }
-
-    var doChallengeCallCounter = 0
-    var doChallengePassedArguments: DoChallengePassedArguments?
-
-    func doChallenge(
-        with appBasedData: TinkoffASDKCore.Confirmation3DS2AppBasedData
-    ) {
-        doChallengeCallCounter += 1
-        doChallengePassedArguments = DoChallengePassedArguments(appBasedData: appBasedData)
+        stopCallsCount = 0
     }
 }
