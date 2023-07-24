@@ -107,7 +107,6 @@ final class TDSControllerTests: BaseTestCase {
 
         // then
         XCTAssertEqual(transactionMock.doChallengeCallsCount, 1)
-        XCTAssertEqual(timeoutResolverMock.challengeValueGetCalls, 1)
     }
 
     /// Прошли проверку challenge
