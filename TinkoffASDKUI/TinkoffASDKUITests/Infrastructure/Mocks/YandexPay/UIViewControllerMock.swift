@@ -84,3 +84,19 @@ final class UIViewControllerMock: UIViewController {
         }
     }
 }
+
+// MARK: - Resets
+
+extension UIViewControllerMock {
+    func fullReset() {
+        presentCallsCount = 0
+        presentReceivedArguments = nil
+        presentReceivedInvocations = []
+        presentCompletionShouldExecute = false
+
+        dismissCallsCount = 0
+        dismissReceivedArguments = nil
+        dismissReceivedInvocations = []
+        dismissCompletionShouldExecute = false
+    }
+}
