@@ -46,6 +46,7 @@
 * [EACQAPW-5626] AcquiringRequestBuilder Tests
 * [EACQAPW-5651] DeviceInfoProvder Tests
 * [EACQAPW-5661] ExternalRequestBuilder Tests
+* [EACQAPW-5669] URLProvider Tests
 
 ### Fixed
 
