@@ -208,17 +208,28 @@ final class EmailViewPresenterTests: BaseTestCase {
         // then
         XCTAssertFalse(isValidEmail)
     }
+
+    func test_setsHeaderError_for_invalid_filled_email() {
+        // given
+        let email = "EMAIL"
+
+        // when
+        setupSut(customerEmail: email, resetViewMock: false)
+
+        // then
+        XCTAssertEqual(viewMock.setTextFieldHeaderErrorCallsCount, 1)
+    }
 }
 
 // MARK: - Private methods
 
 extension EmailViewPresenterTests {
-    private func setupSut(customerEmail: String = "") {
+    private func setupSut(customerEmail: String = "", resetViewMock: Bool = true) {
         viewMock = EmailViewInputMock()
         outputMock = EmailViewPresenterOutputMock()
         sut = EmailViewPresenter(customerEmail: customerEmail, output: outputMock)
         sut.view = viewMock
 
-        viewMock.fullReset()
+        if resetViewMock { viewMock.fullReset() }
     }
 }

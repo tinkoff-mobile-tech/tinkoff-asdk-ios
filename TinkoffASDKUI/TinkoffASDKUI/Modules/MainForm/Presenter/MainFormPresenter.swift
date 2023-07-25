@@ -410,12 +410,11 @@ extension MainFormPresenter {
             return
         }
 
-        let isCvcValid = dataState.hasCards ? savedCardPresenter.isValid : true
-        let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
-
         if dataState.hasCards == false {
             payButtonPresenter.set(enabled: true)
         } else {
+            let isCvcValid = savedCardPresenter.isValid
+            let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
             payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
         }
     }
