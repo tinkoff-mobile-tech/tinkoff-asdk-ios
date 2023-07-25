@@ -413,7 +413,11 @@ extension MainFormPresenter {
         let isCvcValid = dataState.hasCards ? savedCardPresenter.isValid : true
         let isEmailValid = getReceiptSwitchPresenter.isOn ? emailPresenter.isEmailValid : true
 
-        payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
+        if dataState.hasCards == false {
+            payButtonPresenter.set(enabled: true)
+        } else {
+            payButtonPresenter.set(enabled: isCvcValid && isEmailValid)
+        }
     }
 
     private func startPaymentWithSavedCard() {

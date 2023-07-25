@@ -45,6 +45,7 @@
 ### Fixed
 
 * [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
+* [EACQAPW-5657] Pay by Card email field bugfixes
 
 ## [3.1.1] - 2023-07-17Z
 
