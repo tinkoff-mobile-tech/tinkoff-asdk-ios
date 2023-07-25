@@ -15,7 +15,7 @@ final class PaymentFactoryTests: XCTestCase {
     // Dependencies
 
     var paymentDelegateMock: PaymentProcessDelegateMock!
-    var ipProviderMock: MockIPAddressProvider!
+    var ipProviderMock: IPAddressProviderMock!
     var paymentsServiceMock: AcquiringPaymentsServiceMock!
     var threeDsServiceMock: AcquiringThreeDsServiceMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
@@ -26,7 +26,7 @@ final class PaymentFactoryTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        let ipProviderMock = MockIPAddressProvider()
+        let ipProviderMock = IPAddressProviderMock()
         let paymentDelegateMock = PaymentProcessDelegateMock()
         let paymentsServiceMock = AcquiringPaymentsServiceMock()
         let threeDsServiceMock = AcquiringThreeDsServiceMock()

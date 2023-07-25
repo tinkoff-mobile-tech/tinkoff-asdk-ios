@@ -625,7 +625,7 @@ extension CardPaymentProcessTests {
         let sut: CardPaymentProcess
         let sutAsPaymentProcess: IPaymentProcess
         let paymentDelegateMock: PaymentProcessDelegateMock
-        let ipProviderMock: MockIPAddressProvider
+        let ipProviderMock: IPAddressProviderMock
         let paymentsServiceMock: AcquiringPaymentsServiceMock
         let threeDsServiceMock: AcquiringThreeDsServiceMock
         let paymentFlow: PaymentFlow
@@ -637,7 +637,7 @@ extension CardPaymentProcessTests {
         paymentFlow: PaymentFlow
     ) -> Dependencies {
         let paymentDelegateMock = PaymentProcessDelegateMock()
-        let ipProviderMock = MockIPAddressProvider()
+        let ipProviderMock = IPAddressProviderMock()
 
         let paymentsServiceMock = AcquiringPaymentsServiceMock()
         let threeDsServiceMock = AcquiringThreeDsServiceMock()
