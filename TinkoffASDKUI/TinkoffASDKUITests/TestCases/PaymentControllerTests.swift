@@ -219,7 +219,7 @@ final class PaymentControllerTests: BaseTestCase {
         // given
         let pamentFlow = PaymentFlow.fake()
         let paymentSource = PaymentSourceData.yandexPay(base64Token: "base64Token")
-        paymentFactoryMock.createPaymentStubReturn = paymentProcessMock
+        paymentFactoryMock.createPaymentReturnValue = paymentProcessMock
 
         // when
         sut.performPayment(
@@ -228,8 +228,8 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let createPaymentArguments = paymentFactoryMock.createPaymentPassedArguments
-        XCTAssertEqual(paymentFactoryMock.createPaymentCallCounter, 1)
+        let createPaymentArguments = paymentFactoryMock.createPaymentReceivedArguments
+        XCTAssertEqual(paymentFactoryMock.createPaymentCallsCount, 1)
         XCTAssertEqual(createPaymentArguments?.paymentSource, paymentSource)
         XCTAssertEqual(createPaymentArguments?.paymentFlow, pamentFlow)
         XCTAssert(createPaymentArguments?.paymentDelegate === sut)

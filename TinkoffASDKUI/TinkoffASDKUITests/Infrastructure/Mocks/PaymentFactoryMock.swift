@@ -12,28 +12,28 @@ final class PaymentFactoryMock: IPaymentFactory {
 
     // MARK: - createPayment
 
-    struct CreatePaymentArguments {
-        let paymentSource: PaymentSourceData
-        let paymentFlow: PaymentFlow
-        let paymentDelegate: PaymentProcessDelegate
+    typealias CreatePaymentArguments = (paymentSource: PaymentSourceData, paymentFlow: PaymentFlow, paymentDelegate: PaymentProcessDelegate)
+
+    var createPaymentCallsCount = 0
+    var createPaymentReceivedArguments: CreatePaymentArguments?
+    var createPaymentReceivedInvocations: [CreatePaymentArguments?] = []
+    var createPaymentReturnValue: IPaymentProcess?
+
+    func createPayment(paymentSource: PaymentSourceData, paymentFlow: PaymentFlow, paymentDelegate: PaymentProcessDelegate) -> IPaymentProcess? {
+        createPaymentCallsCount += 1
+        let arguments = (paymentSource, paymentFlow, paymentDelegate)
+        createPaymentReceivedArguments = arguments
+        createPaymentReceivedInvocations.append(arguments)
+        return createPaymentReturnValue
     }
+}
 
-    var createPaymentCallCounter = 0
-    var createPaymentPassedArguments: CreatePaymentArguments?
-    var createPaymentStubReturn: IPaymentProcess?
+// MARK: - Resets
 
-    func createPayment(
-        paymentSource: PaymentSourceData,
-        paymentFlow: PaymentFlow,
-        paymentDelegate: PaymentProcessDelegate
-    ) -> IPaymentProcess? {
-        createPaymentCallCounter += 1
-        createPaymentPassedArguments = CreatePaymentArguments(
-            paymentSource: paymentSource,
-            paymentFlow: paymentFlow,
-            paymentDelegate: paymentDelegate
-        )
-
-        return createPaymentStubReturn
+extension PaymentFactoryMock {
+    func fullReset() {
+        createPaymentCallsCount = 0
+        createPaymentReceivedArguments = nil
+        createPaymentReceivedInvocations = []
     }
 }
