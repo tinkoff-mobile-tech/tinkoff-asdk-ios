@@ -12,14 +12,26 @@ final class PaymentStatusUpdateServiceMock: IPaymentStatusUpdateService {
 
     // MARK: - startUpdateStatusIfNeeded
 
+    typealias StartUpdateStatusIfNeededArguments = FullPaymentData
+
     var startUpdateStatusIfNeededCallsCount = 0
-    var startUpdateStatusIfNeededReceivedArguments: FullPaymentData?
-    var startUpdateStatusIfNeededReceivedInvocations: [FullPaymentData] = []
+    var startUpdateStatusIfNeededReceivedArguments: StartUpdateStatusIfNeededArguments?
+    var startUpdateStatusIfNeededReceivedInvocations: [StartUpdateStatusIfNeededArguments?] = []
 
     func startUpdateStatusIfNeeded(data: FullPaymentData) {
         startUpdateStatusIfNeededCallsCount += 1
         let arguments = data
         startUpdateStatusIfNeededReceivedArguments = arguments
         startUpdateStatusIfNeededReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension PaymentStatusUpdateServiceMock {
+    func fullReset() {
+        startUpdateStatusIfNeededCallsCount = 0
+        startUpdateStatusIfNeededReceivedArguments = nil
+        startUpdateStatusIfNeededReceivedInvocations = []
     }
 }
