@@ -39,7 +39,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
         // then
 
-        XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedCallCounter, 1)
+        XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount, 1)
     }
 
     func test_Start_when_paymentFlow_full_InitPayment_success_Charge_success() {
@@ -91,7 +91,7 @@ final class ChargePaymentProcessTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
     }
@@ -133,7 +133,7 @@ final class ChargePaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(dependencies.paymentsServiceMock.chargeCallCounter, 1)
-        XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedCallCounter, 1)
+        XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount, 1)
     }
 
     // MARK: - func start() when paymentFlow == .finish
@@ -166,7 +166,7 @@ final class ChargePaymentProcessTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
     }
@@ -190,7 +190,7 @@ final class ChargePaymentProcessTests: XCTestCase {
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount,
             1
         )
     }
