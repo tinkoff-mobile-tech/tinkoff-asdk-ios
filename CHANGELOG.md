@@ -1,5 +1,7 @@
 # Changelog
 ## [Unreleased]
+### Added
+* [EACQAPW-5649] Add Tinkoff Pay Links clarification to README
 
 ## [3.1.1] - 2023-07-17Z
 

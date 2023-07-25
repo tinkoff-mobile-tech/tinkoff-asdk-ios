@@ -303,7 +303,12 @@ let paymentCallbackURL = PaymentCallbackURL(
     successURL: "SUCCESS_URL",
     failureURL: "FAIL_URL"
 )
-
+```
+> :speech_balloon: 
+> Если параметр `paymentCallbackURL` передан – используются его значения. 
+> В противном случае – используются стандартные значения из настроек терминала.
+> Для установки стандартных **SuccessURL** & **FailURL** обратитесь к персональному менеджеру через нашу поддержку.
+``` swift
 // Словарь, содержащий дополнительные параметры в виде `[Key: Value]`, которые можно передать по необходимости
 let paymentData = ["someKey": "someValue"]
 
