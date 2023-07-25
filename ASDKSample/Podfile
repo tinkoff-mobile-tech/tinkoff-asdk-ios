@@ -13,11 +13,17 @@ target 'ASDKSample' do
   pod 'TinkoffASDKCore', :path => "../", :testspecs => ['Tests']
   pod 'TinkoffASDKUI', :path => "../", :testspecs => ['Tests']
   pod 'TinkoffASDKYandexPay', :path => '../', :testspecs => ['Tests']
-
-	# Linting and Formatting
+  
+  # Linting and Formatting
   pod 'SwiftFormat/CLI', '0.49.18' # Версия должна совпадать с версией контейнера на CI
   pod 'SwiftLint', '0.47.0' # Версия должна совпадать с версией контейнера на CI
   pod 'SwiftGen', '~> 6.0'
+end
+
+target 'ASDKSampleUITests' do
+  if ENV['UITEST_CONFIG'] == 'enabled'
+    pod 'UITestUtils', :git => 'https://gitlab.tcsbank.ru/coretech-mobile-ios/uitestutils.git', :tag => '1.1.3'
+  end
 end
 
 # target 'ASDKSampleTests' do
@@ -33,7 +39,7 @@ post_install do |installer|
   install_githooks
   # Подменяем deployment версию iOS во всех под проектах
   installer.generated_projects.each do |project|
-      project.targets.each do |target|
+    project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimal_ios_version
       end

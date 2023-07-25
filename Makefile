@@ -31,3 +31,7 @@ snapshot_testing:
 	rm -rf 'TestsSharedInfrastructure.podspec'
 #	make clean_podlock
 	make open_workspace
+	
+ui-tests:
+# Для работы с UI тестами устанавливаем переменную окружения "UITEST_CONFIG=enabled" и вызываем обычный make start
+	UITEST_CONFIG=enabled make start

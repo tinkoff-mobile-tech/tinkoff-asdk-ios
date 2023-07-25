@@ -30,7 +30,7 @@ struct AttachCardRequest: AcquiringRequest {
     init(
         data: AttachCardData,
         encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         publicKey: SecKey,
         baseURL: URL
     ) {
@@ -50,7 +50,7 @@ private extension HTTPParameters {
     static func parameters(
         requestData: AttachCardData,
         encryptor: IRSAEncryptor,
-        cardDataFormatter: CardDataFormatter,
+        cardDataFormatter: ICardDataFormatter,
         publicKey: SecKey
     ) -> HTTPParameters {
         var parameters: HTTPParameters = [Constants.Keys.requestKey: requestData.requestKey]
