@@ -45,6 +45,7 @@
 * [EACQAPW-5588] Added UITests target and added tests utils methods
 * [EACQAPW-5626] AcquiringRequestBuilder Tests
 * [EACQAPW-5651] DeviceInfoProvder Tests
+* [EACQAPW-5661] ExternalRequestBuilder Tests
 
 ### Fixed
 
