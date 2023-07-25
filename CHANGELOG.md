@@ -44,6 +44,7 @@
 * [EACQAPW-5614] EnvironmentParametersProvider Tests
 * [EACQAPW-5588] Added UITests target and added tests utils methods
 * [EACQAPW-5626] AcquiringRequestBuilder Tests
+* [EACQAPW-5651] DeviceInfoProvder Tests
 
 ### Fixed
 
