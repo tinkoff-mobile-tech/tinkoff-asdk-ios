@@ -58,6 +58,9 @@ final class CardListPresenterTests: BaseTestCase {
         // given
         prepareSut()
 
+        let card = PaymentCard(pan: "", cardId: "", status: .active, parentPaymentId: nil, expDate: "")
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success([card])
+
         // when
         sutAsProtocol.viewDidLoad()
 
@@ -117,6 +120,8 @@ final class CardListPresenterTests: BaseTestCase {
 
     func test_viewDidHideLoadingSnackbar_deactivateCard_success() throws {
         // given
+        let payload = RemoveCardPayload(cardId: "123", cardStatus: .active)
+        cardsControllerMock.removeCardCompletionClosureInput = .success(payload)
         prepareSut()
         sutAsProtocol.view(didTapDeleteOn: buildCardListCard())
 
@@ -133,10 +138,9 @@ final class CardListPresenterTests: BaseTestCase {
         prepareSut()
         let fakeCard = PaymentCard.fake()
         let cardList = buildCardListCard()
+        cardsControllerMock.removeCardCompletionClosureInput = .success(.init(cardId: cardList.id, cardStatus: .active))
+
         sutAsProtocol.view(didTapDeleteOn: cardList)
-        cardsControllerMock.removeCardStub = { _, completion in
-            completion(.success(.init(cardId: cardList.id, cardStatus: .active)))
-        }
         sut.addNewCardDidReceive(result: .succeded(fakeCard))
 
         // when
@@ -156,9 +160,7 @@ final class CardListPresenterTests: BaseTestCase {
         // given
         prepareSut()
         let cards = buildActiveCardsCache()
-        cardsControllerMock.removeCardStub = { _, completion in
-            completion(.failure(TestsError.basic))
-        }
+        cardsControllerMock.removeCardCompletionClosureInput = .failure(TestsError.basic)
         sutAsProtocol.viewDidHideShimmer(fetchCardsResult: .success(cards))
         sutAsProtocol.view(didTapDeleteOn: buildCardListCard())
         viewMock.reloadCallsCount = .zero
@@ -178,10 +180,8 @@ final class CardListPresenterTests: BaseTestCase {
         let cardListCard = buildCardListCard()
         let expectation = expectation(description: #function)
 
-        cardsControllerMock.removeCardStub = { _, completion in
-            completion(.success(RemoveCardPayload(cardId: "2", cardStatus: .deleted)))
-            expectation.fulfill()
-        }
+        cardsControllerMock.removeCardCompletionClosure = { expectation.fulfill() }
+        cardsControllerMock.removeCardCompletionClosureInput = .success(RemoveCardPayload(cardId: "2", cardStatus: .deleted))
 
         // when
         sutAsProtocol.view(didTapDeleteOn: cardListCard)
@@ -200,10 +200,8 @@ final class CardListPresenterTests: BaseTestCase {
         let cardListCard = buildCardListCard()
         let expectation = expectation(description: #function)
 
-        cardsControllerMock.removeCardStub = { _, completion in
-            completion(.failure(TestsError.basic))
-            expectation.fulfill()
-        }
+        cardsControllerMock.removeCardCompletionClosure = { expectation.fulfill() }
+        cardsControllerMock.removeCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sutAsProtocol.view(didTapDeleteOn: cardListCard)
@@ -248,6 +246,9 @@ final class CardListPresenterTests: BaseTestCase {
     func test_viewDidHideShimmer_network_failure_shouldHideShimmer() {
         // given
         prepareSut()
+
+        let card = PaymentCard(pan: "", cardId: "", status: .active, parentPaymentId: nil, expDate: "")
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success([card])
 
         // when
         sutAsProtocol.viewDidHideShimmer(
@@ -417,12 +418,8 @@ final class CardListPresenterTests: BaseTestCase {
         let cards = buildActiveCardsCache()
         let card = try XCTUnwrap(cards.first)
         let cardListCardToDelete = CardList.Card(from: card)
-        var passedCardId = ""
 
-        cardsControllerMock.removeCardStub = { cardId, completion in
-            passedCardId = cardId
-            completion(.success(RemoveCardPayload(cardId: cardId, cardStatus: .deleted)))
-        }
+        cardsControllerMock.removeCardCompletionClosureInput = .success(RemoveCardPayload(cardId: cardListCardToDelete.id, cardStatus: .deleted))
 
         sut.viewDidHideShimmer(fetchCardsResult: .success(cards))
         sut.viewDidTapEditButton()
@@ -437,7 +434,7 @@ final class CardListPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.showRemovingCardSnackBarCallsCount, 1)
         XCTAssertEqual(viewMock.disableViewUserInteractionCallsCount, 1)
         XCTAssertEqual(cardsControllerMock.removeCardCallsCount, 1)
-        XCTAssertEqual(passedCardId, card.cardId)
+        XCTAssertEqual(cardsControllerMock.removeCardReceivedArguments?.cardId, card.cardId)
         XCTAssertEqual(viewMock.hideLoadingSnackbarCallsCount, 1)
         XCTAssertTrue(didDeleteCardFromView)
         XCTAssertEqual(viewMock.showStubReceivedArguments, .noCardsInCardList())

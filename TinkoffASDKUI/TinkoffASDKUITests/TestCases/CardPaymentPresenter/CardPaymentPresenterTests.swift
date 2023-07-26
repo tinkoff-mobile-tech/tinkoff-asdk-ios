@@ -85,9 +85,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_with_initialActiveCardsNil_success() {
         // given
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.success(self.createActiveCardsArray()))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success(createActiveCardsArray())
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
@@ -105,9 +103,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     func test_viewDidLoad_with_initialActiveCardsNil_failure() {
         // given
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.failure(error))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when

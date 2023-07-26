@@ -142,9 +142,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.succeded(paymentCard))
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .succeded(paymentCard)
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -169,9 +167,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.cancelled)
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .cancelled
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -199,9 +195,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.failed(error))
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .failed(error)
 
         // when
         sut.cardFieldViewAddCardTapped()
@@ -222,9 +216,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         cardFieldPresenterMock.bootstrap()
         cardFieldPresenterMock.validateWholeFormReturnValue = .allValid()
 
-        cardsControllerMock.addCardStub = { options, completion in
-            completion(.failed(NSError(domain: "", code: 510)))
-        }
+        cardsControllerMock.addCardCompletionClosureInput = .failed(NSError(domain: "", code: 510))
 
         // when
         sut.cardFieldViewAddCardTapped()
