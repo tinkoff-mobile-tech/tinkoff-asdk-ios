@@ -308,8 +308,8 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let data = try XCTUnwrap(delegateMock.paymentControllerShouldRepeatWithRebillIdReturnParameters?.data)
-        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 1)
+        let data = try XCTUnwrap(delegateMock.paymentControllerShouldRepeatWithRebillIdReceivedArguments)
+        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallsCount, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.additionalData, additionalData)
     }
@@ -332,7 +332,7 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 0)
+        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallsCount, 0)
     }
 
     func test_paymentControllerNotifiesPaymentDelegate_whenPaymentDidFailed() throws {
