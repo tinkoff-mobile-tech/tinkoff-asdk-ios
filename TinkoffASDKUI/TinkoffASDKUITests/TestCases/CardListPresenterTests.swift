@@ -326,7 +326,7 @@ final class CardListPresenterTests: BaseTestCase {
         sutAsProtocol.viewDidTapCard(cardIndex: 0)
 
         // then
-        XCTAssertEqual(output.cardListWillCloseAfterSelectingCalls.count, 0)
+        XCTAssertEqual(output.cardListWillCloseAfterSelectingCallsCount, 0)
     }
 
     func test_viewDidTapCard_withCardListUseCase_shouldCloseScreen() {
@@ -340,8 +340,8 @@ final class CardListPresenterTests: BaseTestCase {
         sutAsProtocol.viewDidTapCard(cardIndex: 0)
 
         // then
-        XCTAssertEqual(output.cardListWillCloseAfterSelectingCalls.count, 1)
-        XCTAssertEqual(output.cardListWillCloseAfterSelectingCalls, cards)
+        XCTAssertEqual(output.cardListWillCloseAfterSelectingCallsCount, 1)
+        XCTAssertEqual(output.cardListWillCloseAfterSelectingCallsCount, cards.count)
         XCTAssertEqual(viewMock.closeScreenCallsCount, 1)
     }
 
