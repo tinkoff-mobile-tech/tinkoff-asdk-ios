@@ -14,7 +14,7 @@ final class CardListViewControllerTests: BaseTestCase {
     var sut: CardListViewController!
 
     // Mocks
-    var presenterMock: CardListPresenterMock!
+    var presenterMock: CardListViewOutputMock!
     var snackbarControllerMock: SnackbarControllerMock!
 
     // MARK: - Setup
@@ -22,7 +22,7 @@ final class CardListViewControllerTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        presenterMock = CardListPresenterMock()
+        presenterMock = CardListViewOutputMock()
         snackbarControllerMock = SnackbarControllerMock()
         sut = CardListViewController(
             configuration: CardListScreenConfiguration(useCase: .cardList),
