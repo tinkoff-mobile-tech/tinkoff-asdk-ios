@@ -81,7 +81,7 @@ extension EmailViewPresenter {
     }
 
     private func viewSetTextFieldHeaderState() {
-        guard isFieldDidBeginEditing || currentEmail.isEmpty == false else {
+        guard isFieldDidBeginEditing || !currentEmail.isEmpty else {
             view?.setTextFieldHeaderNormal()
             return
         }

@@ -410,7 +410,7 @@ extension MainFormPresenter {
             return
         }
 
-        if dataState.hasCards == false {
+        if !dataState.hasCards {
             payButtonPresenter.set(enabled: true)
         } else {
             let isCvcValid = savedCardPresenter.isValid
