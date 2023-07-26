@@ -43,6 +43,15 @@
         if {{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ShouldExecute {
             {{ param.name}}{{ '?' if param.isOptional }}()
         }
+        {% elif param.typeName.closure.parameters.count > 1 %}
+        {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
+        if let {{ closureInput }} = {{ closureInput }} {
+            {{ param.name}}{{ '?' if param.isOptional }}(
+        {% inner: for i in 0...param.typeName.closure.parameters.count %}{{ ',' if not forloop.inner.first and not forloop.inner.last }}
+            {% if not forloop.inner.last %}
+                {{ closureInput }}.{{ i }}{% endif %}{% endfor %}
+            )
+        }
         {%else%}
         {% set closureInput %}{{ shortNameOfTheMethod }}{{ param.name|upperFirstLetter}}ClosureInput{% endset %}
         if let {{ closureInput }} = {{ closureInput }} {
