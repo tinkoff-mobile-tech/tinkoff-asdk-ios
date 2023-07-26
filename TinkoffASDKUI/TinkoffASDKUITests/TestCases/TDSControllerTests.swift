@@ -38,7 +38,7 @@ final class TDSControllerTests: BaseTestCase {
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         delayExecutorMock = DelayedExecutorMock()
         mainQueueMock = DispatchQueueMock()
-        delayExecutorMock.executeWorkClosureShouldExecute = true
+        delayExecutorMock.executeWorkShouldExecute = true
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         tDSWrapperMock.createTransactionReturnValue = transactionMock
@@ -55,7 +55,7 @@ final class TDSControllerTests: BaseTestCase {
     }
 
     override func tearDown() {
-        delayExecutorMock.executeWorkClosureShouldExecute = false
+        delayExecutorMock.executeWorkShouldExecute = false
         DispatchQueueMock.performOnMainBlockShouldExecute = false
 
         acquiringThreeDSServiceMock = nil
