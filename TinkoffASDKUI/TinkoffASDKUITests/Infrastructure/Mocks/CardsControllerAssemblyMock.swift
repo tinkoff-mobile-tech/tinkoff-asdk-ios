@@ -11,9 +11,11 @@ final class CardsControllerAssemblyMock: ICardsControllerAssembly {
 
     // MARK: - cardsController
 
+    typealias CardsControllerArguments = String
+
     var cardsControllerCallsCount = 0
-    var cardsControllerReceivedArguments: String?
-    var cardsControllerReceivedInvocations: [String] = []
+    var cardsControllerReceivedArguments: CardsControllerArguments?
+    var cardsControllerReceivedInvocations: [CardsControllerArguments?] = []
     var cardsControllerReturnValue: ICardsController!
 
     func cardsController(customerKey: String) -> ICardsController {
@@ -22,5 +24,15 @@ final class CardsControllerAssemblyMock: ICardsControllerAssembly {
         cardsControllerReceivedArguments = arguments
         cardsControllerReceivedInvocations.append(arguments)
         return cardsControllerReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension CardsControllerAssemblyMock {
+    func fullReset() {
+        cardsControllerCallsCount = 0
+        cardsControllerReceivedArguments = nil
+        cardsControllerReceivedInvocations = []
     }
 }
