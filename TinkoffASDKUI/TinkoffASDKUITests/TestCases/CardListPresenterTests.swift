@@ -355,7 +355,7 @@ final class CardListPresenterTests: BaseTestCase {
         sutAsProtocol.viewDidTapAddCardCell()
 
         // then
-        XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
+        XCTAssertEqual(router.openAddNewCardCallsCount, 1)
     }
 
     func test_viewDidTapAddCardCell_shouldOpenCardPayment() throws {
@@ -385,7 +385,7 @@ final class CardListPresenterTests: BaseTestCase {
         // then
         XCTAssertEqual(viewMock.showStubCallsCount, 1)
         XCTAssertEqual(viewMock.showStubReceivedArguments, .noCardsInCardList())
-        XCTAssertEqual(router.openAddNewCardsCallsCount, 1)
+        XCTAssertEqual(router.openAddNewCardCallsCount, 1)
     }
 
     func test_getCardList_unkownCustomer_error_when_configurationIsCardPaymentList() {
