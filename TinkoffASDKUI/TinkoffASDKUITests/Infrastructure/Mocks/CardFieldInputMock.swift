@@ -5,6 +5,7 @@
 //  Created by Ivan Glushko on 27.03.2023.
 //
 
+import Foundation
 @testable import TinkoffASDKUI
 
 class CardFieldInputMock: ICardFieldInput {
@@ -37,32 +38,42 @@ class CardFieldInputMock: ICardFieldInput {
 
     var underlyingCvc: String!
 
-    var setTextFieldTypeCallsCount = 0
-    var setTextFieldTypeReceivedArguments: (CardFieldType, String?)?
-    var setTextFieldTypeReceivedInvocations: [(CardFieldType, String?)] = []
-    func set(textFieldType: CardFieldType, text: String?) {
-        setTextFieldTypeCallsCount += 1
-        let arguments = (textFieldType, text)
-        setTextFieldTypeReceivedArguments = arguments
-        setTextFieldTypeReceivedInvocations.append(arguments)
-    }
-
-    var activateTextFieldTypeCallsCount = 0
-    var activateTextFieldTypeReceivedArguments: CardFieldType?
-    var activateTextFieldTypeReceivedInvocations: [CardFieldType] = []
-    func activate(textFieldType: CardFieldType) {
-        activateTextFieldTypeCallsCount += 1
-        let arguments = textFieldType
-        activateTextFieldTypeReceivedArguments = arguments
-        activateTextFieldTypeReceivedInvocations.append(arguments)
-    }
-
     var validationResult: CardFieldValidationResult {
         get { return underlyingValidationResult }
         set(value) { underlyingValidationResult = value }
     }
 
     var underlyingValidationResult: CardFieldValidationResult!
+
+    // MARK: - set
+
+    typealias SetArguments = (textFieldType: CardFieldType, text: String?)
+
+    var setCallsCount = 0
+    var setReceivedArguments: SetArguments?
+    var setReceivedInvocations: [SetArguments?] = []
+
+    func set(textFieldType: CardFieldType, text: String?) {
+        setCallsCount += 1
+        let arguments = (textFieldType, text)
+        setReceivedArguments = arguments
+        setReceivedInvocations.append(arguments)
+    }
+
+    // MARK: - activate
+
+    typealias ActivateArguments = CardFieldType
+
+    var activateCallsCount = 0
+    var activateReceivedArguments: ActivateArguments?
+    var activateReceivedInvocations: [ActivateArguments?] = []
+
+    func activate(textFieldType: CardFieldType) {
+        activateCallsCount += 1
+        let arguments = textFieldType
+        activateReceivedArguments = arguments
+        activateReceivedInvocations.append(arguments)
+    }
 
     // MARK: - validateWholeForm
 
@@ -77,15 +88,37 @@ class CardFieldInputMock: ICardFieldInput {
 
     // MARK: - injectOutput
 
+    typealias InjectOutputArguments = ICardFieldOutput
+
     var injectOutputCallsCount = 0
-    var injectOutputReceivedArguments: ICardFieldOutput?
-    var injectOutputReceivedInvocations: [ICardFieldOutput] = []
+    var injectOutputReceivedArguments: InjectOutputArguments?
+    var injectOutputReceivedInvocations: [InjectOutputArguments?] = []
 
     func injectOutput(_ output: ICardFieldOutput) {
         injectOutputCallsCount += 1
         let arguments = output
         injectOutputReceivedArguments = arguments
         injectOutputReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension CardFieldInputMock {
+    @objc func fullReset() {
+        setCallsCount = 0
+        setReceivedArguments = nil
+        setReceivedInvocations = []
+
+        activateCallsCount = 0
+        activateReceivedArguments = nil
+        activateReceivedInvocations = []
+
+        validateWholeFormCallsCount = 0
+
+        injectOutputCallsCount = 0
+        injectOutputReceivedArguments = nil
+        injectOutputReceivedInvocations = []
     }
 }
 

@@ -113,9 +113,9 @@ final class AddNewCardPresenterTests: BaseTestCase {
         // when
         sut.scanButtonPressed()
         // then
-        let updatedFields = cardFieldPresenterMock.setTextFieldTypeReceivedInvocations.map { $0.0 }
+        let updatedFields = cardFieldPresenterMock.setReceivedInvocations.map { $0?.0 }
         XCTAssertEqual(viewMock.showCardScannerCallsCount, 1)
-        XCTAssertEqual(cardFieldPresenterMock.setTextFieldTypeCallsCount, 3)
+        XCTAssertEqual(cardFieldPresenterMock.setCallsCount, 3)
         XCTAssertEqual(updatedFields, [.cardNumber, .expiration, .cvc])
     }
 

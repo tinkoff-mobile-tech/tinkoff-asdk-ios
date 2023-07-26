@@ -67,7 +67,9 @@ final class CardFieldViewOutputMock: CardFieldInputMock, ICardFieldViewOutput {
 // MARK: - Resets
 
 extension CardFieldViewOutputMock {
-    func fullReset() {
+    override func fullReset() {
+        super.fullReset()
+
         scanButtonPressedCallsCount = 0
 
         didFillFieldCallsCount = 0
