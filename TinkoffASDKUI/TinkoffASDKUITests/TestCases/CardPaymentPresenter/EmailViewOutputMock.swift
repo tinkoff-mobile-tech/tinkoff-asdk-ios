@@ -24,9 +24,18 @@ final class EmailViewOutputMock: IEmailViewOutput {
 
     var underlyingCurrentEmail = ""
 
+    var isEmailValidGetterCount = 0
+    var isEmailValidSetterCount = 0
+
     var isEmailValid: Bool {
-        get { return underlyingIsEmailValid }
-        set(value) { underlyingIsEmailValid = value }
+        get {
+            isEmailValidGetterCount += 1
+            return underlyingIsEmailValid
+        }
+        set(value) {
+            isEmailValidSetterCount += 1
+            underlyingIsEmailValid = value
+        }
     }
 
     var underlyingIsEmailValid = false
