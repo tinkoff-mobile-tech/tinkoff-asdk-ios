@@ -18,7 +18,7 @@ final class DispatchGroupMock: IDispatchGroup {
 
     var notifyCallsCount = 0
     var notifyReceivedArguments: NotifyArguments?
-    var notifyReceivedInvocations: [NotifyArguments] = []
+    var notifyReceivedInvocations: [NotifyArguments?] = []
     var notifyWorkShouldExecute = false
 
     func notify(qos: DispatchQoS, flags: DispatchWorkItemFlags, queue: DispatchQueue, execute work: @convention(block) @escaping () -> Void) {
@@ -48,6 +48,23 @@ final class DispatchGroupMock: IDispatchGroup {
         leaveCallsCount += 1
     }
 }
+
+// MARK: - Resets
+
+extension DispatchGroupMock {
+    func fullReset() {
+        notifyCallsCount = 0
+        notifyReceivedArguments = nil
+        notifyReceivedInvocations = []
+        notifyWorkShouldExecute = false
+
+        enterCallsCount = 0
+
+        leaveCallsCount = 0
+    }
+}
+
+// MARK: - Helpers
 
 private extension DispatchGroupMock {
     func wait(for duration: TimeInterval) {
