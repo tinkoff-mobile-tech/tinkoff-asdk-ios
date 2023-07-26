@@ -204,8 +204,11 @@ final class TDSCertsManagerTests: BaseTestCase {
         let certificate2 = CertificateData.fake(type: .publicKey, algorithm: .rsa, forceUpdateFlag: false)
         let payload = Get3DSAppBasedCertsConfigPayload.fake(certificates: [certificate1, certificate2])
 
+        let certificateMock = CertificateStateMock()
+        certificateMock.directoryServerID = directoryServerID
+
         acquiringSdkMock.getCertsConfigCompletionClosureInput = .success(payload)
-        tdsWrapperMock.checkCertificatesReturnValue = [CertificateStateStub(directoryServerID: directoryServerID)]
+        tdsWrapperMock.checkCertificatesReturnValue = [certificateMock]
 
         // when
         sut.checkAndUpdateCertsIfNeeded(for: paymentSystem, completion: { _ in })
@@ -230,13 +233,12 @@ final class TDSCertsManagerTests: BaseTestCase {
         let certificate1 = CertificateData.fake(type: .publicKey, algorithm: .ec, forceUpdateFlag: false)
         let payload = Get3DSAppBasedCertsConfigPayload.fake(certificates: [certificate1])
 
-        tdsWrapperMock.checkCertificatesReturnValue = [
-            CertificateStateStub(
-                certificateType: .dsPublicKey,
-                directoryServerID: directoryServerID,
-                sha256Fingerprint: "some"
-            ),
-        ]
+        let certificateMock = CertificateStateMock()
+        certificateMock.certificateType = .dsPublicKey
+        certificateMock.directoryServerID = directoryServerID
+        certificateMock.sha256Fingerprint = "some"
+
+        tdsWrapperMock.checkCertificatesReturnValue = [certificateMock]
         acquiringSdkMock.getCertsConfigCompletionClosureInput = .success(payload)
 
         // when
