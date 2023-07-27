@@ -227,7 +227,7 @@ extension EmailViewPresenterTests {
     private func setupSut(customerEmail: String = "", resetViewMock: Bool = true) {
         viewMock = EmailViewInputMock()
         outputMock = EmailViewPresenterOutputMock()
-        sut = EmailViewPresenter(customerEmail: customerEmail, output: outputMock)
+        sut = EmailViewPresenter(customerEmail: customerEmail, output: outputMock, emailValidator: EmailValidator())
         sut.view = viewMock
 
         if resetViewMock { viewMock.fullReset() }

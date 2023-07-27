@@ -83,7 +83,7 @@ extension PaymentFlow {
 
         let receiptItems: [Item] = []
 
-        paymentData.receipt = Receipt(
+        paymentData.receipt = try? Receipt(
             shopCode: nil,
             email: "email@email.com",
             taxation: .osn,
@@ -177,6 +177,10 @@ extension SavedCardViewPresenter {
 
 extension EmailViewPresenter {
     static func fake() -> EmailViewPresenter {
-        EmailViewPresenter(customerEmail: "", output: EmailViewPresenterOutputMock())
+        EmailViewPresenter(
+            customerEmail: "",
+            output: EmailViewPresenterOutputMock(),
+            emailValidator: EmailValidatorMock()
+        )
     }
 }

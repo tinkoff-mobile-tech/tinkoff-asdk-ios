@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
 final class EmailViewPresenter: IEmailViewOutput, IEmailViewPresenterInput {
 
@@ -18,12 +19,13 @@ final class EmailViewPresenter: IEmailViewOutput, IEmailViewPresenterInput {
     }
 
     private weak var output: IEmailViewPresenterOutput?
+    private let emailValidator: IEmailValidator
 
     // MARK: IEmailViewPresenterInput Properties
 
     let customerEmail: String
     private(set) lazy var currentEmail: String = customerEmail
-    var isEmailValid: Bool { isValidEmail(currentEmail) }
+    var isEmailValid: Bool { emailValidator.isValid(currentEmail) }
 
     private var isFieldDidBeginEditing = false
 
@@ -31,10 +33,12 @@ final class EmailViewPresenter: IEmailViewOutput, IEmailViewPresenterInput {
 
     init(
         customerEmail: String,
-        output: IEmailViewPresenterOutput
+        output: IEmailViewPresenterOutput,
+        emailValidator: IEmailValidator
     ) {
         self.customerEmail = customerEmail
         self.output = output
+        self.emailValidator = emailValidator
     }
 }
 
@@ -71,13 +75,6 @@ extension EmailViewPresenter {
     private func setupView() {
         viewSetTextFieldHeaderState()
         view?.setTextField(text: currentEmail, animated: false)
-    }
-
-    private func isValidEmail(_ email: String) -> Bool {
-        let emailRegEx = ".+\\@.+\\..+"
-
-        let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-        return emailPred.evaluate(with: email)
     }
 
     private func viewSetTextFieldHeaderState() {

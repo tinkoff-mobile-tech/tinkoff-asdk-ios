@@ -48,6 +48,9 @@
 * [EACQAPW-5661] ExternalRequestBuilder Tests
 * [EACQAPW-5669] URLProvider Tests
 
+### Changed
+* [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields
+
 ### Fixed
 
 * [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
