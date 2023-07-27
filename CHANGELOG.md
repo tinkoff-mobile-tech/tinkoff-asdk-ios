@@ -46,10 +46,13 @@
 * [EACQAPW-5626] AcquiringRequestBuilder Tests
 * [EACQAPW-5651] DeviceInfoProvder Tests
 * [EACQAPW-5661] ExternalRequestBuilder Tests
+* [EACQAPW-5669] URLProvider Tests
 
 ### Fixed
 
 * [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
+* [EACQAPW-5657] Pay by Card email field bugfixes
+* [EACQAPW-5350] Fixed showing JSON contents in WebView 3ds
 
 ## [3.1.1] - 2023-07-17Z
 

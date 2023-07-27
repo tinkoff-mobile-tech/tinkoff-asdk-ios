@@ -32,6 +32,7 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
     // MARK: Subviews
 
     private lazy var webView = WKWebView()
+    private let hidingView = UIView()
 
     // MARK: Init
 
@@ -68,6 +69,9 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         webView.load(urlRequest)
+        hidingView.frame = webView.frame
+        hidingView.backgroundColor = ASDKColors.Background.base.color
+        hidingView.isHidden = true
     }
 
     // MARK: WKNavigationDelegate
@@ -84,13 +88,27 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
         )
     }
 
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationResponse: WKNavigationResponse,
+        decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void
+    ) {
+        let isShowingJsonMimeType = navigationResponse.response.mimeType == .jsonMimeType
+        hidingView.isHidden = !isShowingJsonMimeType
+        hidingView.removeFromSuperview()
+        if isShowingJsonMimeType {
+            webView.addSubview(hidingView)
+        }
+        decisionHandler(.allow)
+    }
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.evaluateJavaScript("document.baseURI") { [weak self] value, error in
+        webView.evaluateJavaScript(.baseURI) { [weak self] value, error in
             guard error == nil, let uri = value as? String else {
                 return
             }
 
-            webView.evaluateJavaScript("document.getElementsByTagName('pre')[0].innerText") { value, _ in
+            webView.evaluateJavaScript(.jsonText) { value, _ in
                 guard let response = value as? String,
                       let responseData = response.data(using: .utf8),
                       let self = self
@@ -141,4 +159,11 @@ final class ThreeDSWebViewController<Payload: Decodable>: UIViewController, WKNa
             completion(result)
         }
     }
+}
+
+private extension String {
+    // Javascript code snippets
+    static let baseURI = "document.baseURI"
+    static let jsonText = "document.getElementsByTagName('pre')[0].innerText"
+    static let jsonMimeType = "application/json"
 }

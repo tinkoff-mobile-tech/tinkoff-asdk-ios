@@ -158,14 +158,13 @@ final class MainFormPresenterTests: BaseTestCase {
         XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
     }
 
-    func test_viewDidLoad_when_primaryPaymentMethodCard_success() {
+    func test_viewDidLoad_when_primaryPaymentMethodCard_no_saved_cards_success() {
         // given
         let paymentFlow = PaymentFlow.fake()
         setupSut(paymentFlow: paymentFlow)
 
-        let sbpPaymentMethod = MainFormPaymentMethod.card
         let dataState = MainFormDataState.fake(
-            primaryPaymentMethod: sbpPaymentMethod,
+            primaryPaymentMethod: .card,
             otherPaymentMethods: [],
             cards: nil
         )
@@ -195,9 +194,85 @@ final class MainFormPresenterTests: BaseTestCase {
         XCTAssertEqual(savedCardMock.updatePresentationStateReceivedArguments, [])
         XCTAssertEqual(payButtonMock.presentationState, .pay)
         XCTAssertEqual(payButtonMock.setCallsCount, 1)
-        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, true)
         XCTAssertEqual(viewMock.reloadDataCallsCount, 1)
         XCTAssertEqual(viewMock.hideCommonSheetCallsCount, 1)
+    }
+
+    func test_main_payment_method_card_no_saved_cards_setEnabled_true() {
+        // given
+        let paymentFlow = PaymentFlow.fake()
+        setupSut(paymentFlow: paymentFlow)
+
+        let dataState = MainFormDataState.fake(
+            primaryPaymentMethod: .card,
+            otherPaymentMethods: [],
+            cards: nil
+        )
+
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardMock.presentationState = .selected(card: .fake())
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = true
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        let emailPresenterMock = emailViewPresenterAssemblyMock.buildReturnValue
+        emailPresenterMock.underlyingIsEmailValid = false
+
+        // when
+        sut.viewDidLoad()
+        // then
+        XCTAssertEqual(payButtonMock.presentationState, .pay)
+        XCTAssertEqual(payButtonMock.setCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, true)
+        XCTAssertEqual(savedCardMock.isValidGetterCount, 0)
+        XCTAssertEqual(switchMock.isOnGetterCount, 1)
+        XCTAssertEqual(emailPresenterMock.isEmailValidGetterCount, 0)
+    }
+
+    func test_main_payment_method_card_has_saved_cards_setEnabled() {
+        // given
+        let paymentFlow = PaymentFlow.fake()
+        setupSut(paymentFlow: paymentFlow)
+
+        let dataState = MainFormDataState.fake(
+            primaryPaymentMethod: .card,
+            otherPaymentMethods: [],
+            cards: .fake()
+        )
+
+        dataStateLoaderMock.loadStateCompletionClosureInput = .success(dataState)
+
+        let savedCardMock = SavedCardViewOutputMock()
+        savedCardMock.presentationState = .selected(card: .fake())
+        savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
+
+        let payButtonMock = PayButtonViewOutputMock()
+        payButtonViewPresenterAssemblyMock.buildReturnValue = payButtonMock
+
+        let switchMock = SwitchViewOutputMock()
+        switchMock.underlyingIsOn = true
+        switchViewPresenterAssemblyMock.buildReturnValue = switchMock
+
+        let emailPresenterMock = emailViewPresenterAssemblyMock.buildReturnValue
+        emailPresenterMock.underlyingIsEmailValid = false
+
+        // when
+        sut.viewDidLoad()
+        // then
+        XCTAssertEqual(payButtonMock.presentationState, .pay)
+        XCTAssertEqual(payButtonMock.setCallsCount, 1)
+        XCTAssertEqual(payButtonMock.setReceivedArguments, false)
+        XCTAssertEqual(savedCardMock.isValidGetterCount, 1)
+        XCTAssertEqual(switchMock.isOnGetterCount, 2)
+        XCTAssertEqual(emailPresenterMock.isEmailValidGetterCount, 1)
     }
 
     func test_viewDidLoad_when_primaryPaymentMethodCard_failure() {
