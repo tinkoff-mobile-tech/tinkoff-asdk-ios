@@ -18,7 +18,7 @@ final class SBPQrPresenterTests: BaseTestCase {
     // MARK: Mocks
 
     var viewMock: SBPQrViewInputMock!
-    var sbpServiceMock: AcquiringSBPAndPaymentServiceMock!
+    var sbpServiceMock: AcquiringSdkMock!
     var repeatedRequestHelperMock: RepeatedRequestHelperMock!
     var paymentStatusServiceMock: PaymentStatusServiceMock!
     var mainDispatchQueueMock: DispatchQueueMock!
@@ -448,7 +448,7 @@ final class SBPQrPresenterTests: BaseTestCase {
 extension SBPQrPresenterTests {
     private func configureSut(paymentFlow: PaymentFlow? = nil, moduleCompletionMock: PaymentResultCompletion? = nil) {
         viewMock = SBPQrViewInputMock()
-        sbpServiceMock = AcquiringSBPAndPaymentServiceMock()
+        sbpServiceMock = AcquiringSdkMock()
         repeatedRequestHelperMock = RepeatedRequestHelperMock()
         paymentStatusServiceMock = PaymentStatusServiceMock()
         mainDispatchQueueMock = DispatchQueueMock()
