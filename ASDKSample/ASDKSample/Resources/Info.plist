@@ -1043,38 +1043,44 @@
 		<false/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>localhost.ru</key>
+			<dict/>
+			<key>NSIncludesSubdomains</key>
+			<true/>
+			<key>NSExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
 			<key>qa-mapi.tcsbank.ru</key>
 			<dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 			<key>qr.nspk.ru</key>
 			<dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 			<key>rest-api-test.tinkoff.ru</key>
 			<dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 			<key>securepay.tinkoff.ru</key>
 			<dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 			<key>securepay2-test.tcsbank.ru</key>
 			<dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>

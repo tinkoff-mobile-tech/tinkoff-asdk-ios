@@ -43,10 +43,18 @@ struct SdkAssembly {
 
         let tokenProvider = SampleTokenProvider(password: credential.terminalPassword)
 
+        var server = AppSetting.shared.serverType
+
+        if let value = ProcessInfo.processInfo.environment["TEST"] {
+            if let port = ProcessInfo.processInfo.environment["MOCK_SERVER_PORT"] {
+                server = AcquiringSdkEnvironment.uitest(port)
+            }
+        }
+
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
-            server: AppSetting.shared.serverType,
-            logger: nil, // для включения логирования, заменить nil на Logger()
+            server: server,
+            logger: Logger(), // для включения логирования, заменить nil на Logger()
             tokenProvider: tokenProvider,
             appBasedSdkInterface: AppSetting.shared.appBasedSdkInterface
         )

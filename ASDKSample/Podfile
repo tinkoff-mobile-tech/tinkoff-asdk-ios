@@ -6,7 +6,10 @@ generate_multiple_pod_projects: true
 minimal_ios_version = '12.3'
 
 platform :ios, minimal_ios_version
-plugin 'cocoapods-no-autoimports'
+
+if ENV['UITEST_CONFIG'] != 'enabled'
+  plugin 'cocoapods-no-autoimports'
+end
 
 use_frameworks!
 target 'ASDKSample' do
@@ -23,6 +26,8 @@ end
 target 'ASDKSampleUITests' do
   if ENV['UITEST_CONFIG'] == 'enabled'
     pod 'UITestUtils', :git => 'https://gitlab.tcsbank.ru/coretech-mobile-ios/uitestutils.git', :tag => '1.1.3'
+    pod 'TinkoffMockStrapping/Swifter', :git => 'https://github.com/tinkoff-mobile-tech/TinkoffMockStrapping.git'
+    pod 'Nimble', '~> 9.2.1'
   end
 end
 
