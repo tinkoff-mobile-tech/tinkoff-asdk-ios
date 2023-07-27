@@ -142,28 +142,28 @@
 
 {# !!! mockOptionalVariable - Пока не описанный метод. #}
 {% macro mockOptionalVariable variable %}
-    {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }}
+    var {% call mockedVariableName variable %}: {{ variable.typeName }}
 {% endmacro %}
 
 {# !!! mockNonOptionalArrayOrDictionaryVariable - Пока не описанный метод. #}
 {% macro mockNonOptionalArrayOrDictionaryVariable variable %}
-    {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }} = {% if variable.isArray %}[]{% elif variable.isDictionary %}[:]{% endif %}
+    var {% call mockedVariableName variable %}: {{ variable.typeName }} = {% if variable.isArray %}[]{% elif variable.isDictionary %}[:]{% endif %}
 {% endmacro %}
 
 {# !!! mockNonOptionalVariable - Пока не описанный метод. #}
 {% macro mockNonOptionalVariable variable %}
 
-    {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }} {
+    var {% call mockedVariableName variable %}: {{ variable.typeName }} {
         get { return {% call underlyingMockedVariableName variable %} }
         set(value) { {% call underlyingMockedVariableName variable %} = value }
     }
     {% set wrappedTypeName %}{% if variable.typeName.isProtocolComposition %}({{ variable.typeName }}){% else %}{{ variable.typeName }}{% endif %}{% endset %}
-    {% call accessLevel variable.readAccess %}var {% call underlyingMockedVariableName variable %}: {{ wrappedTypeName }}!
+    var {% call underlyingMockedVariableName variable %}: {{ wrappedTypeName }}!
 {% endmacro %}
 
 {# !!! variableThrowableErrorDeclaration - Пока не описанный метод. #}
 {% macro variableThrowableErrorDeclaration variable %}
-    {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}ThrowableError: Error?
+    var {% call mockedVariableName variable %}ThrowableError: Error?
 {% endmacro %}
 
 {# !!! variableThrowableErrorUsage - Пока не описанный метод. #}
@@ -175,7 +175,7 @@
 
 {# !!! variableClosureDeclaration - Пока не описанный метод. #}
 {% macro variableClosureDeclaration variable %}
-    {% call accessLevel variable.readAccess %}var {% call variableClosureName variable %}: (() {% if variable.isAsync %}async {% endif %}{% if variable.throws %}throws {% endif %}-> {{ variable.typeName }})?
+    var {% call variableClosureName variable %}: (() {% if variable.isAsync %}async {% endif %}{% if variable.throws %}throws {% endif %}-> {{ variable.typeName }})?
 {% endmacro %}
 
 {# !!! variableClosureName - Пока не описанный метод. #}
@@ -183,9 +183,9 @@
 
 {# !!! mockAsyncOrThrowingVariable - Пока не описанный метод. #}
 {% macro mockAsyncOrThrowingVariable variable %}
-    {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}CallsCount = 0
+    var {% call mockedVariableName variable %}CallsCount = 0
 
-    {% call accessLevel variable.readAccess %}var {% call mockedVariableName variable %}: {{ variable.typeName }} {
+    var {% call mockedVariableName variable %}: {{ variable.typeName }} {
         get {% if variable.isAsync %}async {% endif %}{% if variable.throws %}throws {% endif %}{
             {% if variable.throws %}
             {% call variableThrowableErrorUsage variable %}
@@ -198,7 +198,7 @@
             }
         }
     }
-    {% call accessLevel variable.readAccess %}var {% call underlyingMockedVariableName variable %}: {{ variable.typeName }}{{ '!' if not variable.isOptional }}
+    var {% call underlyingMockedVariableName variable %}: {{ variable.typeName }}{{ '!' if not variable.isOptional }}
     {% if variable.throws %}
         {% call variableThrowableErrorDeclaration variable %}
     {% endif %}
