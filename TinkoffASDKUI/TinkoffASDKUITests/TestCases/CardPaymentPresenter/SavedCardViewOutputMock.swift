@@ -18,18 +18,9 @@ final class SavedCardViewOutputMock: ISavedCardViewOutput {
 
     var underlyingPresentationState: SavedCardPresentationState = .idle
 
-    var isValidGetterCount = 0
-    var isValidSetterCount = 0
-
     var isValid: Bool {
-        get {
-            isValidGetterCount += 1
-            return underlyingIsValid
-        }
-        set(value) {
-            isValidSetterCount += 1
-            underlyingIsValid = value
-        }
+        get { return underlyingIsValid }
+        set(value) { underlyingIsValid = value }
     }
 
     var underlyingIsValid = false
