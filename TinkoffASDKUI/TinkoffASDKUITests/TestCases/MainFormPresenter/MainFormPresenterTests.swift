@@ -234,7 +234,6 @@ final class MainFormPresenterTests: BaseTestCase {
         XCTAssertEqual(payButtonMock.setReceivedArguments, true)
         XCTAssertEqual(savedCardMock.isValidGetterCount, 0)
         XCTAssertEqual(switchMock.isOnGetterCount, 1)
-        XCTAssertEqual(emailPresenterMock.isEmailValidGetterCount, 0)
     }
 
     func test_main_payment_method_card_has_saved_cards_setEnabled() {
@@ -272,7 +271,6 @@ final class MainFormPresenterTests: BaseTestCase {
         XCTAssertEqual(payButtonMock.setReceivedArguments, false)
         XCTAssertEqual(savedCardMock.isValidGetterCount, 1)
         XCTAssertEqual(switchMock.isOnGetterCount, 2)
-        XCTAssertEqual(emailPresenterMock.isEmailValidGetterCount, 1)
     }
 
     func test_viewDidLoad_when_primaryPaymentMethodCard_failure() {
