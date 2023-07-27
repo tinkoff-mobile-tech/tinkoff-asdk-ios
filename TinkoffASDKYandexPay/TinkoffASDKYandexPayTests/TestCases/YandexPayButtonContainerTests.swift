@@ -5,6 +5,7 @@
 //  Created by Ivan Glushko on 20.04.2023.
 //
 
+@testable import TinkoffASDKCore
 @testable import TinkoffASDKUI
 @testable import TinkoffASDKYandexPay
 import XCTest
