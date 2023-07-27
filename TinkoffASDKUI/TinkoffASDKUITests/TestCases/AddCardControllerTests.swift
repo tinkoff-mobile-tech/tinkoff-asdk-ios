@@ -72,7 +72,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         sut = createAddCardController(checkType: .check3DS)
         addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
-        addCardServiceMock.check3DSVersionCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.check3DSVersionCompletionClosureInput = .failure(TestsError.basic)
         addCardServiceMock.attachCardReturnValue = CancellableMock()
         var didReturnError = false
 
@@ -93,7 +93,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
-        addCardServiceMock.attachCardCompletionStub = .success(buildAttachCardPayload(attachCardStatus: .done))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(buildAttachCardPayload(attachCardStatus: .done))
 
         // when
         check3DSFlow_success(checkType: .check3DS)
@@ -122,7 +122,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         var addCardReturnedCancelled = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake())
             )
         )
@@ -144,7 +144,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         var addCardReturnedCancelled = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DSACS(.fake()))
         )
 
@@ -166,7 +166,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         let error = TestsError.basic
         var addCardReturnedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake())
             )
         )
@@ -190,7 +190,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         addCardServiceMock.attachCardReturnValue = CancellableMock()
-        addCardServiceMock.attachCardCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.attachCardCompletionClosureInput = .failure(TestsError.basic)
         var didReturnError = false
 
         // when
@@ -212,7 +212,7 @@ final class AddCardControllerTests: BaseTestCase {
         sut = createAddCardController(checkType: .check3DS)
         let cardOptions = CardOptions(pan: "123123213", validThru: "0928", cvc: "123")
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sut.addCard(options: cardOptions, completion: { result in
@@ -232,7 +232,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .failure(TestsError.basic)
+        addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sut.addCard(options: CardOptions.fake(), completion: { result in })
@@ -323,7 +323,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         let sut = createAddCardController(checkType: .check3DS)
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
+        addCardServiceMock.addCardCompletionClosureInput = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
         var receivedExpectedError = false
 
         // when
@@ -344,7 +344,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         let sut = createAddCardController(checkType: .hold3DS)
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
+        addCardServiceMock.addCardCompletionClosureInput = .success(AddCardPayload(requestKey: "requestKey", paymentId: nil))
         var receivedExpectedError = false
 
         // when
@@ -395,7 +395,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         sut = createAddCardController(checkType: .check3DS)
         addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
-        addCardServiceMock.check3DSVersionCompletionStub = .success(check3dsVersionPayload)
+        addCardServiceMock.check3DSVersionCompletionClosureInput = .success(check3dsVersionPayload)
         addCardServiceMock.attachCardReturnValue = CancellableMock()
         // when
         addCardFlow_success(addCardCompletion: { _ in })
@@ -430,7 +430,7 @@ final class AddCardControllerTests: BaseTestCase {
     func test_missingMessageVersionFor3DS() {
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DSACS(.fake()))
         )
 
@@ -451,7 +451,7 @@ final class AddCardControllerTests: BaseTestCase {
 
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             buildAttachCardPayload(attachCardStatus: .needConfirmation3DS(Confirmation3DSData.fake()))
         )
         threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(.fake(status: .unknown))
@@ -471,9 +471,9 @@ final class AddCardControllerTests: BaseTestCase {
     func test_getAddCardState_returns_error_on_failure() {
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
         threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .failure(TestsError.basic)
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .failure(TestsError.basic)
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -490,9 +490,9 @@ final class AddCardControllerTests: BaseTestCase {
     func test_validate_get_state_returns_error_on_wrong_status() {
         // given
         var receivedExpectedError = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
         threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .unknown))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .unknown))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -518,9 +518,9 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DS(.fake())))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DS(.fake())))
         threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(.fake(status: .authorized))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -545,9 +545,9 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .needConfirmation3DSACS(.fake())))
         threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -576,11 +576,11 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(
+        addCardServiceMock.attachCardCompletionClosureInput = .success(
             .fake(status: attachStatus, attachCardStatus: attachCardStatus)
         )
         threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -605,9 +605,9 @@ extension AddCardControllerTests {
 
         // given
         var addCardStateSucceded = false
-        addCardServiceMock.attachCardCompletionStub = .success(.fake(attachCardStatus: .done))
+        addCardServiceMock.attachCardCompletionClosureInput = .success(.fake(attachCardStatus: .done))
         threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(.fake(status: .confirmed))
-        addCardServiceMock.getAddCardStateCompletionInput = .success(.fake(status: .completed))
+        addCardServiceMock.getAddCardStateCompletionClosureInput = .success(.fake(status: .completed))
         addCardServiceMock.getAddCardStateReturnValue = CancellableMock()
 
         // when
@@ -643,7 +643,7 @@ extension AddCardControllerTests {
     private func addCardFlow_success(addCardCompletion: @escaping (AddCardStateResult) -> Void = { _ in }) {
         // given
         addCardServiceMock.addCardReturnValue = CancellableMock()
-        addCardServiceMock.addCardCompletionStub = .success(
+        addCardServiceMock.addCardCompletionClosureInput = .success(
             AddCardPayload(requestKey: "requestKey", paymentId: "32423423")
         )
 
@@ -659,7 +659,7 @@ extension AddCardControllerTests {
     ) {
         sut = createAddCardController(checkType: checkType)
         addCardServiceMock.check3DSVersionReturnValue = CancellableMock()
-        addCardServiceMock.check3DSVersionCompletionStub = .success(build3DSVersionPayload())
+        addCardServiceMock.check3DSVersionCompletionClosureInput = .success(build3DSVersionPayload())
         addCardServiceMock.attachCardReturnValue = CancellableMock()
 
         // when
