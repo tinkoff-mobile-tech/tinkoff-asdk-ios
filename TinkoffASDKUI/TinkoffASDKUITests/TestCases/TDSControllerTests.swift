@@ -211,7 +211,7 @@ final class TDSControllerTests: BaseTestCase {
 
         // then
         let value = try XCTUnwrap(receivedError as? NSError)
-        XCTAssertEqual(value.domain, .doesntMatter)
+        XCTAssertEqual(value.domain, .fake)
         XCTAssertTrue(value.code > 0)
         XCTAssertEqual(transactionMock.closeCallsCount, 1)
     }
@@ -229,14 +229,14 @@ final class TDSControllerTests: BaseTestCase {
             }
         }
 
-        let runtimeError = RuntimeErrorEvent(errorCode: .doesntMatter, errorMessage: .doesntMatter)
+        let runtimeError = RuntimeErrorEvent(errorCode: .fake, errorMessage: .fake)
 
         // when
         sut.runtimeError(runtimeError)
 
         // then
         let value = try XCTUnwrap(receivedError as? NSError)
-        XCTAssertEqual(value.domain, .doesntMatter)
+        XCTAssertEqual(value.domain, .fake)
         XCTAssertTrue(value.code > 0)
         XCTAssertEqual(transactionMock.closeCallsCount, 1)
     }

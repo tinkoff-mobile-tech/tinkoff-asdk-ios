@@ -417,7 +417,7 @@ final class CardListPresenterTests: BaseTestCase {
         prepareSut()
         let cards = buildActiveCardsCache()
         let card = try XCTUnwrap(cards.first)
-        let cardListCardToDelete = CardList.Card(from: card)
+        let cardListCardToDelete = CardList.Card.fake(from: card)
 
         cardsControllerMock.removeCardCompletionClosureInput = .success(RemoveCardPayload(cardId: cardListCardToDelete.id, cardStatus: .deleted))
 
