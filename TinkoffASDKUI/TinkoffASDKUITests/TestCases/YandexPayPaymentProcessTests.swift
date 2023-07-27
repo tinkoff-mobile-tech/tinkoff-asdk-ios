@@ -46,22 +46,22 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let initPayload = InitPayload(amount: 100, orderId: "23", paymentId: "132", status: .checking3ds)
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DS(.fake()))
 
-        paymentServiceMock.initPaymentCompletionInput = .success(initPayload)
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
 
         // when
         sut.start()
 
         // then
-        XCTAssertEqual(paymentServiceMock.initPaymentCallCounter, 1)
-        XCTAssertEqual(paymentServiceMock.finishAuthorizeCallCounter, 1)
+        XCTAssertEqual(paymentServiceMock.initPaymentCallsCount, 1)
+        XCTAssertEqual(paymentServiceMock.finishAuthorizeCallsCount, 1)
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DSConfirmationCallsCount, 1)
     }
 
     func test_start_paymentFlow_full_failure() throws {
         // given
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
-        paymentServiceMock.initPaymentCompletionInput = .failure(TestsError.basic)
+        paymentServiceMock.initPaymentCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sut.start()
@@ -78,20 +78,20 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // given
         let sut = prepareSut(paymentFlow: .finish(paymentOptions: .fake()))
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DS(.fake()))
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
 
         // when
         sut.start()
 
         // then
-        XCTAssertEqual(paymentServiceMock.initPaymentCallCounter, 0)
-        XCTAssertEqual(paymentServiceMock.finishAuthorizeCallCounter, 1)
+        XCTAssertEqual(paymentServiceMock.initPaymentCallsCount, 0)
+        XCTAssertEqual(paymentServiceMock.finishAuthorizeCallsCount, 1)
     }
 
     func test_start_paymentFlow_finish_failure() throws {
         // given
         let sut = prepareSut(paymentFlow: .finish(paymentOptions: .fake()))
-        paymentServiceMock.finishAuthorizeCompletionInput = .failure(TestsError.basic)
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         sut.start()
@@ -110,8 +110,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .done(.fake()))
         let expectedGetPaymentState = finishPayload.paymentState
 
-        paymentServiceMock.initPaymentCompletionInput = .success(initPayload)
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
 
         // when
         sut.start()
@@ -130,8 +130,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DS(.fake()))
         let fakedGetPaymentState = GetPaymentStatePayload.fake(status: .confirmed)
 
-        paymentServiceMock.initPaymentCompletionInput = .success(initPayload)
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
         paymentProcessDelegateMock.paymentNeed3DSConfirmationCompletionClosureInput = .success(fakedGetPaymentState)
 
         // when
@@ -154,8 +154,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DS(.fake()))
         let expectedGetPaymentState = GetPaymentStatePayload.fake(status: .cancelled)
 
-        paymentServiceMock.initPaymentCompletionInput = .success(initPayload)
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
         paymentProcessDelegateMock.paymentNeed3DSConfirmationCompletionClosureInput = .success(expectedGetPaymentState)
 
         // when
@@ -178,8 +178,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DSACS(.fake()))
         let fakedGetPaymentState = GetPaymentStatePayload.fake(status: .confirmed)
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
         paymentProcessDelegateMock.paymentNeed3DSConfirmationACSCompletionClosureInput = .success(fakedGetPaymentState)
 
         // when
@@ -200,8 +200,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DSACS(.fake()))
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
         paymentProcessDelegateMock.paymentNeed3DSConfirmationACSConfirmationCancelledShouldExecute = true
 
         // when
@@ -225,8 +225,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DS2AppBased(.fake()))
         let fakedGetPaymentState = GetPaymentStatePayload.fake(status: .confirmed)
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
         paymentProcessDelegateMock.paymentNeed3DSConfirmationAppBasedCompletionClosureInput = .success(fakedGetPaymentState)
 
         // when
@@ -247,8 +247,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .needConfirmation3DS2AppBased(.fake()))
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
         paymentProcessDelegateMock.paymentNeed3DSConfirmationAppBasedConfirmationCancelledShouldExecute = true
 
         // when
@@ -268,8 +268,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
         let finishPayload = FinishAuthorizePayload.fake(responseStatus: .unknown)
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(finishPayload)
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(finishPayload)
 
         // when
         sut.start()
@@ -287,7 +287,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // given
         let payloadMock = InitPayload.fake()
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
 
         // when
         sut.start()
@@ -301,7 +301,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // given
         let paymentOptions = FinishPaymentOptions.fake()
         let sut = prepareSut(paymentFlow: .finish(paymentOptions: paymentOptions))
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
 
         // when
         sut.start()
@@ -316,10 +316,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         let mockCancellable = CancellableMock()
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.initPaymentStubReturn = { _ in
-            mockCancellable
-        }
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.initPaymentReturnValue = mockCancellable
 
         // when
         sut.start()
@@ -333,8 +331,8 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // given
         let sut = prepareSut(paymentFlow: .full(paymentOptions: .fake()))
 
-        paymentServiceMock.initPaymentCompletionInput = .success(.fake())
-        paymentServiceMock.finishAuthorizeCompletionInput = .success(.fake(responseStatus: .needConfirmation3DS(.fake())))
+        paymentServiceMock.initPaymentCompletionClosureInput = .success(.fake())
+        paymentServiceMock.finishAuthorizeCompletionClosureInput = .success(.fake(responseStatus: .needConfirmation3DS(.fake())))
 
         paymentProcessDelegateMock.paymentNeed3DSConfirmationCompletionClosureInput = .failure(ErrorStub())
 

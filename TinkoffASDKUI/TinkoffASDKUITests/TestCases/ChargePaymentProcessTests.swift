@@ -23,17 +23,14 @@ final class ChargePaymentProcessTests: XCTestCase {
             paymentFlow: .full(paymentOptions: paymentOptions)
         )
 
-        dependencies.paymentsServiceMock.initPaymentStubReturn = { passedArgs in
-            passedArgs.completion(.failure(TestsError.basic))
-            return EmptyCancellable()
-        }
+        dependencies.paymentsServiceMock.initPaymentCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         dependencies.sutAsProtocol.start()
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.initPaymentCallCounter,
+            dependencies.paymentsServiceMock.initPaymentCallsCount,
             1
         )
 
@@ -67,26 +64,19 @@ final class ChargePaymentProcessTests: XCTestCase {
             paymentFlow: .full(paymentOptions: paymentOptions)
         )
 
-        dependencies.paymentsServiceMock.initPaymentStubReturn = { passedArgs in
-            passedArgs.completion(.success(initPayload))
-            return EmptyCancellable()
-        }
-
-        dependencies.paymentsServiceMock.chargeStubReturn = { passedArgs in
-            passedArgs.completion(.success(chargePayload))
-            return EmptyCancellable()
-        }
+        dependencies.paymentsServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
+        dependencies.paymentsServiceMock.chargeCompletionClosureInput = .success(chargePayload)
 
         // when
         dependencies.sutAsProtocol.start()
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.initPaymentCallCounter,
+            dependencies.paymentsServiceMock.initPaymentCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.chargeCallCounter,
+            dependencies.paymentsServiceMock.chargeCallsCount,
             1
         )
 
@@ -112,27 +102,20 @@ final class ChargePaymentProcessTests: XCTestCase {
             paymentFlow: .full(paymentOptions: paymentOptions)
         )
 
-        dependencies.paymentsServiceMock.initPaymentStubReturn = { passedArgs in
-            passedArgs.completion(.success(initPayload))
-            return EmptyCancellable()
-        }
-
-        dependencies.paymentsServiceMock.chargeStubReturn = { passedArgs in
-            passedArgs.completion(.failure(TestsError.basic))
-            return EmptyCancellable()
-        }
+        dependencies.paymentsServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
+        dependencies.paymentsServiceMock.chargeCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         dependencies.sutAsProtocol.start()
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.initPaymentCallCounter,
+            dependencies.paymentsServiceMock.initPaymentCallsCount,
             1
         )
 
         // then
-        XCTAssertEqual(dependencies.paymentsServiceMock.chargeCallCounter, 1)
+        XCTAssertEqual(dependencies.paymentsServiceMock.chargeCallsCount, 1)
         XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount, 1)
     }
 
@@ -152,17 +135,14 @@ final class ChargePaymentProcessTests: XCTestCase {
 
         let chargePayload = ChargePayload(status: .authorized, paymentState: paymentState)
 
-        dependencies.paymentsServiceMock.chargeStubReturn = { passedArgs in
-            passedArgs.completion(.success(chargePayload))
-            return EmptyCancellable()
-        }
+        dependencies.paymentsServiceMock.chargeCompletionClosureInput = .success(chargePayload)
 
         // when
         dependencies.sutAsProtocol.start()
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.chargeCallCounter,
+            dependencies.paymentsServiceMock.chargeCallsCount,
             1
         )
         XCTAssertEqual(
@@ -176,17 +156,14 @@ final class ChargePaymentProcessTests: XCTestCase {
         let options = FinishPaymentOptions(paymentId: "23423", amount: 100, orderId: "id", customerOptions: customerOptions)
         let dependencies = Self.makeDependencies(paymentFlow: .finish(paymentOptions: options))
 
-        dependencies.paymentsServiceMock.chargeStubReturn = { passedArgs in
-            passedArgs.completion(.failure(TestsError.basic))
-            return EmptyCancellable()
-        }
+        dependencies.paymentsServiceMock.chargeCompletionClosureInput = .failure(TestsError.basic)
 
         // when
         dependencies.sutAsProtocol.start()
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.chargeCallCounter,
+            dependencies.paymentsServiceMock.chargeCallsCount,
             1
         )
         XCTAssertEqual(
@@ -199,7 +176,8 @@ final class ChargePaymentProcessTests: XCTestCase {
         // given
         let cancellableMock = CancellableMock()
         let dependencies = Self.makeDependencies(paymentFlow: .full(paymentOptions: .fake()))
-        dependencies.paymentsServiceMock.initPaymentStubReturn = { _ in cancellableMock }
+
+        dependencies.paymentsServiceMock.initPaymentReturnValue = cancellableMock
 
         // when
         dependencies.sut.start()
@@ -220,17 +198,14 @@ extension ChargePaymentProcessTests {
             paymentFlow: .full(paymentOptions: paymentOptions)
         )
 
-        dependencies.paymentsServiceMock.initPaymentStubReturn = { passedArgs in
-            passedArgs.completion(initPayloadResult)
-            return EmptyCancellable()
-        }
+        dependencies.paymentsServiceMock.initPaymentCompletionClosureInput = initPayloadResult
 
         // when
         dependencies.sutAsProtocol.start()
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.initPaymentCallCounter,
+            dependencies.paymentsServiceMock.initPaymentCallsCount,
             1
         )
 
