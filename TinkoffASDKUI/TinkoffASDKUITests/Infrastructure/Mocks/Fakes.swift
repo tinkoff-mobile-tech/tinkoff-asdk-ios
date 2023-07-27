@@ -10,9 +10,17 @@ import ThreeDSWrapper
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
+extension URL {
+    static let fakeVK = URL(string: "www.vk.com")!
+}
+
+extension URLRequest {
+    static let fake = URLRequest(url: .fakeVK)
+}
+
 extension GetTinkoffLinkPayload {
     static func fake() -> GetTinkoffLinkPayload {
-        GetTinkoffLinkPayload(redirectUrl: URL.empty)
+        GetTinkoffLinkPayload(redirectUrl: URL.fakeVK)
     }
 }
 

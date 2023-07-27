@@ -18,7 +18,7 @@ final class TDSCertsManagerTests: BaseTestCase {
 
     // Mocks
 
-    var acquiringSdkMock: AcquiringThreeDsServiceMock!
+    var acquiringSdkMock: AcquiringThreeDSServiceMock!
     var tdsWrapperMock: TDSWrapperMock!
 
     // MARK: - Setup
@@ -26,7 +26,7 @@ final class TDSCertsManagerTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        acquiringSdkMock = AcquiringThreeDsServiceMock()
+        acquiringSdkMock = AcquiringThreeDSServiceMock()
         tdsWrapperMock = TDSWrapperMock()
 
         sut = TDSCertsManager(acquiringSdk: acquiringSdkMock, tdsWrapper: tdsWrapperMock)

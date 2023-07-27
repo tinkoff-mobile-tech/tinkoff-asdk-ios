@@ -19,7 +19,7 @@ final class AddCardControllerTests: BaseTestCase {
     var addCardServiceMock: AddCardServiceMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var threeDSWebFlowControllerMock: ThreeDSWebFlowControllerMock!
-    var acquiringThreeDsServiceMock: AcquiringThreeDsServiceMock!
+    var acquiringThreeDsServiceMock: AcquiringThreeDSServiceMock!
     var tdsControllerMock: TDSControllerMock!
 
     // MARK: - Setup
@@ -29,7 +29,7 @@ final class AddCardControllerTests: BaseTestCase {
         addCardServiceMock = AddCardServiceMock()
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         threeDSWebFlowControllerMock = ThreeDSWebFlowControllerMock()
-        acquiringThreeDsServiceMock = AcquiringThreeDsServiceMock()
+        acquiringThreeDsServiceMock = AcquiringThreeDSServiceMock()
         tdsControllerMock = TDSControllerMock()
         sut = createAddCardController(checkType: .no)
     }
@@ -54,7 +54,7 @@ final class AddCardControllerTests: BaseTestCase {
         check3DSFlow_success(checkType: .check3DS)
 
         // then
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
@@ -402,7 +402,7 @@ final class AddCardControllerTests: BaseTestCase {
         // then
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 0)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 0)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 0)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
@@ -531,7 +531,7 @@ extension AddCardControllerTests {
         // then
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 1)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
@@ -558,7 +558,7 @@ extension AddCardControllerTests {
         // then
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 1)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
@@ -591,7 +591,7 @@ extension AddCardControllerTests {
         // then
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 1)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 1)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
@@ -619,7 +619,7 @@ extension AddCardControllerTests {
         XCTAssertEqual(addCardServiceMock.check3DSVersionCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.confirm3DSACSCallsCount, 0)
-        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallCounter, 0)
+        XCTAssertEqual(acquiringThreeDsServiceMock.confirmation3DSTerminationV2URLCallsCount, 0)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 0)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 0)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)

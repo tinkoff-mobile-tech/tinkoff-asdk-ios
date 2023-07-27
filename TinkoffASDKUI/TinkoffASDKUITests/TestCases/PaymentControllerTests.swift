@@ -17,7 +17,7 @@ final class PaymentControllerTests: BaseTestCase {
 
     var paymentFactoryMock: PaymentFactoryMock!
     var threeDSWebFlowControllerMock: ThreeDSWebFlowControllerMock!
-    var threeDSServiceMock: AcquiringThreeDsServiceMock!
+    var threeDSServiceMock: AcquiringThreeDSServiceMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var tdsControllerMock: TDSControllerMock!
     var paymentStatusUpdateServiceMock: PaymentStatusUpdateServiceMock!
@@ -29,7 +29,7 @@ final class PaymentControllerTests: BaseTestCase {
         super.setUp()
         paymentFactoryMock = PaymentFactoryMock()
         threeDSWebFlowControllerMock = ThreeDSWebFlowControllerMock()
-        threeDSServiceMock = AcquiringThreeDsServiceMock()
+        threeDSServiceMock = AcquiringThreeDSServiceMock()
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         tdsControllerMock = TDSControllerMock()
         paymentStatusUpdateServiceMock = PaymentStatusUpdateServiceMock()

@@ -18,7 +18,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
 
     // Mocks
 
-    var threeDSServiceMock: AcquiringThreeDsServiceMock!
+    var threeDSServiceMock: AcquiringThreeDSServiceMock!
     var threeDSWebViewAssemblyMock: ThreeDSWebViewAssemblyMock<GetPaymentStatePayload>!
     var threeDSWebFlowDelegateMock: ThreeDSWebFlowDelegateMock!
 
@@ -27,7 +27,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        threeDSServiceMock = AcquiringThreeDsServiceMock()
+        threeDSServiceMock = AcquiringThreeDSServiceMock()
         threeDSWebViewAssemblyMock = ThreeDSWebViewAssemblyMock()
         threeDSWebFlowDelegateMock = ThreeDSWebFlowDelegateMock()
 
@@ -60,9 +60,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         let viewControllerMock = UIViewControllerMock()
         threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerReturnValue = navController
         threeDSWebFlowDelegateMock.sourceViewControllerToPresentReturnValue = viewControllerMock
-        threeDSServiceMock.createConfirmation3DSRequestReturnStub = { args in
-            URLRequest(url: URL(string: data.acsUrl) ?? .empty)
-        }
+        threeDSServiceMock.createConfirmation3DSRequestReturnValue = URLRequest(url: URL(string: data.acsUrl) ?? .fakeVK)
 
         var completionResult: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
         let completion: (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void = {
@@ -89,7 +87,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
             .urlRequest.url
 
         XCTAssertEqual(threeDSWebFlowDelegateMock.sourceViewControllerToPresentCallsCount, 1)
-        XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestCallCounter, 1)
+        XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestCallsCount, 1)
         XCTAssertEqual(threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerCallsCount, 1)
         XCTAssertEqual(viewControllerMock.presentCallsCount, 1)
         XCTAssertTrue(viewControllerMock.presentReceivedArguments?.viewControllerToPresent === navController)
@@ -105,9 +103,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         let viewControllerMock = UIViewControllerMock()
         threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerReturnValue = navController
         threeDSWebFlowDelegateMock.sourceViewControllerToPresentReturnValue = viewControllerMock
-        threeDSServiceMock.createConfirmation3DSRequestACSReturnStub = { args in
-            URLRequest(url: URL(string: data.acsUrl) ?? .empty)
-        }
+        threeDSServiceMock.createConfirmation3DSRequestACSReturnValue = URLRequest(url: URL(string: data.acsUrl) ?? .fakeVK)
 
         var completionResult: ThreeDSWebViewResult?
         let completion: (ThreeDSWebViewResult) -> Void = {
@@ -136,7 +132,7 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
             .urlRequest.url
 
         XCTAssertEqual(threeDSWebFlowDelegateMock.sourceViewControllerToPresentCallsCount, 1)
-        XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestACSCallCounter, 1)
+        XCTAssertEqual(threeDSServiceMock.createConfirmation3DSRequestACSCallsCount, 1)
         XCTAssertEqual(threeDSWebViewAssemblyMock.threeDSWebViewNavigationControllerCallsCount, 1)
         XCTAssertEqual(viewControllerMock.presentCallsCount, 1)
         XCTAssertTrue(viewControllerMock.presentReceivedArguments?.viewControllerToPresent === navController)
@@ -153,8 +149,8 @@ final class ThreeDSWebFlowControllerTests: BaseTestCase {
         try sut.complete3DSMethod(checking3DSURLData: data)
 
         // then
-        XCTAssertEqual(threeDSServiceMock.createChecking3DSURLCallCounter, 1)
-        XCTAssertEqual(threeDSServiceMock.createChecking3DSURLRecievedArgumetns, data)
+        XCTAssertEqual(threeDSServiceMock.createChecking3DSURLCallsCount, 1)
+        XCTAssertEqual(threeDSServiceMock.createChecking3DSURLReceivedArguments, data)
         XCTAssertEqual(delegateMock.hiddenWebViewToCollect3DSDataCallsCount, 1)
     }
 }

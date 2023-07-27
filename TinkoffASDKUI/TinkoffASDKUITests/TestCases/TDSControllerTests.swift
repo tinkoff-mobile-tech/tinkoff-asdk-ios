@@ -16,7 +16,7 @@ final class TDSControllerTests: BaseTestCase {
 
     // Mocks
 
-    var acquiringThreeDSServiceMock: AcquiringThreeDsServiceMock!
+    var acquiringThreeDSServiceMock: AcquiringThreeDSServiceMock!
     var tDSWrapperMock: TDSWrapperMock!
     var timeoutResolverMock: TimeoutResolverMock!
     var transactionMock: TransactionMock!
@@ -30,7 +30,7 @@ final class TDSControllerTests: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        acquiringThreeDSServiceMock = AcquiringThreeDsServiceMock()
+        acquiringThreeDSServiceMock = AcquiringThreeDSServiceMock()
         tDSWrapperMock = TDSWrapperMock()
         timeoutResolverMock = TimeoutResolverMock()
         transactionMock = TransactionMock()

@@ -538,11 +538,7 @@ extension CardPaymentProcessTests {
             return EmptyCancellable()
         }
 
-        threeDsServiceMock.check3DSVersionStubReturnValue = { passedArgs -> Cancellable in
-            // handle failure flow
-            passedArgs.completion(.success(check3DsVersionPayload))
-            return EmptyCancellable()
-        }
+        threeDsServiceMock.check3DSVersionCompletionClosureInput = .success(check3DsVersionPayload)
 
         paymentsServiceMock.finishAuthorizeStubReturn = { passedArgs in
             passedArgs.completion(finishAuthorizeResult)
@@ -554,9 +550,9 @@ extension CardPaymentProcessTests {
         sutPaymentProcess.start()
 
         // then
-        let check3dsArgs = threeDsServiceMock.check3DSVersionPassedArguments
+        let check3dsArgs = threeDsServiceMock.check3DSVersionReceivedArguments
 
-        XCTAssertTrue(threeDsServiceMock.check3DSVersionCallCounter == 1)
+        XCTAssertTrue(threeDsServiceMock.check3DSVersionCallsCount == 1)
 
         XCTAssertEqual(
             check3dsArgs?.data.paymentId,
@@ -594,12 +590,7 @@ extension CardPaymentProcessTests {
         let threeDsServiceMock = dependencies.threeDsServiceMock
 
         dependencies.paymentDelegateMock.paymentNeedToCollect3DSDataCompletionClosureInput = ThreeDSDeviceInfo.fake()
-        threeDsServiceMock.check3DSVersionStubReturnValue = { passedArgs -> Cancellable in
-            // handle failure flow
-            passedArgs.completion(check3DSVersionResult)
-            return EmptyCancellable()
-        }
-
+        threeDsServiceMock.check3DSVersionCompletionClosureInput = check3DSVersionResult
         dependencies.paymentsServiceMock.finishAuthorizeCompletionInput = responseStatus
         dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCompletionClosureInput = confirmationCompletion
         dependencies.paymentDelegateMock.paymentNeed3DSConfirmationConfirmationCancelledShouldExecute = true
@@ -627,7 +618,7 @@ extension CardPaymentProcessTests {
         let paymentDelegateMock: PaymentProcessDelegateMock
         let ipProviderMock: IPAddressProviderMock
         let paymentsServiceMock: AcquiringPaymentsServiceMock
-        let threeDsServiceMock: AcquiringThreeDsServiceMock
+        let threeDsServiceMock: AcquiringThreeDSServiceMock
         let paymentFlow: PaymentFlow
         let paymentSource: PaymentSourceData
     }
@@ -640,7 +631,7 @@ extension CardPaymentProcessTests {
         let ipProviderMock = IPAddressProviderMock()
 
         let paymentsServiceMock = AcquiringPaymentsServiceMock()
-        let threeDsServiceMock = AcquiringThreeDsServiceMock()
+        let threeDsServiceMock = AcquiringThreeDSServiceMock()
 
         let sut = CardPaymentProcess(
             paymentsService: paymentsServiceMock,
