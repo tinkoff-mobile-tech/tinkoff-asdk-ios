@@ -31,7 +31,7 @@ Pod::Spec.new do |spec|
     'TinkoffASDKCore/TinkoffASDKCoreTests/TestCases/3DS/BaseTestCase.swift',
     'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Mocks/**/*',
-    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/TestCases/**/*',
+    'TinkoffASDKUI/TinkoffASDKUITests/TestCases/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Extensions/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/TestsError.swift',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Fakes.swift'
