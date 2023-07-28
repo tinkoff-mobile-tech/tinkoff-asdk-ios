@@ -32,6 +32,7 @@ Pod::Spec.new do |spec|
     'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Mocks/YandexPay/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Extensions/**/*',
-    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/TestsError.swift'
+    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/TestsError.swift',
+    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Fakes.swift'
   end
 end
