@@ -22,7 +22,7 @@ final class DispatchQueueTests: BaseTestCase {
                 expectation.fulfill()
             }
         }
-
+фыв
         wait(for: [expectation], timeout: 0.2)
         // then
         XCTAssertTrue(ranOnMainThread)
