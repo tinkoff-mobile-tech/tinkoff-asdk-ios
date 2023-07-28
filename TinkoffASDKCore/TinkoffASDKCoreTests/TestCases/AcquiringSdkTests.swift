@@ -11,13 +11,14 @@ import XCTest
 final class AcquiringSdkTests: XCTestCase {
     // MARK: Properties
 
+    private var sut: AcquiringSdk!
+
     private var acquiringRequestsMock: AcquiringRequestBuilderMock!
     private var externalRequestsMock: ExternalRequestBuilderMock!
     private var ipAddressProviderMock: IPAddressProviderMock!
     private var threeDSFacadeMock: ThreeDSFacadeMock!
     private var languageProviderMock: LanguageProviderMock!
     private var urlDataLoaderMock: URLDataLoaderMock!
-    private var sut: AcquiringSdk!
 
     // MARK: Initialization
 
