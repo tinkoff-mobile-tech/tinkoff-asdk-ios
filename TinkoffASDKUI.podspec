@@ -33,6 +33,7 @@ Pod::Spec.new do |spec|
   spec.test_spec 'Tests' do |test_spec|
     test_spec.source_files =
     'TinkoffASDKUI/TinkoffASDKUITests/**/*',
-    'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*'
+    'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/**/*',
+    'TinkoffASDKCore/TinkoffASDKCoreTests/Infrastructure/Extensions/**/*'
   end
 end
