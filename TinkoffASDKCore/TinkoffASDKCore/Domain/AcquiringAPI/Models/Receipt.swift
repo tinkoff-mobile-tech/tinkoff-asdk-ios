@@ -57,6 +57,9 @@ public struct Receipt: Codable {
         customerInn = try? container.decode(String.self, forKey: .customerInn)
     }
 
+    /// Инициализиатор может пробросить ошибку в случае передачи невалидных полей
+    ///
+    /// НСПК требует как минимимум 1 валидное поле `phone` или `email` для формирования чека
     public init(
         shopCode: String?,
         email: String?,
@@ -67,7 +70,10 @@ public struct Receipt: Codable {
         supplierInfo: SupplierInfo?,
         customer: String?,
         customerInn: String?
-    ) {
+    ) throws {
+        // Проверка обязательных полей
+        try Self.validateMandatoryFields(phone: phone, email: email)
+        // Инициализация свойств
         self.shopCode = shopCode
         self.email = email
         self.taxation = taxation
@@ -90,6 +96,25 @@ public struct Receipt: Codable {
         if supplierInfo != nil { try? container.encode(supplierInfo, forKey: .supplierInfo) }
         if customer != nil { try? container.encode(customer, forKey: .customer) }
         if customerInn != nil { try? container.encode(customerInn, forKey: .customerInn) }
+    }
+
+    static func validateMandatoryFields(phone: String?, email: String?) throws {
+        if let email = email {
+            let isEmailValid = EmailValidator.validate(email)
+            if !isEmailValid {
+                throw ASDKCoreError.invalidEmail
+            }
+        }
+
+        let checkValidaty: (String?) -> Bool = { input in
+            let input = input?.trimmingCharacters(in: [" "])
+            return (input != nil && input?.isEmpty == false)
+        }
+
+        let result = checkValidaty(phone) || checkValidaty(email)
+        if !result {
+            throw ASDKCoreError.missingReceiptFields
+        }
     }
 }
 
