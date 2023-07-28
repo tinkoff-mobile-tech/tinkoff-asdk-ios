@@ -224,17 +224,11 @@ final class YandexPayButtonContainerTests: BaseTestCase {
 
 extension YandexPayButtonContainerTests {
 
-    private func cachePaymentFlow(flow: PaymentFlow = .fakeForTest()) {
+    private func cachePaymentFlow(flow: PaymentFlow = .fake()) {
         yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCompletionClosureInput = flow
         yPPaymentSheetFactoryMock.createReturnValue = YPPaymentSheet.fake()
 
         // кешируем paymentFlow локально в YandexPayButtonContainer
         sut.yandexPayButtonDidRequestPaymentSheet(yandexPayButtonMock, completion: { _ in })
-    }
-}
-
-extension PaymentFlow {
-    static func fakeForTest() -> PaymentFlow {
-        .full(paymentOptions: .fake())
     }
 }
