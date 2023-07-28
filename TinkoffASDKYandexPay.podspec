@@ -34,6 +34,7 @@ Pod::Spec.new do |spec|
     'TinkoffASDKUI/TinkoffASDKUITests/TestCases/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Extensions/**/*',
     'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/TestsError.swift',
-    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Fakes.swift'
+    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/Fakes.swift',
+    'TinkoffASDKUI/TinkoffASDKUITests/Infrastructure/UIASDKTestsAssembly.swift'
   end
 end
