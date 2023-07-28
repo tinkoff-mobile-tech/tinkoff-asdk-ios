@@ -47,6 +47,7 @@
 * [EACQAPW-5651] DeviceInfoProvder Tests
 * [EACQAPW-5661] ExternalRequestBuilder Tests
 * [EACQAPW-5669] URLProvider Tests
+* [EACQAPW-5680] AcquiringSdk Tests
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields
