@@ -20,6 +20,7 @@ final class EmailViewPresenterTests: BaseTestCase {
 
     var viewMock: EmailViewInputMock!
     var outputMock: EmailViewPresenterOutputMock!
+    var emailValidatorMock: EmailValidatorMock!
 
     // MARK: Setup
 
@@ -32,6 +33,7 @@ final class EmailViewPresenterTests: BaseTestCase {
     override func tearDown() {
         viewMock = nil
         outputMock = nil
+        emailValidatorMock = nil
 
         sut = nil
 
@@ -52,6 +54,7 @@ final class EmailViewPresenterTests: BaseTestCase {
     func test_textFieldDidChangeText_to_newValue_valid() {
         // given
         let text = "some@some.some"
+        emailValidatorMock.isValidReturnValue = true
 
         // when
         sut.textFieldDidChangeText(to: text)
@@ -65,6 +68,7 @@ final class EmailViewPresenterTests: BaseTestCase {
     func test_textFieldDidChangeText_to_newValue_notValid() {
         // given
         let text = "some123some.some"
+        emailValidatorMock.isValidReturnValue = false
 
         // when
         sut.textFieldDidChangeText(to: text)
@@ -115,7 +119,10 @@ final class EmailViewPresenterTests: BaseTestCase {
     func test_textFieldDidEndEditing_when_isFieldDidBeginEditingTrue_emailNotValid() {
         // given
         let validEmail = "some123some.some"
-        setupSut(customerEmail: validEmail)
+        setupSut(
+            customerEmail: validEmail,
+            beforeViewSetup: { [weak self] in self?.emailValidatorMock.isValidReturnValue = false }
+        )
         sut.textFieldDidBeginEditing()
         viewMock.fullReset()
 
@@ -158,7 +165,10 @@ final class EmailViewPresenterTests: BaseTestCase {
     func test_setupView_when_emailNotValid_andEditingBegin() {
         // given
         let email = "some123some.some"
-        setupSut(customerEmail: email)
+        setupSut(
+            customerEmail: email,
+            beforeViewSetup: { [weak self] in self?.emailValidatorMock.isValidReturnValue = false }
+        )
         sut.textFieldDidBeginEditing()
         viewMock.fullReset()
 
@@ -188,7 +198,10 @@ final class EmailViewPresenterTests: BaseTestCase {
     func test_isEmailValid_when_true() {
         // given
         let email = "some@some.some"
-        setupSut(customerEmail: email)
+        setupSut(
+            customerEmail: email,
+            beforeViewSetup: { [weak self] in self?.emailValidatorMock.isValidReturnValue = true }
+        )
 
         // when
         let isValidEmail = sut.isEmailValid
@@ -200,7 +213,10 @@ final class EmailViewPresenterTests: BaseTestCase {
     func test_isEmailValid_when_false() {
         // given
         let email = "some123some.some"
-        setupSut(customerEmail: email)
+        setupSut(
+            customerEmail: email,
+            beforeViewSetup: { [weak self] in self?.emailValidatorMock.isValidReturnValue = false }
+        )
 
         // when
         let isValidEmail = sut.isEmailValid
@@ -214,7 +230,11 @@ final class EmailViewPresenterTests: BaseTestCase {
         let email = "EMAIL"
 
         // when
-        setupSut(customerEmail: email, resetViewMock: false)
+        setupSut(
+            customerEmail: email,
+            resetViewMock: false,
+            beforeViewSetup: { [weak self] in self?.emailValidatorMock.isValidReturnValue = false }
+        )
 
         // then
         XCTAssertEqual(viewMock.setTextFieldHeaderErrorCallsCount, 1)
@@ -224,10 +244,16 @@ final class EmailViewPresenterTests: BaseTestCase {
 // MARK: - Private methods
 
 extension EmailViewPresenterTests {
-    private func setupSut(customerEmail: String = "", resetViewMock: Bool = true) {
+    private func setupSut(
+        customerEmail: String = "",
+        resetViewMock: Bool = true,
+        beforeViewSetup: (() -> Void)? = nil
+    ) {
         viewMock = EmailViewInputMock()
         outputMock = EmailViewPresenterOutputMock()
-        sut = EmailViewPresenter(customerEmail: customerEmail, output: outputMock, emailValidator: EmailValidator())
+        emailValidatorMock = EmailValidatorMock()
+        sut = EmailViewPresenter(customerEmail: customerEmail, output: outputMock, emailValidator: emailValidatorMock)
+        beforeViewSetup?()
         sut.view = viewMock
 
         if resetViewMock { viewMock.fullReset() }
