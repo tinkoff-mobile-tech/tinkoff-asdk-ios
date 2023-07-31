@@ -16,7 +16,7 @@ final class YandexPayPaymentSheetAssemblyMock: IYandexPayPaymentSheetAssembly {
 
     var yandexPayPaymentSheetCallsCount = 0
     var yandexPayPaymentSheetReceivedArguments: YandexPayPaymentSheetArguments?
-    var yandexPayPaymentSheetReceivedInvocations: [YandexPayPaymentSheetArguments] = []
+    var yandexPayPaymentSheetReceivedInvocations: [YandexPayPaymentSheetArguments?] = []
     var yandexPayPaymentSheetReturnValue: UIViewController!
 
     func yandexPayPaymentSheet(paymentFlow: PaymentFlow, base64Token: String, output: IYandexPayPaymentSheetOutput) -> UIViewController {
@@ -25,5 +25,15 @@ final class YandexPayPaymentSheetAssemblyMock: IYandexPayPaymentSheetAssembly {
         yandexPayPaymentSheetReceivedArguments = arguments
         yandexPayPaymentSheetReceivedInvocations.append(arguments)
         return yandexPayPaymentSheetReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayPaymentSheetAssemblyMock {
+    func fullReset() {
+        yandexPayPaymentSheetCallsCount = 0
+        yandexPayPaymentSheetReceivedArguments = nil
+        yandexPayPaymentSheetReceivedInvocations = []
     }
 }

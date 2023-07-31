@@ -5,6 +5,7 @@
 //  Created by Ivan Glushko on 20.04.2023.
 //
 
+@testable import TinkoffASDKCore
 @testable import TinkoffASDKUI
 @testable import TinkoffASDKYandexPay
 import XCTest
@@ -91,7 +92,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         let fakedPaymentSheet = YPPaymentSheet.fake()
         let paymentFlow = PaymentFlow.full(paymentOptions: .fake())
 
-        yandexPayButtonContainerDelegateMock.didRequestPaymentFlowCompletionClosureInput = paymentFlow
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCompletionClosureInput = paymentFlow
         yPPaymentSheetFactoryMock.createReturnValue = fakedPaymentSheet
 
         // when
@@ -102,7 +103,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         // then
         let sheet = try XCTUnwrap(receivedYandexPaymentSheet)
         XCTAssertEqual(fakedPaymentSheet, sheet)
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didRequestPaymentFlowCallsCount, 1)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCallsCount, 1)
         XCTAssertEqual(yPPaymentSheetFactoryMock.createCallsCount, 1)
         XCTAssertEqual(yPPaymentSheetFactoryMock.createReceivedArguments, paymentFlow)
     }
@@ -136,8 +137,8 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         sut.yandexPayButton(yandexPayButtonMock, didCompletePaymentWithResult: .cancelled)
 
         // then
-        let result = yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultReceivedArguments?.result
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultCallsCount, 1)
+        let result = yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.result
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultCallsCount, 1)
         XCTAssertEqual(result, .cancelled())
     }
 
@@ -149,14 +150,14 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         sut.yandexPayButton(yandexPayButtonMock, didCompletePaymentWithResult: .failed(fakedError))
 
         // then
-        let result = yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultReceivedArguments?.result
+        let result = yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.result
         let unwrappedResult = try XCTUnwrap(result)
         var isFailedWithError = false
         if case let PaymentResult.failed(error) = unwrappedResult {
             isFailedWithError = (error as? YPPaymentError) == fakedError
         }
 
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultCallsCount, 1)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultCallsCount, 1)
         XCTAssertTrue(isFailedWithError)
     }
 
@@ -175,9 +176,9 @@ final class YandexPayButtonContainerTests: BaseTestCase {
         // when
         sut.yandexPayPaymentFlow(yandexPayPaymentFlowMock, didCompleteWith: .failed(TestsError.basic))
         // then
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultCallsCount, 1)
-        XCTAssert(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultReceivedArguments?.container === sut)
-        XCTAssertEqual(yandexPayButtonContainerDelegateMock.didCompletePaymentWithResultReceivedArguments?.result, .failed(TestsError.basic))
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultCallsCount, 1)
+        XCTAssert(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.container === sut)
+        XCTAssertEqual(yandexPayButtonContainerDelegateMock.yandexPayButtonContainerDidCompletePaymentWithResultReceivedArguments?.result, .failed(TestsError.basic))
     }
 
     func test_setLoaderVisible() {
@@ -224,7 +225,7 @@ final class YandexPayButtonContainerTests: BaseTestCase {
 extension YandexPayButtonContainerTests {
 
     private func cachePaymentFlow(flow: PaymentFlow = .fake()) {
-        yandexPayButtonContainerDelegateMock.didRequestPaymentFlowCompletionClosureInput = flow
+        yandexPayButtonContainerDelegateMock.yandexPayButtonContainerCompletionClosureInput = flow
         yPPaymentSheetFactoryMock.createReturnValue = YPPaymentSheet.fake()
 
         // кешируем paymentFlow локально в YandexPayButtonContainer

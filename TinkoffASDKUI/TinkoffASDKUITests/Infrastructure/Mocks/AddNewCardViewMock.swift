@@ -14,13 +14,15 @@ final class AddNewCardViewMock: IAddNewCardView {
         set(value) { underlyingIsLoading = value }
     }
 
-    var underlyingIsLoading: Bool = false
+    var underlyingIsLoading = false
 
     // MARK: - reloadCollection
 
+    typealias ReloadCollectionArguments = [AddNewCardSection]
+
     var reloadCollectionCallsCount = 0
-    var reloadCollectionReceivedArguments: [AddNewCardSection]?
-    var reloadCollectionReceivedInvocations: [[AddNewCardSection]] = []
+    var reloadCollectionReceivedArguments: ReloadCollectionArguments?
+    var reloadCollectionReceivedInvocations: [ReloadCollectionArguments?] = []
 
     func reloadCollection(sections: [AddNewCardSection]) {
         reloadCollectionCallsCount += 1
@@ -57,12 +59,15 @@ final class AddNewCardViewMock: IAddNewCardView {
 
     typealias SetAddButtonArguments = (enabled: Bool, animated: Bool)
 
-    var setAddButtonCallCounter = 0
-    var setAddButtonArguments: SetAddButtonArguments?
+    var setAddButtonCallsCount = 0
+    var setAddButtonReceivedArguments: SetAddButtonArguments?
+    var setAddButtonReceivedInvocations: [SetAddButtonArguments?] = []
 
     func setAddButton(enabled: Bool, animated: Bool) {
-        setAddButtonCallCounter += 1
-        setAddButtonArguments = (enabled, animated)
+        setAddButtonCallsCount += 1
+        let arguments = (enabled, animated)
+        setAddButtonReceivedArguments = arguments
+        setAddButtonReceivedInvocations.append(arguments)
     }
 
     // MARK: - activateCardField
@@ -75,9 +80,11 @@ final class AddNewCardViewMock: IAddNewCardView {
 
     // MARK: - showOkNativeAlert
 
+    typealias ShowOkNativeAlertArguments = OkAlertData
+
     var showOkNativeAlertCallsCount = 0
-    var showOkNativeAlertReceivedArguments: OkAlertData?
-    var showOkNativeAlertReceivedInvocations: [OkAlertData] = []
+    var showOkNativeAlertReceivedArguments: ShowOkNativeAlertArguments?
+    var showOkNativeAlertReceivedInvocations: [ShowOkNativeAlertArguments?] = []
 
     func showOkNativeAlert(data: OkAlertData) {
         showOkNativeAlertCallsCount += 1
@@ -86,16 +93,57 @@ final class AddNewCardViewMock: IAddNewCardView {
         showOkNativeAlertReceivedInvocations.append(arguments)
     }
 
+    // MARK: - showCardScanner
+
+    typealias ShowCardScannerArguments = CardScannerCompletion
+
     var showCardScannerCallsCount = 0
-    var showCardScannerCompletionStub: (cardNumber: String?, expiration: String?, cvc: String?)?
-    var showCardScannerReceivedArguments: CardScannerCompletion?
-    var showCardScannerReceivedInvocations: [CardScannerCompletion] = []
+    var showCardScannerReceivedArguments: ShowCardScannerArguments?
+    var showCardScannerReceivedInvocations: [ShowCardScannerArguments?] = []
+    var showCardScannerCompletionClosureInput: (String?, String?, String?)?
+
     func showCardScanner(completion: @escaping CardScannerCompletion) {
         showCardScannerCallsCount += 1
-        showCardScannerReceivedArguments = completion
-        showCardScannerReceivedInvocations.append(completion)
-        if let stub = showCardScannerCompletionStub {
-            completion(stub.cardNumber, stub.expiration, stub.cvc)
+        let arguments = completion
+        showCardScannerReceivedArguments = arguments
+        showCardScannerReceivedInvocations.append(arguments)
+        if let showCardScannerCompletionClosureInput = showCardScannerCompletionClosureInput {
+            completion(
+                showCardScannerCompletionClosureInput.0,
+                showCardScannerCompletionClosureInput.1,
+                showCardScannerCompletionClosureInput.2
+            )
         }
+    }
+}
+
+// MARK: - Resets
+
+extension AddNewCardViewMock {
+    func fullReset() {
+        reloadCollectionCallsCount = 0
+        reloadCollectionReceivedArguments = nil
+        reloadCollectionReceivedInvocations = []
+
+        showLoadingStateCallsCount = 0
+
+        hideLoadingStateCallsCount = 0
+
+        closeScreenCallsCount = 0
+
+        setAddButtonCallsCount = 0
+        setAddButtonReceivedArguments = nil
+        setAddButtonReceivedInvocations = []
+
+        activateCardFieldCallsCount = 0
+
+        showOkNativeAlertCallsCount = 0
+        showOkNativeAlertReceivedArguments = nil
+        showOkNativeAlertReceivedInvocations = []
+
+        showCardScannerCallsCount = 0
+        showCardScannerReceivedArguments = nil
+        showCardScannerReceivedInvocations = []
+        showCardScannerCompletionClosureInput = nil
     }
 }

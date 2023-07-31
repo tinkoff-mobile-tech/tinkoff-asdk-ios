@@ -27,10 +27,7 @@ final class CardPaymentProcessTests: XCTestCase {
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
         let paymentsServiceMock = dependencies.paymentsServiceMock
 
-        paymentsServiceMock.initPaymentStubReturn = { passedArgs -> Cancellable in
-            passedArgs.completion(.failure(TestsError.basic))
-            return EmptyCancellable()
-        }
+        paymentsServiceMock.initPaymentCompletionClosureInput = .failure(TestsError.basic)
 
         // when
 
@@ -38,18 +35,18 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
 
-        let paymentDidFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedPassedArguments
+        let paymentDidFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedWithReceivedArguments
 
         let cardId = sutPaymentProcess.paymentSource.getCardAndRebillId().cardId
         let rebillId = sutPaymentProcess.paymentSource.getCardAndRebillId().rebillId
 
-        XCTAssertTrue(paymentsServiceMock.initPaymentCallCounter == 1)
+        XCTAssertTrue(paymentsServiceMock.initPaymentCallsCount == 1)
         XCTAssertEqual(
-            paymentsServiceMock.initPaymentPassedArguments?.data,
+            paymentsServiceMock.initPaymentReceivedArguments?.data,
             .data(with: paymentOptions)
         )
 
-        XCTAssertTrue(dependencies.paymentDelegateMock.paymentDidFailedCallCounter == 1)
+        XCTAssertTrue(dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount == 1)
         XCTAssertEqual(paymentDidFailedArgs?.paymentProcess.paymentSource, sutPaymentProcess.paymentSource)
         XCTAssertEqual(paymentDidFailedArgs?.cardId, cardId)
         XCTAssertEqual(paymentDidFailedArgs?.rebillId, rebillId)
@@ -70,13 +67,13 @@ final class CardPaymentProcessTests: XCTestCase {
 
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
 
-        let didFinishArgs = dependencies.paymentDelegateMock.paymentDidFinishPassedArguments
+        let didFinishArgs = dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments
         let paymentSourceCardId = sutPaymentProcess.paymentSource.getCardAndRebillId().cardId
 
         // then
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
 
@@ -101,12 +98,12 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCallsCount,
             1
         )
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DsConfirmationPassedArguments?.need3DSConfirmation,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationReceivedArguments?.data,
             confirmationData
         )
     }
@@ -125,12 +122,12 @@ final class CardPaymentProcessTests: XCTestCase {
         // then
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallsCount,
             1
         )
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSPassedArguments?.need3DSConfirmationACS,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSReceivedArguments?.data,
             confirmationData
         )
     }
@@ -150,12 +147,12 @@ final class CardPaymentProcessTests: XCTestCase {
         // then
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallsCount,
             1
         )
 
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedPassedArguments?.need3DSConfirmationAppBased,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedReceivedArguments?.data,
             confirmationData
         )
     }
@@ -171,10 +168,10 @@ final class CardPaymentProcessTests: XCTestCase {
 
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
 
-        let payemtnDidFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedPassedArguments
+        let payemtnDidFailedArgs = dependencies.paymentDelegateMock.paymentDidFailedWithReceivedArguments
         let paymentSourceCardId = sutPaymentProcess.paymentSource.getCardAndRebillId().cardId
 
-        XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedCallCounter, 1)
+        XCTAssertEqual(dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount, 1)
 
         XCTAssertEqual(payemtnDidFailedArgs?.cardId, paymentSourceCardId)
     }
@@ -189,11 +186,11 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeedCollect3DsCallCounter,
+            dependencies.paymentDelegateMock.paymentNeedToCollect3DSDataCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
     }
@@ -208,15 +205,15 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
-            1
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
+            2
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments?.state.status,
             .authorized
         )
     }
@@ -231,15 +228,15 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments?.state.status,
             .cancelled
         )
     }
@@ -254,15 +251,15 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallCounter,
-            1
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCallsCount,
+            0
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
-            1
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
+            2
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments?.state.status,
             .authorized
         )
     }
@@ -277,15 +274,15 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments?.state.status,
             .cancelled
         )
     }
@@ -301,15 +298,15 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
-            1
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
+            2
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments?.state.status,
             .authorized
         )
     }
@@ -325,15 +322,15 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             1
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishPassedArguments?.state.status,
+            dependencies.paymentDelegateMock.paymentDidFinishWithReceivedArguments?.state.status,
             .cancelled
         )
     }
@@ -350,11 +347,11 @@ final class CardPaymentProcessTests: XCTestCase {
         )
 
         // then
-        let error = try XCTUnwrap(dependencies.paymentDelegateMock.paymentDidFailedPassedArguments?.error)
+        let error = try XCTUnwrap(dependencies.paymentDelegateMock.paymentDidFailedWithReceivedArguments?.error)
 
         XCTAssertEqualTypes(errorStub, error)
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount,
             1
         )
     }
@@ -369,11 +366,11 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallCounter,
+            dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCallsCount,
             0
         )
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFinishCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFinishWithCallsCount,
             0
         )
     }
@@ -386,7 +383,7 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount,
             1
         )
     }
@@ -406,7 +403,7 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentsServiceMock.finishAuthorizeCallCounter,
+            dependencies.paymentsServiceMock.finishAuthorizeCallsCount,
             1
         )
     }
@@ -416,7 +413,7 @@ final class CardPaymentProcessTests: XCTestCase {
         let dependencies = prepareSut()
         let requestMock = CancellableMock()
 
-        dependencies.paymentsServiceMock.initPaymentStubReturn = { _ in requestMock }
+        dependencies.paymentsServiceMock.initPaymentReturnValue = requestMock
 
         // when
         dependencies.sutAsPaymentProcess.start()
@@ -437,7 +434,7 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount,
             1
         )
     }
@@ -453,7 +450,7 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount,
             1
         )
     }
@@ -469,7 +466,7 @@ final class CardPaymentProcessTests: XCTestCase {
 
         // then
         XCTAssertEqual(
-            dependencies.paymentDelegateMock.paymentDidFailedCallCounter,
+            dependencies.paymentDelegateMock.paymentDidFailedWithCallsCount,
             1
         )
     }
@@ -533,30 +530,20 @@ extension CardPaymentProcessTests {
 
         // finishAuthorizeStubReturn
 
-        paymentsServiceMock.initPaymentStubReturn = { passedArgs -> Cancellable in
-            passedArgs.completion(.success(initPayload))
-            return EmptyCancellable()
-        }
+        paymentsServiceMock.initPaymentCompletionClosureInput = .success(initPayload)
 
-        threeDsServiceMock.check3DSVersionStubReturnValue = { passedArgs -> Cancellable in
-            // handle failure flow
-            passedArgs.completion(.success(check3DsVersionPayload))
-            return EmptyCancellable()
-        }
+        threeDsServiceMock.check3DSVersionCompletionClosureInput = .success(check3DsVersionPayload)
 
-        paymentsServiceMock.finishAuthorizeStubReturn = { passedArgs in
-            passedArgs.completion(finishAuthorizeResult)
-            return EmptyCancellable()
-        }
+        paymentsServiceMock.finishAuthorizeCompletionClosureInput = finishAuthorizeResult
 
         // when
 
         sutPaymentProcess.start()
 
         // then
-        let check3dsArgs = threeDsServiceMock.check3DSVersionPassedArguments
+        let check3dsArgs = threeDsServiceMock.check3DSVersionReceivedArguments
 
-        XCTAssertTrue(threeDsServiceMock.check3DSVersionCallCounter == 1)
+        XCTAssertTrue(threeDsServiceMock.check3DSVersionCallsCount == 1)
 
         XCTAssertEqual(
             check3dsArgs?.data.paymentId,
@@ -568,7 +555,7 @@ extension CardPaymentProcessTests {
             dependencies.paymentSource
         )
 
-        XCTAssertTrue(paymentsServiceMock.finishAuthorizeCallCounter == 1)
+        XCTAssertTrue(paymentsServiceMock.finishAuthorizeCallsCount == 1)
 
         return dependencies
     }
@@ -593,21 +580,16 @@ extension CardPaymentProcessTests {
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
         let threeDsServiceMock = dependencies.threeDsServiceMock
 
-        dependencies.paymentDelegateMock.paymentNeedCollect3DsCompletionInput = ThreeDSDeviceInfo.fake()
-        threeDsServiceMock.check3DSVersionStubReturnValue = { passedArgs -> Cancellable in
-            // handle failure flow
-            passedArgs.completion(check3DSVersionResult)
-            return EmptyCancellable()
-        }
-
-        dependencies.paymentsServiceMock.finishAuthorizeCompletionInput = responseStatus
-        dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCompletionInput = confirmationCompletion
-        dependencies.paymentDelegateMock.paymentNeed3DsConfirmationCancelledInput = confirmationCancelled
-        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCompletionInput = confirmationCompletion
-        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSConfirmationCancelledInput = confirmationCancelled
-        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedConfirmationCancelledInput = confirmationCancelled
-        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCompletionInput = confirmationCompletion
-        dependencies.paymentDelegateMock.startAppBasedFlowCompletionClosureInput = startAppBasedFlowCompletion
+        dependencies.paymentDelegateMock.paymentNeedToCollect3DSDataCompletionClosureInput = ThreeDSDeviceInfo.fake()
+        threeDsServiceMock.check3DSVersionCompletionClosureInput = check3DSVersionResult
+        dependencies.paymentsServiceMock.finishAuthorizeCompletionClosureInput = responseStatus
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCompletionClosureInput = confirmationCompletion
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationConfirmationCancelledShouldExecute = true
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSCompletionClosureInput = confirmationCompletion
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationACSConfirmationCancelledShouldExecute = true
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedConfirmationCancelledShouldExecute = true
+        dependencies.paymentDelegateMock.paymentNeed3DSConfirmationAppBasedCompletionClosureInput = confirmationCompletion
+        dependencies.paymentDelegateMock.startAppBasedFlowCheck3dsPayloadCompletionClosureInput = startAppBasedFlowCompletion
 
         // when
 
@@ -625,9 +607,9 @@ extension CardPaymentProcessTests {
         let sut: CardPaymentProcess
         let sutAsPaymentProcess: IPaymentProcess
         let paymentDelegateMock: PaymentProcessDelegateMock
-        let ipProviderMock: MockIPAddressProvider
+        let ipProviderMock: IPAddressProviderMock
         let paymentsServiceMock: AcquiringPaymentsServiceMock
-        let threeDsServiceMock: AcquiringThreeDsServiceMock
+        let threeDsServiceMock: AcquiringThreeDSServiceMock
         let paymentFlow: PaymentFlow
         let paymentSource: PaymentSourceData
     }
@@ -637,10 +619,10 @@ extension CardPaymentProcessTests {
         paymentFlow: PaymentFlow
     ) -> Dependencies {
         let paymentDelegateMock = PaymentProcessDelegateMock()
-        let ipProviderMock = MockIPAddressProvider()
+        let ipProviderMock = IPAddressProviderMock()
 
         let paymentsServiceMock = AcquiringPaymentsServiceMock()
-        let threeDsServiceMock = AcquiringThreeDsServiceMock()
+        let threeDsServiceMock = AcquiringThreeDSServiceMock()
 
         let sut = CardPaymentProcess(
             paymentsService: paymentsServiceMock,

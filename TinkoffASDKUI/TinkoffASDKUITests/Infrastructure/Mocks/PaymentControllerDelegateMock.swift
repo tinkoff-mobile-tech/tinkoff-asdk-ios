@@ -1,29 +1,14 @@
 //
-//  ChargePaymentControllerDelegateMock.swift
+//  PaymentControllerDelegateMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
-//  Created by Никита Васильев on 22.06.2023.
+//  Created by Ivan Glushko on 21.10.2022.
 //
 
 import TinkoffASDKCore
-import TinkoffASDKUI
+@testable import TinkoffASDKUI
 
-final class ChargePaymentControllerDelegateMock: ChargePaymentControllerDelegate {
-
-    // MARK: - paymentControllerShouldRepeatWithRebillId
-
-    typealias PaymentControllerShouldRepeatWithRebillIdArguments = (controller: IPaymentController, rebillId: String, failedPaymentProcess: IPaymentProcess, additionalData: [String: String], error: Error)
-
-    var paymentControllerShouldRepeatWithRebillIdCallsCount = 0
-    var paymentControllerShouldRepeatWithRebillIdReceivedArguments: PaymentControllerShouldRepeatWithRebillIdArguments?
-    var paymentControllerShouldRepeatWithRebillIdReceivedInvocations: [PaymentControllerShouldRepeatWithRebillIdArguments?] = []
-
-    func paymentController(_ controller: IPaymentController, shouldRepeatWithRebillId rebillId: String, failedPaymentProcess: IPaymentProcess, additionalData: [String: String], error: Error) {
-        paymentControllerShouldRepeatWithRebillIdCallsCount += 1
-        let arguments = (controller, rebillId, failedPaymentProcess, additionalData, error)
-        paymentControllerShouldRepeatWithRebillIdReceivedArguments = arguments
-        paymentControllerShouldRepeatWithRebillIdReceivedInvocations.append(arguments)
-    }
+final class PaymentControllerDelegateMock: PaymentControllerDelegate {
 
     // MARK: - paymentControllerDidFinishPayment
 
@@ -73,12 +58,8 @@ final class ChargePaymentControllerDelegateMock: ChargePaymentControllerDelegate
 
 // MARK: - Resets
 
-extension ChargePaymentControllerDelegateMock {
+extension PaymentControllerDelegateMock {
     func fullReset() {
-        paymentControllerShouldRepeatWithRebillIdCallsCount = 0
-        paymentControllerShouldRepeatWithRebillIdReceivedArguments = nil
-        paymentControllerShouldRepeatWithRebillIdReceivedInvocations = []
-
         paymentControllerDidFinishPaymentCallsCount = 0
         paymentControllerDidFinishPaymentReceivedArguments = nil
         paymentControllerDidFinishPaymentReceivedInvocations = []

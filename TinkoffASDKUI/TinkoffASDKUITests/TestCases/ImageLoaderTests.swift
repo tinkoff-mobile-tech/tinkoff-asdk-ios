@@ -37,7 +37,7 @@ final class ImageLoaderTests: XCTestCase {
 
         // when
         var result: Result<UIImage, Error>?
-        sut.loadImage(url: .empty, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
+        sut.loadImage(url: .fakeVK, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
 
         // then
         if case let .failure(error) = result {
@@ -58,14 +58,14 @@ final class ImageLoaderTests: XCTestCase {
         var invokedPreCacheClosure = false
         var result: Result<UIImage, Error>?
         sut.loadImage(
-            url: .empty,
+            url: .fakeVK,
             preCacheClosure: { _ in
                 invokedPreCacheClosure = true
                 return image
             },
             completion: { result = $0 }
         )
-        sut.loadImage(url: .empty, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
+        sut.loadImage(url: .fakeVK, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
 
         // then
         XCTAssertTrue(invokedPreCacheClosure)
@@ -84,7 +84,7 @@ final class ImageLoaderTests: XCTestCase {
 
         // when
         var result: Result<UIImage, Error>?
-        sut.loadImage(url: .empty, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
+        sut.loadImage(url: .fakeVK, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
 
         // then
         if case let .failure(error) = result {
@@ -102,7 +102,7 @@ final class ImageLoaderTests: XCTestCase {
 
         // when
         var result: Result<UIImage, Error>?
-        sut.loadImage(url: .empty, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
+        sut.loadImage(url: .fakeVK, preCacheClosure: { _ in UIImage() }, completion: { result = $0 })
 
         // then
         if case .failure = result { XCTFail() }
@@ -115,7 +115,7 @@ final class ImageLoaderTests: XCTestCase {
         urlDataLoaderMock.loadDataReturnValue = cancellableMock
 
         // when
-        let uuid = try XCTUnwrap(sut.loadImage(url: .empty, preCacheClosure: { _ in UIImage() }, completion: { _ in }))
+        let uuid = try XCTUnwrap(sut.loadImage(url: .fakeVK, preCacheClosure: { _ in UIImage() }, completion: { _ in }))
         sut.cancelImageLoad(uuid: uuid)
 
         // then

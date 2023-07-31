@@ -10,9 +10,17 @@ import ThreeDSWrapper
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
+extension URL {
+    static let fakeVK = URL(string: "www.vk.com")!
+}
+
+extension URLRequest {
+    static let fake = URLRequest(url: .fakeVK)
+}
+
 extension GetTinkoffLinkPayload {
     static func fake() -> GetTinkoffLinkPayload {
-        GetTinkoffLinkPayload(redirectUrl: URL.empty)
+        GetTinkoffLinkPayload(redirectUrl: URL.fakeVK)
     }
 }
 
@@ -72,6 +80,10 @@ extension PaymentOptions {
             paymentData: initData.paymentFormData ?? [:]
         )
     }
+
+    static func fake() -> PaymentOptions {
+        PaymentOptions(orderOptions: OrderOptions.fake())
+    }
 }
 
 extension PaymentFlow {
@@ -103,6 +115,10 @@ extension PaymentFlow {
         let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
         let options = FinishPaymentOptions(paymentId: "32423", amount: 100, orderId: "id", customerOptions: customerOptions)
         return PaymentFlow.finish(paymentOptions: options)
+    }
+
+    static func fake() -> PaymentFlow {
+        .full(paymentOptions: .fake())
     }
 }
 
@@ -182,5 +198,126 @@ extension EmailViewPresenter {
             output: EmailViewPresenterOutputMock(),
             emailValidator: EmailValidatorMock()
         )
+    }
+}
+
+extension ProtocolErrorEvent {
+    static func fake() -> ProtocolErrorEvent {
+        ProtocolErrorEvent(
+            sdkTransactionID: .fake,
+            errorMessage: ErrorMessage(
+                errorCode: .fake,
+                errorDescription: .fake,
+                errorDetails: .fake,
+                transactionID: .fake
+            )
+        )
+    }
+}
+
+extension AcquiringUISDK {
+    static func fake() -> AcquiringUISDK {
+        return try! AcquiringUISDK(
+            coreSDKConfiguration: .fake()
+        )
+    }
+}
+
+extension AuthenticationRequestParameters {
+    static func fake() -> AuthenticationRequestParameters {
+        AuthenticationRequestParameters(
+            deviceData: "deviceData",
+            sdkTransId: "sdkTransId",
+            sdkAppID: "sdkAppID",
+            sdkReferenceNum: "sdkReferenceNum",
+            ephemeralPublic: "ephemeralPublic"
+        )
+    }
+}
+
+extension CardList.Card {
+    static func fake(from card: PaymentCard) -> CardList.Card {
+        CardList.Card(
+            id: card.cardId,
+            pan: card.pan,
+            cardModel: DynamicIconCardView.Model(),
+            bankNameText: "",
+            cardNumberText: "",
+            isInEditingMode: true,
+            hasCheckmarkInNormalMode: true
+        )
+    }
+}
+
+extension CardOptions {
+    static func fake() -> Self {
+        CardOptions(pan: "123123123123", validThru: "0928", cvc: "123")
+    }
+}
+
+extension Check3DSVersionPayload {
+    static func fake(version: ThreeDSVersion) -> Check3DSVersionPayload {
+        switch version {
+        case .v1:
+            return Check3DSVersionPayload(
+                version: "1.0.0",
+                tdsServerTransID: nil,
+                threeDSMethodURL: nil,
+                paymentSystem: nil
+            )
+
+        case .v2:
+            return Check3DSVersionPayload(
+                version: "2.0.0",
+                tdsServerTransID: "tdsServerTransID",
+                threeDSMethodURL: "threeDSMethodURL",
+                paymentSystem: nil
+            )
+        case .appBased:
+            return Check3DSVersionPayload(
+                version: "2.1.0",
+                tdsServerTransID: "tdsServerTransID",
+                threeDSMethodURL: "threeDSMethodURL",
+                paymentSystem: "mock"
+            )
+        }
+    }
+}
+
+extension Checking3DSURLData {
+    static func fake() -> Checking3DSURLData {
+        Checking3DSURLData(
+            tdsServerTransID: "tdsServerTransID",
+            threeDSMethodURL: "method",
+            notificationURL: "notification"
+        )
+    }
+}
+
+extension FinishPaymentOptions {
+    static func fake() -> FinishPaymentOptions {
+        FinishPaymentOptions(paymentId: "32432", amount: 200, orderId: "4234")
+    }
+}
+
+extension GetTinkoffPayStatusPayload {
+    static func fake(status: GetTinkoffPayStatusPayload.Status = .disallowed) -> GetTinkoffPayStatusPayload {
+        GetTinkoffPayStatusPayload(status: status)
+    }
+}
+
+extension OrderOptions {
+    static func fake() -> OrderOptions {
+        OrderOptions(orderId: "123", amount: 100)
+    }
+}
+
+extension String {
+    static let fake = "doesntMatter"
+}
+
+extension TinkoffPayMethod {
+    static func fake() -> TinkoffPayMethod {
+        TinkoffPayMethod(version: "1.1.1")
     }
 }

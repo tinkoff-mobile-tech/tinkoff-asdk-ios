@@ -16,11 +16,12 @@ final class ImageLoaderMock: IImageLoader {
 
     var loadImageCallsCount = 0
     var loadImageReceivedArguments: LoadImageArguments?
-    var loadImageReceivedInvocations: [LoadImageArguments] = []
+    var loadImageReceivedInvocations: [LoadImageArguments?] = []
     var loadImagePreCacheClosureClosureInput: UIImage?
     var loadImageCompletionClosureInput: Result<UIImage, Swift.Error>?
     var loadImageReturnValue: UUID?
 
+    @discardableResult
     func loadImage(url: URL, preCacheClosure: @escaping (UIImage) -> UIImage, completion: @escaping (Result<UIImage, Swift.Error>) -> Void) -> UUID? {
         loadImageCallsCount += 1
         let arguments = (url, preCacheClosure, completion)
@@ -37,14 +38,32 @@ final class ImageLoaderMock: IImageLoader {
 
     // MARK: - cancelImageLoad
 
+    typealias CancelImageLoadArguments = UUID
+
     var cancelImageLoadCallsCount = 0
-    var cancelImageLoadReceivedArguments: UUID?
-    var cancelImageLoadReceivedInvocations: [UUID] = []
+    var cancelImageLoadReceivedArguments: CancelImageLoadArguments?
+    var cancelImageLoadReceivedInvocations: [CancelImageLoadArguments?] = []
 
     func cancelImageLoad(uuid: UUID) {
         cancelImageLoadCallsCount += 1
         let arguments = uuid
         cancelImageLoadReceivedArguments = arguments
         cancelImageLoadReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension ImageLoaderMock {
+    func fullReset() {
+        loadImageCallsCount = 0
+        loadImageReceivedArguments = nil
+        loadImageReceivedInvocations = []
+        loadImagePreCacheClosureClosureInput = nil
+        loadImageCompletionClosureInput = nil
+
+        cancelImageLoadCallsCount = 0
+        cancelImageLoadReceivedArguments = nil
+        cancelImageLoadReceivedInvocations = []
     }
 }

@@ -8,15 +8,39 @@
 @testable import TinkoffASDKUI
 
 final class CardListRouterMock: ICardListRouter {
-    var openAddNewCardsCallsCount = 0
+
+    // MARK: - openAddNewCard
+
+    typealias OpenAddNewCardArguments = (customerKey: String, output: IAddNewCardPresenterOutput?)
+
+    var openAddNewCardCallsCount = 0
+    var openAddNewCardReceivedArguments: OpenAddNewCardArguments?
+    var openAddNewCardReceivedInvocations: [OpenAddNewCardArguments?] = []
 
     func openAddNewCard(customerKey: String, output: IAddNewCardPresenterOutput?) {
-        openAddNewCardsCallsCount += 1
+        openAddNewCardCallsCount += 1
+        let arguments = (customerKey, output)
+        openAddNewCardReceivedArguments = arguments
+        openAddNewCardReceivedInvocations.append(arguments)
     }
+
+    // MARK: - openCardPayment
 
     var openCardPaymentCallsCount = 0
 
     func openCardPayment() {
         openCardPaymentCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension CardListRouterMock {
+    func fullReset() {
+        openAddNewCardCallsCount = 0
+        openAddNewCardReceivedArguments = nil
+        openAddNewCardReceivedInvocations = []
+
+        openCardPaymentCallsCount = 0
     }
 }

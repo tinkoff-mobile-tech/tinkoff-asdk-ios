@@ -10,6 +10,7 @@ import UIKit
 import WebKit
 
 final class ThreeDSWebFlowDelegateMock: ThreeDSWebFlowDelegate {
+
     // MARK: - hiddenWebViewToCollect3DSData
 
     var hiddenWebViewToCollect3DSDataCallsCount = 0
@@ -28,6 +29,16 @@ final class ThreeDSWebFlowDelegateMock: ThreeDSWebFlowDelegate {
     func sourceViewControllerToPresent() -> UIViewController? {
         sourceViewControllerToPresentCallsCount += 1
         return sourceViewControllerToPresentReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension ThreeDSWebFlowDelegateMock {
+    func fullReset() {
+        hiddenWebViewToCollect3DSDataCallsCount = 0
+
+        sourceViewControllerToPresentCallsCount = 0
     }
 }
 

@@ -11,9 +11,11 @@ final class AddNewCardPresenterOutputMock: IAddNewCardPresenterOutput {
 
     // MARK: - addNewCardDidReceive
 
+    typealias AddNewCardDidReceiveArguments = AddCardResult
+
     var addNewCardDidReceiveCallsCount = 0
-    var addNewCardDidReceiveReceivedArguments: AddCardResult?
-    var addNewCardDidReceiveReceivedInvocations: [AddCardResult] = []
+    var addNewCardDidReceiveReceivedArguments: AddNewCardDidReceiveArguments?
+    var addNewCardDidReceiveReceivedInvocations: [AddNewCardDidReceiveArguments?] = []
 
     func addNewCardDidReceive(result: AddCardResult) {
         addNewCardDidReceiveCallsCount += 1
@@ -24,14 +26,30 @@ final class AddNewCardPresenterOutputMock: IAddNewCardPresenterOutput {
 
     // MARK: - addNewCardWasClosed
 
+    typealias AddNewCardWasClosedArguments = AddCardResult
+
     var addNewCardWasClosedCallsCount = 0
-    var addNewCardWasClosedReceivedArguments: AddCardResult?
-    var addNewCardWasClosedReceivedInvocations: [AddCardResult] = []
+    var addNewCardWasClosedReceivedArguments: AddNewCardWasClosedArguments?
+    var addNewCardWasClosedReceivedInvocations: [AddNewCardWasClosedArguments?] = []
 
     func addNewCardWasClosed(with result: AddCardResult) {
         addNewCardWasClosedCallsCount += 1
         let arguments = result
         addNewCardWasClosedReceivedArguments = arguments
         addNewCardWasClosedReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension AddNewCardPresenterOutputMock {
+    func fullReset() {
+        addNewCardDidReceiveCallsCount = 0
+        addNewCardDidReceiveReceivedArguments = nil
+        addNewCardDidReceiveReceivedInvocations = []
+
+        addNewCardWasClosedCallsCount = 0
+        addNewCardWasClosedReceivedArguments = nil
+        addNewCardWasClosedReceivedInvocations = []
     }
 }

@@ -56,8 +56,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
         validatorMock.validateInputCVCReturnValue = true
 
         // when
@@ -65,7 +65,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeReceivedArguments, result)
@@ -84,8 +84,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = false
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
         validatorMock.validateInputCVCReturnValue = true
 
         // when
@@ -93,7 +93,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeReceivedArguments, result)
@@ -111,8 +111,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
         validatorMock.validateInputCVCReturnValue = true
 
         // when
@@ -120,7 +120,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeReceivedArguments, result)
@@ -132,8 +132,8 @@ final class CardFieldPresenterTests: BaseTestCase {
     func test_validateWholeForm_when_allValid_0_fieldsForValidate() {
         // given
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
         validatorMock.validateInputCVCReturnValue = true
 
         // when
@@ -141,7 +141,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeReceivedArguments, result)
@@ -168,7 +168,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(inputMaskResolverMock.panMaskCallsCount, 1)
         XCTAssertEqual(viewMock.updateCardNumberFieldCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 1)
@@ -195,7 +195,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(inputMaskResolverMock.panMaskCallsCount, 1)
         XCTAssertEqual(viewMock.updateCardNumberFieldCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 1)
@@ -221,7 +221,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(inputMaskResolverMock.panMaskCallsCount, 1)
         XCTAssertEqual(viewMock.updateCardNumberFieldCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 0)
@@ -246,7 +246,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         XCTAssertEqual(inputMaskResolverMock.panMaskCallsCount, 1)
         XCTAssertEqual(viewMock.updateCardNumberFieldCallsCount, 0)
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setCardNumberTextFieldCallsCount, 0)
@@ -313,7 +313,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.activateCallsCount, 1)
@@ -326,7 +326,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.activateCallsCount, 0)
@@ -338,7 +338,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.activateCallsCount, 0)
@@ -353,8 +353,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
         validatorMock.validateInputCVCReturnValue = true
 
         // when
@@ -362,7 +362,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 4)
@@ -383,8 +383,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = false
-        validatorMock.validateValidThruYearReturnValue = false
-        validatorMock.validateInputValidThruYearReturnValue = false
+        validatorMock.validateValidThruYearMonthReturnValue = false
+        validatorMock.validateInputValidThruReturnValue = false
         validatorMock.validateInputCVCReturnValue = false
 
         // when
@@ -417,8 +417,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
         validatorMock.validateInputCVCReturnValue = false
 
         // when
@@ -426,7 +426,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 3)
@@ -446,8 +446,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = false
-        validatorMock.validateInputValidThruYearReturnValue = false
+        validatorMock.validateValidThruYearMonthReturnValue = false
+        validatorMock.validateInputValidThruReturnValue = false
         validatorMock.validateInputCVCReturnValue = false
 
         // when
@@ -459,8 +459,8 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // given
         viewMock.fullReset()
-        validatorMock.validateValidThruYearReturnValue = true
-        validatorMock.validateInputValidThruYearReturnValue = true
+        validatorMock.validateValidThruYearMonthReturnValue = true
+        validatorMock.validateInputValidThruReturnValue = true
 
         // when
         sut.didBeginEditing(fieldType: fieldType)
@@ -484,8 +484,8 @@ final class CardFieldPresenterTests: BaseTestCase {
         outputMock.fullReset()
 
         validatorMock.validateInputPANReturnValue = true
-        validatorMock.validateValidThruYearReturnValue = false
-        validatorMock.validateInputValidThruYearReturnValue = false
+        validatorMock.validateValidThruYearMonthReturnValue = false
+        validatorMock.validateInputValidThruReturnValue = false
         validatorMock.validateInputCVCReturnValue = false
 
         // when
@@ -493,7 +493,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
         XCTAssertEqual(viewMock.setHeaderNormalForCallsCount, 2)
@@ -511,7 +511,7 @@ final class CardFieldPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(validatorMock.validateInputPANCallsCount, 1)
-        XCTAssertEqual(validatorMock.validateInputValidThruYearCallsCount, 1)
+        XCTAssertEqual(validatorMock.validateInputValidThruCallsCount, 1)
         XCTAssertEqual(validatorMock.validateInputCVCCallsCount, 1)
         XCTAssertEqual(outputMock.cardFieldValidationResultDidChangeCallsCount, 1)
     }

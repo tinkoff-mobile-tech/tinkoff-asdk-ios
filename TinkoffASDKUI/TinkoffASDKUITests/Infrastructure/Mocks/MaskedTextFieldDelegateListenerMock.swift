@@ -16,7 +16,7 @@ final class MaskedTextFieldDelegateListenerMock: NSObject, MaskedTextFieldDelega
 
     var textFieldCallsCount = 0
     var textFieldReceivedArguments: TextFieldArguments?
-    var textFieldReceivedInvocations: [TextFieldArguments] = []
+    var textFieldReceivedInvocations: [TextFieldArguments?] = []
 
     @objc
     func textField(_ textField: UITextField, didFillMask complete: Bool, extractValue value: String) {
@@ -27,10 +27,11 @@ final class MaskedTextFieldDelegateListenerMock: NSObject, MaskedTextFieldDelega
     }
 }
 
-extension MaskedTextFieldDelegateListenerMock {
+// MARK: - Resets
 
+extension MaskedTextFieldDelegateListenerMock {
     func fullReset() {
-        textFieldCallsCount = .zero
+        textFieldCallsCount = 0
         textFieldReceivedArguments = nil
         textFieldReceivedInvocations = []
     }

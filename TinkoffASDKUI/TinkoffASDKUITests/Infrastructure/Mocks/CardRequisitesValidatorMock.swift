@@ -12,12 +12,14 @@ import Foundation
 
 final class CardRequisitesValidatorMock: ICardRequisitesValidator {
 
-    // MARK: - validate
+    // MARK: - validateInputPAN
+
+    typealias ValidateInputPANArguments = String
 
     var validateInputPANCallsCount = 0
-    var validateInputPANReceivedArguments: String?
-    var validateInputPANReceivedInvocations: [String?] = []
-    var validateInputPANReturnValue: Bool = false
+    var validateInputPANReceivedArguments: ValidateInputPANArguments?
+    var validateInputPANReceivedInvocations: [ValidateInputPANArguments?] = []
+    var validateInputPANReturnValue = false
 
     func validate(inputPAN: String?) -> Bool {
         validateInputPANCallsCount += 1
@@ -27,42 +29,48 @@ final class CardRequisitesValidatorMock: ICardRequisitesValidator {
         return validateInputPANReturnValue
     }
 
-    // MARK: - validate
+    // MARK: - validateValidThruYearMonth
 
-    typealias ValidateArguments = (validThruYear: Int, month: Int)
+    typealias ValidateValidThruYearMonthArguments = (validThruYear: Int, month: Int)
 
-    var validateValidThruYearCallsCount = 0
-    var validateValidThruYearReceivedArguments: ValidateArguments?
-    var validateValidThruYearReceivedInvocations: [ValidateArguments] = []
-    var validateValidThruYearReturnValue: Bool = false
+    var validateValidThruYearMonthCallsCount = 0
+    var validateValidThruYearMonthReceivedArguments: ValidateValidThruYearMonthArguments?
+    var validateValidThruYearMonthReceivedInvocations: [ValidateValidThruYearMonthArguments?] = []
+    var validateValidThruYearMonthReturnValue = false
 
     func validate(validThruYear: Int, month: Int) -> Bool {
-        validateValidThruYearCallsCount += 1
+        validateValidThruYearMonthCallsCount += 1
         let arguments = (validThruYear, month)
-        validateValidThruYearReceivedArguments = arguments
-        validateValidThruYearReceivedInvocations.append(arguments)
-        return validateValidThruYearReturnValue
+        validateValidThruYearMonthReceivedArguments = arguments
+        validateValidThruYearMonthReceivedInvocations.append(arguments)
+        return validateValidThruYearMonthReturnValue
     }
 
-    var validateInputValidThruYearCallsCount = 0
-    var validateInputValidThruYearReceivedArguments: String?
-    var validateInputValidThruYearReceivedInvocations: [String?] = []
-    var validateInputValidThruYearReturnValue: Bool = false
+    // MARK: - validateInputValidThru
+
+    typealias ValidateInputValidThruArguments = String
+
+    var validateInputValidThruCallsCount = 0
+    var validateInputValidThruReceivedArguments: ValidateInputValidThruArguments?
+    var validateInputValidThruReceivedInvocations: [ValidateInputValidThruArguments?] = []
+    var validateInputValidThruReturnValue = false
 
     func validate(inputValidThru: String?) -> Bool {
-        validateInputValidThruYearCallsCount += 1
+        validateInputValidThruCallsCount += 1
         let arguments = inputValidThru
-        validateInputValidThruYearReceivedArguments = arguments
-        validateInputValidThruYearReceivedInvocations.append(arguments)
-        return validateInputValidThruYearReturnValue
+        validateInputValidThruReceivedArguments = arguments
+        validateInputValidThruReceivedInvocations.append(arguments)
+        return validateInputValidThruReturnValue
     }
 
-    // MARK: - validate
+    // MARK: - validateInputCVC
+
+    typealias ValidateInputCVCArguments = String
 
     var validateInputCVCCallsCount = 0
-    var validateInputCVCReceivedArguments: String?
-    var validateInputCVCReceivedInvocations: [String?] = []
-    var validateInputCVCReturnValue: Bool = false
+    var validateInputCVCReceivedArguments: ValidateInputCVCArguments?
+    var validateInputCVCReceivedInvocations: [ValidateInputCVCArguments?] = []
+    var validateInputCVCReturnValue = false
 
     func validate(inputCVC: String?) -> Bool {
         validateInputCVCCallsCount += 1
@@ -73,28 +81,24 @@ final class CardRequisitesValidatorMock: ICardRequisitesValidator {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension CardRequisitesValidatorMock {
     func fullReset() {
         validateInputPANCallsCount = 0
         validateInputPANReceivedArguments = nil
         validateInputPANReceivedInvocations = []
-        validateInputPANReturnValue = false
 
-        validateValidThruYearCallsCount = 0
-        validateValidThruYearReceivedArguments = nil
-        validateValidThruYearReceivedInvocations = []
-        validateValidThruYearReturnValue = false
+        validateValidThruYearMonthCallsCount = 0
+        validateValidThruYearMonthReceivedArguments = nil
+        validateValidThruYearMonthReceivedInvocations = []
 
-        validateInputValidThruYearCallsCount = 0
-        validateInputValidThruYearReceivedArguments = nil
-        validateInputValidThruYearReceivedInvocations = []
-        validateInputValidThruYearReturnValue = false
+        validateInputValidThruCallsCount = 0
+        validateInputValidThruReceivedArguments = nil
+        validateInputValidThruReceivedInvocations = []
 
         validateInputCVCCallsCount = 0
         validateInputCVCReceivedArguments = nil
         validateInputCVCReceivedInvocations = []
-        validateInputCVCReturnValue = false
     }
 }

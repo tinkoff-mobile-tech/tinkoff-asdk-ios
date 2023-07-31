@@ -51,3 +51,19 @@ final class CommonSheetPresenterMock: ICommonSheetPresenter {
         viewWasClosedCallsCount += 1
     }
 }
+
+// MARK: - Resets
+
+extension CommonSheetPresenterMock {
+    func fullReset() {
+        viewDidLoadCallsCount = 0
+
+        primaryButtonTappedCallsCount = 0
+
+        secondaryButtonTappedCallsCount = 0
+
+        canDismissViewByUserInteractionCallsCount = 0
+
+        viewWasClosedCallsCount = 0
+    }
+}

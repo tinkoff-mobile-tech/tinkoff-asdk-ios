@@ -17,7 +17,7 @@ final class PaymentControllerTests: BaseTestCase {
 
     var paymentFactoryMock: PaymentFactoryMock!
     var threeDSWebFlowControllerMock: ThreeDSWebFlowControllerMock!
-    var threeDSServiceMock: AcquiringThreeDsServiceMock!
+    var threeDSServiceMock: AcquiringThreeDSServiceMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
     var tdsControllerMock: TDSControllerMock!
     var paymentStatusUpdateServiceMock: PaymentStatusUpdateServiceMock!
@@ -29,7 +29,7 @@ final class PaymentControllerTests: BaseTestCase {
         super.setUp()
         paymentFactoryMock = PaymentFactoryMock()
         threeDSWebFlowControllerMock = ThreeDSWebFlowControllerMock()
-        threeDSServiceMock = AcquiringThreeDsServiceMock()
+        threeDSServiceMock = AcquiringThreeDSServiceMock()
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
         tdsControllerMock = TDSControllerMock()
         paymentStatusUpdateServiceMock = PaymentStatusUpdateServiceMock()
@@ -97,7 +97,7 @@ final class PaymentControllerTests: BaseTestCase {
             status: .authorized
         )
 
-        threeDSWebFlowControllerMock.confirm3DSCompletionStub = .succeded(getPaymentStatePayload)
+        threeDSWebFlowControllerMock.confirm3DSCompletionClosureInput = .succeded(getPaymentStatePayload)
         var receivedResult: Result<GetPaymentStatePayload, Error>?
 
         // when
@@ -126,7 +126,7 @@ final class PaymentControllerTests: BaseTestCase {
 
         // given
         let fakedGetPaymentState = GetPaymentStatePayload.fake()
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .succeded(fakedGetPaymentState)
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .succeded(fakedGetPaymentState)
 
         // when
         var completionValue: GetPaymentStatePayload?
@@ -150,7 +150,7 @@ final class PaymentControllerTests: BaseTestCase {
     func test_need3DSConfirmationACS_failure() throws {
         // given
         let error = NSError(domain: "error", code: 123456)
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .failed(error)
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .failed(error)
 
         var resultPayload: GetPaymentStatePayload?
         var resultError: NSError?
@@ -180,7 +180,7 @@ final class PaymentControllerTests: BaseTestCase {
 
     func test_need3DSConfirmationACS_canceled() throws {
         // given
-        threeDSWebFlowControllerMock.confirm3DSACSCompletionInput = .cancelled
+        threeDSWebFlowControllerMock.confirm3DSACSCompletionClosureInput = .cancelled
 
         var isConfirmationCancelledCalled = false
         let confirmationCancelled: () -> Void = { isConfirmationCancelledCalled = true }
@@ -219,7 +219,7 @@ final class PaymentControllerTests: BaseTestCase {
         // given
         let pamentFlow = PaymentFlow.fake()
         let paymentSource = PaymentSourceData.yandexPay(base64Token: "base64Token")
-        paymentFactoryMock.createPaymentStubReturn = paymentProcessMock
+        paymentFactoryMock.createPaymentReturnValue = paymentProcessMock
 
         // when
         sut.performPayment(
@@ -228,8 +228,8 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let createPaymentArguments = paymentFactoryMock.createPaymentPassedArguments
-        XCTAssertEqual(paymentFactoryMock.createPaymentCallCounter, 1)
+        let createPaymentArguments = paymentFactoryMock.createPaymentReceivedArguments
+        XCTAssertEqual(paymentFactoryMock.createPaymentCallsCount, 1)
         XCTAssertEqual(createPaymentArguments?.paymentSource, paymentSource)
         XCTAssertEqual(createPaymentArguments?.paymentFlow, pamentFlow)
         XCTAssert(createPaymentArguments?.paymentDelegate === sut)
@@ -258,7 +258,7 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        XCTAssertEqual(tdsControllerMock.doChallengeCallCounter, 1)
+        XCTAssertEqual(tdsControllerMock.doChallengeCallsCount, 1)
         XCTAssertEqual(cancelBlockTriggerCount, .zero)
         XCTAssertEqual(completionBlockTriggerCount, .zero)
 
@@ -308,8 +308,8 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let data = try XCTUnwrap(delegateMock.paymentControllerShouldRepeatWithRebillIdReturnParameters?.data)
-        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 1)
+        let data = try XCTUnwrap(delegateMock.paymentControllerShouldRepeatWithRebillIdReceivedArguments)
+        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallsCount, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.additionalData, additionalData)
     }
@@ -332,13 +332,13 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallCounter, 0)
+        XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallsCount, 0)
     }
 
     func test_paymentControllerNotifiesPaymentDelegate_whenPaymentDidFailed() throws {
         // given
         let errorStub = ErrorStub()
-        let delegateMock = MockPaymentControllerDelegate()
+        let delegateMock = PaymentControllerDelegateMock()
 
         sut.delegate = delegateMock
 
@@ -351,8 +351,8 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let data = try XCTUnwrap(delegateMock.paymentControllerDidFailedParameters?.data)
-        XCTAssertEqual(delegateMock.paymentControllerDidFailedCallCounter, 1)
+        let data = try XCTUnwrap(delegateMock.paymentControllerDidFailedReceivedArguments)
+        XCTAssertEqual(delegateMock.paymentControllerDidFailedCallsCount, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.cardId, .cardId)
     }
@@ -360,6 +360,8 @@ final class PaymentControllerTests: BaseTestCase {
     func test_paymentControllerNotifiesPaymentDelegate_whenNeedToCollect3DSData() {
         // given
         let data = Checking3DSURLData.fake()
+        let deviceInfo = ThreeDSDeviceInfo.fake()
+        threeDSDeviceInfoProviderMock.createDeviceInfoReturnValue = deviceInfo
 
         // when
         var serviceInfo: ThreeDSDeviceInfo?
@@ -370,11 +372,10 @@ final class PaymentControllerTests: BaseTestCase {
         )
 
         // then
-        let serviceInfoData = threeDSDeviceInfoProviderMock.stubbedCreateDeviceInfoResult
         let threeDSData = threeDSWebFlowControllerMock.complete3DSMethodReceivedArguments
-        XCTAssertEqual(serviceInfo?.cresCallbackUrl, serviceInfoData.cresCallbackUrl)
-        XCTAssertEqual(serviceInfo?.screenHeight, serviceInfoData.screenHeight)
-        XCTAssertEqual(serviceInfo?.screenWidth, serviceInfoData.screenWidth)
+        XCTAssertEqual(serviceInfo?.cresCallbackUrl, deviceInfo.cresCallbackUrl)
+        XCTAssertEqual(serviceInfo?.screenHeight, deviceInfo.screenHeight)
+        XCTAssertEqual(serviceInfo?.screenWidth, deviceInfo.screenWidth)
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 1)
         XCTAssertEqual(threeDSData?.notificationURL, data.notificationURL)
         XCTAssertEqual(threeDSData?.tdsServerTransID, data.tdsServerTransID)
@@ -390,7 +391,7 @@ final class PaymentControllerTests: BaseTestCase {
             cardId: .cardId,
             rebillId: .rebillId
         )
-        let delegateMock = MockPaymentControllerDelegate()
+        let delegateMock = PaymentControllerDelegateMock()
 
         sut.delegate = delegateMock
 
@@ -398,8 +399,8 @@ final class PaymentControllerTests: BaseTestCase {
         sut.paymentFinalStatusRecieved(data: data)
 
         // then
-        let receivedData = try XCTUnwrap(delegateMock.paymentControllerDidFinishPaymentParameters?.data)
-        XCTAssertEqual(delegateMock.paymentControllerDidFinishPaymentCallCounter, 1)
+        let receivedData = try XCTUnwrap(delegateMock.paymentControllerDidFinishPaymentReceivedArguments)
+        XCTAssertEqual(delegateMock.paymentControllerDidFinishPaymentCallsCount, 1)
         XCTAssertEqual(receivedData.rebillId, data.rebillId)
         XCTAssertEqual(receivedData.cardId, data.cardId)
         XCTAssertEqual(receivedData.state, data.payload)
@@ -414,7 +415,7 @@ final class PaymentControllerTests: BaseTestCase {
             cardId: .cardId,
             rebillId: .rebillId
         )
-        let delegateMock = MockPaymentControllerDelegate()
+        let delegateMock = PaymentControllerDelegateMock()
 
         sut.delegate = delegateMock
 
@@ -422,8 +423,8 @@ final class PaymentControllerTests: BaseTestCase {
         sut.paymentCancelStatusRecieved(data: data)
 
         // then
-        let receivedData = try XCTUnwrap(delegateMock.paymentControllerPaymentWasCancelledParameters?.data)
-        XCTAssertEqual(delegateMock.paymentControllerPaymentWasCancelledCallCounter, 1)
+        let receivedData = try XCTUnwrap(delegateMock.paymentControllerPaymentWasCancelledReceivedArguments)
+        XCTAssertEqual(delegateMock.paymentControllerPaymentWasCancelledCallsCount, 1)
         XCTAssertEqual(receivedData.rebillId, data.rebillId)
         XCTAssertEqual(receivedData.cardId, data.cardId)
     }
@@ -437,7 +438,7 @@ final class PaymentControllerTests: BaseTestCase {
             cardId: .cardId,
             rebillId: .rebillId
         )
-        let delegateMock = MockPaymentControllerDelegate()
+        let delegateMock = PaymentControllerDelegateMock()
         let errorStub = ErrorStub()
 
         sut.delegate = delegateMock
@@ -446,8 +447,8 @@ final class PaymentControllerTests: BaseTestCase {
         sut.paymentFailureStatusRecieved(data: data, error: errorStub)
 
         // then
-        let receivedData = try XCTUnwrap(delegateMock.paymentControllerDidFailedParameters?.data)
-        XCTAssertEqual(delegateMock.paymentControllerDidFailedCallCounter, 1)
+        let receivedData = try XCTUnwrap(delegateMock.paymentControllerDidFailedReceivedArguments)
+        XCTAssertEqual(delegateMock.paymentControllerDidFailedCallsCount, 1)
         XCTAssertEqual(receivedData.rebillId, data.rebillId)
         XCTAssertEqual(receivedData.cardId, data.cardId)
     }

@@ -153,7 +153,7 @@ final class TinkoffPaySheetPresenterTests: BaseTestCase {
             when: { sut in
                 sut.tinkoffPayController(
                     tinkoffPayControllerMock,
-                    completedDueToInabilityToOpenTinkoffPay: URL.empty,
+                    completedDueToInabilityToOpenTinkoffPay: URL.fakeVK,
                     error: error
                 )
                 sut.viewWasClosed()

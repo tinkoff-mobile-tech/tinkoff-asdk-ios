@@ -9,27 +9,16 @@ import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class ThreeDSWebFlowControllerMock: IThreeDSWebFlowController {
-
-    var underlyingWebFlowDelegate: (any ThreeDSWebFlowDelegate)?
-    var webFlowDelegateCallsCount = 0
-    var webFlowDelegateSetterCounter = 0
-
-    var webFlowDelegate: (any ThreeDSWebFlowDelegate)? {
-        get {
-            webFlowDelegateCallsCount += 1
-            return underlyingWebFlowDelegate
-        }
-        set {
-            webFlowDelegateSetterCounter += 1
-        }
-    }
+    var webFlowDelegate: (any ThreeDSWebFlowDelegate)?
 
     // MARK: - complete3DSMethod
 
+    typealias Complete3DSMethodArguments = Checking3DSURLData
+
     var complete3DSMethodThrowableError: Error?
     var complete3DSMethodCallsCount = 0
-    var complete3DSMethodReceivedArguments: Checking3DSURLData?
-    var complete3DSMethodReceivedInvocations: [Checking3DSURLData] = []
+    var complete3DSMethodReceivedArguments: Complete3DSMethodArguments?
+    var complete3DSMethodReceivedInvocations: [Complete3DSMethodArguments?] = []
 
     func complete3DSMethod(checking3DSURLData: Checking3DSURLData) throws {
         if let error = complete3DSMethodThrowableError {
@@ -47,16 +36,16 @@ final class ThreeDSWebFlowControllerMock: IThreeDSWebFlowController {
 
     var confirm3DSCallsCount = 0
     var confirm3DSReceivedArguments: Confirm3DSArguments?
-    var confirm3DSReceivedInvocations: [Confirm3DSArguments] = []
-    var confirm3DSCompletionStub: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
+    var confirm3DSReceivedInvocations: [Confirm3DSArguments?] = []
+    var confirm3DSCompletionClosureInput: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
 
     func confirm3DS(data: Confirmation3DSData, completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void) {
         confirm3DSCallsCount += 1
         let arguments = (data, completion)
         confirm3DSReceivedArguments = arguments
         confirm3DSReceivedInvocations.append(arguments)
-        if let confirm3DSCompletionStub = confirm3DSCompletionStub {
-            completion(confirm3DSCompletionStub)
+        if let confirm3DSCompletionClosureInput = confirm3DSCompletionClosureInput {
+            completion(confirm3DSCompletionClosureInput)
         }
     }
 
@@ -66,16 +55,37 @@ final class ThreeDSWebFlowControllerMock: IThreeDSWebFlowController {
 
     var confirm3DSACSCallsCount = 0
     var confirm3DSACSReceivedArguments: Confirm3DSACSArguments?
-    var confirm3DSACSReceivedInvocations: [Confirm3DSACSArguments] = []
-    var confirm3DSACSCompletionInput: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
+    var confirm3DSACSReceivedInvocations: [Confirm3DSACSArguments?] = []
+    var confirm3DSACSCompletionClosureInput: ThreeDSWebViewHandlingResult<GetPaymentStatePayload>?
 
     func confirm3DSACS(data: Confirmation3DSDataACS, messageVersion: String, completion: @escaping (ThreeDSWebViewHandlingResult<GetPaymentStatePayload>) -> Void) {
         confirm3DSACSCallsCount += 1
         let arguments = (data, messageVersion, completion)
         confirm3DSACSReceivedArguments = arguments
         confirm3DSACSReceivedInvocations.append(arguments)
-        if let confirm3DSACSCompletionInput = confirm3DSACSCompletionInput {
-            completion(confirm3DSACSCompletionInput)
+        if let confirm3DSACSCompletionClosureInput = confirm3DSACSCompletionClosureInput {
+            completion(confirm3DSACSCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension ThreeDSWebFlowControllerMock {
+    func fullReset() {
+        complete3DSMethodThrowableError = nil
+        complete3DSMethodCallsCount = 0
+        complete3DSMethodReceivedArguments = nil
+        complete3DSMethodReceivedInvocations = []
+
+        confirm3DSCallsCount = 0
+        confirm3DSReceivedArguments = nil
+        confirm3DSReceivedInvocations = []
+        confirm3DSCompletionClosureInput = nil
+
+        confirm3DSACSCallsCount = 0
+        confirm3DSACSReceivedArguments = nil
+        confirm3DSACSReceivedInvocations = []
+        confirm3DSACSCompletionClosureInput = nil
     }
 }

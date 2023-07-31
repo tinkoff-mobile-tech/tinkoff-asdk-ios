@@ -58,7 +58,7 @@ final class CardsControllerTests: BaseTestCase {
         // given
         cardServiceMock.getCardListReturnValue = CancellableMock()
         addCardControllerMock.underlyingCustomerKey = "key"
-        addCardControllerMock.addCardCompletionStub = .succeded(.fake(status: .authorized))
+        addCardControllerMock.addCardCompletionClosureInput = .succeded(.fake(status: .authorized))
 
         // when
         sut.addCard(options: CardOptions.fake(), completion: { _ in })
@@ -72,7 +72,7 @@ final class CardsControllerTests: BaseTestCase {
 
         // given
         addCardControllerMock.underlyingCustomerKey = "key"
-        addCardControllerMock.addCardCompletionStub = .cancelled
+        addCardControllerMock.addCardCompletionClosureInput = .cancelled
         var mappedResultToCancelled = false
 
         DispatchQueueMock.performOnMainBlockShouldExecute = true
@@ -94,7 +94,7 @@ final class CardsControllerTests: BaseTestCase {
 
         // given
         addCardControllerMock.underlyingCustomerKey = "key"
-        addCardControllerMock.addCardCompletionStub = .failed(TestsError.basic)
+        addCardControllerMock.addCardCompletionClosureInput = .failed(TestsError.basic)
         var mappedResultToFailure = false
 
         DispatchQueueMock.performOnMainBlockShouldExecute = true
@@ -119,7 +119,7 @@ final class CardsControllerTests: BaseTestCase {
         cardServiceMock.getCardListReturnValue = CancellableMock()
         cardServiceMock.getCardListCompletionClosureInput = .failure(TestsError.basic)
         addCardControllerMock.underlyingCustomerKey = "key"
-        addCardControllerMock.addCardCompletionStub = .succeded(.fake(status: .authorized))
+        addCardControllerMock.addCardCompletionClosureInput = .succeded(.fake(status: .authorized))
         var didReturnError = false
 
         DispatchQueueMock.performOnMainBlockShouldExecute = true
@@ -329,7 +329,7 @@ final class CardsControllerTests: BaseTestCase {
         }
         let payload = GetAddCardStatePayload.fake(status: .authorized, cardId: nil)
 
-        addCardControllerMock.addCardCompletionStub = .succeded(payload)
+        addCardControllerMock.addCardCompletionClosureInput = .succeded(payload)
 
         // when
         sut.addCard(options: cardOptions, completion: completion)
@@ -357,7 +357,7 @@ final class CardsControllerTests: BaseTestCase {
         let payload = GetAddCardStatePayload.fake(status: .authorized, cardId: payloadCardId)
 
         let expectedErrorText = "Unexpected behavior of Acquiring API. Could not find added card with id \(payloadCardId) in `GetCardList` response"
-        addCardControllerMock.addCardCompletionStub = .succeded(payload)
+        addCardControllerMock.addCardCompletionClosureInput = .succeded(payload)
 
         let error = CardsController.Error.couldNotFindAddedCard(cardId: payloadCardId)
 
@@ -395,7 +395,7 @@ final class CardsControllerTests: BaseTestCase {
         let payloadCardId = "124913"
         let payload = GetAddCardStatePayload.fake(status: .authorized, cardId: payloadCardId)
 
-        addCardControllerMock.addCardCompletionStub = .succeded(payload)
+        addCardControllerMock.addCardCompletionClosureInput = .succeded(payload)
 
         let customerKey = "some key"
         let expectedData = GetCardListData(customerKey: customerKey)

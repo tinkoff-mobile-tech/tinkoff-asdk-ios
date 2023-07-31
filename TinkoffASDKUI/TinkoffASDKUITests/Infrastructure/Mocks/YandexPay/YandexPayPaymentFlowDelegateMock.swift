@@ -12,9 +12,11 @@ final class YandexPayPaymentFlowDelegateMock: YandexPayPaymentFlowDelegate {
 
     // MARK: - yandexPayPaymentFlowDidRequestViewControllerForPresentation
 
+    typealias YandexPayPaymentFlowDidRequestViewControllerForPresentationArguments = IYandexPayPaymentFlow
+
     var yandexPayPaymentFlowDidRequestViewControllerForPresentationCallsCount = 0
-    var yandexPayPaymentFlowDidRequestViewControllerForPresentationReceivedArguments: IYandexPayPaymentFlow?
-    var yandexPayPaymentFlowDidRequestViewControllerForPresentationReceivedInvocations: [IYandexPayPaymentFlow] = []
+    var yandexPayPaymentFlowDidRequestViewControllerForPresentationReceivedArguments: YandexPayPaymentFlowDidRequestViewControllerForPresentationArguments?
+    var yandexPayPaymentFlowDidRequestViewControllerForPresentationReceivedInvocations: [YandexPayPaymentFlowDidRequestViewControllerForPresentationArguments?] = []
     var yandexPayPaymentFlowDidRequestViewControllerForPresentationReturnValue: UIViewController?
 
     func yandexPayPaymentFlowDidRequestViewControllerForPresentation(_ flow: IYandexPayPaymentFlow) -> UIViewController? {
@@ -29,14 +31,28 @@ final class YandexPayPaymentFlowDelegateMock: YandexPayPaymentFlowDelegate {
 
     typealias YandexPayPaymentFlowArguments = (flow: IYandexPayPaymentFlow, result: PaymentResult)
 
-    var didCompleteWithCallsCount = 0
-    var didCompleteWithReceivedArguments: YandexPayPaymentFlowArguments?
-    var didCompleteWithReceivedInvocations: [YandexPayPaymentFlowArguments] = []
+    var yandexPayPaymentFlowCallsCount = 0
+    var yandexPayPaymentFlowReceivedArguments: YandexPayPaymentFlowArguments?
+    var yandexPayPaymentFlowReceivedInvocations: [YandexPayPaymentFlowArguments?] = []
 
     func yandexPayPaymentFlow(_ flow: IYandexPayPaymentFlow, didCompleteWith result: PaymentResult) {
-        didCompleteWithCallsCount += 1
+        yandexPayPaymentFlowCallsCount += 1
         let arguments = (flow, result)
-        didCompleteWithReceivedArguments = arguments
-        didCompleteWithReceivedInvocations.append(arguments)
+        yandexPayPaymentFlowReceivedArguments = arguments
+        yandexPayPaymentFlowReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayPaymentFlowDelegateMock {
+    func fullReset() {
+        yandexPayPaymentFlowDidRequestViewControllerForPresentationCallsCount = 0
+        yandexPayPaymentFlowDidRequestViewControllerForPresentationReceivedArguments = nil
+        yandexPayPaymentFlowDidRequestViewControllerForPresentationReceivedInvocations = []
+
+        yandexPayPaymentFlowCallsCount = 0
+        yandexPayPaymentFlowReceivedArguments = nil
+        yandexPayPaymentFlowReceivedInvocations = []
     }
 }

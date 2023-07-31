@@ -14,9 +14,11 @@ final class BankResolverMock: IBankResolver {
 
     // MARK: - resolve
 
+    typealias ResolveArguments = String
+
     var resolveCallsCount = 0
-    var resolveReceivedArguments: String?
-    var resolveReceivedInvocations: [String?] = []
+    var resolveReceivedArguments: ResolveArguments?
+    var resolveReceivedInvocations: [ResolveArguments?] = []
     var resolveReturnValue: BankResult = .incorrectInput(error: .noValue)
 
     func resolve(cardNumber: String?) -> BankResult {
@@ -28,7 +30,7 @@ final class BankResolverMock: IBankResolver {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension BankResolverMock {
     func fullReset() {
