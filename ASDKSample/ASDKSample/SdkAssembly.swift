@@ -54,7 +54,7 @@ struct SdkAssembly {
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
             server: server,
-            logger: Logger(), // для включения логирования, заменить nil на Logger()
+            logger: nil, // для включения логирования, заменить nil на Logger()
             tokenProvider: tokenProvider,
             appBasedSdkInterface: AppSetting.shared.appBasedSdkInterface
         )
