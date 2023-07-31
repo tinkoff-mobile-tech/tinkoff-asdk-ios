@@ -1,25 +1,39 @@
 //
 //  ThreeDSDeviceInfoProviderMock.swift
-//  TinkoffASDKCore-Unit-Tests
+//  TinkoffASDKUI-Unit-Tests
 //
-//  Created by Никита Васильев on 26.07.2023.
+//  Created by r.akhmadeev on 21.12.2022.
 //
 
 import Foundation
 import TinkoffASDKCore
 
 final class ThreeDSDeviceInfoProviderMock: IThreeDSDeviceInfoProvider {
-    var invokedCreateDeviceInfo = false
-    var invokedCreateDeviceInfoCount = 0
-    var invokedCreateDeviceInfoParameters: (threeDSCompInd: String, Void)?
-    var invokedCreateDeviceInfoParametersList = [(threeDSCompInd: String, Void)]()
-    var stubbedCreateDeviceInfoResult = ThreeDSDeviceInfo.fake()
+
+    // MARK: - createDeviceInfo
+
+    typealias CreateDeviceInfoArguments = String
+
+    var createDeviceInfoCallsCount = 0
+    var createDeviceInfoReceivedArguments: CreateDeviceInfoArguments?
+    var createDeviceInfoReceivedInvocations: [CreateDeviceInfoArguments?] = []
+    var createDeviceInfoReturnValue: ThreeDSDeviceInfo = .fake()
 
     func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo {
-        invokedCreateDeviceInfo = true
-        invokedCreateDeviceInfoCount += 1
-        invokedCreateDeviceInfoParameters = (threeDSCompInd, ())
-        invokedCreateDeviceInfoParametersList.append((threeDSCompInd, ()))
-        return stubbedCreateDeviceInfoResult
+        createDeviceInfoCallsCount += 1
+        let arguments = threeDSCompInd
+        createDeviceInfoReceivedArguments = arguments
+        createDeviceInfoReceivedInvocations.append(arguments)
+        return createDeviceInfoReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension ThreeDSDeviceInfoProviderMock {
+    func fullReset() {
+        createDeviceInfoCallsCount = 0
+        createDeviceInfoReceivedArguments = nil
+        createDeviceInfoReceivedInvocations = []
     }
 }
