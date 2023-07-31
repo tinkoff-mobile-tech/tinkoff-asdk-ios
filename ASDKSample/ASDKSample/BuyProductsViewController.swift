@@ -110,7 +110,7 @@ class BuyProductsViewController: UIViewController {
         let environment: YandexPaySDKConfiguration.Environment = {
             switch AppSetting.shared.serverType {
             case .prod, .custom: return .production
-            case .test, .preProd, .uitest: return .sandbox
+            case .test, .preProd: return .sandbox
             }
         }()
 

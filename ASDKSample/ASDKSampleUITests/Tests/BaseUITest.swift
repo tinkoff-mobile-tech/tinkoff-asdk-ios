@@ -2,23 +2,27 @@ import SwiftyJSON
 import TinkoffMockStrapping
 import XCTest
 
-open class BaseUITest: XCTestCase {
+open class BaseUITest: XCTestCase, SetStubAvailable {
 
-    var server: MockNetworkServer?
-    lazy var app: XCUIApplication = ApplicationHolder.shared.application
+    public let network = MockNetworkServer()
+    let app: XCUIApplication = ApplicationHolder.shared.application
 
     override open func setUp() {
         super.setUp()
-        server = MockNetworkServer()
-        let port = server!.start()
 
-        app.launchEnvironment["TEST"] = "1"
-        app.launchEnvironment["MOCK_SERVER_PORT"] = String(describing: port)
+        guard let port = network.start() else {
+            XCTFail("Failed to start mock server.")
+            return
+        }
+
+        app.launchEnvironment["UI_TESTS"] = "1"
+        app.launchEnvironment["MOCK_SERVER_URL"] = "http://localhost:\(port)"
         app.launch()
     }
 
     override open func tearDown() {
         super.tearDown()
+        network.stop()
         addScreenshot()
     }
 

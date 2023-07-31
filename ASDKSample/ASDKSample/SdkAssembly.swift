@@ -45,9 +45,9 @@ struct SdkAssembly {
 
         var server = AppSetting.shared.serverType
 
-        if let value = ProcessInfo.processInfo.environment["TEST"] {
-            if let port = ProcessInfo.processInfo.environment["MOCK_SERVER_PORT"] {
-                server = AcquiringSdkEnvironment.uitest(port)
+        if ProcessInfo.processInfo.environment["UI_TESTS"] != nil {
+            if let mockUrl = ProcessInfo.processInfo.environment["MOCK_SERVER_URL"] {
+                server = AcquiringSdkEnvironment.custom(mockUrl)
             }
         }
 

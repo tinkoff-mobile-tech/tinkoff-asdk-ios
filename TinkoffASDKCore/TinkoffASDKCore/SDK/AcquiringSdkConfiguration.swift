@@ -29,7 +29,6 @@ public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible
     case test
     case preProd
     case prod
-    case uitest(String)
     case custom(String)
 
     public var rawValue: String {
@@ -37,7 +36,6 @@ public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible
         case .test: return "rest-api-test.tinkoff.ru"
         case .preProd: return "qa-mapi.tcsbank.ru"
         case .prod: return "securepay.tinkoff.ru"
-        case let .uitest(port): return "localhost.ru:\(port)"
         case let .custom(address): return address
         }
     }
@@ -57,7 +55,6 @@ public enum AcquiringSdkEnvironment: Equatable, Codable, CustomStringConvertible
         case .preProd: return "preProd"
         case .prod: return "prod"
         case .custom: return "custom"
-        case .uitest: return "uitest"
         }
     }
 }
@@ -148,7 +145,7 @@ public class AcquiringSdkConfiguration: NSObject {
         configEnvironment = {
             switch server {
             case .prod, .custom: return .prod
-            case .test, .preProd, .uitest: return .test
+            case .test, .preProd: return .test
             }
         }()
         self.tokenProvider = tokenProvider

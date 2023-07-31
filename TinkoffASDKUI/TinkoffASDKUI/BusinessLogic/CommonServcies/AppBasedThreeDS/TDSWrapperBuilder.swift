@@ -59,7 +59,7 @@ final class TDSWrapperBuilder: ITDSWrapperBuilder {
             switch env {
             case .prod, .custom: return .production
             case .preProd: return .production
-            case .test, .uitest: return .test
+            case .test: return .test
             }
         }()
 

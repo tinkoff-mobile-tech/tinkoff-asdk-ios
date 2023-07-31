@@ -29,7 +29,9 @@ struct URLProvider: IURLProvider {
     // MARK: Init
 
     init?(host: String) {
-        guard let url = URL(string: "https://\(host)/") else {
+        let urlString = (host.hasPrefix("http://") || host.hasPrefix("https://")) ? host : "https://\(host)"
+
+        guard let url = URL(string: urlString) else {
             return nil
         }
 
