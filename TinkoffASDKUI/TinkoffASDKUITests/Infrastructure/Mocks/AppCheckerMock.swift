@@ -11,9 +11,11 @@ final class AppCheckerMock: IAppChecker {
 
     // MARK: - checkApplication
 
+    typealias CheckApplicationArguments = String
+
     var checkApplicationCallsCount = 0
-    var checkApplicationReceivedArguments: String?
-    var checkApplicationReceivedInvocations: [String] = []
+    var checkApplicationReceivedArguments: CheckApplicationArguments?
+    var checkApplicationReceivedInvocations: [CheckApplicationArguments?] = []
     var checkApplicationReturnValue: AppCheckingResult!
 
     func checkApplication(withScheme scheme: String) -> AppCheckingResult {
@@ -22,5 +24,15 @@ final class AppCheckerMock: IAppChecker {
         checkApplicationReceivedArguments = arguments
         checkApplicationReceivedInvocations.append(arguments)
         return checkApplicationReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension AppCheckerMock {
+    func fullReset() {
+        checkApplicationCallsCount = 0
+        checkApplicationReceivedArguments = nil
+        checkApplicationReceivedInvocations = []
     }
 }

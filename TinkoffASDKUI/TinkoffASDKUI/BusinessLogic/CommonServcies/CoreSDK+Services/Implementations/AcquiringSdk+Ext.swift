@@ -7,10 +7,12 @@
 
 import TinkoffASDKCore
 
-extension AcquiringSdk: IAcquiringThreeDSService,
+protocol IAcquiringSdk: IAcquiringThreeDSService,
     IAcquiringPaymentsService,
     IAcquiringTinkoffPayService,
     IAcquiringTerminalService,
     IAcquiringSBPService,
     IAddCardService,
     ICardService {}
+
+extension AcquiringSdk: IAcquiringSdk {}

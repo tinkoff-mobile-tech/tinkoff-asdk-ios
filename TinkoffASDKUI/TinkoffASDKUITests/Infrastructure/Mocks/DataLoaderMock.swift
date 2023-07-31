@@ -9,7 +9,6 @@ import Foundation
 import TinkoffASDKCore
 
 final class DataLoaderMock: IDataLoader {
-    public init() {}
 
     // MARK: - loadData
 
@@ -17,9 +16,9 @@ final class DataLoaderMock: IDataLoader {
 
     var loadDataCallsCount = 0
     var loadDataReceivedArguments: LoadDataArguments?
-    var loadDataReceivedInvocations: [LoadDataArguments] = []
+    var loadDataReceivedInvocations: [LoadDataArguments?] = []
     var loadDataCompletionClosureInput: Result<Data, Error>?
-    var loadDataReturnValue: Cancellable!
+    var loadDataReturnValue: Cancellable = CancellableMock()
 
     func loadData(with url: URL, completion: @escaping (Result<Data, Error>) -> Void) -> Cancellable {
         loadDataCallsCount += 1
@@ -30,5 +29,16 @@ final class DataLoaderMock: IDataLoader {
             completion(loadDataCompletionClosureInput)
         }
         return loadDataReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension DataLoaderMock {
+    func fullReset() {
+        loadDataCallsCount = 0
+        loadDataReceivedArguments = nil
+        loadDataReceivedInvocations = []
+        loadDataCompletionClosureInput = nil
     }
 }

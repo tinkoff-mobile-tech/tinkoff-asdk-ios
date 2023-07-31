@@ -12,9 +12,11 @@ final class ImageProcessorMock: ImageProcessor {
 
     // MARK: - processImage
 
+    typealias ProcessImageArguments = UIImage
+
     var processImageCallsCount = 0
-    var processImageReceivedArguments: UIImage?
-    var processImageReceivedInvocations: [UIImage] = []
+    var processImageReceivedArguments: ProcessImageArguments?
+    var processImageReceivedInvocations: [ProcessImageArguments?] = []
     var processImageReturnValue: UIImage!
 
     func processImage(_ image: UIImage) -> UIImage {
@@ -23,5 +25,15 @@ final class ImageProcessorMock: ImageProcessor {
         processImageReceivedArguments = arguments
         processImageReceivedInvocations.append(arguments)
         return processImageReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension ImageProcessorMock {
+    func fullReset() {
+        processImageCallsCount = 0
+        processImageReceivedArguments = nil
+        processImageReceivedInvocations = []
     }
 }

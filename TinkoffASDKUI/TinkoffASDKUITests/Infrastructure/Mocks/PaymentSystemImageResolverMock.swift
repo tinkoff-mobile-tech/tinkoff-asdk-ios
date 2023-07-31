@@ -12,10 +12,30 @@ import UIKit
 
 final class PaymentSystemImageResolverMock: IPaymentSystemImageResolver {
 
-    var resolveCallCounter = 0
-    var resolveStub: (String?) -> UIImage? = { _ in nil }
+    // MARK: - resolve
+
+    typealias ResolveArguments = String
+
+    var resolveCallsCount = 0
+    var resolveReceivedArguments: ResolveArguments?
+    var resolveReceivedInvocations: [ResolveArguments?] = []
+    var resolveReturnValue: UIImage?
+
     func resolve(by inputPAN: String?) -> UIImage? {
-        resolveCallCounter += 1
-        return resolveStub(inputPAN)
+        resolveCallsCount += 1
+        let arguments = inputPAN
+        resolveReceivedArguments = arguments
+        resolveReceivedInvocations.append(arguments)
+        return resolveReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension PaymentSystemImageResolverMock {
+    func fullReset() {
+        resolveCallsCount = 0
+        resolveReceivedArguments = nil
+        resolveReceivedInvocations = []
     }
 }

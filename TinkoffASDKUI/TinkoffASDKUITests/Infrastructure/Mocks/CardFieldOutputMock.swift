@@ -19,9 +19,11 @@ final class CardFieldOutputMock: ICardFieldOutput {
 
     // MARK: - cardFieldValidationResultDidChange
 
+    typealias CardFieldValidationResultDidChangeArguments = CardFieldValidationResult
+
     var cardFieldValidationResultDidChangeCallsCount = 0
-    var cardFieldValidationResultDidChangeReceivedArguments: CardFieldValidationResult?
-    var cardFieldValidationResultDidChangeReceivedInvocations: [CardFieldValidationResult] = []
+    var cardFieldValidationResultDidChangeReceivedArguments: CardFieldValidationResultDidChangeArguments?
+    var cardFieldValidationResultDidChangeReceivedInvocations: [CardFieldValidationResultDidChangeArguments?] = []
 
     func cardFieldValidationResultDidChange(result: CardFieldValidationResult) {
         cardFieldValidationResultDidChangeCallsCount += 1
@@ -31,7 +33,7 @@ final class CardFieldOutputMock: ICardFieldOutput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension CardFieldOutputMock {
     func fullReset() {

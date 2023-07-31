@@ -85,9 +85,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
 
     func test_viewDidLoad_with_initialActiveCardsNil_success() {
         // given
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.success(self.createActiveCardsArray()))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success(createActiveCardsArray())
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
@@ -105,9 +103,7 @@ final class CardPaymentPresenterTests: BaseTestCase {
     func test_viewDidLoad_with_initialActiveCardsNil_failure() {
         // given
         let error = NSError(domain: "error", code: NSURLErrorNotConnectedToInternet)
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.failure(error))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .failure(error)
         mainDispatchQueueMock.asyncWorkShouldExecute = true
 
         // when
@@ -311,13 +307,13 @@ final class CardPaymentPresenterTests: BaseTestCase {
 
         // then
         XCTAssertEqual(routerMock.showCardScannerCallsCount, 1)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeCallsCount, 3)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[0].0, .cardNumber)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[0].1, cardNumber)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[1].0, .expiration)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[1].1, expiration)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[2].0, .cvc)
-        XCTAssertEqual(cardFieldPresenter.setTextFieldTypeReceivedInvocations[2].1, cvc)
+        XCTAssertEqual(cardFieldPresenter.setCallsCount, 3)
+        XCTAssertEqual(cardFieldPresenter.setReceivedInvocations[0]?.0, .cardNumber)
+        XCTAssertEqual(cardFieldPresenter.setReceivedInvocations[0]?.1, cardNumber)
+        XCTAssertEqual(cardFieldPresenter.setReceivedInvocations[1]?.0, .expiration)
+        XCTAssertEqual(cardFieldPresenter.setReceivedInvocations[1]?.1, expiration)
+        XCTAssertEqual(cardFieldPresenter.setReceivedInvocations[2]?.0, .cvc)
+        XCTAssertEqual(cardFieldPresenter.setReceivedInvocations[2]?.1, cvc)
     }
 
     func test_cardFieldValidationResultDidChange_allValid() {

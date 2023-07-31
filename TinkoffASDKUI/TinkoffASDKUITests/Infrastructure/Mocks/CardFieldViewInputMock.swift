@@ -12,9 +12,11 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     // MARK: - updateDynamicCardView
 
+    typealias UpdateDynamicCardViewArguments = DynamicIconCardView.Model
+
     var updateDynamicCardViewCallsCount = 0
-    var updateDynamicCardViewReceivedArguments: DynamicIconCardView.Model?
-    var updateDynamicCardViewReceivedInvocations: [DynamicIconCardView.Model] = []
+    var updateDynamicCardViewReceivedArguments: UpdateDynamicCardViewArguments?
+    var updateDynamicCardViewReceivedInvocations: [UpdateDynamicCardViewArguments?] = []
 
     func updateDynamicCardView(with model: DynamicIconCardView.Model) {
         updateDynamicCardViewCallsCount += 1
@@ -25,10 +27,12 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     // MARK: - updateCardNumberField
 
+    typealias UpdateCardNumberFieldArguments = String
+
     var updateCardNumberFieldCallsCount = 0
-    var updateCardNumberFieldReceivedArguments: String?
-    var updateCardNumberFieldReceivedInvocations: [String] = []
-    var updateCardNumberFieldReturnValue: Bool = false
+    var updateCardNumberFieldReceivedArguments: UpdateCardNumberFieldArguments?
+    var updateCardNumberFieldReceivedInvocations: [UpdateCardNumberFieldArguments?] = []
+    var updateCardNumberFieldReturnValue = false
 
     func updateCardNumberField(with maskFormat: String) -> Bool {
         updateCardNumberFieldCallsCount += 1
@@ -48,9 +52,11 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     // MARK: - setCardNumberTextField
 
+    typealias SetCardNumberTextFieldArguments = UITextField.ViewMode
+
     var setCardNumberTextFieldCallsCount = 0
-    var setCardNumberTextFieldReceivedArguments: UITextField.ViewMode?
-    var setCardNumberTextFieldReceivedInvocations: [UITextField.ViewMode] = []
+    var setCardNumberTextFieldReceivedArguments: SetCardNumberTextFieldArguments?
+    var setCardNumberTextFieldReceivedInvocations: [SetCardNumberTextFieldArguments?] = []
 
     func setCardNumberTextField(rightViewMode: UITextField.ViewMode) {
         setCardNumberTextFieldCallsCount += 1
@@ -65,7 +71,7 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     var setCallsCount = 0
     var setReceivedArguments: SetArguments?
-    var setReceivedInvocations: [SetArguments] = []
+    var setReceivedInvocations: [SetArguments?] = []
 
     func set(textFieldType: CardFieldType, text: String?) {
         setCallsCount += 1
@@ -76,9 +82,11 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     // MARK: - setHeaderErrorFor
 
+    typealias SetHeaderErrorForArguments = CardFieldType
+
     var setHeaderErrorForCallsCount = 0
-    var setHeaderErrorForReceivedArguments: CardFieldType?
-    var setHeaderErrorForReceivedInvocations: [CardFieldType] = []
+    var setHeaderErrorForReceivedArguments: SetHeaderErrorForArguments?
+    var setHeaderErrorForReceivedInvocations: [SetHeaderErrorForArguments?] = []
 
     func setHeaderErrorFor(textFieldType: CardFieldType) {
         setHeaderErrorForCallsCount += 1
@@ -89,9 +97,11 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     // MARK: - setHeaderNormalFor
 
+    typealias SetHeaderNormalForArguments = CardFieldType
+
     var setHeaderNormalForCallsCount = 0
-    var setHeaderNormalForReceivedArguments: CardFieldType?
-    var setHeaderNormalForReceivedInvocations: [CardFieldType] = []
+    var setHeaderNormalForReceivedArguments: SetHeaderNormalForArguments?
+    var setHeaderNormalForReceivedInvocations: [SetHeaderNormalForArguments?] = []
 
     func setHeaderNormalFor(textFieldType: CardFieldType) {
         setHeaderNormalForCallsCount += 1
@@ -102,9 +112,11 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
 
     // MARK: - activate
 
+    typealias ActivateArguments = CardFieldType
+
     var activateCallsCount = 0
-    var activateReceivedArguments: CardFieldType?
-    var activateReceivedInvocations: [CardFieldType] = []
+    var activateReceivedArguments: ActivateArguments?
+    var activateReceivedInvocations: [ActivateArguments?] = []
 
     func activate(textFieldType: CardFieldType) {
         activateCallsCount += 1
@@ -122,7 +134,7 @@ final class CardFieldViewInputMock: ICardFieldViewInput {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension CardFieldViewInputMock {
     func fullReset() {
@@ -133,7 +145,6 @@ extension CardFieldViewInputMock {
         updateCardNumberFieldCallsCount = 0
         updateCardNumberFieldReceivedArguments = nil
         updateCardNumberFieldReceivedInvocations = []
-        updateCardNumberFieldReturnValue = false
 
         activateScanButtonCallsCount = 0
 

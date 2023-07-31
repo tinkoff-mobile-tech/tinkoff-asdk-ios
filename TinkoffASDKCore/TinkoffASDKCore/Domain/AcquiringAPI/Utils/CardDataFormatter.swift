@@ -19,7 +19,12 @@
 
 import Foundation
 
-struct CardDataFormatter {
+protocol ICardDataFormatter {
+    func formatCardData(cardNumber: String, expDate: String, cvv: String) -> String
+    func formatCardData(cardId: String, cvv: String?) -> String
+}
+
+struct CardDataFormatter: ICardDataFormatter {
     func formatCardData(cardNumber: String, expDate: String, cvv: String) -> String {
         return "\(Constants.Keys.cardNumber)=\(cardNumber);\(Constants.Keys.cardExpDate)=\(expDate);\(Constants.Keys.cardCVV)=\(cvv)"
     }

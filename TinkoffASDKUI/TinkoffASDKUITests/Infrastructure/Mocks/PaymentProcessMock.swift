@@ -9,14 +9,15 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 final class PaymentProcessMock: IPaymentProcess {
-
     var paymentId: String?
+
     var paymentFlow: PaymentFlow {
         get { return underlyingPaymentFlow }
         set(value) { underlyingPaymentFlow = value }
     }
 
     var underlyingPaymentFlow: PaymentFlow!
+
     var paymentSource: PaymentSourceData {
         get { return underlyingPaymentSource }
         set(value) { underlyingPaymentSource = value }
@@ -38,5 +39,15 @@ final class PaymentProcessMock: IPaymentProcess {
 
     func cancel() {
         cancelCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension PaymentProcessMock {
+    func fullReset() {
+        startCallsCount = 0
+
+        cancelCallsCount = 0
     }
 }

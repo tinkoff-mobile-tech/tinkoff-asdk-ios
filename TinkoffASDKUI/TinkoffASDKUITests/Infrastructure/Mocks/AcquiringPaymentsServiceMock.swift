@@ -13,64 +13,68 @@ final class AcquiringPaymentsServiceMock: IAcquiringPaymentsService {
 
     // MARK: - initPayment
 
-    struct InitPaymentPassedArguments {
-        let data: PaymentInitData
-        let completion: (Result<InitPayload, Error>) -> Void
-    }
+    typealias InitPaymentArguments = (data: PaymentInitData, completion: (_ result: Result<InitPayload, Error>) -> Void)
 
-    var initPaymentCallCounter = 0
-    var initPaymentPassedArguments: InitPaymentPassedArguments?
-    var initPaymentCompletionInput: Result<InitPayload, Error>?
-    var initPaymentStubReturn: ((InitPaymentPassedArguments) -> Cancellable) = { _ in EmptyCancellable() }
+    var initPaymentCallsCount = 0
+    var initPaymentReceivedArguments: InitPaymentArguments?
+    var initPaymentReceivedInvocations: [InitPaymentArguments?] = []
+    var initPaymentCompletionClosureInput: Result<InitPayload, Error>?
+    var initPaymentReturnValue: Cancellable = CancellableMock()
 
-    func initPayment(data: PaymentInitData, completion: @escaping (Result<InitPayload, Error>) -> Void) -> Cancellable {
-        initPaymentCallCounter += 1
-        let args = InitPaymentPassedArguments(data: data, completion: completion)
-        initPaymentPassedArguments = args
-        if let initPaymentCompletionInput = initPaymentCompletionInput {
-            completion(initPaymentCompletionInput)
+    @discardableResult
+    func initPayment(data: PaymentInitData, completion: @escaping (_ result: Result<InitPayload, Error>) -> Void) -> Cancellable {
+        initPaymentCallsCount += 1
+        let arguments = (data, completion)
+        initPaymentReceivedArguments = arguments
+        initPaymentReceivedInvocations.append(arguments)
+        if let initPaymentCompletionClosureInput = initPaymentCompletionClosureInput {
+            completion(initPaymentCompletionClosureInput)
         }
-        return initPaymentStubReturn(args)
+        return initPaymentReturnValue
     }
 
     // MARK: - finishAuthorize
 
-    struct FinishAuthorizePassedArguments {
-        let data: FinishAuthorizeData
-        let completion: (Result<FinishAuthorizePayload, Error>) -> Void
-    }
+    typealias FinishAuthorizeArguments = (data: FinishAuthorizeData, completion: (_ result: Result<FinishAuthorizePayload, Error>) -> Void)
 
-    var finishAuthorizeCallCounter = 0
-    var finishAuthorizePassedArguments: FinishAuthorizePassedArguments?
-    var finishAuthorizeCompletionInput: Result<FinishAuthorizePayload, Error>?
-    var finishAuthorizeStubReturn: ((FinishAuthorizePassedArguments) -> Cancellable) = { _ in EmptyCancellable() }
+    var finishAuthorizeCallsCount = 0
+    var finishAuthorizeReceivedArguments: FinishAuthorizeArguments?
+    var finishAuthorizeReceivedInvocations: [FinishAuthorizeArguments?] = []
+    var finishAuthorizeCompletionClosureInput: Result<FinishAuthorizePayload, Error>?
+    var finishAuthorizeReturnValue: Cancellable = CancellableMock()
 
-    func finishAuthorize(data: FinishAuthorizeData, completion: @escaping (Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
-        finishAuthorizeCallCounter += 1
-        let args = FinishAuthorizePassedArguments(data: data, completion: completion)
-        finishAuthorizePassedArguments = args
-        if let finishAuthorizeCompletionInput = finishAuthorizeCompletionInput {
-            completion(finishAuthorizeCompletionInput)
+    @discardableResult
+    func finishAuthorize(data: FinishAuthorizeData, completion: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void) -> Cancellable {
+        finishAuthorizeCallsCount += 1
+        let arguments = (data, completion)
+        finishAuthorizeReceivedArguments = arguments
+        finishAuthorizeReceivedInvocations.append(arguments)
+        if let finishAuthorizeCompletionClosureInput = finishAuthorizeCompletionClosureInput {
+            completion(finishAuthorizeCompletionClosureInput)
         }
-        return finishAuthorizeStubReturn(args)
+        return finishAuthorizeReturnValue
     }
 
     // MARK: - charge
 
-    struct ChargePassedArguments {
-        let data: ChargeData
-        let completion: (Result<ChargePayload, Error>) -> Void
-    }
+    typealias ChargeArguments = (data: ChargeData, completion: (_ result: Result<ChargePayload, Error>) -> Void)
 
-    var chargeCallCounter = 0
-    var chargePassedArguments: ChargePassedArguments?
-    var chargeStubReturn: ((ChargePassedArguments) -> Cancellable) = { _ in EmptyCancellable() }
+    var chargeCallsCount = 0
+    var chargeReceivedArguments: ChargeArguments?
+    var chargeReceivedInvocations: [ChargeArguments?] = []
+    var chargeCompletionClosureInput: Result<ChargePayload, Error>?
+    var chargeReturnValue: Cancellable = CancellableMock()
 
-    func charge(data: ChargeData, completion: @escaping (Result<ChargePayload, Error>) -> Void) -> Cancellable {
-        chargeCallCounter += 1
-        let args = ChargePassedArguments(data: data, completion: completion)
-        chargePassedArguments = args
-        return chargeStubReturn(args)
+    @discardableResult
+    func charge(data: ChargeData, completion: @escaping (_ result: Result<ChargePayload, Error>) -> Void) -> Cancellable {
+        chargeCallsCount += 1
+        let arguments = (data, completion)
+        chargeReceivedArguments = arguments
+        chargeReceivedInvocations.append(arguments)
+        if let chargeCompletionClosureInput = chargeCompletionClosureInput {
+            completion(chargeCompletionClosureInput)
+        }
+        return chargeReturnValue
     }
 
     // MARK: - getPaymentState
@@ -79,8 +83,9 @@ final class AcquiringPaymentsServiceMock: IAcquiringPaymentsService {
 
     var getPaymentStateCallsCount = 0
     var getPaymentStateReceivedArguments: GetPaymentStateArguments?
-    var getPaymentStateReceivedInvocations: [GetPaymentStateArguments] = []
+    var getPaymentStateReceivedInvocations: [GetPaymentStateArguments?] = []
     var getPaymentStateCompletionClosureInput: Result<GetPaymentStatePayload, Error>?
+    var getPaymentStateReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
     func getPaymentState(data: GetPaymentStateData, completion: @escaping (_ result: Result<GetPaymentStatePayload, Error>) -> Void) -> Cancellable {
@@ -91,6 +96,32 @@ final class AcquiringPaymentsServiceMock: IAcquiringPaymentsService {
         if let getPaymentStateCompletionClosureInput = getPaymentStateCompletionClosureInput {
             completion(getPaymentStateCompletionClosureInput)
         }
-        return CancellableMock()
+        return getPaymentStateReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension AcquiringPaymentsServiceMock {
+    func fullReset() {
+        initPaymentCallsCount = 0
+        initPaymentReceivedArguments = nil
+        initPaymentReceivedInvocations = []
+        initPaymentCompletionClosureInput = nil
+
+        finishAuthorizeCallsCount = 0
+        finishAuthorizeReceivedArguments = nil
+        finishAuthorizeReceivedInvocations = []
+        finishAuthorizeCompletionClosureInput = nil
+
+        chargeCallsCount = 0
+        chargeReceivedArguments = nil
+        chargeReceivedInvocations = []
+        chargeCompletionClosureInput = nil
+
+        getPaymentStateCallsCount = 0
+        getPaymentStateReceivedArguments = nil
+        getPaymentStateReceivedInvocations = []
+        getPaymentStateCompletionClosureInput = nil
     }
 }

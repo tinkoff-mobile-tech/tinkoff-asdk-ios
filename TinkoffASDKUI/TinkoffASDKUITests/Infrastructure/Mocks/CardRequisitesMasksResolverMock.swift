@@ -8,6 +8,7 @@
 @testable import TinkoffASDKUI
 
 final class CardRequisitesMasksResolverMock: ICardRequisitesMasksResolver {
+
     var validThruMask: String {
         get { return underlyingValidThruMask }
         set(value) { underlyingValidThruMask = value }
@@ -24,10 +25,12 @@ final class CardRequisitesMasksResolverMock: ICardRequisitesMasksResolver {
 
     // MARK: - panMask
 
+    typealias PanMaskArguments = String
+
     var panMaskCallsCount = 0
-    var panMaskReceivedArguments: String?
-    var panMaskReceivedInvocations: [String?] = []
-    var panMaskReturnValue: String = ""
+    var panMaskReceivedArguments: PanMaskArguments?
+    var panMaskReceivedInvocations: [PanMaskArguments?] = []
+    var panMaskReturnValue = ""
 
     func panMask(for pan: String?) -> String {
         panMaskCallsCount += 1
@@ -38,16 +41,12 @@ final class CardRequisitesMasksResolverMock: ICardRequisitesMasksResolver {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension CardRequisitesMasksResolverMock {
     func fullReset() {
-        underlyingValidThruMask = nil
-        underlyingCvcMask = nil
-
         panMaskCallsCount = 0
         panMaskReceivedArguments = nil
         panMaskReceivedInvocations = []
-        panMaskReturnValue = ""
     }
 }

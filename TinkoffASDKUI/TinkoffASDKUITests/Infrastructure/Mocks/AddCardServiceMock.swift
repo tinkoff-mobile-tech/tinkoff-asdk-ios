@@ -8,95 +8,119 @@
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-public final class AddCardServiceMock: IAddCardService {
-
-    public init() {}
+final class AddCardServiceMock: IAddCardService {
 
     // MARK: - addCard
 
-    public typealias AddCardArguments = (data: AddCardData, completion: (_ result: Result<AddCardPayload, Error>) -> Void)
+    typealias AddCardArguments = (data: AddCardData, completion: (_ result: Result<AddCardPayload, Error>) -> Void)
 
-    public var addCardCallsCount = 0
-    public var addCardReceivedArguments: AddCardArguments?
-    public var addCardReceivedInvocations: [AddCardArguments] = []
-    public var addCardCompletionStub: Result<AddCardPayload, Error>?
-    public var addCardReturnValue: Cancellable!
+    var addCardCallsCount = 0
+    var addCardReceivedArguments: AddCardArguments?
+    var addCardReceivedInvocations: [AddCardArguments?] = []
+    var addCardCompletionClosureInput: Result<AddCardPayload, Error>?
+    var addCardReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
-    public func addCard(data: AddCardData, completion: @escaping (_ result: Result<AddCardPayload, Error>) -> Void) -> Cancellable {
+    func addCard(data: AddCardData, completion: @escaping (_ result: Result<AddCardPayload, Error>) -> Void) -> Cancellable {
         addCardCallsCount += 1
         let arguments = (data, completion)
         addCardReceivedArguments = arguments
         addCardReceivedInvocations.append(arguments)
-        if let addCardCompletionStub = addCardCompletionStub {
-            completion(addCardCompletionStub)
+        if let addCardCompletionClosureInput = addCardCompletionClosureInput {
+            completion(addCardCompletionClosureInput)
         }
         return addCardReturnValue
     }
 
     // MARK: - check3DSVersion
 
-    public typealias Check3DSVersionArguments = (data: Check3DSVersionData, completion: (_ result: Result<Check3DSVersionPayload, Error>) -> Void)
+    typealias Check3DSVersionArguments = (data: Check3DSVersionData, completion: (_ result: Result<Check3DSVersionPayload, Error>) -> Void)
 
-    public var check3DSVersionCallsCount = 0
-    public var check3DSVersionReceivedArguments: Check3DSVersionArguments?
-    public var check3DSVersionReceivedInvocations: [Check3DSVersionArguments] = []
-    public var check3DSVersionCompletionStub: Result<Check3DSVersionPayload, Error>?
-    public var check3DSVersionReturnValue: Cancellable!
+    var check3DSVersionCallsCount = 0
+    var check3DSVersionReceivedArguments: Check3DSVersionArguments?
+    var check3DSVersionReceivedInvocations: [Check3DSVersionArguments?] = []
+    var check3DSVersionCompletionClosureInput: Result<Check3DSVersionPayload, Error>?
+    var check3DSVersionReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
-    public func check3DSVersion(data: Check3DSVersionData, completion: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
+    func check3DSVersion(data: Check3DSVersionData, completion: @escaping (_ result: Result<Check3DSVersionPayload, Error>) -> Void) -> Cancellable {
         check3DSVersionCallsCount += 1
         let arguments = (data, completion)
         check3DSVersionReceivedArguments = arguments
         check3DSVersionReceivedInvocations.append(arguments)
-        if let check3DSVersionCompletionStub = check3DSVersionCompletionStub {
-            completion(check3DSVersionCompletionStub)
+        if let check3DSVersionCompletionClosureInput = check3DSVersionCompletionClosureInput {
+            completion(check3DSVersionCompletionClosureInput)
         }
         return check3DSVersionReturnValue
     }
 
     // MARK: - attachCard
 
-    public typealias AttachCardArguments = (data: AttachCardData, completion: (_ result: Result<AttachCardPayload, Error>) -> Void)
+    typealias AttachCardArguments = (data: AttachCardData, completion: (_ result: Result<AttachCardPayload, Error>) -> Void)
 
-    public var attachCardCallsCount = 0
-    public var attachCardReceivedArguments: AttachCardArguments?
-    public var attachCardCompletionStub: Result<AttachCardPayload, Error>?
-    public var attachCardReceivedInvocations: [AttachCardArguments] = []
-    public var attachCardReturnValue: Cancellable!
+    var attachCardCallsCount = 0
+    var attachCardReceivedArguments: AttachCardArguments?
+    var attachCardReceivedInvocations: [AttachCardArguments?] = []
+    var attachCardCompletionClosureInput: Result<AttachCardPayload, Error>?
+    var attachCardReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
-    public func attachCard(data: AttachCardData, completion: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
+    func attachCard(data: AttachCardData, completion: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void) -> Cancellable {
         attachCardCallsCount += 1
         let arguments = (data, completion)
         attachCardReceivedArguments = arguments
         attachCardReceivedInvocations.append(arguments)
-        if let attachCardCompletionStub = attachCardCompletionStub {
-            completion(attachCardCompletionStub)
+        if let attachCardCompletionClosureInput = attachCardCompletionClosureInput {
+            completion(attachCardCompletionClosureInput)
         }
         return attachCardReturnValue
     }
 
     // MARK: - getAddCardState
 
-    public typealias GetAddCardStateArguments = (data: GetAddCardStateData, completion: (Result<GetAddCardStatePayload, Error>) -> Void)
+    typealias GetAddCardStateArguments = (data: GetAddCardStateData, completion: (Result<GetAddCardStatePayload, Error>) -> Void)
 
-    public var getAddCardStateCallsCount = 0
-    public var getAddCardStateReceivedArguments: GetAddCardStateArguments?
-    public var getAddCardStateReceivedInvocations: [GetAddCardStateArguments] = []
-    public var getAddCardStateCompletionInput: Result<GetAddCardStatePayload, Error>?
-    public var getAddCardStateReturnValue: Cancellable!
+    var getAddCardStateCallsCount = 0
+    var getAddCardStateReceivedArguments: GetAddCardStateArguments?
+    var getAddCardStateReceivedInvocations: [GetAddCardStateArguments?] = []
+    var getAddCardStateCompletionClosureInput: Result<GetAddCardStatePayload, Error>?
+    var getAddCardStateReturnValue: Cancellable = CancellableMock()
 
     @discardableResult
-    public func getAddCardState(data: GetAddCardStateData, completion: @escaping (Result<GetAddCardStatePayload, Error>) -> Void) -> Cancellable {
+    func getAddCardState(data: GetAddCardStateData, completion: @escaping (Result<GetAddCardStatePayload, Error>) -> Void) -> Cancellable {
         getAddCardStateCallsCount += 1
         let arguments = (data, completion)
         getAddCardStateReceivedArguments = arguments
         getAddCardStateReceivedInvocations.append(arguments)
-        if let input = getAddCardStateCompletionInput {
-            completion(input)
+        if let getAddCardStateCompletionClosureInput = getAddCardStateCompletionClosureInput {
+            completion(getAddCardStateCompletionClosureInput)
         }
         return getAddCardStateReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension AddCardServiceMock {
+    func fullReset() {
+        addCardCallsCount = 0
+        addCardReceivedArguments = nil
+        addCardReceivedInvocations = []
+        addCardCompletionClosureInput = nil
+
+        check3DSVersionCallsCount = 0
+        check3DSVersionReceivedArguments = nil
+        check3DSVersionReceivedInvocations = []
+        check3DSVersionCompletionClosureInput = nil
+
+        attachCardCallsCount = 0
+        attachCardReceivedArguments = nil
+        attachCardReceivedInvocations = []
+        attachCardCompletionClosureInput = nil
+
+        getAddCardStateCallsCount = 0
+        getAddCardStateReceivedArguments = nil
+        getAddCardStateReceivedInvocations = []
+        getAddCardStateCompletionClosureInput = nil
     }
 }

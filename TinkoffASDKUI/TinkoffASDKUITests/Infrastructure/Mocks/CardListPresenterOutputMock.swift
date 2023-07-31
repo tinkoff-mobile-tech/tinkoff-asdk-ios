@@ -10,15 +10,48 @@ import Foundation
 @testable import TinkoffASDKUI
 
 final class CardListPresenterOutputMock: ICardListPresenterOutput {
-    var cardListDidUpdateCalls: [[PaymentCard]] = []
+
+    // MARK: - cardListDidUpdate
+
+    typealias CardListDidUpdateArguments = [PaymentCard]
+
+    var cardListDidUpdateCallsCount = 0
+    var cardListDidUpdateReceivedArguments: CardListDidUpdateArguments?
+    var cardListDidUpdateReceivedInvocations: [CardListDidUpdateArguments?] = []
 
     func cardList(didUpdate cards: [PaymentCard]) {
-        cardListDidUpdateCalls.append(cards)
+        cardListDidUpdateCallsCount += 1
+        let arguments = cards
+        cardListDidUpdateReceivedArguments = arguments
+        cardListDidUpdateReceivedInvocations.append(arguments)
     }
 
-    var cardListWillCloseAfterSelectingCalls: [PaymentCard] = []
+    // MARK: - cardListWillCloseAfterSelecting
 
-    func cardList(willCloseAfterSelecting card: TinkoffASDKCore.PaymentCard) {
-        cardListWillCloseAfterSelectingCalls.append(card)
+    typealias CardListWillCloseAfterSelectingArguments = PaymentCard
+
+    var cardListWillCloseAfterSelectingCallsCount = 0
+    var cardListWillCloseAfterSelectingReceivedArguments: CardListWillCloseAfterSelectingArguments?
+    var cardListWillCloseAfterSelectingReceivedInvocations: [CardListWillCloseAfterSelectingArguments?] = []
+
+    func cardList(willCloseAfterSelecting card: PaymentCard) {
+        cardListWillCloseAfterSelectingCallsCount += 1
+        let arguments = card
+        cardListWillCloseAfterSelectingReceivedArguments = arguments
+        cardListWillCloseAfterSelectingReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension CardListPresenterOutputMock {
+    func fullReset() {
+        cardListDidUpdateCallsCount = 0
+        cardListDidUpdateReceivedArguments = nil
+        cardListDidUpdateReceivedInvocations = []
+
+        cardListWillCloseAfterSelectingCallsCount = 0
+        cardListWillCloseAfterSelectingReceivedArguments = nil
+        cardListWillCloseAfterSelectingReceivedInvocations = []
     }
 }

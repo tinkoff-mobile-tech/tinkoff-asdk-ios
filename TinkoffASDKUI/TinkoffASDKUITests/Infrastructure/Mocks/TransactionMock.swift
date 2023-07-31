@@ -7,7 +7,6 @@
 
 import TdsSdkIos
 import ThreeDSWrapper
-
 @testable import TinkoffASDKUI
 
 final class TransactionMock: ITransaction {
@@ -32,7 +31,7 @@ final class TransactionMock: ITransaction {
 
     var doChallengeCallsCount = 0
     var doChallengeReceivedArguments: DoChallengeArguments?
-    var doChallengeReceivedInvocations: [DoChallengeArguments] = []
+    var doChallengeReceivedInvocations: [DoChallengeArguments?] = []
 
     func doChallenge(challengeParameters: ChallengeParameters, challengeStatusReceiver: ChallengeStatusReceiver, timeout: Int) {
         doChallengeCallsCount += 1
@@ -45,11 +44,9 @@ final class TransactionMock: ITransaction {
 
     var getProgressViewCallsCount = 0
     var getProgressViewReturnValue: ProgressDialog!
-    var getProgressViewClosure: (() -> Void)?
 
     func getProgressView() -> ProgressDialog {
         getProgressViewCallsCount += 1
-        getProgressViewClosure?()
         return getProgressViewReturnValue
     }
 
@@ -59,5 +56,22 @@ final class TransactionMock: ITransaction {
 
     func close() {
         closeCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension TransactionMock {
+    func fullReset() {
+        getAuthenticationRequestParametersThrowableError = nil
+        getAuthenticationRequestParametersCallsCount = 0
+
+        doChallengeCallsCount = 0
+        doChallengeReceivedArguments = nil
+        doChallengeReceivedInvocations = []
+
+        getProgressViewCallsCount = 0
+
+        closeCallsCount = 0
     }
 }

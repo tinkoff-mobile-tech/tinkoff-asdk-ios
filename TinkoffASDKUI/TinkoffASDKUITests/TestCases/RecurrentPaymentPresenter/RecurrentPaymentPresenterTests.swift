@@ -157,9 +157,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         var cards = [PaymentCard].fake()
         cards.insert(savedCard, at: 0)
 
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.success(cards))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success(cards)
 
         sut.paymentController(
             PaymentControllerMock(),
@@ -191,9 +189,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         var cards = [PaymentCard].fake()
         cards.insert(savedCard, at: 0)
 
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.success(cards))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success(cards)
 
         sut.paymentController(
             PaymentControllerMock(),
@@ -436,9 +432,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         let savedCardMock = SavedCardViewOutputMock()
         savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
 
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.success(cards))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success(cards)
 
         // when
         sut.paymentController(
@@ -467,9 +461,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         let savedCardMock = SavedCardViewOutputMock()
         savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
 
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.success(cards))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .success(cards)
 
         // when
         sut.paymentController(
@@ -498,9 +490,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
         let savedCardMock = SavedCardViewOutputMock()
         savedCardViewPresenterAssemblyMock.buildReturnValue = savedCardMock
 
-        cardsControllerMock.getActiveCardsStub = { completion in
-            completion(.failure(error))
-        }
+        cardsControllerMock.getActiveCardsCompletionClosureInput = .failure(error)
 
         // when
         sut.paymentController(

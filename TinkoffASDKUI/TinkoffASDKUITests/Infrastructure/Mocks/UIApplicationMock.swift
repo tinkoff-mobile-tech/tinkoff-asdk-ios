@@ -12,10 +12,12 @@ final class UIApplicationMock: IUIApplication {
 
     // MARK: - canOpenURL
 
+    typealias CanOpenURLArguments = URL
+
     var canOpenURLCallsCount = 0
-    var canOpenURLReceivedArguments: URL?
-    var canOpenURLReceivedInvocations: [URL] = []
-    var canOpenURLReturnValue: Bool = false
+    var canOpenURLReceivedArguments: CanOpenURLArguments?
+    var canOpenURLReceivedInvocations: [CanOpenURLArguments?] = []
+    var canOpenURLReturnValue = false
 
     func canOpenURL(_ url: URL) -> Bool {
         canOpenURLCallsCount += 1
@@ -31,7 +33,7 @@ final class UIApplicationMock: IUIApplication {
 
     var openCallsCount = 0
     var openReceivedArguments: OpenArguments?
-    var openReceivedInvocations: [OpenArguments] = []
+    var openReceivedInvocations: [OpenArguments?] = []
     var openCompletionClosureInput: Bool?
 
     func open(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: ((Bool) -> Void)?) {
@@ -42,5 +44,20 @@ final class UIApplicationMock: IUIApplication {
         if let openCompletionClosureInput = openCompletionClosureInput {
             completion?(openCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension UIApplicationMock {
+    func fullReset() {
+        canOpenURLCallsCount = 0
+        canOpenURLReceivedArguments = nil
+        canOpenURLReceivedInvocations = []
+
+        openCallsCount = 0
+        openReceivedArguments = nil
+        openReceivedInvocations = []
+        openCompletionClosureInput = nil
     }
 }

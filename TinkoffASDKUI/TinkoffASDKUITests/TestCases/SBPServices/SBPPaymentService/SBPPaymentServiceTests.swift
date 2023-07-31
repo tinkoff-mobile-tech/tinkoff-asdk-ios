@@ -17,7 +17,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
     // MARK: Mocks
 
-    var acquiringSBPServiceMock: AcquiringSBPAndPaymentServiceMock!
+    var acquiringSBPServiceMock: AcquiringSdkMock!
 
     // MARK: Setup
 
@@ -181,7 +181,7 @@ final class SBPPaymentServiceTests: BaseTestCase {
 
 extension SBPPaymentServiceTests {
     private func setupSut(with paymentFlow: PaymentFlow) {
-        acquiringSBPServiceMock = AcquiringSBPAndPaymentServiceMock()
+        acquiringSBPServiceMock = AcquiringSdkMock()
         sut = SBPPaymentService(acquiringService: acquiringSBPServiceMock, paymentFlow: paymentFlow)
     }
 }

@@ -14,9 +14,11 @@ final class PaymentSystemResolverMock: IPaymentSystemResolver {
 
     // MARK: - resolve
 
+    typealias ResolveArguments = String
+
     var resolveCallsCount = 0
-    var resolveReceivedArguments: String?
-    var resolveReceivedInvocations: [String?] = []
+    var resolveReceivedArguments: ResolveArguments?
+    var resolveReceivedInvocations: [ResolveArguments?] = []
     var resolveReturnValue: PaymentSystemDecision = .unrecognized
 
     func resolve(by inputPAN: String?) -> PaymentSystemDecision {
@@ -28,7 +30,7 @@ final class PaymentSystemResolverMock: IPaymentSystemResolver {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension PaymentSystemResolverMock {
     func fullReset() {
