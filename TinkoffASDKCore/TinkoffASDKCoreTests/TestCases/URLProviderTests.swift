@@ -17,7 +17,7 @@ final class URLProviderTests: XCTestCase {
         let url = provider?.url
 
         // then
-        XCTAssertEqual(url?.absoluteString, "https://\(String.host)/")
+        XCTAssertEqual(url?.absoluteString, "https://\(String.host)")
     }
 
     func test_buildURL_whenHostIsInvalid() {
