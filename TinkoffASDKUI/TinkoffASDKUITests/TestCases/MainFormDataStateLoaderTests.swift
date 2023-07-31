@@ -171,7 +171,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
         terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
             .fake(methods: [.sbp], addCardScheme: true)
         )
-        cardControllers.getActiveCardsStub = { completion in completion(.success([card])) }
+        cardControllers.getActiveCardsCompletionClosureInput = .success([card])
 
         // when
         var state: MainFormDataState?
@@ -194,7 +194,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
         terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
             .fake(methods: [.sbp], addCardScheme: true)
         )
-        cardControllers.getActiveCardsStub = { completion in completion(.failure(ErrorStub())) }
+        cardControllers.getActiveCardsCompletionClosureInput = .failure(ErrorStub())
 
         // when
         var state: MainFormDataState?
@@ -214,6 +214,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
         terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
             .fake(methods: [.yandexPay(.fake())], addCardScheme: true)
         )
+        cardControllers.getActiveCardsCompletionClosureInput = .success([.fake()])
 
         // when
         var state: MainFormDataState?
@@ -234,6 +235,7 @@ final class MainFormDataStateLoaderTests: BaseTestCase {
         terminalServiceMock.getTerminalPayMethodsCompletionClosureInput = .success(
             .fake(methods: [.tinkoffPay(.fake())], addCardScheme: true)
         )
+        cardControllers.getActiveCardsCompletionClosureInput = .success([.fake()])
 
         // when
         var state: MainFormDataState?

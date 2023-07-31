@@ -11,10 +11,12 @@ final class MoneyFormatterMock: IMoneyFormatter {
 
     // MARK: - formatAmount
 
+    typealias FormatAmountArguments = Int
+
     var formatAmountCallsCount = 0
-    var formatAmountReceivedArguments: Int?
-    var formatAmountReceivedInvocations: [Int] = []
-    var formatAmountReturnValue: String = ""
+    var formatAmountReceivedArguments: FormatAmountArguments?
+    var formatAmountReceivedInvocations: [FormatAmountArguments?] = []
+    var formatAmountReturnValue = ""
 
     func formatAmount(_ amount: Int) -> String {
         formatAmountCallsCount += 1
@@ -25,13 +27,12 @@ final class MoneyFormatterMock: IMoneyFormatter {
     }
 }
 
-// MARK: - Public methods
+// MARK: - Resets
 
 extension MoneyFormatterMock {
     func fullReset() {
         formatAmountCallsCount = 0
         formatAmountReceivedArguments = nil
         formatAmountReceivedInvocations = []
-        formatAmountReturnValue = ""
     }
 }

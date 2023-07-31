@@ -9,22 +9,24 @@
 import UIKit
 
 final class SnackbarControllerMock: ISnackbarController {
+
     // MARK: - showSnackView
 
     typealias ShowSnackViewArguments = (config: SnackbarView.Configuration, animated: Bool, completion: ((Bool) -> Void)?)
 
     var showSnackViewCallsCount = 0
-    var showSnackViewCallArguments: ShowSnackViewArguments?
-    var showSnackViewsShouldExecute = true
+    var showSnackViewReceivedArguments: ShowSnackViewArguments?
+    var showSnackViewReceivedInvocations: [ShowSnackViewArguments?] = []
+    var showSnackViewCompletionClosureInput: Bool? = true
 
-    func showSnackView(
-        config: SnackbarView.Configuration,
-        animated: Bool,
-        completion: ((Bool) -> Void)?
-    ) {
+    func showSnackView(config: SnackbarView.Configuration, animated: Bool, completion: ((Bool) -> Void)?) {
         showSnackViewCallsCount += 1
-        showSnackViewCallArguments = (config, animated, completion)
-        if showSnackViewsShouldExecute { completion?(true) }
+        let arguments = (config, animated, completion)
+        showSnackViewReceivedArguments = arguments
+        showSnackViewReceivedInvocations.append(arguments)
+        if let showSnackViewCompletionClosureInput = showSnackViewCompletionClosureInput {
+            completion?(showSnackViewCompletionClosureInput)
+        }
     }
 
     // MARK: - hideSnackView
@@ -32,12 +34,33 @@ final class SnackbarControllerMock: ISnackbarController {
     typealias HideSnackViewArguments = (animated: Bool, completion: ((Bool) -> Void)?)
 
     var hideSnackViewCallsCount = 0
-    var hideSnackViewCallArguments: HideSnackViewArguments?
-    var hideSnackViewShouldExecute = true
+    var hideSnackViewReceivedArguments: HideSnackViewArguments?
+    var hideSnackViewReceivedInvocations: [HideSnackViewArguments?] = []
+    var hideSnackViewCompletionClosureInput: Bool? = true
 
     func hideSnackView(animated: Bool, completion: ((Bool) -> Void)?) {
         hideSnackViewCallsCount += 1
-        hideSnackViewCallArguments = (animated, completion)
-        if hideSnackViewShouldExecute { completion?(true) }
+        let arguments = (animated, completion)
+        hideSnackViewReceivedArguments = arguments
+        hideSnackViewReceivedInvocations.append(arguments)
+        if let hideSnackViewCompletionClosureInput = hideSnackViewCompletionClosureInput {
+            completion?(hideSnackViewCompletionClosureInput)
+        }
+    }
+}
+
+// MARK: - Resets
+
+extension SnackbarControllerMock {
+    func fullReset() {
+        showSnackViewCallsCount = 0
+        showSnackViewReceivedArguments = nil
+        showSnackViewReceivedInvocations = []
+        showSnackViewCompletionClosureInput = nil
+
+        hideSnackViewCallsCount = 0
+        hideSnackViewReceivedArguments = nil
+        hideSnackViewReceivedInvocations = []
+        hideSnackViewCompletionClosureInput = nil
     }
 }

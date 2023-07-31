@@ -79,7 +79,7 @@ final class CellImageLoaderTests: XCTestCase {
         imageLoaderMock.loadImageReturnValue = UUID()
 
         // when
-        sut.loadAndSetRemoteImage(url: .empty, imageView: imageView)
+        sut.loadAndSetRemoteImage(url: .fakeVK, imageView: imageView)
         sut.cancelLoadIfNeeded(imageView: imageView)
 
         // then
@@ -101,7 +101,7 @@ final class CellImageLoaderTests: XCTestCase {
 
         // when
         sut.set(type: .round)
-        let result = sut.loadRemoteImageJustForCache(url: .empty)
+        let result = sut.loadRemoteImageJustForCache(url: .fakeVK)
 
         // then
         XCTAssertEqual(result, uuid)
@@ -122,7 +122,7 @@ final class CellImageLoaderTests: XCTestCase {
         // when
         var isTriggerCompletion = false
         sut.set(type: .round)
-        sut.loadImage(url: .empty, completion: { _ in isTriggerCompletion = true })
+        sut.loadImage(url: .fakeVK, completion: { _ in isTriggerCompletion = true })
 
         // then
         XCTAssertEqual(processorMock.processImageCallsCount, 1)
@@ -144,7 +144,7 @@ final class CellImageLoaderTests: XCTestCase {
 
         // when
         sut.set(type: .round)
-        sut.loadAndSetRemoteImage(url: .empty, imageView: imageView)
+        sut.loadAndSetRemoteImage(url: .fakeVK, imageView: imageView)
 
         // then
         XCTAssertEqual(processorMock.processImageCallsCount, 1)
@@ -166,7 +166,7 @@ final class CellImageLoaderTests: XCTestCase {
 
         // when
         sut.set(type: .round)
-        sut.loadAndSetRemoteImage(url: .empty, imageView: imageView, onFailureImage: mockImage)
+        sut.loadAndSetRemoteImage(url: .fakeVK, imageView: imageView, onFailureImage: mockImage)
 
         // then
         XCTAssertEqual(processorMock.processImageCallsCount, 1)

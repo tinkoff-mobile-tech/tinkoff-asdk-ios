@@ -8,13 +8,14 @@
 @testable import TinkoffASDKUI
 
 final class YandexPayButtonContainerFactoryMock: IYandexPayButtonContainerFactory {
+
     // MARK: - createButtonContainer
 
     typealias CreateButtonContainerArguments = (configuration: YandexPayButtonContainerConfiguration, delegate: IYandexPayButtonContainerDelegate)
 
     var createButtonContainerCallsCount = 0
     var createButtonContainerReceivedArguments: CreateButtonContainerArguments?
-    var createButtonContainerReceivedInvocations: [CreateButtonContainerArguments] = []
+    var createButtonContainerReceivedInvocations: [CreateButtonContainerArguments?] = []
     var createButtonContainerReturnValue: IYandexPayButtonContainer!
 
     func createButtonContainer(with configuration: YandexPayButtonContainerConfiguration, delegate: IYandexPayButtonContainerDelegate) -> IYandexPayButtonContainer {
@@ -23,5 +24,15 @@ final class YandexPayButtonContainerFactoryMock: IYandexPayButtonContainerFactor
         createButtonContainerReceivedArguments = arguments
         createButtonContainerReceivedInvocations.append(arguments)
         return createButtonContainerReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayButtonContainerFactoryMock {
+    func fullReset() {
+        createButtonContainerCallsCount = 0
+        createButtonContainerReceivedArguments = nil
+        createButtonContainerReceivedInvocations = []
     }
 }

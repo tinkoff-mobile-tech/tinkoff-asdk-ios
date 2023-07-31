@@ -25,3 +25,13 @@ final class ProgressDialogMock: ProgressDialog {
         stopCallsCount += 1
     }
 }
+
+// MARK: - Resets
+
+extension ProgressDialogMock {
+    func fullReset() {
+        startCallsCount = 0
+
+        stopCallsCount = 0
+    }
+}

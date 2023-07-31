@@ -193,7 +193,7 @@ class BuyProductsViewController: UIViewController {
             receiptItems.append(item)
         }
 
-        paymentData.receipt = Receipt(
+        paymentData.receipt = try? Receipt(
             shopCode: nil,
             email: customerEmail,
             taxation: .osn,

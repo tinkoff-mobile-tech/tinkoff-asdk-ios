@@ -19,7 +19,7 @@ final class ThreeDSWebViewAssemblyMock<GenericPayload: Decodable>: IThreeDSWebVi
 
     var threeDSWebViewControllerCallsCount = 0
     var threeDSWebViewControllerReceivedArguments: ThreeDSWebViewControllerArguments?
-    var threeDSWebViewControllerReceivedInvocations: [ThreeDSWebViewControllerArguments] = []
+    var threeDSWebViewControllerReceivedInvocations: [ThreeDSWebViewControllerArguments?] = []
     var threeDSWebViewControllerReturnValue: UIViewController!
 
     func threeDSWebViewController<Payload: Decodable>(
@@ -39,7 +39,7 @@ final class ThreeDSWebViewAssemblyMock<GenericPayload: Decodable>: IThreeDSWebVi
 
     var threeDSWebViewNavigationControllerCallsCount = 0
     var threeDSWebViewNavigationControllerReceivedArguments: ThreeDSWebViewNavigationControllerArguments?
-    var threeDSWebViewNavigationControllerReceivedInvocations: [ThreeDSWebViewNavigationControllerArguments] = []
+    var threeDSWebViewNavigationControllerReceivedInvocations: [ThreeDSWebViewNavigationControllerArguments?] = []
     var threeDSWebViewNavigationControllerReturnValue: UINavigationController!
 
     func threeDSWebViewNavigationController<Payload: Decodable>(
@@ -51,5 +51,19 @@ final class ThreeDSWebViewAssemblyMock<GenericPayload: Decodable>: IThreeDSWebVi
         threeDSWebViewNavigationControllerReceivedArguments = arguments
         threeDSWebViewNavigationControllerReceivedInvocations.append(arguments)
         return threeDSWebViewNavigationControllerReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension ThreeDSWebViewAssemblyMock {
+    func fullReset() {
+        threeDSWebViewControllerCallsCount = 0
+        threeDSWebViewControllerReceivedArguments = nil
+        threeDSWebViewControllerReceivedInvocations = []
+
+        threeDSWebViewNavigationControllerCallsCount = 0
+        threeDSWebViewNavigationControllerReceivedArguments = nil
+        threeDSWebViewNavigationControllerReceivedInvocations = []
     }
 }

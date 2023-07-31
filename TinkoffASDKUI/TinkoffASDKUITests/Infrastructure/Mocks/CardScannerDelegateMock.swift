@@ -9,13 +9,14 @@
 import UIKit
 
 final class CardScannerDelegateMock: ICardScannerDelegate {
+
     // MARK: - cardScanButtonDidPressed
 
     typealias CardScanButtonDidPressedArguments = (viewController: UIViewController, completion: CardScannerCompletion)
 
     var cardScanButtonDidPressedCallsCount = 0
     var cardScanButtonDidPressedReceivedArguments: CardScanButtonDidPressedArguments?
-    var cardScanButtonDidPressedReceivedInvocations: [CardScanButtonDidPressedArguments] = []
+    var cardScanButtonDidPressedReceivedInvocations: [CardScanButtonDidPressedArguments?] = []
     var cardScanButtonDidPressedCompletionClosureInput: (String?, String?, String?)?
 
     func cardScanButtonDidPressed(on viewController: UIViewController, completion: @escaping CardScannerCompletion) {
@@ -23,8 +24,23 @@ final class CardScannerDelegateMock: ICardScannerDelegate {
         let arguments = (viewController, completion)
         cardScanButtonDidPressedReceivedArguments = arguments
         cardScanButtonDidPressedReceivedInvocations.append(arguments)
-        if let input = cardScanButtonDidPressedCompletionClosureInput {
-            completion(input.0, input.1, input.2)
+        if let cardScanButtonDidPressedCompletionClosureInput = cardScanButtonDidPressedCompletionClosureInput {
+            completion(
+                cardScanButtonDidPressedCompletionClosureInput.0,
+                cardScanButtonDidPressedCompletionClosureInput.1,
+                cardScanButtonDidPressedCompletionClosureInput.2
+            )
         }
+    }
+}
+
+// MARK: - Resets
+
+extension CardScannerDelegateMock {
+    func fullReset() {
+        cardScanButtonDidPressedCallsCount = 0
+        cardScanButtonDidPressedReceivedArguments = nil
+        cardScanButtonDidPressedReceivedInvocations = []
+        cardScanButtonDidPressedCompletionClosureInput = nil
     }
 }

@@ -39,15 +39,27 @@
 * [EACQAPW-5597] ThreeDSURLRequestBuilder Tests
 * [EACQAPW-5586] Added to Sample Option to choose App Based Sdk Interface
 * [EACQAPW-5597] ThreeDSURLBuilder Tests
+* [EACQAPW-5604] Mocks regeneration
 * [EACQAPW-5606] IPAddressFactory Tests
 * [EACQAPW-5607] ThreeDSDeviceInfoProvider Tests
 * [EACQAPW-5614] EnvironmentParametersProvider Tests
 * [EACQAPW-5588] Added UITests target and added tests utils methods
+* [EACQAPW-5626] AcquiringRequestBuilder Tests
+* [EACQAPW-5651] DeviceInfoProvder Tests
+* [EACQAPW-5661] ExternalRequestBuilder Tests
+* [EACQAPW-5669] URLProvider Tests
+* [EACQAPW-5680] AcquiringSdk Tests
+* [EACQAPW-5738] ThreeDSFacade Tests
 * [EACQAPW-5635] Implement library mock for UI tests
+
+### Changed
+* [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields
 
 ### Fixed
 
 * [EACQAPW-4285] Remove LOOP_CHECKING status in card attachment
+* [EACQAPW-5657] Pay by Card email field bugfixes
+* [EACQAPW-5350] Fixed showing JSON contents in WebView 3ds
 
 ## [3.1.1] - 2023-07-17Z
 

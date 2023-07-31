@@ -15,12 +15,22 @@ final class YandexPayPaymentFlowMock: IYandexPayPaymentFlow {
 
     var startCallsCount = 0
     var startReceivedArguments: StartArguments?
-    var startReceivedInvocations: [StartArguments] = []
+    var startReceivedInvocations: [StartArguments?] = []
 
     func start(with paymentFlow: PaymentFlow, base64Token: String) {
         startCallsCount += 1
         let arguments = (paymentFlow, base64Token)
         startReceivedArguments = arguments
         startReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayPaymentFlowMock {
+    func fullReset() {
+        startCallsCount = 0
+        startReceivedArguments = nil
+        startReceivedInvocations = []
     }
 }

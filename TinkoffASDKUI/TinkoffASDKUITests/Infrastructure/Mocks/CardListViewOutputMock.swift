@@ -1,5 +1,5 @@
 //
-//  CardListPresenterMock.swift
+//  CardListViewOutputMock.swift
 //  TinkoffASDKUI-Unit-Tests
 //
 //  Created by Ivan Glushko on 24.03.2023
@@ -9,7 +9,7 @@ import Foundation
 import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
-final class CardListPresenterMock: ICardListViewOutput {
+final class CardListViewOutputMock: ICardListViewOutput {
 
     // MARK: - viewDidLoad
 
@@ -21,9 +21,11 @@ final class CardListPresenterMock: ICardListViewOutput {
 
     // MARK: - view
 
+    typealias ViewArguments = CardList.Card
+
     var viewCallsCount = 0
-    var viewReceivedArguments: CardList.Card?
-    var viewReceivedInvocations: [CardList.Card] = []
+    var viewReceivedArguments: ViewArguments?
+    var viewReceivedInvocations: [ViewArguments?] = []
 
     func view(didTapDeleteOn card: CardList.Card) {
         viewCallsCount += 1
@@ -58,9 +60,11 @@ final class CardListPresenterMock: ICardListViewOutput {
 
     // MARK: - viewDidTapCard
 
+    typealias ViewDidTapCardArguments = Int
+
     var viewDidTapCardCallsCount = 0
-    var viewDidTapCardReceivedArguments: Int?
-    var viewDidTapCardReceivedInvocations: [Int] = []
+    var viewDidTapCardReceivedArguments: ViewDidTapCardArguments?
+    var viewDidTapCardReceivedInvocations: [ViewDidTapCardArguments?] = []
 
     func viewDidTapCard(cardIndex: Int) {
         viewDidTapCardCallsCount += 1
@@ -79,9 +83,11 @@ final class CardListPresenterMock: ICardListViewOutput {
 
     // MARK: - viewDidHideShimmer
 
+    typealias ViewDidHideShimmerArguments = Result<[PaymentCard], Error>
+
     var viewDidHideShimmerCallsCount = 0
-    var viewDidHideShimmerReceivedArguments: Result<[PaymentCard], Error>?
-    var viewDidHideShimmerReceivedInvocations: [Result<[PaymentCard], Error>] = []
+    var viewDidHideShimmerReceivedArguments: ViewDidHideShimmerArguments?
+    var viewDidHideShimmerReceivedInvocations: [ViewDidHideShimmerArguments?] = []
 
     func viewDidHideShimmer(fetchCardsResult: Result<[PaymentCard], Error>) {
         viewDidHideShimmerCallsCount += 1
@@ -96,5 +102,35 @@ final class CardListPresenterMock: ICardListViewOutput {
 
     func viewDidShowAddedCardSnackbar() {
         viewDidShowAddedCardSnackbarCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension CardListViewOutputMock {
+    func fullReset() {
+        viewDidLoadCallsCount = 0
+
+        viewCallsCount = 0
+        viewReceivedArguments = nil
+        viewReceivedInvocations = []
+
+        viewDidTapEditButtonCallsCount = 0
+
+        viewDidTapDoneEditingButtonCallsCount = 0
+
+        viewDidHideRemovingCardSnackBarCallsCount = 0
+
+        viewDidTapCardCallsCount = 0
+        viewDidTapCardReceivedArguments = nil
+        viewDidTapCardReceivedInvocations = []
+
+        viewDidTapAddCardCellCallsCount = 0
+
+        viewDidHideShimmerCallsCount = 0
+        viewDidHideShimmerReceivedArguments = nil
+        viewDidHideShimmerReceivedInvocations = []
+
+        viewDidShowAddedCardSnackbarCallsCount = 0
     }
 }

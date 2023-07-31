@@ -82,7 +82,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
@@ -92,7 +92,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerDidOpenURLCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerDidOpenTinkoffPayCallsCount, 1)
         XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithSuccessfulCallsCount, 1)
     }
 
@@ -102,7 +102,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
@@ -121,7 +121,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
@@ -131,7 +131,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerDidReceiveIntermediateCallsCount, 1)
     }
 
     func test_thatControllerCompletesWithTimeout_whenStatusIsSuccess() {
@@ -140,7 +140,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
@@ -159,7 +159,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
@@ -178,7 +178,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = true
         repeatedRequestHelperMock.executeWithWaitingIfNeededActionShouldExecute = true
@@ -188,34 +188,34 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithErrorCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithCallsCount, 1)
     }
 
     func test_thatControllerNotifiesDelegate_whenErrorOccurred() {
         // given
         let sut = prepareSut(paymentStatusRetriesCount: 1)
 
-        paymentService.initPaymentCompletionInput = .failure(ErrorStub())
+        paymentService.initPaymentCompletionClosureInput = .failure(ErrorStub())
 
         // when
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithErrorCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithCallsCount, 1)
     }
 
     func test_thatControllerNotifiesDelegate_whenGetLinkErrorOccurred() {
         // given
         let sut = prepareSut(paymentStatusRetriesCount: 1)
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .failure(ErrorStub())
 
         // when
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithErrorCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedWithCallsCount, 1)
     }
 
     func test_thatControllerNotifiesDelegate_whenUnableToOpenExternalApp() {
@@ -224,7 +224,7 @@ final class TinkoffPayControllerTests: BaseTestCase {
 
         queueMock.asyncWorkShouldExecute = true
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
         tinkoffPayServiceMock.getTinkoffPayLinkCompletionClosureInput = .success(.fake())
         applicationOpenerMock.openCompletionClosureInput = false
 
@@ -232,14 +232,14 @@ final class TinkoffPayControllerTests: BaseTestCase {
         sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())
 
         // then
-        XCTAssertEqual(delegateMock.tinkoffPayControllerInabilityToOpenTinkoffPayCallsCount, 1)
+        XCTAssertEqual(delegateMock.tinkoffPayControllerCompletedDueToInabilityToOpenTinkoffPayCallsCount, 1)
     }
 
     func test_thatControllerCancelsRequest_whenStatusIsSuccess() {
         // given
         let sut = prepareSut(paymentStatusRetriesCount: 1)
 
-        paymentService.initPaymentCompletionInput = .success(.fake())
+        paymentService.initPaymentCompletionClosureInput = .success(.fake())
 
         // when
         let process = sut.performPayment(paymentFlow: .full(paymentOptions: .fake()), method: .fake())

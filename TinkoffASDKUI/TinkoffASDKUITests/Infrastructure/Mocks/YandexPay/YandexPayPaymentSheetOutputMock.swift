@@ -11,14 +11,26 @@ final class YandexPayPaymentSheetOutputMock: IYandexPayPaymentSheetOutput {
 
     // MARK: - yandexPayPaymentSheet
 
+    typealias YandexPayPaymentSheetArguments = PaymentResult
+
     var yandexPayPaymentSheetCallsCount = 0
-    var yandexPayPaymentSheetReceivedArguments: PaymentResult?
-    var yandexPayPaymentSheetReceivedInvocations: [PaymentResult] = []
+    var yandexPayPaymentSheetReceivedArguments: YandexPayPaymentSheetArguments?
+    var yandexPayPaymentSheetReceivedInvocations: [YandexPayPaymentSheetArguments?] = []
 
     func yandexPayPaymentSheet(completedWith result: PaymentResult) {
         yandexPayPaymentSheetCallsCount += 1
         let arguments = result
         yandexPayPaymentSheetReceivedArguments = arguments
         yandexPayPaymentSheetReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayPaymentSheetOutputMock {
+    func fullReset() {
+        yandexPayPaymentSheetCallsCount = 0
+        yandexPayPaymentSheetReceivedArguments = nil
+        yandexPayPaymentSheetReceivedInvocations = []
     }
 }
