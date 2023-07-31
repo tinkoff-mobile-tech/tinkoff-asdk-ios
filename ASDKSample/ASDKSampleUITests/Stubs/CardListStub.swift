@@ -15,10 +15,10 @@ public class GetCardListStubs {
     public lazy var `default`: GetCardListStub = .default(url: url, httpMethod: .POST, json: defaultJson)
 
     /// Возвращает запрос с ошибкой `internalServerError`.
-    public lazy var internalServerError: GetCardListStub = .error(url: "v2/GetCardList", error: .internalServerError)
+    public lazy var internalServerError: GetCardListStub = .error(url: url, error: .internalServerError)
 
     /// Возвращает запрос с ошибкой `notFoundError`.
-    public lazy var notFoundError: GetCardListStub = .error(url: "v2/GetCardList", error: .notFoundError)
+    public lazy var notFoundError: GetCardListStub = .error(url: url, error: .notFoundError)
 }
 
 public extension NetworkStub {
