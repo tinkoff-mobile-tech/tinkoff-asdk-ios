@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+import Foundation
 import TinkoffASDKCore
 import TinkoffASDKUI
 
@@ -45,7 +46,7 @@ struct SdkAssembly {
 
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
-            server: AppSetting.shared.serverType,
+            server: assembleServer(),
             logger: nil, // для включения логирования, заменить nil на Logger()
             tokenProvider: tokenProvider,
             appBasedSdkInterface: AppSetting.shared.appBasedSdkInterface
@@ -53,4 +54,20 @@ struct SdkAssembly {
 
         return acquiringSDKConfiguration
     }
+
+    private static func assembleServer() -> AcquiringSdkEnvironment {
+        if ProcessInfo.processInfo.environment[.UITests] != nil {
+            if let mockUrl = ProcessInfo.processInfo.environment[.mockServerUrl] {
+                return AcquiringSdkEnvironment.custom(mockUrl)
+            }
+        }
+        return AppSetting.shared.serverType
+    }
+}
+
+// MARK: - Constants
+
+private extension String {
+    static let UITests = "UI_TESTS"
+    static let mockServerUrl = "MOCK_SERVER_URL"
 }
