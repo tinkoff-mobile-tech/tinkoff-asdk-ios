@@ -21,9 +21,9 @@ open class BaseUITest: XCTestCase, SetStubAvailable {
     }
 
     override open func tearDown() {
-        super.tearDown()
         network.stop()
         addScreenshot()
+        super.tearDown()
     }
 
     override open func tearDownWithError() throws {
