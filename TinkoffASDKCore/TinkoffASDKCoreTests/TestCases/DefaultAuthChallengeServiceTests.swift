@@ -11,10 +11,11 @@ import XCTest
 final class DefaultAuthChallengeServiceTests: XCTestCase {
     // MARK: Properties
 
-    private var certificateValidatorMock: CertificateValidatorMock!
     private var sut: DefaultAuthChallengeService!
 
-    // MARK: Initialization
+    private var certificateValidatorMock: CertificateValidatorMock!
+
+    // MARK: Setup
 
     override func setUp() {
         super.setUp()

@@ -8,9 +8,9 @@
 import Foundation
 
 struct TestTrusts {
-    static let trust: SecTrust = {
+    static let trust: SecTrust? = {
         var trust: SecTrust?
         SecTrustCreateWithCertificates(TestCertificates.certChain as CFTypeRef, nil, &trust)
-        return trust!
+        return trust
     }()
 }
