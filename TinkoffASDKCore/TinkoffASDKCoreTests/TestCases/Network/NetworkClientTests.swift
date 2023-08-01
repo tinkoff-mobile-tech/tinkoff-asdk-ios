@@ -46,7 +46,7 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting(request)
 
         // then
-        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssertEqual(session.stubbedDataTaskResult.invokedResumeCount, 1)
         XCTAssertFalse(session.stubbedDataTaskResult.invokedCancel)
@@ -57,13 +57,13 @@ final class NetworkClientTests: XCTestCase {
     func test_performRequest_withFailedURLRequestBuilding_shouldCallbackRequestBuildingError() {
         // given
         let requestBuildingError = ErrorStub()
-        requestBuilder.stubbedBuildError = requestBuildingError
+        requestBuilder.buildThrowableError = requestBuildingError
 
         // when
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(requestBuilder.buildCallsCount, 0)
         XCTAssertFalse(session.invokedDataTask)
         XCTAssertFalse(statusCodeValidator.invokedValidate)
 
@@ -84,7 +84,7 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssertFalse(statusCodeValidator.invokedValidate)
 
@@ -104,7 +104,7 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssertEqual(statusCodeValidator.invokedValidateCount, 1)
 
@@ -123,7 +123,7 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssertFalse(statusCodeValidator.invokedValidate)
 
@@ -145,7 +145,7 @@ final class NetworkClientTests: XCTestCase {
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(requestBuilder.invokedBuildCount, 1)
+        XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.invokedDataTaskCount, 1)
         XCTAssert(statusCodeValidator.invokedValidate)
 

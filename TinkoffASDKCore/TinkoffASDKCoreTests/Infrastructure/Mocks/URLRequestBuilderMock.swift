@@ -9,21 +9,36 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class URLRequestBuilderMock: IURLRequestBuilder {
-    var invokedBuild = false
-    var invokedBuildCount = 0
-    var invokedBuildParameters: (request: NetworkRequest, Void)?
-    var invokedBuildParametersList = [(request: NetworkRequest, Void)]()
-    var stubbedBuildError: Error?
-    var stubbedBuildResult: URLRequest = .init(url: .doesNotMatter)
+
+    // MARK: - build
+
+    typealias BuildArguments = NetworkRequest
+
+    var buildThrowableError: Error?
+    var buildCallsCount = 0
+    var buildReceivedArguments: BuildArguments?
+    var buildReceivedInvocations: [BuildArguments?] = []
+    var buildReturnValue: URLRequest = .init(url: .doesNotMatter)
 
     func build(request: NetworkRequest) throws -> URLRequest {
-        invokedBuild = true
-        invokedBuildCount += 1
-        invokedBuildParameters = (request, ())
-        invokedBuildParametersList.append((request, ()))
-        if let error = stubbedBuildError {
+        if let error = buildThrowableError {
             throw error
         }
-        return stubbedBuildResult
+        buildCallsCount += 1
+        let arguments = request
+        buildReceivedArguments = arguments
+        buildReceivedInvocations.append(arguments)
+        return buildReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension URLRequestBuilderMock {
+    func fullReset() {
+        buildThrowableError = nil
+        buildCallsCount = 0
+        buildReceivedArguments = nil
+        buildReceivedInvocations = []
     }
 }
