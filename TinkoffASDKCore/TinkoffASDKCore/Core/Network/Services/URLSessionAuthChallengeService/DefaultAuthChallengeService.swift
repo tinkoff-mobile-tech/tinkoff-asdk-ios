@@ -21,7 +21,7 @@ open class DefaultAuthChallengeService {
     // MARK: Public
 
     public func didReceive(
-        challenge: URLAuthenticationChallenge,
+        challenge: IURLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
         DispatchQueue.global().async {
