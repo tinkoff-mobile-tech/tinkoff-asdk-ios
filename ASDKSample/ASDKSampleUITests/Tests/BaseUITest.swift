@@ -15,8 +15,8 @@ open class BaseUITest: XCTestCase, SetStubAvailable {
             return
         }
 
-        app.launchEnvironment["UI_TESTS"] = "1"
-        app.launchEnvironment["MOCK_SERVER_URL"] = "http://localhost:\(port)"
+        app.launchEnvironment[.UITests] = "1"
+        app.launchEnvironment[.mockServerUrl] = "http://localhost:\(port)/"
         app.launch()
     }
 
@@ -39,4 +39,11 @@ open class BaseUITest: XCTestCase, SetStubAvailable {
             add(attachment)
         }
     }
+}
+
+// MARK: - Constants
+
+private extension String {
+    static let UITests = "UI_TESTS"
+    static let mockServerUrl = "MOCK_SERVER_URL"
 }
