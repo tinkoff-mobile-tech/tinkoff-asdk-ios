@@ -658,7 +658,6 @@
 				F7D00F082A6932D600B68B6F /* Sources */,
 				F7D00F092A6932D600B68B6F /* Frameworks */,
 				F7D00F0A2A6932D600B68B6F /* Resources */,
-				E2ACB90996768BA9F2C7D616 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -894,23 +893,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
-		};
-		E2ACB90996768BA9F2C7D616 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleUITests/Pods-ASDKSampleUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleUITests/Pods-ASDKSampleUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleUITests/Pods-ASDKSampleUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
