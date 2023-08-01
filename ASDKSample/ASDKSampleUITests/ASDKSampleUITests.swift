@@ -6,7 +6,7 @@ import XCTest
 
 final class ASDKSampleUITests: BaseUITest {
 
-    // MARK: SetUp & TearDown
+    // MARK: SetUp
 
     override func setUp() {
         super.setUp()
@@ -16,7 +16,7 @@ final class ASDKSampleUITests: BaseUITest {
     // MARK: Tests
 
     func testStubsHistoryOneRequest() {
-        XCUIApplication().buttons["💳"].tap()
+        app.buttons["💳"].tap()
 
         expect(self.network.requestsHistory.count).to(equal(1))
         expect(self.network.history.count).to(equal(1))

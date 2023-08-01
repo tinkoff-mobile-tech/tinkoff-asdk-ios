@@ -12,13 +12,13 @@ public class GetCardListStubs {
     ])
 
     /// Возвращает обыкновенный ответ `example`.
-    public lazy var `default`: GetCardListStub = .default(url: url, httpMethod: .POST, json: defaultJson)
+    lazy var `default`: GetCardListStub = .default(url: url, httpMethod: .POST, json: defaultJson)
 
     /// Возвращает запрос с ошибкой `internalServerError`.
-    public lazy var internalServerError: GetCardListStub = .error(url: url, error: .internalServerError)
+    lazy var internalServerError: GetCardListStub = .error(url: url, error: .internalServerError)
 
     /// Возвращает запрос с ошибкой `notFoundError`.
-    public lazy var notFoundError: GetCardListStub = .error(url: url, error: .notFoundError)
+    lazy var notFoundError: GetCardListStub = .error(url: url, error: .notFoundError)
 }
 
 public extension NetworkStub {

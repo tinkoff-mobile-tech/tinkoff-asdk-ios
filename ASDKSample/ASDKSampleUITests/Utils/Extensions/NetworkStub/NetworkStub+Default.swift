@@ -36,9 +36,7 @@ public extension NetworkStub {
             httpMethod: httpMethod
         )
         let stub = Stub(request: request, response: .json(json))
-
         jsonModifier?(stub)
-
         return stub
     }
 }

@@ -50,7 +50,7 @@
 * [EACQAPW-5669] URLProvider Tests
 * [EACQAPW-5680] AcquiringSdk Tests
 * [EACQAPW-5738] ThreeDSFacade Tests
-* [EACQAPW-5635] Implement library mock for UI tests
+* [EACQAPW-5635] Setting up mocking network server for UI Tests
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields

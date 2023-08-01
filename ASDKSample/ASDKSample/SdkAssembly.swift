@@ -44,17 +44,9 @@ struct SdkAssembly {
 
         let tokenProvider = SampleTokenProvider(password: credential.terminalPassword)
 
-        var server = AppSetting.shared.serverType
-
-        if ProcessInfo.processInfo.environment["UI_TESTS"] != nil {
-            if let mockUrl = ProcessInfo.processInfo.environment["MOCK_SERVER_URL"] {
-                server = AcquiringSdkEnvironment.custom(mockUrl)
-            }
-        }
-
         let acquiringSDKConfiguration = AcquiringSdkConfiguration(
             credential: sdkCredential,
-            server: server,
+            server: assembleServer(),
             logger: nil, // для включения логирования, заменить nil на Logger()
             tokenProvider: tokenProvider,
             appBasedSdkInterface: AppSetting.shared.appBasedSdkInterface
@@ -62,4 +54,20 @@ struct SdkAssembly {
 
         return acquiringSDKConfiguration
     }
+
+    private static func assembleServer() -> AcquiringSdkEnvironment {
+        if ProcessInfo.processInfo.environment[.UITests] != nil {
+            if let mockUrl = ProcessInfo.processInfo.environment[.mockServerUrl] {
+                return AcquiringSdkEnvironment.custom(mockUrl)
+            }
+        }
+        return AppSetting.shared.serverType
+    }
+}
+
+// MARK: - Constants
+
+private extension String {
+    static let UITests = "UI_TESTS"
+    static let mockServerUrl = "MOCK_SERVER_URL"
 }
