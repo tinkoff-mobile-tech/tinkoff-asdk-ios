@@ -8,7 +8,7 @@
 import Foundation
 
 /// Информация о чеке
-public struct Receipt: Codable {
+public struct Receipt: Encodable {
     private enum CodingKeys: String, CodingKey {
         case shopCode = "ShopCode"
         case email = "Email"
@@ -45,22 +45,9 @@ public struct Receipt: Codable {
     /// Версия ФФД.
     public var ffdVersion: FfdVersion?
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        shopCode = try? container.decode(String.self, forKey: .shopCode)
-        email = try? container.decode(String.self, forKey: .email)
-        if let value = try? container.decode(String.self, forKey: .taxation) {
-            taxation = Taxation(rawValue: value)
-        }
-        phone = try? container.decode(String.self, forKey: .phone)
-        items = try? container.decode([Item].self, forKey: .items)
-        agentData = try? container.decode(AgentData.self, forKey: .agentData)
-        supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
-        customer = try? container.decode(String.self, forKey: .customer)
-        customerInn = try? container.decode(String.self, forKey: .customerInn)
-        ffdVersion = try? container.decode(FfdVersion.self, forKey: .ffdVersion)
-    }
-
+    /// Инициализиатор может пробросить ошибку в случае передачи невалидных полей
+    ///
+    /// НСПК требует как минимимум 1 валидное поле `phone` или `email` для формирования чека
     public init(
         shopCode: String?,
         email: String?,
