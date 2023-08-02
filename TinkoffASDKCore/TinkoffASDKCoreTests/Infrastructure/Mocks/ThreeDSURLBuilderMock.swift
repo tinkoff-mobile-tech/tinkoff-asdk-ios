@@ -12,9 +12,11 @@ final class ThreeDSURLBuilderMock: IThreeDSURLBuilder {
 
     // MARK: - url
 
+    typealias UrlArguments = ThreeDSURLType
+
     var urlCallsCount = 0
-    var urlReceivedArguments: ThreeDSURLType?
-    var urlReceivedInvocations: [ThreeDSURLType] = []
+    var urlReceivedArguments: UrlArguments?
+    var urlReceivedInvocations: [UrlArguments?] = []
     var urlReturnValue: URL!
 
     func url(ofType type: ThreeDSURLType) -> URL {
@@ -23,5 +25,15 @@ final class ThreeDSURLBuilderMock: IThreeDSURLBuilder {
         urlReceivedArguments = arguments
         urlReceivedInvocations.append(arguments)
         return urlReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension ThreeDSURLBuilderMock {
+    func fullReset() {
+        urlCallsCount = 0
+        urlReceivedArguments = nil
+        urlReceivedInvocations = []
     }
 }
