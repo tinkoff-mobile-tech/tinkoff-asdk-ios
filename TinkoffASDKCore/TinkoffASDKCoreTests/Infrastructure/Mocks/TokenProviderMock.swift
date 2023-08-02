@@ -9,25 +9,34 @@ import Foundation
 import TinkoffASDKCore
 
 final class TokenProviderMock: ITokenProvider {
-    typealias ProvideTokenCompletion = (Result<String, Error>) -> Void
 
-    var invokedProvideToken = false
-    var invokedProvideTokenCount = 0
-    var invokedProvideTokenParameters: [String: String]?
-    var invokedProvideTokenParametersList = [[String: String]]()
+    // MARK: - provideToken
 
-    var provideTokenMethodStub = { (parameters: [String: String], completion: @escaping ProvideTokenCompletion) in
-        completion(.success("testToken"))
+    typealias ProvideTokenArguments = (parameters: [String: String], completion: (Result<String, Error>) -> Void)
+
+    var provideTokenCallsCount = 0
+    var provideTokenReceivedArguments: ProvideTokenArguments?
+    var provideTokenReceivedInvocations: [ProvideTokenArguments?] = []
+    var provideTokenCompletionClosureInput: Result<String, Error>? = .success("testToken")
+
+    func provideToken(forRequestParameters parameters: [String: String], completion: @escaping (Result<String, Error>) -> Void) {
+        provideTokenCallsCount += 1
+        let arguments = (parameters, completion)
+        provideTokenReceivedArguments = arguments
+        provideTokenReceivedInvocations.append(arguments)
+        if let provideTokenCompletionClosureInput = provideTokenCompletionClosureInput {
+            completion(provideTokenCompletionClosureInput)
+        }
     }
+}
 
-    func provideToken(
-        forRequestParameters parameters: [String: String],
-        completion: @escaping (Result<String, Error>) -> Void
-    ) {
-        invokedProvideToken = true
-        invokedProvideTokenCount += 1
-        invokedProvideTokenParameters = parameters
-        invokedProvideTokenParametersList.append(parameters)
-        provideTokenMethodStub(parameters, completion)
+// MARK: - Resets
+
+extension TokenProviderMock {
+    func fullReset() {
+        provideTokenCallsCount = 0
+        provideTokenReceivedArguments = nil
+        provideTokenReceivedInvocations = []
+        provideTokenCompletionClosureInput = nil
     }
 }

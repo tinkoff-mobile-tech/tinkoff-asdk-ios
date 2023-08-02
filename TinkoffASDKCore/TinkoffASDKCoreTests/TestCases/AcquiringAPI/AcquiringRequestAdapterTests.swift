@@ -80,7 +80,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         )
 
         let stubbedToken = "testToken"
-        tokenProvider.provideTokenMethodStub = { _, completion in completion(.success(stubbedToken)) }
+        tokenProvider.provideTokenCompletionClosureInput = .success(stubbedToken)
 
         // when
         let result = adaptWaiting(request: request)
@@ -102,9 +102,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         let stubbedTerminalKey = "testKey"
         let stubbedToken = "token"
         terminalKeyProvider.stubbedValue = stubbedTerminalKey
-        tokenProvider.provideTokenMethodStub = { _, completion in
-            completion(.success(stubbedToken))
-        }
+        tokenProvider.provideTokenCompletionClosureInput = .success(stubbedToken)
 
         let request = AcquiringRequestStub(parameters: initialParameters, tokenFormationStrategy: .includeAll())
 
@@ -144,18 +142,14 @@ final class AcquiringRequestAdapterTests: XCTestCase {
             .mapValues { String(describing: $0) }
             .merging([Constants.Keys.terminalKey: stubbedTerminalKey]) { $1 }
 
-        XCTAssertEqual(tokenProvider.invokedProvideTokenParameters, expectedParameters)
+        XCTAssertEqual(tokenProvider.provideTokenReceivedArguments?.parameters, expectedParameters)
     }
 
     func test_adapt_withFailedTokenProviding_shouldCallbackError() {
         // given
         let request = AcquiringRequestStub(parameters: ["some": 4], tokenFormationStrategy: .includeAll())
         let tokenProvidingError = ErrorStub()
-        tokenProvider.provideTokenMethodStub = { _, completion in
-            DispatchQueue.global().async {
-                completion(.failure(tokenProvidingError))
-            }
-        }
+        tokenProvider.provideTokenCompletionClosureInput = .failure(tokenProvidingError)
 
         // when
         let result = adaptWaiting(request: request)
