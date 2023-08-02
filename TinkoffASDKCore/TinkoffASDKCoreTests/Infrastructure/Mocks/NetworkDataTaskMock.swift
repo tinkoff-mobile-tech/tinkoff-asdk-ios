@@ -9,19 +9,30 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class NetworkDataTaskMock: INetworkDataTask {
-    var invokedResume = false
-    var invokedResumeCount = 0
+
+    // MARK: - resume
+
+    var resumeCallsCount = 0
 
     func resume() {
-        invokedResume = true
-        invokedResumeCount += 1
+        resumeCallsCount += 1
     }
 
-    var invokedCancel = false
-    var invokedCancelCount = 0
+    // MARK: - cancel
+
+    var cancelCallsCount = 0
 
     func cancel() {
-        invokedCancel = true
-        invokedCancelCount += 1
+        cancelCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension NetworkDataTaskMock {
+    func fullReset() {
+        resumeCallsCount = 0
+
+        cancelCallsCount = 0
     }
 }

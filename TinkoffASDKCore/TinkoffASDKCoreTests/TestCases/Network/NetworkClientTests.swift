@@ -48,8 +48,8 @@ final class NetworkClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.dataTaskCallsCount, 1)
-        XCTAssertEqual(session.dataTaskReturnValue.invokedResumeCount, 1)
-        XCTAssertFalse(session.dataTaskReturnValue.invokedCancel)
+        XCTAssertEqual(session.dataTaskReturnValue.resumeCallsCount, 1)
+        XCTAssertEqual(session.dataTaskReturnValue.cancelCallsCount, 0)
         XCTAssertEqual(statusCodeValidator.invokedValidateCount, 1)
         XCTAssertNoThrow(try result.get())
     }
