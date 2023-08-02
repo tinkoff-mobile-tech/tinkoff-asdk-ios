@@ -9,13 +9,11 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class StringProviderMock: IStringProvider {
-    var invokedValueGetter = false
-    var invokedValueGetterCount = 0
-    var stubbedValue: String = "doesNotMatter"
 
     var value: String {
-        invokedValueGetter = true
-        invokedValueGetterCount += 1
-        return stubbedValue
+        get { return underlyingValue }
+        set(value) { underlyingValue = value }
     }
+
+    var underlyingValue = "doesNotMatter"
 }

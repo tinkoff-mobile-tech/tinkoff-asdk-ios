@@ -57,7 +57,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         )
 
         let stubbedTerminalKey = "testKey"
-        terminalKeyProvider.stubbedValue = stubbedTerminalKey
+        terminalKeyProvider.underlyingValue = stubbedTerminalKey
 
         // when
         let result = adaptWaiting(request: request)
@@ -101,7 +101,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
 
         let stubbedTerminalKey = "testKey"
         let stubbedToken = "token"
-        terminalKeyProvider.stubbedValue = stubbedTerminalKey
+        terminalKeyProvider.underlyingValue = stubbedTerminalKey
         tokenProvider.provideTokenCompletionClosureInput = .success(stubbedToken)
 
         let request = AcquiringRequestStub(parameters: initialParameters, tokenFormationStrategy: .includeAll())
@@ -132,7 +132,7 @@ final class AcquiringRequestAdapterTests: XCTestCase {
         let request = AcquiringRequestStub(parameters: requestParameters, tokenFormationStrategy: .includeAll(except: "object"))
 
         let stubbedTerminalKey = "key"
-        terminalKeyProvider.stubbedValue = stubbedTerminalKey
+        terminalKeyProvider.underlyingValue = stubbedTerminalKey
 
         // when
         _ = adaptWaiting(request: request)
