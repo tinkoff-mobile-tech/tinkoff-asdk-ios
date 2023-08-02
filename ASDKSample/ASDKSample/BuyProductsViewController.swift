@@ -202,7 +202,8 @@ class BuyProductsViewController: UIViewController {
             agentData: nil,
             supplierInfo: nil,
             customer: nil,
-            customerInn: nil
+            customerInn: nil,
+            ffdVersion: .version105
         )
 
         return paymentData

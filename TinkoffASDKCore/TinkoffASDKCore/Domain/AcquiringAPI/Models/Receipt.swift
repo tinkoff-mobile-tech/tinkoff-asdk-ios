@@ -19,6 +19,7 @@ public struct Receipt: Codable {
         case supplierInfo = "SupplierInfo"
         case customer = "Customer"
         case customerInn = "CustomerInn"
+        case ffdVersion = "FfdVersion"
     }
 
     /// Код магазина
@@ -41,6 +42,8 @@ public struct Receipt: Codable {
     public var customer: String?
     /// Инн покупателя. Если ИНН иностранного гражданина, необходимо указать 00000000000
     public var customerInn: String?
+    /// Версия ФФД.
+    public var ffdVersion: FfdVersion?
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -55,6 +58,7 @@ public struct Receipt: Codable {
         supplierInfo = try? container.decode(SupplierInfo.self, forKey: .supplierInfo)
         customer = try? container.decode(String.self, forKey: .customer)
         customerInn = try? container.decode(String.self, forKey: .customerInn)
+        ffdVersion = try? container.decode(FfdVersion.self, forKey: .ffdVersion)
     }
 
     public init(
@@ -66,7 +70,8 @@ public struct Receipt: Codable {
         agentData: AgentData?,
         supplierInfo: SupplierInfo?,
         customer: String?,
-        customerInn: String?
+        customerInn: String?,
+        ffdVersion: FfdVersion?
     ) {
         self.shopCode = shopCode
         self.email = email
@@ -77,6 +82,7 @@ public struct Receipt: Codable {
         self.supplierInfo = supplierInfo
         self.customer = customer
         self.customerInn = customerInn
+        self.ffdVersion = ffdVersion
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -90,6 +96,7 @@ public struct Receipt: Codable {
         if supplierInfo != nil { try? container.encode(supplierInfo, forKey: .supplierInfo) }
         if customer != nil { try? container.encode(customer, forKey: .customer) }
         if customerInn != nil { try? container.encode(customerInn, forKey: .customerInn) }
+        if ffdVersion != nil { try? container.encode(ffdVersion, forKey: .ffdVersion) }
     }
 }
 
@@ -104,6 +111,7 @@ extension Receipt: Equatable {
             lhs.agentData == rhs.agentData &&
             lhs.supplierInfo == rhs.supplierInfo &&
             lhs.customer == rhs.customer &&
-            lhs.customerInn == rhs.customerInn
+            lhs.customerInn == rhs.customerInn &&
+            lhs.ffdVersion == rhs.ffdVersion
     }
 }
