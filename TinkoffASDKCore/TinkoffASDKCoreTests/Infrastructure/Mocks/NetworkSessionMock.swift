@@ -9,30 +9,40 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class NetworkSessionMock: INetworkSession {
-    var invokedDataTask = false
-    var invokedDataTaskCount = 0
-    var invokedDataTaskParameters: (request: URLRequest, Void)?
-    var invokedDataTaskParametersList = [(request: URLRequest, Void)]()
-    var stubbedDataTaskCompletionResult: (Data?, URLResponse?, Error?) = (Data(), HTTPURLResponse(), nil)
-    var stubbedDataTaskResult = NetworkDataTaskMock()
 
-    func dataTask(
-        with request: URLRequest,
-        completion: @escaping (Data?, URLResponse?, Error?) -> Void
-    ) -> INetworkDataTask {
-        invokedDataTask = true
-        invokedDataTaskCount += 1
-        invokedDataTaskParameters = (request, ())
-        invokedDataTaskParametersList.append((request, ()))
+    // MARK: - dataTask
 
-        DispatchQueue.global().async { [stubbedDataTaskCompletionResult] in
+    typealias DataTaskArguments = (request: URLRequest, completion: (Data?, URLResponse?, Error?) -> Void)
+
+    var dataTaskCallsCount = 0
+    var dataTaskReceivedArguments: DataTaskArguments?
+    var dataTaskReceivedInvocations: [DataTaskArguments?] = []
+    var dataTaskCompletionClosureInput: (Data?, URLResponse?, Error?)? = (Data(), HTTPURLResponse(), nil)
+    var dataTaskReturnValue = NetworkDataTaskMock()
+
+    func dataTask(with request: URLRequest, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> INetworkDataTask {
+        dataTaskCallsCount += 1
+        let arguments = (request, completion)
+        dataTaskReceivedArguments = arguments
+        dataTaskReceivedInvocations.append(arguments)
+        if let dataTaskCompletionClosureInput = dataTaskCompletionClosureInput {
             completion(
-                stubbedDataTaskCompletionResult.0,
-                stubbedDataTaskCompletionResult.1,
-                stubbedDataTaskCompletionResult.2
+                dataTaskCompletionClosureInput.0,
+                dataTaskCompletionClosureInput.1,
+                dataTaskCompletionClosureInput.2
             )
         }
+        return dataTaskReturnValue
+    }
+}
 
-        return stubbedDataTaskResult
+// MARK: - Resets
+
+extension NetworkSessionMock {
+    func fullReset() {
+        dataTaskCallsCount = 0
+        dataTaskReceivedArguments = nil
+        dataTaskReceivedInvocations = []
+        dataTaskCompletionClosureInput = nil
     }
 }
