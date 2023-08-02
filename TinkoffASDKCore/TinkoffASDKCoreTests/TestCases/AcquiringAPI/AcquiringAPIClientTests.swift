@@ -45,7 +45,7 @@ final class AcquiringAPIClientTests: XCTestCase {
 
         // then
         XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
-        XCTAssertEqual(networkClient.invokedPerformRequestCount, 1)
+        XCTAssertEqual(networkClient.performRequestCallsCount, 1)
         XCTAssertEqual(decoder.invokedDecodeCount, 1)
         XCTAssertNoThrow(try result.get())
     }
@@ -65,7 +65,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         // then
         let requestPassedToAdapter = try XCTUnwrap(requestAdapter.invokedAdaptParameter as? AcquiringRequestStub)
         XCTAssertEqual(requestPassedToAdapter, initialRequest)
-        let requestPassedToNetworkClient = try XCTUnwrap(networkClient.invokedPerformRequestParameter as? AcquiringRequestStub)
+        let requestPassedToNetworkClient = try XCTUnwrap(networkClient.performRequestReceivedArguments?.request as? AcquiringRequestStub)
         XCTAssertEqual(requestPassedToNetworkClient, adaptedRequest)
     }
 
@@ -80,23 +80,20 @@ final class AcquiringAPIClientTests: XCTestCase {
 
         // then
         XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
-        XCTAssertFalse(networkClient.invokedPerformRequest)
+        XCTAssertEqual(networkClient.performRequestCallsCount, 0)
 
         XCTAssertThrowsError(try result.get())
     }
 
     func test_performRequest_withFailedNetworkResponse_shouldCallbackError() {
         // given
-        networkClient.performRequestMethodStub = { _, completion in
-            completion(.failure(.emptyResponse))
-            return CancellableMock()
-        }
+        networkClient.performRequestCompletionClosureInput = .failure(.emptyResponse)
 
         // when
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(networkClient.invokedPerformRequestCount, 1)
+        XCTAssertEqual(networkClient.performRequestCallsCount, 1)
         XCTAssertThrowsError(try result.get())
     }
 
@@ -140,7 +137,7 @@ final class AcquiringAPIClientTests: XCTestCase {
 
         // then
         XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
-        XCTAssertFalse(networkClient.invokedPerformRequest)
+        XCTAssertEqual(networkClient.performRequestCallsCount, 0)
     }
 
     func test_performRequest_shouldNotCallback_whenCalledCancelOnNetworkPerformingStep() {
@@ -149,12 +146,11 @@ final class AcquiringAPIClientTests: XCTestCase {
         let networkingQueue = DispatchQueue(label: #function, attributes: .initiallyInactive)
         let expectation = expectation(description: #function)
 
-        networkClient.performRequestMethodStub = { _, completion in
+        networkClient.performRequestCompletionClosure = { completion in
             networkingQueue.async {
                 completion(.success(.stub()))
                 expectation.fulfill()
             }
-            return CancellableMock()
         }
 
         requestAdapter.adaptMethodStub = { request, completion in
@@ -172,7 +168,7 @@ final class AcquiringAPIClientTests: XCTestCase {
 
         // then
         XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
-        XCTAssertEqual(networkClient.invokedPerformRequestCount, 1)
+        XCTAssertEqual(networkClient.performRequestCallsCount, 1)
         XCTAssertFalse(decoder.invokedDecode)
     }
 
