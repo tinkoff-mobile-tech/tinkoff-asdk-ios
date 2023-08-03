@@ -20,32 +20,48 @@
 import Foundation
 
 public struct FinishAuthorizeData {
-    /// Номер платежа, полученного после инициализации платежа
-    let paymentId: String
     let paymentSource: PaymentSourceData
-    let infoEmail: String?
-    let sendEmail: Bool?
-    let threeDSVersion: String?
-    let source: String?
-    let route: String?
-    public var deviceInfo: ThreeDSDeviceInfo?
+
+    /// Уникальный идентификатор транзакции в системе Тинькофф Кассы
+    public let paymentId: String
+
+    /// Email для отправки информации об оплате. Обязателен при передаче SendEmail
+    public let infoEmail: String?
+
+    /// true – отправлять клиенту информацию на почту об оплате
+    /// false – не отправлять
+    public let sendEmail: Bool?
+
+    /// Сумма в копейках
+    /// number <= 10 characters
+    public let amount: Int?
+
+    /// JSON объект, содержащий дополнительные параметры в виде ключ:значение.
+    /// Данные параметры будут переданы на страницу оплаты (в случае ее кастомизации).
+    /// Максимальная длина для каждого передаваемого параметра:
+    ///
+    /// Ключ - 20 знаков
+    /// Значение - 100 знаков.
+    /// Максимальное количество пар ключ:значение не может превышать 20
+    public let data: FinishAuthorizeDataEnum?
+
+    /// Канал устройства. Поддерживается следующий канал устройства:
+    /// 01 = Application (APP)
+    /// 02 = Browser (BRW)
+    public var deviceChannel: String? { DeviceChannel.create(from: data) }
 
     public init(
         paymentId: String,
         paymentSource: PaymentSourceData,
-        infoEmail: String? = nil,
-        deviceInfo: ThreeDSDeviceInfo? = nil,
-        threeDSVersion: String? = nil,
-        source: String? = nil,
-        route: String? = nil
+        infoEmail: String?,
+        amount: Int? = nil,
+        data: FinishAuthorizeDataEnum?
     ) {
         self.paymentId = paymentId
         self.paymentSource = paymentSource
         self.infoEmail = infoEmail
         sendEmail = infoEmail != nil
-        self.deviceInfo = deviceInfo
-        self.threeDSVersion = threeDSVersion
-        self.source = source
-        self.route = route
+        self.amount = amount
+        self.data = data
     }
 }

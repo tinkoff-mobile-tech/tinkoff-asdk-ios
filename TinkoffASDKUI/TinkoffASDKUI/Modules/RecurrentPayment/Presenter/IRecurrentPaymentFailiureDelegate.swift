@@ -5,6 +5,8 @@
 //  Created by Aleksandr Pravosudov on 07.03.2023.
 //
 
+import TinkoffASDKCore
+
 public typealias PaymentId = String
 
 /// Делегат, обрабатывающий ошибку списания средств при вызове `v2/Charge`
@@ -16,5 +18,5 @@ public protocol IRecurrentPaymentFailiureDelegate: AnyObject {
     /// - Parameters:
     ///   - additionalData: содержаться два доп. поля failMapiSessionId c failedPaymentId и recurringType
     ///   - completion: после успешного выполнения запроса, необходимо передать в completion новый paymentId
-    func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void)
+    func recurrentPaymentNeedRepeatInit(additionalInitData: AdditionalData, completion: @escaping (Result<PaymentId, Error>) -> Void)
 }

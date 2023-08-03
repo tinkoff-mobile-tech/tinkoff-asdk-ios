@@ -30,7 +30,7 @@ protocol ITDSController: AnyObject {
     /// 1. Запускает App Based Flow проверку
     func startAppBasedFlow(
         check3dsPayload: Check3DSVersionPayload,
-        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+        completion: @escaping (Result<ThreeDsDataSDK, Error>) -> Void
     )
 
     /// 2. Начинает испытание на стороне 3дс-сдк
@@ -91,7 +91,7 @@ final class TDSController: ITDSController {
     /// Запускает App Based Flow проверку
     func startAppBasedFlow(
         check3dsPayload: Check3DSVersionPayload,
-        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+        completion: @escaping (Result<ThreeDsDataSDK, Error>) -> Void
     ) {
         guard let paymentSystem = check3dsPayload.paymentSystem
         else {
@@ -137,7 +137,7 @@ extension TDSController {
     private func getDeviceInfo(
         paymentSystem: String,
         messageVersion: String,
-        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+        completion: @escaping (Result<ThreeDsDataSDK, Error>) -> Void
     ) {
         tdsCertsManager.checkAndUpdateCertsIfNeeded(for: paymentSystem) { [weak self] result in
             guard let self = self else { return }
@@ -167,26 +167,18 @@ extension TDSController {
     private func gatherThreeDSDeviceInfo(
         messageVersion: String,
         authParams: AuthenticationRequestParameters
-    ) -> ThreeDSDeviceInfo {
-        let deviceInfoFromProvider = threeDSDeviceInfoProvider.deviceInfo
-        return ThreeDSDeviceInfo(
-            threeDSCompInd: deviceInfoFromProvider.threeDSCompInd,
-            javaEnabled: deviceInfoFromProvider.javaEnabled,
-            colorDepth: deviceInfoFromProvider.colorDepth,
-            language: deviceInfoFromProvider.language,
-            timezone: deviceInfoFromProvider.timezone,
-            screenHeight: deviceInfoFromProvider.screenHeight,
-            screenWidth: deviceInfoFromProvider.screenWidth,
-            cresCallbackUrl: deviceInfoFromProvider.cresCallbackUrl,
+    ) -> ThreeDsDataSDK {
+
+        let sdkData = threeDSDeviceInfoProvider.createThreeDsDataSDK(
             sdkAppID: authParams.getSDKAppID(),
             sdkEphemPubKey: authParams.getSDKEphemeralPublicKey(),
             sdkReferenceNumber: authParams.getSDKReferenceNumber(),
             sdkTransID: authParams.getSDKTransactionID(),
             sdkMaxTimeout: tdsTimeoutResolver.mapiValue,
-            sdkEncData: authParams.getDeviceData(),
-            sdkInterface: deviceInfoFromProvider.sdkInterface,
-            sdkUiType: deviceInfoFromProvider.sdkUiType
+            sdkEncData: authParams.getDeviceData()
         )
+
+        return sdkData
     }
 
     /// Запускаем app based flow сценарий

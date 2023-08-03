@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
 public protocol ChargePaymentControllerDelegate: PaymentControllerDelegate {
     /// Вызывается, если запрос `Charge` вернул 104 ошибку.
@@ -21,7 +22,7 @@ public protocol ChargePaymentControllerDelegate: PaymentControllerDelegate {
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
         failedPaymentProcess: IPaymentProcess,
-        additionalData: [String: String],
+        additionalInitData: AdditionalData?,
         error: Error
     )
 }

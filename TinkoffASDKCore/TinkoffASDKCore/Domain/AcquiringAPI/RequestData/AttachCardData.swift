@@ -24,20 +24,26 @@ public struct AttachCardData {
     let expDate: String
     let cvv: String
     let requestKey: String
-    let deviceData: ThreeDSDeviceInfo?
+    let data: FinishAuthorizeDataEnum?
 
     public init(
         cardNumber: String,
         expDate: String,
         cvv: String,
         requestKey: String,
-        deviceData: ThreeDSDeviceInfo? = nil
+        data: FinishAuthorizeDataWrapper<ThreeDsDataBrowser>?
     ) {
         self.cardNumber = cardNumber
         self.expDate = expDate
         self.cvv = cvv
         self.requestKey = requestKey
-        self.deviceData = deviceData
+
+        if let data = data {
+            // В данный момент на МАПИ поддерживается только 3ds Browser Flow
+            self.data = .threeDsBrowser(data)
+        } else {
+            self.data = nil
+        }
     }
 
     func cardData() -> String {

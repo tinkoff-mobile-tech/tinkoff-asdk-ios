@@ -22,23 +22,23 @@ extension PaymentFlow {
             }
         }()
 
-        return mergePaymentDataIfNeeded([.primaryMethodKey: methodName])
+        return mergePaymentDataIfNeeded(initData: [.primaryMethodKey: methodName])
     }
 
     func withSavedCardAnalytics() -> PaymentFlow {
-        mergePaymentDataIfNeeded([.chosenMethodKey: .savedCard])
+        mergePaymentDataIfNeeded(initData: [.chosenMethodKey: String.savedCard])
     }
 
     func withNewCardAnalytics() -> PaymentFlow {
-        mergePaymentDataIfNeeded([.chosenMethodKey: .newCard])
+        mergePaymentDataIfNeeded(initData: [.chosenMethodKey: String.newCard])
     }
 
     func withTinkoffPayAnalytics() -> PaymentFlow {
-        mergePaymentDataIfNeeded([.chosenMethodKey: .tinkoffPay])
+        mergePaymentDataIfNeeded(initData: [.chosenMethodKey: String.tinkoffPay])
     }
 
     func withSBPAnalytics() -> PaymentFlow {
-        mergePaymentDataIfNeeded([.chosenMethodKey: .sbp])
+        mergePaymentDataIfNeeded(initData: [.chosenMethodKey: String.sbp])
     }
 }
 

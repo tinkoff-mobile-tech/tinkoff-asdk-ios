@@ -65,8 +65,8 @@ private extension HTTPParameters {
             parameters[Constants.Keys.cardData] = encryptedCardData
         }
 
-        if let deviceData = try? requestData.deviceData?.encode2JSONObject() {
-            parameters[Constants.Keys.data] = deviceData
+        if let data = try? requestData.data.encode2JSONObject() {
+            parameters[Constants.Keys.data] = data
         }
 
         return parameters

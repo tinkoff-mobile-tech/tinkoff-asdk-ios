@@ -73,9 +73,17 @@ private extension HTTPParameters {
             parameters[Constants.Keys.ipAddress] = ipAddress
         }
 
-        let deviceInfoParameters = try? requestData.deviceInfo?.encode2JSONObject()
+        if let deviceChannel = requestData.deviceChannel {
+            parameters[Constants.Keys.deviceChannel] = deviceChannel
+        }
 
-        parameters[Constants.Keys.data] = (deviceInfoParameters ?? [:])
+        if let amount = requestData.amount {
+            parameters[Constants.Keys.amount] = amount
+        }
+
+        let dataParameters = (try? requestData.data?.encode2JSONObject()) ?? [:]
+
+        parameters[Constants.Keys.data] = dataParameters
             .merging(environmentParametersProvider.environmentParameters) { $1 }
 
         switch requestData.paymentSource {

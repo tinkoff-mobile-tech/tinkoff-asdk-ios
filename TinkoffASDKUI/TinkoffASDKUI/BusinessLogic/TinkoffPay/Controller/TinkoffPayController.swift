@@ -71,7 +71,7 @@ final class TinkoffPayController: ITinkoffPayController {
     func performPayment(paymentFlow: PaymentFlow, method: TinkoffPayMethod) -> Cancellable {
         let process = Process()
 
-        let paymentFlow = paymentFlow.mergePaymentDataIfNeeded(.tinkoffPayData)
+        let paymentFlow = paymentFlow.mergePaymentDataIfNeeded(initData: .tinkoffPayData, finishData: nil)
 
         switch paymentFlow {
         case let .full(paymentOptions):

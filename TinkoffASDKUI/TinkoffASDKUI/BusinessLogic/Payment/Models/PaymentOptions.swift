@@ -29,23 +29,38 @@ public struct PaymentOptions: Equatable {
     ///
     /// Используется только для оплаты через `Tinkoff Pay`
     public var paymentCallbackURL: PaymentCallbackURL?
+
+    /// DATA - дополнительные поля для отправки на запрос `/Init`
+    ///
     /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
     ///
     /// `Key: String` – 20 знаков,
-    /// `Value: String` – 100 знаков.
+    /// `Value: String || Encodable` – 100 знаков.
     /// - Warning: Максимальное количество пар параметров не может превышать 20.
     /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
-    public let paymentData: [String: String]?
+    public let paymentInitData: AdditionalData?
+
+    /// DATA - дополнительные поля для отправки на запрос `/FinishAuthorize`
+    ///
+    /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
+    ///
+    /// `Key: String` – 20 знаков,
+    /// `Value: String || Encodable` – 100 знаков.
+    /// - Warning: Максимальное количество пар параметров не может превышать 20.
+    /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
+    public let paymentFinishData: AdditionalData?
 
     public init(
         orderOptions: OrderOptions,
         customerOptions: CustomerOptions? = nil,
         paymentCallbackURL: PaymentCallbackURL? = nil,
-        paymentData: [String: String]? = nil
+        paymentInitData: AdditionalData? = nil,
+        paymentFinishData: AdditionalData? = nil
     ) {
         self.orderOptions = orderOptions
         self.customerOptions = customerOptions
         self.paymentCallbackURL = paymentCallbackURL
-        self.paymentData = paymentData
+        self.paymentInitData = paymentInitData
+        self.paymentFinishData = paymentFinishData
     }
 }

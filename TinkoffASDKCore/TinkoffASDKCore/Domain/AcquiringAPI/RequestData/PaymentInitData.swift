@@ -21,39 +21,6 @@ import Foundation
 
 /// Инициализация платежа, подробнее: [Init - создание заказа на оплату](https://oplata.tinkoff.ru/develop/api/payments/init-request/)
 public struct PaymentInitData: Encodable, Equatable {
-    private enum CodingKeys: CodingKey {
-        case amount
-        case orderId
-        case customerKey
-        case description
-        case payType
-        case savingAsParentPayment
-        case paymentFormData
-        case receipt
-        case shops
-        case receipts
-        case redirectDueDate
-        case successURL
-        case failURL
-
-        var stringValue: String {
-            switch self {
-            case .amount: return Constants.Keys.amount
-            case .orderId: return Constants.Keys.orderId
-            case .customerKey: return Constants.Keys.customerKey
-            case .description: return Constants.Keys.description
-            case .payType: return Constants.Keys.payType
-            case .savingAsParentPayment: return Constants.Keys.savingAsParentPayment
-            case .paymentFormData: return Constants.Keys.data
-            case .receipt: return Constants.Keys.receipt
-            case .shops: return Constants.Keys.shops
-            case .receipts: return Constants.Keys.receipts
-            case .redirectDueDate: return Constants.Keys.redirectDueDate
-            case .successURL: return Constants.Keys.successURL
-            case .failURL: return Constants.Keys.failURL
-            }
-        }
-    }
 
     /// Сумма в копейках. Например, сумма 3руб. 12коп. это число `312`.
     /// Параметр должен быть равен сумме всех товаров в чеке (параметров "Amount", переданных в объекте Items)
@@ -76,9 +43,9 @@ public struct PaymentInitData: Encodable, Equatable {
 
     /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`.
     /// `Key: String` – 20 знаков,
-    /// `Value: String` – 100 знаков.
+    /// `Value: String || Encodable` – 100 знаков.
     /// Максимальное количество пар параметров не может превышать 20.
-    public var paymentFormData: [String: String]?
+    public var additionalData: AdditionalData?
 
     /// Данные чека
     public var receipt: Receipt?
@@ -93,6 +60,44 @@ public struct PaymentInitData: Encodable, Equatable {
     public var successURL: String?
     /// Страница ошибки
     public var failURL: String?
+
+    // MARK: - CodingKeys
+
+    private enum CodingKeys: CodingKey, CaseIterable {
+        case amount
+        case orderId
+        case customerKey
+        case description
+        case payType
+        case savingAsParentPayment
+        case additionalData
+        case receipt
+        case shops
+        case receipts
+        case redirectDueDate
+        case successURL
+        case failURL
+
+        var stringValue: String {
+            switch self {
+            case .amount: return Constants.Keys.amount
+            case .orderId: return Constants.Keys.orderId
+            case .customerKey: return Constants.Keys.customerKey
+            case .description: return Constants.Keys.description
+            case .payType: return Constants.Keys.payType
+            case .savingAsParentPayment: return Constants.Keys.savingAsParentPayment
+            case .additionalData: return Constants.Keys.data
+            case .receipt: return Constants.Keys.receipt
+            case .shops: return Constants.Keys.shops
+            case .receipts: return Constants.Keys.receipts
+            case .redirectDueDate: return Constants.Keys.redirectDueDate
+            case .successURL: return Constants.Keys.successURL
+            case .failURL: return Constants.Keys.failURL
+            }
+        }
+    }
+
+    // MARK: - Init
 
     public init(
         amount: Int64,
@@ -133,34 +138,20 @@ public struct PaymentInitData: Encodable, Equatable {
         )
     }
 
-    public mutating func addPaymentData(_ additionalData: [String: String]) {
-        var updatedData: [String: String] = [:]
-
-        paymentFormData?.forEach { item in
-            updatedData.updateValue(item.value, forKey: item.key)
-        }
-
-        additionalData.forEach { item in
-            updatedData.updateValue(item.value, forKey: item.key)
-        }
-
-        paymentFormData = updatedData
-    }
-
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(amount, forKey: .amount)
         try container.encode(orderId, forKey: .orderId)
         try container.encodeIfPresent(customerKey, forKey: .customerKey)
         try container.encodeIfPresent(payType?.rawValue, forKey: .payType)
-        if description != nil { try? container.encode(description, forKey: .description) }
-        if redirectDueDate != nil { try? container.encode(redirectDueDate, forKey: .redirectDueDate) }
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(redirectDueDate, forKey: .redirectDueDate)
         if let value = savingAsParentPayment, value == true { try container.encode("Y", forKey: .savingAsParentPayment) }
-        if receipt != nil { try? container.encode(receipt, forKey: .receipt) }
-        if shops != nil { try? container.encode(shops, forKey: .shops) }
-        if receipts != nil { try? container.encode(receipts, forKey: .receipts) }
-        if paymentFormData != nil { try? container.encode(paymentFormData, forKey: .paymentFormData) }
-        if successURL != nil { try? container.encode(successURL, forKey: .successURL) }
-        if failURL != nil { try? container.encode(failURL, forKey: .failURL) }
+        try container.encodeIfPresent(receipt, forKey: .receipt)
+        try container.encodeIfPresent(shops, forKey: .shops)
+        try container.encodeIfPresent(receipts, forKey: .receipts)
+        try container.encodeIfPresent(additionalData, forKey: .additionalData)
+        try container.encodeIfPresent(successURL, forKey: .successURL)
+        try container.encodeIfPresent(failURL, forKey: .failURL)
     }
 }

@@ -143,6 +143,14 @@ public final class AcquiringSdk: NSObject, IDataLoader {
         data: PaymentInitData,
         completion: @escaping (_ result: Result<InitPayload, Error>) -> Void
     ) -> Cancellable {
+
+        if let additionalData = data.additionalData {
+            if case let .failure(error) = FinishAuthorizeDataEnum.dictionary(additionalData).validate() {
+                completion(.failure(error))
+                return EmptyCancellable()
+            }
+        }
+
         let request = acquiringRequests.initRequest(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
@@ -159,6 +167,10 @@ public final class AcquiringSdk: NSObject, IDataLoader {
         data: FinishAuthorizeData,
         completion: @escaping (_ result: Result<FinishAuthorizePayload, Error>) -> Void
     ) -> Cancellable {
+        if case let .failure(error) = data.data?.validate() {
+            completion(.failure(error))
+            return EmptyCancellable()
+        }
         let request = acquiringRequests.finishAuthorize(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }
@@ -277,6 +289,10 @@ public final class AcquiringSdk: NSObject, IDataLoader {
         data: AttachCardData,
         completion: @escaping (_ result: Result<AttachCardPayload, Error>) -> Void
     ) -> Cancellable {
+        if case let .failure(error) = data.data?.validate() {
+            completion(.failure(error))
+            return EmptyCancellable()
+        }
         let request = acquiringRequests.attachCard(data: data)
         return acquiringAPI.performRequest(request, completion: completion)
     }

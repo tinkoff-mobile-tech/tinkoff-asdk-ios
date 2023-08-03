@@ -43,6 +43,7 @@ enum Constants {
         static let sendEmail = "SendEmail"
         static let infoEmail = "InfoEmail"
         static let ipAddress = "IP"
+        static let deviceChannel = "deviceChannel"
         static let cardNumber = "PAN"
         static let cardExpDate = "ExpDate"
         static let cardCVV = "CVV"

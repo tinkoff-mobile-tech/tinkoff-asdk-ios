@@ -34,7 +34,7 @@ final class RecurrentPaymentPresenter: IRecurrentPaymentViewOutput {
 
     private var cellTypes: [RecurrentPaymentCellType] = []
     private var moduleResult: PaymentResult = .cancelled()
-    private var additionalData: [String: String] = [:]
+    private var additionalInitData: AdditionalData = .empty()
 
     // MARK: Initialization
 
@@ -148,12 +148,12 @@ extension RecurrentPaymentPresenter: ChargePaymentControllerDelegate {
         _ controller: IPaymentController,
         shouldRepeatWithRebillId rebillId: String,
         failedPaymentProcess: IPaymentProcess,
-        additionalData: [String: String],
+        additionalInitData: AdditionalData?,
         error: Error
     ) {
         moduleResult = .failed(error)
-        self.additionalData = additionalData
-        paymentFlow = paymentFlow.mergePaymentDataIfNeeded(additionalData)
+        self.additionalInitData = additionalInitData ?? .empty()
+        paymentFlow = paymentFlow.mergePaymentDataIfNeeded(initData: additionalInitData?.data)
         getSavedCard(with: rebillId, error: error)
     }
 }
@@ -216,7 +216,7 @@ extension RecurrentPaymentPresenter {
                 paymentSource: .savedCard(cardId: cardId, cvv: cvc)
             )
         case let .finish(paymentOptions):
-            failureDelegate?.recurrentPaymentNeedRepeatInit(additionalData: additionalData) { [weak self] result in
+            failureDelegate?.recurrentPaymentNeedRepeatInit(additionalInitData: additionalInitData) { [weak self] result in
                 guard let self = self else { return }
 
                 self.dispatchQueueType.performOnMain {
