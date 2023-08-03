@@ -8,25 +8,24 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-public final class AppBasedSdkUiProviderMock: IAppBasedSdkUiProvider {
-    public init() {}
+final class AppBasedSdkUiProviderMock: IAppBasedSdkUiProvider {
 
     // MARK: - sdkInterface
 
-    public var sdkInterfaceCallsCount = 0
-    public var sdkInterfaceReturnValue: TdsSdkInterface!
+    var sdkInterfaceCallsCount = 0
+    var sdkInterfaceReturnValue: TdsSdkInterface!
 
-    public func sdkInterface() -> TdsSdkInterface {
+    func sdkInterface() -> TdsSdkInterface {
         sdkInterfaceCallsCount += 1
         return sdkInterfaceReturnValue
     }
 
     // MARK: - sdkUiTypes
 
-    public var sdkUiTypesCallsCount = 0
-    public var sdkUiTypesReturnValue: [TdsSdkUiType]!
+    var sdkUiTypesCallsCount = 0
+    var sdkUiTypesReturnValue: [TdsSdkUiType]!
 
-    public func sdkUiTypes() -> [TdsSdkUiType] {
+    func sdkUiTypes() -> [TdsSdkUiType] {
         sdkUiTypesCallsCount += 1
         return sdkUiTypesReturnValue
     }
