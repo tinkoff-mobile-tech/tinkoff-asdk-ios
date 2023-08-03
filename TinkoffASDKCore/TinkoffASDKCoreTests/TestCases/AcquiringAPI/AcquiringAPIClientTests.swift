@@ -44,7 +44,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         let result = performRequestWaiting(request)
 
         // then
-        XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
+        XCTAssertEqual(requestAdapter.adaptCallsCount, 1)
         XCTAssertEqual(networkClient.performRequestCallsCount, 1)
         XCTAssertEqual(decoder.invokedDecodeCount, 1)
         XCTAssertNoThrow(try result.get())
@@ -55,15 +55,13 @@ final class AcquiringAPIClientTests: XCTestCase {
         let initialRequest = AcquiringRequestStub()
         let adaptedRequest = AcquiringRequestStub(headers: ["some": "anotherValue"])
 
-        requestAdapter.adaptMethodStub = { _, completion in
-            completion(.success(adaptedRequest))
-        }
+        requestAdapter.adaptCompletionClosureInput = .success(adaptedRequest)
 
         // when
         _ = performRequestWaiting(initialRequest)
 
         // then
-        let requestPassedToAdapter = try XCTUnwrap(requestAdapter.invokedAdaptParameter as? AcquiringRequestStub)
+        let requestPassedToAdapter = try XCTUnwrap(requestAdapter.adaptReceivedArguments?.request as? AcquiringRequestStub)
         XCTAssertEqual(requestPassedToAdapter, initialRequest)
         let requestPassedToNetworkClient = try XCTUnwrap(networkClient.performRequestReceivedArguments?.request as? AcquiringRequestStub)
         XCTAssertEqual(requestPassedToNetworkClient, adaptedRequest)
@@ -71,15 +69,13 @@ final class AcquiringAPIClientTests: XCTestCase {
 
     func test_performRequest_withFailedAdaptation_shouldCallbackError() {
         // given
-        requestAdapter.adaptMethodStub = { _, completion in
-            completion(.failure(ErrorStub()))
-        }
+        requestAdapter.adaptCompletionClosureInput = .failure(ErrorStub())
 
         // when
         let result = performRequestWaiting()
 
         // then
-        XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
+        XCTAssertEqual(requestAdapter.adaptCallsCount, 1)
         XCTAssertEqual(networkClient.performRequestCallsCount, 0)
 
         XCTAssertThrowsError(try result.get())
@@ -119,7 +115,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         let adaptationQueue = DispatchQueue(label: #function, attributes: .initiallyInactive)
         let expectation = expectation(description: #function)
 
-        requestAdapter.adaptMethodStub = { request, completion in
+        requestAdapter.adaptCompletionClosure = { completion in
             adaptationQueue.async {
                 completion(.success(request))
                 expectation.fulfill()
@@ -136,7 +132,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         waitForExpectations(timeout: 1)
 
         // then
-        XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
+        XCTAssertEqual(requestAdapter.adaptCallsCount, 1)
         XCTAssertEqual(networkClient.performRequestCallsCount, 0)
     }
 
@@ -153,9 +149,7 @@ final class AcquiringAPIClientTests: XCTestCase {
             }
         }
 
-        requestAdapter.adaptMethodStub = { request, completion in
-            completion(.success(request))
-        }
+        requestAdapter.adaptCompletionClosureInput = .success(request)
 
         // when
         let cancellable = sut.performRequest(request) { (performingResult: Result<EmptyDecodable, Error>) in
@@ -167,7 +161,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         waitForExpectations(timeout: 1)
 
         // then
-        XCTAssertEqual(requestAdapter.invokedAdaptCount, 1)
+        XCTAssertEqual(requestAdapter.adaptCallsCount, 1)
         XCTAssertEqual(networkClient.performRequestCallsCount, 1)
         XCTAssertFalse(decoder.invokedDecode)
     }
