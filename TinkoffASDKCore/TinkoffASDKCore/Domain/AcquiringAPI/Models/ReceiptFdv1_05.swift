@@ -29,9 +29,9 @@ public struct ReceiptFdv1_05: Encodable {
     /// Параметр `email` или `phone` должен быть заполнен.
     public var phone: String?
     /// Система налогообложения
-    public var taxation: Taxation?
+    public var taxation: Taxation
     /// Массив, содержащий в себе информацию о товарах
-    public var items: [Item]?
+    public var items: [Item]
     /// Данные агента
     public var agentData: AgentData?
     /// Данные поставщика платежного агента
@@ -45,9 +45,9 @@ public struct ReceiptFdv1_05: Encodable {
     public init(
         shopCode: String?,
         email: String?,
-        taxation: Taxation?,
+        taxation: Taxation,
         phone: String?,
-        items: [Item]?,
+        items: [Item],
         agentData: AgentData?,
         supplierInfo: SupplierInfo?
     ) {
@@ -63,13 +63,13 @@ public struct ReceiptFdv1_05: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if shopCode != nil { try? container.encode(shopCode, forKey: .shopCode) }
-        if taxation != nil { try? container.encode(taxation?.rawValue, forKey: .taxation) }
         if email != nil { try? container.encode(email, forKey: .email) }
         if phone != nil { try? container.encode(phone, forKey: .phone) }
-        if items != nil { try? container.encode(items, forKey: .items) }
         if agentData != nil { try? container.encode(agentData, forKey: .agentData) }
         if supplierInfo != nil { try? container.encode(supplierInfo, forKey: .supplierInfo) }
         try? container.encode(ffdVersion, forKey: .ffdVersion)
+        try? container.encode(taxation.rawValue, forKey: .taxation)
+        try? container.encode(items, forKey: .items)
     }
 }
 

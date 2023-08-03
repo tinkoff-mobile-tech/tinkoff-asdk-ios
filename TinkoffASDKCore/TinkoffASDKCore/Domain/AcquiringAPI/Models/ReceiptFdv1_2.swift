@@ -38,15 +38,15 @@ public struct ReceiptFdv1_2: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if base.shopCode != nil { try? container.encode(base.shopCode, forKey: .shopCode) }
-        if base.taxation != nil { try? container.encode(base.taxation?.rawValue, forKey: .taxation) }
         if base.email != nil { try? container.encode(base.email, forKey: .email) }
         if base.phone != nil { try? container.encode(base.phone, forKey: .phone) }
-        if base.items != nil { try? container.encode(base.items, forKey: .items) }
         if base.agentData != nil { try? container.encode(base.agentData, forKey: .agentData) }
         if base.supplierInfo != nil { try? container.encode(base.supplierInfo, forKey: .supplierInfo) }
         if customer != nil { try? container.encode(customer, forKey: .customer) }
         if customerInn != nil { try? container.encode(customerInn, forKey: .customerInn) }
         try? container.encode(ffdVersion, forKey: .ffdVersion)
+        try? container.encode(base.taxation.rawValue, forKey: .taxation)
+        try? container.encode(base.items, forKey: .items)
     }
 }
 
