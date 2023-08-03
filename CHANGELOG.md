@@ -47,7 +47,8 @@
 * [EACQAPW-5258] RunLoop run caused bugy getState handles
 * [EACQAPW-5288] TPay Controller handle DEADLINE_EXPIRED
 * [EACQAPW-5297] Fix broken pdfs
-
+* [EACQAPW-5763] Add ffdVersion param
+ 
 ## [3.0.0] - 2023-05-12Z
 
 ### Added
