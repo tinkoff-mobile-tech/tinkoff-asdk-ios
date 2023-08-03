@@ -72,6 +72,7 @@
 "alert.message.addingCardCancel" = "The operation was cancelled";
 
 // errors
+"error.basic" = "Error";
 "error.device.setup" = "Device setup error occured";
 "error.camera.setup" = "Camera error";
 "error.camera.noSessionFound" = "No valid capture session found, I can't take any pictures or videos.";

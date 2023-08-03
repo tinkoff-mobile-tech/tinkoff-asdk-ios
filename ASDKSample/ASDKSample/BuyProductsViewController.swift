@@ -206,7 +206,7 @@ class BuyProductsViewController: UIViewController {
                 customerInn: nil
             )
         } catch {
-            showAlert(title: "Error", message: error.localizedDescription)
+            showAlert(title: Loc.Error.basic, message: error.localizedDescription)
         }
 
         return paymentData
