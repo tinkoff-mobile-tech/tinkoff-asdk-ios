@@ -17,7 +17,6 @@ final class AcquiringAPIClientMock<GenericPayload: Decodable>: IAcquiringAPIClie
     var performRequestCallsCount = 0
     var performRequestReceivedArguments: PerformRequestArguments?
     var performRequestReceivedInvocations: [PerformRequestArguments?] = []
-    var performRequestCompletionClosureInput: Result<GenericPayload, Error>?
     var performRequestReturnValue: Cancellable = CancellableMock()
 
     func performRequest<Payload: Decodable>(_ request: AcquiringRequest, completion: @escaping (Result<Payload, Error>) -> Void) -> Cancellable {
@@ -36,6 +35,5 @@ extension AcquiringAPIClientMock {
         performRequestCallsCount = 0
         performRequestReceivedArguments = nil
         performRequestReceivedInvocations = []
-        performRequestCompletionClosureInput = nil
     }
 }
