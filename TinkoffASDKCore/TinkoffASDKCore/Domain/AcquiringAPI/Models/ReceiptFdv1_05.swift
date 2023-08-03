@@ -39,9 +39,6 @@ public struct ReceiptFdv1_05: Encodable {
     /// Версия ФФД.
     public let ffdVersion: FfdVersion = .version1_05
 
-    /// Инициализиатор может пробросить ошибку в случае передачи невалидных полей
-    ///
-    /// НСПК требует как минимимум 1 валидное поле `phone` или `email` для формирования чека
     public init(
         shopCode: String?,
         email: String?,
