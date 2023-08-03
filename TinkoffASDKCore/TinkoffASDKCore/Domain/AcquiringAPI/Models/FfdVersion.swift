@@ -9,6 +9,7 @@
 import Foundation
 
 public enum FfdVersion: String, Codable {
+    /// По умолчанию версия ФФД - 1.05
     case version1_05 = "1.05"
     case version1_2 = "1.2"
 }

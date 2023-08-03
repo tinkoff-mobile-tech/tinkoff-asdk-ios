@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ReceiptFdv1_05: Encodable {
+public struct ReceiptFdv1_05: Encodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case shopCode = "ShopCode"
         case items = "Items"
@@ -59,24 +59,13 @@ public struct ReceiptFdv1_05: Encodable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if shopCode != nil { try? container.encode(shopCode, forKey: .shopCode) }
-        if email != nil { try? container.encode(email, forKey: .email) }
-        if phone != nil { try? container.encode(phone, forKey: .phone) }
-        if agentData != nil { try? container.encode(agentData, forKey: .agentData) }
-        if supplierInfo != nil { try? container.encode(supplierInfo, forKey: .supplierInfo) }
-        try? container.encode(ffdVersion, forKey: .ffdVersion)
-        try? container.encode(taxation.rawValue, forKey: .taxation)
-        try? container.encode(items, forKey: .items)
-    }
-}
-
-extension ReceiptFdv1_05: Equatable {
-    public static func == (lhs: ReceiptFdv1_05, rhs: ReceiptFdv1_05) -> Bool {
-        lhs.shopCode == rhs.shopCode &&
-            lhs.email == rhs.email &&
-            lhs.phone == rhs.phone &&
-            lhs.taxation == rhs.taxation &&
-            lhs.items == rhs.items &&
-            lhs.ffdVersion == rhs.ffdVersion
+        try container.encodeIfPresent(shopCode, forKey: .shopCode)
+        try container.encodeIfPresent(email, forKey: .email)
+        try container.encodeIfPresent(phone, forKey: .phone)
+        try container.encodeIfPresent(agentData, forKey: .agentData)
+        try container.encodeIfPresent(supplierInfo, forKey: .supplierInfo)
+        try container.encode(ffdVersion, forKey: .ffdVersion)
+        try container.encode(taxation.rawValue, forKey: .taxation)
+        try container.encode(items, forKey: .items)
     }
 }
