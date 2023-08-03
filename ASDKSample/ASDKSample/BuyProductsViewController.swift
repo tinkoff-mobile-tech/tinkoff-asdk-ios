@@ -193,17 +193,16 @@ class BuyProductsViewController: UIViewController {
             receiptItems.append(item)
         }
 
-        paymentData.receipt = Receipt(
-            shopCode: nil,
-            email: customerEmail,
-            taxation: .osn,
-            phone: "+79876543210",
-            items: receiptItems,
-            agentData: nil,
-            supplierInfo: nil,
-            customer: nil,
-            customerInn: nil,
-            ffdVersion: .version105
+        paymentData.receipt = .version1_05(
+            ReceiptFdv1_05(
+                shopCode: nil,
+                email: customerEmail,
+                taxation: .osn,
+                phone: "+79876543210",
+                items: receiptItems,
+                agentData: nil,
+                supplierInfo: nil
+            )
         )
 
         return paymentData
