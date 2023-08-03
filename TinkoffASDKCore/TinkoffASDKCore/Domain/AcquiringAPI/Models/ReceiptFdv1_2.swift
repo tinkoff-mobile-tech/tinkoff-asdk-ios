@@ -18,6 +18,19 @@ public struct ReceiptFdv1_2: Encodable, Equatable {
     /// Инн покупателя. Если ИНН иностранного гражданина, необходимо указать 00000000000
     public var customerInn: String?
 
+    private enum CodingKeys: String, CodingKey {
+        case shopCode = "ShopCode"
+        case items = "Items"
+        case ffdVersion = "FfdVersion"
+        case email = "Email"
+        case phone = "Phone"
+        case taxation = "Taxation"
+        case agentData = "AgentData"
+        case supplierInfo = "SupplierInfo"
+        case customer = "Customer"
+        case customerInn = "CustomerInn"
+    }
+
     public init(base: ReceiptFdv1_05, customer: String?, customerInn: String?) {
         self.base = base
         self.customer = customer
@@ -36,18 +49,5 @@ public struct ReceiptFdv1_2: Encodable, Equatable {
         try container.encode(ffdVersion, forKey: .ffdVersion)
         try container.encode(base.taxation.rawValue, forKey: .taxation)
         try container.encode(base.items, forKey: .items)
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case shopCode = "ShopCode"
-        case items = "Items"
-        case ffdVersion = "FfdVersion"
-        case email = "Email"
-        case phone = "Phone"
-        case taxation = "Taxation"
-        case agentData = "AgentData"
-        case supplierInfo = "SupplierInfo"
-        case customer = "Customer"
-        case customerInn = "CustomerInn"
     }
 }

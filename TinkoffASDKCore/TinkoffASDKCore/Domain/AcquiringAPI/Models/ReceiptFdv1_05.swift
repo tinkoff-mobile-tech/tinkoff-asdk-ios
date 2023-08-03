@@ -9,17 +9,6 @@
 import Foundation
 
 public struct ReceiptFdv1_05: Encodable, Equatable {
-    private enum CodingKeys: String, CodingKey {
-        case shopCode = "ShopCode"
-        case items = "Items"
-        case ffdVersion = "FfdVersion"
-        case email = "Email"
-        case phone = "Phone"
-        case taxation = "Taxation"
-        case agentData = "AgentData"
-        case supplierInfo = "SupplierInfo"
-    }
-
     /// Код магазина
     public var shopCode: String?
     /// Электронный адрес для отправки чека покупателю
@@ -38,6 +27,17 @@ public struct ReceiptFdv1_05: Encodable, Equatable {
     public var supplierInfo: SupplierInfo?
     /// Версия ФФД.
     public let ffdVersion: FfdVersion = .version1_05
+
+    private enum CodingKeys: String, CodingKey {
+        case shopCode = "ShopCode"
+        case items = "Items"
+        case ffdVersion = "FfdVersion"
+        case email = "Email"
+        case phone = "Phone"
+        case taxation = "Taxation"
+        case agentData = "AgentData"
+        case supplierInfo = "SupplierInfo"
+    }
 
     public init(
         shopCode: String?,
