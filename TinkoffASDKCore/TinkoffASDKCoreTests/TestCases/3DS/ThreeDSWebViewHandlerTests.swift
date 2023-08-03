@@ -56,7 +56,7 @@ final class ThreeDSWebViewHandlerTests: BaseTestCase {
         // given
 
         threeDSURLBuilderMock.urlReturnValue = .doesNotMatter
-        acquiringDecoderMock.stubbedDecodeError = ErrorStub()
+        acquiringDecoderMock.decodeThrowableError = ErrorStub()
 
         // when
         var returnedError = false
@@ -70,7 +70,7 @@ final class ThreeDSWebViewHandlerTests: BaseTestCase {
             returnedError = true
         }
 
-        XCTAssertEqual(acquiringDecoderMock.invokedDecodeCount, 1)
+        XCTAssertEqual(acquiringDecoderMock.decodeCallsCount, 0)
         XCTAssertTrue(returnedError)
     }
 }

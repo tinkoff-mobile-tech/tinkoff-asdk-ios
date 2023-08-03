@@ -46,7 +46,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestAdapter.adaptCallsCount, 1)
         XCTAssertEqual(networkClient.performRequestCallsCount, 1)
-        XCTAssertEqual(decoder.invokedDecodeCount, 1)
+        XCTAssertEqual(decoder.decodeCallsCount, 1)
         XCTAssertNoThrow(try result.get())
     }
 
@@ -96,7 +96,7 @@ final class AcquiringAPIClientTests: XCTestCase {
     func test_performRequest_withFailedDecoding_shouldCallbackDecodersError() {
         // given
         let decodingError = ErrorStub()
-        decoder.stubbedDecodeError = decodingError
+        decoder.decodeThrowableError = decodingError
 
         // when
         let result = performRequestWaiting()
@@ -163,7 +163,7 @@ final class AcquiringAPIClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestAdapter.adaptCallsCount, 1)
         XCTAssertEqual(networkClient.performRequestCallsCount, 1)
-        XCTAssertFalse(decoder.invokedDecode)
+        XCTAssertEqual(decoder.decodeCallsCount, 0)
     }
 
     // MARK: Helpers

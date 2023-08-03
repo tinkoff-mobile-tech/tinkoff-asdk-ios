@@ -9,25 +9,36 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class AcquiringDecoderMock: IAcquiringDecoder {
-    var invokedDecode = false
-    var invokedDecodeCount = 0
-    var invokedDecodeParameters: (type: Any, data: Data, strategy: AcquiringDecodingStrategy)?
-    var invokedDecodeParametersList = [(type: Any, data: Data, strategy: AcquiringDecodingStrategy)]()
-    var stubbedDecodeError: Error?
-    var stubbedDecodeResult: Any = EmptyDecodable()
 
-    func decode<Payload: Decodable>(
-        _ type: Payload.Type,
-        from data: Data,
-        with strategy: AcquiringDecodingStrategy
-    ) throws -> Payload {
-        invokedDecode = true
-        invokedDecodeCount += 1
-        invokedDecodeParameters = (type, data, strategy)
-        invokedDecodeParametersList.append((type, data, strategy))
-        if let error = stubbedDecodeError {
+    // MARK: - decode<Payload Decodable>
+
+    typealias DecodeArguments = (type: Any, data: Data, strategy: AcquiringDecodingStrategy)
+
+    var decodeThrowableError: Error?
+    var decodeCallsCount = 0
+    var decodeReceivedArguments: DecodeArguments?
+    var decodeReceivedInvocations: [DecodeArguments?] = []
+    var decodeReturnValue: Any = EmptyDecodable()
+
+    func decode<Payload: Decodable>(_ type: Payload.Type, from data: Data, with strategy: AcquiringDecodingStrategy) throws -> Payload {
+        if let error = decodeThrowableError {
             throw error
         }
-        return stubbedDecodeResult as! Payload
+        decodeCallsCount += 1
+        let arguments = (type, data, strategy)
+        decodeReceivedArguments = arguments
+        decodeReceivedInvocations.append(arguments)
+        return decodeReturnValue as! Payload
+    }
+}
+
+// MARK: - Resets
+
+extension AcquiringDecoderMock {
+    func fullReset() {
+        decodeThrowableError = nil
+        decodeCallsCount = 0
+        decodeReceivedArguments = nil
+        decodeReceivedInvocations = []
     }
 }
