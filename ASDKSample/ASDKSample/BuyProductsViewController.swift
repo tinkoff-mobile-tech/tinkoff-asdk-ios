@@ -193,17 +193,21 @@ class BuyProductsViewController: UIViewController {
             receiptItems.append(item)
         }
 
-        paymentData.receipt = try? Receipt(
-            shopCode: nil,
-            email: customerEmail,
-            taxation: .osn,
-            phone: "+79876543210",
-            items: receiptItems,
-            agentData: nil,
-            supplierInfo: nil,
-            customer: nil,
-            customerInn: nil
-        )
+        do {
+            paymentData.receipt = try Receipt(
+                shopCode: nil,
+                email: customerEmail,
+                taxation: .osn,
+                phone: "+79876543210",
+                items: receiptItems,
+                agentData: nil,
+                supplierInfo: nil,
+                customer: nil,
+                customerInn: nil
+            )
+        } catch {
+            showAlert(title: "Error", message: error.localizedDescription)
+        }
 
         return paymentData
     }
@@ -299,9 +303,13 @@ class BuyProductsViewController: UIViewController {
     }
 
     private func showAlert(with result: PaymentResult) {
+        showAlert(title: result.alertTitle, message: result.alertMessage)
+    }
+
+    private func showAlert(title: String?, message: String?) {
         let alert = UIAlertController(
-            title: result.alertTitle,
-            message: result.alertMessage,
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
 
