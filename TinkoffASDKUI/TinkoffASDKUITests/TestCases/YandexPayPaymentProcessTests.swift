@@ -324,7 +324,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         sut.cancel()
 
         // then
-        XCTAssertTrue(mockCancellable.invokedCancel)
+        XCTAssertEqual(mockCancellable.cancelCallsCount, 1)
     }
 
     func test_thatPaymentProcessNotifiesDelegate() {

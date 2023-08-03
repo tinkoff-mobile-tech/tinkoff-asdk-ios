@@ -420,7 +420,7 @@ final class CardPaymentProcessTests: XCTestCase {
         dependencies.sutAsPaymentProcess.cancel()
 
         // then
-        XCTAssertTrue(requestMock.invokedCancel)
+        XCTAssertEqual(requestMock.cancelCallsCount, 1)
     }
 
     func test_Start_paymentFlow_finish_needConfirmation3DSACS_failed() throws {
