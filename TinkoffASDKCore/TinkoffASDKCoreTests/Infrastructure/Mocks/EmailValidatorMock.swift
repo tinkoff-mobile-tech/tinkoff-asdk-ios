@@ -7,7 +7,7 @@
 
 import TinkoffASDKCore
 
-public final class EmailValidatorMock: IEmailValidator {
+final class EmailValidatorMock: IEmailValidator {
 
     // MARK: - isValid
 
@@ -16,9 +16,9 @@ public final class EmailValidatorMock: IEmailValidator {
     var isValidCallsCount = 0
     var isValidReceivedArguments: IsValidArguments?
     var isValidReceivedInvocations: [IsValidArguments?] = []
-    var isValidReturnValue: Bool = true
+    var isValidReturnValue = true
 
-    public func isValid(_ email: String?) -> Bool {
+    func isValid(_ email: String?) -> Bool {
         isValidCallsCount += 1
         let arguments = email
         isValidReceivedArguments = arguments
