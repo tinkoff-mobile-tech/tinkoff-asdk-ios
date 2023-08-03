@@ -14,26 +14,26 @@ final class DeviceInfoProviderMock: IDeviceInfoProvider {
         set(value) { underlyingModel = value }
     }
 
-    var underlyingModel: String! = "iPhone 13 Pro Max"
+    var underlyingModel = "iPhone 13 Pro Max"
 
     var systemName: String {
         get { return underlyingSystemName }
         set(value) { underlyingSystemName = value }
     }
 
-    var underlyingSystemName: String! = "iOS"
+    var underlyingSystemName = "iOS"
 
     var systemVersion: String {
         get { return underlyingSystemVersion }
         set(value) { underlyingSystemVersion = value }
     }
 
-    var underlyingSystemVersion: String! = "15.0"
+    var underlyingSystemVersion = "15.0"
 
     var modelVersion: String {
         get { return underlyingModelVersion }
         set(value) { underlyingModelVersion = value }
     }
 
-    var underlyingModelVersion: String! = "iPhone 13 Pro Max"
+    var underlyingModelVersion = "iPhone 13 Pro Max"
 }
