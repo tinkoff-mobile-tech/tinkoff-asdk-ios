@@ -10,7 +10,7 @@ import Foundation
 
 final class ExternalAPIClientMock<GenericPayload: Decodable>: IExternalAPIClient {
 
-    // MARK: - perform<Payload Decodable>
+    // MARK: - perform
 
     typealias PerformArguments = (request: NetworkRequest, completion: (Result<GenericPayload, Error>) -> Void)
     typealias Completion = (Result<GenericPayload, Error>) -> Void
@@ -18,7 +18,6 @@ final class ExternalAPIClientMock<GenericPayload: Decodable>: IExternalAPIClient
     var performCallsCount = 0
     var performReceivedArguments: PerformArguments?
     var performReceivedInvocations: [PerformArguments?] = []
-    var performCompletionClosureInput: Result<GenericPayload, Error>?
     var performReturnValue: Cancellable = CancellableMock()
 
     func perform<Payload: Decodable>(_ request: NetworkRequest, completion: @escaping (Result<Payload, Error>) -> Void) -> Cancellable {
@@ -37,6 +36,5 @@ extension ExternalAPIClientMock {
         performCallsCount = 0
         performReceivedArguments = nil
         performReceivedInvocations = []
-        performCompletionClosureInput = nil
     }
 }
