@@ -91,6 +91,8 @@ internal enum Loc {
     }
   }
   internal enum Error {
+    /// Ошибка
+    internal static let basic = Loc.tr("Localizable", "error.basic", fallback: "Ошибка")
     internal enum Camera {
       /// Не найдена камера.
       internal static let noSessionFound = Loc.tr("Localizable", "error.camera.noSessionFound", fallback: "Не найдена камера.")

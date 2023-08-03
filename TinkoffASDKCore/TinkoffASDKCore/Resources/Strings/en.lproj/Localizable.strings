@@ -3,5 +3,10 @@
 "NetworkError.emptyResponse" = "Empty body response";
 "NetworkError.failedToCreateRequest" = "Failed to create request";
 
+// APIError
 "APIError.failureError" = "Acquiring API error";
 "APIError.invalidResponse" = "Invalid API response";
+
+// ASDKCoreError
+"ASDKCoreError.missingReceiptFields" = "Receipt object MUST have 'phone' OR 'email' non-empty field. [example-phone: '+79991459557'] or [example-email: some@email.com]";
+"ASDKCoreError.invalidEmail" = "Email is invalid. The correct format is - some@email.com";

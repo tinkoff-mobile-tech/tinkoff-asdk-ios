@@ -16,6 +16,12 @@ internal enum Loc {
     /// Некорректный ответ API
     internal static let invalidResponse = Loc.tr("Localizable", "APIError.invalidResponse", fallback: "Некорректный ответ API")
   }
+  internal enum ASDKCoreError {
+    /// Некорректный email. Пример правильной почты some@email.com
+    internal static let invalidEmail = Loc.tr("Localizable", "ASDKCoreError.invalidEmail", fallback: "Некорректный email. Пример правильной почты some@email.com")
+    /// Receipt объект должен иметь не пустое валидное поле 'phone' ИЛИ 'email'. [example-phone: '+79991459557'] или [example-email: some@email.com]
+    internal static let missingReceiptFields = Loc.tr("Localizable", "ASDKCoreError.missingReceiptFields", fallback: "Receipt объект должен иметь не пустое валидное поле 'phone' ИЛИ 'email'. [example-phone: '+79991459557'] или [example-email: some@email.com]")
+  }
   internal enum NetworkError {
     /// Пустой ответ
     internal static let emptyResponse = Loc.tr("Localizable", "NetworkError.emptyResponse", fallback: "Пустой ответ")

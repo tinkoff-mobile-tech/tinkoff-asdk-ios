@@ -95,7 +95,7 @@ extension PaymentFlow {
 
         let receiptItems: [Item] = []
 
-        paymentData.receipt = try? Receipt(
+        paymentData.receipt = try! Receipt(
             shopCode: nil,
             email: "email@email.com",
             taxation: .osn,
