@@ -50,7 +50,7 @@ final class NetworkClientTests: XCTestCase {
         XCTAssertEqual(session.dataTaskCallsCount, 1)
         XCTAssertEqual(session.dataTaskReturnValue.resumeCallsCount, 1)
         XCTAssertEqual(session.dataTaskReturnValue.cancelCallsCount, 0)
-        XCTAssertEqual(statusCodeValidator.invokedValidateCount, 1)
+        XCTAssertEqual(statusCodeValidator.validateCallsCount, 1)
         XCTAssertNoThrow(try result.get())
     }
 
@@ -65,7 +65,7 @@ final class NetworkClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestBuilder.buildCallsCount, 0)
         XCTAssertEqual(session.dataTaskCallsCount, 0)
-        XCTAssertFalse(statusCodeValidator.invokedValidate)
+        XCTAssertEqual(statusCodeValidator.validateCallsCount, 0)
 
         XCTAssertThrowsError(try result.get()) { error in
             guard case let NetworkError.failedToCreateRequest(error as ErrorStub) = error,
@@ -86,7 +86,7 @@ final class NetworkClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.dataTaskCallsCount, 1)
-        XCTAssertFalse(statusCodeValidator.invokedValidate)
+        XCTAssertEqual(statusCodeValidator.validateCallsCount, 0)
 
         XCTAssertThrowsError(try result.get()) { error in
             guard case let NetworkError.transportError(error as ErrorStub) = error,
@@ -106,7 +106,7 @@ final class NetworkClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.dataTaskCallsCount, 1)
-        XCTAssertEqual(statusCodeValidator.invokedValidateCount, 1)
+        XCTAssertEqual(statusCodeValidator.validateCallsCount, 1)
 
         XCTAssertThrowsError(try result.get()) { error in
             guard case NetworkError.emptyResponse = error else {
@@ -125,7 +125,7 @@ final class NetworkClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.dataTaskCallsCount, 1)
-        XCTAssertFalse(statusCodeValidator.invokedValidate)
+        XCTAssertEqual(statusCodeValidator.validateCallsCount, 0)
 
         XCTAssertThrowsError(try result.get()) { error in
             guard case NetworkError.emptyResponse = error else {
@@ -139,7 +139,7 @@ final class NetworkClientTests: XCTestCase {
         let stubbedStatusCode = 101
         let httpResponse = HTTPURLResponse(url: .doesNotMatter, statusCode: stubbedStatusCode, httpVersion: nil, headerFields: nil)
         session.dataTaskCompletionClosureInput = (Data(), httpResponse, nil)
-        statusCodeValidator.stubbedValidateResult = false
+        statusCodeValidator.validateReturnValue = false
 
         // when
         let result = performRequestWaiting()
@@ -147,7 +147,7 @@ final class NetworkClientTests: XCTestCase {
         // then
         XCTAssertEqual(requestBuilder.buildCallsCount, 1)
         XCTAssertEqual(session.dataTaskCallsCount, 1)
-        XCTAssert(statusCodeValidator.invokedValidate)
+        XCTAssertEqual(statusCodeValidator.validateCallsCount, 1)
 
         XCTAssertThrowsError(try result.get()) { error in
             guard case let NetworkError.serverError(statusCode) = error,

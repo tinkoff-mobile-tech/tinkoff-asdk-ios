@@ -9,17 +9,31 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class HTTPStatusCodeValidatorMock: IHTTPStatusCodeValidator {
-    var invokedValidate = false
-    var invokedValidateCount = 0
-    var invokedValidateParameters: (statusCode: Int, Void)?
-    var invokedValidateParametersList = [(statusCode: Int, Void)]()
-    var stubbedValidateResult = true
+
+    // MARK: - validate
+
+    typealias ValidateArguments = Int
+
+    var validateCallsCount = 0
+    var validateReceivedArguments: ValidateArguments?
+    var validateReceivedInvocations: [ValidateArguments?] = []
+    var validateReturnValue = true
 
     func validate(statusCode: Int) -> Bool {
-        invokedValidate = true
-        invokedValidateCount += 1
-        invokedValidateParameters = (statusCode, ())
-        invokedValidateParametersList.append((statusCode, ()))
-        return stubbedValidateResult
+        validateCallsCount += 1
+        let arguments = statusCode
+        validateReceivedArguments = arguments
+        validateReceivedInvocations.append(arguments)
+        return validateReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension HTTPStatusCodeValidatorMock {
+    func fullReset() {
+        validateCallsCount = 0
+        validateReceivedArguments = nil
+        validateReceivedInvocations = []
     }
 }
