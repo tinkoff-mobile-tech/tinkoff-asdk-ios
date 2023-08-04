@@ -3,5 +3,10 @@
 "NetworkError.emptyResponse" = "Пустой ответ";
 "NetworkError.failedToCreateRequest" = "Не удалось создать запрос";
 
+// APIError
 "APIError.failureError" = "Ошибка API экваринга";
 "APIError.invalidResponse" = "Некорректный ответ API";
+
+// ASDKCoreError
+"ASDKCoreError.missingReceiptFields" = "Receipt объект должен иметь не пустое валидное поле 'phone' ИЛИ 'email'. [example-phone: '+79991459557'] или [example-email: some@email.com]";
+"ASDKCoreError.invalidEmail" = "Некорректный email. Пример правильной почты some@email.com";

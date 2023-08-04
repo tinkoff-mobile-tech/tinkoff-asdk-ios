@@ -17,12 +17,9 @@ extension ASDKCoreError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .missingReceiptFields:
-            return """
-             Receipt object MUST have 'phone' OR 'email' non-empty field.
-             [example-phone: '+79991459557'] or [example-email: some@email.com]
-            """
+            return Loc.ASDKCoreError.missingReceiptFields
         case .invalidEmail:
-            return "Email is invalid. The correct format is - some@email.com"
+            return Loc.ASDKCoreError.invalidEmail
         }
     }
 }

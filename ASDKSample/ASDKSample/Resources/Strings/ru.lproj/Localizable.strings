@@ -71,6 +71,7 @@
 "alert.message.addingCardCancel" = "Операция отменена";
 
 // errors
+"error.basic" = "Ошибка";
 "error.device.setup" = "Произошла ошибка настройки устройства";
 "error.camera.setup" = "Ошибка камеры";
 "error.camera.noSessionFound" = "Не найдена камера.";
