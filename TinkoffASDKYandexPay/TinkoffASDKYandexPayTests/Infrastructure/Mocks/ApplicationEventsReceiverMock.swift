@@ -32,7 +32,7 @@ final class ApplicationEventsReceiverMock: IApplicationEventsReceiver {
 
     var applicationDidReceiveOpenCallsCount = 0
     var applicationDidReceiveOpenReceivedArguments: ApplicationDidReceiveOpenArguments?
-    var applicationDidReceiveOpenReceivedInvocations: [ApplicationDidReceiveOpenArguments] = []
+    var applicationDidReceiveOpenReceivedInvocations: [ApplicationDidReceiveOpenArguments?] = []
 
     func applicationDidReceiveOpen(_ url: URL, sourceApplication: String?) {
         applicationDidReceiveOpenCallsCount += 1
@@ -43,14 +43,34 @@ final class ApplicationEventsReceiverMock: IApplicationEventsReceiver {
 
     // MARK: - applicationDidReceiveUserActivity
 
+    typealias ApplicationDidReceiveUserActivityArguments = NSUserActivity
+
     var applicationDidReceiveUserActivityCallsCount = 0
-    var applicationDidReceiveUserActivityReceivedArguments: NSUserActivity?
-    var applicationDidReceiveUserActivityReceivedInvocations: [NSUserActivity] = []
+    var applicationDidReceiveUserActivityReceivedArguments: ApplicationDidReceiveUserActivityArguments?
+    var applicationDidReceiveUserActivityReceivedInvocations: [ApplicationDidReceiveUserActivityArguments?] = []
 
     func applicationDidReceiveUserActivity(_ userActivity: NSUserActivity) {
         applicationDidReceiveUserActivityCallsCount += 1
         let arguments = userActivity
         applicationDidReceiveUserActivityReceivedArguments = arguments
         applicationDidReceiveUserActivityReceivedInvocations.append(arguments)
+    }
+}
+
+// MARK: - Resets
+
+extension ApplicationEventsReceiverMock {
+    func fullReset() {
+        applicationWillEnterForegroundCallsCount = 0
+
+        applicationDidBecomeActiveCallsCount = 0
+
+        applicationDidReceiveOpenCallsCount = 0
+        applicationDidReceiveOpenReceivedArguments = nil
+        applicationDidReceiveOpenReceivedInvocations = []
+
+        applicationDidReceiveUserActivityCallsCount = 0
+        applicationDidReceiveUserActivityReceivedArguments = nil
+        applicationDidReceiveUserActivityReceivedInvocations = []
     }
 }

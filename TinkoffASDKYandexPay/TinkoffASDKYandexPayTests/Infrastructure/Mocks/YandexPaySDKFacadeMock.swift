@@ -9,12 +9,49 @@
 import YandexPaySDK
 
 final class YandexPaySDKFacadeMock: IYandexPaySDKFacade {
+
     var isInitialized: Bool {
         get { return underlyingIsInitialized }
         set(value) { underlyingIsInitialized = value }
     }
 
     var underlyingIsInitialized: Bool!
+
+    // MARK: - initialize
+
+    typealias InitializeArguments = YandexPaySDK.YandexPaySDKConfiguration
+
+    var initializeThrowableError: Error?
+    var initializeCallsCount = 0
+    var initializeReceivedArguments: InitializeArguments?
+    var initializeReceivedInvocations: [InitializeArguments?] = []
+
+    func initialize(configuration: YandexPaySDK.YandexPaySDKConfiguration) throws {
+        if let error = initializeThrowableError {
+            throw error
+        }
+        initializeCallsCount += 1
+        let arguments = configuration
+        initializeReceivedArguments = arguments
+        initializeReceivedInvocations.append(arguments)
+    }
+
+    // MARK: - createButton
+
+    typealias CreateButtonArguments = (configuration: YandexPaySDK.YandexPayButtonConfiguration, asyncDelegate: YandexPaySDK.YandexPayButtonAsyncDelegate)
+
+    var createButtonCallsCount = 0
+    var createButtonReceivedArguments: CreateButtonArguments?
+    var createButtonReceivedInvocations: [CreateButtonArguments?] = []
+    var createButtonReturnValue: YandexPaySDK.YandexPayButton!
+
+    func createButton(configuration: YandexPaySDK.YandexPayButtonConfiguration, asyncDelegate: YandexPaySDK.YandexPayButtonAsyncDelegate) -> YandexPaySDK.YandexPayButton {
+        createButtonCallsCount += 1
+        let arguments = (configuration, asyncDelegate)
+        createButtonReceivedArguments = arguments
+        createButtonReceivedInvocations.append(arguments)
+        return createButtonReturnValue
+    }
 
     // MARK: - applicationWillEnterForeground
 
@@ -38,7 +75,7 @@ final class YandexPaySDKFacadeMock: IYandexPaySDKFacade {
 
     var applicationDidReceiveOpenCallsCount = 0
     var applicationDidReceiveOpenReceivedArguments: ApplicationDidReceiveOpenArguments?
-    var applicationDidReceiveOpenReceivedInvocations: [ApplicationDidReceiveOpenArguments] = []
+    var applicationDidReceiveOpenReceivedInvocations: [ApplicationDidReceiveOpenArguments?] = []
 
     func applicationDidReceiveOpen(_ url: URL, sourceApplication: String?) {
         applicationDidReceiveOpenCallsCount += 1
@@ -49,9 +86,11 @@ final class YandexPaySDKFacadeMock: IYandexPaySDKFacade {
 
     // MARK: - applicationDidReceiveUserActivity
 
+    typealias ApplicationDidReceiveUserActivityArguments = NSUserActivity
+
     var applicationDidReceiveUserActivityCallsCount = 0
-    var applicationDidReceiveUserActivityReceivedArguments: NSUserActivity?
-    var applicationDidReceiveUserActivityReceivedInvocations: [NSUserActivity] = []
+    var applicationDidReceiveUserActivityReceivedArguments: ApplicationDidReceiveUserActivityArguments?
+    var applicationDidReceiveUserActivityReceivedInvocations: [ApplicationDidReceiveUserActivityArguments?] = []
 
     func applicationDidReceiveUserActivity(_ userActivity: NSUserActivity) {
         applicationDidReceiveUserActivityCallsCount += 1
@@ -59,38 +98,29 @@ final class YandexPaySDKFacadeMock: IYandexPaySDKFacade {
         applicationDidReceiveUserActivityReceivedArguments = arguments
         applicationDidReceiveUserActivityReceivedInvocations.append(arguments)
     }
+}
 
-    // MARK: - createButton
+extension YandexPaySDKFacadeMock {
+    func fullReset() {
+        initializeThrowableError = nil
+        initializeCallsCount = 0
+        initializeReceivedArguments = nil
+        initializeReceivedInvocations = []
 
-    typealias CreateButtonArguments = (configuration: YandexPaySDK.YandexPayButtonConfiguration, asyncDelegate: YandexPaySDK.YandexPayButtonAsyncDelegate)
+        createButtonCallsCount = 0
+        createButtonReceivedArguments = nil
+        createButtonReceivedInvocations = []
 
-    var createButtonCallsCount = 0
-    var createButtonReceivedArguments: CreateButtonArguments?
-    var createButtonReceivedInvocations: [CreateButtonArguments] = []
-    var createButtonReturnValue: YandexPaySDK.YandexPayButton!
+        applicationWillEnterForegroundCallsCount = 0
 
-    func createButton(configuration: YandexPaySDK.YandexPayButtonConfiguration, asyncDelegate: YandexPaySDK.YandexPayButtonAsyncDelegate) -> YandexPaySDK.YandexPayButton {
-        createButtonCallsCount += 1
-        let arguments = (configuration, asyncDelegate)
-        createButtonReceivedArguments = arguments
-        createButtonReceivedInvocations.append(arguments)
-        return createButtonReturnValue
-    }
+        applicationDidBecomeActiveCallsCount = 0
 
-    // MARK: - initialize
+        applicationDidReceiveOpenCallsCount = 0
+        applicationDidReceiveOpenReceivedArguments = nil
+        applicationDidReceiveOpenReceivedInvocations = []
 
-    var initializeThrowableError: Error?
-    var initializeCallsCount = 0
-    var initializeReceivedArguments: YandexPaySDK.YandexPaySDKConfiguration?
-    var initializeReceivedInvocations: [YandexPaySDK.YandexPaySDKConfiguration] = []
-
-    func initialize(configuration: YandexPaySDK.YandexPaySDKConfiguration) throws {
-        if let error = initializeThrowableError {
-            throw error
-        }
-        initializeCallsCount += 1
-        let arguments = configuration
-        initializeReceivedArguments = arguments
-        initializeReceivedInvocations.append(arguments)
+        applicationDidReceiveUserActivityCallsCount = 0
+        applicationDidReceiveUserActivityReceivedArguments = nil
+        applicationDidReceiveUserActivityReceivedInvocations = []
     }
 }

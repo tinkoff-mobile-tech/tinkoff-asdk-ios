@@ -15,10 +15,10 @@ final class YandexPayButtonContainerFactoryInitializerMock: IYandexPayButtonCont
 
     typealias InitializeButtonFactoryArguments = (configuration: YandexPaySDKConfiguration, method: YandexPayMethod, flowAssembly: IYandexPayPaymentFlowAssembly)
 
-    var initializeButtonFactoryThrowableError: Error?
+    public var initializeButtonFactoryThrowableError: Error?
     var initializeButtonFactoryCallsCount = 0
     var initializeButtonFactoryReceivedArguments: InitializeButtonFactoryArguments?
-    var initializeButtonFactoryReceivedInvocations: [InitializeButtonFactoryArguments] = []
+    var initializeButtonFactoryReceivedInvocations: [InitializeButtonFactoryArguments?] = []
     var initializeButtonFactoryReturnValue: IYandexPayButtonContainerFactory!
 
     func initializeButtonFactory(with configuration: YandexPaySDKConfiguration, method: YandexPayMethod, flowAssembly: IYandexPayPaymentFlowAssembly) throws -> IYandexPayButtonContainerFactory {
@@ -30,5 +30,16 @@ final class YandexPayButtonContainerFactoryInitializerMock: IYandexPayButtonCont
         initializeButtonFactoryReceivedArguments = arguments
         initializeButtonFactoryReceivedInvocations.append(arguments)
         return initializeButtonFactoryReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayButtonContainerFactoryInitializerMock {
+    func fullReset() {
+        initializeButtonFactoryThrowableError = nil
+        initializeButtonFactoryCallsCount = 0
+        initializeButtonFactoryReceivedArguments = nil
+        initializeButtonFactoryReceivedInvocations = []
     }
 }
