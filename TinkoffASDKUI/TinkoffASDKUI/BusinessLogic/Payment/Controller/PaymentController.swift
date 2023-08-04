@@ -96,6 +96,7 @@ extension PaymentController: PaymentProcessDelegate {
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
             self.paymentProcess = nil
+            self.tdsController.stop()
 
             let data = FullPaymentData(paymentProcess: paymentProcess, payload: state, cardId: cardId, rebillId: rebillId)
             self.paymentStatusUpdateService.startUpdateStatusIfNeeded(data: data)
