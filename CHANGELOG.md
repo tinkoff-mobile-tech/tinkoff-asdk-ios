@@ -52,6 +52,7 @@
 * [EACQAPW-5738] ThreeDSFacade Tests
 * [EACQAPW-5635] Setting up mocking network server for UI Tests
 * [EACQAPW-5742] DefaultAuthChallengeService Tests
+* [EACQAPW-5748] Core mocks regeneration
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields
