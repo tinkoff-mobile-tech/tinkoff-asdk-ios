@@ -53,6 +53,7 @@
 * [EACQAPW-5635] Setting up mocking network server for UI Tests
 * [EACQAPW-5742] DefaultAuthChallengeService Tests
 * [EACQAPW-5748] Core mocks regeneration
+* [EACQAPW-5764] Update YandexPay mocks
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields
