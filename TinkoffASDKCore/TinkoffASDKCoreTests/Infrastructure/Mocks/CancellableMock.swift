@@ -9,11 +9,20 @@ import Foundation
 import TinkoffASDKCore
 
 final class CancellableMock: Cancellable {
-    var invokedCancel = false
-    var invokedCancelCount = 0
+
+    // MARK: - cancel
+
+    var cancelCallsCount = 0
 
     func cancel() {
-        invokedCancel = true
-        invokedCancelCount += 1
+        cancelCallsCount += 1
+    }
+}
+
+// MARK: - Resets
+
+extension CancellableMock {
+    func fullReset() {
+        cancelCallsCount = 0
     }
 }

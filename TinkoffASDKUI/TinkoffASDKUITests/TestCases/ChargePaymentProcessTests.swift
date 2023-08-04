@@ -184,7 +184,7 @@ final class ChargePaymentProcessTests: XCTestCase {
         dependencies.sut.cancel()
 
         // then
-        XCTAssertTrue(cancellableMock.invokedCancel)
+        XCTAssertEqual(cancellableMock.cancelCallsCount, 1)
     }
 }
 

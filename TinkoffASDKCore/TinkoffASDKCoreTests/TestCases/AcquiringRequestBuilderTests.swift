@@ -225,7 +225,7 @@ final class AcquiringRequestBuilderTests: XCTestCase {
         // given
         let terminalKey = "2.0"
         baseURLProvider.underlyingUrl = .doesNotMatter
-        terminalKeyProvider.stubbedValue = terminalKey
+        terminalKeyProvider.underlyingValue = terminalKey
 
         // when
         let request = sut.getTinkoffPayStatus()
@@ -257,7 +257,7 @@ final class AcquiringRequestBuilderTests: XCTestCase {
         let terminalKey = "2.0"
 
         baseURLProvider.underlyingUrl = .doesNotMatter
-        terminalKeyProvider.stubbedValue = terminalKey
+        terminalKeyProvider.underlyingValue = terminalKey
 
         // when
         let request = sut.getTerminalPayMethods()

@@ -119,6 +119,6 @@ final class ImageLoaderTests: XCTestCase {
         sut.cancelImageLoad(uuid: uuid)
 
         // then
-        XCTAssertTrue(cancellableMock.invokedCancel)
+        XCTAssertEqual(cancellableMock.cancelCallsCount, 1)
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 @testable import TinkoffASDKCore
 
 final class URLProviderMock: IURLProvider {
+
     var url: URL {
         get { return underlyingUrl }
         set(value) { underlyingUrl = value }

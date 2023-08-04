@@ -8,9 +8,9 @@
 import Foundation
 import struct UIKit.CGSize
 
-typealias IThreeDSFacade = IThreeDSURLBuilder & IThreeDSURLRequestBuilder & IThreeDSWebViewHandlerBuilder & IThreeDSDeviceParamsProviderBuilder
+protocol IThreeDSFacade: IThreeDSURLBuilder, IThreeDSURLRequestBuilder, IThreeDSWebViewHandlerBuilder, IThreeDSDeviceParamsProviderBuilder {}
 
-final class ThreeDSFacade {
+final class ThreeDSFacade: IThreeDSFacade {
     private let threeDSURLBuilder: IThreeDSURLBuilder
     private let threeDSURLRequestBuilder: IThreeDSURLRequestBuilder
     private let webViewHandlerBuilder: IThreeDSWebViewHandlerBuilder

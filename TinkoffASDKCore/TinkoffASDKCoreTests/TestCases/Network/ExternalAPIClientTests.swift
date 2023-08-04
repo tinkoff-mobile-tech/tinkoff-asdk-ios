@@ -40,10 +40,7 @@ final class ExternalAPIClientTests: XCTestCase {
 
         let data = try JSONEncoder().encode(dateStringObject)
 
-        networkClientMock.performRequestMethodStub = { _, completion in
-            completion(.success(.stub(data: data)))
-            return CancellableMock()
-        }
+        networkClientMock.performRequestCompletionClosureInput = .success(.stub(data: data))
 
         // when
         var result: Result<DateObject, Error>?
@@ -65,10 +62,7 @@ final class ExternalAPIClientTests: XCTestCase {
 
         let data = try JSONEncoder().encode(dateStringObject)
 
-        networkClientMock.performRequestMethodStub = { _, completion in
-            completion(.success(.stub(data: data)))
-            return CancellableMock()
-        }
+        networkClientMock.performUrlRequestCompletionClosureInput = .success(.stub(data: data))
 
         // when
         var result: Result<DateObject, Error>?
@@ -82,10 +76,7 @@ final class ExternalAPIClientTests: XCTestCase {
 
     func test_thatNetworkClientPerformsRequest_failed() throws {
         // given
-        networkClientMock.performRequestMethodStub = { _, completion in
-            completion(.failure(.emptyResponse))
-            return CancellableMock()
-        }
+        networkClientMock.performRequestCompletionClosureInput = .failure(.emptyResponse)
 
         // when
         var result: Result<DateObject, Error>?

@@ -8,7 +8,18 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-final class ThreeDSFacadeMock: IThreeDSURLBuilder & IThreeDSURLRequestBuilder & IThreeDSWebViewHandlerBuilder & IThreeDSDeviceParamsProviderBuilder {
+final class ThreeDSFacadeMock: IThreeDSFacade {
+
+    // MARK: - threeDSDeviceInfoProvider
+
+    var threeDSDeviceInfoProviderCallsCount = 0
+    var threeDSDeviceInfoProviderReturnValue: IThreeDSDeviceInfoProvider!
+
+    func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
+        threeDSDeviceInfoProviderCallsCount += 1
+        return threeDSDeviceInfoProviderReturnValue
+    }
+
     // MARK: - url
 
     typealias UrlArguments = ThreeDSURLType
@@ -98,14 +109,33 @@ final class ThreeDSFacadeMock: IThreeDSURLBuilder & IThreeDSURLRequestBuilder & 
         threeDSWebViewHandlerCallsCount += 1
         return threeDSWebViewHandlerReturnValue
     }
+}
 
-    // MARK: - threeDSDeviceInfoProvider
+// MARK: - Resets
 
-    var threeDSDeviceInfoProviderCallsCount = 0
-    var threeDSDeviceInfoProviderReturnValue: IThreeDSDeviceInfoProvider!
+extension ThreeDSFacadeMock {
+    func fullReset() {
+        threeDSDeviceInfoProviderCallsCount = 0
 
-    func threeDSDeviceInfoProvider() -> IThreeDSDeviceInfoProvider {
-        threeDSDeviceInfoProviderCallsCount += 1
-        return threeDSDeviceInfoProviderReturnValue
+        urlCallsCount = 0
+        urlReceivedArguments = nil
+        urlReceivedInvocations = []
+
+        buildConfirmation3DSRequestACSThrowableError = nil
+        buildConfirmation3DSRequestACSCallsCount = 0
+        buildConfirmation3DSRequestACSReceivedArguments = nil
+        buildConfirmation3DSRequestACSReceivedInvocations = []
+
+        buildConfirmation3DSRequestThrowableError = nil
+        buildConfirmation3DSRequestCallsCount = 0
+        buildConfirmation3DSRequestReceivedArguments = nil
+        buildConfirmation3DSRequestReceivedInvocations = []
+
+        build3DSCheckURLRequestThrowableError = nil
+        build3DSCheckURLRequestCallsCount = 0
+        build3DSCheckURLRequestReceivedArguments = nil
+        build3DSCheckURLRequestReceivedInvocations = []
+
+        threeDSWebViewHandlerCallsCount = 0
     }
 }

@@ -8,7 +8,6 @@
 import Foundation
 @testable import TinkoffASDKCore
 
-public final class IPAddressProviderMock: IIPAddressProvider {
-    public init() {}
-    public var ipAddress: IPAddress?
+final class IPAddressProviderMock: IIPAddressProvider {
+    var ipAddress: IPAddress?
 }

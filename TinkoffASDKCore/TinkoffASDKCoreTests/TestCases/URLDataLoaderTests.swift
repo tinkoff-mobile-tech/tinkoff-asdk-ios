@@ -33,10 +33,7 @@ final class URLDataLoaderTests: XCTestCase {
     func test_loadData_success() {
         // given
         let data = Data()
-        networkClientMock.performRequestURLRequestMethodStub = { _, completion -> Cancellable in
-            completion(.success(.stub(data: data)))
-            return CancellableMock()
-        }
+        networkClientMock.performUrlRequestCompletionClosureInput = .success(.stub(data: data))
 
         // when
         var result: Result<Data, Error>?
@@ -53,10 +50,7 @@ final class URLDataLoaderTests: XCTestCase {
     func test_loadData_failed() {
         // given
         let errorMock = NetworkError.emptyResponse
-        networkClientMock.performRequestURLRequestMethodStub = { _, completion -> Cancellable in
-            completion(.failure(errorMock))
-            return CancellableMock()
-        }
+        networkClientMock.performUrlRequestCompletionClosureInput = .failure(errorMock)
 
         // when
         var result: Result<Data, Error>?
