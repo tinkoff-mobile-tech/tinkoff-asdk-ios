@@ -287,6 +287,7 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(data.cardId, .cardId)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.payload, state)
+        XCTAssertEqual(tdsControllerMock.stopCallsCount, 1)
     }
 
     func test_paymentControlleNotifiesChargePaymentDelegate_whenPaymentDidFailed_104() throws {
@@ -312,6 +313,7 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallsCount, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.additionalData, additionalData)
+        XCTAssertEqual(tdsControllerMock.stopCallsCount, 1)
     }
 
     func test_paymentControlleNotifiesChargePaymentDelegate_whenPaymentDidFailed() throws {
@@ -355,6 +357,7 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(delegateMock.paymentControllerDidFailedCallsCount, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
         XCTAssertEqual(data.cardId, .cardId)
+        XCTAssertEqual(tdsControllerMock.stopCallsCount, 1)
     }
 
     func test_paymentControllerNotifiesPaymentDelegate_whenNeedToCollect3DSData() {
@@ -451,6 +454,7 @@ final class PaymentControllerTests: BaseTestCase {
         XCTAssertEqual(delegateMock.paymentControllerDidFailedCallsCount, 1)
         XCTAssertEqual(receivedData.rebillId, data.rebillId)
         XCTAssertEqual(receivedData.cardId, data.cardId)
+        XCTAssertEqual(tdsControllerMock.stopCallsCount, 1)
     }
 }
 
