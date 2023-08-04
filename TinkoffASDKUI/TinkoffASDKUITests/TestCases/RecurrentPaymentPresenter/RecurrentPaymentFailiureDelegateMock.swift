@@ -5,22 +5,23 @@
 //  Created by Aleksandr Pravosudov on 05.06.2023.
 //
 
+import TinkoffASDKCore
 @testable import TinkoffASDKUI
 
 final class RecurrentPaymentFailiureDelegateMock: IRecurrentPaymentFailiureDelegate {
 
     // MARK: - recurrentPaymentNeedRepeatInit
 
-    typealias RecurrentPaymentNeedRepeatInitArguments = (additionalData: [String: String], completion: (Result<PaymentId, Error>) -> Void)
+    typealias RecurrentPaymentNeedRepeatInitArguments = (additionalInitData: AdditionalData, completion: (Result<PaymentId, Error>) -> Void)
 
     var recurrentPaymentNeedRepeatInitCallsCount = 0
     var recurrentPaymentNeedRepeatInitReceivedArguments: RecurrentPaymentNeedRepeatInitArguments?
     var recurrentPaymentNeedRepeatInitReceivedInvocations: [RecurrentPaymentNeedRepeatInitArguments?] = []
     var recurrentPaymentNeedRepeatInitCompletionClosureInput: Result<PaymentId, Error>?
 
-    func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void) {
+    func recurrentPaymentNeedRepeatInit(additionalInitData: AdditionalData, completion: @escaping (Result<PaymentId, Error>) -> Void) {
         recurrentPaymentNeedRepeatInitCallsCount += 1
-        let arguments = (additionalData, completion)
+        let arguments = (additionalInitData, completion)
         recurrentPaymentNeedRepeatInitReceivedArguments = arguments
         recurrentPaymentNeedRepeatInitReceivedInvocations.append(arguments)
         if let recurrentPaymentNeedRepeatInitCompletionClosureInput = recurrentPaymentNeedRepeatInitCompletionClosureInput {

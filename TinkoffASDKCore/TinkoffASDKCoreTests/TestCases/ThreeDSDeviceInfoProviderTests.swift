@@ -48,24 +48,17 @@ final class ThreeDSDeviceInfoProviderTests: XCTestCase {
         sdkUiProviderMock.sdkUiTypesReturnValue = [.html]
 
         // when
-        let info = sut.createDeviceInfo(threeDSCompInd: .threeDSCompInd)
+        let info = sut.createThreeDsDataBrowser(threeDSCompInd: .threeDSCompInd)
 
         // then
         XCTAssertEqual(info.threeDSCompInd, .threeDSCompInd)
         XCTAssertEqual(info.javaEnabled, "true")
-        XCTAssertEqual(info.colorDepth, 32)
+        XCTAssertEqual(info.colorDepth, "32")
         XCTAssertEqual(info.language, lang.rawValue)
-        XCTAssertEqual(info.timezone, TimeZone.current.secondsFromGMT() / 60, accuracy: 1)
-        XCTAssertEqual(info.screenHeight, Int(UIScreen.main.bounds.height * UIScreen.main.scale))
-        XCTAssertEqual(info.screenWidth, Int(UIScreen.main.bounds.width * UIScreen.main.scale))
+        XCTAssertEqual(info.timezone, "\(TimeZone.current.secondsFromGMT() / 60)")
+        XCTAssertEqual(info.screenHeight, "\(Int(UIScreen.main.bounds.height * UIScreen.main.scale))")
+        XCTAssertEqual(info.screenWidth, "\(Int(UIScreen.main.bounds.width * UIScreen.main.scale))")
         XCTAssertEqual(info.cresCallbackUrl, "https://www.tinkoff.ru")
-        XCTAssertNil(info.sdkAppID)
-        XCTAssertNil(info.sdkEphemPubKey)
-        XCTAssertNil(info.sdkTransID)
-        XCTAssertNil(info.sdkMaxTimeout)
-        XCTAssertNil(info.sdkEncData)
-        XCTAssertEqual(info.sdkInterface, .native)
-        XCTAssertEqual(info.sdkUiType, TdsSdkUiType.html.rawValue)
 
         XCTAssertEqual(
             urlBuilderMock.urlReceivedArguments?.rawValue,
@@ -80,20 +73,20 @@ final class ThreeDSDeviceInfoProviderTests: XCTestCase {
         sdkUiProviderMock.sdkUiTypesReturnValue = [.html]
 
         // when
-        let info = sut.createDeviceInfo(threeDSCompInd: .threeDSCompInd)
+        let info = sut.createThreeDsDataBrowser(threeDSCompInd: .threeDSCompInd)
 
         // then
         XCTAssertEqual(info.language, AcquiringSdkLanguage.ru.rawValue)
     }
 
-    func test_deviceInfo() {
+    func test_createThreeDsDataBrowser() {
         // given
         urlBuilderMock.urlReturnValue = .doesNotMatter
         sdkUiProviderMock.sdkInterfaceReturnValue = .native
         sdkUiProviderMock.sdkUiTypesReturnValue = [.html]
 
         // when
-        let info = sut.deviceInfo
+        let info = sut.createThreeDsDataBrowser()
 
         // then
         XCTAssertEqual(info.threeDSCompInd, "Y")

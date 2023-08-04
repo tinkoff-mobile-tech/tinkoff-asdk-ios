@@ -14,14 +14,14 @@ final class TDSControllerMock: ITDSController {
 
     // MARK: - startAppBasedFlow
 
-    typealias StartAppBasedFlowArguments = (check3dsPayload: Check3DSVersionPayload, completion: (Result<ThreeDSDeviceInfo, Error>) -> Void)
+    typealias StartAppBasedFlowArguments = (check3dsPayload: Check3DSVersionPayload, completion: (Result<ThreeDsDataSDK, Error>) -> Void)
 
     var startAppBasedFlowCallsCount = 0
     var startAppBasedFlowReceivedArguments: StartAppBasedFlowArguments?
     var startAppBasedFlowReceivedInvocations: [StartAppBasedFlowArguments?] = []
-    var startAppBasedFlowCompletionClosureInput: Result<ThreeDSDeviceInfo, Error>?
+    var startAppBasedFlowCompletionClosureInput: Result<ThreeDsDataSDK, Error>?
 
-    func startAppBasedFlow(check3dsPayload: Check3DSVersionPayload, completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void) {
+    func startAppBasedFlow(check3dsPayload: Check3DSVersionPayload, completion: @escaping (Result<ThreeDsDataSDK, Error>) -> Void) {
         startAppBasedFlowCallsCount += 1
         let arguments = (check3dsPayload, completion)
         startAppBasedFlowReceivedArguments = arguments

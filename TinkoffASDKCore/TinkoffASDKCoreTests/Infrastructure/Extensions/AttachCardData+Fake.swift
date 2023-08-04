@@ -10,6 +10,12 @@ import Foundation
 
 extension AttachCardData {
     static func fake() -> AttachCardData {
-        AttachCardData(cardNumber: "22001234556789010", expDate: "2020-08-11", cvv: "231", requestKey: "key")
+        AttachCardData(
+            cardNumber: "22001234556789010",
+            expDate: "2020-08-11",
+            cvv: "231",
+            requestKey: "key",
+            data: nil
+        )
     }
 }

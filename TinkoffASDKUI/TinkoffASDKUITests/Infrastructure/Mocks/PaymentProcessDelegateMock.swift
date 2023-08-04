@@ -40,25 +40,6 @@ final class PaymentProcessDelegateMock: PaymentProcessDelegate {
         paymentDidFailedWithReceivedInvocations.append(arguments)
     }
 
-    // MARK: - paymentNeedToCollect3DSData
-
-    typealias PaymentNeedToCollect3DSDataArguments = (paymentProcess: IPaymentProcess, checking3DSURLData: Checking3DSURLData, completion: (ThreeDSDeviceInfo) -> Void)
-
-    var paymentNeedToCollect3DSDataCallsCount = 0
-    var paymentNeedToCollect3DSDataReceivedArguments: PaymentNeedToCollect3DSDataArguments?
-    var paymentNeedToCollect3DSDataReceivedInvocations: [PaymentNeedToCollect3DSDataArguments?] = []
-    var paymentNeedToCollect3DSDataCompletionClosureInput: ThreeDSDeviceInfo?
-
-    func payment(_ paymentProcess: IPaymentProcess, needToCollect3DSData checking3DSURLData: Checking3DSURLData, completion: @escaping (ThreeDSDeviceInfo) -> Void) {
-        paymentNeedToCollect3DSDataCallsCount += 1
-        let arguments = (paymentProcess, checking3DSURLData, completion)
-        paymentNeedToCollect3DSDataReceivedArguments = arguments
-        paymentNeedToCollect3DSDataReceivedInvocations.append(arguments)
-        if let paymentNeedToCollect3DSDataCompletionClosureInput = paymentNeedToCollect3DSDataCompletionClosureInput {
-            completion(paymentNeedToCollect3DSDataCompletionClosureInput)
-        }
-    }
-
     // MARK: - paymentNeed3DSConfirmation
 
     typealias PaymentNeed3DSConfirmationArguments = (paymentProcess: IPaymentProcess, data: Confirmation3DSData, confirmationCancelled: () -> Void, completion: (Result<GetPaymentStatePayload, Error>) -> Void)
@@ -79,6 +60,25 @@ final class PaymentProcessDelegateMock: PaymentProcessDelegate {
         }
         if let paymentNeed3DSConfirmationCompletionClosureInput = paymentNeed3DSConfirmationCompletionClosureInput {
             completion(paymentNeed3DSConfirmationCompletionClosureInput)
+        }
+    }
+
+    // MARK: - paymentNeedToCollect3DSData
+
+    typealias PaymentNeedToCollect3DSDataArguments = (paymentProcess: IPaymentProcess, checking3DSURLData: Checking3DSURLData, completion: (ThreeDsDataBrowser) -> Void)
+
+    var paymentNeedToCollect3DSDataCallsCount = 0
+    var paymentNeedToCollect3DSDataReceivedArguments: PaymentNeedToCollect3DSDataArguments?
+    var paymentNeedToCollect3DSDataReceivedInvocations: [PaymentNeedToCollect3DSDataArguments?] = []
+    var paymentNeedToCollect3DSDataCompletionClosureInput: ThreeDsDataBrowser?
+
+    func payment(_ paymentProcess: IPaymentProcess, needToCollect3DSData checking3DSURLData: Checking3DSURLData, completion: @escaping (ThreeDsDataBrowser) -> Void) {
+        paymentNeedToCollect3DSDataCallsCount += 1
+        let arguments = (paymentProcess, checking3DSURLData, completion)
+        paymentNeedToCollect3DSDataReceivedArguments = arguments
+        paymentNeedToCollect3DSDataReceivedInvocations.append(arguments)
+        if let paymentNeedToCollect3DSDataCompletionClosureInput = paymentNeedToCollect3DSDataCompletionClosureInput {
+            completion(paymentNeedToCollect3DSDataCompletionClosureInput)
         }
     }
 
@@ -105,6 +105,25 @@ final class PaymentProcessDelegateMock: PaymentProcessDelegate {
         }
     }
 
+    // MARK: - startAppBasedFlowCheck3dsPayload
+
+    typealias StartAppBasedFlowCheck3dsPayloadArguments = (check3dsPayload: Check3DSVersionPayload, completion: (Result<ThreeDsDataSDK, Error>) -> Void)
+
+    var startAppBasedFlowCheck3dsPayloadCallsCount = 0
+    var startAppBasedFlowCheck3dsPayloadReceivedArguments: StartAppBasedFlowCheck3dsPayloadArguments?
+    var startAppBasedFlowCheck3dsPayloadReceivedInvocations: [StartAppBasedFlowCheck3dsPayloadArguments?] = []
+    var startAppBasedFlowCheck3dsPayloadCompletionClosureInput: Result<ThreeDsDataSDK, Error>?
+
+    func startAppBasedFlow(check3dsPayload: Check3DSVersionPayload, completion: @escaping (Result<ThreeDsDataSDK, Error>) -> Void) {
+        startAppBasedFlowCheck3dsPayloadCallsCount += 1
+        let arguments = (check3dsPayload, completion)
+        startAppBasedFlowCheck3dsPayloadReceivedArguments = arguments
+        startAppBasedFlowCheck3dsPayloadReceivedInvocations.append(arguments)
+        if let startAppBasedFlowCheck3dsPayloadCompletionClosureInput = startAppBasedFlowCheck3dsPayloadCompletionClosureInput {
+            completion(startAppBasedFlowCheck3dsPayloadCompletionClosureInput)
+        }
+    }
+
     // MARK: - paymentNeed3DSConfirmationAppBased
 
     typealias PaymentNeed3DSConfirmationAppBasedArguments = (paymentProcess: IPaymentProcess, data: Confirmation3DS2AppBasedData, version: String, confirmationCancelled: () -> Void, completion: (Result<GetPaymentStatePayload, Error>) -> Void)
@@ -127,25 +146,6 @@ final class PaymentProcessDelegateMock: PaymentProcessDelegate {
             completion(paymentNeed3DSConfirmationAppBasedCompletionClosureInput)
         }
     }
-
-    // MARK: - startAppBasedFlowCheck3dsPayload
-
-    typealias StartAppBasedFlowCheck3dsPayloadArguments = (check3dsPayload: Check3DSVersionPayload, completion: (Result<ThreeDSDeviceInfo, Error>) -> Void)
-
-    var startAppBasedFlowCheck3dsPayloadCallsCount = 0
-    var startAppBasedFlowCheck3dsPayloadReceivedArguments: StartAppBasedFlowCheck3dsPayloadArguments?
-    var startAppBasedFlowCheck3dsPayloadReceivedInvocations: [StartAppBasedFlowCheck3dsPayloadArguments?] = []
-    var startAppBasedFlowCheck3dsPayloadCompletionClosureInput: Result<ThreeDSDeviceInfo, Error>?
-
-    func startAppBasedFlow(check3dsPayload: Check3DSVersionPayload, completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void) {
-        startAppBasedFlowCheck3dsPayloadCallsCount += 1
-        let arguments = (check3dsPayload, completion)
-        startAppBasedFlowCheck3dsPayloadReceivedArguments = arguments
-        startAppBasedFlowCheck3dsPayloadReceivedInvocations.append(arguments)
-        if let startAppBasedFlowCheck3dsPayloadCompletionClosureInput = startAppBasedFlowCheck3dsPayloadCompletionClosureInput {
-            completion(startAppBasedFlowCheck3dsPayloadCompletionClosureInput)
-        }
-    }
 }
 
 // MARK: - Resets
@@ -160,16 +160,16 @@ extension PaymentProcessDelegateMock {
         paymentDidFailedWithReceivedArguments = nil
         paymentDidFailedWithReceivedInvocations = []
 
-        paymentNeedToCollect3DSDataCallsCount = 0
-        paymentNeedToCollect3DSDataReceivedArguments = nil
-        paymentNeedToCollect3DSDataReceivedInvocations = []
-        paymentNeedToCollect3DSDataCompletionClosureInput = nil
-
         paymentNeed3DSConfirmationCallsCount = 0
         paymentNeed3DSConfirmationReceivedArguments = nil
         paymentNeed3DSConfirmationReceivedInvocations = []
         paymentNeed3DSConfirmationConfirmationCancelledShouldExecute = false
         paymentNeed3DSConfirmationCompletionClosureInput = nil
+
+        paymentNeedToCollect3DSDataCallsCount = 0
+        paymentNeedToCollect3DSDataReceivedArguments = nil
+        paymentNeedToCollect3DSDataReceivedInvocations = []
+        paymentNeedToCollect3DSDataCompletionClosureInput = nil
 
         paymentNeed3DSConfirmationACSCallsCount = 0
         paymentNeed3DSConfirmationACSReceivedArguments = nil
@@ -177,15 +177,15 @@ extension PaymentProcessDelegateMock {
         paymentNeed3DSConfirmationACSConfirmationCancelledShouldExecute = false
         paymentNeed3DSConfirmationACSCompletionClosureInput = nil
 
+        startAppBasedFlowCheck3dsPayloadCallsCount = 0
+        startAppBasedFlowCheck3dsPayloadReceivedArguments = nil
+        startAppBasedFlowCheck3dsPayloadReceivedInvocations = []
+        startAppBasedFlowCheck3dsPayloadCompletionClosureInput = nil
+
         paymentNeed3DSConfirmationAppBasedCallsCount = 0
         paymentNeed3DSConfirmationAppBasedReceivedArguments = nil
         paymentNeed3DSConfirmationAppBasedReceivedInvocations = []
         paymentNeed3DSConfirmationAppBasedConfirmationCancelledShouldExecute = false
         paymentNeed3DSConfirmationAppBasedCompletionClosureInput = nil
-
-        startAppBasedFlowCheck3dsPayloadCallsCount = 0
-        startAppBasedFlowCheck3dsPayloadReceivedArguments = nil
-        startAppBasedFlowCheck3dsPayloadReceivedInvocations = []
-        startAppBasedFlowCheck3dsPayloadCompletionClosureInput = nil
     }
 }

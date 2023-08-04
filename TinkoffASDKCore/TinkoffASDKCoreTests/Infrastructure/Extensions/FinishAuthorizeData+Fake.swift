@@ -10,6 +10,12 @@ import Foundation
 
 extension FinishAuthorizeData {
     static func fake() -> FinishAuthorizeData {
-        FinishAuthorizeData(paymentId: "id", paymentSource: .savedCard(cardId: "123", cvv: "213"))
+        FinishAuthorizeData(
+            paymentId: "id",
+            paymentSource: .savedCard(cardId: "123", cvv: "213"),
+            infoEmail: nil,
+            amount: nil,
+            data: nil
+        )
     }
 }
