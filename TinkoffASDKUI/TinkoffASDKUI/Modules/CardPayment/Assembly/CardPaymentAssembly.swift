@@ -39,7 +39,12 @@ final class CardPaymentAssembly: ICardPaymentAssembly {
         cardScannerDelegate: ICardScannerDelegate?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
-        let cardsController = (paymentFlow.customerOptions?.customerKey).map { cardsControllerAssembly.cardsController(customerKey: $0) }
+        let cardsController = (paymentFlow.customerOptions?.customerKey).map {
+            cardsControllerAssembly.cardsController(
+                customerKey: $0,
+                addCardOptions: .empty
+            )
+        }
 
         let validator = CardRequisitesValidator()
         let paymentSystemResolver = PaymentSystemResolver()

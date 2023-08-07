@@ -214,7 +214,7 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         var didReturnError = false
         sut = createAddCardController(checkType: .check3DS)
-        let cardOptions = CardOptions(pan: "123123213", validThru: "0928", cvc: "123")
+        let cardOptions = CardData(pan: "123123213", validThru: "0928", cvc: "123")
         addCardServiceMock.addCardReturnValue = CancellableMock()
         addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
@@ -239,7 +239,7 @@ final class AddCardControllerTests: BaseTestCase {
         addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { result in })
+        sut.addCard(options: CardData.fake(), completion: { result in })
 
         // then
         XCTAssertEqual(addCardServiceMock.addCardCallsCount, 1)
@@ -331,7 +331,7 @@ final class AddCardControllerTests: BaseTestCase {
         var receivedExpectedError = false
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { result in
+        sut.addCard(options: CardData.fake(), completion: { result in
             if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
                 if case .missingPaymentIdFor3DSFlow = castedError {
                     receivedExpectedError = true
@@ -352,7 +352,7 @@ final class AddCardControllerTests: BaseTestCase {
         var receivedExpectedError = false
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { result in
+        sut.addCard(options: CardData.fake(), completion: { result in
             if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
                 if case .missingPaymentIdFor3DSFlow = castedError {
                     receivedExpectedError = true
@@ -652,7 +652,7 @@ extension AddCardControllerTests {
         )
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: addCardCompletion)
+        sut.addCard(options: CardData.fake(), completion: addCardCompletion)
         // then
         XCTAssertEqual(addCardServiceMock.addCardCallsCount, 1)
     }

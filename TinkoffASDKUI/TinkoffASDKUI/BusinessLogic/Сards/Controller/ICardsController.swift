@@ -22,7 +22,7 @@ public protocol ICardsController: AnyObject {
     /// - Parameters:
     ///   - options: Параметры привязки карты
     ///   - completion: Замыкание с результатом привязки, вызывающееся на главном потоке
-    func addCard(options: CardOptions, completion: @escaping (AddCardResult) -> Void)
+    func addCard(cardData: CardData, completion: @escaping (AddCardResult) -> Void)
 
     /// Удаляет привязанную раннее карту
     /// - Parameters:

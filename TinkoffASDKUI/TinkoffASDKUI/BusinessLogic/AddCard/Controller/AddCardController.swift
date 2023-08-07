@@ -24,6 +24,7 @@ final class AddCardController {
     // MARK: IAddCardController Properties
 
     let customerKey: String
+    private let addCardOptions: AddCardOptions
 
     // MARK: Dependencies
 
@@ -44,6 +45,7 @@ final class AddCardController {
         webFlowController: IThreeDSWebFlowController,
         threeDSService: IAcquiringThreeDSService,
         customerKey: String,
+        addCardOptions: AddCardOptions,
         checkType: PaymentCardCheckType,
         tdsController: ITDSController,
         successfulStatuses: Set<AcquiringStatus> = [.completed],
@@ -54,6 +56,7 @@ final class AddCardController {
         self.webFlowController = webFlowController
         self.threeDSService = threeDSService
         self.customerKey = customerKey
+        self.addCardOptions = addCardOptions
         self.checkType = checkType
         self.tdsController = tdsController
         cardStateSuccessfulStatuses = successfulStatuses
@@ -69,7 +72,7 @@ extension AddCardController: IAddCardController {
         set { webFlowController.webFlowDelegate = newValue }
     }
 
-    func addCard(options: CardOptions, completion: @escaping (AddCardStateResult) -> Void) {
+    func addCard(cardData: CardData, completion: @escaping (AddCardStateResult) -> Void) {
         let completionDecorator: Completion = { result in
             DispatchQueue.performOnMain { completion(result) }
         }
@@ -80,7 +83,7 @@ extension AddCardController: IAddCardController {
             switch result {
             case let .success(payload):
                 self.check3DSVersionIfNeeded(
-                    options: options,
+                    cardData: cardData,
                     addCardPayload: payload,
                     completion: completionDecorator
                 )
@@ -96,7 +99,7 @@ extension AddCardController: IAddCardController {
 extension AddCardController {
     /// Выполняет проверку версии 3DS по необходимости, основываясь на заданном `checkType`
     private func check3DSVersionIfNeeded(
-        options: CardOptions,
+        cardData: CardData,
         addCardPayload: AddCardPayload,
         completion: @escaping Completion
     ) {
@@ -107,7 +110,7 @@ extension AddCardController {
             }
 
             check3DSVersion(
-                options: options,
+                cardData: cardData,
                 paymentId: paymentId,
                 requestKey: addCardPayload.requestKey,
                 completion: completion
@@ -115,7 +118,8 @@ extension AddCardController {
         case .no, .hold:
             attachCard(
                 requestKey: addCardPayload.requestKey,
-                options: options,
+                cardData: cardData,
+                data: .dictionary(addCardOptions.attachCardData ?? .empty()),
                 completion: completion
             )
         }
@@ -123,18 +127,19 @@ extension AddCardController {
 
     /// Выполняет проверку версии 3DS
     private func check3DSVersion(
-        options: CardOptions,
+        cardData: CardData,
         paymentId: String,
         requestKey: String,
         completion: @escaping Completion
     ) {
-        addCardService.check3DSVersion(data: .data(with: paymentId, options: options)) { [weak self] result in
+        addCardService.check3DSVersion(data: .data(with: paymentId, cardData: cardData)) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
             case let .success(payload):
                 self.complete3DSMethodIfNeededAndAttachCard(
-                    options: options,
+                    cardData: cardData,
+                    addCardOptions: self.addCardOptions,
                     check3DSPayload: payload,
                     requestKey: requestKey,
                     completion: completion
@@ -149,14 +154,20 @@ extension AddCardController {
     ///
     /// Параметры `tdsServerTransID`, `threeDSMethodURL` в `Check3DSVersionPayload` являются признаком проверки `3DS v2`
     private func complete3DSMethodIfNeededAndAttachCard(
-        options: CardOptions,
+        cardData: CardData,
+        addCardOptions: AddCardOptions,
         check3DSPayload: Check3DSVersionPayload,
         requestKey: String,
         completion: @escaping Completion
     ) {
         switch check3DSPayload.receiveVersion() {
         case .v1:
-            attachCard(requestKey: requestKey, options: options, completion: completion)
+            attachCard(
+                requestKey: requestKey,
+                cardData: cardData,
+                data: .dictionary(addCardOptions.attachCardData ?? .empty()),
+                completion: completion
+            )
 
         // TODO: EACQAPW-5432 ждет задачу чтобы убрать appBased из case
         case .v2, .appBased:
@@ -171,7 +182,8 @@ extension AddCardController {
             )
 
             complete3DSMethod(
-                options: options,
+                cardData: cardData,
+                addCardOptions: addCardOptions,
                 checking3DSURLData: checking3DSURLData,
                 requestKey: requestKey,
                 messageVersion: check3DSPayload.version,
@@ -207,7 +219,8 @@ extension AddCardController {
 
     /// Завершает подготовку к привязке карты  с использованием `3DS v2`, а затем привязывает карту
     private func complete3DSMethod(
-        options: CardOptions,
+        cardData: CardData,
+        addCardOptions: AddCardOptions,
         checking3DSURLData: Checking3DSURLData,
         requestKey: String,
         messageVersion: String,
@@ -223,12 +236,15 @@ extension AddCardController {
             }
 
             let browserData = self.threeDSDeviceInfoProvider.createThreeDsDataBrowser()
+            let data = FinishAuthorizeDataWrapper<ThreeDsDataBrowser>(
+                data: browserData,
+                additionalData: addCardOptions.attachCardData
+            )
 
             self.attachCard(
                 requestKey: requestKey,
-                options: options,
-                // ТУДУ: Пробрасывать additionalData для AttachCard
-                data: FinishAuthorizeDataWrapper<ThreeDsDataBrowser>(data: browserData, additionalData: nil),
+                cardData: cardData,
+                data: .threeDsBrowser(data),
                 messageVersion: messageVersion,
                 completion: completion
             )
@@ -238,15 +254,15 @@ extension AddCardController {
     /// Привязывает карту
     private func attachCard(
         requestKey: String,
-        options: CardOptions,
-        data: FinishAuthorizeDataWrapper<ThreeDsDataBrowser>? = nil,
+        cardData: CardData,
+        data: FinishAuthorizeDataEnum?,
         messageVersion: String? = nil,
         completion: @escaping Completion
     ) {
         let attachData = AttachCardData(
-            cardNumber: options.pan,
-            expDate: options.validThru,
-            cvv: options.cvc,
+            cardNumber: cardData.pan,
+            expDate: cardData.validThru,
+            cvv: cardData.cvc,
             requestKey: requestKey,
             data: data
         )
@@ -432,13 +448,13 @@ extension AddCardController.Error: LocalizedError {
 // MARK: - Check3DSVersionData + Helpers
 
 private extension Check3DSVersionData {
-    static func data(with paymentId: String, options: CardOptions) -> Check3DSVersionData {
+    static func data(with paymentId: String, cardData: CardData) -> Check3DSVersionData {
         Check3DSVersionData(
             paymentId: paymentId,
             paymentSource: .cardNumber(
-                number: options.pan,
-                expDate: options.validThru,
-                cvv: options.cvc
+                number: cardData.pan,
+                expDate: cardData.validThru,
+                cvv: cardData.cvc
             )
         )
     }

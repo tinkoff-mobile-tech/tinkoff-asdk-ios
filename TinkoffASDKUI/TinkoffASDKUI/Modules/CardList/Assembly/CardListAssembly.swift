@@ -43,10 +43,12 @@ final class CardListAssembly: ICardListAssembly {
 
     func cardsPresentingNavigationController(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         cardScannerDelegate: ICardScannerDelegate?
     ) -> UINavigationController {
         let view = createModule(
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             configuration: .cardList(),
             cardScannerDelegate: cardScannerDelegate
         )
@@ -65,6 +67,7 @@ final class CardListAssembly: ICardListAssembly {
     ) -> UIViewController {
         createModule(
             customerKey: customerKey,
+            addCardOptions: .empty,
             configuration: .cardPaymentList(selectedCardId: selectedCard.cardId),
             cards: cards,
             paymentFlow: paymentFlow,
@@ -79,6 +82,7 @@ final class CardListAssembly: ICardListAssembly {
 
     private func createModule(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         configuration: CardListScreenConfiguration,
         cards: [PaymentCard] = [],
         paymentFlow: PaymentFlow? = nil,
@@ -100,6 +104,7 @@ final class CardListAssembly: ICardListAssembly {
         let router = CardListRouter(
             addNewCardAssembly: addNewCardAssembly,
             cardPaymentAssembly: cardPaymentAssembly,
+            addCardOptions: addCardOptions,
             paymentFlow: paymentFlow,
             amount: amount,
             cardPaymentOutput: cardPaymentOutput,
@@ -108,7 +113,9 @@ final class CardListAssembly: ICardListAssembly {
 
         let presenter = CardListPresenter(
             screenConfiguration: configuration,
-            cardsController: cardsControllerAssembly.cardsController(customerKey: customerKey),
+            cardsController: cardsControllerAssembly.cardsController(
+                customerKey: customerKey, addCardOptions: addCardOptions
+            ),
             router: router,
             imageResolver: PaymentSystemImageResolver(),
             bankResolver: BankResolver(),

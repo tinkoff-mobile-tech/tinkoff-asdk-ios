@@ -23,10 +23,13 @@ final class CardsControllerAssembly: ICardsControllerAssembly {
 
     // MARK: ICardsControllerAssembly
 
-    func cardsController(customerKey: String) -> ICardsController {
+    func cardsController(customerKey: String, addCardOptions: AddCardOptions) -> ICardsController {
         CardsController(
             cardService: coreSDK,
-            addCardController: addCardControllerAssembly.addCardController(customerKey: customerKey)
+            addCardController: addCardControllerAssembly.addCardController(
+                customerKey: customerKey,
+                addCardOptions: addCardOptions
+            )
         )
     }
 }

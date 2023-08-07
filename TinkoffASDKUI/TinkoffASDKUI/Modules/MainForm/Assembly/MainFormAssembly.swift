@@ -51,7 +51,12 @@ final class MainFormAssembly: IMainFormAssembly {
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
-        let cardsController = paymentFlow.customerKey.map(cardsControllerAssembly.cardsController(customerKey:))
+        let cardsController = paymentFlow.customerKey.map { customerKey in
+            cardsControllerAssembly.cardsController(
+                customerKey: customerKey,
+                addCardOptions: .empty
+            )
+        }
 
         let appChecker = AppChecker()
 

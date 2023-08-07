@@ -250,9 +250,9 @@ extension CardList.Card {
     }
 }
 
-extension CardOptions {
+extension CardData {
     static func fake() -> Self {
-        CardOptions(pan: "123123123123", validThru: "0928", cvc: "123")
+        CardData(pan: "123123123123", validThru: "0928", cvc: "123")
     }
 }
 

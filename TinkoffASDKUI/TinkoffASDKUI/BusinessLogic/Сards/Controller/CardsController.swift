@@ -45,12 +45,12 @@ extension CardsController: ICardsController {
 
     var customerKey: String { addCardController.customerKey }
 
-    func addCard(options: CardOptions, completion: @escaping (AddCardResult) -> Void) {
+    func addCard(cardData: CardData, completion: @escaping (AddCardResult) -> Void) {
         let completionDecorator: (AddCardResult) -> Void = { [weak self] result in
             self?.dispatchQueueType.performOnMain { completion(result) }
         }
 
-        addCardController.addCard(options: options) { [weak self] result in
+        addCardController.addCard(cardData: cardData) { [weak self] result in
             guard let self = self else { return }
 
             switch result {

@@ -20,5 +20,5 @@ public protocol IAddCardController: AnyObject {
     /// - Parameters:
     ///   - options: Опции добавления карты
     ///   - completion: Замыкание с результатом привязки карты, вызывающееся на главном потоке
-    func addCard(options: CardOptions, completion: @escaping (AddCardStateResult) -> Void)
+    func addCard(cardData: CardData, completion: @escaping (AddCardStateResult) -> Void)
 }

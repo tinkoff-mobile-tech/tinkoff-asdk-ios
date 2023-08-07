@@ -189,9 +189,10 @@ public final class AcquiringUISDK {
 
     /// Создает новый `IAddCardController`, с помощью которого можно привязать новую карту с прохождением проверки 3DS, используя свой `UI`
     /// - Parameter customerKey: Идентификатор покупателя в системе продавца
+    /// - Parameter addCardOptions: Параметры для флоу привязки карты
     /// - Returns: IAddCardController
-    public func addCardController(customerKey: String) -> IAddCardController {
-        addCardControllerAssembly.addCardController(customerKey: customerKey)
+    public func addCardController(customerKey: String, addCardOptions: AddCardOptions) -> IAddCardController {
+        addCardControllerAssembly.addCardController(customerKey: customerKey, addCardOptions: addCardOptions)
     }
 
     // MARK: CardsController
@@ -199,9 +200,10 @@ public final class AcquiringUISDK {
     /// Создает новый `ICardsController`, с помощью которого можно получить список активных карт,
     /// удалить  и привязать новую карту с прохождением проверки 3DS, используя свой `UI`
     /// - Parameter customerKey: Идентификатор покупателя в системе продавца
+    /// - Parameter addCardOptions: Параметры для флоу привязки карты
     /// - Returns: ICardsController
-    public func cardsController(customerKey: String) -> ICardsController {
-        cardsControllerAssembly.cardsController(customerKey: customerKey)
+    public func cardsController(customerKey: String, addCardOptions: AddCardOptions) -> ICardsController {
+        cardsControllerAssembly.cardsController(customerKey: customerKey, addCardOptions: addCardOptions)
     }
 
     // MARK: MainForm
@@ -236,16 +238,19 @@ public final class AcquiringUISDK {
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран привязки карты
     ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
+    ///   - addCardOptions: Параметры для флоу привязки карты
     ///   - cardScannerDelegate: Делегат, предоставляющий возможность отобразить карточный сканер поверх заданного экрана
     ///   - completion: Замыкание с результатом привязки карты, которое будет вызвано на главном потоке после закрытия экрана
     public func presentAddCard(
         on presentingViewController: UIViewController,
         customerKey: String,
+        addCardOptions: AddCardOptions,
         cardScannerDelegate: ICardScannerDelegate? = nil,
         completion: ((AddCardResult) -> Void)? = nil
     ) {
         let navigationController = addNewCardAssembly.addNewCardNavigationController(
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             cardScannerDelegate: cardScannerDelegate,
             onViewWasClosed: completion
         )
@@ -261,14 +266,17 @@ public final class AcquiringUISDK {
     /// - Parameters:
     ///   - presentingViewController: `UIViewController`, поверх которого будет отображен экран добавления карты
     ///   - customerKey: Идентификатор покупателя в системе Продавца, к которому будет привязана карта
+    ///   - addCardOptions: Параметры для флоу привязки карты
     ///   - cardScannerDelegate: Делегат, предоставляющий возможность отобразить карточный сканер поверх заданного экрана
     public func presentCardList(
         on presentingViewController: UIViewController,
         customerKey: String,
+        addCardOptions: AddCardOptions,
         cardScannerDelegate: ICardScannerDelegate? = nil
     ) {
         let navigationController = cardListAssembly.cardsPresentingNavigationController(
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             cardScannerDelegate: cardScannerDelegate
         )
         presentingViewController.present(navigationController, animated: true)

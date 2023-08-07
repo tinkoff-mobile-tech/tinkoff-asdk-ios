@@ -1,5 +1,5 @@
 //
-//  CardOptions.swift
+//  CardData.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 19.02.2023.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Параметры карты
-public struct CardOptions: Equatable {
+/// Даннные карты
+public struct CardData: Equatable {
     /// Номер карты
     public let pan: String
     /// Срок годности карты в формате `MM/YY`

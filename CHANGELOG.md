@@ -55,6 +55,7 @@
 * [EACQAPW-5748] Core mocks regeneration
 * [EACQAPW-5764] Update YandexPay mocks
 * [EACQAPW-5827] Update fakes
+* [EACQAPW-5625] Added Card Options to pass DATA field in /AttachCard
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields

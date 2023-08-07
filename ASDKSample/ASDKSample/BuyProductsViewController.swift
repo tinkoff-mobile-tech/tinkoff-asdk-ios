@@ -22,6 +22,11 @@ import TinkoffASDKUI
 import TinkoffASDKYandexPay
 import UIKit
 
+extension AdditionalData {
+    static let paymentInit = AdditionalData(data: ["/InitKey": "/InitValue"])
+    static let paymentFinish = AdditionalData(data: ["/FinishKey": "/FinishValue"])
+}
+
 class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
@@ -56,7 +61,7 @@ class BuyProductsViewController: UIViewController {
     private var rebillCards: [PaymentCard] { activeCards.filter { $0.parentPaymentId != nil } }
     private var activeCards = [PaymentCard]()
 
-    private lazy var cardsController = uiSDK.cardsController(customerKey: customerKey)
+    private lazy var cardsController = uiSDK.cardsController(customerKey: customerKey, addCardOptions: .cardOptions)
 
     @IBOutlet var tableView: UITableView!
     @IBOutlet var buttonAddToCart: UIBarButtonItem!
@@ -615,13 +620,13 @@ private extension PaymentOptions {
         }
 
         var initAddData = initData.additionalData ?? .empty()
-        initAddData.merging(["/InitKey": "/InitValue"])
+        initAddData.merging(AdditionalData.paymentInit)
 
         return PaymentOptions(
             orderOptions: orderOptions,
             customerOptions: customerOptions,
             paymentInitData: initAddData,
-            paymentFinishData: AdditionalData(data: ["/FinishKey": "/FinishValue"])
+            paymentFinishData: .paymentFinish
         )
     }
 }

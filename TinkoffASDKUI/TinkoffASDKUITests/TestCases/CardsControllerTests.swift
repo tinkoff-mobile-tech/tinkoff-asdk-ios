@@ -61,7 +61,7 @@ final class CardsControllerTests: BaseTestCase {
         addCardControllerMock.addCardCompletionClosureInput = .succeded(.fake(status: .authorized))
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { _ in })
+        sut.addCard(options: CardData.fake(), completion: { _ in })
 
         // then
         XCTAssertEqual(cardServiceMock.getCardListCallsCount, 1)
@@ -78,7 +78,7 @@ final class CardsControllerTests: BaseTestCase {
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { result in
+        sut.addCard(options: CardData.fake(), completion: { result in
             guard case .cancelled = result else { return }
             mappedResultToCancelled = true
         })
@@ -100,7 +100,7 @@ final class CardsControllerTests: BaseTestCase {
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { result in
+        sut.addCard(options: CardData.fake(), completion: { result in
             guard case let .failed(error) = result, error is TestsError else { return }
             mappedResultToFailure = true
         })
@@ -125,7 +125,7 @@ final class CardsControllerTests: BaseTestCase {
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         // when
-        sut.addCard(options: CardOptions.fake(), completion: { result in
+        sut.addCard(options: CardData.fake(), completion: { result in
             if case let .failed(error) = result, error is TestsError {
                 didReturnError = true
             }
@@ -316,7 +316,7 @@ final class CardsControllerTests: BaseTestCase {
 
     func test_addCard_success_when_cardIdNil() {
         // given
-        let cardOptions = CardOptions.fake()
+        let cardOptions = CardData.fake()
 
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
@@ -345,7 +345,7 @@ final class CardsControllerTests: BaseTestCase {
 
     func test_addCard_success_when_payloadCardId_notEqual_for_some_cardId() {
         // given
-        let cardOptions = CardOptions.fake()
+        let cardOptions = CardData.fake()
 
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
@@ -384,7 +384,7 @@ final class CardsControllerTests: BaseTestCase {
 
     func test_addCard_success() {
         // given
-        let cardOptions = CardOptions.fake()
+        let cardOptions = CardData.fake()
 
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
