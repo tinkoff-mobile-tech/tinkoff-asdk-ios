@@ -50,8 +50,6 @@ final class AdditionalDataTests: BaseTestCase {
         XCTAssertEqual(data, AdditionalData(data: ["new": "data", "key": "value"]))
     }
 
-    func test_encodable() {}
-
     func test_equatable() {
         // given
         let firstData = AdditionalData(data: TestData.firstData)
