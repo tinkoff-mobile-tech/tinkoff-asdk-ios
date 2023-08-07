@@ -85,8 +85,8 @@ extension PaymentFlow {
     }
 
     func mergePaymentDataIfNeeded(
-        initData: [String: Encodable]?,
-        finishData: [String: Encodable]? = nil
+        initData: [String: any DataValue]?,
+        finishData: [String: any DataValue]? = nil
     ) -> PaymentFlow {
         guard initData != nil || finishData != nil else { return self }
 

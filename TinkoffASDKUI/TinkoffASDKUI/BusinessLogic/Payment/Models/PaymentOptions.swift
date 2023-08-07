@@ -35,7 +35,7 @@ public struct PaymentOptions: Equatable {
     /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
     ///
     /// `Key: String` – 20 знаков,
-    /// `Value: String || Encodable` – 100 знаков.
+    /// `Value: DataValue` – 100 знаков.
     /// - Warning: Максимальное количество пар параметров не может превышать 20.
     /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
     public let paymentInitData: AdditionalData?
@@ -45,7 +45,7 @@ public struct PaymentOptions: Equatable {
     /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
     ///
     /// `Key: String` – 20 знаков,
-    /// `Value: String || Encodable` – 100 знаков.
+    /// `Value: DataValue` – 100 знаков.
     /// - Warning: Максимальное количество пар параметров не может превышать 20.
     /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
     public let paymentFinishData: AdditionalData?

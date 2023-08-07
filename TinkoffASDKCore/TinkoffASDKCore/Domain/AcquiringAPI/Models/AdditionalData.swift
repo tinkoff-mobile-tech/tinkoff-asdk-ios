@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// Тип значения DATA
+public typealias DataValue = Equatable & Encodable
+
 /// Дополнительные поля для параметра `DATA`
 ///
 /// Используется в запросах:
@@ -16,32 +19,37 @@ import Foundation
 /// `JSON` объект, содержащий дополнительные параметры в виде `[Key: Value]`
 ///
 /// `Key: String` – 20 знаков,
-/// `Value: String || Encodable` – 100 знаков.
+/// `Value: DataValue` – 100 знаков.
 /// - Warning: Максимальное количество пар параметров не может превышать 20.
 /// Часть может быть зарезервирована `TinkoffAcquiringSDK`
 ///
-public struct AdditionalData: Equatable, Encodable {
+public struct AdditionalData {
 
-    public private(set) var data: [String: Encodable]
+    public private(set) var data: [String: any DataValue]
 
-    public init(data: [String: Encodable]) {
+    public init(data: [String: any DataValue]) {
         self.data = data
     }
 
     /// Добавляет новые значение в текущий data
-    public mutating func merging(_ second: [String: Encodable]?) {
+    public mutating func merging(_ second: [String: any DataValue]?) {
         guard let second = second else { return }
         second.forEach { item in
             data.updateValue(item.value, forKey: item.key)
         }
     }
 
+    public mutating func merging(_ second: AdditionalData?) {
+        merging(second?.data)
+    }
+
     /// Создает пустой объект
     public static func empty() -> Self {
         AdditionalData(data: [:])
     }
+}
 
-    // MARK: - Encodable
+extension AdditionalData: Encodable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: DynamicCodingKey.self)
@@ -51,8 +59,9 @@ public struct AdditionalData: Equatable, Encodable {
             try container.encode(value, forKey: key)
         }
     }
+}
 
-    // MARK: - Equatable
+extension AdditionalData: Equatable {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
         let lhsSortedKeys: [String] = lhs.data.keys.sorted()
@@ -60,21 +69,29 @@ public struct AdditionalData: Equatable, Encodable {
         if lhsSortedKeys != rhsSortedKeys {
             return false
         } else {
-            for key in lhsSortedKeys {
-                let value1 = lhs.data[key]
-                let value2 = rhs.data[key]
-                return compareValues(value1, value2)
-            }
+            let result = lhsSortedKeys.map { key in
+                guard let value1 = lhs.data[key], let value2 = rhs.data[key] else { return false }
+                return value1.isEqual(value2)
+            }.allSatisfy { $0 == true }
 
-            // when [:]
-            return true
+            return result
         }
     }
+}
 
-    private static func compareValues<T, U>(_ value1: T, _ value2: U) -> Bool {
-        guard type(of: value1 as Any) == type(of: value2 as Any) else { return false }
-        let mirrorValue1 = Mirror(reflecting: value1).description
-        let mirrorValue2 = Mirror(reflecting: value2).description
-        return mirrorValue1 == mirrorValue2
+private extension Equatable {
+
+    // Little hack to compare any Equatable
+    func isEqual(_ other: any Equatable) -> Bool {
+        guard let other = other as? Self else { return other.isExactlyEqual(self) }
+        return self == other
+    }
+
+    // For Subtypes
+    private func isExactlyEqual(_ other: any Equatable) -> Bool {
+        guard let other = other as? Self else {
+            return false
+        }
+        return self == other
     }
 }

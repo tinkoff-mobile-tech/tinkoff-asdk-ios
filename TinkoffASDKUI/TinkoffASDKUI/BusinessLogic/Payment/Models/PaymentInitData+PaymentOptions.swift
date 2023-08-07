@@ -43,7 +43,7 @@ extension PaymentInitData {
         initData.failURL = paymentOptions.paymentCallbackURL?.failureURL
 
         var additionalData = initData.additionalData ?? .empty()
-        additionalData.merging(paymentOptions.paymentInitData?.data)
+        additionalData.merging(paymentOptions.paymentInitData)
         if isCharge {
             additionalData.merging([.chargeFlag: String.true])
         }

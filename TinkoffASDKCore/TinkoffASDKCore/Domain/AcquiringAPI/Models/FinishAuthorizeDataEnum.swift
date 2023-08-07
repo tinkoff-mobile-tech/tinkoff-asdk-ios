@@ -20,45 +20,6 @@ public enum FinishAuthorizeDataEnum {
     case dictionary(AdditionalData)
 }
 
-public extension FinishAuthorizeDataEnum {
-
-    /// Валидация объекта по правилам МАПИ
-    func validate() -> Result<Void, Error> {
-        var jsonObject: JSONObject
-
-        do {
-            jsonObject = try encode2JSONObject()
-        } catch {
-            return .failure(error)
-        }
-
-        // Максимальное количество пар ключ:значение не может превышать 20
-        if jsonObject.keys.count > 20 {
-            return .failure(ASDKCoreError.invalidFinishAuthorizeData)
-        }
-
-        var keyCountHitLimit = false
-        var valueCountHitLimit = false
-
-        for (key, value) in jsonObject {
-            // Ключ не более 20 знаков
-            if key.count > 20 {
-                keyCountHitLimit = true
-            }
-            // Значение не более 100 знаков
-            if (value as? String)?.count ?? .zero > 100 {
-                valueCountHitLimit = true
-            }
-        }
-
-        if keyCountHitLimit || valueCountHitLimit {
-            return .failure(ASDKCoreError.invalidFinishAuthorizeData)
-        } else {
-            return .success(())
-        }
-    }
-}
-
 extension FinishAuthorizeDataEnum: Encodable {
 
     public func encode(to encoder: Encoder) throws {
@@ -66,16 +27,12 @@ extension FinishAuthorizeDataEnum: Encodable {
         case let .threeDsBrowser(wrappedData):
             let finishAuthorizeData3Ds = wrappedData.data
             try finishAuthorizeData3Ds.encode(to: encoder)
-            if let additionalData = wrappedData.additionalData {
-                try additionalData.encode(to: encoder)
-            }
+            try wrappedData.additionalData?.encode(to: encoder)
 
         case let .threeDsSdk(wrappedData):
             let finishAuthorizeData3DsSDK = wrappedData.data
             try finishAuthorizeData3DsSDK.encode(to: encoder)
-            if let additionalData = wrappedData.additionalData {
-                try additionalData.encode(to: encoder)
-            }
+            try wrappedData.additionalData?.encode(to: encoder)
 
         case let .dictionary(data):
             try data.encode(to: encoder)

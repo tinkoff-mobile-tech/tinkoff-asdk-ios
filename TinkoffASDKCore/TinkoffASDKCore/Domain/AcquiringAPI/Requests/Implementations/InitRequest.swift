@@ -40,7 +40,7 @@ struct InitRequest: AcquiringRequest {
     ) {
         self.baseURL = baseURL
         var initData = paymentInitData
-        var additionalData = paymentInitData.additionalData ?? AdditionalData(data: [:])
+        var additionalData = paymentInitData.additionalData ?? .empty()
         additionalData.merging(environmentParametersProvider.environmentParameters)
         initData.additionalData = additionalData
         parameters = (try? initData.encode2JSONObject(dateEncodingStrategy: .iso8601)) ?? [:]

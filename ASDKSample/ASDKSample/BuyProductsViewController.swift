@@ -614,11 +614,14 @@ private extension PaymentOptions {
             CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
         }
 
+        var initAddData = initData.additionalData ?? .empty()
+        initAddData.merging(["/InitKey": "/InitValue"])
+
         return PaymentOptions(
             orderOptions: orderOptions,
             customerOptions: customerOptions,
-            paymentInitData: initData.additionalData,
-            paymentFinishData: nil
+            paymentInitData: initAddData,
+            paymentFinishData: AdditionalData(data: ["/FinishKey": "/FinishValue"])
         )
     }
 }
