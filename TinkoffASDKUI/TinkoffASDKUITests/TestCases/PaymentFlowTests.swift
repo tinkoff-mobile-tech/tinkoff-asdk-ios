@@ -19,7 +19,7 @@ final class PaymentFlowTests: XCTestCase {
         paymentOptions.paymentCallbackURL = PaymentCallbackURL(successURL: successURL, failureURL: failURL)
         let sut = PaymentFlow.full(paymentOptions: paymentOptions)
         // when
-        let result = sut.mergePaymentDataIfNeeded(Self.tinkoffPayData)
+        let result = sut.mergePaymentDataIfNeeded(initData: Self.tinkoffPayData)
         // then
         guard case let .full(mergedOptions) = result else { XCTFail(); return }
         XCTAssertEqual(mergedOptions.paymentCallbackURL?.successURL, successURL)

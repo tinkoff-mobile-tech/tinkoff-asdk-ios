@@ -91,6 +91,7 @@ final class TDSControllerTests: BaseTestCase {
 
         // then
         XCTAssertEqual(transactionMock.getAuthenticationRequestParametersCallsCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createThreeDsDataSDKCallsCount, 1)
         XCTAssertEqual(transactionMock.getProgressViewCallsCount, 1)
         XCTAssertEqual(mainQueueMock.asyncCallsCount, 1)
         XCTAssertTrue(didReceiveThreeDSInfo)
@@ -254,7 +255,7 @@ final class TDSControllerTests: BaseTestCase {
 
     func test_startAppBasedFlow_returnsError() {
         // when
-        var result: Result<ThreeDSDeviceInfo, Error>?
+        var result: Result<ThreeDsDataSDK, Error>?
         sut.startAppBasedFlow(check3dsPayload: .fake(version: .v1), completion: { result = $0 })
 
         // then
@@ -271,7 +272,7 @@ final class TDSControllerTests: BaseTestCase {
         transactionMock.getAuthenticationRequestParametersThrowableError = errorStub
 
         // when
-        var result: Result<ThreeDSDeviceInfo, Error>?
+        var result: Result<ThreeDsDataSDK, Error>?
         setupAndStartAppBasedFlow { result = $0 }
 
         // then
@@ -285,11 +286,12 @@ final class TDSControllerTests: BaseTestCase {
 
 extension TDSControllerTests {
 
-    func setupAndStartAppBasedFlow(completion: ((Result<ThreeDSDeviceInfo, Error>) -> Void)? = nil) {
+    func setupAndStartAppBasedFlow(completion: ((Result<ThreeDsDataSDK, Error>) -> Void)? = nil) {
         // given
         transactionMock.getAuthenticationRequestParametersReturnValue = .fake()
         transactionMock.getProgressViewReturnValue = ProgressDialogMock()
         tdsCertsManagerMock.checkAndUpdateCertsIfNeededCompletionClosureInput = .success("matchingDirectoryServerID")
+        threeDSDeviceInfoProviderMock.createThreeDsDataSDKReturnValue = .fake()
         // when
         sut.startAppBasedFlow(
             check3dsPayload: .fake(version: .appBased),

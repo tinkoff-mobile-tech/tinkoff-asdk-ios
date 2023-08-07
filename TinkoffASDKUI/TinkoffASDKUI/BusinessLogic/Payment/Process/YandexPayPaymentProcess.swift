@@ -103,11 +103,16 @@ private extension YandexPayPaymentProcess {
     }
 
     private func createFinishAuthorizeData(paymentId: String) -> FinishAuthorizeData {
-        FinishAuthorizeData(
+        let browserData = threeDSDeviceInfoProvider.createThreeDsDataBrowser(threeDSCompInd: .threeDSCompInd)
+        let data = FinishAuthorizeDataWrapper<ThreeDsDataBrowser>(
+            data: browserData,
+            additionalData: paymentFlow.additionalFinishData
+        )
+        return FinishAuthorizeData(
             paymentId: paymentId,
             paymentSource: paymentSource,
             infoEmail: paymentFlow.customerOptions?.email,
-            deviceInfo: threeDSDeviceInfoProvider.createDeviceInfo(threeDSCompInd: .threeDSCompInd)
+            data: .threeDsBrowser(data)
         )
     }
 

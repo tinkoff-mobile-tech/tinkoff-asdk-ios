@@ -12,15 +12,15 @@ final class ChargePaymentControllerDelegateMock: ChargePaymentControllerDelegate
 
     // MARK: - paymentControllerShouldRepeatWithRebillId
 
-    typealias PaymentControllerShouldRepeatWithRebillIdArguments = (controller: IPaymentController, rebillId: String, failedPaymentProcess: IPaymentProcess, additionalData: [String: String], error: Error)
+    typealias PaymentControllerShouldRepeatWithRebillIdArguments = (controller: IPaymentController, rebillId: String, failedPaymentProcess: IPaymentProcess, additionalInitData: AdditionalData?, error: Error)
 
     var paymentControllerShouldRepeatWithRebillIdCallsCount = 0
     var paymentControllerShouldRepeatWithRebillIdReceivedArguments: PaymentControllerShouldRepeatWithRebillIdArguments?
     var paymentControllerShouldRepeatWithRebillIdReceivedInvocations: [PaymentControllerShouldRepeatWithRebillIdArguments?] = []
 
-    func paymentController(_ controller: IPaymentController, shouldRepeatWithRebillId rebillId: String, failedPaymentProcess: IPaymentProcess, additionalData: [String: String], error: Error) {
+    func paymentController(_ controller: IPaymentController, shouldRepeatWithRebillId rebillId: String, failedPaymentProcess: IPaymentProcess, additionalInitData: AdditionalData?, error: Error) {
         paymentControllerShouldRepeatWithRebillIdCallsCount += 1
-        let arguments = (controller, rebillId, failedPaymentProcess, additionalData, error)
+        let arguments = (controller, rebillId, failedPaymentProcess, additionalInitData, error)
         paymentControllerShouldRepeatWithRebillIdReceivedArguments = arguments
         paymentControllerShouldRepeatWithRebillIdReceivedInvocations.append(arguments)
     }

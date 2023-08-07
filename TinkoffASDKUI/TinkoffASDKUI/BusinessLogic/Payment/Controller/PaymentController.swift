@@ -128,14 +128,14 @@ extension PaymentController: PaymentProcessDelegate {
     func payment(
         _ paymentProcess: IPaymentProcess,
         needToCollect3DSData checking3DSURLData: Checking3DSURLData,
-        completion: @escaping (ThreeDSDeviceInfo) -> Void
+        completion: @escaping (ThreeDsDataBrowser) -> Void
     ) {
 
         DispatchQueue.performOnMain { [weak self] in
             guard let self = self else { return }
 
             try? self.threeDSWebFlowController.complete3DSMethod(checking3DSURLData: checking3DSURLData)
-            completion(self.threeDSDeviceInfoProvider.deviceInfo)
+            completion(self.threeDSDeviceInfoProvider.createThreeDsDataBrowser())
         }
     }
 
@@ -192,7 +192,7 @@ extension PaymentController: PaymentProcessDelegate {
 
     func startAppBasedFlow(
         check3dsPayload: Check3DSVersionPayload,
-        completion: @escaping (Result<ThreeDSDeviceInfo, Error>) -> Void
+        completion: @escaping (Result<ThreeDsDataSDK, Error>) -> Void
     ) {
         tdsController.startAppBasedFlow(
             check3dsPayload: check3dsPayload,
@@ -266,7 +266,7 @@ extension PaymentController {
             return false
         }
 
-        let additionalData = ["failMapiSessionId": "\(failedPaymentId)", "recurringType": "12"]
+        let prefilledData = ["failMapiSessionId": "\(failedPaymentId)", "recurringType": "12"]
 
         let errorCode = (error as NSError).code
         switch errorCode {
@@ -275,7 +275,7 @@ extension PaymentController {
                 self,
                 shouldRepeatWithRebillId: rebillId,
                 failedPaymentProcess: paymentProcess,
-                additionalData: additionalData,
+                additionalInitData: AdditionalData(data: prefilledData),
                 error: error
             )
             return true

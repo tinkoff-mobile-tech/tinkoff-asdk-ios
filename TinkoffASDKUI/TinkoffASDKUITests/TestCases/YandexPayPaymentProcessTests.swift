@@ -140,7 +140,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // then
         let arguments = paymentProcessDelegateMock.paymentNeed3DSConfirmationReceivedArguments
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DSConfirmationCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createThreeDsDataBrowserCallsCount, 1)
         let paymentProcess = try XCTUnwrap(arguments?.paymentProcess)
         XCTAssertEqualTypes(paymentProcess, sut)
         try assertCalledDelegateDidFinish(sut: sut, fakedGetPaymentState: fakedGetPaymentState)
@@ -188,7 +188,7 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // then
         let arguments = paymentProcessDelegateMock.paymentNeed3DSConfirmationACSReceivedArguments
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DSConfirmationACSCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
+        XCTAssertEqual(threeDSDeviceInfoProviderMock.createThreeDsDataBrowserCallsCount, 1)
         let paymentProcess = try XCTUnwrap(arguments?.paymentProcess)
         XCTAssertEqualTypes(paymentProcess, sut)
         try assertCalledDelegateDidFinish(sut: sut, fakedGetPaymentState: fakedGetPaymentState)
@@ -235,7 +235,6 @@ final class YandexPayPaymentProcessTests: BaseTestCase {
         // then
         let arguments = paymentProcessDelegateMock.paymentNeed3DSConfirmationAppBasedReceivedArguments
         XCTAssertEqual(paymentProcessDelegateMock.paymentNeed3DSConfirmationAppBasedCallsCount, 1)
-        XCTAssertEqual(threeDSDeviceInfoProviderMock.createDeviceInfoCallsCount, 1)
         let paymentProcess = try XCTUnwrap(arguments?.paymentProcess)
         XCTAssertEqualTypes(paymentProcess, sut)
         try assertCalledDelegateDidFinish(sut: sut, fakedGetPaymentState: fakedGetPaymentState)
@@ -371,7 +370,9 @@ extension YandexPayPaymentProcessTests {
     }
 
     private func prepareSut(paymentFlow: PaymentFlow, base64Token: String = "") -> YandexPayPaymentProcess {
-        YandexPayPaymentProcess(
+        threeDSDeviceInfoProviderMock.createThreeDsDataBrowserReturnValue = .fake()
+
+        return YandexPayPaymentProcess(
             paymentFlow: paymentFlow,
             paymentSource: .yandexPay(base64Token: base64Token),
             paymentService: paymentServiceMock,

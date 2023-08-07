@@ -77,7 +77,8 @@ extension PaymentOptions {
         return PaymentOptions(
             orderOptions: orderOptions,
             customerOptions: customerOptions,
-            paymentData: initData.paymentFormData ?? [:]
+            paymentInitData: initData.additionalData,
+            paymentFinishData: nil
         )
     }
 

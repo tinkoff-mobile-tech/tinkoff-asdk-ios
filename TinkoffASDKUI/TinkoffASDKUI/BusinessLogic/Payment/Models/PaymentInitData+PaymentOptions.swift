@@ -42,14 +42,17 @@ extension PaymentInitData {
         initData.successURL = paymentOptions.paymentCallbackURL?.successURL
         initData.failURL = paymentOptions.paymentCallbackURL?.failureURL
 
+        var additionalData = initData.additionalData ?? .empty()
+        additionalData.merging(paymentOptions.paymentInitData)
         if isCharge {
-            initData.addPaymentData(["chargeFlag": "true"])
+            additionalData.merging([.chargeFlag: String.true])
         }
-
-        if let paymentData = paymentOptions.paymentData {
-            initData.addPaymentData(paymentData)
-        }
-
+        initData.additionalData = additionalData
         return initData
     }
+}
+
+private extension String {
+    static let chargeFlag = "chargeFlag"
+    static let `true` = "true"
 }

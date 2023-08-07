@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinkoffASDKCore
 
 /// Тип проведения оплаты
 public enum PaymentFlow: Equatable {
@@ -24,6 +25,24 @@ extension PaymentFlow {
             return paymentOptions.customerOptions
         case let .finish(paymentOptions):
             return paymentOptions.customerOptions
+        }
+    }
+
+    var additionalInitData: AdditionalData? {
+        switch self {
+        case let .full(paymentOptions):
+            return paymentOptions.paymentInitData
+        case .finish:
+            return nil
+        }
+    }
+
+    var additionalFinishData: AdditionalData? {
+        switch self {
+        case let .full(paymentOptions):
+            return paymentOptions.paymentFinishData
+        case let .finish(finishOptions):
+            return finishOptions.paymentFinishData
         }
     }
 
@@ -50,7 +69,8 @@ extension PaymentFlow {
             let newPaymentOptions = PaymentOptions(
                 orderOptions: paymentOptions.orderOptions,
                 customerOptions: newCustomerOptions,
-                paymentData: paymentOptions.paymentData
+                paymentInitData: paymentOptions.paymentInitData,
+                paymentFinishData: paymentOptions.paymentFinishData
             )
             return .full(paymentOptions: newPaymentOptions)
         case let .finish(paymentOptions):
@@ -64,20 +84,42 @@ extension PaymentFlow {
         }
     }
 
-    func mergePaymentDataIfNeeded(_ paymentData: [String: String]?) -> PaymentFlow {
-        guard let paymentData = paymentData else { return self }
+    func mergePaymentDataIfNeeded(
+        initData: [String: any DataValue]?,
+        finishData: [String: any DataValue]? = nil
+    ) -> PaymentFlow {
+        guard initData != nil || finishData != nil else { return self }
 
         switch self {
         case let .full(paymentOptions):
+            var newInitData = paymentOptions.paymentInitData ?? .empty()
+            newInitData.merging(initData)
+
+            var newFinishData = paymentOptions.paymentFinishData ?? .empty()
+            newFinishData.merging(finishData)
+
             let newPaymentOptions = PaymentOptions(
                 orderOptions: paymentOptions.orderOptions,
                 customerOptions: paymentOptions.customerOptions,
                 paymentCallbackURL: paymentOptions.paymentCallbackURL,
-                paymentData: (paymentOptions.paymentData ?? [:]).merging(paymentData) { $1 }
+                paymentInitData: newInitData,
+                paymentFinishData: newFinishData
             )
             return .full(paymentOptions: newPaymentOptions)
-        case .finish:
-            return self
+
+        case let .finish(finishPaymentOptions):
+            guard let finishData else { return self }
+            var newFinishData = finishPaymentOptions.paymentFinishData
+            newFinishData?.merging(finishData)
+
+            let newFinishPaymentOptions = FinishPaymentOptions(
+                paymentId: finishPaymentOptions.paymentId,
+                amount: finishPaymentOptions.amount,
+                orderId: finishPaymentOptions.orderId,
+                customerOptions: finishPaymentOptions.customerOptions,
+                paymentFinishData: newFinishData
+            )
+            return .finish(paymentOptions: newFinishPaymentOptions)
         }
     }
 }

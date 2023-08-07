@@ -327,11 +327,11 @@ extension BuyProductsViewController: ICardScannerDelegate {
 }
 
 extension BuyProductsViewController: IRecurrentPaymentFailiureDelegate {
-    func recurrentPaymentNeedRepeatInit(additionalData: [String: String], completion: @escaping (Result<PaymentId, Error>) -> Void) {
+    func recurrentPaymentNeedRepeatInit(additionalInitData: AdditionalData, completion: @escaping (Result<PaymentId, Error>) -> Void) {
         var initData = createPaymentData()
-
-        let newPaymentData = initData.paymentFormData?.merging(additionalData) { $1 }
-        initData.paymentFormData = newPaymentData
+        var newAdditionalData = initData.additionalData ?? .empty()
+        newAdditionalData.merging(additionalInitData.data)
+        initData.additionalData = newAdditionalData
 
         coreSDK.initPayment(data: initData) { result in
             if let paymentId = try? result.map({ $0.paymentId }).get() {
@@ -614,10 +614,14 @@ private extension PaymentOptions {
             CustomerOptions(customerKey: $0, email: "exampleEmail@tinkoff.ru")
         }
 
+        var initAddData = initData.additionalData ?? .empty()
+        initAddData.merging(["/InitKey": "/InitValue"])
+
         return PaymentOptions(
             orderOptions: orderOptions,
             customerOptions: customerOptions,
-            paymentData: initData.paymentFormData ?? [:]
+            paymentInitData: initAddData,
+            paymentFinishData: AdditionalData(data: ["/FinishKey": "/FinishValue"])
         )
     }
 }

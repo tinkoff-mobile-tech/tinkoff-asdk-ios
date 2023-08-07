@@ -57,6 +57,7 @@
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields
+* [EACQAPW-5616] Fully Refactored additional DATA on /Init /FinishAuthorize and /AttachCard
 
 ### Fixed
 

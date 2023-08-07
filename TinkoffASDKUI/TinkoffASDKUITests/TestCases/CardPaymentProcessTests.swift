@@ -565,7 +565,7 @@ extension CardPaymentProcessTests {
         responseStatus: Result<FinishAuthorizePayload, Error> = .success(.fake(responseStatus: .done(.fake()))),
         confirmationCompletion: Result<GetPaymentStatePayload, Error>? = nil,
         confirmationCancelled: Void? = nil,
-        startAppBasedFlowCompletion: Result<ThreeDSDeviceInfo, Error>? = nil
+        startAppBasedFlowCompletion: Result<ThreeDsDataSDK, Error>? = nil
     ) -> Dependencies {
         let paymentSource = UIASDKTestsAssembly.makePaymentSourceData_cardNumber()
         let customerOptions = CustomerOptions(customerKey: "somekey", email: "someemail")
@@ -580,7 +580,7 @@ extension CardPaymentProcessTests {
         let sutPaymentProcess = dependencies.sutAsPaymentProcess
         let threeDsServiceMock = dependencies.threeDsServiceMock
 
-        dependencies.paymentDelegateMock.paymentNeedToCollect3DSDataCompletionClosureInput = ThreeDSDeviceInfo.fake()
+        dependencies.paymentDelegateMock.paymentNeedToCollect3DSDataCompletionClosureInput = .fake()
         threeDsServiceMock.check3DSVersionCompletionClosureInput = check3DSVersionResult
         dependencies.paymentsServiceMock.finishAuthorizeCompletionClosureInput = responseStatus
         dependencies.paymentDelegateMock.paymentNeed3DSConfirmationCompletionClosureInput = confirmationCompletion

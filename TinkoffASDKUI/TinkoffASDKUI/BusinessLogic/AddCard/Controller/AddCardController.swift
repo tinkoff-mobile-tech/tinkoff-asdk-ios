@@ -222,10 +222,13 @@ extension AddCardController {
                 return completion(.failed(error))
             }
 
+            let browserData = self.threeDSDeviceInfoProvider.createThreeDsDataBrowser()
+
             self.attachCard(
                 requestKey: requestKey,
                 options: options,
-                deviceData: self.threeDSDeviceInfoProvider.deviceInfo,
+                // ТУДУ: Пробрасывать additionalData для AttachCard
+                data: FinishAuthorizeDataWrapper<ThreeDsDataBrowser>(data: browserData, additionalData: nil),
                 messageVersion: messageVersion,
                 completion: completion
             )
@@ -236,7 +239,7 @@ extension AddCardController {
     private func attachCard(
         requestKey: String,
         options: CardOptions,
-        deviceData: ThreeDSDeviceInfo? = nil,
+        data: FinishAuthorizeDataWrapper<ThreeDsDataBrowser>? = nil,
         messageVersion: String? = nil,
         completion: @escaping Completion
     ) {
@@ -245,7 +248,7 @@ extension AddCardController {
             expDate: options.validThru,
             cvv: options.cvc,
             requestKey: requestKey,
-            deviceData: deviceData
+            data: data
         )
 
         addCardService.attachCard(data: attachData) { [weak self] result in

@@ -136,7 +136,8 @@ private extension CardPaymentProcess {
             let data = FinishAuthorizeData(
                 paymentId: paymentId,
                 paymentSource: paymentSource,
-                infoEmail: paymentFlow.customerOptions?.email
+                infoEmail: paymentFlow.customerOptions?.email,
+                data: nil // ?????????????????
             )
             finishAuthorize(data: data, threeDSVersion: payload.version)
 
@@ -150,38 +151,43 @@ private extension CardPaymentProcess {
                 notificationURL: threeDsService.confirmation3DSCompleteV2URL().absoluteString
             )
 
-            // Может тут должен быть метод ?
-            // need3DSConfirmationACS
-            delegate?.payment(self, needToCollect3DSData: check3DSData) { [weak self] deviceInfo in
+            delegate?.payment(self, needToCollect3DSData: check3DSData) { [weak self] threeDsBrowserData in
                 guard let self = self else { return }
+
+                let browserData = FinishAuthorizeDataWrapper<ThreeDsDataBrowser>(
+                    data: threeDsBrowserData,
+                    additionalData: self.paymentFlow.additionalFinishData
+                )
 
                 let data = FinishAuthorizeData(
                     paymentId: paymentId,
                     paymentSource: self.paymentSource,
                     infoEmail: self.paymentFlow.customerOptions?.email,
-                    deviceInfo: deviceInfo,
-                    threeDSVersion: payload.version
+                    data: .threeDsBrowser(browserData)
                 )
+
                 self.finishAuthorize(data: data, threeDSVersion: payload.version)
             }
 
         case .appBased:
-            let finishAuthorizeData = FinishAuthorizeData(
-                paymentId: paymentId,
-                paymentSource: paymentSource,
-                infoEmail: paymentFlow.customerOptions?.email,
-                threeDSVersion: payload.version
-            )
-
             delegate?.startAppBasedFlow(
                 check3dsPayload: payload,
                 completion: { [weak self] result in
                     guard let self = self else { return }
                     switch result {
-                    case let .success(threeDsDeviceInfo):
-                        var enrichedFinishAuthorizeData = finishAuthorizeData
-                        enrichedFinishAuthorizeData.deviceInfo = threeDsDeviceInfo
-                        self.finishAuthorize(data: enrichedFinishAuthorizeData)
+                    case let .success(threeDsSdkData):
+                        let sdkData = FinishAuthorizeDataWrapper<ThreeDsDataSDK>(
+                            data: threeDsSdkData,
+                            additionalData: self.paymentFlow.additionalFinishData
+                        )
+
+                        let finishAuthorizeData = FinishAuthorizeData(
+                            paymentId: paymentId,
+                            paymentSource: self.paymentSource,
+                            infoEmail: self.paymentFlow.customerOptions?.email,
+                            data: .threeDsSdk(sdkData)
+                        )
+                        self.finishAuthorize(data: finishAuthorizeData)
                     case let .failure(error):
                         let (cardId, rebillId) = self.paymentSource.getCardAndRebillId()
                         self.delegate?.paymentDidFailed(self, with: error, cardId: cardId, rebillId: rebillId)

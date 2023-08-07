@@ -163,7 +163,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
             PaymentControllerMock(),
             shouldRepeatWithRebillId: String(parentId),
             failedPaymentProcess: PaymentProcessMock(),
-            additionalData: [:],
+            additionalInitData: .empty(),
             error: error
         )
 
@@ -195,7 +195,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
             PaymentControllerMock(),
             shouldRepeatWithRebillId: String(parentId),
             failedPaymentProcess: PaymentProcessMock(),
-            additionalData: [:],
+            additionalInitData: .empty(),
             error: error
         )
 
@@ -439,7 +439,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
             PaymentControllerMock(),
             shouldRepeatWithRebillId: String(parentId),
             failedPaymentProcess: PaymentProcessMock(),
-            additionalData: [:],
+            additionalInitData: .empty(),
             error: error
         )
 
@@ -468,7 +468,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
             PaymentControllerMock(),
             shouldRepeatWithRebillId: String(parentId),
             failedPaymentProcess: PaymentProcessMock(),
-            additionalData: [:],
+            additionalInitData: .empty(),
             error: error
         )
 
@@ -497,7 +497,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
             PaymentControllerMock(),
             shouldRepeatWithRebillId: String(parentId),
             failedPaymentProcess: PaymentProcessMock(),
-            additionalData: [:],
+            additionalInitData: .empty(),
             error: error
         )
 
@@ -526,7 +526,7 @@ final class RecurrentPaymentPresenterTests: BaseTestCase {
             PaymentControllerMock(),
             shouldRepeatWithRebillId: String(parentId),
             failedPaymentProcess: PaymentProcessMock(),
-            additionalData: [:],
+            additionalInitData: .empty(),
             error: error
         )
 

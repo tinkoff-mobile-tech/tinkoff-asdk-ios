@@ -295,7 +295,7 @@ final class PaymentControllerTests: BaseTestCase {
         let paymentId = String.paymentId
         let errorStub = NSError(domain: "domain", code: 104)
         let delegateMock = ChargePaymentControllerDelegateMock()
-        let additionalData = ["failMapiSessionId": "\(paymentId)", "recurringType": "12"]
+        let additionalInitData = AdditionalData(data: ["failMapiSessionId": "\(paymentId)", "recurringType": "12"])
         paymentProcessMock.paymentId = paymentId
 
         sut.delegate = delegateMock
@@ -312,7 +312,7 @@ final class PaymentControllerTests: BaseTestCase {
         let data = try XCTUnwrap(delegateMock.paymentControllerShouldRepeatWithRebillIdReceivedArguments)
         XCTAssertEqual(delegateMock.paymentControllerShouldRepeatWithRebillIdCallsCount, 1)
         XCTAssertEqual(data.rebillId, .rebillId)
-        XCTAssertEqual(data.additionalData, additionalData)
+        XCTAssertEqual(data.additionalInitData, additionalInitData)
         XCTAssertEqual(tdsControllerMock.stopCallsCount, 1)
     }
 
@@ -363,11 +363,11 @@ final class PaymentControllerTests: BaseTestCase {
     func test_paymentControllerNotifiesPaymentDelegate_whenNeedToCollect3DSData() {
         // given
         let data = Checking3DSURLData.fake()
-        let deviceInfo = ThreeDSDeviceInfo.fake()
-        threeDSDeviceInfoProviderMock.createDeviceInfoReturnValue = deviceInfo
+        let deviceInfo = ThreeDsDataBrowser.fake()
+        threeDSDeviceInfoProviderMock.createThreeDsDataBrowserReturnValue = deviceInfo
 
         // when
-        var serviceInfo: ThreeDSDeviceInfo?
+        var serviceInfo: ThreeDsDataBrowser?
         sut.payment(
             paymentProcessMock,
             needToCollect3DSData: data,

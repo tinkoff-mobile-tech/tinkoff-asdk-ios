@@ -21,12 +21,24 @@ import Foundation
 import class UIKit.UIScreen
 
 public protocol IThreeDSDeviceInfoProvider {
-    func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo
+
+    func createThreeDsDataBrowser(threeDSCompInd: String) -> ThreeDsDataBrowser
+
+    func createThreeDsDataSDK(
+        sdkAppID: String,
+        sdkEphemPubKey: String,
+        sdkReferenceNumber: String,
+        sdkTransID: String,
+        sdkMaxTimeout: String,
+        sdkEncData: String
+    ) -> ThreeDsDataSDK
 }
 
 public extension IThreeDSDeviceInfoProvider {
-    var deviceInfo: ThreeDSDeviceInfo {
-        createDeviceInfo(threeDSCompInd: "Y")
+
+    /// threeDSCompInd: "Y"
+    func createThreeDsDataBrowser() -> ThreeDsDataBrowser {
+        return createThreeDsDataBrowser(threeDSCompInd: "Y")
     }
 }
 
@@ -45,26 +57,36 @@ final class ThreeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider {
         self.sdkUiProvider = sdkUiProvider
     }
 
-    func createDeviceInfo(threeDSCompInd: String) -> ThreeDSDeviceInfo {
-        ThreeDSDeviceInfo(
-            // BRW
-            threeDSCompInd: threeDSCompInd,
-            javaEnabled: "true",
-            colorDepth: 32,
-            language: (languageProvider.language ?? .ru).rawValue,
-            timezone: TimeZone.current.secondsFromGMT() / 60,
-            screenHeight: Int(UIScreen.main.bounds.height * UIScreen.main.scale),
-            screenWidth: Int(UIScreen.main.bounds.width * UIScreen.main.scale),
-            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString,
-            // SDK
-            sdkAppID: nil,
-            sdkEphemPubKey: nil,
-            sdkReferenceNumber: nil,
-            sdkTransID: nil,
-            sdkMaxTimeout: nil,
-            sdkEncData: nil,
+    public func createThreeDsDataSDK(
+        sdkAppID: String,
+        sdkEphemPubKey: String,
+        sdkReferenceNumber: String,
+        sdkTransID: String,
+        sdkMaxTimeout: String,
+        sdkEncData: String
+    ) -> ThreeDsDataSDK {
+        ThreeDsDataSDK(
+            sdkAppID: sdkAppID,
+            sdkEphemPubKey: sdkEphemPubKey,
+            sdkReferenceNumber: sdkReferenceNumber,
+            sdkTransID: sdkTransID,
+            sdkMaxTimeout: sdkMaxTimeout,
+            sdkEncData: sdkEncData,
             sdkInterface: sdkUiProvider.sdkInterface(),
             sdkUiType: sdkUiProvider.sdkUiTypes().map { $0.rawValue }.joined(separator: ",")
+        )
+    }
+
+    public func createThreeDsDataBrowser(threeDSCompInd: String) -> ThreeDsDataBrowser {
+        ThreeDsDataBrowser(
+            threeDSCompInd: threeDSCompInd,
+            javaEnabled: "true",
+            colorDepth: "\(32)",
+            language: (languageProvider.language ?? .ru).rawValue,
+            timezone: "\(TimeZone.current.secondsFromGMT() / 60)",
+            screenHeight: "\(Int(UIScreen.main.bounds.height * UIScreen.main.scale))",
+            screenWidth: "\(Int(UIScreen.main.bounds.width * UIScreen.main.scale))",
+            cresCallbackUrl: urlBuilder.url(ofType: .confirmation3DSTerminationV2URL).absoluteString
         )
     }
 }
