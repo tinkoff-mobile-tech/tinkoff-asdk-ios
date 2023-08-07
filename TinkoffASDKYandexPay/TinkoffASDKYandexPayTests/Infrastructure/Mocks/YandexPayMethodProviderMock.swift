@@ -13,9 +13,11 @@ final class YandexPayMethodProviderMock: IYandexPayMethodProvider {
 
     // MARK: - provideMethod
 
+    typealias ProvideMethodArguments = (Result<YandexPayMethod, Error>) -> Void
+
     var provideMethodCallsCount = 0
-    var provideMethodReceivedArguments: ((Result<YandexPayMethod, Error>) -> Void)?
-    var provideMethodReceivedInvocations: [(Result<YandexPayMethod, Error>) -> Void] = []
+    var provideMethodReceivedArguments: ProvideMethodArguments?
+    var provideMethodReceivedInvocations: [ProvideMethodArguments?] = []
     var provideMethodCompletionClosureInput: Result<YandexPayMethod, Error>?
 
     func provideMethod(completion: @escaping (Result<YandexPayMethod, Error>) -> Void) {
@@ -26,5 +28,16 @@ final class YandexPayMethodProviderMock: IYandexPayMethodProvider {
         if let provideMethodCompletionClosureInput = provideMethodCompletionClosureInput {
             completion(provideMethodCompletionClosureInput)
         }
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayMethodProviderMock {
+    func fullReset() {
+        provideMethodCallsCount = 0
+        provideMethodReceivedArguments = nil
+        provideMethodReceivedInvocations = []
+        provideMethodCompletionClosureInput = nil
     }
 }

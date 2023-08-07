@@ -13,9 +13,11 @@ final class YandexPayPaymentFlowAssemblyMock: IYandexPayPaymentFlowAssembly {
 
     // MARK: - yandexPayPaymentFlow
 
+    typealias YandexPayPaymentFlowArguments = YandexPayPaymentFlowDelegate
+
     var yandexPayPaymentFlowCallsCount = 0
-    var yandexPayPaymentFlowReceivedArguments: YandexPayPaymentFlowDelegate?
-    var yandexPayPaymentFlowReceivedInvocations: [YandexPayPaymentFlowDelegate] = []
+    var yandexPayPaymentFlowReceivedArguments: YandexPayPaymentFlowArguments?
+    var yandexPayPaymentFlowReceivedInvocations: [YandexPayPaymentFlowArguments?] = []
     var yandexPayPaymentFlowReturnValue: IYandexPayPaymentFlow!
 
     func yandexPayPaymentFlow(delegate: YandexPayPaymentFlowDelegate) -> IYandexPayPaymentFlow {
@@ -24,5 +26,15 @@ final class YandexPayPaymentFlowAssemblyMock: IYandexPayPaymentFlowAssembly {
         yandexPayPaymentFlowReceivedArguments = arguments
         yandexPayPaymentFlowReceivedInvocations.append(arguments)
         return yandexPayPaymentFlowReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension YandexPayPaymentFlowAssemblyMock {
+    func fullReset() {
+        yandexPayPaymentFlowCallsCount = 0
+        yandexPayPaymentFlowReceivedArguments = nil
+        yandexPayPaymentFlowReceivedInvocations = []
     }
 }

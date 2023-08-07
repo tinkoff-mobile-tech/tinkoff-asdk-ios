@@ -10,12 +10,13 @@
 import YandexPaySDK
 
 final class YPPaymentSheetFactoryMock: IYPPaymentSheetFactory {
-
     // MARK: - create
 
+    typealias CreateArguments = PaymentFlow
+
     var createCallsCount = 0
-    var createReceivedArguments: PaymentFlow?
-    var createReceivedInvocations: [PaymentFlow] = []
+    var createReceivedArguments: CreateArguments?
+    var createReceivedInvocations: [CreateArguments?] = []
     var createReturnValue: YPPaymentSheet!
 
     func create(with paymentFlow: PaymentFlow) -> YPPaymentSheet {
@@ -24,5 +25,15 @@ final class YPPaymentSheetFactoryMock: IYPPaymentSheetFactory {
         createReceivedArguments = arguments
         createReceivedInvocations.append(arguments)
         return createReturnValue
+    }
+}
+
+// MARK: - Resets
+
+extension YPPaymentSheetFactoryMock {
+    func fullReset() {
+        createCallsCount = 0
+        createReceivedArguments = nil
+        createReceivedInvocations = []
     }
 }
