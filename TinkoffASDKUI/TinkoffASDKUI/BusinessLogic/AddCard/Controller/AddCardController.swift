@@ -260,7 +260,7 @@ extension AddCardController {
         completion: @escaping Completion
     ) {
         let attachData = AttachCardData(
-            cardNumber: cardData.pan,
+            cardNumber: cardData.number,
             expDate: cardData.validThru,
             cvv: cardData.cvc,
             requestKey: requestKey,
@@ -452,7 +452,7 @@ private extension Check3DSVersionData {
         Check3DSVersionData(
             paymentId: paymentId,
             paymentSource: .cardNumber(
-                number: cardData.pan,
+                number: cardData.number,
                 expDate: cardData.validThru,
                 cvv: cardData.cvc
             )

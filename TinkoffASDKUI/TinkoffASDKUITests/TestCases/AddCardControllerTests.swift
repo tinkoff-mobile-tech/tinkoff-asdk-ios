@@ -104,6 +104,17 @@ final class AddCardControllerTests: BaseTestCase {
 
         // then
         XCTAssertEqual(addCardServiceMock.getAddCardStateCallsCount, 1)
+        guard let dataParameter = addCardServiceMock.attachCardReceivedArguments?.data.data else {
+            XCTFail()
+            return
+        }
+        switch dataParameter {
+        case let .threeDsBrowser(finishAuthorizeDataWrapper):
+            let keysSet = finishAuthorizeDataWrapper.additionalData
+            let addCardKeys = AddCardOptions.fake().attachCardData
+            XCTAssertEqual(keysSet, addCardKeys)
+        default: XCTFail()
+        }
     }
 
     func test_AttachCard_checkType_HoldOrNo() {
@@ -117,7 +128,10 @@ final class AddCardControllerTests: BaseTestCase {
 
         // then
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
-        XCTAssertNil(addCardServiceMock.attachCardReceivedArguments?.data.data)
+        switch addCardServiceMock.attachCardReceivedArguments?.data.data {
+        case let .dictionary(additionalData): XCTAssertEqual(additionalData, AddCardOptions.fake().attachCardData)
+        default: XCTFail()
+        }
     }
 
     func test_3DSConfirmationInWebView_cancelled() {
@@ -214,12 +228,12 @@ final class AddCardControllerTests: BaseTestCase {
         // given
         var didReturnError = false
         sut = createAddCardController(checkType: .check3DS)
-        let cardOptions = CardData(pan: "123123213", validThru: "0928", cvc: "123")
+        let cardOptions = CardData(number: "123123213", validThru: "0928", cvc: "123")
         addCardServiceMock.addCardReturnValue = CancellableMock()
         addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
-        sut.addCard(options: cardOptions, completion: { result in
+        sut.addCard(cardData: cardOptions, completion: { result in
             if case let .failed(error) = result, error is TestsError {
                 didReturnError = true
             }
@@ -239,7 +253,7 @@ final class AddCardControllerTests: BaseTestCase {
         addCardServiceMock.addCardCompletionClosureInput = .failure(TestsError.basic)
 
         // when
-        sut.addCard(options: CardData.fake(), completion: { result in })
+        sut.addCard(cardData: CardData.fake(), completion: { result in })
 
         // then
         XCTAssertEqual(addCardServiceMock.addCardCallsCount, 1)
@@ -331,7 +345,7 @@ final class AddCardControllerTests: BaseTestCase {
         var receivedExpectedError = false
 
         // when
-        sut.addCard(options: CardData.fake(), completion: { result in
+        sut.addCard(cardData: CardData.fake(), completion: { result in
             if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
                 if case .missingPaymentIdFor3DSFlow = castedError {
                     receivedExpectedError = true
@@ -352,7 +366,7 @@ final class AddCardControllerTests: BaseTestCase {
         var receivedExpectedError = false
 
         // when
-        sut.addCard(options: CardData.fake(), completion: { result in
+        sut.addCard(cardData: CardData.fake(), completion: { result in
             if case let .failed(error) = result, let castedError = error as? AddCardController.Error {
                 if case .missingPaymentIdFor3DSFlow = castedError {
                     receivedExpectedError = true
@@ -627,9 +641,12 @@ extension AddCardControllerTests {
         XCTAssertEqual(threeDSWebFlowControllerMock.complete3DSMethodCallsCount, 0)
         XCTAssertEqual(threeDSDeviceInfoProviderMock.createThreeDsDataBrowserCallsCount, 0)
         XCTAssertEqual(addCardServiceMock.attachCardCallsCount, 1)
-        XCTAssertNil(addCardServiceMock.attachCardReceivedArguments?.data.data)
         XCTAssertEqual(addCardServiceMock.getAddCardStateCallsCount, 1)
         XCTAssertTrue(addCardStateSucceded)
+        switch addCardServiceMock.attachCardReceivedArguments?.data.data {
+        case let .dictionary(additionalData): XCTAssertEqual(additionalData, AddCardOptions.fake().attachCardData)
+        default: XCTFail()
+        }
     }
 
     private func createAddCardController(checkType: PaymentCardCheckType) -> AddCardController {
@@ -639,6 +656,7 @@ extension AddCardControllerTests {
             webFlowController: threeDSWebFlowControllerMock,
             threeDSService: acquiringThreeDsServiceMock,
             customerKey: "key",
+            addCardOptions: .fake(),
             checkType: checkType,
             tdsController: tdsControllerMock
         )
@@ -652,7 +670,7 @@ extension AddCardControllerTests {
         )
 
         // when
-        sut.addCard(options: CardData.fake(), completion: addCardCompletion)
+        sut.addCard(cardData: CardData.fake(), completion: addCardCompletion)
         // then
         XCTAssertEqual(addCardServiceMock.addCardCallsCount, 1)
     }

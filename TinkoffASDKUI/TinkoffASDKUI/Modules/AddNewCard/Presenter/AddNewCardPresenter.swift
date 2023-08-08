@@ -56,7 +56,7 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
         guard cardFieldPresenter.validateWholeForm().isValid else { return }
 
         let cardOptions = CardData(
-            pan: cardFieldPresenter.cardNumber,
+            number: cardFieldPresenter.cardNumber,
             validThru: cardFieldPresenter.expiration,
             cvc: cardFieldPresenter.cvc
         )

@@ -552,7 +552,7 @@ final class CardFieldPresenterTests: BaseTestCase {
         sut.didFillField(type: .expiration, text: expiration, filled: true)
         sut.didFillField(type: .cvc, text: cvc, filled: true)
 
-        let expectedCardData = CardData(cardNumber: cardNumber, expiration: expiration, cvc: cvc)
+        let expectedCardData = CardData(number: cardNumber, validThru: expiration, cvc: cvc)
 
         // when
         let cardData = sut.cardData

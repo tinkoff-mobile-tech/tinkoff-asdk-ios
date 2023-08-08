@@ -22,11 +22,6 @@ import TinkoffASDKUI
 import TinkoffASDKYandexPay
 import UIKit
 
-extension AdditionalData {
-    static let paymentInit = AdditionalData(data: ["/InitKey": "/InitValue"])
-    static let paymentFinish = AdditionalData(data: ["/FinishKey": "/FinishValue"])
-}
-
 class BuyProductsViewController: UIViewController {
 
     enum TableViewCellType {
@@ -655,4 +650,9 @@ extension PaymentResult {
             return paymentInfo.map { "\($0)" } ?? ""
         }
     }
+}
+
+extension AdditionalData {
+    static let paymentInit = AdditionalData(data: ["/InitKey": "/InitValue"])
+    static let paymentFinish = AdditionalData(data: ["/FinishKey": "/FinishValue"])
 }

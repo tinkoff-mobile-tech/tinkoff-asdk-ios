@@ -20,7 +20,7 @@ public protocol ICardsController: AnyObject {
     ///
     /// После успешной привязки `ICardController` сделает запрос на полный список карт для определения привязанной карты
     /// - Parameters:
-    ///   - options: Параметры привязки карты
+    ///   - cardData: Данные карты
     ///   - completion: Замыкание с результатом привязки, вызывающееся на главном потоке
     func addCard(cardData: CardData, completion: @escaping (AddCardResult) -> Void)
 

@@ -18,7 +18,7 @@ public protocol IAddCardController: AnyObject {
 
     /// Привязывает новую карту с заданными параметрами к пользователю
     /// - Parameters:
-    ///   - options: Опции добавления карты
+    ///   - cardData: Данные карты
     ///   - completion: Замыкание с результатом привязки карты, вызывающееся на главном потоке
     func addCard(cardData: CardData, completion: @escaping (AddCardStateResult) -> Void)
 }

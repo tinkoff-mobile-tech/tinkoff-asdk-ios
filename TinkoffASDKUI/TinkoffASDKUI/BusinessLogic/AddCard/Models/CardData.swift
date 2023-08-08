@@ -10,7 +10,7 @@ import Foundation
 /// Даннные карты
 public struct CardData: Equatable {
     /// Номер карты
-    public let pan: String
+    public let number: String
     /// Срок годности карты в формате `MM/YY`
     public let validThru: String
     /// Трехзначный cvc-код
@@ -21,8 +21,8 @@ public struct CardData: Equatable {
     ///   - pan: Номер карты
     ///   - validThru: Срок годности карты в формате `MM/YY`
     ///   - cvc: Трехзначный cvc-код
-    public init(pan: String, validThru: String, cvc: String) {
-        self.pan = pan
+    public init(number: String, validThru: String, cvc: String) {
+        self.number = number
         self.validThru = validThru
         self.cvc = cvc
     }

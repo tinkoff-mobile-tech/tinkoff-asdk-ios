@@ -21,16 +21,16 @@ final class CardsControllerMock: ICardsController {
 
     // MARK: - addCard
 
-    typealias AddCardArguments = (cardData: CardData completion: (AddCardResult) -> Void)
+    typealias AddCardArguments = (cardData: CardData, completion: (AddCardResult) -> Void)
 
     var addCardCallsCount = 0
     var addCardReceivedArguments: AddCardArguments?
     var addCardReceivedInvocations: [AddCardArguments?] = []
     var addCardCompletionClosureInput: AddCardResult?
 
-    func addCard(cardData: CardData completion: @escaping (AddCardResult) -> Void) {
+    func addCard(cardData: CardData, completion: @escaping (AddCardResult) -> Void) {
         addCardCallsCount += 1
-        let arguments = (options, completion)
+        let arguments = (cardData, completion)
         addCardReceivedArguments = arguments
         addCardReceivedInvocations.append(arguments)
         if let addCardCompletionClosureInput = addCardCompletionClosureInput {

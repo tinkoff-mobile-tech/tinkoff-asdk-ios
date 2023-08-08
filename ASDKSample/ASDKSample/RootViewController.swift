@@ -22,12 +22,6 @@ import UIKit
 import TinkoffASDKCore
 import TinkoffASDKUI
 
-extension AddCardOptions {
-    static let cardOptions = AddCardOptions(
-        attachCardData: AdditionalData(data: ["/AttachKey": "/AttachValue"])
-    )
-}
-
 struct Product: Codable {
 
     var price: NSDecimalNumber
@@ -272,4 +266,10 @@ extension RootViewController {
         alert.addAction(action)
         present(alert, animated: true)
     }
+}
+
+extension AddCardOptions {
+    static let cardOptions = AddCardOptions(
+        attachCardData: AdditionalData(data: ["/AttachKey": "/AttachValue"])
+    )
 }
