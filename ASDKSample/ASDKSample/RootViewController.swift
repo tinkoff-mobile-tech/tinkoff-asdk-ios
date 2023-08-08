@@ -159,6 +159,7 @@ class RootViewController: UITableViewController {
             sdk.presentCardList(
                 on: self,
                 customerKey: AppSetting.shared.activeSdkCredentials.customerKey,
+                addCardOptions: .cardOptions,
                 cardScannerDelegate: self
             )
         }
@@ -172,7 +173,12 @@ class RootViewController: UITableViewController {
 
             let customerKey = AppSetting.shared.activeSdkCredentials.customerKey
 
-            sdk.presentAddCard(on: self, customerKey: customerKey, cardScannerDelegate: nil) { [weak self] result in
+            sdk.presentAddCard(
+                on: self,
+                customerKey: customerKey,
+                addCardOptions: .cardOptions,
+                cardScannerDelegate: nil
+            ) { [weak self] result in
                 self?.addingNewCardCompleted(result: result)
             }
         }
@@ -260,4 +266,10 @@ extension RootViewController {
         alert.addAction(action)
         present(alert, animated: true)
     }
+}
+
+extension AddCardOptions {
+    static let cardOptions = AddCardOptions(
+        attachCardData: AdditionalData(data: ["/AttachKey": "/AttachValue"])
+    )
 }

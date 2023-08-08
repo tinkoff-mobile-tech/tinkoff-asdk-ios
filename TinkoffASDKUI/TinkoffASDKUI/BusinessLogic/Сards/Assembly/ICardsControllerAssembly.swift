@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ICardsControllerAssembly {
-    func cardsController(customerKey: String) -> ICardsController
+    func cardsController(customerKey: String, addCardOptions: AddCardOptions) -> ICardsController
 }

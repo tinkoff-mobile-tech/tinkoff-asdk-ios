@@ -26,7 +26,7 @@ final class CardFieldPresenter: ICardFieldViewOutput {
 
     // MARK: Properties
 
-    var cardData: CardData { CardData(cardNumber: cardNumber, expiration: expiration, cvc: cvc) }
+    var cardData: CardData { CardData(number: cardNumber, validThru: expiration, cvc: cvc) }
 
     private(set) var validationResult = CardFieldValidationResult()
 

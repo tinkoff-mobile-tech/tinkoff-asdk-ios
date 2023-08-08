@@ -23,11 +23,13 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     func addNewCardView(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         output: IAddNewCardPresenterOutput?,
         cardScannerDelegate: ICardScannerDelegate?
     ) -> AddNewCardViewController {
         createModule(
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             output: output,
             cardScannerDelegate: cardScannerDelegate,
             onViewWasClosed: nil
@@ -36,11 +38,13 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     func addNewCardNavigationController(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         cardScannerDelegate: ICardScannerDelegate?,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> UINavigationController {
         let viewController = createModule(
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             output: nil,
             cardScannerDelegate: cardScannerDelegate,
             onViewWasClosed: onViewWasClosed
@@ -52,11 +56,15 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
 
     private func createModule(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         output: IAddNewCardPresenterOutput?,
         cardScannerDelegate: ICardScannerDelegate?,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> AddNewCardViewController {
-        let cardsController = cardsControllerAssembly.cardsController(customerKey: customerKey)
+        let cardsController = cardsControllerAssembly.cardsController(
+            customerKey: customerKey,
+            addCardOptions: addCardOptions
+        )
 
         let validator = CardRequisitesValidator()
         let paymentSystemResolver = PaymentSystemResolver()
@@ -72,6 +80,7 @@ final class AddNewCardAssembly: IAddNewCardAssembly {
         let cardFieldPresenter = cardFieldPresenterAssembly.build(isScanButtonNeeded: cardScannerDelegate != nil)
 
         let presenter = AddNewCardPresenter(
+            addCardOptions: addCardOptions,
             cardsController: cardsController,
             output: output,
             onViewWasClosed: onViewWasClosed,

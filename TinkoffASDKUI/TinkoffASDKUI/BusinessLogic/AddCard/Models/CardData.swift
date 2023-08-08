@@ -1,5 +1,5 @@
 //
-//  CardOptions.swift
+//  CardData.swift
 //  TinkoffASDKUI
 //
 //  Created by r.akhmadeev on 19.02.2023.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-/// Параметры карты
-public struct CardOptions: Equatable {
+/// Даннные карты
+public struct CardData: Equatable {
     /// Номер карты
-    public let pan: String
+    public let number: String
     /// Срок годности карты в формате `MM/YY`
     public let validThru: String
     /// Трехзначный cvc-код
@@ -21,8 +21,8 @@ public struct CardOptions: Equatable {
     ///   - pan: Номер карты
     ///   - validThru: Срок годности карты в формате `MM/YY`
     ///   - cvc: Трехзначный cvc-код
-    public init(pan: String, validThru: String, cvc: String) {
-        self.pan = pan
+    public init(number: String, validThru: String, cvc: String) {
+        self.number = number
         self.validThru = validThru
         self.cvc = cvc
     }

@@ -12,16 +12,21 @@ final class AddNewCardAssemblyMock: IAddNewCardAssembly {
 
     // MARK: - addNewCardView
 
-    typealias AddNewCardViewArguments = (customerKey: String, output: IAddNewCardPresenterOutput?, cardScannerDelegate: ICardScannerDelegate?)
+    typealias AddNewCardViewArguments = (customerKey: String, addCardOptions: AddCardOptions, output: IAddNewCardPresenterOutput?, cardScannerDelegate: ICardScannerDelegate?)
 
     var addNewCardViewCallsCount = 0
     var addNewCardViewReceivedArguments: AddNewCardViewArguments?
     var addNewCardViewReceivedInvocations: [AddNewCardViewArguments?] = []
     var addNewCardViewReturnValue: AddNewCardViewController!
 
-    func addNewCardView(customerKey: String, output: IAddNewCardPresenterOutput?, cardScannerDelegate: ICardScannerDelegate?) -> AddNewCardViewController {
+    func addNewCardView(
+        customerKey: String,
+        addCardOptions: AddCardOptions,
+        output: IAddNewCardPresenterOutput?,
+        cardScannerDelegate: ICardScannerDelegate?
+    ) -> AddNewCardViewController {
         addNewCardViewCallsCount += 1
-        let arguments = (customerKey, output, cardScannerDelegate)
+        let arguments = (customerKey, addCardOptions, output, cardScannerDelegate)
         addNewCardViewReceivedArguments = arguments
         addNewCardViewReceivedInvocations.append(arguments)
         return addNewCardViewReturnValue
@@ -29,7 +34,7 @@ final class AddNewCardAssemblyMock: IAddNewCardAssembly {
 
     // MARK: - addNewCardNavigationController
 
-    typealias AddNewCardNavigationControllerArguments = (customerKey: String, cardScannerDelegate: ICardScannerDelegate?, onViewWasClosed: ((AddCardResult) -> Void)?)
+    typealias AddNewCardNavigationControllerArguments = (customerKey: String, addCardOptions: AddCardOptions, cardScannerDelegate: ICardScannerDelegate?, onViewWasClosed: ((AddCardResult) -> Void)?)
 
     var addNewCardNavigationControllerCallsCount = 0
     var addNewCardNavigationControllerReceivedArguments: AddNewCardNavigationControllerArguments?
@@ -37,9 +42,14 @@ final class AddNewCardAssemblyMock: IAddNewCardAssembly {
     var addNewCardNavigationControllerOnViewWasClosedClosureInput: AddCardResult?
     var addNewCardNavigationControllerReturnValue: UINavigationController!
 
-    func addNewCardNavigationController(customerKey: String, cardScannerDelegate: ICardScannerDelegate?, onViewWasClosed: ((AddCardResult) -> Void)?) -> UINavigationController {
+    func addNewCardNavigationController(
+        customerKey: String,
+        addCardOptions: AddCardOptions,
+        cardScannerDelegate: ICardScannerDelegate?,
+        onViewWasClosed: ((AddCardResult) -> Void)?
+    ) -> UINavigationController {
         addNewCardNavigationControllerCallsCount += 1
-        let arguments = (customerKey, cardScannerDelegate, onViewWasClosed)
+        let arguments = (customerKey, addCardOptions, cardScannerDelegate, onViewWasClosed)
         addNewCardNavigationControllerReceivedArguments = arguments
         addNewCardNavigationControllerReceivedInvocations.append(arguments)
         if let addNewCardNavigationControllerOnViewWasClosedClosureInput = addNewCardNavigationControllerOnViewWasClosedClosureInput {

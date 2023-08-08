@@ -15,8 +15,13 @@ protocol ICardListAssembly {
     /// Используется для отображения списка карт в сценарии управления картами, доступного при открытии из родительского приложения
     /// - Parameter customerKey: Идентификатор покупателя в системе Продавца
     /// - Parameter cardScannerDelegate: Объект, который принимает решение какой экран показать в случае если нажали на кнопку сканера карты
+    /// - Parameter addCardOptions: Параметры для флоу привязки карты
     /// - Returns: `UINavigationController`
-    func cardsPresentingNavigationController(customerKey: String, cardScannerDelegate: ICardScannerDelegate?) -> UINavigationController
+    func cardsPresentingNavigationController(
+        customerKey: String,
+        addCardOptions: AddCardOptions,
+        cardScannerDelegate: ICardScannerDelegate?
+    ) -> UINavigationController
 
     /// Создает экран со списком карт, с выбранной картой по-умолчанию.
     ///

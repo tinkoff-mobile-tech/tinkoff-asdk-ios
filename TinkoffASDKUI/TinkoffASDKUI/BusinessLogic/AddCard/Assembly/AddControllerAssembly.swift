@@ -32,13 +32,17 @@ final class AddCardControllerAssembly: IAddCardControllerAssembly {
 
     // MARK: IAddCardControllerAssembly
 
-    func addCardController(customerKey: String) -> IAddCardController {
+    func addCardController(
+        customerKey: String,
+        addCardOptions: AddCardOptions
+    ) -> IAddCardController {
         return AddCardController(
             addCardService: coreSDK,
             threeDSDeviceInfoProvider: coreSDK.threeDSDeviceInfoProvider(),
             webFlowController: webFlowControllerAssembly.threeDSWebFlowController(),
             threeDSService: coreSDK,
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             checkType: configuration.addCardCheckType,
             tdsController: appBasedFlowControllerAssembly.assemble()
         )

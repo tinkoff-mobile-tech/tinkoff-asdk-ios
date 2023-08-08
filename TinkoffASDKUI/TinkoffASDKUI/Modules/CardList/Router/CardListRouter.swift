@@ -16,6 +16,7 @@ final class CardListRouter: ICardListRouter {
 
     // MARK: CardPayment Flow Dependencies
 
+    private let addCardOptions: AddCardOptions
     private let paymentFlow: PaymentFlow?
     private let amount: Int64?
     private weak var cardPaymentOutput: ICardPaymentPresenterModuleOutput?
@@ -26,6 +27,7 @@ final class CardListRouter: ICardListRouter {
     init(
         addNewCardAssembly: IAddNewCardAssembly,
         cardPaymentAssembly: ICardPaymentAssembly,
+        addCardOptions: AddCardOptions,
         paymentFlow: PaymentFlow?,
         amount: Int64?,
         cardPaymentOutput: ICardPaymentPresenterModuleOutput?,
@@ -33,6 +35,7 @@ final class CardListRouter: ICardListRouter {
     ) {
         self.addNewCardAssembly = addNewCardAssembly
         self.cardPaymentAssembly = cardPaymentAssembly
+        self.addCardOptions = addCardOptions
         self.paymentFlow = paymentFlow
         self.amount = amount
         self.cardPaymentOutput = cardPaymentOutput
@@ -44,6 +47,7 @@ final class CardListRouter: ICardListRouter {
     func openAddNewCard(customerKey: String, output: IAddNewCardPresenterOutput?) {
         let viewController = addNewCardAssembly.addNewCardView(
             customerKey: customerKey,
+            addCardOptions: addCardOptions,
             output: output,
             cardScannerDelegate: cardScannerDelegate
         )
