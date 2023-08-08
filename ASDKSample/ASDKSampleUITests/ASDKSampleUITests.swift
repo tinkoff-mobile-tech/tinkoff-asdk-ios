@@ -10,15 +10,39 @@ final class ASDKSampleUITests: BaseUITest {
 
     override func setUp() {
         super.setUp()
-        setStub(NetworkStub.getCardList.default)
+        setStubs(
+            NetworkStub.getCardList.default,
+            NetworkStub.addCard.default,
+            NetworkStub.attachCard.default,
+            NetworkStub.getAddCardState.default
+        )
     }
 
     // MARK: Tests
 
-    func testStubsHistoryOneRequest() {
-        app.buttons["💳"].tap()
+    func testAddNon3dsCard() {
+        SampleMainPage().tapOnCardListButton()
+        CardListPage().tapOnAddNewCardButton()
+
+        setStub(NetworkStub.getCardList.default) {
+            $0.addCard(JSON(["CardId": "3750", "Pan": "220138******0047", "Status": "A", "RebillId": "145119"]))
+        }
+
+        AddNewCardPage().apply {
+            $0.checkCardNumber()
+            $0.checkCardIcon(bank: "empty", paymentSystem: "empty")
+            $0.checkExpireDate()
+            $0.checkCvc()
+            $0.checkAddCardButtonIsDisabled()
+
+            $0.enterCardNumber("2201 3820 0000 0047")
+            $0.enterExpireDate(mounth: "03", year: "99")
+            $0.enterCVC("123")
+            $0.checkAddCardButtonIsEnabled()
+
+            $0.tapOnAddCardButton()
+        }
 
         expect(self.network.requestsHistory.count).to(equal(1))
-        expect(self.network.history.count).to(equal(1))
     }
 }

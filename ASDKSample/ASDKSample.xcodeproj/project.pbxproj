@@ -72,8 +72,14 @@
 		B1DB069A295AD5DB006C9DAF /* UIAlertController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */; };
 		B1F10E182A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */; };
 		B1F10E1A2A1CF0BE00B34171 /* SampleTestsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F10E192A1CF0BE00B34171 /* SampleTestsHelper.swift */; };
+		F751B2A22A7CE3B500B56C27 /* SampleMainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F751B2A12A7CE3B500B56C27 /* SampleMainPage.swift */; };
+		F751B2A42A7D275900B56C27 /* CardListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F751B2A32A7D275900B56C27 /* CardListPage.swift */; };
+		F751B2A62A7D297300B56C27 /* AddNewCardPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F751B2A52A7D297300B56C27 /* AddNewCardPage.swift */; };
 		F77E4C0E2A77F5E7002C3858 /* CardListStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77E4C0D2A77F5E6002C3858 /* CardListStub.swift */; };
 		F77E4C112A7815BD002C3858 /* NetworkStub+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77E4C102A7815BD002C3858 /* NetworkStub+Default.swift */; };
+		F77EB5FD2A816DC000EA3F5C /* AddCardStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77EB5FC2A816DC000EA3F5C /* AddCardStub.swift */; };
+		F77EB5FF2A82719300EA3F5C /* AttachCardStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77EB5FE2A82719300EA3F5C /* AttachCardStub.swift */; };
+		F77EB6012A82721A00EA3F5C /* GetAddCardState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77EB6002A82721A00EA3F5C /* GetAddCardState.swift */; };
 		F7D00F0F2A6932D600B68B6F /* ASDKSampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D00F0E2A6932D600B68B6F /* ASDKSampleUITests.swift */; };
 		F7D00F582A6966CF00B68B6F /* XCUIElement+Wait.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D00F572A6966CF00B68B6F /* XCUIElement+Wait.swift */; };
 		F7D00F5D2A69678700B68B6F /* TimeInterval+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D00F5C2A69678700B68B6F /* TimeInterval+Utils.swift */; };
@@ -176,9 +182,15 @@
 		B1DB0699295AD5DB006C9DAF /* UIAlertController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Ext.swift"; sourceTree = "<group>"; };
 		B1F10E172A1CEF9200B34171 /* YandexPayPaymentSheetTestsRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexPayPaymentSheetTestsRU.swift; sourceTree = "<group>"; };
 		B1F10E192A1CF0BE00B34171 /* SampleTestsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTestsHelper.swift; sourceTree = "<group>"; };
+		F751B2A12A7CE3B500B56C27 /* SampleMainPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleMainPage.swift; sourceTree = "<group>"; };
+		F751B2A32A7D275900B56C27 /* CardListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListPage.swift; sourceTree = "<group>"; };
+		F751B2A52A7D297300B56C27 /* AddNewCardPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewCardPage.swift; sourceTree = "<group>"; };
 		F766CECEAB3039B03E54DDAA /* Pods-ASDKSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDKSample.debug.xcconfig"; path = "Target Support Files/Pods-ASDKSample/Pods-ASDKSample.debug.xcconfig"; sourceTree = "<group>"; };
 		F77E4C0D2A77F5E6002C3858 /* CardListStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListStub.swift; sourceTree = "<group>"; };
 		F77E4C102A7815BD002C3858 /* NetworkStub+Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkStub+Default.swift"; sourceTree = "<group>"; };
+		F77EB5FC2A816DC000EA3F5C /* AddCardStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardStub.swift; sourceTree = "<group>"; };
+		F77EB5FE2A82719300EA3F5C /* AttachCardStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachCardStub.swift; sourceTree = "<group>"; };
+		F77EB6002A82721A00EA3F5C /* GetAddCardState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAddCardState.swift; sourceTree = "<group>"; };
 		F7D00F0C2A6932D600B68B6F /* ASDKSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ASDKSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7D00F0E2A6932D600B68B6F /* ASDKSampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASDKSampleUITests.swift; sourceTree = "<group>"; };
 		F7D00F572A6966CF00B68B6F /* XCUIElement+Wait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Wait.swift"; sourceTree = "<group>"; };
@@ -508,6 +520,9 @@
 			isa = PBXGroup;
 			children = (
 				F77E4C0D2A77F5E6002C3858 /* CardListStub.swift */,
+				F77EB5FC2A816DC000EA3F5C /* AddCardStub.swift */,
+				F77EB5FE2A82719300EA3F5C /* AttachCardStub.swift */,
+				F77EB6002A82721A00EA3F5C /* GetAddCardState.swift */,
 			);
 			path = Stubs;
 			sourceTree = "<group>";
@@ -597,6 +612,9 @@
 			isa = PBXGroup;
 			children = (
 				F7D00F642A696B9200B68B6F /* BasePage.swift */,
+				F751B2A12A7CE3B500B56C27 /* SampleMainPage.swift */,
+				F751B2A32A7D275900B56C27 /* CardListPage.swift */,
+				F751B2A52A7D297300B56C27 /* AddNewCardPage.swift */,
 			);
 			path = PageObjects;
 			sourceTree = "<group>";
@@ -658,6 +676,7 @@
 				F7D00F082A6932D600B68B6F /* Sources */,
 				F7D00F092A6932D600B68B6F /* Frameworks */,
 				F7D00F0A2A6932D600B68B6F /* Resources */,
+				E9C0E392A26CF36F79706966 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -894,6 +913,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
+		E9C0E392A26CF36F79706966 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleUITests/Pods-ASDKSampleUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleUITests/Pods-ASDKSampleUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ASDKSampleUITests/Pods-ASDKSampleUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		F09863582217055B0E8545CE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -998,13 +1034,19 @@
 			files = (
 				F7D00F0F2A6932D600B68B6F /* ASDKSampleUITests.swift in Sources */,
 				F7D00F652A696B9200B68B6F /* BasePage.swift in Sources */,
+				F751B2A22A7CE3B500B56C27 /* SampleMainPage.swift in Sources */,
+				F77EB5FF2A82719300EA3F5C /* AttachCardStub.swift in Sources */,
+				F77EB6012A82721A00EA3F5C /* GetAddCardState.swift in Sources */,
 				F7D00F582A6966CF00B68B6F /* XCUIElement+Wait.swift in Sources */,
+				F751B2A42A7D275900B56C27 /* CardListPage.swift in Sources */,
 				F7D00F622A696A7800B68B6F /* XCTestCase+AllureId.swift in Sources */,
 				F7D00F692A69AEC200B68B6F /* ApplicationHolder.swift in Sources */,
 				F7D00F672A69ADB100B68B6F /* BaseUITest.swift in Sources */,
 				F77E4C112A7815BD002C3858 /* NetworkStub+Default.swift in Sources */,
 				F7D00F5F2A696A2900B68B6F /* XCUIElement+ScrollToElement.swift in Sources */,
 				F77E4C0E2A77F5E7002C3858 /* CardListStub.swift in Sources */,
+				F77EB5FD2A816DC000EA3F5C /* AddCardStub.swift in Sources */,
+				F751B2A62A7D297300B56C27 /* AddNewCardPage.swift in Sources */,
 				F7D00F5D2A69678700B68B6F /* TimeInterval+Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

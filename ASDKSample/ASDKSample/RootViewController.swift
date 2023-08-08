@@ -229,8 +229,10 @@ private extension RootViewController {
 
 extension RootViewController {
     private func addingNewCardCompleted(result: AddCardResult) {
+        print("------", result)
         switch result {
         case .cancelled, .failed:
+            print("------failed", result)
             let alert = UIAlertController.okAlert(
                 title: nil,
                 message: String(describing: result),

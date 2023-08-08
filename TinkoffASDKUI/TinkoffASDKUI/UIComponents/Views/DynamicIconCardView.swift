@@ -75,6 +75,8 @@ class DynamicIconCardView: UIView {
         paymentSystemBadgeImageView.clipsToBounds = true
 
         setupFrames()
+
+        setupAccessabilityIdentifier()
     }
 
     private func setupFrames() {
@@ -108,6 +110,7 @@ class DynamicIconCardView: UIView {
     private func configureWithData(_ data: Data) {
         configureBank(icon: data.bank)
         configurePaymentSystem(icon: data.paymentSystem, bank: data.bank)
+        setupAccessabilityLabels(data)
     }
 
     private func configureBank(icon: Icon.Bank?) {
@@ -120,6 +123,16 @@ class DynamicIconCardView: UIView {
         paymentSystemBadgeView.alpha = icon == nil ? 1 as CGFloat : 0 as CGFloat
         paymentSystemBadgeImageView.alpha = icon == nil ? 0 as CGFloat : 1 as CGFloat
         paymentSystemBadgeImageView.image = icon?.getImage(bank: bank)
+    }
+
+    private func setupAccessabilityLabels(_ data: Data) {
+        cardImageView.accessibilityLabel = data.bank == nil ? "empty" : data.bank.debugDescription
+        paymentSystemBadgeView.accessibilityLabel = data.paymentSystem == nil ? "empty" : data.paymentSystem.debugDescription
+    }
+
+    private func setupAccessabilityIdentifier() {
+        cardImageView.accessibilityIdentifier = "bankIcon"
+        paymentSystemBadgeView.accessibilityIdentifier = "paymentSystemIcon"
     }
 }
 

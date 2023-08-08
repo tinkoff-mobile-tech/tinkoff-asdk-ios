@@ -3,8 +3,7 @@ import XCTest
 public extension XCUIElement {
 
     func waitAndTap(timeout: TimeInterval = 60) {
-        wait(timeout: timeout)
-        tap()
+        wait(timeout: timeout).tap()
     }
 
     func waitSafelyAndTap(timeout: TimeInterval = 5) {

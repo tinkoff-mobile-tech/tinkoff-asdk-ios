@@ -41,6 +41,7 @@ final class FloatingTextField: UIView {
         label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = ASDKColors.Text.secondary.color
         label.numberOfLines = 1
+        label.accessibilityIdentifier = "headerLabel"
         return label
     }()
 

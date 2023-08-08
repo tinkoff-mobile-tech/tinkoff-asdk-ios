@@ -147,6 +147,7 @@ extension AddNewCardView {
         ])
 
         addButton.isEnabled = false
+        addButton.accessibilityIdentifier = "addButton"
     }
 
     private func calculateAddButtonBottomInset(keyboardHeight: CGFloat) -> CGFloat {

@@ -49,6 +49,7 @@ final class CardFieldView: UIView, ICardFieldViewInput {
         super.init(frame: frame)
         setupViews()
         setupConstraints()
+        setupAccessibilityIdentifier()
     }
 
     @available(*, unavailable)
@@ -218,6 +219,13 @@ extension CardFieldView {
         case cvcTextField.textField: return .cvc
         default: return nil
         }
+    }
+
+    private func setupAccessibilityIdentifier() {
+        cardNumberTextField.accessibilityIdentifier = ".cardNumber"
+        expireTextField.accessibilityIdentifier = ".expireTextField"
+        cvcTextField.accessibilityIdentifier = ".cvcTextField"
+        dynamicCardView.accessibilityIdentifier = "dynamicCardView"
     }
 }
 

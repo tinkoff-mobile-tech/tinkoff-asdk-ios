@@ -3,6 +3,12 @@ import TinkoffMockStrapping
 
 public class GetCardListStub: NetworkStub {}
 
+public extension GetCardListStub {
+    func addCard(_ newCard: JSON) {
+        json.arrayObject?.append(newCard)
+    }
+}
+
 public class GetCardListStubs {
 
     private lazy var url = "v2/GetCardList"
