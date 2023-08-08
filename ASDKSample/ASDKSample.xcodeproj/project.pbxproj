@@ -51,6 +51,7 @@
 		B1419C5628D46AB2005C61DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1419C5128D46AB2005C61DE /* Main.storyboard */; };
 		B1419C5928D46D96005C61DE /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1419C5728D46D96005C61DE /* Strings+Generated.swift */; };
 		B1419C5A28D46D96005C61DE /* Assets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1419C5828D46D96005C61DE /* Assets+Generated.swift */; };
+		B14D0C972A82B3AB00CDBB0D /* AsdkAccessibilityIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14D0C962A82B3AB00CDBB0D /* AsdkAccessibilityIdentifier.swift */; };
 		B156F90C28F0440000ABABDD /* UIEdgeInsets+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */; };
 		B156F90E28F06B3700ABABDD /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156F90D28F06B3700ABABDD /* UIView+Ext.swift */; };
 		B16DA1D62A1B96310046D04A /* README_SNAPSHOT_TESTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B16DA1D52A1B96310046D04A /* README_SNAPSHOT_TESTS.md */; };
@@ -159,6 +160,7 @@
 		B1419C5228D46AB2005C61DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B1419C5728D46D96005C61DE /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		B1419C5828D46D96005C61DE /* Assets+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Generated.swift"; sourceTree = "<group>"; };
+		B14D0C962A82B3AB00CDBB0D /* AsdkAccessibilityIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AsdkAccessibilityIdentifier.swift; path = ../../TinkoffASDKUI/TinkoffASDKUI/Utils/AsdkAccessibilityIdentifier.swift; sourceTree = "<group>"; };
 		B156F90B28F0440000ABABDD /* UIEdgeInsets+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Ext.swift"; sourceTree = "<group>"; };
 		B156F90D28F06B3700ABABDD /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		B16DA1D52A1B96310046D04A /* README_SNAPSHOT_TESTS.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README_SNAPSHOT_TESTS.md; sourceTree = "<group>"; };
@@ -543,6 +545,7 @@
 				F7D00F552A69669800B68B6F /* Utils */,
 				F7D00F542A69668A00B68B6F /* Tests */,
 				F7D00F0E2A6932D600B68B6F /* ASDKSampleUITests.swift */,
+				B14D0C962A82B3AB00CDBB0D /* AsdkAccessibilityIdentifier.swift */,
 			);
 			path = ASDKSampleUITests;
 			sourceTree = "<group>";
@@ -1047,6 +1050,7 @@
 				F77E4C0E2A77F5E7002C3858 /* CardListStub.swift in Sources */,
 				F77EB5FD2A816DC000EA3F5C /* AddCardStub.swift in Sources */,
 				F751B2A62A7D297300B56C27 /* AddNewCardPage.swift in Sources */,
+				B14D0C972A82B3AB00CDBB0D /* AsdkAccessibilityIdentifier.swift in Sources */,
 				F7D00F5D2A69678700B68B6F /* TimeInterval+Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
