@@ -1,11 +1,35 @@
 //
-//  YPPaymentSheet+Equatable.swift
-//  Pods-ASDKSample
+//  Fakes.swift
+//  TinkoffASDKYandexPay
 //
-//  Created by Ivan Glushko on 20.04.2023.
+//  Created by Никита Васильев on 07.08.2023.
 //
 
 import YandexPaySDK
+
+extension YPCardPaymentMethod {
+
+    static func fake() -> YPCardPaymentMethod {
+        YPCardPaymentMethod(
+            gateway: "YPGateway",
+            gatewayMerchantId: "gatewayMerchantId",
+            allowedAuthMethods: [.panOnly],
+            allowedCardNetworks: [.mir]
+        )
+    }
+}
+
+extension YPPaymentInfo {
+
+    static func fake() -> YPPaymentInfo {
+        YPPaymentInfo(
+            paymentToken: "YPPaymentToken",
+            paymentMethodInfo: .card(.init(cardLast4: "2344", cardNetwork: .mir)),
+            paymentAmount: "200",
+            billingContact: nil
+        )
+    }
+}
 
 extension YPPaymentSheet: Equatable {
     public static func == (lhs: YandexPaySDK.YPPaymentSheet, rhs: YandexPaySDK.YPPaymentSheet) -> Bool {
@@ -46,5 +70,17 @@ extension YPCardPaymentMethod: Equatable {
             lhs.allowedAuthMethods == rhs.allowedAuthMethods &&
             lhs.allowedCardNetworks == rhs.allowedCardNetworks &&
             lhs.verificationDetails == rhs.verificationDetails
+    }
+}
+
+extension YPPaymentSheet {
+
+    static func fake() -> YPPaymentSheet {
+        YPPaymentSheet(
+            countryCode: .ru,
+            currencyCode: .rub,
+            order: .init(id: "123", amount: "123"),
+            paymentMethods: [.card(.fake())]
+        )
     }
 }
