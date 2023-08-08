@@ -43,7 +43,6 @@ final class TDSControllerAssembly: ITDSControllerAssembly {
             tdsTimeoutResolver: TDSTimeoutResolver(),
             tdsCertsManager: tdsCertsManager,
             threeDSDeviceInfoProvider: threeDSDeviceInfoProvider,
-            delayExecutor: DelayedExecutor.buildDefault(),
             mainQueue: DispatchQueue.main
         )
     }
