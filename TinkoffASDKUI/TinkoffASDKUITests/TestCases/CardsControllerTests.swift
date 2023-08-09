@@ -402,7 +402,7 @@ final class CardsControllerTests: BaseTestCase {
 
         addCardControllerMock.underlyingCustomerKey = customerKey
 
-        let sberFakeCard = PaymentCard.sberFake()
+        let sberFakeCard = PaymentCard.fakeSber()
         let cards: [PaymentCard] = [.fakeInactive(), sberFakeCard, .fake()]
         cardServiceMock.getCardListCompletionClosureInput = .success(cards)
 
