@@ -28,7 +28,7 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
         self.cardsControllerAssembly = cardsControllerAssembly
     }
 
-    // MARK: ISBPPaymentSheetAssembly
+    // MARK: IRecurrentPaymentAssembly
 
     func build(
         paymentFlow: PaymentFlow,
@@ -37,7 +37,9 @@ final class RecurrentPaymentAssembly: IRecurrentPaymentAssembly {
         moduleCompletion: PaymentResultCompletion?
     ) -> UIViewController {
         let paymentController = paymentControllerAssembly.paymentController()
-        let cardsController = paymentFlow.customerKey.map { cardsControllerAssembly.cardsController(customerKey: $0) }
+        let cardsController = paymentFlow.customerKey.map {
+            cardsControllerAssembly.cardsController(customerKey: $0, addCardOptions: .empty)
+        }
 
         let validator = CardRequisitesValidator()
         let paymentSystemResolver = PaymentSystemResolver()

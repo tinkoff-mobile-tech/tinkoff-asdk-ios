@@ -31,19 +31,13 @@ public struct AttachCardData {
         expDate: String,
         cvv: String,
         requestKey: String,
-        data: FinishAuthorizeDataWrapper<ThreeDsDataBrowser>?
+        data: FinishAuthorizeDataEnum?
     ) {
         self.cardNumber = cardNumber
         self.expDate = expDate
         self.cvv = cvv
         self.requestKey = requestKey
-
-        if let data = data {
-            // В данный момент на МАПИ поддерживается только 3ds Browser Flow
-            self.data = .threeDsBrowser(data)
-        } else {
-            self.data = nil
-        }
+        self.data = data
     }
 
     func cardData() -> String {

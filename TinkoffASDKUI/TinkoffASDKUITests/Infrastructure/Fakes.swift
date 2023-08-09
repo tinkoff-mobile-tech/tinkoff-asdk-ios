@@ -250,9 +250,9 @@ extension CardList.Card {
     }
 }
 
-extension CardOptions {
+extension CardData {
     static func fake() -> Self {
-        CardOptions(pan: "123123123123", validThru: "0928", cvc: "123")
+        CardData(number: "123123123123", validThru: "0928", cvc: "123")
     }
 }
 
@@ -320,5 +320,11 @@ extension String {
 extension TinkoffPayMethod {
     static func fake() -> TinkoffPayMethod {
         TinkoffPayMethod(version: "1.1.1")
+    }
+}
+
+extension AddCardOptions {
+    static func fake() -> Self {
+        Self(attachCardData: AdditionalData(data: ["/FakeKey-Card": "/FakeKey-Value"]))
     }
 }

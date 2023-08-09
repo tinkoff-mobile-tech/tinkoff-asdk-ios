@@ -18,6 +18,7 @@ protocol IAddNewCardAssembly {
     /// - Returns: `UIViewController`
     func addNewCardView(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         output: IAddNewCardPresenterOutput?,
         cardScannerDelegate: ICardScannerDelegate?
     ) -> AddNewCardViewController
@@ -32,6 +33,7 @@ protocol IAddNewCardAssembly {
     /// - Returns: `UINavigationController`
     func addNewCardNavigationController(
         customerKey: String,
+        addCardOptions: AddCardOptions,
         cardScannerDelegate: ICardScannerDelegate?,
         onViewWasClosed: ((AddCardResult) -> Void)?
     ) -> UINavigationController

@@ -33,6 +33,7 @@ final class AddNewCardPresenterTests: BaseTestCase {
         viewMock = AddNewCardViewMock()
 
         sut = AddNewCardPresenter(
+            addCardOptions: .fake(),
             cardsController: cardsControllerMock,
             output: outputMock,
             onViewWasClosed: { [weak self] result in

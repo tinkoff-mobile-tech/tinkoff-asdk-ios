@@ -129,8 +129,8 @@ extension CardFieldInputMock {
         underlyingCvc = "111"
         underlyingExpiration = "0928"
         underlyingCardData = CardData(
-            cardNumber: underlyingCardNumber,
-            expiration: underlyingExpiration,
+            number: underlyingCardNumber,
+            validThru: underlyingExpiration,
             cvc: underlyingCvc
         )
     }

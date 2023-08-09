@@ -17,6 +17,8 @@ final class AddNewCardPresenter {
 
     private let cardsController: ICardsController
 
+    private let addCardOptions: AddCardOptions
+
     // MARK: Output Events Handlers
 
     private weak var output: IAddNewCardPresenterOutput?
@@ -33,11 +35,13 @@ final class AddNewCardPresenter {
     // MARK: Init
 
     init(
+        addCardOptions: AddCardOptions,
         cardsController: ICardsController,
         output: IAddNewCardPresenterOutput?,
         onViewWasClosed: ((AddCardResult) -> Void)?,
         cardFieldPresenter: ICardFieldViewOutput
     ) {
+        self.addCardOptions = addCardOptions
         self.cardsController = cardsController
         self.output = output
         self.onViewWasClosed = onViewWasClosed
@@ -51,8 +55,8 @@ extension AddNewCardPresenter: IAddNewCardPresenter {
     func cardFieldViewAddCardTapped() {
         guard cardFieldPresenter.validateWholeForm().isValid else { return }
 
-        let cardOptions = CardOptions(
-            pan: cardFieldPresenter.cardNumber,
+        let cardOptions = CardData(
+            number: cardFieldPresenter.cardNumber,
             validThru: cardFieldPresenter.expiration,
             cvc: cardFieldPresenter.cvc
         )
@@ -100,10 +104,10 @@ extension AddNewCardPresenter: ICardFieldOutput {
 // MARK: - Private
 
 extension AddNewCardPresenter {
-    private func addCard(options: CardOptions) {
+    private func addCard(options: CardData) {
         view?.showLoadingState()
 
-        cardsController.addCard(options: options) { [weak self] result in
+        cardsController.addCard(cardData: options) { [weak self] result in
             guard let self = self else { return }
             self.output?.addNewCardDidReceive(result: result)
             self.view?.hideLoadingState()
