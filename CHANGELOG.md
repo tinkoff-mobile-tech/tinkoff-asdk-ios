@@ -57,6 +57,7 @@
 * [EACQAPW-5827] Update fakes
 * [EACQAPW-5625] Added Card Options to pass DATA field in /AttachCard
 * [EACQAPW-5828] Combine all Core Fakes in one file
+* [EACQAPW-5434] Remove tds controller error handles
 
 ### Changed
 * [EACQAPW-5617] Now Receipt initializer checks validity of mandatory fields

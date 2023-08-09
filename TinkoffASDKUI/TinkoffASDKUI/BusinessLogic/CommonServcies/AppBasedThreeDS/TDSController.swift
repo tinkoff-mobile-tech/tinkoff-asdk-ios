@@ -53,11 +53,6 @@ final class TDSController: ITDSController {
     private let threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider
     private let mainQueue: any IDispatchQueue
 
-    // TODO: EACQAPW-5434 Убрать костыль задержки в TDSController
-    // Костыль нужен для решения проблемы одновременных анимаций модалок.
-    // Из-за этого не показывается шторка асдк с ошибкой оплаты
-    private let delayExecutor: IDelayedExecutor
-
     // 3ds sdk properties
 
     private var transaction: ITransaction?
@@ -76,7 +71,6 @@ final class TDSController: ITDSController {
         tdsTimeoutResolver: ITimeoutResolver,
         tdsCertsManager: ITDSCertsManager,
         threeDSDeviceInfoProvider: IThreeDSDeviceInfoProvider,
-        delayExecutor: IDelayedExecutor,
         mainQueue: IDispatchQueue
     ) {
         self.threeDsService = threeDsService
@@ -84,7 +78,6 @@ final class TDSController: ITDSController {
         self.tdsTimeoutResolver = tdsTimeoutResolver
         self.tdsCertsManager = tdsCertsManager
         self.threeDSDeviceInfoProvider = threeDSDeviceInfoProvider
-        self.delayExecutor = delayExecutor
         self.mainQueue = mainQueue
     }
 
@@ -214,13 +207,6 @@ extension TDSController {
         )
     }
 
-    private func sendCompletionWithDelay(result: Result<GetPaymentStatePayload, Error>) {
-        delayExecutor.execute { [weak self] in
-            guard let self = self else { return }
-            self.completionHandler?(result)
-        }
-    }
-
     private func buildCresValue(with transStatus: String) throws -> String {
         guard let challengeParams = challengeParams else { return "" }
         let acsTransID = try challengeParams.getAcsTransactionId()
@@ -266,15 +252,13 @@ extension TDSController: ChallengeStatusReceiver {
 
     func cancelled() {
         finishTransaction()
-        delayExecutor.execute { [weak self] in
-            self?.cancelHandler?()
-        }
+        cancelHandler?()
         clear()
     }
 
     func timedout() {
         finishTransaction()
-        sendCompletionWithDelay(result: .failure(TDSFlowError.timeout))
+        completionHandler?(.failure(TDSFlowError.timeout))
         clear()
     }
 
@@ -283,7 +267,7 @@ extension TDSController: ChallengeStatusReceiver {
         let errorDescription = protocolErrorEvent.getErrorMessage().getErrorDescription()
         let errorCode = Int(protocolErrorEvent.getErrorMessage().getErrorCode()) ?? 1
         let error = NSError(domain: errorDescription, code: errorCode)
-        sendCompletionWithDelay(result: .failure(error))
+        completionHandler?(.failure(error))
         clear()
     }
 
@@ -292,7 +276,7 @@ extension TDSController: ChallengeStatusReceiver {
         let errorDescription = runtimeErrorEvent.getErrorMessage()
         let errorCode = Int(runtimeErrorEvent.getErrorCode()) ?? 1
         let error = NSError(domain: errorDescription, code: errorCode)
-        sendCompletionWithDelay(result: .failure(error))
+        completionHandler?(.failure(error))
         clear()
     }
 }

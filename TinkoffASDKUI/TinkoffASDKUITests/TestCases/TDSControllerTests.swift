@@ -22,7 +22,6 @@ final class TDSControllerTests: BaseTestCase {
     var transactionMock: TransactionMock!
     var tdsCertsManagerMock: TDSCertsManagerMock!
     var threeDSDeviceInfoProviderMock: ThreeDSDeviceInfoProviderMock!
-    var delayExecutorMock: DelayedExecutorMock!
     var mainQueueMock: DispatchQueueMock!
 
     // MARK: - Setup
@@ -36,9 +35,7 @@ final class TDSControllerTests: BaseTestCase {
         transactionMock = TransactionMock()
         tdsCertsManagerMock = TDSCertsManagerMock()
         threeDSDeviceInfoProviderMock = ThreeDSDeviceInfoProviderMock()
-        delayExecutorMock = DelayedExecutorMock()
         mainQueueMock = DispatchQueueMock()
-        delayExecutorMock.executeWorkShouldExecute = true
         DispatchQueueMock.performOnMainBlockShouldExecute = true
 
         tDSWrapperMock.createTransactionReturnValue = transactionMock
@@ -49,13 +46,11 @@ final class TDSControllerTests: BaseTestCase {
             tdsTimeoutResolver: timeoutResolverMock,
             tdsCertsManager: tdsCertsManagerMock,
             threeDSDeviceInfoProvider: threeDSDeviceInfoProviderMock,
-            delayExecutor: delayExecutorMock,
             mainQueue: mainQueueMock
         )
     }
 
     override func tearDown() {
-        delayExecutorMock.executeWorkShouldExecute = false
         DispatchQueueMock.performOnMainBlockShouldExecute = false
 
         acquiringThreeDSServiceMock = nil
@@ -64,7 +59,6 @@ final class TDSControllerTests: BaseTestCase {
         transactionMock = nil
         tdsCertsManagerMock = nil
         threeDSDeviceInfoProviderMock = nil
-        delayExecutorMock = nil
         mainQueueMock = nil
 
         sut = nil
